@@ -1,0 +1,20 @@
+PODS:
+  - MASShortcut (2.3.6)
+  - Sparkle (1.21.3)
+
+DEPENDENCIES:
+  - MASShortcut
+  - Sparkle
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - MASShortcut
+    - Sparkle
+
+SPEC CHECKSUMS:
+  MASShortcut: 9c215e8a8a78f3d01ce56da48e2730ab66b538fa
+  Sparkle: 3f75576db8b0265adef36c43249d747f22d0b708
+
+PODFILE CHECKSUM: 9d924c34b8abce32760985160284c3feccaedcd7
+
+COCOAPODS: 1.7.0

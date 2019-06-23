@@ -1,0 +1,954 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12D896200936C0DE9FF41FB4 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		6327EAA4FEECF2AE087FCD30 /* Pods_RectangleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */; };
+		9821401F22B35FEA00ABFB3F /* RightHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */; };
+		9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */; };
+		9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402222B3886100ABFB3F /* CenterCalculation.swift */; };
+		9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402422B3887200ABFB3F /* MaximizeCalculation.swift */; };
+		9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */; };
+		9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */; };
+		9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */; };
+		9821402F22B389B600ABFB3F /* NextPrevThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */; };
+		9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */; };
+		9821403322B38A1B00ABFB3F /* UpperLeftCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */; };
+		9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */; };
+		9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403622B3D16700ABFB3F /* MaximizeHeightCalculation.swift */; };
+		9821403F22B3EBD900ABFB3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403E22B3EBD900ABFB3F /* AppDelegate.swift */; };
+		9821404322B3EBDA00ABFB3F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9821404222B3EBDA00ABFB3F /* Assets.xcassets */; };
+		9821404622B3EBDA00ABFB3F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9821404422B3EBDA00ABFB3F /* Main.storyboard */; };
+		9821405B22B3ECCA00ABFB3F /* RectangleLauncher.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9821403C22B3EBD900ABFB3F /* RectangleLauncher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9821405E22B3ED3600ABFB3F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9821405D22B3ED3600ABFB3F /* ServiceManagement.framework */; };
+		9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821405F22B3EFB200ABFB3F /* Defaults.swift */; };
+		9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824700C22AF9B7D0037B409 /* AppDelegate.swift */; };
+		9824701122AF9B7E0037B409 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9824701022AF9B7E0037B409 /* Assets.xcassets */; };
+		9824701422AF9B7E0037B409 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9824701222AF9B7E0037B409 /* Main.storyboard */; };
+		9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824701F22AF9B7E0037B409 /* RectangleTests.swift */; };
+		9824702C22AFA22E0037B409 /* AccessibilityWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702A22AFA22E0037B409 /* AccessibilityWindow.swift */; };
+		9824702D22AFA22E0037B409 /* AccessibilityWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9824702B22AFA22E0037B409 /* AccessibilityWindow.xib */; };
+		9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */; };
+		9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703022AFA8470037B409 /* RectangleStatusItem.swift */; };
+		9824703722B0F3200037B409 /* WindowAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703622B0F3200037B409 /* WindowAction.swift */; };
+		9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703822B0F37C0037B409 /* ShortcutManager.swift */; };
+		9824703B22B139780037B409 /* CUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703A22B139780037B409 /* CUtil.swift */; };
+		9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703C22B13C7E0037B409 /* AccessibilityElement.swift */; };
+		9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703E22B13FBC0037B409 /* ScreenDetection.swift */; };
+		9824704122B186D00037B409 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704022B186D00037B409 /* WindowManager.swift */; };
+		9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704622B189240037B409 /* StandardWindowMover.swift */; };
+		9824704C22B189250037B409 /* WindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704722B189240037B409 /* WindowMover.swift */; };
+		9824704D22B189250037B409 /* WindowCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704822B189250037B409 /* WindowCalculation.swift */; };
+		9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704922B189250037B409 /* QuantizedWindowMover.swift */; };
+		9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704A22B189250037B409 /* BestEffortWindowMover.swift */; };
+		9824705122B28D7A0037B409 /* LeftHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */; };
+		985B9BF122B8D77600A2E8F0 /* PrefsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */; };
+		985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */; };
+		985B9BF822BB6F5100A2E8F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 985B9BF622BB6F5000A2E8F0 /* MessageView.xib */; };
+		985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF722BB6F5000A2E8F0 /* MessageView.swift */; };
+		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
+		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9824701C22AF9B7E0037B409 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9824700122AF9B7D0037B409 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9824700822AF9B7D0037B409;
+			remoteInfo = Rectangle;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9821405A22B3EC9900ABFB3F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				9821405B22B3ECCA00ABFB3F /* RectangleLauncher.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0796D218CC3C7CD563827A8D /* Pods-RectangleLauncher.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleLauncher.release.xcconfig"; path = "Target Support Files/Pods-RectangleLauncher/Pods-RectangleLauncher.release.xcconfig"; sourceTree = "<group>"; };
+		20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rectangle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EE34B57BB10FDB0B4E8359F /* Pods-RectangleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleTests.release.xcconfig"; path = "Target Support Files/Pods-RectangleTests/Pods-RectangleTests.release.xcconfig"; sourceTree = "<group>"; };
+		534283F3C564C4526C67E459 /* Pods-RectangleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleTests.debug.xcconfig"; path = "Target Support Files/Pods-RectangleTests/Pods-RectangleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.debug.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.debug.xcconfig"; sourceTree = "<group>"; };
+		80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleLauncher.debug.xcconfig"; path = "Target Support Files/Pods-RectangleLauncher/Pods-RectangleLauncher.debug.xcconfig"; sourceTree = "<group>"; };
+		81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightHalfCalculation.swift; sourceTree = "<group>"; };
+		9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomHalfCalculation.swift; sourceTree = "<group>"; };
+		9821402222B3886100ABFB3F /* CenterCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterCalculation.swift; sourceTree = "<group>"; };
+		9821402422B3887200ABFB3F /* MaximizeCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximizeCalculation.swift; sourceTree = "<group>"; };
+		9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSizeCalculation.swift; sourceTree = "<group>"; };
+		9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerLeftCalculation.swift; sourceTree = "<group>"; };
+		9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerRightCalculation.swift; sourceTree = "<group>"; };
+		9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevThirdsCalculation.swift; sourceTree = "<group>"; };
+		9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopHalfCalculation.swift; sourceTree = "<group>"; };
+		9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperLeftCalculation.swift; sourceTree = "<group>"; };
+		9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperRightCalculation.swift; sourceTree = "<group>"; };
+		9821403622B3D16700ABFB3F /* MaximizeHeightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximizeHeightCalculation.swift; sourceTree = "<group>"; };
+		9821403C22B3EBD900ABFB3F /* RectangleLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RectangleLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9821403E22B3EBD900ABFB3F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		9821404222B3EBDA00ABFB3F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9821404522B3EBDA00ABFB3F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9821404722B3EBDA00ABFB3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9821404822B3EBDA00ABFB3F /* RectangleLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RectangleLauncher.entitlements; sourceTree = "<group>"; };
+		9821405D22B3ED3600ABFB3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		9821405F22B3EFB200ABFB3F /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		9824700922AF9B7D0037B409 /* Rectangle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rectangle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9824700C22AF9B7D0037B409 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		9824701022AF9B7E0037B409 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9824701322AF9B7E0037B409 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9824701522AF9B7E0037B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9824701622AF9B7E0037B409 /* Rectangle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rectangle.entitlements; sourceTree = "<group>"; };
+		9824701B22AF9B7E0037B409 /* RectangleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RectangleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9824701F22AF9B7E0037B409 /* RectangleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleTests.swift; sourceTree = "<group>"; };
+		9824702122AF9B7E0037B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9824702A22AFA22E0037B409 /* AccessibilityWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessibilityWindow.swift; sourceTree = "<group>"; };
+		9824702B22AFA22E0037B409 /* AccessibilityWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AccessibilityWindow.xib; sourceTree = "<group>"; };
+		9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuthorization.swift; sourceTree = "<group>"; };
+		9824703022AFA8470037B409 /* RectangleStatusItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleStatusItem.swift; sourceTree = "<group>"; };
+		9824703622B0F3200037B409 /* WindowAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAction.swift; sourceTree = "<group>"; };
+		9824703822B0F37C0037B409 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
+		9824703A22B139780037B409 /* CUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CUtil.swift; sourceTree = "<group>"; };
+		9824703C22B13C7E0037B409 /* AccessibilityElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityElement.swift; sourceTree = "<group>"; };
+		9824703E22B13FBC0037B409 /* ScreenDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenDetection.swift; sourceTree = "<group>"; };
+		9824704022B186D00037B409 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
+		9824704622B189240037B409 /* StandardWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardWindowMover.swift; sourceTree = "<group>"; };
+		9824704722B189240037B409 /* WindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowMover.swift; sourceTree = "<group>"; };
+		9824704822B189250037B409 /* WindowCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowCalculation.swift; sourceTree = "<group>"; };
+		9824704922B189250037B409 /* QuantizedWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuantizedWindowMover.swift; sourceTree = "<group>"; };
+		9824704A22B189250037B409 /* BestEffortWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BestEffortWindowMover.swift; sourceTree = "<group>"; };
+		9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftHalfCalculation.swift; sourceTree = "<group>"; };
+		985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefsViewController.swift; sourceTree = "<group>"; };
+		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
+		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
+		985B9BF722BB6F5000A2E8F0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
+		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
+		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
+		F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4F1FB66CBFB958E8BB16DCD /* Pods_RectangleMAS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleMAS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9821403922B3EBD900ABFB3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9824700622AF9B7D0037B409 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9821405E22B3ED3600ABFB3F /* ServiceManagement.framework in Frameworks */,
+				12D896200936C0DE9FF41FB4 /* (null) in Frameworks */,
+				F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9824701822AF9B7E0037B409 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6327EAA4FEECF2AE087FCD30 /* Pods_RectangleTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		67F292BA10681FCA82000D3E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */,
+				BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */,
+				80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */,
+				0796D218CC3C7CD563827A8D /* Pods-RectangleLauncher.release.xcconfig */,
+				534283F3C564C4526C67E459 /* Pods-RectangleTests.debug.xcconfig */,
+				3EE34B57BB10FDB0B4E8359F /* Pods-RectangleTests.release.xcconfig */,
+				E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */,
+				DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		9821403D22B3EBD900ABFB3F /* RectangleLauncher */ = {
+			isa = PBXGroup;
+			children = (
+				9821403E22B3EBD900ABFB3F /* AppDelegate.swift */,
+				9821404222B3EBDA00ABFB3F /* Assets.xcassets */,
+				9821404422B3EBDA00ABFB3F /* Main.storyboard */,
+				9821404722B3EBDA00ABFB3F /* Info.plist */,
+				9821404822B3EBDA00ABFB3F /* RectangleLauncher.entitlements */,
+			);
+			path = RectangleLauncher;
+			sourceTree = "<group>";
+		};
+		9821405C22B3ED3600ABFB3F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9821405D22B3ED3600ABFB3F /* ServiceManagement.framework */,
+				F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */,
+				81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */,
+				F4F1FB66CBFB958E8BB16DCD /* Pods_RectangleMAS.framework */,
+				20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		982140E922B7DA3100ABFB3F /* WindowCalculation */ = {
+			isa = PBXGroup;
+			children = (
+				9824704822B189250037B409 /* WindowCalculation.swift */,
+				9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */,
+				9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */,
+				9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */,
+				9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */,
+				9821402222B3886100ABFB3F /* CenterCalculation.swift */,
+				9821402422B3887200ABFB3F /* MaximizeCalculation.swift */,
+				9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */,
+				9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */,
+				9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */,
+				9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */,
+				9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */,
+				9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */,
+				9821403622B3D16700ABFB3F /* MaximizeHeightCalculation.swift */,
+			);
+			path = WindowCalculation;
+			sourceTree = "<group>";
+		};
+		982140EA22B7DB0400ABFB3F /* WindowMover */ = {
+			isa = PBXGroup;
+			children = (
+				9824704A22B189250037B409 /* BestEffortWindowMover.swift */,
+				9824704922B189250037B409 /* QuantizedWindowMover.swift */,
+				9824704622B189240037B409 /* StandardWindowMover.swift */,
+				9824704722B189240037B409 /* WindowMover.swift */,
+			);
+			path = WindowMover;
+			sourceTree = "<group>";
+		};
+		982140EB22B7DB1A00ABFB3F /* AccessibilityAuthorization */ = {
+			isa = PBXGroup;
+			children = (
+				9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */,
+				9824702A22AFA22E0037B409 /* AccessibilityWindow.swift */,
+				9824702B22AFA22E0037B409 /* AccessibilityWindow.xib */,
+			);
+			path = AccessibilityAuthorization;
+			sourceTree = "<group>";
+		};
+		982140EC22B7DB5700ABFB3F /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				9824703A22B139780037B409 /* CUtil.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		9824700022AF9B7D0037B409 = {
+			isa = PBXGroup;
+			children = (
+				9824700B22AF9B7D0037B409 /* Rectangle */,
+				9824701E22AF9B7E0037B409 /* RectangleTests */,
+				9821403D22B3EBD900ABFB3F /* RectangleLauncher */,
+				9824700A22AF9B7D0037B409 /* Products */,
+				9821405C22B3ED3600ABFB3F /* Frameworks */,
+				67F292BA10681FCA82000D3E /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		9824700A22AF9B7D0037B409 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9824700922AF9B7D0037B409 /* Rectangle.app */,
+				9824701B22AF9B7E0037B409 /* RectangleTests.xctest */,
+				9821403C22B3EBD900ABFB3F /* RectangleLauncher.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9824700B22AF9B7D0037B409 /* Rectangle */ = {
+			isa = PBXGroup;
+			children = (
+				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
+				9824701022AF9B7E0037B409 /* Assets.xcassets */,
+				9824701222AF9B7E0037B409 /* Main.storyboard */,
+				9824701522AF9B7E0037B409 /* Info.plist */,
+				9824701622AF9B7E0037B409 /* Rectangle.entitlements */,
+				9821405F22B3EFB200ABFB3F /* Defaults.swift */,
+				985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */,
+				985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */,
+				9824703022AFA8470037B409 /* RectangleStatusItem.swift */,
+				9824703622B0F3200037B409 /* WindowAction.swift */,
+				9824703822B0F37C0037B409 /* ShortcutManager.swift */,
+				9824703C22B13C7E0037B409 /* AccessibilityElement.swift */,
+				9824703E22B13FBC0037B409 /* ScreenDetection.swift */,
+				9824704022B186D00037B409 /* WindowManager.swift */,
+				985B9BFA22BE218C00A2E8F0 /* Popover */,
+				982140EA22B7DB0400ABFB3F /* WindowMover */,
+				982140E922B7DA3100ABFB3F /* WindowCalculation */,
+				982140EB22B7DB1A00ABFB3F /* AccessibilityAuthorization */,
+				982140EC22B7DB5700ABFB3F /* Utilities */,
+			);
+			path = Rectangle;
+			sourceTree = "<group>";
+		};
+		9824701E22AF9B7E0037B409 /* RectangleTests */ = {
+			isa = PBXGroup;
+			children = (
+				9824701F22AF9B7E0037B409 /* RectangleTests.swift */,
+				9824702122AF9B7E0037B409 /* Info.plist */,
+			);
+			path = RectangleTests;
+			sourceTree = "<group>";
+		};
+		985B9BFA22BE218C00A2E8F0 /* Popover */ = {
+			isa = PBXGroup;
+			children = (
+				985B9BF722BB6F5000A2E8F0 /* MessageView.swift */,
+				985B9BF622BB6F5000A2E8F0 /* MessageView.xib */,
+			);
+			path = Popover;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9821403B22B3EBD900ABFB3F /* RectangleLauncher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9821405422B3EBDA00ABFB3F /* Build configuration list for PBXNativeTarget "RectangleLauncher" */;
+			buildPhases = (
+				29FB3DDD8496454008602727 /* [CP] Check Pods Manifest.lock */,
+				9821403822B3EBD900ABFB3F /* Sources */,
+				9821403922B3EBD900ABFB3F /* Frameworks */,
+				9821403A22B3EBD900ABFB3F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RectangleLauncher;
+			productName = RectangleLauncher;
+			productReference = 9821403C22B3EBD900ABFB3F /* RectangleLauncher.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9824700822AF9B7D0037B409 /* Rectangle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9824702422AF9B7E0037B409 /* Build configuration list for PBXNativeTarget "Rectangle" */;
+			buildPhases = (
+				E6D791631A87C2748EF5183E /* [CP] Check Pods Manifest.lock */,
+				9824700522AF9B7D0037B409 /* Sources */,
+				9824700622AF9B7D0037B409 /* Frameworks */,
+				9824700722AF9B7D0037B409 /* Resources */,
+				9821405A22B3EC9900ABFB3F /* CopyFiles */,
+				28805C67730FCF221CAEF5FA /* [CP] Embed Pods Frameworks */,
+				9849988C22BE4484000F2631 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Rectangle;
+			productName = Rectangle;
+			productReference = 9824700922AF9B7D0037B409 /* Rectangle.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9824701A22AF9B7E0037B409 /* RectangleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9824702722AF9B7E0037B409 /* Build configuration list for PBXNativeTarget "RectangleTests" */;
+			buildPhases = (
+				606B67C52D78680F8A89F465 /* [CP] Check Pods Manifest.lock */,
+				9824701722AF9B7E0037B409 /* Sources */,
+				9824701822AF9B7E0037B409 /* Frameworks */,
+				9824701922AF9B7E0037B409 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9824701D22AF9B7E0037B409 /* PBXTargetDependency */,
+			);
+			name = RectangleTests;
+			productName = RectangleTests;
+			productReference = 9824701B22AF9B7E0037B409 /* RectangleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9824700122AF9B7D0037B409 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1020;
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = "Ryan Hanson";
+				TargetAttributes = {
+					9821403B22B3EBD900ABFB3F = {
+						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+						};
+					};
+					9824700822AF9B7D0037B409 = {
+						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
+					};
+					9824701A22AF9B7E0037B409 = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = 9824700822AF9B7D0037B409;
+					};
+				};
+			};
+			buildConfigurationList = 9824700422AF9B7D0037B409 /* Build configuration list for PBXProject "Rectangle" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9824700022AF9B7D0037B409;
+			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9824700822AF9B7D0037B409 /* Rectangle */,
+				9824701A22AF9B7E0037B409 /* RectangleTests */,
+				9821403B22B3EBD900ABFB3F /* RectangleLauncher */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9821403A22B3EBD900ABFB3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9821404322B3EBDA00ABFB3F /* Assets.xcassets in Resources */,
+				9821404622B3EBDA00ABFB3F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9824700722AF9B7D0037B409 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				985B9BF822BB6F5100A2E8F0 /* MessageView.xib in Resources */,
+				9824702D22AFA22E0037B409 /* AccessibilityWindow.xib in Resources */,
+				9824701122AF9B7E0037B409 /* Assets.xcassets in Resources */,
+				9824701422AF9B7E0037B409 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9824701922AF9B7E0037B409 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		28805C67730FCF221CAEF5FA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rectangle/Pods-Rectangle-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rectangle/Pods-Rectangle-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rectangle/Pods-Rectangle-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		29FB3DDD8496454008602727 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RectangleLauncher-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		606B67C52D78680F8A89F465 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RectangleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9849988C22BE4484000F2631 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\n\ncodesign --verbose --force --deep -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\ncodesign --verbose --force -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A\"\n";
+		};
+		E6D791631A87C2748EF5183E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Rectangle-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9821403822B3EBD900ABFB3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9821403F22B3EBD900ABFB3F /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9824700522AF9B7D0037B409 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
+				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
+				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
+				9824705122B28D7A0037B409 /* LeftHalfCalculation.swift in Sources */,
+				9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */,
+				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
+				9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */,
+				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
+				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
+				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
+				9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */,
+				9824703B22B139780037B409 /* CUtil.swift in Sources */,
+				985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */,
+				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
+				9821401F22B35FEA00ABFB3F /* RightHalfCalculation.swift in Sources */,
+				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,
+				9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */,
+				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
+				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
+				9821402F22B389B600ABFB3F /* NextPrevThirdsCalculation.swift in Sources */,
+				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
+				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
+				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
+				985B9BF122B8D77600A2E8F0 /* PrefsViewController.swift in Sources */,
+				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
+				9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */,
+				9824702C22AFA22E0037B409 /* AccessibilityWindow.swift in Sources */,
+				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
+				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
+				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
+				9821403322B38A1B00ABFB3F /* UpperLeftCalculation.swift in Sources */,
+				9824704C22B189250037B409 /* WindowMover.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9824701722AF9B7E0037B409 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9824701D22AF9B7E0037B409 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9824700822AF9B7D0037B409 /* Rectangle */;
+			targetProxy = 9824701C22AF9B7E0037B409 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		9821404422B3EBDA00ABFB3F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9821404522B3EBDA00ABFB3F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		9824701222AF9B7E0037B409 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9824701322AF9B7E0037B409 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9821405522B3EBDA00ABFB3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = RectangleLauncher/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.RectangleLauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		9821405622B3EBDA00ABFB3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0796D218CC3C7CD563827A8D /* Pods-RectangleLauncher.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = RectangleLauncher/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.RectangleLauncher;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		9824702222AF9B7E0037B409 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		9824702322AF9B7E0037B409 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		9824702522AF9B7E0037B409 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Rectangle/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		9824702622AF9B7E0037B409 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Rectangle/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		9824702822AF9B7E0037B409 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 534283F3C564C4526C67E459 /* Pods-RectangleTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = RectangleTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ryanhanson.RectangleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rectangle.app/Contents/MacOS/Rectangle";
+			};
+			name = Debug;
+		};
+		9824702922AF9B7E0037B409 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3EE34B57BB10FDB0B4E8359F /* Pods-RectangleTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = RectangleTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ryanhanson.RectangleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Rectangle.app/Contents/MacOS/Rectangle";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9821405422B3EBDA00ABFB3F /* Build configuration list for PBXNativeTarget "RectangleLauncher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9821405522B3EBDA00ABFB3F /* Debug */,
+				9821405622B3EBDA00ABFB3F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9824700422AF9B7D0037B409 /* Build configuration list for PBXProject "Rectangle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9824702222AF9B7E0037B409 /* Debug */,
+				9824702322AF9B7E0037B409 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9824702422AF9B7E0037B409 /* Build configuration list for PBXNativeTarget "Rectangle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9824702522AF9B7E0037B409 /* Debug */,
+				9824702622AF9B7E0037B409 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9824702722AF9B7E0037B409 /* Build configuration list for PBXNativeTarget "RectangleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9824702822AF9B7E0037B409 /* Debug */,
+				9824702922AF9B7E0037B409 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9824700122AF9B7D0037B409 /* Project object */;
+}
