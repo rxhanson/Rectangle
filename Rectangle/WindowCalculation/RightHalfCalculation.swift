@@ -18,13 +18,17 @@ class RightHalfCalculation: WindowCalculation {
         
         if !Defaults.strictWindowActions.enabled {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
-                var twoThirdRect = oneHalfRect
+                
+                var twoThirdRect = visibleFrameOfDestinationScreen
                 twoThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
+                twoThirdRect.origin.x = floor(visibleFrameOfDestinationScreen.width / 3.0)
+
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
                     return twoThirdRect
                 }
+                
                 if rectCenteredWithinRect(twoThirdRect, windowRect) {
-                    var oneThirdsRect = oneHalfRect
+                    var oneThirdsRect = visibleFrameOfDestinationScreen
                     oneThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
                     oneThirdsRect.origin.x = visibleFrameOfDestinationScreen.origin.x + visibleFrameOfDestinationScreen.width - oneThirdsRect.width
                     return oneThirdsRect
