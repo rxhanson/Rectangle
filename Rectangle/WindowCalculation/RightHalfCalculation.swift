@@ -21,7 +21,7 @@ class RightHalfCalculation: WindowCalculation {
                 
                 var twoThirdRect = visibleFrameOfDestinationScreen
                 twoThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
-                twoThirdRect.origin.x = floor(visibleFrameOfDestinationScreen.width / 3.0)
+                twoThirdRect.origin.x = visibleFrameOfDestinationScreen.minX + visibleFrameOfDestinationScreen.width - twoThirdRect.width
 
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
                     return twoThirdRect
