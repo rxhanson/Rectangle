@@ -10,28 +10,36 @@ import Foundation
 import Cocoa
 
 class WindowManager {
-    private var applicationPrevRects = [String : PreviousRect?]()
+    typealias appBundleId = String
+
     private let screenDetection = ScreenDetection()
     private let windowMoverChain: [WindowMover]
     private let windowCalculationFactory = WindowCalculationFactory()
+    
+    private var restoreRects = [appBundleId: CGRect]() // the last window frame that the user positioned
+    private var lastRectangleRects = [appBundleId: CGRect]() // the last window frame that this app positioned
     
     init() {
         windowMoverChain = [StandardWindowMover(), QuantizedWindowMover(), BestEffortWindowMover()]
     }
     
     func execute(_ action: WindowAction) {
-        guard let frontmostWindowElement = AccessibilityElement.frontmostWindow()
-            else {
-                NSSound.beep()
-                return
-        }
-
-        let screenDetectionResult: ScreenDetectionResult = screenDetection.screen(with: action, frontmostWindowElement: frontmostWindowElement)
-        
-        if action == .undo {
-            undoLastWindowAction()
+        guard let frontmostWindowElement = AccessibilityElement.frontmostWindow(),
+            let frontmostAppBundleId = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+        else {
+            NSSound.beep()
             return
         }
+        
+        if action == .restore {
+            if let restoreRect = restoreRects[frontmostAppBundleId] {
+                frontmostWindowElement.setRectOf(restoreRect)
+            }
+            lastRectangleRects.removeValue(forKey: frontmostAppBundleId)
+            return
+        }
+        
+        let screenDetectionResult: ScreenDetectionResult = screenDetection.screen(with: action, frontmostWindowElement: frontmostWindowElement)
         
         var frameOfDestinationScreen = CGRect.null
         var visibleFrameOfDestinationScreen = CGRect.null
@@ -45,7 +53,12 @@ class WindowManager {
         }
 
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
-
+        
+        if restoreRects[frontmostAppBundleId] == nil
+            || currentWindowRect != lastRectangleRects[frontmostAppBundleId] {
+            restoreRects[frontmostAppBundleId] = currentWindowRect
+        }
+        
         if frontmostWindowElement.isSheet()
             || frontmostWindowElement.isSystemDialog()
             || currentWindowRect.isNull
@@ -60,7 +73,7 @@ class WindowManager {
         
         let windowCalculation = windowCalculationFactory.calculation(for: action)
 
-        guard let newRect = windowCalculation.calculate(currentNormalizedRect, visibleFrameOfSourceScreen: visibleFrameOfSourceScreen, visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen, action: action) else {
+        guard let newRect = windowCalculation?.calculate(currentNormalizedRect, visibleFrameOfSourceScreen: visibleFrameOfSourceScreen, visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen, action: action) else {
             NSSound.beep()
             return
         }
@@ -76,19 +89,7 @@ class WindowManager {
             windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: frameOfDestinationScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
         }
         
+        let resultingRect = frontmostWindowElement.rectOfElement()
+        lastRectangleRects[frontmostAppBundleId] = resultingRect
     }
-    
-    func undoLastWindowAction() {
-        // TODO add this in... also add in saving the last window rect
-        print("not yet supported")
-    }
-    
-    private func getFrontMostAppIdentifier() -> String? {
-        return NSWorkspace.shared.frontmostApplication?.bundleIdentifier
-    }
-}
-
-struct PreviousRect {
-    let accessibilityElement: AccessibilityElement
-    let windowRect: CGRect
 }

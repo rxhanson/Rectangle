@@ -747,11 +747,11 @@
             <objects>
                 <viewController id="zlF-FD-XEr" customClass="PrefsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="8J7-VI-pmF">
-                        <rect key="frame" x="0.0" y="0.0" width="685" height="298"/>
+                        <rect key="frame" x="0.0" y="0.0" width="685" height="309"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TSr-yF-3BH">
-                                <rect key="frame" x="73" y="260" width="56" height="17"/>
+                                <rect key="frame" x="73" y="271" width="56" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Left Half" id="fPH-nM-S6H">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -760,11 +760,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d7Z-2a-UXa" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="259" width="163" height="19"/>
+                                <rect key="frame" x="145" y="270" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Ul-Sk-AbK">
-                                <rect key="frame" x="75" y="206" width="55" height="17"/>
+                                <rect key="frame" x="75" y="217" width="55" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Top Half" id="JNr-4c-hjY">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -773,11 +773,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DRk-Wr-aIb" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="205" width="163" height="19"/>
+                                <rect key="frame" x="145" y="216" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nDt-Il-Cgp">
-                                <rect key="frame" x="66" y="233" width="64" height="17"/>
+                                <rect key="frame" x="66" y="244" width="64" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Right Half" id="lH2-uH-rAP">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -786,11 +786,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x4q-lR-dx4" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="232" width="163" height="19"/>
+                                <rect key="frame" x="145" y="243" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kqz-ml-42f">
-                                <rect key="frame" x="52" y="179" width="77" height="17"/>
+                                <rect key="frame" x="52" y="190" width="77" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Bottom Half" id="G8C-k2-Ne4">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -799,11 +799,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iQV-DO-Cxc" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="178" width="163" height="19"/>
+                                <rect key="frame" x="145" y="189" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5wg-qe-QcV">
-                                <rect key="frame" x="75" y="140" width="54" height="17"/>
+                                <rect key="frame" x="75" y="142" width="54" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Top Left" id="RCf-bA-edI">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -812,11 +812,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9cp-9N-fcs" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="139" width="163" height="19"/>
+                                <rect key="frame" x="145" y="141" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yya-0P-bjg">
-                                <rect key="frame" x="68" y="113" width="62" height="17"/>
+                                <rect key="frame" x="68" y="115" width="62" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Top Right" id="s99-Vf-T0X">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -825,11 +825,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qDP-Xg-dUc" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="112" width="163" height="19"/>
+                                <rect key="frame" x="145" y="114" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PYS-so-k9q">
-                                <rect key="frame" x="53" y="88" width="76" height="17"/>
+                                <rect key="frame" x="53" y="90" width="76" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Bottom Left" id="CUz-4L-KJm">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -838,15 +838,15 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6aS-0r-LPa" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="86" width="163" height="19"/>
+                                <rect key="frame" x="145" y="88" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TPy-dB-mlK" customClass="MASShortcutView">
-                                <rect key="frame" x="145" y="60" width="163" height="19"/>
+                                <rect key="frame" x="145" y="62" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ti7-BO-gn3">
-                                <rect key="frame" x="46" y="61" width="84" height="17"/>
+                                <rect key="frame" x="46" y="63" width="84" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Bottom Right" id="eCd-Dt-0br">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -855,11 +855,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EPO-gm-axe" customClass="MASShortcutView">
-                                <rect key="frame" x="473" y="258" width="163" height="19"/>
+                                <rect key="frame" x="473" y="269" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RRR-ye-S9b">
-                                <rect key="frame" x="378" y="259" width="80" height="17"/>
+                                <rect key="frame" x="378" y="270" width="80" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Next Display" id="UQK-2J-YNE">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -868,11 +868,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZTh-jl-FhR" customClass="MASShortcutView">
-                                <rect key="frame" x="473" y="231" width="163" height="19"/>
+                                <rect key="frame" x="473" y="242" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Kl-Bw-om6">
-                                <rect key="frame" x="354" y="232" width="104" height="17"/>
+                                <rect key="frame" x="354" y="243" width="104" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Previous Display" id="R0Y-a8-KUo">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -881,11 +881,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gzd-8D-e62" customClass="MASShortcutView">
-                                <rect key="frame" x="473" y="189" width="163" height="19"/>
+                                <rect key="frame" x="473" y="142" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7aB-wp-cuJ">
-                                <rect key="frame" x="397" y="190" width="61" height="17"/>
+                                <rect key="frame" x="397" y="143" width="61" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Maximize" id="toj-Oe-OEr">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -894,11 +894,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zvk-Fp-i18" customClass="MASShortcutView">
-                                <rect key="frame" x="472" y="163" width="163" height="19"/>
+                                <rect key="frame" x="472" y="116" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9C9-ri-9ti">
-                                <rect key="frame" x="352" y="164" width="105" height="17"/>
+                                <rect key="frame" x="352" y="117" width="105" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Maximize Height" id="EgH-fB-5pi">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -907,11 +907,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="345-og-Fs5" customClass="MASShortcutView">
-                                <rect key="frame" x="472" y="136" width="163" height="19"/>
+                                <rect key="frame" x="472" y="89" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pnL-6a-anK">
-                                <rect key="frame" x="411" y="137" width="45" height="17"/>
+                                <rect key="frame" x="411" y="90" width="45" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Center" id="9I4-R2-GHX">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -919,12 +919,16 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hOd-U9-NCo" customClass="MASShortcutView">
+                                <rect key="frame" x="473" y="63" width="163" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RfB-sc-e4F" customClass="MASShortcutView">
-                                <rect key="frame" x="472" y="96" width="163" height="19"/>
+                                <rect key="frame" x="473" y="205" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jKS-CJ-Sg5">
-                                <rect key="frame" x="377" y="97" width="80" height="17"/>
+                                <rect key="frame" x="378" y="206" width="80" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Make Larger" id="dW3-q5-NEc">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -933,11 +937,11 @@
                                 </textFieldCell>
                             </textField>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kVg-HT-ohz" customClass="MASShortcutView">
-                                <rect key="frame" x="472" y="70" width="163" height="19"/>
+                                <rect key="frame" x="473" y="179" width="163" height="19"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2PT-7w-V9C">
-                                <rect key="frame" x="371" y="71" width="86" height="17"/>
+                                <rect key="frame" x="372" y="180" width="86" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Make Smaller" id="fCG-Gj-T3q">
                                     <font key="font" usesAppearanceFont="YES"/>
@@ -947,7 +951,7 @@
                             </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e3y-fj-7BK">
                                 <rect key="frame" x="445" y="4" width="197" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="push" title="Restore Default Shortcuts" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RIG-dY-j7C">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -958,11 +962,11 @@
                             </button>
                             <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ars-sQ-OB5">
                                 <rect key="frame" x="0.0" y="41" width="685" height="5"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </box>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bg0-bW-sTK">
                                 <rect key="frame" x="46" y="13" width="133" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="check" title="Launch on Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="xl6-e7-rtX">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -973,7 +977,7 @@
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aeo-L3-615">
                                 <rect key="frame" x="244" y="13" width="141" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="check" title="Hide Menu Bar Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Qwx-l8-zG2">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -984,7 +988,7 @@
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lCV-20-RMa">
                                 <rect key="frame" x="385" y="5" width="28" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="bevel" title="ⓘ" bezelStyle="rounded" alignment="center" imageScaling="proportionallyDown" inset="2" id="B07-oE-l6y">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="16"/>
@@ -993,6 +997,15 @@
                                     <action selector="showInfoForHideMenuBarIcon:" target="zlF-FD-XEr" id="Gt4-jy-UIe"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yC1-Lb-J5o">
+                                <rect key="frame" x="407" y="64" width="51" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Restore" id="aVB-cB-z7N">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -1009,6 +1022,7 @@
                         <outlet property="maximizeShortcutView" destination="gzd-8D-e62" id="Sfd-cg-z7C"/>
                         <outlet property="nextDisplayShortcutView" destination="EPO-gm-axe" id="ve4-ez-V1O"/>
                         <outlet property="previousDisplayShortcutView" destination="ZTh-jl-FhR" id="3C9-jr-Aip"/>
+                        <outlet property="restoreShortcutView" destination="hOd-U9-NCo" id="kQQ-56-beH"/>
                         <outlet property="rightHalfShortcutView" destination="x4q-lR-dx4" id="J3g-G4-LzJ"/>
                         <outlet property="topHalfShortcutView" destination="DRk-Wr-aIb" id="ehx-5a-k1u"/>
                         <outlet property="topLeftShortcutView" destination="9cp-9N-fcs" id="CbD-sG-RM8"/>
@@ -1017,7 +1031,7 @@
                 </viewController>
                 <customObject id="BOw-l7-fkl" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="96.5" y="762"/>
+            <point key="canvasLocation" x="96.5" y="767.5"/>
         </scene>
     </scenes>
 </document>

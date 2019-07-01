@@ -28,12 +28,13 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var nextDisplayShortcutView: MASShortcutView!
     @IBOutlet weak var previousDisplayShortcutView: MASShortcutView!
     
+    @IBOutlet weak var makeLargerShortcutView: MASShortcutView!
+    @IBOutlet weak var makeSmallerShortcutView: MASShortcutView!
+    
     @IBOutlet weak var maximizeShortcutView: MASShortcutView!
     @IBOutlet weak var maximizeHeightShortcutView: MASShortcutView!
     @IBOutlet weak var centerShortcutView: MASShortcutView!
-    
-    @IBOutlet weak var makeLargerShortcutView: MASShortcutView!
-    @IBOutlet weak var makeSmallerShortcutView: MASShortcutView!
+    @IBOutlet weak var restoreShortcutView: MASShortcutView!
     
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
@@ -82,7 +83,8 @@ class PrefsViewController: NSViewController {
             .maximizeHeight: maximizeHeightShortcutView,
             .center: centerShortcutView,
             .larger: makeLargerShortcutView,
-            .smaller: makeSmallerShortcutView
+            .smaller: makeSmallerShortcutView,
+            .restore: restoreShortcutView
         ]
         
         for (action, view) in actionsToViews {

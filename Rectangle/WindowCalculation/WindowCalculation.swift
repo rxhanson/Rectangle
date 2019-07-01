@@ -42,7 +42,7 @@ class WindowCalculationFactory {
     let nextPrevThirdsCalculation = NextPrevThirdsCalculation()
     let maxHeightCalculation = MaximizeHeightCalculation()
     
-    func calculation(for action: WindowAction) -> WindowCalculation {
+    func calculation(for action: WindowAction) -> WindowCalculation? {
         switch action {
         case .leftHalf: return leftHalfCalculation
         case .rightHalf: return rightHalfCalculation
@@ -63,6 +63,7 @@ class WindowCalculationFactory {
         case .upperRight: return upperRightCalculation
         case .nextThird: return nextPrevThirdsCalculation
         case .previousThird: return nextPrevThirdsCalculation
+        default: return nil
         }
     }
     
