@@ -18,15 +18,6 @@ target 'Rectangle' do
 
 end
 
-target 'RectangleMAS' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
-  
-  # Pods for Rectangle
-  pod 'MASShortcut'
-  
-end
-
 target 'RectangleLauncher' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
