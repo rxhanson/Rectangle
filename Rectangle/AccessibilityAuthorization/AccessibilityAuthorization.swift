@@ -29,6 +29,7 @@ class AccessibilityAuthorization {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if AXIsProcessTrusted() {
                 self.accessibilityWindow?.close()
+                self.accessibilityWindow = nil
                 completion()
             } else {
                 self.pollAccessibility(completion: completion)

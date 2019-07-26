@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private let sparkleUpdater = SUUpdater()
     
-    private var prefsWindowController: NSWindowController?
+    private weak var prefsWindowController: NSWindowController?
     
     @IBOutlet weak var mainStatusMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
