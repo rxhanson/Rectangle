@@ -41,8 +41,24 @@ class WindowCalculationFactory {
     let upperRightCalculation = UpperRightCalculation()
     let nextPrevThirdsCalculation = NextPrevThirdsCalculation()
     let maxHeightCalculation = MaximizeHeightCalculation()
+    let leftThirdCalculation = LeftThirdCalculation()
+    let leftTwoThirdsCalculation = LeftTwoThirdsCalculation()
+    let horizCenterThirdCalculation = HorizCenterThirdCalculation()
+    let rightTwoThirdsCalculation = RightTwoThirdsCalculation()
+    let rightThirdCalculation = RightThirdCalculation()
+    let topThirdCalculation = TopThirdCalculation()
+    let topTwoThirdsCalculation = TopTwoThirdsCalculation()
+    let vertCenterThirdCalculation = VertCenterThirdCalculation()
+    let bottomTwoThirdsCalculation = BottomTwoThirdsCalculation()
+    let bottomThirdCalculation = BottomThirdCalculation()
+    let moveLeftCalculation = MoveLeftCalculation()
+    let moveRightCalculation = MoveRightCalculation()
+    let moveUpCalculation = MoveUpCalculation()
+    let moveDownCalculation = MoveDownCalculation()
+    let almostMaximizeCalculation = AlmostMaximizeCalculation()
     
     func calculation(for action: WindowAction) -> WindowCalculation? {
+        
         switch action {
         case .leftHalf: return leftHalfCalculation
         case .rightHalf: return rightHalfCalculation
@@ -63,6 +79,21 @@ class WindowCalculationFactory {
         case .upperRight: return upperRightCalculation
         case .nextThird: return nextPrevThirdsCalculation
         case .previousThird: return nextPrevThirdsCalculation
+        case .leftThird: return leftThirdCalculation
+        case .leftTwoThirds: return leftTwoThirdsCalculation
+        case .horizCenterThird: return horizCenterThirdCalculation
+        case .rightTwoThirds: return rightTwoThirdsCalculation
+        case .rightThird: return rightThirdCalculation
+        case .topThird: return topThirdCalculation
+        case .topTwoThirds: return topTwoThirdsCalculation
+        case .vertCenterThird: return vertCenterThirdCalculation
+        case .bottomTwoThirds: return bottomTwoThirdsCalculation
+        case .bottomThird: return bottomThirdCalculation
+        case .moveLeft: return moveLeftCalculation
+        case .moveRight: return moveRightCalculation
+        case .moveUp: return moveUpCalculation
+        case .moveDown: return moveDownCalculation
+        case .almostMaximize: return almostMaximizeCalculation
         default: return nil
         }
     }

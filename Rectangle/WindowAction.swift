@@ -16,9 +16,9 @@ fileprivate let shift = NSEvent.ModifierFlags.shift.rawValue
 fileprivate let cmd = NSEvent.ModifierFlags.command.rawValue
 
 enum WindowAction: Int {
-    case leftHalf = 0, rightHalf = 1, maximize = 2, maximizeHeight = 3, previousDisplay = 4, nextDisplay = 5, undo = 6, redo = 7, larger = 8, smaller = 9, bottomHalf = 10, topHalf = 11, center = 12, lowerLeft = 13, lowerRight = 14, upperLeft = 15, upperRight = 16, nextThird = 17, previousThird = 18, restore = 19
+    case leftHalf = 0, rightHalf = 1, maximize = 2, maximizeHeight = 3, previousDisplay = 4, nextDisplay = 5, undo = 6, redo = 7, larger = 8, smaller = 9, bottomHalf = 10, topHalf = 11, center = 12, lowerLeft = 13, lowerRight = 14, upperLeft = 15, upperRight = 16, nextThird = 17, previousThird = 18, restore = 19, leftThird = 20, leftTwoThirds = 21, horizCenterThird = 22, rightTwoThirds = 23, rightThird = 24, topThird = 25, topTwoThirds = 26, vertCenterThird = 27, bottomTwoThirds = 28, bottomThird = 29, moveLeft = 30, moveRight = 31, moveUp = 32, moveDown = 33, almostMaximize = 34
     
-    static let active = [leftHalf, rightHalf, maximize, maximizeHeight, previousDisplay, nextDisplay, undo, redo, larger, smaller, bottomHalf, topHalf, center, lowerLeft, lowerRight, upperLeft, upperRight, restore]
+    static let active = [leftHalf, rightHalf, maximize, maximizeHeight, previousDisplay, nextDisplay, undo, redo, larger, smaller, bottomHalf, topHalf, center, lowerLeft, lowerRight, upperLeft, upperRight, restore, leftThird, leftTwoThirds, horizCenterThird, rightTwoThirds, rightThird, topThird, topTwoThirds, vertCenterThird, bottomTwoThirds, bottomThird, moveLeft, moveRight, moveUp, moveDown, almostMaximize]
     
     func post() {
         NotificationCenter.default.post(name: notificationName, object: self)
@@ -46,6 +46,21 @@ enum WindowAction: Int {
         case .nextThird: return "nextThird"
         case .previousThird: return "previousThird"
         case .restore: return "restore"
+        case .leftThird: return "leftThird"
+        case .leftTwoThirds: return "leftTwoThirds"
+        case .horizCenterThird: return "horizCenterThird"
+        case .rightTwoThirds: return "rightTwoThirds"
+        case .rightThird: return "rightThird"
+        case .topThird: return "topThird"
+        case .topTwoThirds: return "topTwoThirds"
+        case .vertCenterThird: return "vertCenterThird"
+        case .bottomTwoThirds: return "bottomTwoThirds"
+        case .bottomThird: return "bottomThird"
+        case .moveLeft: return "moveLeft"
+        case .moveRight: return "moveRight"
+        case .moveUp: return "moveUp"
+        case .moveDown: return "moveDown"
+        case .almostMaximize: return "almostMaximize"
         }
     }
     
@@ -60,7 +75,7 @@ enum WindowAction: Int {
         }
     }
     
-    var spectacleDefault: Shortcut {
+    var spectacleDefault: Shortcut? {
         switch self {
         case .leftHalf: return Shortcut( cmd|alt, kVK_LeftArrow )
         case .rightHalf: return Shortcut( cmd|alt, kVK_RightArrow )
@@ -82,10 +97,11 @@ enum WindowAction: Int {
         case .nextThird: return Shortcut( ctrl|alt, kVK_RightArrow )
         case .previousThird: return Shortcut( ctrl|alt, kVK_LeftArrow )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
+        default: return nil
         }
     }
     
-    var alternateDefault: Shortcut {
+    var alternateDefault: Shortcut? {
         switch self {
         case .leftHalf: return Shortcut( ctrl|alt, kVK_LeftArrow )
         case .rightHalf: return Shortcut( ctrl|alt, kVK_RightArrow )
@@ -107,6 +123,7 @@ enum WindowAction: Int {
         case .nextThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .previousThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
+        default: return nil
         }
     }
 }

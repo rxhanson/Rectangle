@@ -33,9 +33,10 @@ class ShortcutManager {
     private func registerDefaults() {
         
         let defaultShortcuts = WindowAction.active.reduce(into: [String: MASShortcut]()) { dict, windowAction in
-            let defaultShortcut = Defaults.alternateDefaultShortcuts.enabled
+            guard let defaultShortcut = Defaults.alternateDefaultShortcuts.enabled
                 ? windowAction.alternateDefault
                 : windowAction.spectacleDefault
+            else { return }
             let shortcut = MASShortcut(keyCode: UInt(defaultShortcut.keyCode), modifierFlags: defaultShortcut.modifierFlags)
             dict[windowAction.name] = shortcut
         }

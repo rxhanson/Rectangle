@@ -15,6 +15,7 @@ class PrefsViewController: NSViewController {
     var actionsToViews = [WindowAction: MASShortcutView]()
     lazy var messagePopover = MessagePopover()
     
+    // Basic
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
     @IBOutlet weak var topHalfShortcutView: MASShortcutView!
@@ -36,6 +37,27 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var centerShortcutView: MASShortcutView!
     @IBOutlet weak var restoreShortcutView: MASShortcutView!
     
+    // Additional
+    @IBOutlet weak var leftThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var leftTwoThirdsShortcutView: MASShortcutView!
+    @IBOutlet weak var horizCenterThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var rightTwoThirdsShortcutView: MASShortcutView!
+    @IBOutlet weak var rightThirdShortcutView: MASShortcutView!
+    
+    @IBOutlet weak var topThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var topTwoThirdsShortcutView: MASShortcutView!
+    @IBOutlet weak var vertCenterThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var bottomTwoThirdsShortcutView: MASShortcutView!
+    @IBOutlet weak var bottomThirdShortcutView: MASShortcutView!
+    
+    @IBOutlet weak var moveLeftShortcutView: MASShortcutView!
+    @IBOutlet weak var moveRightShortcutView: MASShortcutView!
+    @IBOutlet weak var moveUpShortcutView: MASShortcutView!
+    @IBOutlet weak var moveDownShortcutView: MASShortcutView!
+    
+    @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
+    
+    // Settings
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
 
@@ -84,7 +106,22 @@ class PrefsViewController: NSViewController {
             .center: centerShortcutView,
             .larger: makeLargerShortcutView,
             .smaller: makeSmallerShortcutView,
-            .restore: restoreShortcutView
+            .restore: restoreShortcutView,
+            .leftThird: leftThirdShortcutView,
+            .leftTwoThirds: leftTwoThirdsShortcutView,
+            .horizCenterThird: horizCenterThirdShortcutView,
+            .rightTwoThirds: rightTwoThirdsShortcutView,
+            .rightThird: rightThirdShortcutView,
+            .topThird: topThirdShortcutView,
+            .topTwoThirds: topTwoThirdsShortcutView,
+            .vertCenterThird: vertCenterThirdShortcutView,
+            .bottomTwoThirds: bottomTwoThirdsShortcutView,
+            .bottomThird: bottomThirdShortcutView,
+            .moveLeft: moveLeftShortcutView,
+            .moveRight: moveRightShortcutView,
+            .moveUp: moveUpShortcutView,
+            .moveDown: moveDownShortcutView,
+            .almostMaximize: almostMaximizeShortcutView
         ]
         
         for (action, view) in actionsToViews {

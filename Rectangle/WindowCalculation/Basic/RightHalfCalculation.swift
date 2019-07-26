@@ -19,19 +19,19 @@ class RightHalfCalculation: WindowCalculation {
         if !Defaults.strictWindowActions.enabled {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
                 
-                var twoThirdRect = visibleFrameOfDestinationScreen
-                twoThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
-                twoThirdRect.origin.x = visibleFrameOfDestinationScreen.minX + visibleFrameOfDestinationScreen.width - twoThirdRect.width
+                var twoThirdsRect = visibleFrameOfDestinationScreen
+                twoThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
+                twoThirdsRect.origin.x = visibleFrameOfDestinationScreen.minX + visibleFrameOfDestinationScreen.width - twoThirdsRect.width
 
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
-                    return twoThirdRect
+                    return twoThirdsRect
                 }
                 
-                if rectCenteredWithinRect(twoThirdRect, windowRect) {
-                    var oneThirdsRect = visibleFrameOfDestinationScreen
-                    oneThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
-                    oneThirdsRect.origin.x = visibleFrameOfDestinationScreen.origin.x + visibleFrameOfDestinationScreen.width - oneThirdsRect.width
-                    return oneThirdsRect
+                if rectCenteredWithinRect(twoThirdsRect, windowRect) {
+                    var oneThirdRect = visibleFrameOfDestinationScreen
+                    oneThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
+                    oneThirdRect.origin.x = visibleFrameOfDestinationScreen.origin.x + visibleFrameOfDestinationScreen.width - oneThirdRect.width
+                    return oneThirdRect
                 }
             }
         }

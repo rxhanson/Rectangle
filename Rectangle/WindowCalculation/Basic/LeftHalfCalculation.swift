@@ -17,15 +17,15 @@ class LeftHalfCalculation: WindowCalculation {
         
         if !Defaults.strictWindowActions.enabled {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
-                var twoThirdRect = oneHalfRect
-                twoThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
+                var twoThirdsRect = oneHalfRect
+                twoThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
-                    return twoThirdRect
+                    return twoThirdsRect
                 }
-                if rectCenteredWithinRect(twoThirdRect, windowRect) {
-                    var oneThirdsRect = oneHalfRect
-                    oneThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
-                    return oneThirdsRect
+                if rectCenteredWithinRect(twoThirdsRect, windowRect) {
+                    var oneThirdRect = oneHalfRect
+                    oneThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
+                    return oneThirdRect
                 }
             }
         }
