@@ -19,8 +19,8 @@ class AlmostMaximizeCalculation: WindowCalculation {
         calculatedWindowRect.size.height = visibleFrameOfDestinationScreen.height * 0.9
         
         // Center
-        calculatedWindowRect.origin.x = round((visibleFrameOfDestinationScreen.width - windowRect.width) / 2.0) + visibleFrameOfDestinationScreen.minX
-        calculatedWindowRect.origin.y = round((visibleFrameOfDestinationScreen.height - windowRect.height) / 2.0) + visibleFrameOfDestinationScreen.minY
+        calculatedWindowRect.origin.x = round((visibleFrameOfDestinationScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfDestinationScreen.minX
+        calculatedWindowRect.origin.y = round((visibleFrameOfDestinationScreen.height - calculatedWindowRect.height) / 2.0) + visibleFrameOfDestinationScreen.minY
         
         return calculatedWindowRect
     }
