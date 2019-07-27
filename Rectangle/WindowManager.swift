@@ -20,7 +20,11 @@ class WindowManager {
     private var lastRectangleRects = [appBundleId: CGRect]() // the last window frame that this app positioned
     
     init() {
-        windowMoverChain = [StandardWindowMover(), QuantizedWindowMover(), BestEffortWindowMover()]
+        windowMoverChain = [
+            StandardWindowMover(),
+//            QuantizedWindowMover(),
+            BestEffortWindowMover()
+        ]
     }
     
     func execute(_ action: WindowAction) {
