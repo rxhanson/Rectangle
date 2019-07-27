@@ -725,7 +725,7 @@
         <!--Window Controller-->
         <scene sceneID="9jZ-4I-Wps">
             <objects>
-                <windowController storyboardIdentifier="PrefsWindowController" id="fmq-Go-Xew" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="PrefsWindowController" showSeguePresentationStyle="single" id="fmq-Go-Xew" sceneMemberID="viewController">
                     <window key="window" title="Rectangle Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="STb-JK-oB1">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <rect key="contentRect" x="245" y="301" width="480" height="270"/>
@@ -745,7 +745,7 @@
         <!--Prefs View Controller-->
         <scene sceneID="vcH-Iu-BJm">
             <objects>
-                <viewController id="zlF-FD-XEr" customClass="PrefsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController showSeguePresentationStyle="single" id="zlF-FD-XEr" customClass="PrefsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="8J7-VI-pmF">
                         <rect key="frame" x="0.0" y="0.0" width="685" height="379"/>
                         <autoresizingMask key="autoresizingMask"/>

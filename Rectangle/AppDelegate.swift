@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private let sparkleUpdater = SUUpdater()
     
-    private weak var prefsWindowController: NSWindowController?
+    private var prefsWindowController: NSWindowController?
     
     @IBOutlet weak var mainStatusMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
@@ -57,6 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         NSApp.activate(ignoringOtherApps: true)
         prefsWindowController?.showWindow(self)
+        prefsWindowController?.window?.makeKey()
     }
     
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
