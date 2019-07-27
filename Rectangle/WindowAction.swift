@@ -123,6 +123,11 @@ enum WindowAction: Int {
         case .nextThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .previousThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
+        case .leftThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
+        case .leftTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_E )
+        case .horizCenterThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
+        case .rightTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
+        case .rightThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
         default: return nil
         }
     }
