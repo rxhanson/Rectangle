@@ -747,7 +747,7 @@
             <objects>
                 <viewController id="zlF-FD-XEr" customClass="PrefsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="8J7-VI-pmF">
-                        <rect key="frame" x="0.0" y="0.0" width="685" height="373"/>
+                        <rect key="frame" x="0.0" y="0.0" width="685" height="379"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e3y-fj-7BK">
@@ -794,13 +794,13 @@
                                     <action selector="showInfoForHideMenuBarIcon:" target="zlF-FD-XEr" id="Gt4-jy-UIe"/>
                                 </connections>
                             </button>
-                            <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="88T-6n-dkk">
-                                <rect key="frame" x="13" y="41" width="659" height="318"/>
+                            <tabView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="88T-6n-dkk" customClass="CustomTabView" customModule="Rectangle" customModuleProvider="target">
+                                <rect key="frame" x="13" y="47" width="659" height="318"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <font key="font" metaFont="system"/>
                                 <tabViewItems>
                                     <tabViewItem label="Basic" identifier="" id="qnN-jy-GFc">
-                                        <view key="view" id="t3y-4B-mP0">
+                                        <view key="view" ambiguous="YES" id="t3y-4B-mP0">
                                             <rect key="frame" x="10" y="33" width="639" height="272"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
@@ -1016,7 +1016,7 @@
                                         </view>
                                     </tabViewItem>
                                     <tabViewItem label="Additional" identifier="" id="hyn-pu-ktI">
-                                        <view key="view" ambiguous="YES" id="9r4-XS-Cdb">
+                                        <view key="view" id="9r4-XS-Cdb">
                                             <rect key="frame" x="10" y="33" width="639" height="272"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
@@ -1260,7 +1260,7 @@
                 </viewController>
                 <customObject id="BOw-l7-fkl" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="96.5" y="799.5"/>
+            <point key="canvasLocation" x="96.5" y="802.5"/>
         </scene>
     </scenes>
 </document>

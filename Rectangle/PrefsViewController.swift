@@ -129,3 +129,11 @@ class PrefsViewController: NSViewController {
         }
     }
 }
+
+class CustomTabView: NSTabView {
+    
+    override var acceptsFirstResponder: Bool {
+        return false
+    }
+    
+}
