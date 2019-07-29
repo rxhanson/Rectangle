@@ -51,16 +51,11 @@
 		985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */; };
 		985B9BF822BB6F5100A2E8F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 985B9BF622BB6F5000A2E8F0 /* MessageView.xib */; };
 		985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF722BB6F5000A2E8F0 /* MessageView.swift */; };
-		988D066122EB4C7C004EABD7 /* LeftThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066022EB4C7C004EABD7 /* LeftThirdCalculation.swift */; };
-		988D066322EB4CA5004EABD7 /* LeftTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066222EB4CA5004EABD7 /* LeftTwoThirdsCalculation.swift */; };
-		988D066522EB4CB6004EABD7 /* HorizCenterThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066422EB4CB5004EABD7 /* HorizCenterThirdCalculation.swift */; };
-		988D066722EB4CC0004EABD7 /* RightTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066622EB4CC0004EABD7 /* RightTwoThirdsCalculation.swift */; };
-		988D066922EB4CCB004EABD7 /* RightThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066822EB4CCB004EABD7 /* RightThirdCalculation.swift */; };
-		988D066B22EB4CE2004EABD7 /* TopThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066A22EB4CE2004EABD7 /* TopThirdCalculation.swift */; };
-		988D066D22EB4CEC004EABD7 /* TopTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066C22EB4CEC004EABD7 /* TopTwoThirdsCalculation.swift */; };
-		988D066F22EB4D04004EABD7 /* VertCenterThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066E22EB4D04004EABD7 /* VertCenterThirdCalculation.swift */; };
-		988D067122EB4D10004EABD7 /* BottomTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067022EB4D10004EABD7 /* BottomTwoThirdsCalculation.swift */; };
-		988D067322EB4D19004EABD7 /* BottomThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067222EB4D19004EABD7 /* BottomThirdCalculation.swift */; };
+		988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */; };
+		988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */; };
+		988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */; };
+		988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066622EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift */; };
+		988D066922EB4CCB004EABD7 /* LastThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066822EB4CCB004EABD7 /* LastThirdCalculation.swift */; };
 		988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */; };
 		988D067F22EB4EDE004EABD7 /* MoveLeftCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */; };
 		988D068122EB4EE7004EABD7 /* MoveRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */; };
@@ -150,16 +145,11 @@
 		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
 		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		985B9BF722BB6F5000A2E8F0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
-		988D066022EB4C7C004EABD7 /* LeftThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftThirdCalculation.swift; sourceTree = "<group>"; };
-		988D066222EB4CA5004EABD7 /* LeftTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTwoThirdsCalculation.swift; sourceTree = "<group>"; };
-		988D066422EB4CB5004EABD7 /* HorizCenterThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizCenterThirdCalculation.swift; sourceTree = "<group>"; };
-		988D066622EB4CC0004EABD7 /* RightTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightTwoThirdsCalculation.swift; sourceTree = "<group>"; };
-		988D066822EB4CCB004EABD7 /* RightThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightThirdCalculation.swift; sourceTree = "<group>"; };
-		988D066A22EB4CE2004EABD7 /* TopThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopThirdCalculation.swift; sourceTree = "<group>"; };
-		988D066C22EB4CEC004EABD7 /* TopTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTwoThirdsCalculation.swift; sourceTree = "<group>"; };
-		988D066E22EB4D04004EABD7 /* VertCenterThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertCenterThirdCalculation.swift; sourceTree = "<group>"; };
-		988D067022EB4D10004EABD7 /* BottomTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomTwoThirdsCalculation.swift; sourceTree = "<group>"; };
-		988D067222EB4D19004EABD7 /* BottomThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomThirdCalculation.swift; sourceTree = "<group>"; };
+		988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThirdCalculation.swift; sourceTree = "<group>"; };
+		988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTwoThirdsCalculation.swift; sourceTree = "<group>"; };
+		988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterThirdCalculation.swift; sourceTree = "<group>"; };
+		988D066622EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastTwoThirdsCalculation.swift; sourceTree = "<group>"; };
+		988D066822EB4CCB004EABD7 /* LastThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThirdCalculation.swift; sourceTree = "<group>"; };
 		988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlmostMaximizeCalculation.swift; sourceTree = "<group>"; };
 		988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveLeftCalculation.swift; sourceTree = "<group>"; };
 		988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveRightCalculation.swift; sourceTree = "<group>"; };
@@ -245,8 +235,29 @@
 			isa = PBXGroup;
 			children = (
 				9824704822B189250037B409 /* WindowCalculation.swift */,
-				988D065E22EB4BDB004EABD7 /* Basic */,
-				988D065F22EB4BE9004EABD7 /* Additional */,
+				9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */,
+				9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */,
+				9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */,
+				9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */,
+				9821402222B3886100ABFB3F /* CenterCalculation.swift */,
+				9821402422B3887200ABFB3F /* MaximizeCalculation.swift */,
+				9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */,
+				9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */,
+				9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */,
+				9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */,
+				9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */,
+				9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */,
+				9821403622B3D16700ABFB3F /* MaximizeHeightCalculation.swift */,
+				988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */,
+				988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */,
+				988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */,
+				988D066622EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift */,
+				988D066822EB4CCB004EABD7 /* LastThirdCalculation.swift */,
+				988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */,
+				988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */,
+				988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */,
+				988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */,
+				988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */,
 			);
 			path = WindowCalculation;
 			sourceTree = "<group>";
@@ -344,48 +355,6 @@
 				985B9BF622BB6F5000A2E8F0 /* MessageView.xib */,
 			);
 			path = Popover;
-			sourceTree = "<group>";
-		};
-		988D065E22EB4BDB004EABD7 /* Basic */ = {
-			isa = PBXGroup;
-			children = (
-				9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */,
-				9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */,
-				9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */,
-				9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */,
-				9821402222B3886100ABFB3F /* CenterCalculation.swift */,
-				9821402422B3887200ABFB3F /* MaximizeCalculation.swift */,
-				9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */,
-				9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */,
-				9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */,
-				9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */,
-				9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */,
-				9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */,
-				9821403622B3D16700ABFB3F /* MaximizeHeightCalculation.swift */,
-			);
-			path = Basic;
-			sourceTree = "<group>";
-		};
-		988D065F22EB4BE9004EABD7 /* Additional */ = {
-			isa = PBXGroup;
-			children = (
-				988D066022EB4C7C004EABD7 /* LeftThirdCalculation.swift */,
-				988D066222EB4CA5004EABD7 /* LeftTwoThirdsCalculation.swift */,
-				988D066422EB4CB5004EABD7 /* HorizCenterThirdCalculation.swift */,
-				988D066622EB4CC0004EABD7 /* RightTwoThirdsCalculation.swift */,
-				988D066822EB4CCB004EABD7 /* RightThirdCalculation.swift */,
-				988D066A22EB4CE2004EABD7 /* TopThirdCalculation.swift */,
-				988D066C22EB4CEC004EABD7 /* TopTwoThirdsCalculation.swift */,
-				988D066E22EB4D04004EABD7 /* VertCenterThirdCalculation.swift */,
-				988D067022EB4D10004EABD7 /* BottomTwoThirdsCalculation.swift */,
-				988D067222EB4D19004EABD7 /* BottomThirdCalculation.swift */,
-				988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */,
-				988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */,
-				988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */,
-				988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */,
-				988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */,
-			);
-			path = Additional;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -656,13 +625,12 @@
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				988D068122EB4EE7004EABD7 /* MoveRightCalculation.swift in Sources */,
-				988D067322EB4D19004EABD7 /* BottomThirdCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
-				988D066322EB4CA5004EABD7 /* LeftTwoThirdsCalculation.swift in Sources */,
+				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
 				9824705122B28D7A0037B409 /* LeftHalfCalculation.swift in Sources */,
 				9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */,
 				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
-				988D066522EB4CB6004EABD7 /* HorizCenterThirdCalculation.swift in Sources */,
+				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
 				9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
@@ -671,33 +639,29 @@
 				9824703B22B139780037B409 /* CUtil.swift in Sources */,
 				988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */,
 				985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */,
-				988D066722EB4CC0004EABD7 /* RightTwoThirdsCalculation.swift in Sources */,
+				988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
-				988D066D22EB4CEC004EABD7 /* TopTwoThirdsCalculation.swift in Sources */,
 				9821401F22B35FEA00ABFB3F /* RightHalfCalculation.swift in Sources */,
 				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,
 				9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */,
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
-				988D066F22EB4D04004EABD7 /* VertCenterThirdCalculation.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
 				9821402F22B389B600ABFB3F /* NextPrevThirdsCalculation.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
 				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
 				985B9BF122B8D77600A2E8F0 /* PrefsViewController.swift in Sources */,
-				988D066B22EB4CE2004EABD7 /* TopThirdCalculation.swift in Sources */,
-				988D067122EB4D10004EABD7 /* BottomTwoThirdsCalculation.swift in Sources */,
 				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
 				9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */,
 				9824702C22AFA22E0037B409 /* AccessibilityWindow.swift in Sources */,
-				988D066122EB4C7C004EABD7 /* LeftThirdCalculation.swift in Sources */,
+				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
 				988D067F22EB4EDE004EABD7 /* MoveLeftCalculation.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
 				9821403322B38A1B00ABFB3F /* UpperLeftCalculation.swift in Sources */,
 				9824704C22B189250037B409 /* WindowMover.swift in Sources */,
-				988D066922EB4CCB004EABD7 /* RightThirdCalculation.swift in Sources */,
+				988D066922EB4CCB004EABD7 /* LastThirdCalculation.swift in Sources */,
 				988D068522EB4EFC004EABD7 /* MoveDownCalculation.swift in Sources */,
 				988D068322EB4EF3004EABD7 /* MoveUpCalculation.swift in Sources */,
 			);

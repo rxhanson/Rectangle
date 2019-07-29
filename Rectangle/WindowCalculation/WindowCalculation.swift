@@ -24,6 +24,10 @@ extension WindowCalculation {
         return (rect1.width <= rect2.width) && (rect1.height <= rect2.height)
     }
     
+    func isLandscape(_ rect: CGRect) -> Bool {
+        return rect.width > rect.height
+    }
+    
 }
 
 class WindowCalculationFactory {
@@ -41,16 +45,11 @@ class WindowCalculationFactory {
     let upperRightCalculation = UpperRightCalculation()
     let nextPrevThirdsCalculation = NextPrevThirdsCalculation()
     let maxHeightCalculation = MaximizeHeightCalculation()
-    let leftThirdCalculation = LeftThirdCalculation()
-    let leftTwoThirdsCalculation = LeftTwoThirdsCalculation()
-    let horizCenterThirdCalculation = HorizCenterThirdCalculation()
-    let rightTwoThirdsCalculation = RightTwoThirdsCalculation()
-    let rightThirdCalculation = RightThirdCalculation()
-    let topThirdCalculation = TopThirdCalculation()
-    let topTwoThirdsCalculation = TopTwoThirdsCalculation()
-    let vertCenterThirdCalculation = VertCenterThirdCalculation()
-    let bottomTwoThirdsCalculation = BottomTwoThirdsCalculation()
-    let bottomThirdCalculation = BottomThirdCalculation()
+    let firstThirdCalculation = FirstThirdCalculation()
+    let firstTwoThirdsCalculation = FirstTwoThirdsCalculation()
+    let centerThirdCalculation = CenterThirdCalculation()
+    let lastTwoThirdsCalculation = LastTwoThirdsCalculation()
+    let lastThirdCalculation = LastThirdCalculation()
     let moveLeftCalculation = MoveLeftCalculation()
     let moveRightCalculation = MoveRightCalculation()
     let moveUpCalculation = MoveUpCalculation()
@@ -79,16 +78,11 @@ class WindowCalculationFactory {
         case .upperRight: return upperRightCalculation
         case .nextThird: return nextPrevThirdsCalculation
         case .previousThird: return nextPrevThirdsCalculation
-        case .leftThird: return leftThirdCalculation
-        case .leftTwoThirds: return leftTwoThirdsCalculation
-        case .horizCenterThird: return horizCenterThirdCalculation
-        case .rightTwoThirds: return rightTwoThirdsCalculation
-        case .rightThird: return rightThirdCalculation
-        case .topThird: return topThirdCalculation
-        case .topTwoThirds: return topTwoThirdsCalculation
-        case .vertCenterThird: return vertCenterThirdCalculation
-        case .bottomTwoThirds: return bottomTwoThirdsCalculation
-        case .bottomThird: return bottomThirdCalculation
+        case .firstThird: return firstThirdCalculation
+        case .firstTwoThirds: return firstTwoThirdsCalculation
+        case .centerThird: return centerThirdCalculation
+        case .lastTwoThirds: return lastTwoThirdsCalculation
+        case .lastThird: return lastThirdCalculation
         case .moveLeft: return moveLeftCalculation
         case .moveRight: return moveRightCalculation
         case .moveUp: return moveUpCalculation

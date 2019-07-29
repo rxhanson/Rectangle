@@ -16,9 +16,38 @@ fileprivate let shift = NSEvent.ModifierFlags.shift.rawValue
 fileprivate let cmd = NSEvent.ModifierFlags.command.rawValue
 
 enum WindowAction: Int {
-    case leftHalf = 0, rightHalf = 1, maximize = 2, maximizeHeight = 3, previousDisplay = 4, nextDisplay = 5, undo = 6, redo = 7, larger = 8, smaller = 9, bottomHalf = 10, topHalf = 11, center = 12, lowerLeft = 13, lowerRight = 14, upperLeft = 15, upperRight = 16, nextThird = 17, previousThird = 18, restore = 19, leftThird = 20, leftTwoThirds = 21, horizCenterThird = 22, rightTwoThirds = 23, rightThird = 24, topThird = 25, topTwoThirds = 26, vertCenterThird = 27, bottomTwoThirds = 28, bottomThird = 29, moveLeft = 30, moveRight = 31, moveUp = 32, moveDown = 33, almostMaximize = 34
+    case leftHalf = 0,
+    rightHalf = 1,
+    maximize = 2,
+    maximizeHeight = 3,
+    previousDisplay = 4,
+    nextDisplay = 5,
+    undo = 6,
+    redo = 7,
+    larger = 8,
+    smaller = 9,
+    bottomHalf = 10,
+    topHalf = 11,
+    center = 12,
+    lowerLeft = 13,
+    lowerRight = 14,
+    upperLeft = 15,
+    upperRight = 16,
+    nextThird = 17,
+    previousThird = 18,
+    restore = 19,
+    firstThird = 20,
+    firstTwoThirds = 21,
+    centerThird = 22,
+    lastTwoThirds = 23,
+    lastThird = 24,
+    moveLeft = 25,
+    moveRight = 26,
+    moveUp = 27,
+    moveDown = 28,
+    almostMaximize = 29
     
-    static let active = [leftHalf, rightHalf, maximize, maximizeHeight, previousDisplay, nextDisplay, undo, redo, larger, smaller, bottomHalf, topHalf, center, lowerLeft, lowerRight, upperLeft, upperRight, restore, leftThird, leftTwoThirds, horizCenterThird, rightTwoThirds, rightThird, topThird, topTwoThirds, vertCenterThird, bottomTwoThirds, bottomThird, moveLeft, moveRight, moveUp, moveDown, almostMaximize]
+    static let active = [leftHalf, rightHalf, maximize, maximizeHeight, previousDisplay, nextDisplay, undo, redo, larger, smaller, bottomHalf, topHalf, center, lowerLeft, lowerRight, upperLeft, upperRight, restore, firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird, moveLeft, moveRight, moveUp, moveDown, almostMaximize]
     
     func post() {
         NotificationCenter.default.post(name: notificationName, object: self)
@@ -46,16 +75,11 @@ enum WindowAction: Int {
         case .nextThird: return "nextThird"
         case .previousThird: return "previousThird"
         case .restore: return "restore"
-        case .leftThird: return "leftThird"
-        case .leftTwoThirds: return "leftTwoThirds"
-        case .horizCenterThird: return "horizCenterThird"
-        case .rightTwoThirds: return "rightTwoThirds"
-        case .rightThird: return "rightThird"
-        case .topThird: return "topThird"
-        case .topTwoThirds: return "topTwoThirds"
-        case .vertCenterThird: return "vertCenterThird"
-        case .bottomTwoThirds: return "bottomTwoThirds"
-        case .bottomThird: return "bottomThird"
+        case .firstThird: return "firstThird"
+        case .firstTwoThirds: return "firstTwoThirds"
+        case .centerThird: return "centerThird"
+        case .lastTwoThirds: return "lastTwoThirds"
+        case .lastThird: return "lastThird"
         case .moveLeft: return "moveLeft"
         case .moveRight: return "moveRight"
         case .moveUp: return "moveUp"
@@ -123,11 +147,11 @@ enum WindowAction: Int {
         case .nextThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .previousThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
-        case .leftThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
-        case .leftTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_E )
-        case .horizCenterThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
-        case .rightTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
-        case .rightThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
+        case .firstThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
+        case .firstTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_E )
+        case .centerThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
+        case .lastTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
+        case .lastThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
         default: return nil
         }
     }

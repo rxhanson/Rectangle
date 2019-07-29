@@ -15,7 +15,6 @@ class PrefsViewController: NSViewController {
     var actionsToViews = [WindowAction: MASShortcutView]()
     lazy var messagePopover = MessagePopover()
     
-    // Basic
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
     @IBOutlet weak var topHalfShortcutView: MASShortcutView!
@@ -38,17 +37,11 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var restoreShortcutView: MASShortcutView!
     
     // Additional
-    @IBOutlet weak var leftThirdShortcutView: MASShortcutView!
-    @IBOutlet weak var leftTwoThirdsShortcutView: MASShortcutView!
-    @IBOutlet weak var horizCenterThirdShortcutView: MASShortcutView!
-    @IBOutlet weak var rightTwoThirdsShortcutView: MASShortcutView!
-    @IBOutlet weak var rightThirdShortcutView: MASShortcutView!
-    
-    @IBOutlet weak var topThirdShortcutView: MASShortcutView!
-    @IBOutlet weak var topTwoThirdsShortcutView: MASShortcutView!
-    @IBOutlet weak var vertCenterThirdShortcutView: MASShortcutView!
-    @IBOutlet weak var bottomTwoThirdsShortcutView: MASShortcutView!
-    @IBOutlet weak var bottomThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var firstThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var firstTwoThirdsShortcutView: MASShortcutView!
+    @IBOutlet weak var centerThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var lastTwoThirdsShortcutView: MASShortcutView!
+    @IBOutlet weak var lastThirdShortcutView: MASShortcutView!
     
     @IBOutlet weak var moveLeftShortcutView: MASShortcutView!
     @IBOutlet weak var moveRightShortcutView: MASShortcutView!
@@ -107,16 +100,11 @@ class PrefsViewController: NSViewController {
             .larger: makeLargerShortcutView,
             .smaller: makeSmallerShortcutView,
             .restore: restoreShortcutView,
-            .leftThird: leftThirdShortcutView,
-            .leftTwoThirds: leftTwoThirdsShortcutView,
-            .horizCenterThird: horizCenterThirdShortcutView,
-            .rightTwoThirds: rightTwoThirdsShortcutView,
-            .rightThird: rightThirdShortcutView,
-            .topThird: topThirdShortcutView,
-            .topTwoThirds: topTwoThirdsShortcutView,
-            .vertCenterThird: vertCenterThirdShortcutView,
-            .bottomTwoThirds: bottomTwoThirdsShortcutView,
-            .bottomThird: bottomThirdShortcutView,
+            .firstThird: firstThirdShortcutView,
+            .firstTwoThirds: firstTwoThirdsShortcutView,
+            .centerThird: centerThirdShortcutView,
+            .lastTwoThirds: lastTwoThirdsShortcutView,
+            .lastThird: lastThirdShortcutView,
             .moveLeft: moveLeftShortcutView,
             .moveRight: moveRightShortcutView,
             .moveUp: moveUpShortcutView,

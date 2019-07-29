@@ -11,6 +11,7 @@ import Foundation
 class MoveUpCalculation: WindowCalculation {
     
     func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+        
         var calculatedWindowRect = windowRect
         calculatedWindowRect.origin.y = visibleFrameOfDestinationScreen.maxY - windowRect.height
         
