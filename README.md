@@ -15,5 +15,5 @@ Then restart the Rectangle app.
 ##  Differences with Spectacle
 Spectacle used it's own keyboard shortcut recorder, while Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut), a well maintained open source library for shortcut recording in macOS apps. This cuts down dramatically on the number of bugs that were only in Spectacle because of the custom shortcut recorder. 
 
-There are still a number of Spectacle features that are not implemented in Rectangle, such as next/previous thirds. Feel free to send a pull request for anything missing.
+Spectacle had everything localized, and Rectangle is still lacking localization. Feel free to send a pull request for this or anything else missing.
 
