@@ -18,4 +18,4 @@ Spectacle used it's own keyboard shortcut recorder, while Rectangle uses [MASSho
 Spectacle had everything localized, and Rectangle is still lacking localization. Feel free to send a pull request for this or anything else missing.
 
 ## Contributing
-I use the logic from Rectangle in the [Multitouch](https://multitouch.app) app. If you contribute to Rectangle, or contributed to Spectacle, then you get a Multitouch license for free. 
+Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. 
