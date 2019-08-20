@@ -32,6 +32,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+//        https://superuser.com/questions/16750/how-can-i-run-an-application-with-command-line-arguments-in-mac-os
+        print(ProcessInfo.processInfo.arguments)
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
@@ -48,6 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         statusItem.openMenu()
+        print(ProcessInfo.processInfo.arguments)
         return true
     }
     

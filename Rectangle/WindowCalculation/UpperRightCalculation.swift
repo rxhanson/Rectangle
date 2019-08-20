@@ -18,7 +18,7 @@ class UpperRightCalculation: WindowCalculation {
         oneQuarterRect.origin.x += oneQuarterRect.width
         oneQuarterRect.origin.y = visibleFrameOfDestinationScreen.minY + floor(visibleFrameOfDestinationScreen.height / 2.0) + (visibleFrameOfDestinationScreen.height.truncatingRemainder(dividingBy: 2.0))
 
-        if !Defaults.strictWindowActions.enabled {
+        if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midY - oneQuarterRect.midY) <= 1.0 {
                 var twoThirdRect = oneQuarterRect
                 twoThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)

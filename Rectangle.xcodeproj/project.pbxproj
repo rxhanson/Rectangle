@@ -61,6 +61,7 @@
 		988D068122EB4EE7004EABD7 /* MoveRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */; };
 		988D068322EB4EF3004EABD7 /* MoveUpCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */; };
 		988D068522EB4EFC004EABD7 /* MoveDownCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */; };
+		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
 /* End PBXBuildFile section */
@@ -155,6 +156,7 @@
 		988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveRightCalculation.swift; sourceTree = "<group>"; };
 		988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveUpCalculation.swift; sourceTree = "<group>"; };
 		988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDownCalculation.swift; sourceTree = "<group>"; };
+		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
 		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				9824701522AF9B7E0037B409 /* Info.plist */,
 				9824701622AF9B7E0037B409 /* Rectangle.entitlements */,
 				9821405F22B3EFB200ABFB3F /* Defaults.swift */,
+				98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */,
 				985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */,
 				985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */,
 				9824703022AFA8470037B409 /* RectangleStatusItem.swift */,
@@ -432,10 +435,10 @@
 						CreatedOnToolsVersion = 10.2.1;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -443,7 +446,7 @@
 						CreatedOnToolsVersion = 10.2.1;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -583,7 +586,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\n\ncodesign --verbose --force --deep -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\ncodesign --verbose --force -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\n\n#codesign --verbose --force --deep -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n#codesign --verbose --force -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A\"\n";
 		};
 		E6D791631A87C2748EF5183E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -638,6 +641,7 @@
 				9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */,
 				9824703B22B139780037B409 /* CUtil.swift in Sources */,
 				988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */,
+				98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */,
 				985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */,
 				988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
@@ -710,10 +714,12 @@
 			baseConfigurationReference = 80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = RectangleLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -722,6 +728,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.RectangleLauncher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -732,10 +739,12 @@
 			baseConfigurationReference = 0796D218CC3C7CD563827A8D /* Pods-RectangleLauncher.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = RectangleLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -744,6 +753,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.RectangleLauncher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -869,10 +879,11 @@
 			baseConfigurationReference = 53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -891,10 +902,11 @@
 			baseConfigurationReference = BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -914,10 +926,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				INFOPLIST_FILE = RectangleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -938,10 +950,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				INFOPLIST_FILE = RectangleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

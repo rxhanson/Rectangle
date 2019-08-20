@@ -16,7 +16,7 @@ class LowerRightCalculation: WindowCalculation {
         oneQuarterRect.size.height = floor(visibleFrameOfDestinationScreen.height / 2.0)
         oneQuarterRect.origin.x += oneQuarterRect.width
 
-        if !Defaults.strictWindowActions.enabled {
+        if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midY - oneQuarterRect.midY) <= 1.0 {
                 var twoThirdRect = oneQuarterRect
                 twoThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)

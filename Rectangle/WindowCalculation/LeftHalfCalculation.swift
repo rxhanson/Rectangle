@@ -15,7 +15,7 @@ class LeftHalfCalculation: WindowCalculation {
         var oneHalfRect = visibleFrameOfDestinationScreen
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
         
-        if !Defaults.strictWindowActions.enabled {
+        if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
                 var twoThirdsRect = oneHalfRect
                 twoThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
@@ -28,6 +28,8 @@ class LeftHalfCalculation: WindowCalculation {
                     return oneThirdRect
                 }
             }
+        } else if Defaults.subsequentExecutionMode == .acrossMonitor {
+            
         }
         
         return oneHalfRect

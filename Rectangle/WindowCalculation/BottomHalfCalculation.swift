@@ -15,7 +15,7 @@ class BottomHalfCalculation: WindowCalculation {
         var oneHalfRect = visibleFrameOfDestinationScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
         
-        if !Defaults.strictWindowActions.enabled {
+        if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midX - oneHalfRect.midX) <= 1.0 {
                 var twoThirdsRect = oneHalfRect
                 twoThirdsRect.size.height = floor(visibleFrameOfDestinationScreen.height * 2 / 3.0)

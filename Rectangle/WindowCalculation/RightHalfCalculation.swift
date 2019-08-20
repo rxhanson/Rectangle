@@ -16,7 +16,7 @@ class RightHalfCalculation: WindowCalculation {
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
         oneHalfRect.origin.x += oneHalfRect.size.width
         
-        if !Defaults.strictWindowActions.enabled {
+        if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
                 
                 var twoThirdsRect = visibleFrameOfDestinationScreen
