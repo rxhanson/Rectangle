@@ -50,18 +50,18 @@ struct WindowCalculationResult {
 
 class WindowCalculationFactory {
     
-    let leftHalfCalculation = LeftHalfCalculation()
-    let rightHalfCalculation = RightHalfCalculation()
+    let leftHalfCalculation = LeftRightHalfCalculation()
+    let rightHalfCalculation = LeftRightHalfCalculation()
     let bottomHalfCalculation = BottomHalfCalculation()
     let topHalfCalculation = TopHalfCalculation()
     let centerCalculation = CenterCalculation()
+    let nextPrevDisplayCalculation = NextPrevDisplayCalculation()
     let maximizeCalculation = MaximizeCalculation()
     let changeSizeCalculation = ChangeSizeCalculation()
     let lowerLeftCalculation = LowerLeftCalculation()
     let lowerRightCalculation = LowerRightCalculation()
     let upperLeftCalculation = UpperLeftCalculation()
     let upperRightCalculation = UpperRightCalculation()
-    let nextPrevThirdsCalculation = NextPrevThirdsCalculation()
     let maxHeightCalculation = MaximizeHeightCalculation()
     let firstThirdCalculation = FirstThirdCalculation()
     let firstTwoThirdsCalculation = FirstTwoThirdsCalculation()
@@ -81,8 +81,8 @@ class WindowCalculationFactory {
         case .rightHalf: return rightHalfCalculation
         case .maximize: return maximizeCalculation
         case .maximizeHeight: return maxHeightCalculation
-        case .previousDisplay: return centerCalculation
-        case .nextDisplay: return centerCalculation
+        case .previousDisplay: return nextPrevDisplayCalculation
+        case .nextDisplay: return nextPrevDisplayCalculation
         case .undo: return maximizeCalculation
         case .redo: return maximizeCalculation
         case .larger: return changeSizeCalculation
@@ -94,8 +94,6 @@ class WindowCalculationFactory {
         case .lowerRight: return lowerRightCalculation
         case .upperLeft: return upperLeftCalculation
         case .upperRight: return upperRightCalculation
-        case .nextThird: return nextPrevThirdsCalculation
-        case .previousThird: return nextPrevThirdsCalculation
         case .firstThird: return firstThirdCalculation
         case .firstTwoThirds: return firstTwoThirdsCalculation
         case .centerThird: return centerThirdCalculation
