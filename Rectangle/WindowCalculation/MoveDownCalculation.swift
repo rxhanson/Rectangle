@@ -10,16 +10,16 @@ import Foundation
 
 class MoveDownCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
         var calculatedWindowRect = windowRect
-        calculatedWindowRect.origin.y = visibleFrameOfDestinationScreen.minY
+        calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
         
-        if windowRect.width >= visibleFrameOfDestinationScreen.width {
-            calculatedWindowRect.size.width = visibleFrameOfDestinationScreen.width
-            calculatedWindowRect.origin.x = visibleFrameOfDestinationScreen.minX
+        if windowRect.width >= visibleFrameOfScreen.width {
+            calculatedWindowRect.size.width = visibleFrameOfScreen.width
+            calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
         } else {
-            calculatedWindowRect.origin.x = round((visibleFrameOfDestinationScreen.width - windowRect.width) / 2.0) + visibleFrameOfDestinationScreen.minX
+            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - windowRect.width) / 2.0) + visibleFrameOfScreen.minX
         }
         return calculatedWindowRect
 

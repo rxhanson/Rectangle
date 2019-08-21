@@ -10,10 +10,10 @@ import Foundation
 
 class MaximizeHeightCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         var maxHeightRect = windowRect
-        maxHeightRect.origin.y = visibleFrameOfDestinationScreen.minY
-        maxHeightRect.size.height = visibleFrameOfDestinationScreen.maxY
+        maxHeightRect.origin.y = visibleFrameOfScreen.minY
+        maxHeightRect.size.height = visibleFrameOfScreen.maxY
         return maxHeightRect
     }
     

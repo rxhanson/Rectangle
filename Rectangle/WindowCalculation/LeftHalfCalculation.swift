@@ -10,21 +10,21 @@ import Foundation
 
 class LeftHalfCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        var oneHalfRect = visibleFrameOfDestinationScreen
+        var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
         
         if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
                 var twoThirdsRect = oneHalfRect
-                twoThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
+                twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
                     return twoThirdsRect
                 }
                 if rectCenteredWithinRect(twoThirdsRect, windowRect) {
                     var oneThirdRect = oneHalfRect
-                    oneThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
+                    oneThirdRect.size.width = floor(visibleFrameOfScreen.width / 3.0)
                     return oneThirdRect
                 }
             }

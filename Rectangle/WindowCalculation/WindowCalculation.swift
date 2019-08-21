@@ -6,13 +6,26 @@
 //  Copyright © 2019 Ryan Hanson. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 protocol WindowCalculation {
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect?
+    
+    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
+    
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect?
 }
 
 extension WindowCalculation {
+    
+    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+        
+        if let rect = calculateRect(windowRect, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action) {
+            
+            return WindowCalculationResult(rect: rect, screen: usableScreens.currentScreen)
+        }
+        
+        return nil
+    }
 
     func rectCenteredWithinRect(_ rect1: CGRect, _ rect2: CGRect) -> Bool {
         let centeredMidX = abs(rect2.midX - rect1.midX) <= 1.0
@@ -28,6 +41,11 @@ extension WindowCalculation {
         return rect.width > rect.height
     }
     
+}
+
+struct WindowCalculationResult {
+    let rect: CGRect
+    let screen: NSScreen
 }
 
 class WindowCalculationFactory {

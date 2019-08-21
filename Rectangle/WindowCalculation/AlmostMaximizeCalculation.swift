@@ -10,17 +10,17 @@ import Foundation
 
 class AlmostMaximizeCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
 
-        var calculatedWindowRect = visibleFrameOfDestinationScreen
+        var calculatedWindowRect = visibleFrameOfScreen
         
         // Resize
-        calculatedWindowRect.size.width = visibleFrameOfDestinationScreen.width * 0.9
-        calculatedWindowRect.size.height = visibleFrameOfDestinationScreen.height * 0.9
+        calculatedWindowRect.size.width = visibleFrameOfScreen.width * 0.9
+        calculatedWindowRect.size.height = visibleFrameOfScreen.height * 0.9
         
         // Center
-        calculatedWindowRect.origin.x = round((visibleFrameOfDestinationScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfDestinationScreen.minX
-        calculatedWindowRect.origin.y = round((visibleFrameOfDestinationScreen.height - calculatedWindowRect.height) / 2.0) + visibleFrameOfDestinationScreen.minY
+        calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
+        calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - calculatedWindowRect.height) / 2.0) + visibleFrameOfScreen.minY
         
         return calculatedWindowRect
     }

@@ -10,8 +10,8 @@ import Foundation
 
 class MaximizeCalculation: WindowCalculation {
 
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
-        return visibleFrameOfDestinationScreen
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+        return visibleFrameOfScreen
     }
     
 }

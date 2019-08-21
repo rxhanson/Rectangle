@@ -10,28 +10,28 @@ import Foundation
 
 class CenterThirdCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        return isLandscape(visibleFrameOfDestinationScreen)
-            ? horizontallyCenteredThird(visibleFrameOfDestinationScreen)
-            : verticallyCenteredThird(visibleFrameOfDestinationScreen)
+        return isLandscape(visibleFrameOfScreen)
+            ? horizontallyCenteredThird(visibleFrameOfScreen)
+            : verticallyCenteredThird(visibleFrameOfScreen)
     }
     
-    private func horizontallyCenteredThird(_ visibleFrameOfDestinationScreen: CGRect) -> CGRect {
-        var centerThirdRect = visibleFrameOfDestinationScreen
-        centerThirdRect.origin.x = visibleFrameOfDestinationScreen.minX + floor(visibleFrameOfDestinationScreen.width / 3.0)
-        centerThirdRect.origin.y = visibleFrameOfDestinationScreen.minY
-        centerThirdRect.size.width = visibleFrameOfDestinationScreen.width / 3.0
-        centerThirdRect.size.height = visibleFrameOfDestinationScreen.height
+    private func horizontallyCenteredThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
+        var centerThirdRect = visibleFrameOfScreen
+        centerThirdRect.origin.x = visibleFrameOfScreen.minX + floor(visibleFrameOfScreen.width / 3.0)
+        centerThirdRect.origin.y = visibleFrameOfScreen.minY
+        centerThirdRect.size.width = visibleFrameOfScreen.width / 3.0
+        centerThirdRect.size.height = visibleFrameOfScreen.height
         return centerThirdRect
     }
     
-    private func verticallyCenteredThird(_ visibleFrameOfDestinationScreen: CGRect) -> CGRect {
-        var centerThirdRect = visibleFrameOfDestinationScreen
-        centerThirdRect.origin.x = visibleFrameOfDestinationScreen.minX
-        centerThirdRect.origin.y = visibleFrameOfDestinationScreen.minY + floor(visibleFrameOfDestinationScreen.height / 3.0)
-        centerThirdRect.size.width = visibleFrameOfDestinationScreen.width
-        centerThirdRect.size.height = visibleFrameOfDestinationScreen.height / 3.0
+    private func verticallyCenteredThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
+        var centerThirdRect = visibleFrameOfScreen
+        centerThirdRect.origin.x = visibleFrameOfScreen.minX
+        centerThirdRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 3.0)
+        centerThirdRect.size.width = visibleFrameOfScreen.width
+        centerThirdRect.size.height = visibleFrameOfScreen.height / 3.0
         return centerThirdRect
     }
 }

@@ -10,27 +10,27 @@ import Foundation
 
 class RightHalfCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        var oneHalfRect = visibleFrameOfDestinationScreen
+        var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
         oneHalfRect.origin.x += oneHalfRect.size.width
         
         if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midY - oneHalfRect.midY) <= 1.0 {
                 
-                var twoThirdsRect = visibleFrameOfDestinationScreen
-                twoThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
-                twoThirdsRect.origin.x = visibleFrameOfDestinationScreen.minX + visibleFrameOfDestinationScreen.width - twoThirdsRect.width
+                var twoThirdsRect = visibleFrameOfScreen
+                twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
+                twoThirdsRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - twoThirdsRect.width
 
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
                     return twoThirdsRect
                 }
                 
                 if rectCenteredWithinRect(twoThirdsRect, windowRect) {
-                    var oneThirdRect = visibleFrameOfDestinationScreen
-                    oneThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
-                    oneThirdRect.origin.x = visibleFrameOfDestinationScreen.origin.x + visibleFrameOfDestinationScreen.width - oneThirdRect.width
+                    var oneThirdRect = visibleFrameOfScreen
+                    oneThirdRect.size.width = floor(visibleFrameOfScreen.width / 3.0)
+                    oneThirdRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.width - oneThirdRect.width
                     return oneThirdRect
                 }
             }

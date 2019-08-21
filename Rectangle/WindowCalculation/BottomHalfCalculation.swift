@@ -10,15 +10,15 @@ import Foundation
 
 class BottomHalfCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        var oneHalfRect = visibleFrameOfDestinationScreen
+        var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
         
         if Defaults.subsequentExecutionMode == .resize {
             if abs(windowRect.midX - oneHalfRect.midX) <= 1.0 {
                 var twoThirdsRect = oneHalfRect
-                twoThirdsRect.size.height = floor(visibleFrameOfDestinationScreen.height * 2 / 3.0)
+                twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
                 
                 if rectCenteredWithinRect(oneHalfRect, windowRect) {
                     return twoThirdsRect
@@ -26,7 +26,7 @@ class BottomHalfCalculation: WindowCalculation {
                 
                 if rectCenteredWithinRect(twoThirdsRect, windowRect) {
                     var oneThirdRect = oneHalfRect
-                    oneThirdRect.size.height = floor(visibleFrameOfDestinationScreen.height / 3.0)
+                    oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
                     return oneThirdRect
                 }
             }
