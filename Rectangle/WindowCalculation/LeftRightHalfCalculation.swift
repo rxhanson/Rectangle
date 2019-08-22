@@ -30,7 +30,7 @@ class LeftRightHalfCalculation: WindowCalculation {
             return WindowCalculationResult(rect: oneHalfRect, screen: screen)
         }
         
-        if Defaults.subsequentExecutionMode == .resize {
+        if Defaults.subsequentExecutionMode.value == .resize {
             
             var twoThirdsRect = oneHalfRect
             twoThirdsRect.size.width = floor(screen.visibleFrame.width * 2 / 3.0)
@@ -45,7 +45,7 @@ class LeftRightHalfCalculation: WindowCalculation {
                 return WindowCalculationResult(rect: oneThirdRect, screen: screen)
             }
             
-        } else if Defaults.subsequentExecutionMode == .acrossMonitor {
+        } else if Defaults.subsequentExecutionMode.value == .acrossMonitor {
             
             if rectCenteredWithinRect(oneHalfRect, windowRect) {
                 if let prevScreen = usableScreens.adjacentScreens?.prev {
@@ -70,7 +70,7 @@ class LeftRightHalfCalculation: WindowCalculation {
             return WindowCalculationResult(rect: oneHalfRect, screen: screen)
         }
         
-        if Defaults.subsequentExecutionMode == .resize {
+        if Defaults.subsequentExecutionMode.value == .resize {
             
             var twoThirdsRect = screen.visibleFrame
             twoThirdsRect.size.width = floor(screen.visibleFrame.width * 2 / 3.0)
@@ -87,7 +87,7 @@ class LeftRightHalfCalculation: WindowCalculation {
                 return WindowCalculationResult(rect: oneThirdRect, screen: screen)
             }
             
-        } else if Defaults.subsequentExecutionMode == .acrossMonitor {
+        } else if Defaults.subsequentExecutionMode.value == .acrossMonitor {
             
             if rectCenteredWithinRect(oneHalfRect, windowRect) {
                 if let nextScreen = usableScreens.adjacentScreens?.next {

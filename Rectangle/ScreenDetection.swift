@@ -15,12 +15,14 @@ class ScreenDetection {
         guard let firstScreen = screens.first else { return nil }
         
         if screens.count == 1 {
-            return UsableScreens(currentScreen: firstScreen, adjacentScreens: nil)
+            let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens)
         }
         
         let screensOrdered = order(screens: screens)
         guard let sourceScreen: NSScreen = screenContaining(frontmostWindowElement?.rectOfElement() ?? CGRect.zero, screens: screensOrdered) else {
-            return UsableScreens(currentScreen: firstScreen, adjacentScreens: nil)
+            let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens)
         }
         
         let adjacentScreens = adjacent(toFrameOfScreen: sourceScreen.frame, screens: screensOrdered)

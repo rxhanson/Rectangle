@@ -13,3 +13,22 @@ enum SubsequentExecutionMode: Int {
     case acrossMonitor = 1 // like Windows 7
     case none = 2 // like Magnet
 }
+
+class SubsequentExecutionDefault {
+    private let key: String = "subsequentExecutionMode"
+    private var initialized = false
+    
+    var value: SubsequentExecutionMode {
+        didSet {
+            if initialized {
+                UserDefaults.standard.set(value.rawValue, forKey: key)
+            }
+        }
+    }
+    
+    init() {
+        let intValue = UserDefaults.standard.integer(forKey: key)
+        value = SubsequentExecutionMode(rawValue: intValue) ?? .resize
+        initialized = true
+    }
+}
