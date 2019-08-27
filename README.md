@@ -17,5 +17,7 @@ Spectacle used it's own keyboard shortcut recorder, while Rectangle uses [MASSho
 
 Spectacle had everything localized, and Rectangle is still lacking localization. Feel free to send a pull request for this or anything else missing.
 
+Rectangle has a few additional actions, including moving windows to screen edges without resizing them, maximizing only the height of a window, and almost (90%) maximizing a window. Additionally, next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Note that these thirds actions take into account screen orientation, as in first third will be left third on landscape and top third on portrait.
+
 ## Contributing
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. 
