@@ -13,7 +13,6 @@ import ServiceManagement
 class PrefsViewController: NSViewController {
     
     var actionsToViews = [WindowAction: MASShortcutView]()
-    lazy var messagePopover = MessagePopover()
     
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
@@ -51,37 +50,7 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
     
     // Settings
-    @IBOutlet weak var launchOnLoginCheckbox: NSButton!
-    @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
-
-    @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
-        let newSetting: Bool = sender.state == .on
-        SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
-        Defaults.launchOnLogin.enabled = newSetting
-    }
-    
-    @IBAction func toggleHideMenuBarIcon(_ sender: NSButton) {
-        let newSetting: Bool = sender.state == .on
-        Defaults.hideMenuBarIcon.enabled = newSetting
-        RectangleStatusItem.instance.refreshVisibility()
-    }
-
-    @IBAction func showInfoForHideMenuBarIcon(_ sender: NSButton) {
-        messagePopover.show(message: "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu.", sender: sender)
-    }
-    
-    @IBAction func restoreDefaults(_ sender: Any) {
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
-    }
-    
     override func awakeFromNib() {
-        if Defaults.launchOnLogin.enabled {
-            launchOnLoginCheckbox.state = .on
-        }
-        
-        if Defaults.hideMenuBarIcon.enabled {
-            hideMenuBarIconCheckbox.state = .on
-        }
         
         actionsToViews = [
             .leftHalf: leftHalfShortcutView,
@@ -118,10 +87,18 @@ class PrefsViewController: NSViewController {
     }
 }
 
-class CustomTabView: NSTabView {
+class FlippedClipView: NSClipView {
     
-    override var acceptsFirstResponder: Bool {
-        return false
+    override var isFlipped: Bool {
+        return true
+    }
+    
+}
+
+class NoKnobSlotScroller: NSScroller {
+    
+    override func drawKnobSlot(in slotRect: NSRect, highlight flag: Bool) {
+        // don't draw a knob slot... it looks nicer
     }
     
 }
