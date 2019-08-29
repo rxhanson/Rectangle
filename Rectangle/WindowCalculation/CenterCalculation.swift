@@ -10,15 +10,15 @@ import Foundation
 
 class CenterCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
 
-        if rectFitsWithinRect(rect1: windowRect, rect2: visibleFrameOfDestinationScreen) {
+        if rectFitsWithinRect(rect1: windowRect, rect2: visibleFrameOfScreen) {
             var calculatedWindowRect = windowRect
-            calculatedWindowRect.origin.x = round((visibleFrameOfDestinationScreen.width - windowRect.width) / 2.0) + visibleFrameOfDestinationScreen.minX
-            calculatedWindowRect.origin.y = round((visibleFrameOfDestinationScreen.height - windowRect.height) / 2.0) + visibleFrameOfDestinationScreen.minY
+            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - windowRect.width) / 2.0) + visibleFrameOfScreen.minX
+            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - windowRect.height) / 2.0) + visibleFrameOfScreen.minY
             return calculatedWindowRect
         } else {
-            return visibleFrameOfDestinationScreen
+            return visibleFrameOfScreen
         }
 
     }

@@ -6,7 +6,6 @@
 //  Copyright © 2019 Ryan Hanson. All rights reserved.
 //
 
-import Foundation
 import Cocoa
 
 class WindowManager {
@@ -43,19 +42,11 @@ class WindowManager {
             return
         }
         
-        let screenDetectionResult: ScreenDetectionResult = screenDetection.screen(with: action, frontmostWindowElement: frontmostWindowElement)
-        
-        var frameOfDestinationScreen = CGRect.null
-        var visibleFrameOfDestinationScreen = CGRect.null
-        var visibleFrameOfSourceScreen = CGRect.null
-        
-        if let destinationScreen = screenDetectionResult.destinationScreen,
-            let sourceScreen = screenDetectionResult.sourceScreen {
-            frameOfDestinationScreen = NSRectToCGRect(destinationScreen.frame)
-            visibleFrameOfDestinationScreen = NSRectToCGRect(destinationScreen.visibleFrame)
-            visibleFrameOfSourceScreen = NSRectToCGRect(sourceScreen.visibleFrame)
+        guard let usableScreens = screenDetection.detectScreens(for: action, using: frontmostWindowElement) else {
+            NSSound.beep()
+            return
         }
-
+        
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
         
         if restoreRects[frontmostAppBundleId] == nil
@@ -66,33 +57,34 @@ class WindowManager {
         if frontmostWindowElement.isSheet()
             || frontmostWindowElement.isSystemDialog()
             || currentWindowRect.isNull
-            || frameOfDestinationScreen.isNull
-            || visibleFrameOfDestinationScreen.isNull
-            || visibleFrameOfSourceScreen.isNull {
+            || usableScreens.frameOfCurrentScreen.isNull
+            || usableScreens.visibleFrameOfCurrentScreen.isNull {
             NSSound.beep()
             return
         }
 
-        let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect, frameOfScreen: frameOfDestinationScreen)
+        let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect, frameOfScreen: usableScreens.frameOfCurrentScreen)
         
         let windowCalculation = windowCalculationFactory.calculation(for: action)
 
-        guard let newRect = windowCalculation?.calculate(currentNormalizedRect, visibleFrameOfSourceScreen: visibleFrameOfSourceScreen, visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen, action: action) else {
+        guard let calcResult = windowCalculation?.calculate(currentNormalizedRect, usableScreens: usableScreens, action: action) else {
             NSSound.beep()
             return
         }
-        
-        let newNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(newRect, frameOfScreen: frameOfDestinationScreen)
-        
+
+        let newNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
+
         if currentNormalizedRect.equalTo(newNormalizedRect) {
             NSSound.beep()
             return
         }
-        
+
+        let visibleFrameOfDestinationScreen = NSRectToCGRect(calcResult.screen.visibleFrame)
+
         for windowMover in windowMoverChain {
-            windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: frameOfDestinationScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
+            windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
         }
-        
+
         let resultingRect = frontmostWindowElement.rectOfElement()
         lastRectangleRects[frontmostAppBundleId] = resultingRect
     }

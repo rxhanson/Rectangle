@@ -1,0 +1,34 @@
+//
+//  SubsequentExecutionMode.swift
+//  Rectangle
+//
+//  Created by Ryan Hanson on 8/15/19.
+//  Copyright © 2019 Ryan Hanson. All rights reserved.
+//
+
+import Foundation
+
+enum SubsequentExecutionMode: Int {
+    case resize = 0 // based on Spectacle
+    case acrossMonitor = 1 // like Windows 7
+    case none = 2 // like Magnet
+}
+
+class SubsequentExecutionDefault {
+    private let key: String = "subsequentExecutionMode"
+    private var initialized = false
+    
+    var value: SubsequentExecutionMode {
+        didSet {
+            if initialized {
+                UserDefaults.standard.set(value.rawValue, forKey: key)
+            }
+        }
+    }
+    
+    init() {
+        let intValue = UserDefaults.standard.integer(forKey: key)
+        value = SubsequentExecutionMode(rawValue: intValue) ?? .resize
+        initialized = true
+    }
+}

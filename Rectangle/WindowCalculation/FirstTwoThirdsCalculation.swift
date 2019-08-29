@@ -10,23 +10,23 @@ import Foundation
 
 class FirstTwoThirdsCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        return isLandscape(visibleFrameOfDestinationScreen)
-            ? leftTwoThirds(visibleFrameOfDestinationScreen)
-            : topTwoThirds(visibleFrameOfDestinationScreen)
+        return isLandscape(visibleFrameOfScreen)
+            ? leftTwoThirds(visibleFrameOfScreen)
+            : topTwoThirds(visibleFrameOfScreen)
     }
     
-    private func leftTwoThirds(_ visibleFrameOfDestinationScreen: CGRect) -> CGRect {
-        var twoThirdsRect = visibleFrameOfDestinationScreen
-        twoThirdsRect.size.width = floor(visibleFrameOfDestinationScreen.width * 2 / 3.0)
+    private func leftTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
+        var twoThirdsRect = visibleFrameOfScreen
+        twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
         return twoThirdsRect
     }
     
-    private func topTwoThirds(_ visibleFrameOfDestinationScreen: CGRect) -> CGRect {
-        var twoThirdsRect = visibleFrameOfDestinationScreen
-        twoThirdsRect.size.height = floor(visibleFrameOfDestinationScreen.height * 2 / 3.0)
-        twoThirdsRect.origin.y = visibleFrameOfDestinationScreen.origin.y + visibleFrameOfDestinationScreen.height - twoThirdsRect.height
+    private func topTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
+        var twoThirdsRect = visibleFrameOfScreen
+        twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
+        twoThirdsRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.height - twoThirdsRect.height
         return twoThirdsRect
     }
 }

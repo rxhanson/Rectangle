@@ -10,26 +10,27 @@ import Cocoa
 
 class ScreenDetection {
 
-    func screen(with action: WindowAction, frontmostWindowElement: AccessibilityElement?) -> ScreenDetectionResult {
+    func detectScreens(for action: WindowAction, using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
         let screens = NSScreen.screens
+        guard let firstScreen = screens.first else { return nil }
         
         if screens.count == 1 {
-            return ScreenDetectionResult(sourceScreen: screens.first, destinationScreen: screens.first)
+            let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens)
         }
         
         let screensOrdered = order(screens: screens)
         guard let sourceScreen: NSScreen = screenContaining(frontmostWindowElement?.rectOfElement() ?? CGRect.zero, screens: screensOrdered) else {
-            return ScreenDetectionResult(sourceScreen: screens.first, destinationScreen: screens.first)
+            let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens)
         }
-        var destinationScreen: NSScreen? = sourceScreen
-        if action.isMoveToDisplay {
-            destinationScreen = nextOrPreviousScreen(toFrameOfScreen: NSRectToCGRect(sourceScreen.frame), inDirectionOf: action, screens: screensOrdered)
-            
-        }
-        return ScreenDetectionResult(sourceScreen: sourceScreen, destinationScreen: destinationScreen)
+        
+        let adjacentScreens = adjacent(toFrameOfScreen: sourceScreen.frame, screens: screensOrdered)
+        
+        return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens)
     }
 
-    func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
+    private func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
         var result: NSScreen? = NSScreen.main
         var largestPercentageOfRectWithinFrameOfScreen: CGFloat = 0.0
         for currentScreen in screens {
@@ -56,31 +57,45 @@ class ScreenDetection {
         }
         return result
     }
-
-    func nextOrPreviousScreen(toFrameOfScreen frameOfScreen: CGRect, inDirectionOf action: WindowAction, screens: [NSScreen]?) -> NSScreen? {
-        guard let screens = screens, screens.count > 1 else { return nil }
-        var result: NSScreen? = nil
-        for i in 0..<screens.count {
-            let currentScreen: NSScreen = screens[i]
-            let currentFrameOfScreen = NSRectToCGRect(currentScreen.frame)
-            var nextOrPreviousIndex: Int = i
-            if !currentFrameOfScreen.equalTo(frameOfScreen) {
-                continue
+    
+    func adjacent(toFrameOfScreen frameOfScreen: CGRect, screens: [NSScreen]) -> AdjacentScreens? {
+        if screens.count == 2 {
+            let otherScreen = screens.first(where: { screen in
+                let frame = NSRectToCGRect(screen.frame)
+                return !frame.equalTo(frameOfScreen)
+            })
+            if let otherScreen = otherScreen {
+                return AdjacentScreens(prev: otherScreen, next: otherScreen)
             }
-            if action == .nextDisplay {
-                nextOrPreviousIndex += 1
-            } else if action == .previousDisplay {
-                nextOrPreviousIndex -= 1
+        } else if screens.count > 2 {
+            let currentScreenIndex = screens.firstIndex(where: { screen in
+                let frame = NSRectToCGRect(screen.frame)
+                return frame.equalTo(frameOfScreen)
+            })
+            if let currentScreenIndex = currentScreenIndex {
+                let nextIndex = currentScreenIndex == screens.count - 1
+                    ? 0
+                    : currentScreenIndex + 1
+                let prevIndex = currentScreenIndex == 0
+                    ? screens.count - 1
+                    : currentScreenIndex - 1
+                return AdjacentScreens(prev: screens[prevIndex], next: screens[nextIndex])
             }
-            if nextOrPreviousIndex < 0 {
-                nextOrPreviousIndex = screens.count - 1
-            } else if nextOrPreviousIndex >= screens.count {
-                nextOrPreviousIndex = 0
-            }
-            result = screens[nextOrPreviousIndex]
-            break
         }
-        return result
+        
+        return nil
+    }
+
+    func nextOrPreviousScreen(toFrameOfScreen frameOfScreen: CGRect, inDirectionOf action: WindowAction, screens: [NSScreen]) -> NSScreen? {
+        
+        guard let adjacentScreens = adjacent(toFrameOfScreen: frameOfScreen, screens: screens) else { return nil }
+        switch action {
+        case .previousDisplay:
+            return adjacentScreens.prev
+        case .nextDisplay:
+            return adjacentScreens.next
+        default: return nil
+        }
     }
 
     func order(screens: [NSScreen]) -> [NSScreen] {
@@ -99,7 +114,21 @@ class ScreenDetection {
 
 }
 
-struct ScreenDetectionResult {
-    let sourceScreen: NSScreen?
-    let destinationScreen: NSScreen?
+struct UsableScreens {
+    let currentScreen: NSScreen
+    let adjacentScreens: AdjacentScreens?
+    let frameOfCurrentScreen: CGRect
+    let visibleFrameOfCurrentScreen: CGRect
+    
+    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens?) {
+        self.currentScreen = currentScreen
+        self.adjacentScreens = adjacentScreens
+        self.frameOfCurrentScreen = NSRectToCGRect(currentScreen.frame)
+        self.visibleFrameOfCurrentScreen =  NSRectToCGRect(currentScreen.visibleFrame)
+    }
+}
+
+struct AdjacentScreens {
+    let prev: NSScreen
+    let next: NSScreen
 }

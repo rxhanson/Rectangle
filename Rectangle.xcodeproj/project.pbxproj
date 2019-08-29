@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		12D896200936C0DE9FF41FB4 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		6327EAA4FEECF2AE087FCD30 /* Pods_RectangleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */; };
-		9821401F22B35FEA00ABFB3F /* RightHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */; };
 		9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */; };
 		9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402222B3886100ABFB3F /* CenterCalculation.swift */; };
 		9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402422B3887200ABFB3F /* MaximizeCalculation.swift */; };
@@ -46,8 +45,7 @@
 		9824704D22B189250037B409 /* WindowCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704822B189250037B409 /* WindowCalculation.swift */; };
 		9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704922B189250037B409 /* QuantizedWindowMover.swift */; };
 		9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704A22B189250037B409 /* BestEffortWindowMover.swift */; };
-		9824705122B28D7A0037B409 /* LeftHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */; };
-		985B9BF122B8D77600A2E8F0 /* PrefsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */; };
+		9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */; };
 		985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */; };
 		985B9BF822BB6F5100A2E8F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 985B9BF622BB6F5000A2E8F0 /* MessageView.xib */; };
 		985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF722BB6F5000A2E8F0 /* MessageView.swift */; };
@@ -61,6 +59,10 @@
 		988D068122EB4EE7004EABD7 /* MoveRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */; };
 		988D068322EB4EF3004EABD7 /* MoveUpCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */; };
 		988D068522EB4EFC004EABD7 /* MoveDownCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */; };
+		98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B3D231130AF0066EC23 /* SettingsViewController.swift */; };
+		98910B42231476B30066EC23 /* PrefsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B41231476B30066EC23 /* PrefsViewController.swift */; };
+		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
+		98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
 /* End PBXBuildFile section */
@@ -96,7 +98,6 @@
 		53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.debug.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.debug.xcconfig"; sourceTree = "<group>"; };
 		80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleLauncher.debug.xcconfig"; path = "Target Support Files/Pods-RectangleLauncher/Pods-RectangleLauncher.debug.xcconfig"; sourceTree = "<group>"; };
 		81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightHalfCalculation.swift; sourceTree = "<group>"; };
 		9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomHalfCalculation.swift; sourceTree = "<group>"; };
 		9821402222B3886100ABFB3F /* CenterCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterCalculation.swift; sourceTree = "<group>"; };
 		9821402422B3887200ABFB3F /* MaximizeCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximizeCalculation.swift; sourceTree = "<group>"; };
@@ -140,8 +141,7 @@
 		9824704822B189250037B409 /* WindowCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowCalculation.swift; sourceTree = "<group>"; };
 		9824704922B189250037B409 /* QuantizedWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuantizedWindowMover.swift; sourceTree = "<group>"; };
 		9824704A22B189250037B409 /* BestEffortWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BestEffortWindowMover.swift; sourceTree = "<group>"; };
-		9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftHalfCalculation.swift; sourceTree = "<group>"; };
-		985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrefsViewController.swift; sourceTree = "<group>"; };
+		9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftRightHalfCalculation.swift; sourceTree = "<group>"; };
 		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
 		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		985B9BF722BB6F5000A2E8F0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
@@ -155,6 +155,10 @@
 		988D068022EB4EE7004EABD7 /* MoveRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveRightCalculation.swift; sourceTree = "<group>"; };
 		988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveUpCalculation.swift; sourceTree = "<group>"; };
 		988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDownCalculation.swift; sourceTree = "<group>"; };
+		98910B3D231130AF0066EC23 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		98910B41231476B30066EC23 /* PrefsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PrefsViewController.swift; path = Rectangle/PrefsViewController.swift; sourceTree = SOURCE_ROOT; };
+		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
+		98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevDisplayCalculation.swift; sourceTree = "<group>"; };
 		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -235,8 +239,7 @@
 			isa = PBXGroup;
 			children = (
 				9824704822B189250037B409 /* WindowCalculation.swift */,
-				9824705022B28D7A0037B409 /* LeftHalfCalculation.swift */,
-				9821401E22B35FEA00ABFB3F /* RightHalfCalculation.swift */,
+				9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */,
 				9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */,
 				9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */,
 				9821402222B3886100ABFB3F /* CenterCalculation.swift */,
@@ -258,6 +261,7 @@
 				988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */,
 				988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */,
 				988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */,
+				98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */,
 			);
 			path = WindowCalculation;
 			sourceTree = "<group>";
@@ -322,7 +326,7 @@
 				9824701522AF9B7E0037B409 /* Info.plist */,
 				9824701622AF9B7E0037B409 /* Rectangle.entitlements */,
 				9821405F22B3EFB200ABFB3F /* Defaults.swift */,
-				985B9BF022B8D77600A2E8F0 /* PrefsViewController.swift */,
+				98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */,
 				985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */,
 				9824703022AFA8470037B409 /* RectangleStatusItem.swift */,
 				9824703622B0F3200037B409 /* WindowAction.swift */,
@@ -330,6 +334,7 @@
 				9824703C22B13C7E0037B409 /* AccessibilityElement.swift */,
 				9824703E22B13FBC0037B409 /* ScreenDetection.swift */,
 				9824704022B186D00037B409 /* WindowManager.swift */,
+				98910B3C2311304D0066EC23 /* PrefsWindow */,
 				985B9BFA22BE218C00A2E8F0 /* Popover */,
 				982140EA22B7DB0400ABFB3F /* WindowMover */,
 				982140E922B7DA3100ABFB3F /* WindowCalculation */,
@@ -355,6 +360,15 @@
 				985B9BF622BB6F5000A2E8F0 /* MessageView.xib */,
 			);
 			path = Popover;
+			sourceTree = "<group>";
+		};
+		98910B3C2311304D0066EC23 /* PrefsWindow */ = {
+			isa = PBXGroup;
+			children = (
+				98910B41231476B30066EC23 /* PrefsViewController.swift */,
+				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
+			);
+			path = PrefsWindow;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -432,10 +446,10 @@
 						CreatedOnToolsVersion = 10.2.1;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -443,7 +457,7 @@
 						CreatedOnToolsVersion = 10.2.1;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -583,7 +597,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\n\ncodesign --verbose --force --deep -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\ncodesign --verbose --force -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\n\n#codesign --verbose --force --deep -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n#codesign --verbose --force -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A\"\n";
 		};
 		E6D791631A87C2748EF5183E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -627,7 +641,7 @@
 				988D068122EB4EE7004EABD7 /* MoveRightCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
 				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
-				9824705122B28D7A0037B409 /* LeftHalfCalculation.swift in Sources */,
+				9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */,
 				9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */,
 				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
 				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
@@ -638,24 +652,26 @@
 				9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */,
 				9824703B22B139780037B409 /* CUtil.swift in Sources */,
 				988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */,
+				98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */,
 				985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */,
 				988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
-				9821401F22B35FEA00ABFB3F /* RightHalfCalculation.swift in Sources */,
 				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,
 				9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */,
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
+				98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
 				9821402F22B389B600ABFB3F /* NextPrevThirdsCalculation.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
 				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
-				985B9BF122B8D77600A2E8F0 /* PrefsViewController.swift in Sources */,
 				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
 				9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */,
+				98910B42231476B30066EC23 /* PrefsViewController.swift in Sources */,
 				9824702C22AFA22E0037B409 /* AccessibilityWindow.swift in Sources */,
 				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
 				988D067F22EB4EDE004EABD7 /* MoveLeftCalculation.swift in Sources */,
+				98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
@@ -710,10 +726,12 @@
 			baseConfigurationReference = 80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = RectangleLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -722,6 +740,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.RectangleLauncher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -732,10 +751,12 @@
 			baseConfigurationReference = 0796D218CC3C7CD563827A8D /* Pods-RectangleLauncher.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = RectangleLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -744,6 +765,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.RectangleLauncher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -869,10 +891,11 @@
 			baseConfigurationReference = 53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -891,10 +914,11 @@
 			baseConfigurationReference = BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -914,10 +938,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				INFOPLIST_FILE = RectangleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -938,10 +962,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				INFOPLIST_FILE = RectangleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

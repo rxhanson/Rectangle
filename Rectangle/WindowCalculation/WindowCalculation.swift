@@ -6,13 +6,26 @@
 //  Copyright © 2019 Ryan Hanson. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 protocol WindowCalculation {
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect?
+    
+    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
+    
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect?
 }
 
 extension WindowCalculation {
+    
+    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+        
+        if let rect = calculateRect(windowRect, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action) {
+            
+            return WindowCalculationResult(rect: rect, screen: usableScreens.currentScreen)
+        }
+        
+        return nil
+    }
 
     func rectCenteredWithinRect(_ rect1: CGRect, _ rect2: CGRect) -> Bool {
         let centeredMidX = abs(rect2.midX - rect1.midX) <= 1.0
@@ -30,20 +43,25 @@ extension WindowCalculation {
     
 }
 
+struct WindowCalculationResult {
+    let rect: CGRect
+    let screen: NSScreen
+}
+
 class WindowCalculationFactory {
     
-    let leftHalfCalculation = LeftHalfCalculation()
-    let rightHalfCalculation = RightHalfCalculation()
+    let leftHalfCalculation = LeftRightHalfCalculation()
+    let rightHalfCalculation = LeftRightHalfCalculation()
     let bottomHalfCalculation = BottomHalfCalculation()
     let topHalfCalculation = TopHalfCalculation()
     let centerCalculation = CenterCalculation()
+    let nextPrevDisplayCalculation = NextPrevDisplayCalculation()
     let maximizeCalculation = MaximizeCalculation()
     let changeSizeCalculation = ChangeSizeCalculation()
     let lowerLeftCalculation = LowerLeftCalculation()
     let lowerRightCalculation = LowerRightCalculation()
     let upperLeftCalculation = UpperLeftCalculation()
     let upperRightCalculation = UpperRightCalculation()
-    let nextPrevThirdsCalculation = NextPrevThirdsCalculation()
     let maxHeightCalculation = MaximizeHeightCalculation()
     let firstThirdCalculation = FirstThirdCalculation()
     let firstTwoThirdsCalculation = FirstTwoThirdsCalculation()
@@ -63,8 +81,8 @@ class WindowCalculationFactory {
         case .rightHalf: return rightHalfCalculation
         case .maximize: return maximizeCalculation
         case .maximizeHeight: return maxHeightCalculation
-        case .previousDisplay: return centerCalculation
-        case .nextDisplay: return centerCalculation
+        case .previousDisplay: return nextPrevDisplayCalculation
+        case .nextDisplay: return nextPrevDisplayCalculation
         case .undo: return maximizeCalculation
         case .redo: return maximizeCalculation
         case .larger: return changeSizeCalculation
@@ -76,8 +94,6 @@ class WindowCalculationFactory {
         case .lowerRight: return lowerRightCalculation
         case .upperLeft: return upperLeftCalculation
         case .upperRight: return upperRightCalculation
-        case .nextThird: return nextPrevThirdsCalculation
-        case .previousThird: return nextPrevThirdsCalculation
         case .firstThird: return firstThirdCalculation
         case .firstTwoThirds: return firstTwoThirdsCalculation
         case .centerThird: return centerThirdCalculation

@@ -10,25 +10,25 @@ import Foundation
 
 class LastThirdCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        return isLandscape(visibleFrameOfDestinationScreen)
-            ? rightThird(visibleFrameOfDestinationScreen)
-            : bottomThird(visibleFrameOfDestinationScreen)
+        return isLandscape(visibleFrameOfScreen)
+            ? rightThird(visibleFrameOfScreen)
+            : bottomThird(visibleFrameOfScreen)
     }
     
-    private func rightThird(_ visibleFrameOfDestinationScreen: CGRect) -> CGRect {
+    private func rightThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
         
-        var oneThirdRect = visibleFrameOfDestinationScreen
-        oneThirdRect.size.width = floor(visibleFrameOfDestinationScreen.width / 3.0)
-        oneThirdRect.origin.x = visibleFrameOfDestinationScreen.origin.x + visibleFrameOfDestinationScreen.width - oneThirdRect.width
+        var oneThirdRect = visibleFrameOfScreen
+        oneThirdRect.size.width = floor(visibleFrameOfScreen.width / 3.0)
+        oneThirdRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.width - oneThirdRect.width
         return oneThirdRect
     }
     
-    private func bottomThird(_ visibleFrameOfDestinationScreen: CGRect) -> CGRect {
+    private func bottomThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
         
-        var oneThirdRect = visibleFrameOfDestinationScreen
-        oneThirdRect.size.height = floor(visibleFrameOfDestinationScreen.height / 3.0)
+        var oneThirdRect = visibleFrameOfScreen
+        oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
         return oneThirdRect
     }
 }

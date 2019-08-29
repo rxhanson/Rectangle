@@ -13,7 +13,6 @@ import ServiceManagement
 class PrefsViewController: NSViewController {
     
     var actionsToViews = [WindowAction: MASShortcutView]()
-    lazy var messagePopover = MessagePopover()
     
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
@@ -51,37 +50,7 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
     
     // Settings
-    @IBOutlet weak var launchOnLoginCheckbox: NSButton!
-    @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
-
-    @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
-        let newSetting: Bool = sender.state == .on
-        SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
-        Defaults.launchOnLogin.enabled = newSetting
-    }
-    
-    @IBAction func toggleHideMenuBarIcon(_ sender: NSButton) {
-        let newSetting: Bool = sender.state == .on
-        Defaults.hideMenuBarIcon.enabled = newSetting
-        RectangleStatusItem.instance.refreshVisibility()
-    }
-
-    @IBAction func showInfoForHideMenuBarIcon(_ sender: NSButton) {
-        messagePopover.show(message: "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu.", sender: sender)
-    }
-    
-    @IBAction func restoreDefaults(_ sender: Any) {
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
-    }
-    
     override func awakeFromNib() {
-        if Defaults.launchOnLogin.enabled {
-            launchOnLoginCheckbox.state = .on
-        }
-        
-        if Defaults.hideMenuBarIcon.enabled {
-            hideMenuBarIconCheckbox.state = .on
-        }
         
         actionsToViews = [
             .leftHalf: leftHalfShortcutView,
@@ -115,12 +84,37 @@ class PrefsViewController: NSViewController {
         for (action, view) in actionsToViews {
             view.associatedUserDefaultsKey = action.name
         }
+        
+        if Defaults.allowAnyShortcut.enabled {
+            let passThroughValidator = PassthroughShortcutValidator()
+            actionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
+        }
+        
+        subscribeToAllowAnyShortcutToggle()
+    }
+    
+    private func subscribeToAllowAnyShortcutToggle() {
+        NotificationCenter.default.addObserver(self, selector: #selector(allowAnyShortcutToggled), name: SettingsViewController.allowAnyShortcutNotificationName, object: nil)
+    }
+    
+    @objc func allowAnyShortcutToggled(notification: Notification) {
+        guard let enabled = notification.object as? Bool else { return }
+        let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
+        actionsToViews.values.forEach { $0.shortcutValidator = validator }
     }
 }
 
-class CustomTabView: NSTabView {
+class PassthroughShortcutValidator: MASShortcutValidator {
     
-    override var acceptsFirstResponder: Bool {
+    override func isShortcutValid(_ shortcut: MASShortcut!) -> Bool {
+        return true
+    }
+    
+    override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
+        return false
+    }
+    
+    override func isShortcut(_ shortcut: MASShortcut!, alreadyTakenIn menu: NSMenu!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
         return false
     }
     

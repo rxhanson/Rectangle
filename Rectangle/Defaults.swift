@@ -13,7 +13,8 @@ class Defaults {
     static let disabledApps = StringDefault(key: "disabledApps")
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
     static let alternateDefaultShortcuts = BoolDefault(key: "alternateDefaultShortcuts") // switch to magnet defaults
-    static let strictWindowActions = BoolDefault(key: "strictWindowActions") // Spectacle will resize to third screen sizes on successive triggers. Disable that by setting this to true
+    static let subsequentExecutionMode = SubsequentExecutionDefault()
+    static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
 }
 
 class BoolDefault {

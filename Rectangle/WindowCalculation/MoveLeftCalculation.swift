@@ -10,16 +10,16 @@ import Foundation
 
 class MoveLeftCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, visibleFrameOfSourceScreen: CGRect, visibleFrameOfDestinationScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
         var calculatedWindowRect = windowRect
-        calculatedWindowRect.origin.x = visibleFrameOfDestinationScreen.minX
+        calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
         
-        if windowRect.height >= visibleFrameOfDestinationScreen.height {
-            calculatedWindowRect.size.height = visibleFrameOfDestinationScreen.height
-            calculatedWindowRect.origin.y = visibleFrameOfDestinationScreen.minY
+        if windowRect.height >= visibleFrameOfScreen.height {
+            calculatedWindowRect.size.height = visibleFrameOfScreen.height
+            calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
         } else {
-            calculatedWindowRect.origin.y = round((visibleFrameOfDestinationScreen.height - windowRect.height) / 2.0) + visibleFrameOfDestinationScreen.minY
+            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - windowRect.height) / 2.0) + visibleFrameOfScreen.minY
         }
         return calculatedWindowRect
         
