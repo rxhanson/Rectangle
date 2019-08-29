@@ -13,6 +13,8 @@ class SettingsViewController: NSViewController {
     
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
+    @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
+    @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -24,6 +26,15 @@ class SettingsViewController: NSViewController {
         let newSetting: Bool = sender.state == .on
         Defaults.hideMenuBarIcon.enabled = newSetting
         RectangleStatusItem.instance.refreshVisibility()
+    }
+    
+    @IBAction func toggleSubsequentExecutionBehavior(_ sender: NSButton) {
+        Defaults.subsequentExecutionMode.value = sender.state == .on
+            ? .acrossMonitor
+            : .resize
+    }
+    
+    @IBAction func toggleAllowAnyShortcut(_ sender: NSButton) {
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {

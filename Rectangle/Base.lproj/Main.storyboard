@@ -1729,6 +1729,9 @@
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="toggleSubsequentExecutionBehavior:" target="yhc-gS-h02" id="dzP-GJ-Pbr"/>
+                                        </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
                                         <rect key="frame" x="-2" y="24" width="454" height="14"/>
@@ -1744,6 +1747,9 @@
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="toggleAllowAnyShortcut:" target="yhc-gS-h02" id="dXP-rV-Pqk"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -1789,8 +1795,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="allowAnyShortcutCheckbox" destination="UY7-Nt-G3K" id="0dH-iu-gSs"/>
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
                         <outlet property="launchOnLoginCheckbox" destination="eQJ-O3-a8H" id="iF3-bq-l1j"/>
+                        <outlet property="subsequentExecutionCheckbox" destination="95T-Ls-2ah" id="mhe-zK-Tja"/>
                     </connections>
                 </viewController>
                 <customObject id="c9e-yT-Dp7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

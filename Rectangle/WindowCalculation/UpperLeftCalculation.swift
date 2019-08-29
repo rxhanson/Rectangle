@@ -16,7 +16,7 @@ class UpperLeftCalculation: WindowCalculation {
         oneQuarterRect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         oneQuarterRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 2.0) + (visibleFrameOfScreen.height.truncatingRemainder(dividingBy: 2.0))
 
-        if Defaults.subsequentExecutionMode.value == .resize {
+        if Defaults.subsequentExecutionMode.value != .none {
             if abs(windowRect.midY - oneQuarterRect.midY) <= 1.0 {
                 var twoThirdRect = oneQuarterRect
                 twoThirdRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
