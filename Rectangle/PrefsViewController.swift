@@ -84,21 +84,38 @@ class PrefsViewController: NSViewController {
         for (action, view) in actionsToViews {
             view.associatedUserDefaultsKey = action.name
         }
+        
+        if Defaults.allowAnyShortcut.enabled {
+            let passThroughValidator = PassthroughShortcutValidator()
+            actionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
+        }
+        
+        subscribeToAllowAnyShortcutToggle()
+    }
+    
+    private func subscribeToAllowAnyShortcutToggle() {
+        NotificationCenter.default.addObserver(self, selector: #selector(allowAnyShortcutToggled), name: SettingsViewController.allowAnyShortcutNotificationName, object: nil)
+    }
+    
+    @objc func allowAnyShortcutToggled(notification: Notification) {
+        guard let enabled = notification.object as? Bool else { return }
+        let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
+        actionsToViews.values.forEach { $0.shortcutValidator = validator }
     }
 }
 
-class FlippedClipView: NSClipView {
+class PassthroughShortcutValidator: MASShortcutValidator {
     
-    override var isFlipped: Bool {
+    override func isShortcutValid(_ shortcut: MASShortcut!) -> Bool {
         return true
     }
     
-}
-
-class NoKnobSlotScroller: NSScroller {
+    override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
+        return false
+    }
     
-    override func drawKnobSlot(in slotRect: NSRect, highlight flag: Bool) {
-        // don't draw a knob slot... it looks nicer
+    override func isShortcut(_ shortcut: MASShortcut!, alreadyTakenIn menu: NSMenu!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
+        return false
     }
     
 }

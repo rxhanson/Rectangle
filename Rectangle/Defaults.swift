@@ -14,6 +14,7 @@ class Defaults {
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
     static let alternateDefaultShortcuts = BoolDefault(key: "alternateDefaultShortcuts") // switch to magnet defaults
     static let subsequentExecutionMode = SubsequentExecutionDefault()
+    static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
 }
 
 class BoolDefault {

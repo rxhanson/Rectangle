@@ -11,6 +11,8 @@ import ServiceManagement
 
 class SettingsViewController: NSViewController {
     
+    static let allowAnyShortcutNotificationName = Notification.Name("allowAnyShortcutToggle")
+    
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
     @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
@@ -35,6 +37,9 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func toggleAllowAnyShortcut(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.allowAnyShortcut.enabled = newSetting
+        NotificationCenter.default.post(name: SettingsViewController.allowAnyShortcutNotificationName, object: newSetting)
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
@@ -49,6 +54,15 @@ class SettingsViewController: NSViewController {
         if Defaults.hideMenuBarIcon.enabled {
             hideMenuBarIconCheckbox.state = .on
         }
+        
+        if Defaults.subsequentExecutionMode.value == .acrossMonitor {
+            subsequentExecutionCheckbox.state = .on
+        }
+        
+        if Defaults.allowAnyShortcut.enabled {
+            allowAnyShortcutCheckbox.state = .on
+        }
+        
     }
 
 }
