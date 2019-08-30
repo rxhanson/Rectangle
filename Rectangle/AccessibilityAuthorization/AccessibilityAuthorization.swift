@@ -40,17 +40,10 @@ class AccessibilityAuthorization {
         }
     }
     
-    func generateUnauthorizedMenu() -> NSMenu {
-        let unauthMenu = NSMenu()
-        unauthMenu.addItem(withTitle: "Not Authorized to Control Your Computer", action: nil, keyEquivalent: "")
-        unauthMenu.addItem(withTitle: "Authorize...", action: #selector(bringWindowToFront), keyEquivalent: "")
-        unauthMenu.addItem(NSMenuItem.separator())
-        unauthMenu.addItem(withTitle: "Quit", action: #selector(quit), keyEquivalent: "q")
-        unauthMenu.items.forEach { $0.target = self }
-        return unauthMenu
-    }
-    
-    @objc func bringWindowToFront() {
+    func showAuthorizationWindow() {
+        if accessibilityWindowController?.window?.isMiniaturized == true {
+            accessibilityWindowController?.window?.deminiaturize(self)
+        }
         NSApp.activate(ignoringOtherApps: true)
     }
     

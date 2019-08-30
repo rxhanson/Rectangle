@@ -679,6 +679,7 @@
                     <connections>
                         <outlet property="ignoreMenuItem" destination="D99-0O-MB6" id="iBN-Bc-ds7"/>
                         <outlet property="mainStatusMenu" destination="6wc-Rn-2EG" id="UWt-be-ZH1"/>
+                        <outlet property="unauthorizedMenu" destination="HZt-qn-3MK" id="c4f-hw-GWr"/>
                     </connections>
                 </customObject>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -715,6 +716,32 @@
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="terminate:" target="hnw-xV-0zn" id="M1a-kx-BJY"/>
+                            </connections>
+                        </menuItem>
+                    </items>
+                </menu>
+                <menu id="HZt-qn-3MK">
+                    <items>
+                        <menuItem title="Not Authorized to Control Your Computer" id="cBj-76-2E7">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem title="Authorize..." id="VIf-4h-MJW">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="authorizeAccessibility:" target="Voe-Tx-rLC" id="fFL-4P-f1a"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="9x0-IB-BiQ"/>
+                        <menuItem title="About" id="jxe-nr-LDQ">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="orderFrontStandardAboutPanel:" target="hnw-xV-0zn" id="o6b-d0-Qt8"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Quit Rectangle" keyEquivalent="q" id="yvN-PE-bxn">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="terminate:" target="hnw-xV-0zn" id="esy-Pm-oTg"/>
                             </connections>
                         </menuItem>
                     </items>

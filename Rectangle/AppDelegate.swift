@@ -24,6 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var prefsWindowController: NSWindowController?
     
     @IBOutlet weak var mainStatusMenu: NSMenu!
+    @IBOutlet weak var unauthorizedMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     
     override init() {
@@ -43,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         statusItem.statusMenu = alreadyTrusted
             ? mainStatusMenu
-            : accessibilityAuthorization.generateUnauthorizedMenu()
+            : unauthorizedMenu
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -73,6 +74,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.sparkleUpdater.checkForUpdates(sender)
     }
     
+    @IBAction func authorizeAccessibility(_ sender: Any) {
+        accessibilityAuthorization.showAuthorizationWindow()
+    }
+
     private func checkLaunchOnLogin() {
         let running = NSWorkspace.shared.runningApplications
         let isRunning = !running.filter({$0.bundleIdentifier == AppDelegate.launcherAppId}).isEmpty
