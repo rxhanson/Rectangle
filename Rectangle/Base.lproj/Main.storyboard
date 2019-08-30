@@ -1832,8 +1832,128 @@
             </objects>
             <point key="canvasLocation" x="372" y="1267"/>
         </scene>
+        <!--Window Controller-->
+        <scene sceneID="lEt-lj-rQC">
+            <objects>
+                <windowController storyboardIdentifier="AccessibilityWindowController" id="GjB-3W-g3G" customClass="AccessibilityWindowController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Authorize Rectangle" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="9JD-tZ-7jf">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" fullSizeContentView="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="245" y="301" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <connections>
+                            <outlet property="delegate" destination="GjB-3W-g3G" id="mlD-s5-EEm"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="5D9-0a-Mbi" kind="relationship" relationship="window.shadowedContentViewController" id="8wX-oi-1HB"/>
+                    </connections>
+                </windowController>
+                <customObject id="8dD-1m-YGC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="656" y="251"/>
+        </scene>
+        <!--Accessibility View Controller-->
+        <scene sceneID="yOZ-qp-n9s">
+            <objects>
+                <viewController id="5D9-0a-Mbi" customClass="AccessibilityViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="1ZR-Nv-NGc">
+                        <rect key="frame" x="0.0" y="0.0" width="370" height="363"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4I0-IC-dnS">
+                                <rect key="frame" x="20" y="20" width="330" height="323"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8BY-qu-jQ8">
+                                        <rect key="frame" x="67" y="296" width="196" height="27"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Authorize Rectangle" id="iXo-XL-T6q">
+                                            <font key="font" size="22" name=".AppleSystemUIFont"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="5m6-XJ-hq8">
+                                        <rect key="frame" x="135" y="214" width="60" height="60"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="60" id="KxT-kJ-YPv"/>
+                                            <constraint firstAttribute="height" constant="60" id="svN-TS-n5K"/>
+                                        </constraints>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Untilted" id="dlp-3B-rHa"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AdB-Z9-aJk">
+                                        <rect key="frame" x="-2" y="158" width="334" height="34"/>
+                                        <textFieldCell key="cell" alignment="center" title="Rectangle needs your permission to control your window positions." id="gyg-xl-dPn">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LtJ-oN-QeI">
+                                        <rect key="frame" x="-1" y="92" width="333" height="46"/>
+                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iWV-c2-BJD">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <string key="title"> Open System Preferences  → Security &amp; Privacy →
+ Privacy → Accessibility</string>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="openSystemPrefs:" target="5D9-0a-Mbi" id="6dM-UK-KBu"/>
+                                        </connections>
+                                    </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TlJ-Di-kby">
+                                        <rect key="frame" x="98" y="56" width="134" height="17"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Check Rectangle.app" id="t7n-mU-75I">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6GN-iB-M1L">
+                                        <rect key="frame" x="-2" y="0.0" width="334" height="34"/>
+                                        <textFieldCell key="cell" alignment="center" title="If the checkbox is disabled, click the padlock and enter your password" id="9XM-Zb-HEb">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="999" constant="330" id="Txs-9d-Su6"/>
+                                    <constraint firstAttribute="width" constant="330" id="ija-bQ-0qq"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="4I0-IC-dnS" secondAttribute="bottom" constant="20" symbolic="YES" id="6VM-hI-r3b"/>
+                            <constraint firstItem="4I0-IC-dnS" firstAttribute="leading" secondItem="1ZR-Nv-NGc" secondAttribute="leading" constant="20" symbolic="YES" id="Gcc-RY-bAG"/>
+                            <constraint firstAttribute="trailing" secondItem="4I0-IC-dnS" secondAttribute="trailing" constant="20" symbolic="YES" id="avA-k7-RbF"/>
+                            <constraint firstItem="4I0-IC-dnS" firstAttribute="top" secondItem="1ZR-Nv-NGc" secondAttribute="top" constant="20" symbolic="YES" id="jJz-xW-me7"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="Pz3-OM-dTg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="657" y="739"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="Untilted" width="256" height="256"/>
         <image name="keyboardToolbarTemplate" width="144" height="144"/>
         <image name="toolbarSettingsTemplate" width="100" height="100"/>
     </resources>

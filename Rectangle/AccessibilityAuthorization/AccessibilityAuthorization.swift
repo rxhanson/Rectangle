@@ -16,7 +16,7 @@ class AccessibilityAuthorization {
     public func checkAccessibility(completion: @escaping () -> Void) -> Bool {
         if !AXIsProcessTrusted() {
             
-            accessibilityWindowController = NSStoryboard(name: "Accessibility", bundle: nil).instantiateController(withIdentifier: "AccessibilityWindowController") as? NSWindowController
+            accessibilityWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "AccessibilityWindowController") as? NSWindowController
             
             NSApp.activate(ignoringOtherApps: true)
             accessibilityWindowController?.showWindow(self)
