@@ -11,13 +11,16 @@ import Cocoa
 
 class AccessibilityAuthorization {
     
-    private var accessibilityWindow: AccessibilityWindow?
+    private var accessibilityWindowController: NSWindowController?
     
     public func checkAccessibility(completion: @escaping () -> Void) -> Bool {
         if !AXIsProcessTrusted() {
-            accessibilityWindow = AccessibilityWindow(windowNibName: "AccessibilityWindow")
-            accessibilityWindow?.showWindow(nil)
+            
+            accessibilityWindowController = NSStoryboard(name: "Accessibility", bundle: nil).instantiateController(withIdentifier: "AccessibilityWindowController") as? NSWindowController
+            
             NSApp.activate(ignoringOtherApps: true)
+            accessibilityWindowController?.showWindow(self)
+            accessibilityWindowController?.window?.makeKey()
             pollAccessibility(completion: completion)
             return false
         } else {
@@ -28,8 +31,8 @@ class AccessibilityAuthorization {
     private func pollAccessibility(completion: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if AXIsProcessTrusted() {
-                self.accessibilityWindow?.close()
-                self.accessibilityWindow = nil
+                self.accessibilityWindowController?.close()
+                self.accessibilityWindowController = nil
                 completion()
             } else {
                 self.pollAccessibility(completion: completion)
