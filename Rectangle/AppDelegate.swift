@@ -45,6 +45,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.statusMenu = alreadyTrusted
             ? mainStatusMenu
             : unauthorizedMenu
+        
+        addWindowActionMenuItems()
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -98,6 +100,42 @@ extension AppDelegate: NSMenuDelegate {
         } else {
             ignoreMenuItem.isHidden = true
         }
+        
+        for menuItem in menu.items {
+            guard let windowAction = menuItem.representedObject as? WindowAction else { continue }
+            if let fullKeyEquivalent = shortcutManager.getKeyEquivalent(action: windowAction) {
+                menuItem.keyEquivalent = fullKeyEquivalent.0.lowercased()
+                menuItem.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: fullKeyEquivalent.1)
+            }
+        }
+    }
+    
+    func menuDidClose(_ menu: NSMenu) {
+        for menuItem in menu.items {
+            menuItem.keyEquivalent = ""
+            menuItem.keyEquivalentModifierMask = NSEvent.ModifierFlags()
+        }
+    }
+    
+    func addWindowActionMenuItems() {
+        var menuIndex = 0
+        for action in WindowAction.active {
+            if menuIndex != 0 && action.firstInGroup {
+                mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
+                menuIndex += 1
+            }
+            
+            let newMenuItem = NSMenuItem(title: action.displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
+            newMenuItem.representedObject = action
+            mainStatusMenu.insertItem(newMenuItem, at: menuIndex)
+            menuIndex += 1
+        }
+        mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
+    }
+    
+    @objc func executeMenuWindowAction(sender: NSMenuItem) {
+        guard let windowAction = sender.representedObject as? WindowAction else { return }
+        windowAction.post()
     }
     
 }

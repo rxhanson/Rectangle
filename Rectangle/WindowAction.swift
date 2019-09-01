@@ -47,10 +47,26 @@ enum WindowAction: Int {
     moveDown = 28,
     almostMaximize = 29
     
-    static let active = [leftHalf, rightHalf, maximize, maximizeHeight, previousDisplay, nextDisplay, undo, redo, larger, smaller, bottomHalf, topHalf, center, lowerLeft, lowerRight, upperLeft, upperRight, restore, firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird, moveLeft, moveRight, moveUp, moveDown, almostMaximize]
+    // Order matters here - it's used in the menu
+    static let active = [leftHalf, rightHalf, topHalf, bottomHalf,
+                         upperRight, upperLeft, lowerLeft, lowerRight,
+                         firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird,
+                         maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
+                         nextDisplay, previousDisplay,
+                         moveLeft, moveRight, moveUp, moveDown]
     
     func post() {
         NotificationCenter.default.post(name: notificationName, object: self)
+    }
+    
+    // Determines where separators should be used in the menu
+    var firstInGroup: Bool {
+        switch self {
+        case .leftHalf, .upperRight, .firstThird, .maximize, .nextDisplay, .moveLeft:
+            return true
+        default:
+            return false
+        }
     }
     
     var name: String {
@@ -86,6 +102,45 @@ enum WindowAction: Int {
         case .moveDown: return "moveDown"
         case .almostMaximize: return "almostMaximize"
         }
+    }
+
+    var displayName: String {
+        var key: String
+        
+        switch self {
+        case .leftHalf: key = "Left Half"
+        case .rightHalf: key = "Right Half"
+        case .maximize: key = "Maximize"
+        case .maximizeHeight: key = "Maximize Height"
+        case .previousDisplay: key = "Previous Display"
+        case .nextDisplay: key = "Next Display"
+        case .undo: key = "Undo"
+        case .redo: key = "Redo"
+        case .larger: key = "Larger"
+        case .smaller: key = "Smaller"
+        case .bottomHalf: key = "Bottom Half"
+        case .topHalf: key = "Top Half"
+        case .center: key = "Center"
+        case .lowerLeft: key = "Lower Left"
+        case .lowerRight: key = "Lower Right"
+        case .upperLeft: key = "Upper Left"
+        case .upperRight: key = "Upper Right"
+        case .nextThird: key = "Next Third"
+        case .previousThird: key = "Previous Third"
+        case .restore: key = "Restore"
+        case .firstThird: key = "First Third"
+        case .firstTwoThirds: key = "First Two Thirds"
+        case .centerThird: key = "Center Third"
+        case .lastTwoThirds: key = "Last Two Thirds"
+        case .lastThird: key = "Last Third"
+        case .moveLeft: key = "Move Left"
+        case .moveRight: key = "Move Right"
+        case .moveUp: key = "Move Up"
+        case .moveDown: key = "Move Down"
+        case .almostMaximize: key = "Almost Maximize"
+        }
+        
+        return NSLocalizedString(key, comment: key)
     }
     
     var notificationName: Notification.Name {

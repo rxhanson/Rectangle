@@ -686,13 +686,6 @@
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <menu id="6wc-Rn-2EG">
                     <items>
-                        <menuItem title="Preferences" id="YRC-4a-xGg">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="openPreferences:" target="Voe-Tx-rLC" id="EgB-O8-H7c"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem isSeparatorItem="YES" id="rsq-zP-x08"/>
                         <menuItem title="Ignore" id="D99-0O-MB6">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
@@ -700,6 +693,12 @@
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="hf9-TP-K3t"/>
+                        <menuItem title="Preferences..." id="YRC-4a-xGg">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="openPreferences:" target="Voe-Tx-rLC" id="EgB-O8-H7c"/>
+                            </connections>
+                        </menuItem>
                         <menuItem title="About" id="gFy-Zj-RGl">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
@@ -1889,10 +1888,10 @@
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LtJ-oN-QeI">
-                                        <rect key="frame" x="-1" y="92" width="333" height="46"/>
+                                        <rect key="frame" x="2" y="92" width="326" height="46"/>
                                         <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iWV-c2-BJD">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <string key="title"> Open System Preferences  → Security &amp; Privacy →
+                                            <string key="title">Open System Preferences → Security &amp; Privacy →
  Privacy → Accessibility</string>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>

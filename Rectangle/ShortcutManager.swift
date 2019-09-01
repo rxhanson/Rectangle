@@ -26,6 +26,11 @@ class ShortcutManager {
         subscribeAll(selector: #selector(windowActionTriggered))
     }
     
+    public func getKeyEquivalent(action: WindowAction) -> (String, UInt)? {
+        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: action.name) as? MASShortcut else { return nil }
+        return (masShortcut.keyCodeString, masShortcut.modifierFlags)
+    }
+    
     deinit {
         unsubscribe()
     }
