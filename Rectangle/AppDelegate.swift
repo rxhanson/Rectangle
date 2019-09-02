@@ -95,7 +95,8 @@ extension AppDelegate: NSMenuDelegate {
     
     func menuWillOpen(_ menu: NSMenu) {
         if let frontAppName = applicationToggle.frontAppName {
-            ignoreMenuItem.title = "Ignore \(frontAppName)"
+            let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore", comment: "")
+            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "App", with: frontAppName)
             ignoreMenuItem.state = applicationToggle.disabledForApp ? .on : .off
         } else {
             ignoreMenuItem.isHidden = true

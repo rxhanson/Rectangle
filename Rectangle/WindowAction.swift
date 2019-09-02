@@ -22,8 +22,6 @@ enum WindowAction: Int {
     maximizeHeight = 3,
     previousDisplay = 4,
     nextDisplay = 5,
-    undo = 6,
-    redo = 7,
     larger = 8,
     smaller = 9,
     bottomHalf = 10,
@@ -33,8 +31,6 @@ enum WindowAction: Int {
     lowerRight = 14,
     upperLeft = 15,
     upperRight = 16,
-    nextThird = 17,
-    previousThird = 18,
     restore = 19,
     firstThird = 20,
     firstTwoThirds = 21,
@@ -77,8 +73,6 @@ enum WindowAction: Int {
         case .maximizeHeight: return "maximizeHeight"
         case .previousDisplay: return "previousDisplay"
         case .nextDisplay: return "nextDisplay"
-        case .undo: return "undo"
-        case .redo: return "redo"
         case .larger: return "larger"
         case .smaller: return "smaller"
         case .bottomHalf: return "bottomHalf"
@@ -88,8 +82,6 @@ enum WindowAction: Int {
         case .lowerRight: return "lowerRight"
         case .upperLeft: return "upperLeft"
         case .upperRight: return "upperRight"
-        case .nextThird: return "nextThird"
-        case .previousThird: return "previousThird"
         case .restore: return "restore"
         case .firstThird: return "firstThird"
         case .firstTwoThirds: return "firstTwoThirds"
@@ -106,41 +98,90 @@ enum WindowAction: Int {
 
     var displayName: String {
         var key: String
+        var value: String
         
         switch self {
-        case .leftHalf: key = "Left Half"
-        case .rightHalf: key = "Right Half"
-        case .maximize: key = "Maximize"
-        case .maximizeHeight: key = "Maximize Height"
-        case .previousDisplay: key = "Previous Display"
-        case .nextDisplay: key = "Next Display"
-        case .undo: key = "Undo"
-        case .redo: key = "Redo"
-        case .larger: key = "Larger"
-        case .smaller: key = "Smaller"
-        case .bottomHalf: key = "Bottom Half"
-        case .topHalf: key = "Top Half"
-        case .center: key = "Center"
-        case .lowerLeft: key = "Lower Left"
-        case .lowerRight: key = "Lower Right"
-        case .upperLeft: key = "Upper Left"
-        case .upperRight: key = "Upper Right"
-        case .nextThird: key = "Next Third"
-        case .previousThird: key = "Previous Third"
-        case .restore: key = "Restore"
-        case .firstThird: key = "First Third"
-        case .firstTwoThirds: key = "First Two Thirds"
-        case .centerThird: key = "Center Third"
-        case .lastTwoThirds: key = "Last Two Thirds"
-        case .lastThird: key = "Last Third"
-        case .moveLeft: key = "Move Left"
-        case .moveRight: key = "Move Right"
-        case .moveUp: key = "Move Up"
-        case .moveDown: key = "Move Down"
-        case .almostMaximize: key = "Almost Maximize"
+        case .leftHalf:
+            key = "Xc8-Sm-pig.title"
+            value = "Left Half"
+        case .rightHalf:
+            key = "F8S-GI-LiB.title"
+            value = "Right Half"
+        case .maximize:
+            key = "8oe-J2-oUU.title"
+            value = "Maximize"
+        case .maximizeHeight:
+            key = "6DV-cd-fda.title"
+            value = "Maximize Height"
+        case .previousDisplay:
+            key = "QwF-QN-YH7.title"
+            value = "Previous Display"
+        case .nextDisplay:
+            key = "Jnd-Lc-nlh.title"
+            value = "Next Display"
+        case .larger:
+            key = "Eah-KL-kbn.title"
+            value = "Larger"
+        case .smaller:
+            key = "MzN-CJ-ASD.title"
+            value = "Smaller"
+        case .bottomHalf:
+            key = "ec4-FB-fMa.title"
+            value = "Bottom Half"
+        case .topHalf:
+            key = "d7y-s8-7GE.title"
+            value = "Top Half"
+        case .center:
+            key = "8Bg-SZ-hDO.title"
+            value = "Center"
+        case .lowerLeft:
+            key = "6ma-hP-5xX.title"
+            value = "Bottom Left"
+        case .lowerRight:
+            key = "J6t-sg-Wwz.title"
+            value = "Bottom Right"
+        case .upperLeft:
+            key = "adp-cN-qkh.title"
+            value = "Top Left"
+        case .upperRight:
+            key = "0Ak-33-SM7.title"
+            value = "Top Right"
+        case .restore:
+            key = "C9v-g0-DH8.title"
+            value = "Restore"
+        case .firstThird:
+            key = "F12-EV-Lfz.title"
+            value = "First Third"
+        case .firstTwoThirds:
+            key = "3zd-xE-oWl.title"
+            value = "First Two Thirds"
+        case .centerThird:
+            key = "7YK-9Z-lzw.title"
+            value = "Center Third"
+        case .lastTwoThirds:
+            key = "08q-Ce-1QL.title"
+            value = "Last Two Thirds"
+        case .lastThird:
+            key = "cRm-wn-Yv6.title"
+            value = "Last Third"
+        case .moveLeft:
+            key = "v2f-bX-xiM.title"
+            value = "Move Left"
+        case .moveRight:
+            key = "rzr-Qq-702.title"
+            value = "Move Right"
+        case .moveUp:
+            key = "HOm-BV-2jc.title"
+            value = "Move Up"
+        case .moveDown:
+            key = "1Rc-Od-eP5.title"
+            value = "Move Down"
+        case .almostMaximize:
+            key = "e57-QJ-6bL.title"
+            value = "Almost Maximize"
         }
         
-        return NSLocalizedString(key, comment: key)
+        return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
     }
     
     var notificationName: Notification.Name {
@@ -162,8 +203,6 @@ enum WindowAction: Int {
         case .maximizeHeight: return Shortcut( ctrl|alt|shift, kVK_UpArrow )
         case .previousDisplay: return Shortcut( ctrl|alt|cmd, kVK_LeftArrow )
         case .nextDisplay:  return Shortcut( ctrl|alt|cmd, kVK_RightArrow )
-        case .undo: return Shortcut( cmd|alt, kVK_ANSI_Z )
-        case .redo: return Shortcut( cmd|alt|shift, kVK_ANSI_Z )
         case .larger: return Shortcut( ctrl|alt|shift, kVK_RightArrow )
         case .smaller: return Shortcut( ctrl|alt|shift, kVK_LeftArrow )
         case .bottomHalf: return Shortcut( cmd|alt, kVK_DownArrow )
@@ -173,8 +212,6 @@ enum WindowAction: Int {
         case .lowerRight: return Shortcut( cmd|ctrl|shift, kVK_RightArrow )
         case .upperLeft: return Shortcut( ctrl|cmd, kVK_LeftArrow )
         case .upperRight: return Shortcut( ctrl|cmd, kVK_RightArrow )
-        case .nextThird: return Shortcut( ctrl|alt, kVK_RightArrow )
-        case .previousThird: return Shortcut( ctrl|alt, kVK_LeftArrow )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
         default: return nil
         }
@@ -194,13 +231,9 @@ enum WindowAction: Int {
         case .maximizeHeight: return Shortcut( ctrl|alt|shift, kVK_UpArrow )
         case .previousDisplay: return Shortcut( ctrl|alt|cmd, kVK_LeftArrow )
         case .nextDisplay: return Shortcut( ctrl|alt|cmd, kVK_RightArrow )
-        case .undo: return Shortcut( cmd|alt, kVK_Delete )
-        case .redo: return Shortcut( cmd|alt|shift, kVK_Delete )
         case .larger: return Shortcut( ctrl|alt, kVK_ANSI_Equal )
         case .smaller: return Shortcut( ctrl|alt, kVK_ANSI_Minus )
         case .center: return Shortcut( ctrl|alt, kVK_ANSI_C )
-        case .nextThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
-        case .previousThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
         case .firstThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
         case .firstTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_E )

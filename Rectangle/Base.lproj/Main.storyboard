@@ -686,7 +686,7 @@
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <menu id="6wc-Rn-2EG">
                     <items>
-                        <menuItem title="Ignore" id="D99-0O-MB6">
+                        <menuItem title="Ignore &quot;App&quot;" id="D99-0O-MB6">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="ignoreFrontMostApp:" target="Voe-Tx-rLC" id="CTQ-bh-luD"/>

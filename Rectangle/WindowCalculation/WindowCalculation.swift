@@ -83,8 +83,6 @@ class WindowCalculationFactory {
         case .maximizeHeight: return maxHeightCalculation
         case .previousDisplay: return nextPrevDisplayCalculation
         case .nextDisplay: return nextPrevDisplayCalculation
-        case .undo: return maximizeCalculation
-        case .redo: return maximizeCalculation
         case .larger: return changeSizeCalculation
         case .smaller: return changeSizeCalculation
         case .bottomHalf: return bottomHalfCalculation

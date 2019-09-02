@@ -15,7 +15,6 @@
 		9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */; };
 		9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */; };
 		9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */; };
-		9821402F22B389B600ABFB3F /* NextPrevThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */; };
 		9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */; };
 		9821403322B38A1B00ABFB3F /* UpperLeftCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */; };
 		9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */; };
@@ -103,7 +102,6 @@
 		9821402622B3888100ABFB3F /* ChangeSizeCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSizeCalculation.swift; sourceTree = "<group>"; };
 		9821402822B3889100ABFB3F /* LowerLeftCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerLeftCalculation.swift; sourceTree = "<group>"; };
 		9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowerRightCalculation.swift; sourceTree = "<group>"; };
-		9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevThirdsCalculation.swift; sourceTree = "<group>"; };
 		9821403022B38A0500ABFB3F /* TopHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopHalfCalculation.swift; sourceTree = "<group>"; };
 		9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperLeftCalculation.swift; sourceTree = "<group>"; };
 		9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpperRightCalculation.swift; sourceTree = "<group>"; };
@@ -267,7 +265,6 @@
 				9821402A22B388A000ABFB3F /* LowerRightCalculation.swift */,
 				9821403222B38A1B00ABFB3F /* UpperLeftCalculation.swift */,
 				9821403422B38A2B00ABFB3F /* UpperRightCalculation.swift */,
-				9821402E22B389B600ABFB3F /* NextPrevThirdsCalculation.swift */,
 				9821403622B3D16700ABFB3F /* MaximizeHeightCalculation.swift */,
 				988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */,
 				988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */,
@@ -687,7 +684,6 @@
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
 				98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
-				9821402F22B389B600ABFB3F /* NextPrevThirdsCalculation.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
 				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
