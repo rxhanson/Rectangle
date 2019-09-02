@@ -12,8 +12,8 @@ class NextPrevDisplayCalculation: WindowCalculation {
     
     let centerCalculation = CenterCalculation()
     
-    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
-        
+    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+
         var screen: NSScreen?
         
         if action == .nextDisplay {

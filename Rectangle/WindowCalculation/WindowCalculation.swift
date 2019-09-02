@@ -69,8 +69,7 @@ class WindowCalculationFactory {
     let centerThirdCalculation = CenterThirdCalculation()
     let lastTwoThirdsCalculation = LastTwoThirdsCalculation()
     let lastThirdCalculation = LastThirdCalculation()
-    let moveLeftCalculation = MoveLeftCalculation()
-    let moveRightCalculation = MoveRightCalculation()
+    let moveLeftRightCalculation = MoveLeftRightCalculation()
     let moveUpCalculation = MoveUpCalculation()
     let moveDownCalculation = MoveDownCalculation()
     let almostMaximizeCalculation = AlmostMaximizeCalculation()
@@ -98,8 +97,8 @@ class WindowCalculationFactory {
         case .centerThird: return centerThirdCalculation
         case .lastTwoThirds: return lastTwoThirdsCalculation
         case .lastThird: return lastThirdCalculation
-        case .moveLeft: return moveLeftCalculation
-        case .moveRight: return moveRightCalculation
+        case .moveLeft: return moveLeftRightCalculation
+        case .moveRight: return moveLeftRightCalculation
         case .moveUp: return moveUpCalculation
         case .moveDown: return moveDownCalculation
         case .almostMaximize: return almostMaximizeCalculation
