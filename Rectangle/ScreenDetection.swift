@@ -86,18 +86,6 @@ class ScreenDetection {
         return nil
     }
 
-    func nextOrPreviousScreen(toFrameOfScreen frameOfScreen: CGRect, inDirectionOf action: WindowAction, screens: [NSScreen]) -> NSScreen? {
-        
-        guard let adjacentScreens = adjacent(toFrameOfScreen: frameOfScreen, screens: screens) else { return nil }
-        switch action {
-        case .previousDisplay:
-            return adjacentScreens.prev
-        case .nextDisplay:
-            return adjacentScreens.next
-        default: return nil
-        }
-    }
-
     func order(screens: [NSScreen]) -> [NSScreen] {
         let sortedByY = screens.sorted(by: { screen1, screen2 in
             return screen1.frame.origin.y < screen2.frame.origin.y

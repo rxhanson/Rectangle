@@ -8,7 +8,9 @@
 
 import Cocoa
 
-class NextPrevDisplayCalculation: CenterCalculation {
+class NextPrevDisplayCalculation: WindowCalculation {
+    
+    let centerCalculation = CenterCalculation()
     
     func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
@@ -29,4 +31,8 @@ class NextPrevDisplayCalculation: CenterCalculation {
         return nil
     }
     
+    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+        
+        return centerCalculation.calculateRect(windowRect, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+    }
 }
