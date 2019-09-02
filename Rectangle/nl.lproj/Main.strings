@@ -411,7 +411,7 @@
 "i1d-Er-qST.title" = "Kleiner";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences → Security & Privacy →\n Privacy → Accessibility"; ObjectID = "iWV-c2-BJD"; */
-"iWV-c2-BJD.title" = "Open Systeem Voorkeuren → Beveiliging & Privacy →\n Privacy → Toegankelijkheid";
+"iWV-c2-BJD.title" = "Open Systeem Voorkeuren →\n Beveiliging & Privacy →\n Privacy → Toegankelijkheid";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
 "iXo-XL-T6q.title" = "Machtigen Rectangle";

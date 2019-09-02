@@ -411,7 +411,7 @@
 "i1d-Er-qST.title" = "Меньше";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences → Security & Privacy →\n Privacy → Accessibility"; ObjectID = "iWV-c2-BJD"; */
-"iWV-c2-BJD.title" = "Параметры открытой системы → Безопасность и конфиденциальность →\n Конфиденциальность → Доступность";
+"iWV-c2-BJD.title" = "Параметры открытой системы →\n Безопасность и конфиденциальность →\n Конфиденциальность → Доступность";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
 "iXo-XL-T6q.title" = "Разрешить Rectangle";
