@@ -10,96 +10,99 @@ import Cocoa
 
 class LeftRightHalfCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         if action == .leftHalf {
-            return calculateLeft(windowRect, screen: usableScreens.currentScreen, usableScreens: usableScreens)
+            return calculateLeft(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
         } else if action == .rightHalf {
-            return calculateRight(windowRect, screen: usableScreens.currentScreen, usableScreens: usableScreens)
+            return calculateRight(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
         }
         
         return nil
     }
     
-    func calculateLeft(_ windowRect: CGRect, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
+    func calculateLeft(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
         var oneHalfRect = screen.visibleFrame
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
         
-        if abs(windowRect.midY - oneHalfRect.midY) > 1.0 {
-            return WindowCalculationResult(rect: oneHalfRect, screen: screen)
-        }
-        
-        if Defaults.subsequentExecutionMode.value == .resize {
+        if Defaults.subsequentExecutionMode.value == .acrossMonitor {
+            
+            if let lastAction = lastAction, lastAction.action == .leftHalf {
+                let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
+                if normalizedLastRect == windowRect {
+                    if let prevScreen = usableScreens.adjacentScreens?.prev {
+                        return calculateRight(windowRect, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
+                    }
+                }
+            }
+            
+        } else if Defaults.subsequentExecutionMode.value == .resize {
+            
+            if abs(windowRect.midY - oneHalfRect.midY) > 1.0 {
+                return WindowCalculationResult(rect: oneHalfRect, screen: screen, resultingAction: .leftHalf)
+            }
             
             var twoThirdsRect = oneHalfRect
             twoThirdsRect.size.width = floor(screen.visibleFrame.width * 2 / 3.0)
             
             if rectCenteredWithinRect(oneHalfRect, windowRect) {
-                return WindowCalculationResult(rect: twoThirdsRect, screen: screen)
+                return WindowCalculationResult(rect: twoThirdsRect, screen: screen, resultingAction: .leftHalf)
             }
             
             if rectCenteredWithinRect(twoThirdsRect, windowRect) {
                 var oneThirdRect = oneHalfRect
                 oneThirdRect.size.width = floor(screen.visibleFrame.width / 3.0)
-                return WindowCalculationResult(rect: oneThirdRect, screen: screen)
+                return WindowCalculationResult(rect: oneThirdRect, screen: screen, resultingAction: .leftHalf)
             }
             
-        } else if Defaults.subsequentExecutionMode.value == .acrossMonitor {
-            
-            if rectCenteredWithinRect(oneHalfRect, windowRect) {
-                if let prevScreen = usableScreens.adjacentScreens?.prev {
-                    return calculateRight(windowRect, screen: prevScreen, usableScreens: usableScreens)
-                } else {
-                    return nil
-                }
-            }
         }
         
-        return WindowCalculationResult(rect: oneHalfRect, screen: screen)
+        return WindowCalculationResult(rect: oneHalfRect, screen: screen, resultingAction: .leftHalf)
     }
     
     
-    func calculateRight(_ windowRect: CGRect, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
+    func calculateRight(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
         var oneHalfRect = screen.visibleFrame
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
         oneHalfRect.origin.x += oneHalfRect.size.width
         
-        if abs(windowRect.midY - oneHalfRect.midY) > 1.0 {
-            return WindowCalculationResult(rect: oneHalfRect, screen: screen)
-        }
-        
-        if Defaults.subsequentExecutionMode.value == .resize {
+        if Defaults.subsequentExecutionMode.value == .acrossMonitor {
+            
+            if let lastAction = lastAction, lastAction.action == .rightHalf {
+                let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
+                if normalizedLastRect == windowRect {
+                    if let prevScreen = usableScreens.adjacentScreens?.prev {
+                        return calculateLeft(windowRect, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
+                    }
+                }
+            }
+
+            
+        } else if Defaults.subsequentExecutionMode.value == .resize {
+            
+            if abs(windowRect.midY - oneHalfRect.midY) > 1.0 {
+                return WindowCalculationResult(rect: oneHalfRect, screen: screen, resultingAction: .rightHalf)
+            }
             
             var twoThirdsRect = screen.visibleFrame
             twoThirdsRect.size.width = floor(screen.visibleFrame.width * 2 / 3.0)
             twoThirdsRect.origin.x = screen.visibleFrame.minX + screen.visibleFrame.width - twoThirdsRect.width
             
             if rectCenteredWithinRect(oneHalfRect, windowRect) {
-                return WindowCalculationResult(rect: twoThirdsRect, screen: screen)
+                return WindowCalculationResult(rect: twoThirdsRect, screen: screen, resultingAction: .rightHalf)
             }
             
             if rectCenteredWithinRect(twoThirdsRect, windowRect) {
                 var oneThirdRect = screen.visibleFrame
                 oneThirdRect.size.width = floor(screen.visibleFrame.width / 3.0)
                 oneThirdRect.origin.x = screen.visibleFrame.origin.x + screen.visibleFrame.width - oneThirdRect.width
-                return WindowCalculationResult(rect: oneThirdRect, screen: screen)
+                return WindowCalculationResult(rect: oneThirdRect, screen: screen, resultingAction: .rightHalf)
             }
-            
-        } else if Defaults.subsequentExecutionMode.value == .acrossMonitor {
-            
-            if rectCenteredWithinRect(oneHalfRect, windowRect) {
-                if let nextScreen = usableScreens.adjacentScreens?.next {
-                    return calculateLeft(windowRect, screen: nextScreen, usableScreens: usableScreens)
-                } else {
-                    return nil
-                }
-            }
-            
         }
         
-        return WindowCalculationResult(rect: oneHalfRect, screen: screen)
+        return WindowCalculationResult(rect: oneHalfRect, screen: screen, resultingAction: .rightHalf)
     }
 
     // unused

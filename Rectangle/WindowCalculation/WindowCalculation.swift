@@ -10,18 +10,18 @@ import Cocoa
 
 protocol WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
+    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
     
     func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect?
 }
 
 extension WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         if let rect = calculateRect(windowRect, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action) {
             
-            return WindowCalculationResult(rect: rect, screen: usableScreens.currentScreen)
+            return WindowCalculationResult(rect: rect, screen: usableScreens.currentScreen, resultingAction: action)
         }
         
         return nil
@@ -46,6 +46,7 @@ extension WindowCalculation {
 struct WindowCalculationResult {
     let rect: CGRect
     let screen: NSScreen
+    let resultingAction: WindowAction
 }
 
 class WindowCalculationFactory {

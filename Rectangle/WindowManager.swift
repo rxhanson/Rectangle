@@ -16,12 +16,12 @@ class WindowManager {
     private let windowCalculationFactory = WindowCalculationFactory()
     
     private var restoreRects = [appBundleId: CGRect]() // the last window frame that the user positioned
-    private var lastRectangleRects = [appBundleId: CGRect]() // the last window frame that this app positioned
+    private var lastRectangleActions = [appBundleId: RectangleAction]() // the last window frame that this app positioned
     
     init() {
         windowMoverChain = [
             StandardWindowMover(),
-//            QuantizedWindowMover(),
+            // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
             BestEffortWindowMover()
         ]
     }
@@ -38,7 +38,7 @@ class WindowManager {
             if let restoreRect = restoreRects[frontmostAppBundleId] {
                 frontmostWindowElement.setRectOf(restoreRect)
             }
-            lastRectangleRects.removeValue(forKey: frontmostAppBundleId)
+            lastRectangleActions.removeValue(forKey: frontmostAppBundleId)
             return
         }
         
@@ -49,8 +49,10 @@ class WindowManager {
         
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
         
+        let lastRectangleAction = lastRectangleActions[frontmostAppBundleId]
+        
         if restoreRects[frontmostAppBundleId] == nil
-            || currentWindowRect != lastRectangleRects[frontmostAppBundleId] {
+            || currentWindowRect != lastRectangleAction?.rect {
             restoreRects[frontmostAppBundleId] = currentWindowRect
         }
         
@@ -67,7 +69,7 @@ class WindowManager {
         
         let windowCalculation = windowCalculationFactory.calculation(for: action)
 
-        guard let calcResult = windowCalculation?.calculate(currentNormalizedRect, usableScreens: usableScreens, action: action) else {
+        guard let calcResult = windowCalculation?.calculate(currentNormalizedRect, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
             NSSound.beep()
             return
         }
@@ -86,6 +88,11 @@ class WindowManager {
         }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
-        lastRectangleRects[frontmostAppBundleId] = resultingRect
+        lastRectangleActions[frontmostAppBundleId] = RectangleAction(action: calcResult.resultingAction, rect: resultingRect)
     }
+}
+
+struct RectangleAction {
+    let action: WindowAction
+    let rect: CGRect
 }

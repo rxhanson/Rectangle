@@ -24,7 +24,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
 
         if let screen = screen {
             if let rect = calculateRect(windowRect, visibleFrameOfScreen: NSRectToCGRect(screen.visibleFrame), action: action) {
-                return WindowCalculationResult(rect: rect, screen: screen)
+                return WindowCalculationResult(rect: rect, screen: screen, resultingAction: action)
             }
         }
         
