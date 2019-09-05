@@ -18,18 +18,18 @@ class SnappingManager {
     var previousWindowRect: CGRect?
     var currentHotSpot: HotSpot?
     
-    let box: NSWindow
+    var box: NSWindow
     
     let screenDetection = ScreenDetection()
     
     init(windowCalculationFactory: WindowCalculationFactory) {
         self.windowCalculationFactory = windowCalculationFactory
         
-        let initialRect = NSRect(x: 0, y: 0, width: 10, height: 10)
-        box = NSWindow(contentRect: initialRect, styleMask: .borderless, backing: .buffered, defer: false)
-        box.backgroundColor = .blue
-        box.isReleasedWhenClosed = false
-        
+        let initialBoxRect = NSRect(x: 0, y: 0, width: 0, height: 0)
+        box = NSWindow(contentRect: initialBoxRect, styleMask: .borderless, backing: .buffered, defer: false)
+
+        initializeBox()
+
         eventMonitor = EventMonitor(mask: [.leftMouseUp, .leftMouseDragged]) { event in
             guard let event = event else { return }
             switch event.type {
@@ -37,7 +37,7 @@ class SnappingManager {
                 self.frontmostWindow = nil
                 self.windowMoving = false
                 self.previousWindowRect = nil
-//                print(event.locationInWindow)
+
             case .leftMouseDragged:
                 if self.frontmostWindow == nil {
                     self.frontmostWindow = AccessibilityElement.frontmostWindow()
@@ -59,7 +59,6 @@ class SnappingManager {
                         if let newBoxRect = self.getBoxRect(hotSpot: newHotSpot, currentWindowRect: currentRect) {
                             self.box.setFrame(newBoxRect, display: true)
                             self.box.makeKeyAndOrderFront(nil)
-                            print(newBoxRect)
                         }
                         
                         self.currentHotSpot = newHotSpot
@@ -77,6 +76,22 @@ class SnappingManager {
         }
         
         eventMonitor?.start()
+    }
+    
+    private func initializeBox() {
+        box.backgroundColor = .clear
+        box.isOpaque = false
+        box.level = .modalPanel
+        box.hasShadow = false
+        box.isReleasedWhenClosed = false
+        
+        let boxView = NSBox()
+        boxView.boxType = .custom
+        boxView.borderType = .noBorder
+        boxView.cornerRadius = 5
+        boxView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.3).cgColor
+        
+        box.contentView = boxView
     }
     
     func getBoxRect(hotSpot: HotSpot, currentWindowRect: CGRect) -> CGRect? {
