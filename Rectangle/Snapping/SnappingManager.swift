@@ -15,7 +15,7 @@ class SnappingManager {
     var eventMonitor: EventMonitor?
     var frontmostWindow: AccessibilityElement?
     var windowMoving: Bool = false
-    var previousWindowRect: CGRect?
+    var initialWindowRect: CGRect?
     var currentHotSpot: HotSpot?
     
     var box: NSWindow
@@ -30,23 +30,29 @@ class SnappingManager {
 
         initializeBox()
 
-        eventMonitor = EventMonitor(mask: [.leftMouseUp, .leftMouseDragged]) { event in
+        eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged]) { event in
             guard let event = event else { return }
             switch event.type {
+            case .leftMouseDown:
+                self.frontmostWindow = AccessibilityElement.frontmostWindow()
+                self.initialWindowRect = self.frontmostWindow?.rectOfElement()
             case .leftMouseUp:
                 self.frontmostWindow = nil
                 self.windowMoving = false
-                self.previousWindowRect = nil
-            case .leftMouseDragged:
-                if self.frontmostWindow == nil {
-                    self.frontmostWindow = AccessibilityElement.frontmostWindow()
+                self.initialWindowRect = nil
+                if self.currentHotSpot != nil {
+                    self.box.close()
+                    self.currentHotSpot?.type.action.post()
+                    self.currentHotSpot = nil
                 }
+            case .leftMouseDragged:
                 guard let currentRect = self.frontmostWindow?.rectOfElement() else {
                     return
                 }
                 if !self.windowMoving {
-                    if currentRect.size == self.previousWindowRect?.size && currentRect.origin != self.previousWindowRect?.origin {
+                    if currentRect.size == self.initialWindowRect?.size && currentRect.origin != self.initialWindowRect?.origin {
                         self.windowMoving = true
+//                        WindowAction.restore.post()
                     }
                 }
                 if self.windowMoving {
@@ -68,7 +74,6 @@ class SnappingManager {
                         }
                     }
                 }
-                self.previousWindowRect = currentRect
             default:
                 return
             }
@@ -79,6 +84,7 @@ class SnappingManager {
     
     // Make the box semi-opaque with a border and rouned corners
     private func initializeBox() {
+        box.title = "Rectangle"
         box.backgroundColor = .clear
         box.isOpaque = false
         box.level = .modalPanel
