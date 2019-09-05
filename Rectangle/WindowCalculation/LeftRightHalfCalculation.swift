@@ -105,8 +105,20 @@ class LeftRightHalfCalculation: WindowCalculation {
         return WindowCalculationResult(rect: oneHalfRect, screen: screen, resultingAction: .rightHalf)
     }
 
-    // unused
+    // Used to draw box for snapping
     func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
-        return nil
+        switch action {
+        case .leftHalf:
+            var oneHalfRect = visibleFrameOfScreen
+            oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
+            return oneHalfRect
+        case .rightHalf:
+            var oneHalfRect = visibleFrameOfScreen
+            oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
+            oneHalfRect.origin.x += oneHalfRect.size.width
+            return oneHalfRect
+        default:
+            return nil
+        }
     }
 }

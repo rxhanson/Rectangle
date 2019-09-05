@@ -10,7 +10,7 @@ import Cocoa
 
 class ScreenDetection {
 
-    func detectScreens(for action: WindowAction, using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
+    func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
         let screens = NSScreen.screens
         guard let firstScreen = screens.first else { return nil }
         

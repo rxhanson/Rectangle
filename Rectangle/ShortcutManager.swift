@@ -11,11 +11,12 @@ import MASShortcut
 
 class ShortcutManager {
     
-    let windowManager = WindowManager()
+    let windowManager: WindowManager
     let applicationToggle: ApplicationToggle
     
-    init(applicationToggle: ApplicationToggle) {
+    init(applicationToggle: ApplicationToggle, windowManager: WindowManager) {
         self.applicationToggle = applicationToggle
+        self.windowManager = windowManager
         
         registerDefaults()
 

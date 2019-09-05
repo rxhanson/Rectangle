@@ -17,7 +17,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
     private let applicationToggle = ApplicationToggle()
+    
     private let shortcutManager: ShortcutManager
+    private let windowManager: WindowManager
+    private let windowCalculationFactory: WindowCalculationFactory
+    private let snappingManager: SnappingManager
     
     private let sparkleUpdater = SUUpdater()
     
@@ -28,7 +32,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     
     override init() {
-        self.shortcutManager = ShortcutManager(applicationToggle: applicationToggle)
+        self.windowCalculationFactory = WindowCalculationFactory()
+        self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory)
+        self.shortcutManager = ShortcutManager(applicationToggle: applicationToggle, windowManager: windowManager)
+        self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory)
         super.init()
     }
     

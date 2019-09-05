@@ -13,12 +13,13 @@ class WindowManager {
 
     private let screenDetection = ScreenDetection()
     private let windowMoverChain: [WindowMover]
-    private let windowCalculationFactory = WindowCalculationFactory()
+    private let windowCalculationFactory: WindowCalculationFactory
     
     private var restoreRects = [appBundleId: CGRect]() // the last window frame that the user positioned
     private var lastRectangleActions = [appBundleId: RectangleAction]() // the last window frame that this app positioned
     
-    init() {
+    init(windowCalculationFactory: WindowCalculationFactory) {
+        self.windowCalculationFactory = windowCalculationFactory
         windowMoverChain = [
             StandardWindowMover(),
             // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
@@ -42,7 +43,7 @@ class WindowManager {
             return
         }
         
-        guard let usableScreens = screenDetection.detectScreens(for: action, using: frontmostWindowElement) else {
+        guard let usableScreens = screenDetection.detectScreens(using: frontmostWindowElement) else {
             NSSound.beep()
             return
         }
