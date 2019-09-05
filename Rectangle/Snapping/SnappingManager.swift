@@ -25,8 +25,8 @@ class SnappingManager {
     init(windowCalculationFactory: WindowCalculationFactory) {
         self.windowCalculationFactory = windowCalculationFactory
         
-        let initialBoxRect = NSRect(x: 0, y: 0, width: 0, height: 0)
-        box = NSWindow(contentRect: initialBoxRect, styleMask: .borderless, backing: .buffered, defer: false)
+        let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
+        box = NSWindow(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
 
         initializeBox()
 
@@ -37,7 +37,6 @@ class SnappingManager {
                 self.frontmostWindow = nil
                 self.windowMoving = false
                 self.previousWindowRect = nil
-
             case .leftMouseDragged:
                 if self.frontmostWindow == nil {
                     self.frontmostWindow = AccessibilityElement.frontmostWindow()
@@ -78,17 +77,30 @@ class SnappingManager {
         eventMonitor?.start()
     }
     
+    // Make the box semi-opaque with a border and rouned corners
     private func initializeBox() {
         box.backgroundColor = .clear
         box.isOpaque = false
         box.level = .modalPanel
         box.hasShadow = false
         box.isReleasedWhenClosed = false
+  
+        box.styleMask.insert(.fullSizeContentView)
+        box.titleVisibility = .hidden
+        box.titlebarAppearsTransparent = true
+        box.collectionBehavior.insert(.transient)
+        box.standardWindowButton(.closeButton)?.isHidden = true
+        box.standardWindowButton(.miniaturizeButton)?.isHidden = true
+        box.standardWindowButton(.zoomButton)?.isHidden = true
+        box.standardWindowButton(.toolbarButton)?.isHidden = true
         
         let boxView = NSBox()
         boxView.boxType = .custom
-        boxView.borderType = .noBorder
+        boxView.borderColor = .lightGray
+        boxView.borderType = .lineBorder
+        boxView.borderWidth = 0.5
         boxView.cornerRadius = 5
+        boxView.wantsLayer = true
         boxView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.3).cgColor
         
         box.contentView = boxView
