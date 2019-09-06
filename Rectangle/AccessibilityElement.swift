@@ -81,6 +81,41 @@ class AccessibilityElement {
         return value(for: .subrole) == kAXSystemDialogSubrole
     }
     
+    func getIdentifier() -> Int? {
+        if let windowInfo = CGWindowListCopyWindowInfo(.optionOnScreenOnly, 0) as? Array<Dictionary<String,Any>> {
+            let pid = getPid()
+            let rect = rectOfElement()
+            
+            let windowsOfSameApp = windowInfo.filter { (infoDict) -> Bool in
+                infoDict[kCGWindowOwnerPID as String] as? pid_t == pid
+            }
+            
+            let matchingWindows = windowsOfSameApp.filter { (infoDict) -> Bool in
+                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
+                    if bounds["X"] == rect.origin.x
+                        && bounds["Y"] == rect.origin.y
+                        && bounds["Height"] == rect.height
+                        && bounds["Width"] == rect.width {
+                        return true
+                    }
+                }
+                return false
+            }
+            
+            // Take the first match because there's no real way to guarantee which window we're actually getting
+            if let firstMatch = matchingWindows.first {
+                return firstMatch[kCGWindowNumber as String] as? Int
+            }
+        }
+        return nil
+    }
+    
+    func getPid() -> pid_t {
+        var pid: pid_t = 0;
+        AXUIElementGetPid(self.underlyingElement, &pid);
+        return pid
+    }
+    
     private func getPosition() -> CGPoint? {
         return self.value(for: .position)
     }

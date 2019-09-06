@@ -9,14 +9,14 @@
 import Cocoa
 
 class WindowManager {
-    typealias appBundleId = String
+    typealias WindowId = Int
 
     private let screenDetection = ScreenDetection()
     private let windowMoverChain: [WindowMover]
     private let windowCalculationFactory: WindowCalculationFactory
     
-    private var restoreRects = [appBundleId: CGRect]() // the last window frame that the user positioned
-    private var lastRectangleActions = [appBundleId: RectangleAction]() // the last window frame that this app positioned
+    private var restoreRects = [WindowId: CGRect]() // the last window frame that the user positioned
+    private var lastRectangleActions = [WindowId: RectangleAction]() // the last window frame that this app positioned
     
     init(windowCalculationFactory: WindowCalculationFactory) {
         self.windowCalculationFactory = windowCalculationFactory
@@ -29,17 +29,17 @@ class WindowManager {
     
     func execute(_ action: WindowAction) {
         guard let frontmostWindowElement = AccessibilityElement.frontmostWindow(),
-            let frontmostAppBundleId = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+            let windowId = frontmostWindowElement.getIdentifier()
         else {
             NSSound.beep()
             return
         }
         
         if action == .restore {
-            if let restoreRect = restoreRects[frontmostAppBundleId] {
+            if let restoreRect = restoreRects[windowId] {
                 frontmostWindowElement.setRectOf(restoreRect)
             }
-            lastRectangleActions.removeValue(forKey: frontmostAppBundleId)
+            lastRectangleActions.removeValue(forKey: windowId)
             return
         }
         
@@ -50,11 +50,11 @@ class WindowManager {
         
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
         
-        let lastRectangleAction = lastRectangleActions[frontmostAppBundleId]
+        let lastRectangleAction = lastRectangleActions[windowId]
         
-        if restoreRects[frontmostAppBundleId] == nil
+        if restoreRects[windowId] == nil
             || currentWindowRect != lastRectangleAction?.rect {
-            restoreRects[frontmostAppBundleId] = currentWindowRect
+            restoreRects[windowId] = currentWindowRect
         }
         
         if frontmostWindowElement.isSheet()
@@ -89,7 +89,7 @@ class WindowManager {
         }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
-        lastRectangleActions[frontmostAppBundleId] = RectangleAction(action: calcResult.resultingAction, rect: resultingRect)
+        lastRectangleActions[windowId] = RectangleAction(action: calcResult.resultingAction, rect: resultingRect)
     }
 }
 
