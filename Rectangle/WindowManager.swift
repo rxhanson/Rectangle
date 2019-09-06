@@ -9,17 +9,15 @@
 import Cocoa
 
 class WindowManager {
-    typealias WindowId = Int
 
     private let screenDetection = ScreenDetection()
     private let windowMoverChain: [WindowMover]
     private let windowCalculationFactory: WindowCalculationFactory
+    private let windowHistory: WindowHistory
     
-    private var restoreRects = [WindowId: CGRect]() // the last window frame that the user positioned
-    private var lastRectangleActions = [WindowId: RectangleAction]() // the last window frame that this app positioned
-    
-    init(windowCalculationFactory: WindowCalculationFactory) {
+    init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
+        self.windowHistory = windowHistory
         windowMoverChain = [
             StandardWindowMover(),
             // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
@@ -27,7 +25,7 @@ class WindowManager {
         ]
     }
     
-    func execute(_ action: WindowAction) {
+    func execute(_ parameters: ExecutionParameters) {
         guard let frontmostWindowElement = AccessibilityElement.frontmostWindow(),
             let windowId = frontmostWindowElement.getIdentifier()
         else {
@@ -35,11 +33,13 @@ class WindowManager {
             return
         }
         
+        let action = parameters.action
+        
         if action == .restore {
-            if let restoreRect = restoreRects[windowId] {
+            if let restoreRect = windowHistory.restoreRects[windowId] {
                 frontmostWindowElement.setRectOf(restoreRect)
             }
-            lastRectangleActions.removeValue(forKey: windowId)
+            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             return
         }
         
@@ -50,11 +50,13 @@ class WindowManager {
         
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
         
-        let lastRectangleAction = lastRectangleActions[windowId]
+        let lastRectangleAction = windowHistory.lastRectangleActions[windowId]
         
-        if restoreRects[windowId] == nil
-            || currentWindowRect != lastRectangleAction?.rect {
-            restoreRects[windowId] = currentWindowRect
+        if parameters.updateRestoreRect {
+            if windowHistory.restoreRects[windowId] == nil
+                || currentWindowRect != lastRectangleAction?.rect {
+                windowHistory.restoreRects[windowId] = currentWindowRect
+            }
         }
         
         if frontmostWindowElement.isSheet()
@@ -89,11 +91,21 @@ class WindowManager {
         }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
-        lastRectangleActions[windowId] = RectangleAction(action: calcResult.resultingAction, rect: resultingRect)
+        windowHistory.lastRectangleActions[windowId] = RectangleAction(action: calcResult.resultingAction, rect: resultingRect)
     }
 }
 
 struct RectangleAction {
     let action: WindowAction
     let rect: CGRect
+}
+
+struct ExecutionParameters {
+    let action: WindowAction
+    let updateRestoreRect: Bool
+    
+    init(_ action: WindowAction, updateRestoreRect: Bool = true) {
+        self.action = action
+        self.updateRestoreRect = updateRestoreRect
+    }
 }

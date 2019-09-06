@@ -51,9 +51,9 @@ class ShortcutManager {
     }
     
     @objc func windowActionTriggered(notification: NSNotification) {
-        guard let windowAction = notification.object as? WindowAction else { return }
+        guard let parameters = notification.object as? ExecutionParameters else { return }
         if !applicationToggle.disabledForApp {
-            windowManager.execute(windowAction)            
+            windowManager.execute(parameters)            
         }
     }
     

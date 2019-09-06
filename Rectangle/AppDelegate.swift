@@ -17,6 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
     private let applicationToggle = ApplicationToggle()
+    private let windowHistory = WindowHistory()
     
     private let shortcutManager: ShortcutManager
     private let windowManager: WindowManager
@@ -33,9 +34,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     override init() {
         self.windowCalculationFactory = WindowCalculationFactory()
-        self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory)
+        self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
         self.shortcutManager = ShortcutManager(applicationToggle: applicationToggle, windowManager: windowManager)
-        self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory)
+        self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
         super.init()
     }
     

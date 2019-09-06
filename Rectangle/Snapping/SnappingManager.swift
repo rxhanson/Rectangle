@@ -11,6 +11,7 @@ import Cocoa
 class SnappingManager {
 
     let windowCalculationFactory: WindowCalculationFactory
+    let windowHistory: WindowHistory
     
     var eventMonitor: EventMonitor?
     var frontmostWindow: AccessibilityElement?
@@ -22,8 +23,9 @@ class SnappingManager {
     
     let screenDetection = ScreenDetection()
     
-    init(windowCalculationFactory: WindowCalculationFactory) {
+    init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
+        self.windowHistory = windowHistory
         
         let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
         box = NSWindow(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
@@ -42,7 +44,7 @@ class SnappingManager {
                 self.initialWindowRect = nil
                 if self.currentHotSpot != nil {
                     self.box.close()
-                    self.currentHotSpot?.type.action.post()
+                    self.currentHotSpot?.type.action.postSnap()
                     self.currentHotSpot = nil
                 }
             case .leftMouseDragged:
@@ -52,6 +54,11 @@ class SnappingManager {
                 if !self.windowMoving {
                     if currentRect.size == self.initialWindowRect?.size && currentRect.origin != self.initialWindowRect?.origin {
                         self.windowMoving = true
+                        
+                        // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
+                        // else record history
+                        
+                        
 //                        WindowAction.restore.post()
                     }
                 }

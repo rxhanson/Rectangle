@@ -52,7 +52,11 @@ enum WindowAction: Int {
                          moveLeft, moveRight, moveUp, moveDown]
     
     func post() {
-        NotificationCenter.default.post(name: notificationName, object: self)
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
+    }
+    
+    func postSnap() {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false))
     }
     
     // Determines where separators should be used in the menu
