@@ -1715,15 +1715,15 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsViewController" id="yhc-gS-h02" customClass="SettingsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mTk-eQ-4uf">
-                        <rect key="frame" x="0.0" y="0.0" width="490" height="229"/>
+                        <rect key="frame" x="0.0" y="0.0" width="490" height="253"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tUi-Ja-evb">
-                                <rect key="frame" x="20" y="61" width="450" height="148"/>
+                                <rect key="frame" x="20" y="61" width="450" height="172"/>
                                 <subviews>
                                     <button verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="eQJ-O3-a8H">
-                                        <rect key="frame" x="-2" y="132" width="454" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Launch on Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="e9j-DR-MEH">
+                                        <rect key="frame" x="-2" y="156" width="454" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Launch on login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="e9j-DR-MEH">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -1731,9 +1731,19 @@
                                             <action selector="toggleLaunchOnLogin:" target="yhc-gS-h02" id="ySg-6C-AGY"/>
                                         </connections>
                                     </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
+                                        <rect key="frame" x="-2" y="132" width="454" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="toggleWindowSnapping:" target="yhc-gS-h02" id="SJi-mm-vwm"/>
+                                        </connections>
+                                    </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wBT-R4-q9s">
                                         <rect key="frame" x="-2" y="108" width="454" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Hide Menu Bar Icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="qlg-kC-FMr">
+                                        <buttonCell key="cell" type="check" title="Hide menu bar icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="qlg-kC-FMr">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -1785,12 +1795,14 @@
                                 <visibilityPriorities>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                     <real value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -1825,6 +1837,7 @@
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
                         <outlet property="launchOnLoginCheckbox" destination="eQJ-O3-a8H" id="iF3-bq-l1j"/>
                         <outlet property="subsequentExecutionCheckbox" destination="95T-Ls-2ah" id="mhe-zK-Tja"/>
+                        <outlet property="windowSnappingCheckbox" destination="3wO-pf-nsb" id="00K-AW-LYi"/>
                     </connections>
                 </viewController>
                 <customObject id="c9e-yT-Dp7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

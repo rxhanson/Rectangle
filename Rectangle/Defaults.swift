@@ -15,6 +15,7 @@ class Defaults {
     static let alternateDefaultShortcuts = BoolDefault(key: "alternateDefaultShortcuts") // switch to magnet defaults
     static let subsequentExecutionMode = SubsequentExecutionDefault()
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
+    static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
 }
 
 class BoolDefault {
@@ -32,6 +33,36 @@ class BoolDefault {
     init(key: String) {
         self.key = key
         enabled = UserDefaults.standard.bool(forKey: key)
+        initialized = true
+    }
+}
+
+class OptionalBoolDefault {
+    private let key: String
+    private var initialized = false
+    
+    var enabled: Bool? {
+        didSet {
+            if initialized {
+                if enabled == true {
+                    UserDefaults.standard.set(1, forKey: key)
+                } else if enabled == false {
+                    UserDefaults.standard.set(2, forKey: key)
+                } else {
+                    UserDefaults.standard.set(0, forKey: key)
+                }
+            }
+        }
+    }
+    
+    init(key: String) {
+        self.key = key
+        let intValue = UserDefaults.standard.integer(forKey: key)
+        switch intValue {
+        case 1: enabled = true
+        case 2: enabled = false
+        default: break
+        }
         initialized = true
     }
 }

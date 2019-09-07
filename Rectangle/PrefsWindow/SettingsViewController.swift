@@ -12,8 +12,10 @@ import ServiceManagement
 class SettingsViewController: NSViewController {
     
     static let allowAnyShortcutNotificationName = Notification.Name("allowAnyShortcutToggle")
+    static let windowSnappingNotificationName = Notification.Name("windowSnappingToggle")
     
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
+    @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
     @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
@@ -22,6 +24,12 @@ class SettingsViewController: NSViewController {
         let newSetting: Bool = sender.state == .on
         SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
         Defaults.launchOnLogin.enabled = newSetting
+    }
+    
+    @IBAction func toggleWindowSnapping(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.windowSnapping.enabled = newSetting
+        NotificationCenter.default.post(name: SettingsViewController.windowSnappingNotificationName, object: newSetting)
     }
     
     @IBAction func toggleHideMenuBarIcon(_ sender: NSButton) {
@@ -61,6 +69,10 @@ class SettingsViewController: NSViewController {
         
         if Defaults.allowAnyShortcut.enabled {
             allowAnyShortcutCheckbox.state = .on
+        }
+        
+        if Defaults.windowSnapping.enabled == false {
+            windowSnappingCheckbox.state = .off
         }
         
     }

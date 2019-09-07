@@ -19,7 +19,7 @@ class SnappingManager {
     var initialWindowRect: CGRect?
     var currentHotSpot: HotSpot?
     
-    var box: NSWindow
+    var box: NSWindow?
     
     let screenDetection = ScreenDetection()
     
@@ -27,14 +27,36 @@ class SnappingManager {
         self.windowCalculationFactory = windowCalculationFactory
         self.windowHistory = windowHistory
         
-        let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
-        box = NSWindow(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
-
-        initializeBox()
-
-        eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged], handler: handle)
+        if Defaults.windowSnapping.enabled != false {
+            enableSnapping()
+        }
         
+        subscribeToWindowSnappingToggle()
+    }
+    
+    private func subscribeToWindowSnappingToggle() {
+        NotificationCenter.default.addObserver(self, selector: #selector(windowSnappingToggled), name: SettingsViewController.windowSnappingNotificationName, object: nil)
+    }
+    
+    @objc func windowSnappingToggled(notification: Notification) {
+        guard let enabled = notification.object as? Bool else { return }
+        if enabled {
+            enableSnapping()
+        } else {
+            disableSnapping()
+        }
+    }
+    
+    private func enableSnapping() {
+        box = generateBoxWindow()
+        eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged], handler: handle)
         eventMonitor?.start()
+    }
+    
+    private func disableSnapping() {
+        box = nil
+        eventMonitor?.stop()
+        eventMonitor = nil
     }
     
     func handle(event: NSEvent?) {
@@ -49,7 +71,7 @@ class SnappingManager {
             windowMoving = false
             initialWindowRect = nil
             if let currentHotSpot = self.currentHotSpot {
-                box.close()
+                box?.close()
                 currentHotSpot.action.postSnap(screen: currentHotSpot.screen)
                 self.currentHotSpot = nil
             }
@@ -81,14 +103,14 @@ class SnappingManager {
                     }
                     
                     if let newBoxRect = getBoxRect(hotSpot: newHotSpot, currentWindowRect: currentRect) {
-                        box.setFrame(newBoxRect, display: true)
-                        box.makeKeyAndOrderFront(nil)
+                        box?.setFrame(newBoxRect, display: true)
+                        box?.makeKeyAndOrderFront(nil)
                     }
                     
                     currentHotSpot = newHotSpot
                 } else {
                     if currentHotSpot != nil {
-                        box.close()
+                        box?.close()
                         currentHotSpot = nil
                     }
                 }
@@ -114,7 +136,11 @@ class SnappingManager {
     }
     
     // Make the box semi-opaque with a border and rouned corners
-    private func initializeBox() {
+    private func generateBoxWindow() -> NSWindow {
+        
+        let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
+        let box = NSWindow(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
+
         box.title = "Rectangle"
         box.backgroundColor = .clear
         box.isOpaque = false
@@ -141,6 +167,8 @@ class SnappingManager {
         boxView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.3).cgColor
         
         box.contentView = boxView
+        
+        return box
     }
     
     func getBoxRect(hotSpot: HotSpot, currentWindowRect: CGRect) -> CGRect? {
@@ -179,7 +207,6 @@ class SnappingManager {
                     }
                 }
             }
-            
             
             if loc.x <= frame.maxX {
                 if loc.x > frame.maxX - 25 {
