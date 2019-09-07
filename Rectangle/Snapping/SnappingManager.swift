@@ -75,7 +75,7 @@ class SnappingManager {
                 }
             }
             if windowMoving {
-                if let newHotSpot = getMouseHotSpot() {
+                if let newHotSpot = getMouseHotSpot(priorHotSpot: currentHotSpot) {
                     if newHotSpot == currentHotSpot {
                         return
                     }
@@ -151,7 +151,7 @@ class SnappingManager {
         return nil
     }
     
-    func getMouseHotSpot() -> HotSpot? {
+    func getMouseHotSpot(priorHotSpot: HotSpot?) -> HotSpot? {
         
         for screen in NSScreen.screens {
             let frame = screen.frame
@@ -211,6 +211,17 @@ class SnappingManager {
                     return HotSpot(screen: screen, action: .firstThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
+                    if let priorAction = priorHotSpot?.action {
+                        let action: WindowAction
+                        switch priorAction {
+                        case .firstThird, .firstTwoThirds:
+                            action = .firstTwoThirds
+                        case .lastThird, .lastTwoThirds:
+                            action = .lastTwoThirds
+                        default: action = .centerThird
+                        }
+                        return HotSpot(screen: screen, action: action)
+                    }
                     return HotSpot(screen: screen, action: .centerThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
