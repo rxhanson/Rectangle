@@ -48,7 +48,9 @@ class SnappingManager {
                     self.currentHotSpot = nil
                 }
             case .leftMouseDragged:
-                guard let currentRect = self.frontmostWindow?.rectOfElement() else {
+                guard let currentRect = self.frontmostWindow?.rectOfElement(),
+                    let windowId = self.frontmostWindow?.getIdentifier()
+                else {
                     return
                 }
                 if !self.windowMoving {
@@ -56,10 +58,22 @@ class SnappingManager {
                         self.windowMoving = true
                         
                         // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
-                        // else record history
-                        
-                        
-//                        WindowAction.restore.post()
+                        if let lastRect = self.windowHistory.lastRectangleActions[windowId] {
+                            
+                            if lastRect.rect == self.initialWindowRect {
+                                if let restoreRect = self.windowHistory.restoreRects[windowId] {
+                                    
+                                    // macOS will adjust the location regardless of the origin of the restore rect, but adjusting it helps make it a little closer to the cursor
+                                    let adjustedRestoreRect = CGRect(x: lastRect.rect.midX, y: lastRect.rect.maxY, width: restoreRect.width, height: restoreRect.height)
+                                    
+                                    self.frontmostWindow?.setRectOf(adjustedRestoreRect)
+                                    self.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                                }
+                            }
+                        } else {
+                            // else record history
+                            self.windowHistory.restoreRects[windowId] = self.initialWindowRect
+                        }
                     }
                 }
                 if self.windowMoving {
