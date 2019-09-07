@@ -42,9 +42,9 @@ class SnappingManager {
                 self.frontmostWindow = nil
                 self.windowMoving = false
                 self.initialWindowRect = nil
-                if self.currentHotSpot != nil {
+                if let currentHotSpot = self.currentHotSpot {
                     self.box.close()
-                    self.currentHotSpot?.type.action.postSnap()
+                    currentHotSpot.type.action.postSnap(screen: currentHotSpot.screen)
                     self.currentHotSpot = nil
                 }
             case .leftMouseDragged:
@@ -54,22 +54,14 @@ class SnappingManager {
                     return
                 }
                 if !self.windowMoving {
-                    if currentRect.size == self.initialWindowRect?.size && currentRect.origin != self.initialWindowRect?.origin {
+                    if currentRect.size == self.initialWindowRect?.size
+                        && currentRect.origin != self.initialWindowRect?.origin {
                         self.windowMoving = true
                         
                         // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
-                        if let lastRect = self.windowHistory.lastRectangleActions[windowId]?.rect {
-                            
-                            if lastRect == self.initialWindowRect {
-                                if let restoreRect = self.windowHistory.restoreRects[windowId] {
-                                    
-                                    // macOS will adjust the location regardless of the origin of the restore rect, but adjusting it helps make it a little closer to the cursor
-                                    let adjustedRestoreRect = CGRect(x: lastRect.midX, y: lastRect.minY + lastRect.height - restoreRect.height, width: restoreRect.width, height: restoreRect.height)
-                                    
-                                    self.frontmostWindow?.setRectOf(adjustedRestoreRect)
-                                    self.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                                }
-                            }
+                        if let restoreRect = self.obtainRestoreRect(windowId: windowId, currentRect: currentRect) {
+                            self.frontmostWindow?.setRectOf(restoreRect)
+                            self.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                         } else {
                             // else record history
                             self.windowHistory.restoreRects[windowId] = self.initialWindowRect
@@ -101,6 +93,21 @@ class SnappingManager {
         }
         
         eventMonitor?.start()
+    }
+    
+    private func obtainRestoreRect(windowId: WindowId, currentRect: CGRect) -> CGRect? {
+        guard let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
+            lastRect == initialWindowRect,
+            let restoreRect = windowHistory.restoreRects[windowId]
+        else { return nil }
+        
+        // Set x and y WRT the current rect to reduce jenkiness
+        let adjustedRestoreRect = CGRect(
+            x: currentRect.minX,
+            y: currentRect.minY + currentRect.height - restoreRect.height,
+            width: restoreRect.width,
+            height: restoreRect.height)
+        return adjustedRestoreRect
     }
     
     // Make the box semi-opaque with a border and rouned corners

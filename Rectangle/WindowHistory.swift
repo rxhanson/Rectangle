@@ -8,9 +8,9 @@
 
 import Foundation
 
+typealias WindowId = Int
+
 class WindowHistory {
-    
-    typealias WindowId = Int
     
     var restoreRects = [WindowId: CGRect]() // the last window frame that the user positioned
     

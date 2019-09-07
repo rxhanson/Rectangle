@@ -43,7 +43,14 @@ class WindowManager {
             return
         }
         
-        guard let usableScreens = screenDetection.detectScreens(using: frontmostWindowElement) else {
+        var screens: UsableScreens?
+        if let screen = parameters.screen {
+            screens = UsableScreens(currentScreen: screen)
+        } else {
+            screens = screenDetection.detectScreens(using: frontmostWindowElement)
+        }
+        
+        guard let usableScreens = screens else {
             NSSound.beep()
             return
         }
@@ -103,9 +110,11 @@ struct RectangleAction {
 struct ExecutionParameters {
     let action: WindowAction
     let updateRestoreRect: Bool
+    let screen: NSScreen?
     
-    init(_ action: WindowAction, updateRestoreRect: Bool = true) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
+        self.screen = screen
     }
 }

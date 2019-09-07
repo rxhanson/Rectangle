@@ -55,8 +55,8 @@ enum WindowAction: Int {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
     }
     
-    func postSnap() {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false))
+    func postSnap(screen: NSScreen) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen))
     }
     
     // Determines where separators should be used in the menu

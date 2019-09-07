@@ -108,7 +108,7 @@ struct UsableScreens {
     let frameOfCurrentScreen: CGRect
     let visibleFrameOfCurrentScreen: CGRect
     
-    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens?) {
+    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens
         self.frameOfCurrentScreen = NSRectToCGRect(currentScreen.frame)
