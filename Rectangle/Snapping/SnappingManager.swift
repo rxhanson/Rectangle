@@ -58,13 +58,13 @@ class SnappingManager {
                         self.windowMoving = true
                         
                         // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
-                        if let lastRect = self.windowHistory.lastRectangleActions[windowId] {
+                        if let lastRect = self.windowHistory.lastRectangleActions[windowId]?.rect {
                             
-                            if lastRect.rect == self.initialWindowRect {
+                            if lastRect == self.initialWindowRect {
                                 if let restoreRect = self.windowHistory.restoreRects[windowId] {
                                     
                                     // macOS will adjust the location regardless of the origin of the restore rect, but adjusting it helps make it a little closer to the cursor
-                                    let adjustedRestoreRect = CGRect(x: lastRect.rect.midX, y: lastRect.rect.maxY, width: restoreRect.width, height: restoreRect.height)
+                                    let adjustedRestoreRect = CGRect(x: lastRect.midX, y: lastRect.minY + lastRect.height - restoreRect.height, width: restoreRect.width, height: restoreRect.height)
                                     
                                     self.frontmostWindow?.setRectOf(adjustedRestoreRect)
                                     self.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
