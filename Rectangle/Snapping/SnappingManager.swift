@@ -206,8 +206,15 @@ class SnappingManager {
             }
             
             if loc.y >= frame.minY && loc.y < frame.minY + 5 {
-                if loc.x >= frame.minX && loc.x <= frame.maxX {
-//                    return HotSpot(screen: screen, type: .bottom)
+                let thirdWidth = floor(frame.width / 3)
+                if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
+                    return HotSpot(screen: screen, action: .firstThird)
+                }
+                if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
+                    return HotSpot(screen: screen, action: .centerThird)
+                }
+                if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
+                    return HotSpot(screen: screen, action: .lastThird)
                 }
             }
             
