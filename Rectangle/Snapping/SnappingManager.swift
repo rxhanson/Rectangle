@@ -168,6 +168,12 @@ class SnappingManager {
                 }
                 
                 if loc.x < frame.minX + 5 {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
+                        return HotSpot(screen: screen, action: .bottomHalf)
+                    }
+                    if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
+                        return HotSpot(screen: screen, action: .topHalf)
+                    }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
                         return HotSpot(screen: screen, action: .leftHalf)
                     }
@@ -187,6 +193,12 @@ class SnappingManager {
 
                 
                 if loc.x > frame.maxX - 5 {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
+                        return HotSpot(screen: screen, action: .bottomHalf)
+                    }
+                    if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
+                        return HotSpot(screen: screen, action: .topHalf)
+                    }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
                         return HotSpot(screen: screen, action: .rightHalf)
                     }
