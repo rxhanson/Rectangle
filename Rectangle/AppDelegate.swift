@@ -54,6 +54,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             ? mainStatusMenu
             : unauthorizedMenu
         
+        mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
     }
     
@@ -110,19 +111,32 @@ extension AppDelegate: NSMenuDelegate {
             ignoreMenuItem.isHidden = true
         }
         
+        let frontmostWindow = AccessibilityElement.frontmostWindow()
+        let screenCount = NSScreen.screens.count
+        
         for menuItem in menu.items {
             guard let windowAction = menuItem.representedObject as? WindowAction else { continue }
             if let fullKeyEquivalent = shortcutManager.getKeyEquivalent(action: windowAction) {
                 menuItem.keyEquivalent = fullKeyEquivalent.0.lowercased()
                 menuItem.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: fullKeyEquivalent.1)
             }
+            if frontmostWindow == nil {
+                menuItem.isEnabled = false
+            }
+            if screenCount == 1
+                && (windowAction == .nextDisplay || windowAction == .previousDisplay) {
+                menuItem.isEnabled = false
+            }
         }
     }
     
     func menuDidClose(_ menu: NSMenu) {
         for menuItem in menu.items {
+            
             menuItem.keyEquivalent = ""
             menuItem.keyEquivalentModifierMask = NSEvent.ModifierFlags()
+            
+            menuItem.isEnabled = true
         }
     }
     

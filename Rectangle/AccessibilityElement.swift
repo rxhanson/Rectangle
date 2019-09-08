@@ -30,26 +30,20 @@ class AccessibilityElement {
             os_log("Failed to find the application that currently has focus.", type: .info)
             return nil
         }
-        guard let frontmostWindowElement = frontmostApplicationElement.withAttribute(NSAccessibility.Attribute.focusedWindow as CFString) else {
-            os_log("Invalid accessibility element provided, unable to determine the size and position of the window.", type: .info)
-            return nil
-        }
-        return frontmostWindowElement
+        let focusedAttr = NSAccessibility.Attribute.focusedWindow as CFString
+        return frontmostApplicationElement.withAttribute(focusedAttr)
     }
     
     func withAttribute(_ attribute: CFString) -> AccessibilityElement? {
-        var newElement: AccessibilityElement?
         var copiedUnderlyingElement: AnyObject?
         let result: AXError = AXUIElementCopyAttributeValue(underlyingElement, attribute, &copiedUnderlyingElement)
         if result == .success {
             if let copiedUnderlyingElement = copiedUnderlyingElement {
-                newElement = AccessibilityElement(copiedUnderlyingElement as! AXUIElement)
+                return AccessibilityElement(copiedUnderlyingElement as! AXUIElement)
             }
-        } else {
-            os_log("Unable to obtain accessibility element", type: .info)
-            print("Unable to obtain the accessibility element with the specified attribute: \(attribute) (error code \(result.rawValue))")
         }
-        return newElement
+        os_log("Unable to obtain accessibility element", type: .debug)
+        return nil
     }
     
     func rectOfElement() -> CGRect {
