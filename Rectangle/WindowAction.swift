@@ -62,7 +62,7 @@ enum WindowAction: Int {
     // Determines where separators should be used in the menu
     var firstInGroup: Bool {
         switch self {
-        case .leftHalf, .topRight, .firstThird, .maximize, .nextDisplay, .moveLeft:
+        case .leftHalf, .topLeft, .firstThird, .maximize, .nextDisplay, .moveLeft:
             return true
         default:
             return false
