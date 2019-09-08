@@ -10,8 +10,8 @@ import Foundation
 
 enum SubsequentExecutionMode: Int {
     case resize = 0 // based on Spectacle
-    case acrossMonitor = 1 // like Windows 7
-    case none = 2 // like Magnet
+    case acrossMonitor = 1
+    case none = 2
 }
 
 class SubsequentExecutionDefault {
