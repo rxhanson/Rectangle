@@ -88,10 +88,10 @@ class WindowCalculationFactory {
         case .bottomHalf: return bottomHalfCalculation
         case .topHalf: return topHalfCalculation
         case .center: return centerCalculation
-        case .lowerLeft: return lowerLeftCalculation
-        case .lowerRight: return lowerRightCalculation
-        case .upperLeft: return upperLeftCalculation
-        case .upperRight: return upperRightCalculation
+        case .bottomLeft: return lowerLeftCalculation
+        case .bottomRight: return lowerRightCalculation
+        case .topLeft: return upperLeftCalculation
+        case .topRight: return upperRightCalculation
         case .firstThird: return firstThirdCalculation
         case .firstTwoThirds: return firstTwoThirdsCalculation
         case .centerThird: return centerThirdCalculation

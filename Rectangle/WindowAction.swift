@@ -27,10 +27,10 @@ enum WindowAction: Int {
     bottomHalf = 10,
     topHalf = 11,
     center = 12,
-    lowerLeft = 13,
-    lowerRight = 14,
-    upperLeft = 15,
-    upperRight = 16,
+    bottomLeft = 13,
+    bottomRight = 14,
+    topLeft = 15,
+    topRight = 16,
     restore = 19,
     firstThird = 20,
     firstTwoThirds = 21,
@@ -45,7 +45,7 @@ enum WindowAction: Int {
     
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, topHalf, bottomHalf,
-                         upperRight, upperLeft, lowerLeft, lowerRight,
+                         topLeft, topRight, bottomLeft, bottomRight,
                          firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird,
                          maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
                          nextDisplay, previousDisplay,
@@ -62,7 +62,7 @@ enum WindowAction: Int {
     // Determines where separators should be used in the menu
     var firstInGroup: Bool {
         switch self {
-        case .leftHalf, .upperRight, .firstThird, .maximize, .nextDisplay, .moveLeft:
+        case .leftHalf, .topRight, .firstThird, .maximize, .nextDisplay, .moveLeft:
             return true
         default:
             return false
@@ -82,10 +82,10 @@ enum WindowAction: Int {
         case .bottomHalf: return "bottomHalf"
         case .topHalf: return "topHalf"
         case .center: return "center"
-        case .lowerLeft: return "lowerLeft"
-        case .lowerRight: return "lowerRight"
-        case .upperLeft: return "upperLeft"
-        case .upperRight: return "upperRight"
+        case .bottomLeft: return "bottomLeft"
+        case .bottomRight: return "bottomRight"
+        case .topLeft: return "topLeft"
+        case .topRight: return "topRight"
         case .restore: return "restore"
         case .firstThird: return "firstThird"
         case .firstTwoThirds: return "firstTwoThirds"
@@ -138,16 +138,16 @@ enum WindowAction: Int {
         case .center:
             key = "8Bg-SZ-hDO.title"
             value = "Center"
-        case .lowerLeft:
+        case .bottomLeft:
             key = "6ma-hP-5xX.title"
             value = "Bottom Left"
-        case .lowerRight:
+        case .bottomRight:
             key = "J6t-sg-Wwz.title"
             value = "Bottom Right"
-        case .upperLeft:
+        case .topLeft:
             key = "adp-cN-qkh.title"
             value = "Top Left"
-        case .upperRight:
+        case .topRight:
             key = "0Ak-33-SM7.title"
             value = "Top Right"
         case .restore:
@@ -212,10 +212,10 @@ enum WindowAction: Int {
         case .bottomHalf: return Shortcut( cmd|alt, kVK_DownArrow )
         case .topHalf: return Shortcut( cmd|alt, kVK_UpArrow )
         case .center: return Shortcut( alt|cmd, kVK_ANSI_C )
-        case .lowerLeft: return Shortcut( cmd|ctrl|shift, kVK_LeftArrow )
-        case .lowerRight: return Shortcut( cmd|ctrl|shift, kVK_RightArrow )
-        case .upperLeft: return Shortcut( ctrl|cmd, kVK_LeftArrow )
-        case .upperRight: return Shortcut( ctrl|cmd, kVK_RightArrow )
+        case .bottomLeft: return Shortcut( cmd|ctrl|shift, kVK_LeftArrow )
+        case .bottomRight: return Shortcut( cmd|ctrl|shift, kVK_RightArrow )
+        case .topLeft: return Shortcut( ctrl|cmd, kVK_LeftArrow )
+        case .topRight: return Shortcut( ctrl|cmd, kVK_RightArrow )
         case .restore: return Shortcut( ctrl|alt, kVK_Delete)
         default: return nil
         }
@@ -227,10 +227,10 @@ enum WindowAction: Int {
         case .rightHalf: return Shortcut( ctrl|alt, kVK_RightArrow )
         case .bottomHalf: return Shortcut( ctrl|alt, kVK_DownArrow )
         case .topHalf: return Shortcut( ctrl|alt, kVK_UpArrow )
-        case .lowerLeft: return Shortcut( ctrl|alt, kVK_ANSI_J )
-        case .lowerRight: return Shortcut( ctrl|alt, kVK_ANSI_K )
-        case .upperLeft: return Shortcut( ctrl|alt, kVK_ANSI_U )
-        case .upperRight: return Shortcut( ctrl|alt, kVK_ANSI_I )
+        case .bottomLeft: return Shortcut( ctrl|alt, kVK_ANSI_J )
+        case .bottomRight: return Shortcut( ctrl|alt, kVK_ANSI_K )
+        case .topLeft: return Shortcut( ctrl|alt, kVK_ANSI_U )
+        case .topRight: return Shortcut( ctrl|alt, kVK_ANSI_I )
         case .maximize: return Shortcut( ctrl|alt, kVK_Return )
         case .maximizeHeight: return Shortcut( ctrl|alt|shift, kVK_UpArrow )
         case .previousDisplay: return Shortcut( ctrl|alt|cmd, kVK_LeftArrow )
