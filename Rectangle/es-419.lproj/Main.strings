@@ -539,3 +539,5 @@
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
 "z6F-FW-3nz.title" = "Mostrar sustituciones";
 
+/* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
+"1ui-PL-TkR.title" = "Ajustar ventanas arrastrando";
