@@ -13,7 +13,7 @@ class MaximizeHeightCalculation: WindowCalculation {
     func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         var maxHeightRect = windowRect
         maxHeightRect.origin.y = visibleFrameOfScreen.minY
-        maxHeightRect.size.height = visibleFrameOfScreen.maxY
+        maxHeightRect.size.height = visibleFrameOfScreen.height
         return maxHeightRect
     }
     
