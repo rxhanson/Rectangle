@@ -16,7 +16,6 @@ class SnappingManager {
     var eventMonitor: EventMonitor?
     var frontmostWindow: AccessibilityElement?
     var windowMoving: Bool = false
-    var windowResizingVertical: Bool = false
     var initialWindowRect: CGRect?
     var currentHotSpot: HotSpot?
     
@@ -70,7 +69,6 @@ class SnappingManager {
         case .leftMouseUp:
             frontmostWindow = nil
             windowMoving = false
-            windowResizingVertical = false
             initialWindowRect = nil
             if let currentHotSpot = self.currentHotSpot {
                 box?.close()
@@ -78,26 +76,17 @@ class SnappingManager {
                 self.currentHotSpot = nil
             }
         case .leftMouseDragged:
-            onLeftMouseDragged()
-        default:
-            return
-        }
-    }
-    
-    private func onLeftMouseDragged() {
-        guard let currentRect = frontmostWindow?.rectOfElement(),
-            let windowId = frontmostWindow?.getIdentifier(),
-            let initialRect = initialWindowRect
-            else { return }
-        
-        if !windowMoving && !windowResizingVertical {
-            
-            if currentRect.size == initialRect.size {
-                
-                if currentRect.origin != initialRect.origin {
+            guard let currentRect = frontmostWindow?.rectOfElement(),
+                let windowId = frontmostWindow?.getIdentifier()
+                else {
+                    return
+            }
+            if !windowMoving {
+                if currentRect.size == initialWindowRect?.size
+                    && currentRect.origin != initialWindowRect?.origin {
                     windowMoving = true
                     
-                    // if window was put there by rectangle, restore
+                    // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
                     if let restoreRect = obtainRestoreRect(windowId: windowId, currentRect: currentRect) {
                         frontmostWindow?.setRectOf(restoreRect.locationRect)
                         frontmostWindow?.setRectOf(restoreRect.sizeRect)
@@ -107,39 +96,28 @@ class SnappingManager {
                         windowHistory.restoreRects[windowId] = initialWindowRect
                     }
                 }
-                
-            } else if currentRect.height > initialRect.height {
-                windowResizingVertical = true
             }
-        }
-        
-        var newHotSpot: HotSpot?
-        if windowMoving {
-            newHotSpot = obtainMovedHotSpot(priorHotSpot: currentHotSpot)
-        }
-        else if windowResizingVertical {
-            newHotSpot = obtainResizedHotSpot()
-        }
-        else {
+            if windowMoving {
+                if let newHotSpot = getMouseHotSpot(priorHotSpot: currentHotSpot) {
+                    if newHotSpot == currentHotSpot {
+                        return
+                    }
+                    
+                    if let newBoxRect = getBoxRect(hotSpot: newHotSpot, currentWindowRect: currentRect) {
+                        box?.setFrame(newBoxRect, display: true)
+                        box?.makeKeyAndOrderFront(nil)
+                    }
+                    
+                    currentHotSpot = newHotSpot
+                } else {
+                    if currentHotSpot != nil {
+                        box?.close()
+                        currentHotSpot = nil
+                    }
+                }
+            }
+        default:
             return
-        }
-        
-        if let newHotSpot = newHotSpot {
-            if newHotSpot == currentHotSpot {
-                return
-            }
-            
-            if let newBoxRect = getBoxRect(hotSpot: newHotSpot, currentWindowRect: currentRect) {
-                box?.setFrame(newBoxRect, display: true)
-                box?.makeKeyAndOrderFront(nil)
-            }
-            
-            currentHotSpot = newHotSpot
-        } else {
-            if currentHotSpot != nil {
-                box?.close()
-                currentHotSpot = nil
-            }
         }
     }
     
@@ -165,7 +143,7 @@ class SnappingManager {
         return TwoStageResizeRect(sizeRect: sizeRect, locationRect: locationRect)
     }
     
-    // Make the box semi-opaque with a border and rounded corners
+    // Make the box semi-opaque with a border and rouned corners
     private func generateBoxWindow() -> NSWindow {
         
         let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
@@ -209,23 +187,7 @@ class SnappingManager {
         return nil
     }
     
-    func obtainResizedHotSpot() -> HotSpot? {
-        for screen in NSScreen.screens {
-            let frame = screen.frame
-            let loc = NSEvent.mouseLocation
-            
-            if loc.y <= frame.maxY && loc.y > frame.maxY - 5 {
-                if loc.x >= frame.minX && loc.x <= frame.maxX {
-                    return HotSpot(screen: screen, action: .maximizeHeight)
-                }
-            }
-            
-        }
-        
-        return nil
-    }
-    
-    func obtainMovedHotSpot(priorHotSpot: HotSpot?) -> HotSpot? {
+    func getMouseHotSpot(priorHotSpot: HotSpot?) -> HotSpot? {
         
         for screen in NSScreen.screens {
             let frame = screen.frame
