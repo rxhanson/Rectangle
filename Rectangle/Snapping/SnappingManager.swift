@@ -86,13 +86,12 @@ class SnappingManager {
                     && currentRect.origin != initialWindowRect?.origin {
                     windowMoving = true
                     
-                    // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
+                    // if window was put there by rectangle, restore
                     if let restoreRect = obtainRestoreRect(windowId: windowId, currentRect: currentRect) {
                         frontmostWindow?.setRectOf(restoreRect.locationRect)
                         frontmostWindow?.setRectOf(restoreRect.sizeRect)
                         windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                     } else {
-                        // else record history
                         windowHistory.restoreRects[windowId] = initialWindowRect
                     }
                 }
@@ -143,7 +142,7 @@ class SnappingManager {
         return TwoStageResizeRect(sizeRect: sizeRect, locationRect: locationRect)
     }
     
-    // Make the box semi-opaque with a border and rouned corners
+    // Make the box semi-opaque with a border and rounded corners
     private func generateBoxWindow() -> NSWindow {
         
         let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
