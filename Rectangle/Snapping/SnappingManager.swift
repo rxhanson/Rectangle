@@ -88,7 +88,8 @@ class SnappingManager {
                     
                     // if window was put there by rectangle, restore size and put center window under cursor while keeping window on screen
                     if let restoreRect = obtainRestoreRect(windowId: windowId, currentRect: currentRect) {
-                        frontmostWindow?.setRectOf(restoreRect)
+                        frontmostWindow?.setRectOf(restoreRect.locationRect)
+                        frontmostWindow?.setRectOf(restoreRect.sizeRect)
                         windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                     } else {
                         // else record history
@@ -120,19 +121,26 @@ class SnappingManager {
         }
     }
     
-    private func obtainRestoreRect(windowId: WindowId, currentRect: CGRect) -> CGRect? {
+    private func obtainRestoreRect(windowId: WindowId, currentRect: CGRect) -> TwoStageResizeRect? {
         guard let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
             lastRect == initialWindowRect,
             let restoreRect = windowHistory.restoreRects[windowId]
         else { return nil }
         
         // Set x and y WRT the current rect to reduce jenkiness
-        let adjustedRestoreRect = CGRect(
+        let sizeRect = CGRect(
             x: currentRect.minX,
-            y: currentRect.minY + currentRect.height - restoreRect.height,
+            y: currentRect.minY,
             width: restoreRect.width,
             height: restoreRect.height)
-        return adjustedRestoreRect
+        
+        let locationRect = CGRect(
+            x: currentRect.minX,
+            y: currentRect.minY + currentRect.height - restoreRect.height,
+            width: currentRect.width,
+            height: currentRect.height)
+        
+        return TwoStageResizeRect(sizeRect: sizeRect, locationRect: locationRect)
     }
     
     // Make the box semi-opaque with a border and rouned corners
@@ -272,4 +280,11 @@ class SnappingManager {
 struct HotSpot: Equatable {
     let screen: NSScreen
     let action: WindowAction
+}
+
+// Updating the location first, followed by the size can reduce some jenkiness
+// This leads to a smoother restore when dragging a previously snapped window
+struct TwoStageResizeRect {
+    let sizeRect: CGRect
+    let locationRect: CGRect
 }
