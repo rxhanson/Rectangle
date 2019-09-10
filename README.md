@@ -15,9 +15,11 @@ Then restart the Rectangle app.
 ##  Differences with Spectacle
 Spectacle used it's own keyboard shortcut recorder, while Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut), a well maintained open source library for shortcut recording in macOS apps. This cuts down dramatically on the number of bugs that were only in Spectacle because of the custom shortcut recorder. 
 
-Rectangle has a few additional actions, including moving windows to screen edges without resizing them, maximizing only the height of a window, and almost (90%) maximizing a window. 
-Additionally, next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Note that these thirds actions take into account screen orientation, as in first third will be left third on landscape and top third on portrait.
-Rectangle also allows window traversal across displays on subsequent left or right executions, similar to what Microsoft provided in Windows 7. This is an option that can be checked in the preferences.
+### Additional features
+* Additional window actions: move windows to each edge without resizing, maximize only the height of a window, almost maximizing a window. 
+* Next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Screen orientation is taken into account, as in first third will be left third on landscape and top third on portrait.
+* There's an option to have windows traverse across displays on subsequent left or right executions, similar to what Microsoft provided in Windows 7.
+* Windows will snap when dragged to edges/corners of the screen. This can be disabled.
 
 ## Contributing
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. 
