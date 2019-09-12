@@ -22,7 +22,7 @@ Spectacle used it's own keyboard shortcut recorder, while Rectangle uses [MASSho
 * Windows will snap when dragged to edges/corners of the screen. This can be disabled.
 
 ## Contributing
-Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. 
+Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Code contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. 
 
 ### Localization
 Localization was done using [DeepL](https://www.deepl.com/translator). Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
