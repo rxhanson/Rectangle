@@ -1,6 +1,6 @@
 
-/* Class = "NSTextFieldCell"; title = "This overrides the default behavior of 2/3 and 1/3 resizing on subsequent executions."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "Это отменяет стандартное поведение при последующих исполнениях - изменение размера на 2/3 и 1/3.";
+/* Class = "NSTextFieldCell"; title = "This applies to move or half actions only. Half actions will not  perform 2/3 & 1/3 behavior when enabled."; ObjectID = "01Z-t3-cBm"; */
+"01Z-t3-cBm.title" = "Это относится только к перемещениям или действиям наполовину. Действия наполовину не будут выполнять 2/3 и 1/3 действий, если они включены.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "Последние две трети";
@@ -22,6 +22,9 @@
 
 /* Class = "NSMenuItem"; title = "Lower"; ObjectID = "1tx-W0-xDw"; */
 "1tx-W0-xDw.title" = "Нижнее";
+
+/* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
+"1ui-PL-TkR.title" = "Защелкивание окон путем перетаскивания";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "Поднять";
@@ -51,7 +54,7 @@
 "4J7-dP-txa.title" = "Введите полный экран";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
-"4sb-4s-VLi.title" = "Выход из прямоугольника";
+"4sb-4s-VLi.title" = "Выход из Rectangle";
 
 /* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
 "5QF-Oa-p0T.title" = "Редактировать";
@@ -99,7 +102,7 @@
 "9yt-4B-nSM.title" = "Интеллектуальное копирование/вставка";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
-"A66-A4-cGD.title" = "Выход из прямоугольника";
+"A66-A4-cGD.title" = "Выход из Rectangle";
 
 /* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
 "AYu-sK-qS6.title" = "Главное меню";
@@ -116,8 +119,8 @@
 /* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
 "C9v-g0-DH8.title" = "Восстановить";
 
-/* Class = "NSMenuItem"; title = "Ignore \"App\"" ; ObjectID = "D99-0O-MB6"; */
-"D99-0O-MB6.title" = "Игнорировать \"App\"";
+/* Class = "NSMenuItem"; title = "Ignore \"App\""; ObjectID = "D99-0O-MB6"; */
+"D99-0O-MB6.title" = "Игнорировать \";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
 "DVo-aG-piG.title" = "Близко";
@@ -264,10 +267,10 @@
 "S0p-oC-mLd.title" = "Перейти к выбору";
 
 /* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
-"STb-JK-oB1.title" = "Предпочтения прямоугольника";
+"STb-JK-oB1.title" = "Предпочтения Rectangle";
 
-/* Class = "NSButtonCell"; title = "Traverse screens on subsequent left or right half executions"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "Проходные экраны в последующих левосторонних или правосторонних исполнениях";
+/* Class = "NSButtonCell"; title = "Traverse displays on subsequent left or right executions"; ObjectID = "SXx-HZ-GkB"; */
+"SXx-HZ-GkB.title" = "Индикация перемещения в последующих исполнениях слева или справа";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "Окно";
@@ -383,7 +386,7 @@
 /* Class = "NSTextFieldCell"; title = "Almost Maximize"; ObjectID = "e57-QJ-6bL"; */
 "e57-QJ-6bL.title" = "Почти максимизировать";
 
-/* Class = "NSButtonCell"; title = "Launch on Login"; ObjectID = "e9j-DR-MEH"; */
+/* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
 "e9j-DR-MEH.title" = "Запуск при входе в систему";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
@@ -410,8 +413,8 @@
 /* Class = "NSMenuItem"; title = "Smaller"; ObjectID = "i1d-Er-qST"; */
 "i1d-Er-qST.title" = "Меньше";
 
-/* Class = "NSButtonCell"; title = "Open System Preferences → Security & Privacy →\n Privacy → Accessibility"; ObjectID = "iWV-c2-BJD"; */
-"iWV-c2-BJD.title" = "Параметры открытой системы →\n Безопасность и конфиденциальность →\n Конфиденциальность → Доступность";
+/* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
+"iWV-c2-BJD.title" = "Параметры открытой системы";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
 "iXo-XL-T6q.title" = "Разрешить Rectangle";
@@ -433,6 +436,9 @@
 
 /* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
 "kIP-vf-haE.title" = "Показать боковую панель";
+
+/* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
+"lgE-cR-cQ5.title" = "Перейдите в Системные настройки → Безопасность и конфиденциальность → Конфиденциальность → Доступность → Доступность";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
 "ltc-mf-BHr.title" = "Если значок строки меню скрыт, перезапустите программу Rectangle из Finder, чтобы открыть меню.";
@@ -464,14 +470,17 @@
 /* Class = "NSMenuItem"; title = "Page Setup…"; ObjectID = "qIS-W8-SiK"; */
 "qIS-W8-SiK.title" = "Настройка страницы…";
 
-/* Class = "NSButtonCell"; title = "Hide Menu Bar Icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "Скрыть иконку строки меню";
+/* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
+"qlg-kC-FMr.title" = "Скрыть значок строки меню";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "Проверка орфографии при наборе текста";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
 "rgM-f4-ycn.title" = "Интеллектуальные тире";
+
+/* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
+"rmV-YD-Hzj.title" = "Автоматическая проверка наличия обновлений";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
 "rzr-Qq-702.title" = "Вправо";
@@ -534,10 +543,8 @@
 "xrE-MZ-jX0.title" = "Речь";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
-"yvN-PE-bxn.title" = "Выход из прямоугольника";
+"yvN-PE-bxn.title" = "Выход из Rectangle";
 
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
 "z6F-FW-3nz.title" = "Показать замены";
 
-/* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "Защелкивание окон путем перетаскивания";
