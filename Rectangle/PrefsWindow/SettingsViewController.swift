@@ -8,6 +8,7 @@
 
 import Cocoa
 import ServiceManagement
+import Sparkle
 
 class SettingsViewController: NSViewController {
     
@@ -19,6 +20,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
     @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
+    @IBOutlet weak var checkForUpdatesAutomaticallyCheckbox: NSButton!
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -75,6 +77,9 @@ class SettingsViewController: NSViewController {
             windowSnappingCheckbox.state = .off
         }
         
+        if let updater = SUUpdater.shared() {
+            checkForUpdatesAutomaticallyCheckbox.bind(.value, to: updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
+        }
     }
 
 }

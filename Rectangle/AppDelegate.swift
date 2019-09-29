@@ -24,8 +24,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let windowCalculationFactory: WindowCalculationFactory
     private let snappingManager: SnappingManager
     
-    private let sparkleUpdater = SUUpdater()
-    
     private var prefsWindowController: NSWindowController?
     
     @IBOutlet weak var mainStatusMenu: NSMenu!
@@ -87,7 +85,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
-        self.sparkleUpdater.checkForUpdates(sender)
+        SUUpdater.shared()?.checkForUpdates(sender)
     }
     
     @IBAction func authorizeAccessibility(_ sender: Any) {
