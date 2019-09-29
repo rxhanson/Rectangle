@@ -116,6 +116,10 @@ extension AppDelegate: NSMenuDelegate {
         
         for menuItem in menu.items {
             guard let windowAction = menuItem.representedObject as? WindowAction else { continue }
+
+            menuItem.image = windowAction.image
+            menuItem.image?.size = NSSize(width: 18, height: 12)
+
             if let fullKeyEquivalent = shortcutManager.getKeyEquivalent(action: windowAction) {
                 menuItem.keyEquivalent = fullKeyEquivalent.0.lowercased()
                 menuItem.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: fullKeyEquivalent.1)

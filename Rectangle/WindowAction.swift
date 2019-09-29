@@ -247,6 +247,38 @@ enum WindowAction: Int {
         default: return nil
         }
     }
+    
+    var image: NSImage {
+        switch self {
+        case .leftHalf: return NSImage(imageLiteralResourceName: "leftHalfTemplate")
+        case .rightHalf: return NSImage(imageLiteralResourceName: "rightHalfTemplate")
+        case .maximize: return NSImage(imageLiteralResourceName: "maximizeTemplate")
+        case .maximizeHeight: return NSImage(imageLiteralResourceName: "maximizeHeightTemplate")
+        case .previousDisplay: return NSImage(imageLiteralResourceName: "prevDisplayTemplate")
+        case .nextDisplay: return NSImage(imageLiteralResourceName: "nextDisplayTemplate")
+        case .larger: return NSImage(imageLiteralResourceName: "makeLargerTemplate")
+        case .smaller: return NSImage(imageLiteralResourceName: "makeSmallerTemplate")
+        case .bottomHalf: return NSImage(imageLiteralResourceName: "bottomHalfTemplate")
+        case .topHalf: return NSImage(imageLiteralResourceName: "topHalfTemplate")
+        case .center: return NSImage(imageLiteralResourceName: "centerTemplate")
+        case .bottomLeft: return NSImage(imageLiteralResourceName: "bottomLeftTemplate")
+        case .bottomRight: return NSImage(imageLiteralResourceName: "bottomRightTemplate")
+        case .topLeft: return NSImage(imageLiteralResourceName: "topLeftTemplate")
+        case .topRight: return NSImage(imageLiteralResourceName: "topRightTemplate")
+        case .restore: return NSImage(imageLiteralResourceName: "restoreTemplate")
+        case .firstThird: return NSImage(imageLiteralResourceName: "firstThirdTemplate")
+        case .firstTwoThirds: return NSImage(imageLiteralResourceName: "firstTwoThirdsTemplate")
+        case .centerThird: return NSImage(imageLiteralResourceName: "centerThirdTemplate")
+        case .lastTwoThirds: return NSImage(imageLiteralResourceName: "lastTwoThirdsTemplate")
+        case .lastThird: return NSImage(imageLiteralResourceName: "lastThirdTemplate")
+        case .moveLeft: return NSImage(imageLiteralResourceName: "moveLeftTemplate")
+        case .moveRight: return NSImage(imageLiteralResourceName: "moveRightTemplate")
+        case .moveUp: return NSImage(imageLiteralResourceName: "moveUpTemplate")
+        case .moveDown: return NSImage(imageLiteralResourceName: "moveDownTemplate")
+        case .almostMaximize: return NSImage(imageLiteralResourceName: "almostMaximizeTemplate")
+        }
+    }
+    
 }
 
 struct Shortcut {
