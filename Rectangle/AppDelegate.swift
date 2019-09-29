@@ -73,6 +73,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         prefsWindowController?.window?.makeKey()
     }
     
+    @IBAction func showAbout(_ sender: Any) {
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.orderFrontStandardAboutPanel(sender)
+    }
+    
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
         if sender.state == .on {
             applicationToggle.enableFrontApp()

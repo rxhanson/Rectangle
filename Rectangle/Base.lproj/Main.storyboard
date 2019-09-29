@@ -702,7 +702,7 @@
                         <menuItem title="About" id="gFy-Zj-RGl">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
-                                <action selector="orderFrontStandardAboutPanel:" target="hnw-xV-0zn" id="ir4-MT-upQ"/>
+                                <action selector="showAbout:" target="Voe-Tx-rLC" id="dGA-Fy-dtB"/>
                             </connections>
                         </menuItem>
                         <menuItem title="Check for Updates…" id="HIK-3r-i7E">
