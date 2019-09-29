@@ -3,6 +3,7 @@ Rectangle is not accepting any new feature requests at this time, sorry. You can
 
 ## Bugs
 Please search through the existing issues, open and closed, before filing a new bug.
+Add the version of Rectangle, the version of the OS, and screenshots or videos as necessary.
 
 ## Coding Style
 Please match the existing coding style as much as possible.
