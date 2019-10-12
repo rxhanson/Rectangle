@@ -2232,16 +2232,16 @@
         <!--Tab View Controller-->
         <scene sceneID="b39-fJ-MZO">
             <objects>
-                <tabViewController tabStyle="toolbar" id="5pc-CV-2b9" sceneMemberID="viewController">
+                <tabViewController tabStyle="toolbar" canPropagateSelectedChildViewControllerTitle="NO" id="5pc-CV-2b9" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem image="keyboardToolbarTemplate" id="uw2-9W-2jq"/>
-                        <tabViewItem image="toolbarSettingsTemplate" id="gtf-PD-IHm"/>
+                        <tabViewItem label="Keyboard Shortcuts" image="keyboardToolbarTemplate" id="uw2-9W-2jq"/>
+                        <tabViewItem label="Settings" image="toolbarSettingsTemplate" id="gtf-PD-IHm"/>
                     </tabViewItems>
                     <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
                     <tabView key="tabView" type="noTabsNoBorder" id="Tya-24-HNL">
                         <rect key="frame" x="-126" y="0.0" width="453" height="261"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <font key="font" metaFont="message"/>
+                        <font key="font" metaFont="system"/>
                         <connections>
                             <outlet property="delegate" destination="5pc-CV-2b9" id="as1-vk-M94"/>
                         </connections>
@@ -2300,7 +2300,7 @@
                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gIp-Hu-6ns">
                                         <rect key="frame" x="-2" y="110" width="454" height="14"/>
                                         <textFieldCell key="cell" title="When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu." id="ltc-mf-BHr">
-                                            <font key="font" metaFont="smallSystem"/>
+                                            <font key="font" metaFont="menu" size="11"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -2318,7 +2318,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
                                         <rect key="frame" x="-2" y="48" width="454" height="28"/>
                                         <textFieldCell key="cell" title="This applies to move or half actions only. Half actions will not  perform 2/3 &amp; 1/3 behavior when enabled." id="01Z-t3-cBm">
-                                            <font key="font" metaFont="smallSystem"/>
+                                            <font key="font" metaFont="menu" size="11"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -2435,7 +2435,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8BY-qu-jQ8">
                                         <rect key="frame" x="27" y="323" width="196" height="26"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Authorize Rectangle" id="iXo-XL-T6q">
-                                            <font key="font" size="22" name=".AppleSystemUIFont"/>
+                                            <font key="font" metaFont="system" size="22"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -2459,7 +2459,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XRC-ST-jLi">
                                         <rect key="frame" x="-2" y="137" width="254" height="28"/>
                                         <textFieldCell key="cell" alignment="center" title="Go to System Preferences → Security &amp; Privacy → Privacy → Accessibility" id="lgE-cR-cQ5">
-                                            <font key="font" metaFont="smallSystem"/>
+                                            <font key="font" metaFont="menu" size="11"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
