@@ -58,8 +58,8 @@ class MoveLeftRightCalculation: WindowCalculation {
             if let lastAction = lastAction, lastAction.action == .moveRight {
                 let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
                 if normalizedLastRect == windowRect {
-                    if let prevScreen = usableScreens.adjacentScreens?.prev {
-                        return calculateLeft(windowRect, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
+                    if let nextScreen = usableScreens.adjacentScreens?.next {
+                        return calculateLeft(windowRect, lastAction: lastAction, screen: nextScreen, usableScreens: usableScreens)
                     }
                 }
             }

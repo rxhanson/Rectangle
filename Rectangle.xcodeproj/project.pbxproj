@@ -54,7 +54,7 @@
 		988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066622EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift */; };
 		988D066922EB4CCB004EABD7 /* LastThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066822EB4CCB004EABD7 /* LastThirdCalculation.swift */; };
 		988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */; };
-		988D067F22EB4EDE004EABD7 /* MoveLeftCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */; };
+		988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D067E22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift */; };
 		988D068322EB4EF3004EABD7 /* MoveUpCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */; };
 		988D068522EB4EFC004EABD7 /* MoveDownCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */; };
 		98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B3D231130AF0066EC23 /* SettingsViewController.swift */; };
@@ -151,7 +151,7 @@
 		988D066622EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastTwoThirdsCalculation.swift; sourceTree = "<group>"; };
 		988D066822EB4CCB004EABD7 /* LastThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThirdCalculation.swift; sourceTree = "<group>"; };
 		988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlmostMaximizeCalculation.swift; sourceTree = "<group>"; };
-		988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveLeftCalculation.swift; sourceTree = "<group>"; };
+		988D067E22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveLeftRightCalculation.swift; sourceTree = "<group>"; };
 		988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveUpCalculation.swift; sourceTree = "<group>"; };
 		988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDownCalculation.swift; sourceTree = "<group>"; };
 		98910B3D231130AF0066EC23 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -277,7 +277,7 @@
 				988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */,
 				988D066622EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift */,
 				988D066822EB4CCB004EABD7 /* LastThirdCalculation.swift */,
-				988D067E22EB4EDE004EABD7 /* MoveLeftCalculation.swift */,
+				988D067E22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift */,
 				988D068222EB4EF3004EABD7 /* MoveUpCalculation.swift */,
 				988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */,
 				988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */,
@@ -712,7 +712,7 @@
 				98910B42231476B30066EC23 /* PrefsViewController.swift in Sources */,
 				9824702C22AFA22E0037B409 /* AccessibilityWindowController.swift in Sources */,
 				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
-				988D067F22EB4EDE004EABD7 /* MoveLeftCalculation.swift in Sources */,
+				988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */,
 				98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
@@ -789,11 +789,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = RectangleLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -814,11 +814,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = RectangleLauncher/RectangleLauncher.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = RectangleLauncher/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -956,19 +956,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/Rectangle.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				CURRENT_PROJECT_VERSION = 10;
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 0.7;
+				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -982,19 +982,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/Rectangle.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_HARDENED_RUNTIME = NO;
+				CURRENT_PROJECT_VERSION = 10;
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 0.7;
+				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1008,10 +1008,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				INFOPLIST_FILE = RectangleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1032,10 +1032,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				INFOPLIST_FILE = RectangleTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
