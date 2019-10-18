@@ -10,7 +10,7 @@ import Foundation
 
 class ChangeSizeCalculation: WindowCalculation {
     
-    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         let sizeOffset: CGFloat = action == .smaller ? -30.0 : 30.0
         
         var resizedWindowRect = windowRect

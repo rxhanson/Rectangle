@@ -23,7 +23,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
         }
 
         if let screen = screen {
-            if let rect = calculateRect(windowRect, visibleFrameOfScreen: NSRectToCGRect(screen.visibleFrame), action: action) {
+            if let rect = calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: NSRectToCGRect(screen.visibleFrame), action: action) {
                 return WindowCalculationResult(rect: rect, screen: screen, resultingAction: action)
             }
         }
@@ -31,8 +31,8 @@ class NextPrevDisplayCalculation: WindowCalculation {
         return nil
     }
     
-    func calculateRect(_ windowRect: CGRect, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        return centerCalculation.calculateRect(windowRect, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        return centerCalculation.calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
     }
 }

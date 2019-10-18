@@ -78,7 +78,7 @@ class WindowManager {
         let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect, frameOfScreen: usableScreens.frameOfCurrentScreen)
         
         let windowCalculation = windowCalculationFactory.calculation(for: action)
-
+        
         guard let calcResult = windowCalculation?.calculate(currentNormalizedRect, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
             NSSound.beep()
             return
@@ -98,13 +98,19 @@ class WindowManager {
         }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
-        windowHistory.lastRectangleActions[windowId] = RectangleAction(action: calcResult.resultingAction, rect: resultingRect)
+        let currentCount = (lastRectangleAction?.action == calcResult.resultingAction) ? lastRectangleAction?.count : nil
+        windowHistory.lastRectangleActions[windowId] = RectangleAction(
+            action: calcResult.resultingAction,
+            rect: resultingRect,
+            count: currentCount?.advanced(by: 1) ?? 1
+        )
     }
 }
 
 struct RectangleAction {
     let action: WindowAction
     let rect: CGRect
+    let count: Int
 }
 
 struct ExecutionParameters {

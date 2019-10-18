@@ -181,7 +181,7 @@ class SnappingManager {
     func getBoxRect(hotSpot: HotSpot, currentWindowRect: CGRect) -> CGRect? {
         if let calculation = windowCalculationFactory.calculation(for: hotSpot.action) {
             
-            return calculation.calculateRect(currentWindowRect, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
+            return calculation.calculateRect(currentWindowRect, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
         }
         return nil
     }
