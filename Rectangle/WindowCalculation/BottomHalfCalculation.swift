@@ -8,33 +8,37 @@
 
 import Foundation
 
-class BottomHalfCalculation: WindowCalculation {
-    
+class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
+
     func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+
+        if Defaults.subsequentExecutionMode.value == .none
+            || lastAction == nil {
+            return calculateFirstRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        }
+        
+        return calculateRepeatedRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+    }
+    
+    
+    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
         var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
+        return oneHalfRect
+    }
+    
+    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        if Defaults.subsequentExecutionMode.value == .none {
-            return oneHalfRect
-        }
+        var twoThirdsRect = visibleFrameOfScreen
+        twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
+        return twoThirdsRect
+    }
+    
+    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
-        let count = (lastAction?.action == action) ? (lastAction?.count ?? 0) : 0
-        let position = count % 3
-        
-        switch (position) {
-            case 2:
-                var oneThirdRect = oneHalfRect
-                oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-                return oneThirdRect
-            
-            case 1:
-                var twoThirdsRect = oneHalfRect
-                twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
-                return twoThirdsRect
-            
-            default:
-                return oneHalfRect
-        }
+        var oneThirdRect = visibleFrameOfScreen
+        oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
+        return oneThirdRect
     }
 }
