@@ -21,21 +21,21 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     }
     
     
-    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
         
         var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
         return oneHalfRect
     }
     
-    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
         
         var twoThirdsRect = visibleFrameOfScreen
         twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
         return twoThirdsRect
     }
     
-    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
         
         var oneThirdRect = visibleFrameOfScreen
         oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
