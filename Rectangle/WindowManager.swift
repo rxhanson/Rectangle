@@ -98,11 +98,18 @@ class WindowManager {
         }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
-        let currentCount = (lastRectangleAction?.action == calcResult.resultingAction) ? lastRectangleAction?.count : nil
+        
+        var newCount = 1
+        if lastRectangleAction?.action == calcResult.resultingAction,
+            let currentCount = lastRectangleAction?.count {
+            newCount = currentCount + 1
+            newCount %= 3
+        }
+        
         windowHistory.lastRectangleActions[windowId] = RectangleAction(
             action: calcResult.resultingAction,
             rect: resultingRect,
-            count: currentCount?.advanced(by: 1) ?? 1
+            count: newCount
         )
     }
 }

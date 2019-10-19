@@ -17,7 +17,7 @@ protocol WindowCalculation {
 
 extension WindowCalculation {
     
-        func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
             if let rect = calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action) {
             
