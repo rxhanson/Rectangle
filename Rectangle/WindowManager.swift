@@ -114,7 +114,7 @@ class WindowManager {
         )
         
         if Defaults.debug.enabled {
-            os_log("%{PUBLIC}@ | display: %{PUBLIC}@, calculatedRect: %{PUBLIC}@, resultRect: %{PUBLIC}@", type: .debug, action.name, visibleFrameOfDestinationScreen.debugDescription, newNormalizedRect.debugDescription, resultingRect.debugDescription)
+            os_log("%{public}@ | display: %{public}@, calculatedRect: %{public}@, resultRect: %{public}@", type: .debug, action.name, visibleFrameOfDestinationScreen.debugDescription, newNormalizedRect.debugDescription, resultingRect.debugDescription)
         }
     }
 }
