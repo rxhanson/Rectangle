@@ -16,6 +16,7 @@ class Defaults {
     static let subsequentExecutionMode = SubsequentExecutionDefault()
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
+    static let debug = BoolDefault(key: "debug")
 }
 
 class BoolDefault {

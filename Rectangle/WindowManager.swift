@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import os.log
 
 class WindowManager {
 
@@ -111,6 +112,10 @@ class WindowManager {
             rect: resultingRect,
             count: newCount
         )
+        
+        if Defaults.debug.enabled {
+            os_log("%{PUBLIC}@ | display: %{PUBLIC}@, calculatedRect: %{PUBLIC}@, resultRect: %{PUBLIC}@", type: .debug, action.name, visibleFrameOfDestinationScreen.debugDescription, newNormalizedRect.debugDescription, resultingRect.debugDescription)
+        }
     }
 }
 
