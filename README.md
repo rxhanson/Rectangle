@@ -26,3 +26,13 @@ Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Co
 
 ### Localization
 Localization was done using [DeepL](https://www.deepl.com/translator). Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
+
+## Debug Logging
+To enable debug logging (starting in v0.9.1), execute the following Terminal command and restart the app:
+
+`defaults write com.knollsoft.Rectangle debug -bool true`
+
+To view logs:
+1. Open Console.app
+1. Select Action -> Include Debug Messages in the menu
+1. Enter this in the search bar: `process:Rectangle any:calculatedRect`
