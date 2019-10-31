@@ -22,7 +22,7 @@ class WindowManager {
         windowMoverChain = [
             StandardWindowMover(),
             // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
-            BestEffortWindowMover()
+//            BestEffortWindowMover()
         ]
     }
     
