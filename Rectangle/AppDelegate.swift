@@ -108,7 +108,7 @@ extension AppDelegate: NSMenuDelegate {
     
     func menuWillOpen(_ menu: NSMenu) {
         if let frontAppName = applicationToggle.frontAppName {
-            let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app, comment: "")
+            let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
             ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
             ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
         } else {
