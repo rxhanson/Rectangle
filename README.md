@@ -27,6 +27,8 @@ Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Co
 ### Localization
 Localization was done using [DeepL](https://www.deepl.com/translator). Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
 
+Pull requests for localizations are welcome. Japanese, Chinese, and Korean localizations are needed.
+
 ## Troubleshooting
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
 1. Make sure macOS is up to date, if possible.
