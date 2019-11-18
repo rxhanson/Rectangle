@@ -39,11 +39,20 @@ If windows aren't resizing or moving as you expect, here's some initial steps to
 1. If you suspect there may be another application causing issues, try creating and logging in as a new macOS user.
 
 ## Debug Logging
-To enable debug logging (starting in v0.9.1), execute the following Terminal command and restart the app:
+To enable debug logging (starting in v0.9.1), execute the following Terminal command:
 
 `defaults write com.knollsoft.Rectangle debug -bool true`
+
+Then restart the app.
 
 To view logs:
 1. Open Console.app
 1. Select Action -> Include Debug Messages in the menu
 1. Enter this in the search bar: `process:Rectangle any:calculatedRect`
+
+## Installation
+You can download the latest dmg from https://rectangleapp.com or the [Releases page](https://github.com/rxhanson/Rectangle/releases).
+
+Or install with brew cask:
+
+`brew cask install rectangle`
