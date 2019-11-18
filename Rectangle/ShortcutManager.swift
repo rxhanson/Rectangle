@@ -12,19 +12,27 @@ import MASShortcut
 class ShortcutManager {
     
     let windowManager: WindowManager
-    let applicationToggle: ApplicationToggle
     
-    init(applicationToggle: ApplicationToggle, windowManager: WindowManager) {
-        self.applicationToggle = applicationToggle
+    init(windowManager: WindowManager) {
         self.windowManager = windowManager
         
         registerDefaults()
 
+        bindShortcuts()
+        
+        subscribeAll(selector: #selector(windowActionTriggered))
+    }
+    
+    public func bindShortcuts() {
         for action in WindowAction.active {
             MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: action.name, toAction: action.post)
         }
-        
-        subscribeAll(selector: #selector(windowActionTriggered))
+    }
+    
+    public func unbindShortcuts() {
+        for action in WindowAction.active {
+            MASShortcutBinder.shared()?.breakBinding(withDefaultsKey: action.name)
+        }
     }
     
     public func getKeyEquivalent(action: WindowAction) -> (String, UInt)? {
@@ -52,9 +60,7 @@ class ShortcutManager {
     
     @objc func windowActionTriggered(notification: NSNotification) {
         guard let parameters = notification.object as? ExecutionParameters else { return }
-        if !applicationToggle.disabledForApp {
-            windowManager.execute(parameters)            
-        }
+        windowManager.execute(parameters)
     }
     
     private func subscribe(notification: WindowAction, selector: Selector) {

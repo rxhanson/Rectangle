@@ -16,11 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
-    private let applicationToggle = ApplicationToggle()
     private let windowHistory = WindowHistory()
     
     private let shortcutManager: ShortcutManager
     private let windowManager: WindowManager
+    private let applicationToggle: ApplicationToggle
     private let windowCalculationFactory: WindowCalculationFactory
     private let snappingManager: SnappingManager
     
@@ -33,7 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     override init() {
         self.windowCalculationFactory = WindowCalculationFactory()
         self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
-        self.shortcutManager = ShortcutManager(applicationToggle: applicationToggle, windowManager: windowManager)
+        self.shortcutManager = ShortcutManager(windowManager: windowManager)
+        self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
         super.init()
     }
@@ -107,9 +108,9 @@ extension AppDelegate: NSMenuDelegate {
     
     func menuWillOpen(_ menu: NSMenu) {
         if let frontAppName = applicationToggle.frontAppName {
-            let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore \"App\"", comment: "")
-            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "App", with: frontAppName)
-            ignoreMenuItem.state = applicationToggle.disabledForApp ? .on : .off
+            let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app, comment: "")
+            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
+            ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
         } else {
             ignoreMenuItem.isHidden = true
         }

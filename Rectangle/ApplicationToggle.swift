@@ -13,9 +13,12 @@ class ApplicationToggle: NSObject {
     private var disabledApps = Set<String>()
     public private(set) var frontAppId: String?
     public private(set) var frontAppName: String?
-    public private(set) var disabledForApp: Bool = false
+    public private(set) var shortcutsDisabled: Bool = false
     
-    override init() {
+    private let shortcutManager: ShortcutManager
+    
+    init(shortcutManager: ShortcutManager) {
+        self.shortcutManager = shortcutManager
         super.init()
         registerFrontAppChangeNote()
         if let disabledApps = getDisabledApps() {
@@ -41,12 +44,26 @@ class ApplicationToggle: NSObject {
         
         return disabledApps
     }
+
+    private func disableShortcuts() {
+        if !self.shortcutsDisabled {
+            self.shortcutsDisabled = true
+            self.shortcutManager.unbindShortcuts()
+        }
+    }
     
+    private func enableShortcuts() {
+        if self.shortcutsDisabled {
+            self.shortcutsDisabled = false
+            self.shortcutManager.bindShortcuts()
+        }
+    }
+
     public func disableFrontApp() {
         if let frontAppId = self.frontAppId {
             disabledApps.insert(frontAppId)
             saveDisabledApps()
-            self.disabledForApp = true
+            disableShortcuts()
         }
     }
     
@@ -54,7 +71,7 @@ class ApplicationToggle: NSObject {
         if let frontAppId = self.frontAppId {
             disabledApps.remove(frontAppId)
             saveDisabledApps()
-            self.disabledForApp = false
+            enableShortcuts()
         }
     }
     
@@ -71,9 +88,13 @@ class ApplicationToggle: NSObject {
             self.frontAppId = application.bundleIdentifier
             self.frontAppName = application.localizedName
             if let frontAppId = application.bundleIdentifier {
-                self.disabledForApp = isDisabled(bundleId: frontAppId)
+                if isDisabled(bundleId: frontAppId) {
+                    disableShortcuts()
+                } else {
+                    enableShortcuts()
+                }
             } else {
-                self.disabledForApp = false
+                enableShortcuts()
             }
         }
     }

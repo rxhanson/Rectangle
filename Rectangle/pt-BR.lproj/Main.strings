@@ -119,8 +119,8 @@
 /* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
 "C9v-g0-DH8.title" = "Restaurar";
 
-/* Class = "NSMenuItem"; title = "Ignore \"App\""; ObjectID = "D99-0O-MB6"; */
-"D99-0O-MB6.title" = "Ignorar";
+/* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
+"D99-0O-MB6.title" = "Ignorar frontmost.app";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
 "DVo-aG-piG.title" = "Fechar";
