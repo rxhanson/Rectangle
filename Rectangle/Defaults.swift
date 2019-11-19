@@ -17,6 +17,7 @@ class Defaults {
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let debug = BoolDefault(key: "debug")
+    static let almostMaximizeRatio = FloatDefault(key: "almostMaximizeRatio")
 }
 
 class BoolDefault {
@@ -83,6 +84,25 @@ class StringDefault {
     init(key: String) {
         self.key = key
         value = UserDefaults.standard.string(forKey: key)
+        initialized = true
+    }
+}
+
+class FloatDefault {
+    private let key: String
+    private var initialized = false
+    
+    var value: Float {
+        didSet {
+            if initialized {
+                UserDefaults.standard.set(value, forKey: key)
+            }
+        }
+    }
+    
+    init(key: String) {
+        self.key = key
+        value = UserDefaults.standard.float(forKey: key)
         initialized = true
     }
 }
