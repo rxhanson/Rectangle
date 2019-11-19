@@ -117,6 +117,9 @@ class AccessibilityElement {
     private func set(position: CGPoint) {
         if let value = AXValue.from(value: position, type: .cgPoint) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXPositionAttribute as CFString, value)
+            if Defaults.debug.enabled {
+                os_log("AX position proposed: %{public}@, result: %{public}@", type: .debug, position.debugDescription, getPosition()?.debugDescription ?? "N/A")
+            }
         }
     }
     
@@ -127,6 +130,9 @@ class AccessibilityElement {
     private func set(size: CGSize) {
         if let value = AXValue.from(value: size, type: .cgSize) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXSizeAttribute as CFString, value)
+            if Defaults.debug.enabled {
+                os_log("AX sizing proposed: %{public}@, result: %{public}@", type: .debug, size.debugDescription, getSize()?.debugDescription ?? "N/A")
+            }
         }
     }
     
