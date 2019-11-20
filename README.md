@@ -13,7 +13,7 @@ The default keyboard shortcuts are based on Spectacle, but there is a recommende
 Then restart the Rectangle app.
 
 ##  Differences with Spectacle
-Spectacle used it's own keyboard shortcut recorder, while Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut), a well maintained open source library for shortcut recording in macOS apps. This cuts down dramatically on the number of bugs that were only in Spectacle because of the custom shortcut recorder. 
+Spectacle used its own keyboard shortcut recorder, while Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut), a well maintained open source library for shortcut recording in macOS apps. This cuts down dramatically on the number of bugs that were only in Spectacle because of the custom shortcut recorder. 
 
 ### Additional features
 * Additional window actions: move windows to each edge without resizing, maximize only the height of a window, almost maximizing a window. 
