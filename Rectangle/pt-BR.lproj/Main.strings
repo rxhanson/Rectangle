@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "This applies to move or half actions only. Half actions will not  perform 2/3 & 1/3 behavior when enabled."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "Isto aplica-se apenas a acções de movimento ou meias acções. Metade das ações não executará 2/3 e 1/3 de comportamento quando habilitado.";
+"01Z-t3-cBm.title" = "Isto aplica-se apenas a ações de movimento ou meias ações. Metade das ações não executará 2/3 e 1/3 de comportamento quando habilitado.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "Últimos dois terços";
@@ -174,7 +174,7 @@
 "HFo-cy-zxI.title" = "Mostrar Ortografia e Gramática";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
-"HIK-3r-i7E.title" = "Verifique se há atualizações…";
+"HIK-3r-i7E.title" = "Verificar se há atualizações…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
 "HOm-BV-2jc.title" = "Mover para cima";
