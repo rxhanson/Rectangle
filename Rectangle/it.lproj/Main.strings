@@ -9,7 +9,7 @@
 "0Ak-33-SM7.title" = "In alto a destra";
 
 /* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
-"1Rc-Od-eP5.title" = "Sposta verso il basso";
+"1Rc-Od-eP5.title" = "Sposta giù";
 
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
 "1UK-8n-QPP.title" = "Personalizza la barra degli strumenti…";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "Discorso";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "I primi due terzi";
+"3zd-xE-oWl.title" = "Primi due terzi";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "Stringi";
@@ -66,7 +66,7 @@
 "5kV-Vb-QxS.title" = "Informazioni su Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "Maximize Height"; ObjectID = "6DV-cd-fda"; */
-"6DV-cd-fda.title" = "Massimizzare l'altezza";
+"6DV-cd-fda.title" = "Massimizza l'altezza";
 
 /* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
 "6dh-zS-Vam.title" = "Ripeti";
@@ -78,7 +78,7 @@
 "78Y-hA-62v.title" = "Correggi automaticamente l'ortografia";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "Centra ad un terzo";
+"7YK-9Z-lzw.title" = "Terzo centrale";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
 "8Bg-SZ-hDO.title" = "Centra";
@@ -87,7 +87,7 @@
 "8mr-sm-Yjd.title" = "Direzione di scrittura";
 
 /* Class = "NSTextFieldCell"; title = "Maximize"; ObjectID = "8oe-J2-oUU"; */
-"8oe-J2-oUU.title" = "Massimizzare";
+"8oe-J2-oUU.title" = "Massimizza";
 
 /* Class = "NSWindow"; title = "Authorize Rectangle"; ObjectID = "9JD-tZ-7jf"; */
 "9JD-tZ-7jf.title" = "Autorizzare Rectangle";
@@ -129,10 +129,10 @@
 "Dv1-io-Yv7.title" = "Ortografia e grammatica";
 
 /* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
-"Eah-KL-kbn.title" = "Rendi più grande";
+"Eah-KL-kbn.title" = "Ingrandisci";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "Primo Terzo";
+"F12-EV-Lfz.title" = "Primo terzo";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "Aiuto";
@@ -219,7 +219,7 @@
 "MkV-Pr-PK5.title" = "Copia Righello";
 
 /* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
-"MzN-CJ-ASD.title" = "Rendi più piccolo";
+"MzN-CJ-ASD.title" = "Rimpicciolisci";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
 "NMo-om-nkz.title" = "Servizi";
@@ -279,7 +279,7 @@
 "UEZ-Bs-lqG.title" = "Maiuscolo";
 
 /* Class = "NSMenuItem"; title = "Center"; ObjectID = "VIY-Ag-zcb"; */
-"VIY-Ag-zcb.title" = "Centro";
+"VIY-Ag-zcb.title" = "Centra";
 
 /* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
 "VIf-4h-MJW.title" = "Autorizzare…";
@@ -393,7 +393,7 @@
 "ec4-FB-fMa.title" = "Metà inferiore";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
-"gFy-Zj-RGl.title" = "A proposito di";
+"gFy-Zj-RGl.title" = "Informazioni su";
 
 /* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
 "gVA-U4-sdL.title" = "Incolla";
@@ -543,7 +543,7 @@
 "xrE-MZ-jX0.title" = "Discorso";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
-"yvN-PE-bxn.title" = "Esci dal Rectangle";
+"yvN-PE-bxn.title" = "Esci da Rectangle";
 
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
 "z6F-FW-3nz.title" = "Mostra sostituzioni";
