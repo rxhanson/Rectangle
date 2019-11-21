@@ -93,7 +93,7 @@
 "9JD-tZ-7jf.title" = "Autorizzare Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
-"9XM-Zb-HEb.title" = "Se la casella di controllo è disattivata, fai clic sul lucchetto e inserisci la password.";
+"9XM-Zb-HEb.title" = "Se la casella di controllo è disattivata, fai clic sul lucchetto ed inserisci la password.";
 
 /* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
 "9ic-FL-obx.title" = "Sostituzioni";
