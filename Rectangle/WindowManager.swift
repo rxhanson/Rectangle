@@ -114,7 +114,9 @@ class WindowManager {
         )
         
         if Defaults.debug.enabled {
-            os_log("%{public}@ | display: %{public}@, calculatedRect: %{public}@, resultRect: %{public}@", type: .debug, action.name, visibleFrameOfDestinationScreen.debugDescription, newNormalizedRect.debugDescription, resultingRect.debugDescription)
+            if #available(OSX 10.12, *) {
+                os_log("%{public}@ | display: %{public}@, calculatedRect: %{public}@, resultRect: %{public}@", type: .debug, action.name, visibleFrameOfDestinationScreen.debugDescription, newNormalizedRect.debugDescription, resultingRect.debugDescription)
+            }
         }
     }
 }

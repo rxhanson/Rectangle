@@ -27,7 +27,9 @@ class AccessibilityElement {
     
     static func frontmostWindow() -> AccessibilityElement? {
         guard let frontmostApplicationElement = AccessibilityElement.frontmostApplication() else {
-            os_log("Failed to find the application that currently has focus.", type: .info)
+            if #available(OSX 10.12, *) {
+                os_log("Failed to find the application that currently has focus.", type: .info)
+            }
             return nil
         }
         let focusedAttr = NSAccessibility.Attribute.focusedWindow as CFString
@@ -42,7 +44,9 @@ class AccessibilityElement {
                 return AccessibilityElement(copiedUnderlyingElement as! AXUIElement)
             }
         }
-        os_log("Unable to obtain accessibility element", type: .debug)
+        if #available(OSX 10.12, *) {
+            os_log("Unable to obtain accessibility element", type: .debug)
+        }
         return nil
     }
     
@@ -118,7 +122,9 @@ class AccessibilityElement {
         if let value = AXValue.from(value: position, type: .cgPoint) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXPositionAttribute as CFString, value)
             if Defaults.debug.enabled {
-                os_log("AX position proposed: %{public}@, result: %{public}@", type: .debug, position.debugDescription, getPosition()?.debugDescription ?? "N/A")
+                if #available(OSX 10.12, *) {
+                    os_log("AX position proposed: %{public}@, result: %{public}@", type: .debug, position.debugDescription, getPosition()?.debugDescription ?? "N/A")
+                }
             }
         }
     }
@@ -131,7 +137,9 @@ class AccessibilityElement {
         if let value = AXValue.from(value: size, type: .cgSize) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXSizeAttribute as CFString, value)
             if Defaults.debug.enabled {
-                os_log("AX sizing proposed: %{public}@, result: %{public}@", type: .debug, size.debugDescription, getSize()?.debugDescription ?? "N/A")
+                if #available(OSX 10.12, *) {
+                    os_log("AX sizing proposed: %{public}@, result: %{public}@", type: .debug, size.debugDescription, getSize()?.debugDescription ?? "N/A")
+                }
             }
         }
     }
