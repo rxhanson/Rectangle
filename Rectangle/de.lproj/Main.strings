@@ -3,7 +3,7 @@
 "01Z-t3-cBm.title" = "Dies gilt nur für Zug- oder Halbaktionen. Halbe Aktionen führen bei aktivierter Funktion kein 2/3- und 1/3-Verhalten aus.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "Letzte zwei Drittel";
+"08q-Ce-1QL.title" = "Zwei Drittel rechts";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
 "0Ak-33-SM7.title" = "Oben rechts";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "Rede";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "Die ersten zwei Drittel";
+"3zd-xE-oWl.title" = "Zwei Drittel links";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "Festziehen";
@@ -63,7 +63,7 @@
 "5Vv-lz-BsD.title" = "Kopierstil";
 
 /* Class = "NSMenuItem"; title = "About Rectangle"; ObjectID = "5kV-Vb-QxS"; */
-"5kV-Vb-QxS.title" = "Über das Rectangle";
+"5kV-Vb-QxS.title" = "Über Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "Maximize Height"; ObjectID = "6DV-cd-fda"; */
 "6DV-cd-fda.title" = "Höhe maximieren";
@@ -78,7 +78,7 @@
 "78Y-hA-62v.title" = "Automatische Korrektur der Rechtschreibung";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "Mitte Dritte";
+"7YK-9Z-lzw.title" = "Mittleres Drittel";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
 "8Bg-SZ-hDO.title" = "Zentrum";
@@ -132,7 +132,7 @@
 "Eah-KL-kbn.title" = "Vergrößern";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "Erstes Drittel";
+"F12-EV-Lfz.title" = "Linkes Drittel";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "Hilfe";
@@ -219,7 +219,7 @@
 "MkV-Pr-PK5.title" = "Lineal kopieren";
 
 /* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
-"MzN-CJ-ASD.title" = "Kleiner machen";
+"MzN-CJ-ASD.title" = "Verkleinern";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
 "NMo-om-nkz.title" = "Dienstleistungen";
@@ -270,7 +270,7 @@
 "STb-JK-oB1.title" = "Rectangle-Einstellungen";
 
 /* Class = "NSButtonCell"; title = "Traverse displays on subsequent left or right executions"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "Verfahranzeigen bei nachfolgenden Links- oder Rechtsausführungen";
+"SXx-HZ-GkB.title" = "Zum nächsten Bildschirm wechseln bei mehreren Links- oder Rechtbefehlen";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "Fenster";
@@ -360,7 +360,7 @@
 "cDB-IK-hbR.title" = "Keine verwenden";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "Letztes Drittel";
+"cRm-wn-Yv6.title" = "Rechtes Drittel";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "Auswahl";
@@ -387,7 +387,7 @@
 "e57-QJ-6bL.title" = "Fast maximieren";
 
 /* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
-"e9j-DR-MEH.title" = "Start beim Login";
+"e9j-DR-MEH.title" = "Bei der Anmeldung automatisch öffnen";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
 "ec4-FB-fMa.title" = "Untere Hälfte";
@@ -438,16 +438,16 @@
 "kIP-vf-haE.title" = "Sidebar anzeigen";
 
 /* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
-"lgE-cR-cQ5.title" = "Gehen Sie zu Systemeinstellungen → Sicherheit & Datenschutz → Datenschutz → Barrierefreiheit";
+"lgE-cR-cQ5.title" = "Gehen Sie zu Systemeinstellungen → Sicherheit → Datenschutz → Bedienungshilfen";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "Wenn das Symbol der Menüleiste ausgeblendet ist, starten Sie das Rectangle im Finder neu, um das Menü zu öffnen.";
+"ltc-mf-BHr.title" = "Um das Menü zu öffnen, wenn das Symbol in der Menüleiste ausgeblendet ist, starten Sie Rectangle im Finder neu.";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Grammatik mit Rechtschreibung prüfen";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "Erlauben Sie jede Tastenkombination.";
+"n4U-FC-L9s.title" = "Erlauben Sie jede Tastenkombination";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "Ligaturen";
@@ -543,7 +543,7 @@
 "xrE-MZ-jX0.title" = "Rede";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
-"yvN-PE-bxn.title" = "Rectangle verlassen";
+"yvN-PE-bxn.title" = "Rectangle beenden";
 
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
 "z6F-FW-3nz.title" = "Vertretungen anzeigen";
