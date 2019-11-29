@@ -117,6 +117,9 @@ class WindowManager {
             if #available(OSX 10.15, *) {
                 srcDestScreens += ", srcScreen: \(usableScreens.currentScreen.localizedName)"
                 srcDestScreens += ", destScreen: \(calcResult.screen.localizedName)"
+                if let resultScreens = screenDetection.detectScreens(using: frontmostWindowElement) {
+                    srcDestScreens += ", resultScreen: \(resultScreens.currentScreen.localizedName)"
+                }
             }
             
             Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newNormalizedRect.debugDescription), resultRect: \(resultingRect.debugDescription)\(srcDestScreens)")
