@@ -679,7 +679,9 @@
                     <connections>
                         <outlet property="ignoreMenuItem" destination="D99-0O-MB6" id="iBN-Bc-ds7"/>
                         <outlet property="mainStatusMenu" destination="6wc-Rn-2EG" id="UWt-be-ZH1"/>
+                        <outlet property="quitMenuItem" destination="A66-A4-cGD" id="Vul-Dd-RcH"/>
                         <outlet property="unauthorizedMenu" destination="HZt-qn-3MK" id="c4f-hw-GWr"/>
+                        <outlet property="viewLoggingMenuItem" destination="O8K-y6-bva" id="31H-se-kyh"/>
                     </connections>
                 </customObject>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -705,6 +707,12 @@
                                 <action selector="showAbout:" target="Voe-Tx-rLC" id="dGA-Fy-dtB"/>
                             </connections>
                         </menuItem>
+                        <menuItem title="View Logging..." alternate="YES" id="O8K-y6-bva">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="viewLogging:" target="Voe-Tx-rLC" id="8cH-2P-yKC"/>
+                            </connections>
+                        </menuItem>
                         <menuItem title="Check for Updates…" id="HIK-3r-i7E">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
@@ -712,7 +720,6 @@
                             </connections>
                         </menuItem>
                         <menuItem title="Quit Rectangle" keyEquivalent="q" id="A66-A4-cGD">
-                            <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="terminate:" target="hnw-xV-0zn" id="M1a-kx-BJY"/>
                             </connections>
@@ -2300,7 +2307,7 @@
                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gIp-Hu-6ns">
                                         <rect key="frame" x="-2" y="110" width="454" height="14"/>
                                         <textFieldCell key="cell" title="When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu." id="ltc-mf-BHr">
-                                            <font key="font" metaFont="label" size="11"/>
+                                            <font key="font" metaFont="controlContent" size="11"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -2318,7 +2325,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
                                         <rect key="frame" x="-2" y="48" width="454" height="28"/>
                                         <textFieldCell key="cell" title="This applies to move or half actions only. Half actions will not  perform 2/3 &amp; 1/3 behavior when enabled." id="01Z-t3-cBm">
-                                            <font key="font" metaFont="label" size="11"/>
+                                            <font key="font" metaFont="controlContent" size="11"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -2459,7 +2466,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XRC-ST-jLi">
                                         <rect key="frame" x="-2" y="137" width="254" height="28"/>
                                         <textFieldCell key="cell" alignment="center" title="Go to System Preferences → Security &amp; Privacy → Privacy → Accessibility" id="lgE-cR-cQ5">
-                                            <font key="font" metaFont="label" size="11"/>
+                                            <font key="font" metaFont="controlContent" size="11"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>

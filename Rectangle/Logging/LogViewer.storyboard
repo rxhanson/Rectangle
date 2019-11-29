@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="lVl-bK-43b">
+            <objects>
+                <windowController storyboardIdentifier="LogWindowController" id="vJi-GS-BV5" customClass="LogWindowController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="Rectangle Logging" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Uij-UE-jd5">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="245" y="301" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <value key="minSize" type="size" width="100" height="50"/>
+                        <toolbar key="toolbar" implicitIdentifier="B1DBE389-331A-4689-B03B-A64CB9B7762C" autosavesConfiguration="NO" allowsUserCustomization="NO" displayMode="iconOnly" sizeMode="small" id="zwU-0y-LnI">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="A9F27F45-23A4-4F6A-B29F-A185C68E5CC0" label="Clear" paletteLabel="Clear" tag="-1" image="NSTrashEmpty" id="vSV-yb-vAt">
+                                    <size key="minSize" width="72" height="72"/>
+                                    <size key="maxSize" width="72" height="72"/>
+                                    <connections>
+                                        <action selector="clearClicked:" target="vJi-GS-BV5" id="q3B-He-jB8"/>
+                                    </connections>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="Efc-d5-q0y"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="zCn-Wl-gsE"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="Nei-0S-1mq"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="Vn6-3B-BfI"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="mkO-5w-oGc"/>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="vSV-yb-vAt"/>
+                            </defaultToolbarItems>
+                        </toolbar>
+                        <connections>
+                            <outlet property="delegate" destination="vJi-GS-BV5" id="GBp-av-2Ru"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="PiU-lX-bsA" kind="relationship" relationship="window.shadowedContentViewController" id="gtr-RV-G0d"/>
+                    </connections>
+                </windowController>
+                <customObject id="ibM-d1-JvQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-152" y="222"/>
+        </scene>
+        <!--Log View Controller-->
+        <scene sceneID="cN1-rF-z25">
+            <objects>
+                <viewController storyboardIdentifier="LogViewController" id="PiU-lX-bsA" customClass="LogViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="ptq-Cu-Bka">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dQe-XH-ZUC">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <clipView key="contentView" ambiguous="YES" drawsBackground="NO" copiesOnScroll="NO" id="mJP-NV-KKg">
+                                    <rect key="frame" x="0.0" y="0.0" width="465" height="270"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView ambiguous="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="gEX-Ux-opP" customClass="KeyDownTextView" customModule="Rectangle" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="465" height="270"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <size key="minSize" width="465" height="270"/>
+                                            <size key="maxSize" width="480" height="10000000"/>
+                                            <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        </textView>
+                                    </subviews>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="4i8-uk-TK7">
+                                    <rect key="frame" x="-100" y="-100" width="225" height="15"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="BWv-Pu-eWb">
+                                    <rect key="frame" x="465" y="0.0" width="15" height="270"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="textView" destination="gEX-Ux-opP" id="NNV-3N-MRU"/>
+                    </connections>
+                </viewController>
+                <customObject id="HYT-Vt-vzx" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-152" y="670"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="NSTrashEmpty" width="32" height="32"/>
+    </resources>
+</document>

@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import os.log
 
 class WindowManager {
 
@@ -113,10 +112,8 @@ class WindowManager {
             count: newCount
         )
         
-        if Defaults.debug.enabled {
-            if #available(OSX 10.12, *) {
-                os_log("%{public}@ | display: %{public}@, calculatedRect: %{public}@, resultRect: %{public}@", type: .debug, action.name, visibleFrameOfDestinationScreen.debugDescription, newNormalizedRect.debugDescription, resultingRect.debugDescription)
-            }
+        if Logger.logging {
+            Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newNormalizedRect.debugDescription), resultRect: \(resultingRect.debugDescription)")
         }
     }
 }

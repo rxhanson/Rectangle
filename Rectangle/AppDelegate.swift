@@ -29,6 +29,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var mainStatusMenu: NSMenu!
     @IBOutlet weak var unauthorizedMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
+    @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
+    @IBOutlet weak var quitMenuItem: NSMenuItem!
     
     override init() {
         self.windowCalculationFactory = WindowCalculationFactory()
@@ -75,6 +77,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func showAbout(_ sender: Any) {
         NSApp.activate(ignoringOtherApps: true)
         NSApp.orderFrontStandardAboutPanel(sender)
+    }
+    
+    @IBAction func viewLogging(_ sender: Any) {
+        Logger.showLogging(sender: sender)
     }
     
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
@@ -138,6 +144,10 @@ extension AppDelegate: NSMenuDelegate {
                 menuItem.isEnabled = false
             }
         }
+        
+        viewLoggingMenuItem.keyEquivalentModifierMask = .option
+        quitMenuItem.keyEquivalent = "q"
+        quitMenuItem.keyEquivalentModifierMask = .command
     }
     
     func menuDidClose(_ menu: NSMenu) {
