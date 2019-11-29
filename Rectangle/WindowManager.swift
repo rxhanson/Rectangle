@@ -113,7 +113,13 @@ class WindowManager {
         )
         
         if Logger.logging {
-            Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newNormalizedRect.debugDescription), resultRect: \(resultingRect.debugDescription)")
+            var srcDestScreens: String = ""
+            if #available(OSX 10.15, *) {
+                srcDestScreens += ", srcScreen: \(usableScreens.currentScreen.localizedName)"
+                srcDestScreens += ", destScreen: \(calcResult.screen.localizedName)"
+            }
+            
+            Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newNormalizedRect.debugDescription), resultRect: \(resultingRect.debugDescription)\(srcDestScreens)")
         }
     }
 }
