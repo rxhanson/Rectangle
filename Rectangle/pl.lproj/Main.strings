@@ -1,5 +1,5 @@
 
-/* Class = "NSTextFieldCell"; title = "This applies to move or half actions only. Half actions will not  perform 2/3 & 1/3 behavior when enabled."; ObjectID = "01Z-t3-cBm"; */
+/* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
 "01Z-t3-cBm.title" = "Dotyczy to tylko ruchu lub połowy akcji. Połowa akcji nie wykona 2/3 i 1/3 zachowania, gdy zostanie włączona.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
@@ -269,7 +269,7 @@
 /* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
 "STb-JK-oB1.title" = "Preferencje w zakresie Rectanglea";
 
-/* Class = "NSButtonCell"; title = "Traverse displays on subsequent left or right executions"; ObjectID = "SXx-HZ-GkB"; */
+/* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
 "SXx-HZ-GkB.title" = "Wyświetlanie trawersów w kolejnych lewych lub prawych wykonaniach.";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
