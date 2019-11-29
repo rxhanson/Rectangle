@@ -59,6 +59,8 @@
 		988D068522EB4EFC004EABD7 /* MoveDownCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068422EB4EFC004EABD7 /* MoveDownCalculation.swift */; };
 		98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B3D231130AF0066EC23 /* SettingsViewController.swift */; };
 		98910B42231476B30066EC23 /* PrefsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B41231476B30066EC23 /* PrefsViewController.swift */; };
+		98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98987AA22391890300BE72C4 /* LogViewer.storyboard */; };
+		98987AA52391890400BE72C4 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98987AA32391890400BE72C4 /* LogViewer.swift */; };
 		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
 		98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */; };
 		98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2755D231FF6A9009B9292 /* EventMonitor.swift */; };
@@ -177,6 +179,8 @@
 		98910B6C231D16840066EC23 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
 		98910B6D231D16B00066EC23 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Main.strings"; sourceTree = "<group>"; };
 		98910B6E231D16B00066EC23 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Main.strings"; sourceTree = "<group>"; };
+		98987AA22391890300BE72C4 /* LogViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LogViewer.storyboard; sourceTree = "<group>"; };
+		98987AA32391890400BE72C4 /* LogViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
 		98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevDisplayCalculation.swift; sourceTree = "<group>"; };
 		98C2755D231FF6A9009B9292 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
@@ -358,6 +362,7 @@
 				9824703E22B13FBC0037B409 /* ScreenDetection.swift */,
 				98C275662322E2DA009B9292 /* WindowHistory.swift */,
 				9824704022B186D00037B409 /* WindowManager.swift */,
+				98987AA62391890C00BE72C4 /* Logging */,
 				98910B3C2311304D0066EC23 /* PrefsWindow */,
 				98C2755F231FF6AE009B9292 /* Snapping */,
 				985B9BFA22BE218C00A2E8F0 /* Popover */,
@@ -394,6 +399,15 @@
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
 			);
 			path = PrefsWindow;
+			sourceTree = "<group>";
+		};
+		98987AA62391890C00BE72C4 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				98987AA22391890300BE72C4 /* LogViewer.storyboard */,
+				98987AA32391890400BE72C4 /* LogViewer.swift */,
+			);
+			path = Logging;
 			sourceTree = "<group>";
 		};
 		98C2755F231FF6AE009B9292 /* Snapping */ = {
@@ -552,6 +566,7 @@
 				9824701122AF9B7E0037B409 /* Assets.xcassets in Resources */,
 				9824701422AF9B7E0037B409 /* Main.storyboard in Resources */,
 				981F27D12340E3E1006CD263 /* InternetAccessPolicy.plist in Resources */,
+				98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,6 +737,7 @@
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
 				9821403322B38A1B00ABFB3F /* UpperLeftCalculation.swift in Sources */,
+				98987AA52391890400BE72C4 /* LogViewer.swift in Sources */,
 				9824704C22B189250037B409 /* WindowMover.swift in Sources */,
 				988D066922EB4CCB004EABD7 /* LastThirdCalculation.swift in Sources */,
 				988D068522EB4EFC004EABD7 /* MoveDownCalculation.swift in Sources */,

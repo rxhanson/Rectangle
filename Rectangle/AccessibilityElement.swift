@@ -9,7 +9,6 @@
 import Foundation
 import Carbon
 import Cocoa
-import os.log
 
 class AccessibilityElement {
     private let underlyingElement: AXUIElement
@@ -27,8 +26,8 @@ class AccessibilityElement {
     
     static func frontmostWindow() -> AccessibilityElement? {
         guard let frontmostApplicationElement = AccessibilityElement.frontmostApplication() else {
-            if #available(OSX 10.12, *) {
-                os_log("Failed to find the application that currently has focus.", type: .info)
+            if Logger.logging {
+                Logger.log("Failed to find the application that currently has focus.")
             }
             return nil
         }
@@ -44,8 +43,8 @@ class AccessibilityElement {
                 return AccessibilityElement(copiedUnderlyingElement as! AXUIElement)
             }
         }
-        if #available(OSX 10.12, *) {
-            os_log("Unable to obtain accessibility element", type: .debug)
+        if Logger.logging {
+            Logger.log("Unable to obtain accessibility element")
         }
         return nil
     }
@@ -121,10 +120,8 @@ class AccessibilityElement {
     private func set(position: CGPoint) {
         if let value = AXValue.from(value: position, type: .cgPoint) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXPositionAttribute as CFString, value)
-            if Defaults.debug.enabled {
-                if #available(OSX 10.12, *) {
-                    os_log("AX position proposed: %{public}@, result: %{public}@", type: .debug, position.debugDescription, getPosition()?.debugDescription ?? "N/A")
-                }
+            if Logger.logging {
+                Logger.log("AX position proposed: \(position.debugDescription), result: \(getPosition()?.debugDescription ?? "N/A")")
             }
         }
     }
@@ -136,10 +133,8 @@ class AccessibilityElement {
     private func set(size: CGSize) {
         if let value = AXValue.from(value: size, type: .cgSize) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXSizeAttribute as CFString, value)
-            if Defaults.debug.enabled {
-                if #available(OSX 10.12, *) {
-                    os_log("AX sizing proposed: %{public}@, result: %{public}@", type: .debug, size.debugDescription, getSize()?.debugDescription ?? "N/A")
-                }
+            if Logger.logging {
+                Logger.log("AX sizing proposed: \(size.debugDescription), result: \(getSize()?.debugDescription ?? "N/A")")
             }
         }
     }
