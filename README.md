@@ -36,9 +36,9 @@ Note that the `subsequentExecutionMode` is also tied to the setting for traversi
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Code and localization contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. Both Multitouch and Rectangle also use Sparkle and MASShortcut, so contributors to either of those projects are also entitled to a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
 
 ### Localization
-Localization was done using [DeepL](https://www.deepl.com/translator). Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
+Localization was done using [DeepL](https://www.deepl.com/translator) and Google Translate. Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
 
-Pull requests for localizations are welcome. Japanese, Chinese, and Korean localizations are needed.
+Pull requests for new localizations or improvements on existing localizations are welcome.
 
 ## Troubleshooting
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
@@ -51,17 +51,10 @@ If windows aren't resizing or moving as you expect, here's some initial steps to
 1. The logs are pretty straightforward. If your calculated rect and your resulting rect are identical, chances are that there is another application causing issues. Save your logs if needed to attach to an issue if you create one.
 1. If you suspect there may be another application causing issues, try creating and logging in as a new macOS user.
 
-## Debug Logging
-To enable debug logging (starting in v0.9.1), execute the following Terminal command:
-
-`defaults write com.knollsoft.Rectangle debug -bool true`
-
-Then restart the app.
-
-To view logs:
-1. Open Console.app
-1. Select Action -> Include Debug Messages in the menu
-1. Enter this in the search bar: `process:Rectangle any:calculatedRect`
+## View Debug Logging
+1. Hold down the alt (option) key with the Rectangle menu open. 
+1. Select the "View Logging..." menu item, which is in place of the "About" menu item.
+1. Logging will appear in the window as you perform Rectangle commands.
 
 ## Installation
 You can download the latest dmg from https://rectangleapp.com or the [Releases page](https://github.com/rxhanson/Rectangle/releases).
