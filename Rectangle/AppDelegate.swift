@@ -18,11 +18,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = RectangleStatusItem.instance
     private let windowHistory = WindowHistory()
     
-    private let shortcutManager: ShortcutManager
-    private let windowManager: WindowManager
-    private let applicationToggle: ApplicationToggle
-    private let windowCalculationFactory: WindowCalculationFactory
-    private let snappingManager: SnappingManager
+    private var shortcutManager: ShortcutManager!
+    private var windowManager: WindowManager!
+    private var applicationToggle: ApplicationToggle!
+    private var windowCalculationFactory: WindowCalculationFactory!
+    private var snappingManager: SnappingManager!
     
     private var prefsWindowController: NSWindowController?
     
@@ -32,15 +32,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
     
-    override init() {
-        self.windowCalculationFactory = WindowCalculationFactory()
-        self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
-        self.shortcutManager = ShortcutManager(windowManager: windowManager)
-        self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
-        self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
-        super.init()
-    }
-    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
@@ -49,6 +40,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
             self.openPreferences(self)
             self.statusItem.statusMenu = self.mainStatusMenu
+            self.accessibilityTrusted()
+        }
+        
+        if alreadyTrusted {
+            accessibilityTrusted()
         }
         
         statusItem.statusMenu = alreadyTrusted
@@ -57,6 +53,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
+    }
+    
+    func accessibilityTrusted() {
+        self.windowCalculationFactory = WindowCalculationFactory()
+        self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
+        self.shortcutManager = ShortcutManager(windowManager: windowManager)
+        self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
+        self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
