@@ -33,7 +33,7 @@ Followed by a restart of the app.
 Note that the `subsequentExecutionMode` is also tied to the setting for traversing displays in the prefs.
 
 ## Contributing
-Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Code and localization contributors to Rectangle or Spectacle are entitled to a free license of Multitouch. Both Multitouch and Rectangle also use Sparkle and MASShortcut, so contributors to either of those projects are also entitled to a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
+Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. If you contribute code or localizations that get merged into Rectangle, you get a free license of Multitouch. Contributors to Sparkle, MASShortcut, or Spectacle can also receive a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
 
 ### Localization
 Localization was done using [DeepL](https://www.deepl.com/translator) and Google Translate. Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
