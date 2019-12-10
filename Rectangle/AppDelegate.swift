@@ -8,6 +8,8 @@
 
 import Cocoa
 import Sparkle
+import ServiceManagement
+import os.log
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -109,6 +111,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if isRunning {
             let killNotification = Notification.Name("killLauncher")
             DistributedNotificationCenter.default().post(name: killNotification, object: Bundle.main.bundleIdentifier!)
+        }
+        
+        // Even if we are already set up to launch on login, setting it again since macOS can be buggy with this type of launch on login.
+        if Defaults.launchOnLogin.enabled {
+            let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
+            if !smLoginSuccess {
+                if #available(OSX 10.12, *) {
+                    os_log("Unable to enable launch at login. Attempting one more time.", type: .info)
+                }
+                SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
+            }
         }
     }
     
