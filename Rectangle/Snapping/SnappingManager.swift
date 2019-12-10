@@ -78,9 +78,8 @@ class SnappingManager {
         case .leftMouseDragged:
             guard let currentRect = frontmostWindow?.rectOfElement(),
                 let windowId = frontmostWindow?.getIdentifier()
-                else {
-                    return
-            }
+            else { return }
+            
             if !windowMoving {
                 if currentRect.size == initialWindowRect?.size
                     && currentRect.origin != initialWindowRect?.origin {
@@ -94,6 +93,9 @@ class SnappingManager {
                     } else {
                         windowHistory.restoreRects[windowId] = initialWindowRect
                     }
+                }
+                else {
+                    windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
             if windowMoving {
