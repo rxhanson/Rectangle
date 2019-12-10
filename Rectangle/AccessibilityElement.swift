@@ -58,9 +58,14 @@ class AccessibilityElement {
         return CGRect(x: position.x, y: position.y, width: size.width, height: size.height)
     }
     
-    func setRectOf(_ rect: CGRect) {
-        set(position: rect.origin)
-        set(size: rect.size)
+    func setRectOf(_ rect: CGRect, sizeFirst: Bool = false) {
+        if sizeFirst {
+            set(size: rect.size)
+            set(position: rect.origin)
+        } else {
+            set(position: rect.origin)
+            set(size: rect.size)
+        }
     }
     
     static func normalizeCoordinatesOf(_ rect: CGRect, frameOfScreen: CGRect) -> CGRect {

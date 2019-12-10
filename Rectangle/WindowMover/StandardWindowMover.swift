@@ -14,6 +14,7 @@ class StandardWindowMover: WindowMover {
         if previousWindowRect?.isNull == true {
             return
         }
-        frontmostWindowElement?.setRectOf(windowRect)
+        let sameDisplay = visibleFrameOfScreen.contains(windowRect)
+        frontmostWindowElement?.setRectOf(windowRect, sizeFirst: sameDisplay)
     }
 }
