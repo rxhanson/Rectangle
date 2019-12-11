@@ -3,13 +3,13 @@
 "01Z-t3-cBm.title" = "이동하기 또는 절반 동작을 반복하면 윈도우가 1/2, 2/3, 혹은 1/3 크기가 되는 대신, 다음 디스플레이로 이동합니다.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "우측 2/3";
+"08q-Ce-1QL.title" = "마지막 2/3";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
-"0Ak-33-SM7.title" = "우측 상단";
+"0Ak-33-SM7.title" = "오른쪽 위";
 
 /* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
-"1Rc-Od-eP5.title" = "하단 이동";
+"1Rc-Od-eP5.title" = "아래로 이동";
 
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
 "1UK-8n-QPP.title" = "도구 막대 사용자화…";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "말하기";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "좌측 2/3";
+"3zd-xE-oWl.title" = "처음 2/3";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "좁게";
@@ -72,16 +72,16 @@
 "6dh-zS-Vam.title" = "실행 복귀";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left"; ObjectID = "6ma-hP-5xX"; */
-"6ma-hP-5xX.title" = "좌측 하단";
+"6ma-hP-5xX.title" = "왼쪽 아래";
 
 /* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
 "78Y-hA-62v.title" = "맞춤법 자동 수정";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "중앙 1/3";
+"7YK-9Z-lzw.title" = "가운데 1/3";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
-"8Bg-SZ-hDO.title" = "중앙";
+"8Bg-SZ-hDO.title" = "가운데";
 
 /* Class = "NSMenu"; title = "Writing Direction"; ObjectID = "8mr-sm-Yjd"; */
 "8mr-sm-Yjd.title" = "작성 방향";
@@ -129,16 +129,16 @@
 "Dv1-io-Yv7.title" = "맞춤법 및 문법";
 
 /* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
-"Eah-KL-kbn.title" = "확대";
+"Eah-KL-kbn.title" = "크게";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "좌측 1/3";
+"F12-EV-Lfz.title" = "처음 1/3";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "도움말";
 
 /* Class = "NSTextFieldCell"; title = "Right Half"; ObjectID = "F8S-GI-LiB"; */
-"F8S-GI-LiB.title" = "우측 절반";
+"F8S-GI-LiB.title" = "오른쪽 절반";
 
 /* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
 "FKE-Sm-Kum.title" = "Rectangle 도움말";
@@ -177,7 +177,7 @@
 "HIK-3r-i7E.title" = "업데이트 확인…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
-"HOm-BV-2jc.title" = "상단 이동";
+"HOm-BV-2jc.title" = "위로 이동";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
 "HyV-fh-RgO.title" = "보기";
@@ -192,7 +192,7 @@
 "J5U-5w-g23.title" = "좌우 정렬";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
-"J6t-sg-Wwz.title" = "우측 하단";
+"J6t-sg-Wwz.title" = "오른쪽 아래";
 
 /* Class = "NSMenuItem"; title = "Use None"; ObjectID = "J7y-lM-qPV"; */
 "J7y-lM-qPV.title" = "사용하지 않음";
@@ -219,7 +219,7 @@
 "MkV-Pr-PK5.title" = "눈금자 복사하기";
 
 /* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
-"MzN-CJ-ASD.title" = "축소";
+"MzN-CJ-ASD.title" = "작게";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
 "NMo-om-nkz.title" = "서비스";
@@ -273,7 +273,7 @@
 "STb-JK-oB1.title" = "Rectangle 환경설정";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "좌측 및 우측 명령 반복시 디스플레이 순환하기";
+"SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령 반복시 디스플레이 순환하기";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "윈도우";
@@ -306,7 +306,7 @@
 "WeT-3V-zwk.title" = "붙여넣고 스타일 일치시킴";
 
 /* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
-"Xc8-Sm-pig.title" = "좌측 절반";
+"Xc8-Sm-pig.title" = "왼쪽 절반";
 
 /* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
 "Xz5-n4-O0W.title" = "찾기…";
@@ -339,7 +339,7 @@
 "aXa-aM-Jaq.title" = "서체";
 
 /* Class = "NSTextFieldCell"; title = "Top Left"; ObjectID = "adp-cN-qkh"; */
-"adp-cN-qkh.title" = "좌측 상단";
+"adp-cN-qkh.title" = "왼쪽 위";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "agt-UL-0e3"; */
 "agt-UL-0e3.title" = "기본값 사용";
@@ -363,7 +363,7 @@
 "cDB-IK-hbR.title" = "사용하지 않음";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "우측 1/3";
+"cRm-wn-Yv6.title" = "마지막 1/3";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "선택 부분";
@@ -372,7 +372,7 @@
 "cwL-P1-jid.title" = "스마트 링크";
 
 /* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
-"d7y-s8-7GE.title" = "상단 절반";
+"d7y-s8-7GE.title" = "위쪽 절반";
 
 /* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
 "d9M-CD-aMd.title" = "소문자로 만들기";
@@ -393,7 +393,7 @@
 "e9j-DR-MEH.title" = "로그인 시 시작";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
-"ec4-FB-fMa.title" = "하단 절반";
+"ec4-FB-fMa.title" = "아래쪽 절반";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
 "gFy-Zj-RGl.title" = "정보";
@@ -489,7 +489,7 @@
 "rmV-YD-Hzj.title" = "자동으로 업데이트 확인";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
-"rzr-Qq-702.title" = "우측 이동";
+"rzr-Qq-702.title" = "오른쪽으로 이동";
 
 /* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
 "snW-S8-Cw5.title" = "도구 막대 보기";
@@ -519,7 +519,7 @@
 "uw2-9W-2jq.label" = "키보드 단축키";
 
 /* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
-"v2f-bX-xiM.title" = "좌측 이동";
+"v2f-bX-xiM.title" = "왼쪽으로 이동";
 
 /* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
 "vKC-jM-MkH.title" = "스타일 붙여넣기";
