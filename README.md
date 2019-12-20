@@ -36,6 +36,7 @@ Note that the `subsequentExecutionMode` is also tied to the setting for traversi
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
 
 `defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>`
+
 `defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>`
 
 Followed by a restart of the app.
