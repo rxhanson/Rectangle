@@ -32,6 +32,14 @@ Followed by a restart of the app.
 
 Note that the `subsequentExecutionMode` is also tied to the setting for traversing displays in the prefs.
 
+### Details on Almost Maximize
+By default, "Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
+
+`defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>`
+`defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>`
+
+Followed by a restart of the app.
+
 ## Contributing
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. If you contribute code or localizations that get merged into Rectangle, you get a free license of Multitouch. Contributors to Sparkle, MASShortcut, or Spectacle can also receive a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
 
