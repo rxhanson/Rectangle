@@ -10,13 +10,19 @@ import Foundation
 
 class AlmostMaximizeCalculation: WindowCalculation {
     
-    let almostMaximizeRatio: CGFloat
-        
+    let almostMaximizeHeight: CGFloat
+    let almostMaximizeWidth: CGFloat
+
     init() {
-        let defaultRatio = Defaults.almostMaximizeRatio.value
-        almostMaximizeRatio = (defaultRatio <= 0 || defaultRatio > 1)
+        let defaultHeight = Defaults.almostMaximizeHeight.value
+        almostMaximizeHeight = (defaultHeight <= 0 || defaultHeight > 1)
             ? 0.9
-            : CGFloat(defaultRatio)
+            : CGFloat(defaultHeight)
+
+        let defaultWidth = Defaults.almostMaximizeWidth.value
+        almostMaximizeWidth = (defaultWidth <= 0 || defaultWidth > 1)
+            ? 0.9
+            : CGFloat(defaultWidth)
     }
     
     func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
@@ -24,8 +30,8 @@ class AlmostMaximizeCalculation: WindowCalculation {
         var calculatedWindowRect = visibleFrameOfScreen
         
         // Resize
-        calculatedWindowRect.size.width = visibleFrameOfScreen.width * almostMaximizeRatio
-        calculatedWindowRect.size.height = visibleFrameOfScreen.height * almostMaximizeRatio
+        calculatedWindowRect.size.height = visibleFrameOfScreen.height * almostMaximizeHeight
+        calculatedWindowRect.size.width = visibleFrameOfScreen.width * almostMaximizeWidth
         
         // Center
         calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX

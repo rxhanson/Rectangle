@@ -16,7 +16,8 @@ class Defaults {
     static let subsequentExecutionMode = SubsequentExecutionDefault()
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
-    static let almostMaximizeRatio = FloatDefault(key: "almostMaximizeRatio")
+    static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
+    static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
 }
 
 class BoolDefault {
