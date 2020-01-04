@@ -45,7 +45,7 @@ class WindowManager {
         
         var screens: UsableScreens?
         if let screen = parameters.screen {
-            screens = UsableScreens(currentScreen: screen)
+            screens = UsableScreens(currentScreen: screen, numScreens: 1)
         } else {
             screens = screenDetection.detectScreens(using: frontmostWindowElement)
         }

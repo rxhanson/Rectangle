@@ -13,6 +13,8 @@ class NextPrevDisplayCalculation: WindowCalculation {
     let centerCalculation = CenterCalculation()
     
     func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+        
+        guard usableScreens.numScreens > 1 else { return nil }
 
         var screen: NSScreen?
         

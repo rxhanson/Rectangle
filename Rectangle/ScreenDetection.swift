@@ -16,18 +16,18 @@ class ScreenDetection {
         
         if screens.count == 1 {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
-            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
         }
         
         let screensOrdered = order(screens: screens)
         guard let sourceScreen: NSScreen = screenContaining(frontmostWindowElement?.rectOfElement() ?? CGRect.zero, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
-            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
         }
         
         let adjacentScreens = adjacent(toFrameOfScreen: sourceScreen.frame, screens: screensOrdered)
         
-        return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens)
+        return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
     }
 
     private func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
@@ -107,12 +107,14 @@ struct UsableScreens {
     let adjacentScreens: AdjacentScreens?
     let frameOfCurrentScreen: CGRect
     let visibleFrameOfCurrentScreen: CGRect
+    let numScreens: Int
     
-    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil) {
+    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens
         self.frameOfCurrentScreen = NSRectToCGRect(currentScreen.frame)
         self.visibleFrameOfCurrentScreen =  NSRectToCGRect(currentScreen.visibleFrame)
+        self.numScreens = numScreens
     }
 }
 
