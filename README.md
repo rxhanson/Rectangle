@@ -71,3 +71,9 @@ You can download the latest dmg from https://rectangleapp.com or the [Releases p
 Or install with brew cask:
 
 `brew cask install rectangle`
+
+## Preferences Storage
+The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:
+`~/Library/Preferences/com.knollsoft.Rectangle.plist`
+
+That file can be backed up or transferred to other machines.
