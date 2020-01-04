@@ -8,6 +8,10 @@
 
 import Foundation
 
+/**
+ * After a window has been moved and resized, if the window could not be resized small enough to fit the intended size, then some of the window may appear off the screen. The BestEffortWindowMover will move the window so that it fits entirely on the screen.
+ */
+
 class BestEffortWindowMover: WindowMover {
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
         guard var movedWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
