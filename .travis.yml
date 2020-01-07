@@ -1,1 +1,5 @@
 os: osx
+language: objective-c
+xcode_project: Rectangle.xcodeproj
+xcode_scheme: RectangleTests
+
