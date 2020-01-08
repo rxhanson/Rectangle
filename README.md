@@ -26,7 +26,9 @@ The default behavior for Rectangle is based on Spectacle. Each time you execute 
 
 This behavior can be disabled with the following terminal command:
 
-`defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2`
+```bash
+defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
+```
 
 Followed by a restart of the app.
 
@@ -35,9 +37,13 @@ Note that the `subsequentExecutionMode` is also tied to the setting for traversi
 ### Details on Almost Maximize
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
 
-`defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>`
+```bash
+defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>
+```
 
-`defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>`
+```bash
+defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
+```
 
 Followed by a restart of the app.
 
@@ -70,7 +76,9 @@ You can download the latest dmg from https://rectangleapp.com or the [Releases p
 
 Or install with brew cask:
 
-`brew cask install rectangle`
+```bash
+brew cask install rectangle
+```
 
 ## Preferences Storage
 The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:
