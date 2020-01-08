@@ -8,7 +8,9 @@ Rectangle arbitrarily supports macOS v10.12+. If you're willing to test on earli
 ## Keyboard Shortcuts
 The default keyboard shortcuts are based on Spectacle, but there is a recommended alternative set of defaults based on the Magnet app. This can be enabled by setting "alternateDefaultShortcuts" to true in NSUserDefaults for Rectangle with the following Terminal command:
 
-`defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true`
+```bash
+defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
+```
 
 Then restart the Rectangle app. 
 
