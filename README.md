@@ -2,6 +2,8 @@
 
 Rectangle is a window management app based on Spectacle, written in Swift.
 
+![image](https://user-images.githubusercontent.com/13651296/71896594-7cdb9280-3154-11ea-83a7-70b71c6df9d4.png)
+
 ## System Requirements
 Rectangle arbitrarily supports macOS v10.12+. If you're willing to test on earlier versions of macOS, this can be updated.
 
