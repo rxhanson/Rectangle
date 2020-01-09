@@ -7,6 +7,15 @@ Rectangle is a window management app based on Spectacle, written in Swift.
 ## System Requirements
 Rectangle arbitrarily supports macOS v10.12+. If you're willing to test on earlier versions of macOS, this can be updated.
 
+## Installation
+You can download the latest dmg from https://rectangleapp.com or the [Releases page](https://github.com/rxhanson/Rectangle/releases).
+
+Or install with brew cask:
+
+```bash
+brew cask install rectangle
+```
+
 ## Keyboard Shortcuts
 The default keyboard shortcuts are based on Spectacle, but there is a recommended alternative set of defaults based on the Magnet app. This can be enabled by setting "alternateDefaultShortcuts" to true in NSUserDefaults for Rectangle with the following Terminal command:
 
@@ -59,6 +68,19 @@ Localization was done using [DeepL](https://www.deepl.com/translator) and Google
 
 Pull requests for new localizations or improvements on existing localizations are welcome.
 
+### Running the app in Xcode (for developers)
+Rectangle uses [CocoaPods](https://cocoapods.org/) to install Sparkle and MASShortcut. 
+
+1. Make sure CocoaPods is installed and up to date on your machine (`sudo gem install cocoapods`).
+1. Execute `pod install` the root directory of the project. 
+1. Open the generated xcworkspace file (`open Rectangle.xcworkspace`).
+
+#### Signing
+- Rectangle is typically in a state where it is signed to run locally with no developer ID configured.
+- You can run the app out of the box this way, but you might have to authorize the app in System Prefs every time you run it. 
+- If you have a developer ID set up, you'll want to use that to sign it and additionally add the Hardened Runtime capability to the Rectangle and RectangleLauncher targets. 
+
+
 ## Troubleshooting
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
 1. Make sure macOS is up to date, if possible.
@@ -74,15 +96,6 @@ If windows aren't resizing or moving as you expect, here's some initial steps to
 1. Hold down the alt (option) key with the Rectangle menu open. 
 1. Select the "View Logging..." menu item, which is in place of the "About" menu item.
 1. Logging will appear in the window as you perform Rectangle commands.
-
-## Installation
-You can download the latest dmg from https://rectangleapp.com or the [Releases page](https://github.com/rxhanson/Rectangle/releases).
-
-Or install with brew cask:
-
-```bash
-brew cask install rectangle
-```
 
 ## Preferences Storage
 The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:
