@@ -18,6 +18,7 @@ class Defaults {
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
+    static let gapSize = FloatDefault(key: "gapSize")
 }
 
 class BoolDefault {

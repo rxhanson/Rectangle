@@ -279,6 +279,16 @@ enum WindowAction: Int {
         }
     }
     
+    var gapEdge: Edge {
+        switch self {
+        case .leftHalf: return .right
+        case .rightHalf: return .left
+        case .bottomHalf: return .bottom
+        case .topHalf: return .top
+        default:
+            return .none
+        }
+    }
 }
 
 struct Shortcut {

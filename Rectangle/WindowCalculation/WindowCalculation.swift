@@ -44,7 +44,7 @@ extension WindowCalculation {
 }
 
 struct WindowCalculationResult {
-    let rect: CGRect
+    var rect: CGRect
     let screen: NSScreen
     let resultingAction: WindowAction
 }

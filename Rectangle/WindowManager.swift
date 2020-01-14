@@ -15,6 +15,7 @@ class WindowManager {
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowCalculationFactory: WindowCalculationFactory
     private let windowHistory: WindowHistory
+    private let gapSize = Defaults.gapSize.value
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
@@ -85,9 +86,13 @@ class WindowManager {
         
         let windowCalculation = windowCalculationFactory.calculation(for: action)
         
-        guard let calcResult = windowCalculation?.calculate(currentNormalizedRect, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
+        guard var calcResult = windowCalculation?.calculate(currentNormalizedRect, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
             NSSound.beep()
             return
+        }
+        
+        if gapSize > 0, calcResult.resultingAction.gapEdge != .none {
+            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: calcResult.resultingAction.gapEdge, gapSize: gapSize)
         }
 
         let newNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
