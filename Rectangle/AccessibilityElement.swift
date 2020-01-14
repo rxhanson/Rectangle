@@ -64,16 +64,16 @@ class AccessibilityElement {
             set(size: rect.size)
     }
     
-    func isResizeable() -> Bool {
-        var resizeable: DarwinBoolean = true
-        let status = AXUIElementIsAttributeSettable(self.underlyingElement, kAXSizeAttribute as CFString, &resizeable)
+    func isResizable() -> Bool {
+        var resizable: DarwinBoolean = true
+        let status = AXUIElementIsAttributeSettable(self.underlyingElement, kAXSizeAttribute as CFString, &resizable)
         
         if status != .success {
             if Logger.logging {
                 Logger.log("Unable to determine if window is resizeable. Assuming it is.")
             }
         }
-        return resizeable.boolValue
+        return resizable.boolValue
     }
     
     static func normalizeCoordinatesOf(_ rect: CGRect, frameOfScreen: CGRect) -> CGRect {
