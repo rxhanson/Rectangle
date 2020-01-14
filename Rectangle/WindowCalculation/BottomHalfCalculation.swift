@@ -25,20 +25,20 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         
         var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
-        return oneHalfRect
+        return applyUselessGaps(oneHalfRect, sharedEdges: .bottom)
     }
     
     func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
         
         var twoThirdsRect = visibleFrameOfScreen
         twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
-        return twoThirdsRect
+        return applyUselessGaps(twoThirdsRect, sharedEdges: .bottom)
     }
     
     func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
         
         var oneThirdRect = visibleFrameOfScreen
         oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-        return oneThirdRect
+        return applyUselessGaps(oneThirdRect, sharedEdges: .bottom)
     }
 }

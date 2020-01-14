@@ -26,7 +26,7 @@ class UpperLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         oneQuarterRect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         oneQuarterRect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         oneQuarterRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 2.0) + (visibleFrameOfScreen.height.truncatingRemainder(dividingBy: 2.0))
-        return oneQuarterRect
+        return applyUselessGaps(oneQuarterRect)
     }
     
     func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
@@ -36,7 +36,7 @@ class UpperLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         twoThirdsRect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         twoThirdsRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 2.0) + (visibleFrameOfScreen.height.truncatingRemainder(dividingBy: 2.0))
 
-        return twoThirdsRect
+        return applyUselessGaps(twoThirdsRect)
     }
     
     func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
@@ -46,6 +46,6 @@ class UpperLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         oneThirdRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 2.0) + (visibleFrameOfScreen.height.truncatingRemainder(dividingBy: 2.0))
 
-        return oneThirdRect
+        return applyUselessGaps(oneThirdRect)
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -2268,14 +2268,14 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsViewController" id="yhc-gS-h02" customClass="SettingsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mTk-eQ-4uf">
-                        <rect key="frame" x="0.0" y="0.0" width="490" height="277"/>
+                        <rect key="frame" x="0.0" y="0.0" width="490" height="309"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tUi-Ja-evb">
-                                <rect key="frame" x="20" y="61" width="450" height="196"/>
+                                <rect key="frame" x="20" y="61" width="450" height="228"/>
                                 <subviews>
                                     <button verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="eQJ-O3-a8H">
-                                        <rect key="frame" x="-2" y="180" width="454" height="18"/>
+                                        <rect key="frame" x="-2" y="212" width="454" height="18"/>
                                         <buttonCell key="cell" type="check" title="Launch on login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="e9j-DR-MEH">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -2285,7 +2285,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
-                                        <rect key="frame" x="-2" y="156" width="454" height="18"/>
+                                        <rect key="frame" x="-2" y="188" width="454" height="18"/>
                                         <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -2295,7 +2295,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wBT-R4-q9s">
-                                        <rect key="frame" x="-2" y="132" width="454" height="18"/>
+                                        <rect key="frame" x="-2" y="164" width="454" height="18"/>
                                         <buttonCell key="cell" type="check" title="Hide menu bar icon" bezelStyle="regularSquare" imagePosition="left" inset="2" id="qlg-kC-FMr">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -2305,15 +2305,15 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gIp-Hu-6ns">
-                                        <rect key="frame" x="-2" y="110" width="454" height="14"/>
+                                        <rect key="frame" x="-2" y="142" width="454" height="14"/>
                                         <textFieldCell key="cell" title="When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu." id="ltc-mf-BHr">
-                                            <font key="font" metaFont="menu" size="11"/>
+                                            <font key="font" metaFont="toolTip"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="95T-Ls-2ah">
-                                        <rect key="frame" x="-2" y="84" width="454" height="18"/>
+                                        <rect key="frame" x="-2" y="116" width="454" height="18"/>
                                         <buttonCell key="cell" type="check" title="Cycle across displays on repeated left or right commands" bezelStyle="regularSquare" imagePosition="left" inset="2" id="SXx-HZ-GkB">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -2323,15 +2323,15 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
-                                        <rect key="frame" x="-2" y="48" width="454" height="28"/>
+                                        <rect key="frame" x="-2" y="80" width="454" height="28"/>
                                         <textFieldCell key="cell" title="If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size." id="01Z-t3-cBm">
-                                            <font key="font" metaFont="menu" size="11"/>
+                                            <font key="font" metaFont="toolTip"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UY7-Nt-G3K">
-                                        <rect key="frame" x="-2" y="22" width="454" height="18"/>
+                                        <rect key="frame" x="-2" y="54" width="454" height="18"/>
                                         <buttonCell key="cell" type="check" title="Allow any keyboard shortcut" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n4U-FC-L9s">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -2341,12 +2341,50 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HcU-0y-wJU">
-                                        <rect key="frame" x="-2" y="-2" width="454" height="18"/>
+                                        <rect key="frame" x="-2" y="30" width="454" height="18"/>
                                         <buttonCell key="cell" type="check" title="Check for updates automatically" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="rmV-YD-Hzj">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                     </button>
+                                    <stackView autoresizesSubviews="NO" distribution="fill" orientation="horizontal" alignment="centerY" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y9O-Ed-XYo">
+                                        <rect key="frame" x="0.0" y="0.0" width="450" height="22"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N5U-vW-di5">
+                                                <rect key="frame" x="-2" y="3" width="87" height="16"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Useless Gaps" id="RNJ-7p-rXL">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xmx-Om-ndD">
+                                                <rect key="frame" x="83" y="1" width="354" height="21"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" enabled="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="KVv-YJ-nqZ">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3xo-js-24G">
+                                                <rect key="frame" x="434" y="-3" width="19" height="28"/>
+                                                <stepperCell key="cell" continuous="YES" alignment="left" increment="2" maxValue="100" id="n0B-XJ-MO1"/>
+                                                <connections>
+                                                    <action selector="uselessGapsChanged:" target="yhc-gS-h02" id="ysa-pY-CqF"/>
+                                                </connections>
+                                            </stepper>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="width" priority="999" constant="450" id="Db3-zB-dtQ"/>
@@ -2361,8 +2399,10 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -2400,6 +2440,8 @@
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
                         <outlet property="launchOnLoginCheckbox" destination="eQJ-O3-a8H" id="iF3-bq-l1j"/>
                         <outlet property="subsequentExecutionCheckbox" destination="95T-Ls-2ah" id="mhe-zK-Tja"/>
+                        <outlet property="uselessGapsStepper" destination="3xo-js-24G" id="pBV-Mn-hcy"/>
+                        <outlet property="uselessGapsValueTextField" destination="KVv-YJ-nqZ" id="MLD-af-Sgh"/>
                         <outlet property="windowSnappingCheckbox" destination="3wO-pf-nsb" id="00K-AW-LYi"/>
                     </connections>
                 </viewController>
@@ -2466,7 +2508,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XRC-ST-jLi">
                                         <rect key="frame" x="-2" y="137" width="254" height="28"/>
                                         <textFieldCell key="cell" alignment="center" title="Go to System Preferences → Security &amp; Privacy → Privacy → Accessibility" id="lgE-cR-cQ5">
-                                            <font key="font" metaFont="menu" size="11"/>
+                                            <font key="font" metaFont="toolTip"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>

@@ -21,7 +21,9 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesAutomaticallyCheckbox: NSButton!
-    
+    @IBOutlet weak var uselessGapsStepper: NSStepper!
+    @IBOutlet weak var uselessGapsValueTextField: NSTextFieldCell!
+
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
@@ -56,6 +58,11 @@ class SettingsViewController: NSViewController {
         NotificationCenter.default.post(name: SettingsViewController.allowAnyShortcutNotificationName, object: newSetting)
     }
     
+    @IBAction func uselessGapsChanged(_ sender: NSStepper) {
+        Defaults.uselessGaps.value = sender.floatValue
+        uselessGapsValueTextField.floatValue = Defaults.uselessGaps.value
+    }
+
     @IBAction func restoreDefaults(_ sender: Any) {
         WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
     }
@@ -81,6 +88,9 @@ class SettingsViewController: NSViewController {
             windowSnappingCheckbox.state = .off
         }
         
+        uselessGapsStepper.floatValue = Defaults.uselessGaps.value
+        uselessGapsValueTextField.floatValue = Defaults.uselessGaps.value
+
         if let updater = SUUpdater.shared() {
             checkForUpdatesAutomaticallyCheckbox.bind(.value, to: updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
         }

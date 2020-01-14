@@ -26,7 +26,7 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
         oneHalfRect.origin.y += oneHalfRect.height + (visibleFrameOfScreen.height.truncatingRemainder(dividingBy: 2.0))
-        return oneHalfRect
+        return applyUselessGaps(oneHalfRect, sharedEdges: .top)
     }
     
     func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
@@ -34,7 +34,7 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         var twoThirdsRect = visibleFrameOfScreen
         twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
         twoThirdsRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.height - twoThirdsRect.height
-        return twoThirdsRect
+        return applyUselessGaps(twoThirdsRect, sharedEdges: .top)
     }
     
     func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
@@ -42,6 +42,6 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         var oneThirdRect = visibleFrameOfScreen
         oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
         oneThirdRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.height - oneThirdRect.height
-        return oneThirdRect
+        return applyUselessGaps(oneThirdRect, sharedEdges: .top)
     }
 }

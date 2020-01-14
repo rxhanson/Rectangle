@@ -40,7 +40,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         if action == .rightHalf {
             oneHalfRect.origin.x += oneHalfRect.size.width
         }
-        return oneHalfRect
+        return applyUselessGaps(oneHalfRect, sharedEdges: action == .rightHalf ? .left : .right)
     }
 
     func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
@@ -50,7 +50,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         if action == .rightHalf {
             twoThirdsRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - twoThirdsRect.width
         }
-        return twoThirdsRect
+        return applyUselessGaps(twoThirdsRect, sharedEdges: action == .rightHalf ? .left : .right)
     }
 
     func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
@@ -60,7 +60,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         if action == .rightHalf {
             oneThirdRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.width - oneThirdRect.width
         }
-        return oneThirdRect
+        return applyUselessGaps(oneThirdRect, sharedEdges: action == .rightHalf ? .left : .right)
     }
 
     func calculateLeftAcrossDisplays(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {

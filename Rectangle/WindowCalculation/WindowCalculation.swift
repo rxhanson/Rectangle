@@ -41,6 +41,61 @@ extension WindowCalculation {
         return rect.width > rect.height
     }
     
+    func applyUselessGaps(_ rect: CGRect, sharedEdges: Edge = .none) -> CGRect {
+        let uselessGapSize = CGFloat(Defaults.uselessGaps.value)
+        var withGaps = rect.insetBy(dx: uselessGapSize, dy: uselessGapSize)
+
+        if (sharedEdges.contains(.left)) {
+            withGaps = CGRect(
+                x: withGaps.origin.x - (uselessGapSize / 2),
+                y: withGaps.origin.y,
+                width: withGaps.width + (uselessGapSize / 2),
+                height: withGaps.height
+            )
+        }
+
+        if (sharedEdges.contains(.right)) {
+            withGaps = CGRect(
+                x: withGaps.origin.x,
+                y: withGaps.origin.y,
+                width: withGaps.width + (uselessGapSize / 2),
+                height: withGaps.height
+            )
+        }
+
+        if (sharedEdges.contains(.top)) {
+            withGaps = CGRect(
+                x: withGaps.origin.x,
+                y: withGaps.origin.y - (uselessGapSize / 2),
+                width: withGaps.width,
+                height: withGaps.height + (uselessGapSize / 2)
+            )
+        }
+
+        if (sharedEdges.contains(.bottom)) {
+            withGaps = CGRect(
+                x: withGaps.origin.x,
+                y: withGaps.origin.y,
+                width: withGaps.width,
+                height: withGaps.height + (uselessGapSize / 2)
+            )
+        }
+
+        return withGaps
+    }
+
+}
+
+struct Edge: OptionSet {
+    let rawValue: Int
+
+    static let left = Edge(rawValue: 1 << 0)
+    static let right = Edge(rawValue: 1 << 1)
+    static let top = Edge(rawValue: 1 << 2)
+    static let bottom = Edge(rawValue: 1 << 3)
+
+    static let all: Edge = [.left, .right, .top, .bottom]
+    static let none: Edge = []
 }
 
 struct WindowCalculationResult {
