@@ -1,20 +1,20 @@
 PODS:
-  - MASShortcut (2.3.6)
-  - Sparkle (1.21.3)
+  - MASShortcut (2.4.0)
+  - Sparkle (1.22.0)
 
 DEPENDENCIES:
   - MASShortcut
   - Sparkle
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - MASShortcut
     - Sparkle
 
 SPEC CHECKSUMS:
-  MASShortcut: 9c215e8a8a78f3d01ce56da48e2730ab66b538fa
-  Sparkle: 3f75576db8b0265adef36c43249d747f22d0b708
+  MASShortcut: d9e4909e878661cc42877cc9d6efbe638273ab57
+  Sparkle: 593ac2e677c07bcb6c3b22d621240e7cbedaab57
 
-PODFILE CHECKSUM: 9d924c34b8abce32760985160284c3feccaedcd7
+PODFILE CHECKSUM: 8cc8e127e49dd104a2ef51ae95acef123648eab6
 
-COCOAPODS: 1.7.0
+COCOAPODS: 1.8.4

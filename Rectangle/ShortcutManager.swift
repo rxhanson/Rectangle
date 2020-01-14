@@ -35,7 +35,7 @@ class ShortcutManager {
         }
     }
     
-    public func getKeyEquivalent(action: WindowAction) -> (String, UInt)? {
+    public func getKeyEquivalent(action: WindowAction) -> (String?, NSEvent.ModifierFlags)? {
         guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: action.name) as? MASShortcut else { return nil }
         return (masShortcut.keyCodeString, masShortcut.modifierFlags)
     }
@@ -51,7 +51,7 @@ class ShortcutManager {
                 ? windowAction.alternateDefault
                 : windowAction.spectacleDefault
             else { return }
-            let shortcut = MASShortcut(keyCode: UInt(defaultShortcut.keyCode), modifierFlags: defaultShortcut.modifierFlags)
+            let shortcut = MASShortcut(keyCode: defaultShortcut.keyCode, modifierFlags: NSEvent.ModifierFlags(rawValue: defaultShortcut.modifierFlags))
             dict[windowAction.name] = shortcut
         }
         

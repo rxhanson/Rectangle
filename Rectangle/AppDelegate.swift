@@ -148,9 +148,10 @@ extension AppDelegate: NSMenuDelegate {
             menuItem.image?.size = NSSize(width: 18, height: 12)
 
             if !applicationToggle.shortcutsDisabled {
-                if let fullKeyEquivalent = shortcutManager.getKeyEquivalent(action: windowAction) {
-                    menuItem.keyEquivalent = fullKeyEquivalent.0.lowercased()
-                    menuItem.keyEquivalentModifierMask = NSEvent.ModifierFlags(rawValue: fullKeyEquivalent.1)
+                if let fullKeyEquivalent = shortcutManager.getKeyEquivalent(action: windowAction),
+                    let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
+                    menuItem.keyEquivalent = keyEquivalent
+                    menuItem.keyEquivalentModifierMask = fullKeyEquivalent.1
                 }
             }
             if frontmostWindow == nil {
