@@ -61,6 +61,7 @@
 		98910B42231476B30066EC23 /* PrefsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B41231476B30066EC23 /* PrefsViewController.swift */; };
 		98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98987AA22391890300BE72C4 /* LogViewer.storyboard */; };
 		98987AA52391890400BE72C4 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98987AA32391890400BE72C4 /* LogViewer.swift */; };
+		98B3559823CE025700E410E0 /* CenteringFixedSizedWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B3559723CE025700E410E0 /* CenteringFixedSizedWindowMover.swift */; };
 		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
 		98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */; };
 		98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2755D231FF6A9009B9292 /* EventMonitor.swift */; };
@@ -181,6 +182,7 @@
 		98910B6E231D16B00066EC23 /* es-419 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-419"; path = "es-419.lproj/Main.strings"; sourceTree = "<group>"; };
 		98987AA22391890300BE72C4 /* LogViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LogViewer.storyboard; sourceTree = "<group>"; };
 		98987AA32391890400BE72C4 /* LogViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
+		98B3559723CE025700E410E0 /* CenteringFixedSizedWindowMover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenteringFixedSizedWindowMover.swift; sourceTree = "<group>"; };
 		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
 		98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevDisplayCalculation.swift; sourceTree = "<group>"; };
 		98C2755D231FF6A9009B9292 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
@@ -308,6 +310,7 @@
 				9824704922B189250037B409 /* QuantizedWindowMover.swift */,
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
+				98B3559723CE025700E410E0 /* CenteringFixedSizedWindowMover.swift */,
 			);
 			path = WindowMover;
 			sourceTree = "<group>";
@@ -458,7 +461,6 @@
 				9824700722AF9B7D0037B409 /* Resources */,
 				9821405A22B3EC9900ABFB3F /* CopyFiles */,
 				28805C67730FCF221CAEF5FA /* [CP] Embed Pods Frameworks */,
-				9849988C22BE4484000F2631 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -653,23 +655,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9849988C22BE4484000F2631 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nLOCATION=\"${BUILT_PRODUCTS_DIR}\"/\"${FRAMEWORKS_FOLDER_PATH}\"\n\ncodesign --verbose --force --deep -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\ncodesign --verbose --force -o runtime -s \"Developer ID Application\" \"$LOCATION/Sparkle.framework/Versions/A\"\n";
-		};
 		E6D791631A87C2748EF5183E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -721,6 +706,7 @@
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
 				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
+				98B3559823CE025700E410E0 /* CenteringFixedSizedWindowMover.swift in Sources */,
 				9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */,
 				9824703B22B139780037B409 /* CUtil.swift in Sources */,
 				988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */,
@@ -999,7 +985,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Rectangle/Info.plist;
@@ -1008,7 +994,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.15;
+				MARKETING_VERSION = 0.16;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1025,7 +1011,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Rectangle/Info.plist;
@@ -1034,7 +1020,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.15;
+				MARKETING_VERSION = 0.16;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

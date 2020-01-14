@@ -11,16 +11,22 @@ import Cocoa
 class WindowManager {
 
     private let screenDetection = ScreenDetection()
-    private let windowMoverChain: [WindowMover]
+    private let standardWindowMoverChain: [WindowMover]
+    private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowCalculationFactory: WindowCalculationFactory
     private let windowHistory: WindowHistory
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
         self.windowHistory = windowHistory
-        windowMoverChain = [
+        standardWindowMoverChain = [
             StandardWindowMover(),
             // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
+            BestEffortWindowMover()
+        ]
+        
+        fixedSizeWindowMoverChain = [
+            CenteringFixedSizedWindowMover(),
             BestEffortWindowMover()
         ]
     }
@@ -92,6 +98,10 @@ class WindowManager {
         }
 
         let visibleFrameOfDestinationScreen = NSRectToCGRect(calcResult.screen.visibleFrame)
+
+        let windowMoverChain = frontmostWindowElement.isResizeable()
+            ? standardWindowMoverChain
+            : fixedSizeWindowMoverChain
 
         for windowMover in windowMoverChain {
             windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)

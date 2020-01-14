@@ -64,6 +64,18 @@ class AccessibilityElement {
             set(size: rect.size)
     }
     
+    func isResizeable() -> Bool {
+        var resizeable: DarwinBoolean = true
+        let status = AXUIElementIsAttributeSettable(self.underlyingElement, kAXSizeAttribute as CFString, &resizeable)
+        
+        if status != .success {
+            if Logger.logging {
+                Logger.log("Unable to determine if window is resizeable. Assuming it is.")
+            }
+        }
+        return resizeable.boolValue
+    }
+    
     static func normalizeCoordinatesOf(_ rect: CGRect, frameOfScreen: CGRect) -> CGRect {
         var normalizedRect = rect
         let frameOfScreenWithMenuBar = NSScreen.screens[0].frame as CGRect

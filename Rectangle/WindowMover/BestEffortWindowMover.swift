@@ -14,31 +14,32 @@ import Foundation
 
 class BestEffortWindowMover: WindowMover {
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard var movedWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
+        guard let currentWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
         
-        let previouslyMovedWindowRect: CGRect = movedWindowRect
-        if movedWindowRect.origin.x < visibleFrameOfScreen.origin.x {
+        var adjustedWindowRect: CGRect = currentWindowRect
+        
+        if adjustedWindowRect.origin.x < visibleFrameOfScreen.origin.x {
             
-            movedWindowRect.origin.x = visibleFrameOfScreen.origin.x
+            adjustedWindowRect.origin.x = visibleFrameOfScreen.origin.x
             
-        } else if movedWindowRect.origin.x + movedWindowRect.size.width > visibleFrameOfScreen.origin.x + visibleFrameOfScreen.size.width {
+        } else if adjustedWindowRect.origin.x + adjustedWindowRect.size.width > visibleFrameOfScreen.origin.x + visibleFrameOfScreen.size.width {
             
-            movedWindowRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.size.width - (movedWindowRect.size.width)
+            adjustedWindowRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.size.width - (adjustedWindowRect.size.width)
         }
         
-        movedWindowRect = AccessibilityElement.normalizeCoordinatesOf(movedWindowRect , frameOfScreen: frameOfScreen)
-        if movedWindowRect.origin.y < visibleFrameOfScreen.origin.y {
+        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect , frameOfScreen: frameOfScreen)
+        if adjustedWindowRect.origin.y < visibleFrameOfScreen.origin.y {
             
-            movedWindowRect.origin.y = visibleFrameOfScreen.origin.y
+            adjustedWindowRect.origin.y = visibleFrameOfScreen.origin.y
             
-        } else if movedWindowRect.origin.y + movedWindowRect.size.height > visibleFrameOfScreen.origin.y + visibleFrameOfScreen.size.height {
+        } else if adjustedWindowRect.origin.y + adjustedWindowRect.size.height > visibleFrameOfScreen.origin.y + visibleFrameOfScreen.size.height {
             
-            movedWindowRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.size.height - (movedWindowRect.size.height)
+            adjustedWindowRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.size.height - (adjustedWindowRect.size.height)
         }
         
-        movedWindowRect = AccessibilityElement.normalizeCoordinatesOf(movedWindowRect , frameOfScreen: frameOfScreen)
-        if !movedWindowRect.equalTo(previouslyMovedWindowRect) {
-            frontmostWindowElement?.setRectOf(movedWindowRect )
+        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect, frameOfScreen: frameOfScreen)
+        if !currentWindowRect.equalTo(adjustedWindowRect) {
+            frontmostWindowElement?.setRectOf(adjustedWindowRect)
         }
     }
 }
