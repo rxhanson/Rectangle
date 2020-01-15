@@ -75,6 +75,16 @@ defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN
 
 Followed by a restart of the app.
 
+### Details on Adding Gaps Between Windows
+
+As of v0.17, gaps between windows can be added with the following command:
+
+```bash
+defaults write com.knollsoft.Rectangle gapSize -float <NUM_PIXELS>
+```
+
+Followed by a restart of the app.
+
 ## Contributing
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. If you contribute code or localizations that get merged into Rectangle, you get a free license of Multitouch. Contributors to Sparkle, MASShortcut, or Spectacle can also receive a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
 
