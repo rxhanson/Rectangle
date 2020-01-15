@@ -17,6 +17,19 @@ Or install with brew cask:
 ```bash
 brew cask install rectangle
 ```
+## How to use it
+They Keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used then on Windows or other window management apps.
+
+Drag a window to the edge of the screen. When the mouse cursor reaches the edge of the screen, you'll see a footprint that Rectangle will attempt to resize and move the window to when the click is released.
+
+| Snap Area                                              | Resulting Action                       |
+|--------------------------------------------------------|----------------------------------------|
+| Left or right edge                                     | Left or right half                     |
+| Top                                                    | Maximize                               |
+| Corners                                                | Quarter in respective corner           |
+| Left or right edge, just above or below a corner       | Top or bottom half                     |
+| Bottom left, center, or right third                    | Respective third                       |
+| Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
 ## Keyboard Shortcuts
 The default keyboard shortcuts are based on Spectacle, but there is a recommended alternative set of defaults based on the Magnet app. This can be enabled by setting "alternateDefaultShortcuts" to true in NSUserDefaults for Rectangle with the following Terminal command:
