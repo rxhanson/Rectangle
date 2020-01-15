@@ -8,14 +8,14 @@
 
 import Cocoa
 
-protocol WindowCalculation {
+protocol Calculation {
     
     func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
     
     func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect?
 }
 
-extension WindowCalculation {
+class WindowCalculation: Calculation {
     
     func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
@@ -27,6 +27,10 @@ extension WindowCalculation {
         return nil
     }
 
+    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+        return nil
+    }
+    
     func rectCenteredWithinRect(_ rect1: CGRect, _ rect2: CGRect) -> Bool {
         let centeredMidX = abs(rect2.midX - rect1.midX) <= 1.0
         let centeredMidY = abs(rect2.midY - rect1.midY) <= 1.0

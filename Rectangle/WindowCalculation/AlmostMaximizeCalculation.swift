@@ -13,7 +13,7 @@ class AlmostMaximizeCalculation: WindowCalculation {
     let almostMaximizeHeight: CGFloat
     let almostMaximizeWidth: CGFloat
 
-    init() {
+    override init() {
         let defaultHeight = Defaults.almostMaximizeHeight.value
         almostMaximizeHeight = (defaultHeight <= 0 || defaultHeight > 1)
             ? 0.9
@@ -25,7 +25,7 @@ class AlmostMaximizeCalculation: WindowCalculation {
             : CGFloat(defaultWidth)
     }
     
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
 
         var calculatedWindowRect = visibleFrameOfScreen
         

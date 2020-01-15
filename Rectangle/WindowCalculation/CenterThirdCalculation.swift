@@ -10,7 +10,7 @@ import Foundation
 
 class CenterThirdCalculation: WindowCalculation {
     
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
         return isLandscape(visibleFrameOfScreen)
             ? horizontallyCenteredThird(visibleFrameOfScreen)

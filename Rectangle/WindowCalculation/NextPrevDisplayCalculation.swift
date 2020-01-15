@@ -12,7 +12,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
     
     let centerCalculation = CenterCalculation()
     
-    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    override func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         guard usableScreens.numScreens > 1 else { return nil }
 
@@ -33,7 +33,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
         return nil
     }
     
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
         return centerCalculation.calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
     }

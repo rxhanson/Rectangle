@@ -10,7 +10,7 @@ import Cocoa
 
 class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     
-    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    override func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         switch Defaults.subsequentExecutionMode.value {
             
@@ -95,7 +95,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
     }
 
     // Used to draw box for snapping
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         switch action {
         case .leftHalf:
             var oneHalfRect = visibleFrameOfScreen

@@ -10,7 +10,7 @@ import Foundation
 
 class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
 
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
 
         if Defaults.subsequentExecutionMode.value == .none
             || lastAction == nil {

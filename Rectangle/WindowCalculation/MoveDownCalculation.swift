@@ -10,7 +10,7 @@ import Foundation
 
 class MoveDownCalculation: WindowCalculation {
     
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         
         var calculatedWindowRect = windowRect
         calculatedWindowRect.origin.y = visibleFrameOfScreen.minY

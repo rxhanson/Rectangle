@@ -10,7 +10,7 @@ import Cocoa
 
 class MoveLeftRightCalculation: WindowCalculation {
     
-    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    override func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         if action == .moveLeft {
             return calculateLeft(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
@@ -81,7 +81,7 @@ class MoveLeftRightCalculation: WindowCalculation {
     }
     
     // unused
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
         return nil
     }
     
