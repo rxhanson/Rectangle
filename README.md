@@ -1,5 +1,7 @@
 # Rectangle
 
+![](https://github.com/rxhanson/Rectangle/workflows/Build/badge.svg)
+
 Rectangle is a window management app based on Spectacle, written in Swift.
 
 ![image](https://user-images.githubusercontent.com/13651296/71896594-7cdb9280-3154-11ea-83a7-70b71c6df9d4.png)
