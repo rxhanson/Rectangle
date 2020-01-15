@@ -33,7 +33,7 @@ class GapCalculation {
             )
         }
         
-        if (sharedEdges.contains(.top)) {
+        if (sharedEdges.contains(.bottom)) {
             withGaps = CGRect(
                 x: withGaps.origin.x,
                 y: withGaps.origin.y - (cgGapSize / 2),
@@ -42,7 +42,7 @@ class GapCalculation {
             )
         }
         
-        if (sharedEdges.contains(.bottom)) {
+        if (sharedEdges.contains(.top)) {
             withGaps = CGRect(
                 x: withGaps.origin.x,
                 y: withGaps.origin.y,

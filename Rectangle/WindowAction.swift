@@ -279,14 +279,27 @@ enum WindowAction: Int {
         }
     }
     
-    var gapEdge: Edge {
+    var gapSharedEdge: Edge {
         switch self {
         case .leftHalf: return .right
         case .rightHalf: return .left
-        case .bottomHalf: return .bottom
-        case .topHalf: return .top
+        case .bottomHalf: return .top
+        case .topHalf: return .bottom
+        case .bottomLeft: return [.top, .right]
+        case .bottomRight: return [.top, .left]
+        case .topLeft: return [.bottom, .right]
+        case .topRight: return [.bottom, .left]
         default:
             return .none
+        }
+    }
+    
+    var gapsApplicable: Bool {
+        switch self {
+        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird:
+            return true
+        default:
+            return false
         }
     }
 }
