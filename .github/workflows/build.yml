@@ -1,0 +1,18 @@
+name: Build
+
+on: [pull_request]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Dependences
+      run: |
+        pod repo update
+        pod install
+    - name: Build
+      run: xcodebuild -workspace Rectangle.xcworkspace -scheme Rectangle
+      
