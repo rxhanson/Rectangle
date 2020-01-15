@@ -10,14 +10,14 @@ import Foundation
 
 class CenterThirdCalculation: WindowCalculation {
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         return isLandscape(visibleFrameOfScreen)
-            ? horizontallyCenteredThird(visibleFrameOfScreen)
-            : verticallyCenteredThird(visibleFrameOfScreen)
+            ? RectResult(centeredVerticalThird(visibleFrameOfScreen), subAction: .centerVerticalThird)
+            : RectResult(centeredHorizontal(visibleFrameOfScreen), subAction: .centerHorizontalThird)
     }
     
-    private func horizontallyCenteredThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
+    private func centeredVerticalThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
         var centerThirdRect = visibleFrameOfScreen
         centerThirdRect.origin.x = visibleFrameOfScreen.minX + floor(visibleFrameOfScreen.width / 3.0)
         centerThirdRect.origin.y = visibleFrameOfScreen.minY
@@ -26,7 +26,7 @@ class CenterThirdCalculation: WindowCalculation {
         return centerThirdRect
     }
     
-    private func verticallyCenteredThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
+    private func centeredHorizontal(_ visibleFrameOfScreen: CGRect) -> CGRect {
         var centerThirdRect = visibleFrameOfScreen
         centerThirdRect.origin.x = visibleFrameOfScreen.minX
         centerThirdRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 3.0)

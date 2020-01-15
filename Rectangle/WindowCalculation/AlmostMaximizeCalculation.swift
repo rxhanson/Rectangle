@@ -25,7 +25,7 @@ class AlmostMaximizeCalculation: WindowCalculation {
             : CGFloat(defaultWidth)
     }
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
         var calculatedWindowRect = visibleFrameOfScreen
         
@@ -37,7 +37,7 @@ class AlmostMaximizeCalculation: WindowCalculation {
         calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
         calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - calculatedWindowRect.height) / 2.0) + visibleFrameOfScreen.minY
         
-        return calculatedWindowRect
+        return RectResult(calculatedWindowRect)
     }
     
 }

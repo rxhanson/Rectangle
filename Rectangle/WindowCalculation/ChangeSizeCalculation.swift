@@ -10,7 +10,7 @@ import Foundation
 
 class ChangeSizeCalculation: WindowCalculation {
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         let sizeOffset: CGFloat = action == .smaller ? -30.0 : 30.0
         
         var resizedWindowRect = windowRect
@@ -40,7 +40,7 @@ class ChangeSizeCalculation: WindowCalculation {
         if resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
             resizedWindowRect = windowRect
         }
-        return resizedWindowRect
+        return RectResult(resizedWindowRect)
     }
     
     private func againstEdgeOfScreen(_ gap: CGFloat) -> Bool {

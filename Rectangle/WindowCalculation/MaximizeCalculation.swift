@@ -10,8 +10,8 @@ import Foundation
 
 class MaximizeCalculation: WindowCalculation {
 
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
-        return visibleFrameOfScreen
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+        return RectResult(visibleFrameOfScreen)
     }
     
 }

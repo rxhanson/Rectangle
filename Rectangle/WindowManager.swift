@@ -92,7 +92,9 @@ class WindowManager {
         }
         
         if gapSize > 0, calcResult.resultingAction.gapsApplicable {
-            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: calcResult.resultingAction.gapSharedEdge, gapSize: gapSize)
+            let gapSharedEdges = calcResult.resultingSubAction?.gapSharedEdge ?? calcResult.resultingAction.gapSharedEdge
+            
+            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: gapSharedEdges, gapSize: gapSize)
         }
 
         let newNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)

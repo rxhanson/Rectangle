@@ -12,23 +12,24 @@ protocol Calculation {
     
     func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
     
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect?
+    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
 }
 
 class WindowCalculation: Calculation {
     
     func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
-            if let rect = calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action) {
-            
-            return WindowCalculationResult(rect: rect, screen: usableScreens.currentScreen, resultingAction: action)
+        let rectResult = calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action)
+        
+        if rectResult.rect.isNull {
+            return nil
         }
         
-        return nil
+        return WindowCalculationResult(rect: rectResult.rect, screen: usableScreens.currentScreen, resultingAction: action, resultingSubAction: rectResult.subAction)
     }
 
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
-        return nil
+    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+        return RectResult(CGRect.null)
     }
     
     func rectCenteredWithinRect(_ rect1: CGRect, _ rect2: CGRect) -> Bool {
@@ -47,10 +48,28 @@ class WindowCalculation: Calculation {
     
 }
 
+struct RectResult {
+    let rect: CGRect
+    let subAction: SubWindowAction?
+    
+    init(_ rect: CGRect, subAction: SubWindowAction? = nil) {
+        self.rect = rect
+        self.subAction = subAction
+    }
+}
+
 struct WindowCalculationResult {
     var rect: CGRect
     let screen: NSScreen
     let resultingAction: WindowAction
+    let resultingSubAction: SubWindowAction?
+    
+    init(rect: CGRect, screen: NSScreen, resultingAction: WindowAction,  resultingSubAction: SubWindowAction? = nil) {
+        self.rect = rect
+        self.screen = screen
+        self.resultingAction = resultingAction
+        self.resultingSubAction = resultingSubAction
+    }
 }
 
 class WindowCalculationFactory {

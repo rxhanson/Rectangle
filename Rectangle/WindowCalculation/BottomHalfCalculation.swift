@@ -10,7 +10,7 @@ import Foundation
 
 class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
 
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
         if Defaults.subsequentExecutionMode.value == .none
             || lastAction == nil {
@@ -21,24 +21,25 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     }
     
     
-    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
+    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.height = floor(oneHalfRect.height / 2.0)
-        return oneHalfRect
+        
+        return RectResult(oneHalfRect)
     }
     
-    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
+    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var twoThirdsRect = visibleFrameOfScreen
         twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
-        return twoThirdsRect
+        return RectResult(twoThirdsRect)
     }
     
-    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect {
+    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var oneThirdRect = visibleFrameOfScreen
         oneThirdRect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-        return oneThirdRect
+        return RectResult(oneThirdRect)
     }
 }

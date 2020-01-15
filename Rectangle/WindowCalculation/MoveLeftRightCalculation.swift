@@ -81,8 +81,8 @@ class MoveLeftRightCalculation: WindowCalculation {
     }
     
     // unused
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
-        return nil
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+        return RectResult(CGRect.null)
     }
     
 }

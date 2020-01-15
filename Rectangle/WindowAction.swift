@@ -304,6 +304,35 @@ enum WindowAction: Int {
     }
 }
 
+enum SubWindowAction {
+    case leftThird,
+    centerVerticalThird,
+    rightThird,
+    leftTwoThirds,
+    rightTwoThirds,
+    
+    topThird,
+    centerHorizontalThird,
+    bottomThird,
+    topTwoThirds,
+    bottomTwoThirds
+    
+    var gapSharedEdge: Edge {
+        switch self {
+        case .leftThird: return .right
+        case .centerVerticalThird: return [.right, .left]
+        case .rightThird: return .left
+        case .leftTwoThirds: return .right
+        case .rightTwoThirds: return .left
+        case .topThird: return .bottom
+        case .centerHorizontalThird: return [.top, .bottom]
+        case .bottomThird: return .top
+        case .topTwoThirds: return .bottom
+        case .bottomTwoThirds: return .top
+        }
+    }
+}
+
 struct Shortcut {
     let keyCode: Int
     let modifierFlags: UInt

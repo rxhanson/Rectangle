@@ -10,7 +10,7 @@ import Foundation
 
 class MoveUpCalculation: WindowCalculation {
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var calculatedWindowRect = windowRect
         calculatedWindowRect.origin.y = visibleFrameOfScreen.maxY - windowRect.height
@@ -21,7 +21,7 @@ class MoveUpCalculation: WindowCalculation {
         } else {
             calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - windowRect.width) / 2.0) + visibleFrameOfScreen.minX
         }
-        return calculatedWindowRect
+        return RectResult(calculatedWindowRect)
 
     }
     

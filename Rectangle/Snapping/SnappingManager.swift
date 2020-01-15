@@ -23,6 +23,8 @@ class SnappingManager {
     
     let screenDetection = ScreenDetection()
     
+    private let gapSize = Defaults.gapSize.value
+    
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
         self.windowHistory = windowHistory
@@ -183,7 +185,13 @@ class SnappingManager {
     func getBoxRect(hotSpot: HotSpot, currentWindowRect: CGRect) -> CGRect? {
         if let calculation = windowCalculationFactory.calculation(for: hotSpot.action) {
             
-            return calculation.calculateRect(currentWindowRect, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
+            let rectResult = calculation.calculateRect(currentWindowRect, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
+            
+            if gapSize > 0, hotSpot.action.gapsApplicable {
+                return GapCalculation.applyGaps(rectResult.rect, sharedEdges: hotSpot.action.gapSharedEdge, gapSize: gapSize)
+            }
+            
+            return rectResult.rect
         }
         return nil
     }

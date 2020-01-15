@@ -10,11 +10,11 @@ import Foundation
 
 class LastTwoThirdsCalculation: WindowCalculation {
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> CGRect? {
+    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         return isLandscape(visibleFrameOfScreen)
-            ? rightTwoThirds(visibleFrameOfScreen)
-            : bottomTwoThirds(visibleFrameOfScreen)
+            ? RectResult(rightTwoThirds(visibleFrameOfScreen), subAction: .rightTwoThirds)
+            : RectResult(bottomTwoThirds(visibleFrameOfScreen), subAction: .bottomTwoThirds)
     }
     
     private func rightTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
