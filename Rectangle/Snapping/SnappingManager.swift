@@ -188,7 +188,9 @@ class SnappingManager {
             let rectResult = calculation.calculateRect(currentWindowRect, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
             
             if gapSize > 0, hotSpot.action.gapsApplicable {
-                return GapCalculation.applyGaps(rectResult.rect, sharedEdges: hotSpot.action.gapSharedEdge, gapSize: gapSize)
+                let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
+
+                return GapCalculation.applyGaps(rectResult.rect, sharedEdges: gapSharedEdges, gapSize: gapSize)
             }
             
             return rectResult.rect
