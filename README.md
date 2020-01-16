@@ -85,6 +85,17 @@ defaults write com.knollsoft.Rectangle gapSize -float <NUM_PIXELS>
 
 Followed by a restart of the app.
 
+### Details on Move Up/Down/Left/Right
+
+The current default behavior of these actions is to center the window along the edge that the window is being moved to. 
+
+As of v0.19, the centering can be disabled with the following command:
+
+```bash
+defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
+```
+Followed by a restart of the app.
+
 ## Contributing
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. If you contribute code or localizations that get merged into Rectangle, you get a free license of Multitouch. Contributors to Sparkle, MASShortcut, or Spectacle can also receive a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
 
