@@ -199,10 +199,10 @@ enum WindowAction: Int {
         }
     }
     
-    var isDirectionalMove: Bool {
+    var resizes: Bool {
         switch self {
-        case .moveUp, .moveDown, .moveLeft, .moveRight: return true
-        default: return false
+        case .moveUp, .moveDown, .moveLeft, .moveRight, .center, .nextDisplay, .previousDisplay: return false
+        default: return true
         }
     }
     

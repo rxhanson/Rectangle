@@ -106,7 +106,7 @@ class WindowManager {
 
         let visibleFrameOfDestinationScreen = NSRectToCGRect(calcResult.screen.visibleFrame)
 
-        let useFixedSizeMover = !frontmostWindowElement.isResizable() && !action.isDirectionalMove
+        let useFixedSizeMover = !frontmostWindowElement.isResizable() && action.resizes
         let windowMoverChain = useFixedSizeMover
             ? fixedSizeWindowMoverChain
             : standardWindowMoverChain
