@@ -18,7 +18,7 @@ Or install with brew cask:
 brew cask install rectangle
 ```
 ## How to use it
-They Keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used then on Windows or other window management apps.
+They keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used then on Windows or other window management apps.
 
 Drag a window to the edge of the screen. When the mouse cursor reaches the edge of the screen, you'll see a footprint that Rectangle will attempt to resize and move the window to when the click is released.
 
@@ -112,10 +112,9 @@ Rectangle uses [CocoaPods](https://cocoapods.org/) to install Sparkle and MASSho
 1. Open the generated xcworkspace file (`open Rectangle.xcworkspace`).
 
 #### Signing
-- Rectangle is typically in a state where it is signed to run locally with no developer ID configured.
+- When running in Xcode (debug), Rectangle is signed to run locally with no developer ID configured.
 - You can run the app out of the box this way, but you might have to authorize the app in System Prefs every time you run it. 
-- If you have a developer ID set up, you'll want to use that to sign it and additionally add the Hardened Runtime capability to the Rectangle and RectangleLauncher targets. 
-
+- If you don't want to authorize in System Prefs every time you run it and you have a developer ID set up, you'll want to use that to sign it and additionally add the Hardened Runtime capability to the Rectangle and RectangleLauncher targets. 
 
 ## Troubleshooting
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
