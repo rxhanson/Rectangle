@@ -199,6 +199,13 @@ enum WindowAction: Int {
         }
     }
     
+    var isDirectionalMove: Bool {
+        switch self {
+        case .moveUp, .moveDown, .moveLeft, .moveRight: return true
+        default: return false
+        }
+    }
+    
     var spectacleDefault: Shortcut? {
         switch self {
         case .leftHalf: return Shortcut( cmd|alt, kVK_LeftArrow )

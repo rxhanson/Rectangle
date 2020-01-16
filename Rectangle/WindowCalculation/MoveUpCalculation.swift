@@ -18,7 +18,7 @@ class MoveUpCalculation: WindowCalculation {
         if windowRect.width >= visibleFrameOfScreen.width {
             calculatedWindowRect.size.width = visibleFrameOfScreen.width
             calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
-        } else {
+        } else if Defaults.centeredDirectionalMove.enabled != false {
             calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - windowRect.width) / 2.0) + visibleFrameOfScreen.minX
         }
         return RectResult(calculatedWindowRect)

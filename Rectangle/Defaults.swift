@@ -19,6 +19,7 @@ class Defaults {
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
     static let gapSize = FloatDefault(key: "gapSize")
+    static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
 }
 
 class BoolDefault {

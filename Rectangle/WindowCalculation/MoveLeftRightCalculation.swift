@@ -43,7 +43,7 @@ class MoveLeftRightCalculation: WindowCalculation {
         if windowRect.height >= visibleFrameOfScreen.height {
             calculatedWindowRect.size.height = visibleFrameOfScreen.height
             calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
-        } else {
+        } else if Defaults.centeredDirectionalMove.enabled != false {
             calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - windowRect.height) / 2.0) + visibleFrameOfScreen.minY
         }
         return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveLeft)
@@ -73,7 +73,7 @@ class MoveLeftRightCalculation: WindowCalculation {
         if windowRect.height >= visibleFrameOfScreen.height {
             calculatedWindowRect.size.height = visibleFrameOfScreen.height
             calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
-        } else {
+        } else if Defaults.centeredDirectionalMove.enabled != false {
             calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - windowRect.height) / 2.0) + visibleFrameOfScreen.minY
         }
         return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveRight)
