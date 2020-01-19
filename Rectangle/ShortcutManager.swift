@@ -37,7 +37,7 @@ class ShortcutManager {
     
     public func getKeyEquivalent(action: WindowAction) -> (String?, NSEvent.ModifierFlags)? {
         guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: action.name) as? MASShortcut else { return nil }
-        return (masShortcut.keyCodeString, masShortcut.modifierFlags)
+        return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
     
     deinit {
