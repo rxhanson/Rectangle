@@ -1,9 +1,9 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "Это относится только к перемещениям или действиям наполовину. Действия наполовину не будут выполнять 2/3 и 1/3 действий, если они включены.";
+"01Z-t3-cBm.title" = "При повторе перемещения или изменения размеров до трети или половины окна оно будет перемещено на следующий экран вместо изменения размеров";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "Последние две трети";
+"08q-Ce-1QL.title" = "Правые две трети";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
 "0Ak-33-SM7.title" = "Справа вверху";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "Речь";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "Первые две трети";
+"3zd-xE-oWl.title" = "Левые две трети";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "Затяните";
@@ -72,16 +72,16 @@
 "6dh-zS-Vam.title" = "Повторить";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left"; ObjectID = "6ma-hP-5xX"; */
-"6ma-hP-5xX.title" = "Нижний левый нижний";
+"6ma-hP-5xX.title" = "Внизу слева";
 
 /* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
 "78Y-hA-62v.title" = "Автоматически исправлять орфографию";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "Центр Третий";
+"7YK-9Z-lzw.title" = "Центральная треть";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
-"8Bg-SZ-hDO.title" = "Центр";
+"8Bg-SZ-hDO.title" = "В центр";
 
 /* Class = "NSMenu"; title = "Writing Direction"; ObjectID = "8mr-sm-Yjd"; */
 "8mr-sm-Yjd.title" = "Направление записи";
@@ -99,7 +99,7 @@
 "9ic-FL-obx.title" = "замены";
 
 /* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
-"9yt-4B-nSM.title" = "Интеллектуальное копирование/вставка";
+"9yt-4B-nSM.title" = "Умное копирование/вставка";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
 "A66-A4-cGD.title" = "Выход из Rectangle";
@@ -108,13 +108,13 @@
 "AYu-sK-qS6.title" = "Главное меню";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
-"BOF-NM-1cW.title" = "Предпочтения…";
+"BOF-NM-1cW.title" = "Настройки";
 
 /* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "BgM-ve-c93"; */
 "BgM-ve-c93.title" = "\tСлева направо";
 
 /* Class = "NSMenuItem"; title = "Save As…"; ObjectID = "Bw7-FT-i3A"; */
-"Bw7-FT-i3A.title" = "Спасти Эс…";
+"Bw7-FT-i3A.title" = "Сохранить как…";
 
 /* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
 "C9v-g0-DH8.title" = "Восстановить";
@@ -123,16 +123,16 @@
 "D99-0O-MB6.title" = "Игнорировать frontmost.app";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
-"DVo-aG-piG.title" = "Близко";
+"DVo-aG-piG.title" = "Закрыть";
 
 /* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
 "Dv1-io-Yv7.title" = "Правописание и грамматика";
 
 /* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
-"Eah-KL-kbn.title" = "Увеличьте";
+"Eah-KL-kbn.title" = "Увеличить";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "Первая третья";
+"F12-EV-Lfz.title" = "Левая треть";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "Помощь";
@@ -141,16 +141,16 @@
 "F8S-GI-LiB.title" = "Правая половина";
 
 /* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
-"FKE-Sm-Kum.title" = "Rectangle Справка Справка";
+"FKE-Sm-Kum.title" = "Rectangle Справка";
 
 /* Class = "NSMenuItem"; title = "Text"; ObjectID = "Fal-I4-PZk"; */
 "Fal-I4-PZk.title" = "Текст";
 
 /* Class = "NSMenu"; title = "Substitutions"; ObjectID = "FeM-D8-WVr"; */
-"FeM-D8-WVr.title" = "замены";
+"FeM-D8-WVr.title" = "Замены";
 
 /* Class = "NSMenuItem"; title = "Bold"; ObjectID = "GB9-OM-e27"; */
-"GB9-OM-e27.title" = "Смелый";
+"GB9-OM-e27.title" = "Полужирный";
 
 /* Class = "NSMenu"; title = "Format"; ObjectID = "GEO-Iw-cKr"; */
 "GEO-Iw-cKr.title" = "Формат";
@@ -162,7 +162,7 @@
 "Gi5-1S-RQB.title" = "Шрифт";
 
 /* Class = "NSMenuItem"; title = "Writing Direction"; ObjectID = "H1b-Si-o9J"; */
-"H1b-Si-o9J.title" = "Направление записи";
+"H1b-Si-o9J.title" = "Направление письма";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
 "H8h-7b-M4v.title" = "Просмотр";
@@ -174,10 +174,10 @@
 "HFo-cy-zxI.title" = "Показать правописание и грамматику";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
-"HIK-3r-i7E.title" = "Проверьте, нет ли обновлений…";
+"HIK-3r-i7E.title" = "Проверить обновления…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
-"HOm-BV-2jc.title" = "Поднимайся";
+"HOm-BV-2jc.title" = "Вверх";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
 "HyV-fh-RgO.title" = "Просмотр";
@@ -186,10 +186,10 @@
 "I0S-gh-46l.title" = "Подписчик";
 
 /* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
-"IAo-SY-fd9.title" = "Открой…";
+"IAo-SY-fd9.title" = "Открыть";
 
 /* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
-"J5U-5w-g23.title" = "Обоснуйте";
+"J5U-5w-g23.title" = "Выровнять";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
 "J6t-sg-Wwz.title" = "Внизу справа";
@@ -198,31 +198,31 @@
 "J7y-lM-qPV.title" = "Не использовать";
 
 /* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
-"Jnd-Lc-nlh.title" = "Следующий дисплей";
+"Jnd-Lc-nlh.title" = "Следующий экран";
 
 /* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
-"KaW-ft-85H.title" = "Обратный ход к Спасенным";
+"KaW-ft-85H.title" = "Вернуть к сохранённому";
 
 /* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
-"Kd2-mp-pUS.title" = "Показать все";
+"Kd2-mp-pUS.title" = "Показать всё";
 
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
-"LE2-aR-0XJ.title" = "Приведите всех на передний план.";
+"LE2-aR-0XJ.title" = "Вынести всё вперёд";
 
 /* Class = "NSMenuItem"; title = "Paste Ruler"; ObjectID = "LVM-kO-fVI"; */
-"LVM-kO-fVI.title" = "линейка пасты";
+"LVM-kO-fVI.title" = "Вставить линейку";
 
 /* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "Lbh-J2-qVU"; */
 "Lbh-J2-qVU.title" = "\tСлева направо";
 
 /* Class = "NSMenuItem"; title = "Copy Ruler"; ObjectID = "MkV-Pr-PK5"; */
-"MkV-Pr-PK5.title" = "Копировать правителя";
+"MkV-Pr-PK5.title" = "Скопировать линейку";
 
 /* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
-"MzN-CJ-ASD.title" = "Сделать меньше";
+"MzN-CJ-ASD.title" = "Уменьшить";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
-"NMo-om-nkz.title" = "Услуги";
+"NMo-om-nkz.title" = "Службы";
 
 /* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "Nop-cj-93Q"; */
 "Nop-cj-93Q.title" = "\tПо умолчанию";
@@ -240,7 +240,7 @@
 "OwM-mh-QMV.title" = "Найти предыдущий";
 
 /* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
-"Oyz-dy-DGm.title" = "Хватит болтать.";
+"Oyz-dy-DGm.title" = "Хватит болтать";
 
 /* Class = "NSMenuItem"; title = "Bigger"; ObjectID = "Ptp-SP-VEL"; */
 "Ptp-SP-VEL.title" = "Больше";
@@ -249,7 +249,7 @@
 "Q5e-8K-NDq.title" = "Показать шрифты";
 
 /* Class = "NSTextFieldCell"; title = "Previous Display"; ObjectID = "QwF-QN-YH7"; */
-"QwF-QN-YH7.title" = "Предыдущий дисплей";
+"QwF-QN-YH7.title" = "Предыдущий экран";
 
 /* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
 "R4o-n2-Eq4.title" = "Увеличить";
@@ -261,46 +261,46 @@
 "Rqc-34-cIF.title" = "Суперсценарий";
 
 /* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
-"Ruw-6m-B2m.title" = "Выберите Все";
+"Ruw-6m-B2m.title" = "Выберите всё";
 
 /* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
-"S0p-oC-mLd.title" = "Перейти к выбору";
+"S0p-oC-mLd.title" = "Перейти к выбранному";
 
 /* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
-"STb-JK-oB1.title" = "Предпочтения Rectangle";
+"STb-JK-oB1.title" = "Настройки Rectangle";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "Индикация перемещения в последующих исполнениях слева или справа";
+"SXx-HZ-GkB.title" = "Перемещать окна между экранами при последовательном выравнивании влево или вправо";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "Окно";
 
 /* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
-"UEZ-Bs-lqG.title" = "Капитализировать";
+"UEZ-Bs-lqG.title" = "В верхнем регистре";
 
 /* Class = "NSMenuItem"; title = "Center"; ObjectID = "VIY-Ag-zcb"; */
 "VIY-Ag-zcb.title" = "Центр";
 
 /* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
-"VIf-4h-MJW.title" = "Разрешите…";
+"VIf-4h-MJW.title" = "Авторизовать…";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
-"Vdr-fp-XzO.title" = "Скрыть других";
+"Vdr-fp-XzO.title" = "Скрыть другое";
 
 /* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
-"Vjx-xi-njq.title" = "курсив";
+"Vjx-xi-njq.title" = "Курсив";
 
 /* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
 "W48-6f-4Dl.title" = "Редактировать";
 
 /* Class = "NSMenuItem"; title = "Underline"; ObjectID = "WRG-CD-K1S"; */
-"WRG-CD-K1S.title" = "Подчеркните";
+"WRG-CD-K1S.title" = "Подчеркнутый";
 
 /* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
-"Was-JA-tGl.title" = "Новый";
+"Was-JA-tGl.title" = "Создать";
 
 /* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
-"WeT-3V-zwk.title" = "Вставка и стиль матча";
+"WeT-3V-zwk.title" = "Вставить и соотнести стили";
 
 /* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
 "Xc8-Sm-pig.title" = "Левая половина";
@@ -309,22 +309,22 @@
 "Xz5-n4-O0W.title" = "Найти…";
 
 /* Class = "NSMenuItem"; title = "Find and Replace…"; ObjectID = "YEy-JH-Tfz"; */
-"YEy-JH-Tfz.title" = "Найдите и замените…";
+"YEy-JH-Tfz.title" = "Найти и заменить…";
 
 /* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "YGs-j5-SAR"; */
 "YGs-j5-SAR.title" = "\tПо умолчанию";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "YRC-4a-xGg"; */
-"YRC-4a-xGg.title" = "Предпочтения…";
+"YRC-4a-xGg.title" = "Настройки…";
 
 /* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
-"Ynk-f8-cLZ.title" = "Начать говорить";
+"Ynk-f8-cLZ.title" = "Проговорить";
 
 /* Class = "NSMenuItem"; title = "Align Left"; ObjectID = "ZM1-6Q-yy1"; */
 "ZM1-6Q-yy1.title" = "Выровнять влево";
 
 /* Class = "NSMenuItem"; title = "Paragraph"; ObjectID = "ZvO-Gk-QUH"; */
-"ZvO-Gk-QUH.title" = "Пункт";
+"ZvO-Gk-QUH.title" = "Параграф";
 
 /* Class = "NSMenuItem"; title = "Print…"; ObjectID = "aTl-1u-JFS"; */
 "aTl-1u-JFS.title" = "Печать…";
@@ -348,7 +348,7 @@
 "bib-Uj-vzu.title" = "Файл";
 
 /* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
-"buJ-ug-pKt.title" = "Использовать выбор для поиска";
+"buJ-ug-pKt.title" = "Использовать выбранное для поиска";
 
 /* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
 "c8a-y6-VQd.title" = "Преобразования";
@@ -360,7 +360,7 @@
 "cDB-IK-hbR.title" = "Не использовать";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "Последняя третья";
+"cRm-wn-Yv6.title" = "Правая треть";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "Выбор";
@@ -372,7 +372,7 @@
 "d7y-s8-7GE.title" = "Верхняя половина";
 
 /* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
-"d9M-CD-aMd.title" = "Сделать нижний футляр";
+"d9M-CD-aMd.title" = "Привести к нижнему регистру";
 
 /* Class = "NSMenu"; title = "Text"; ObjectID = "d9c-me-L2H"; */
 "d9c-me-L2H.title" = "Текст";
@@ -393,31 +393,31 @@
 "ec4-FB-fMa.title" = "Нижняя половина";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
-"gFy-Zj-RGl.title" = "О";
+"gFy-Zj-RGl.title" = "О программе";
 
 /* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
 "gVA-U4-sdL.title" = "Вставка";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangle требует вашего разрешения для управления положением окон.";
+"gyg-xl-dPn.title" = "Rectangle необходимо ваше разрешение для управления положением окон";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
-"hQb-2v-fYv.title" = "Интеллектуальные котировки";
+"hQb-2v-fYv.title" = "Интеллектуальные кавычки";
 
 /* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
 "hz2-CU-CR7.title" = "Проверьте документ сейчас";
 
 /* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
-"hz9-B4-Xy5.title" = "Услуги";
+"hz9-B4-Xy5.title" = "Службы";
 
 /* Class = "NSMenuItem"; title = "Smaller"; ObjectID = "i1d-Er-qST"; */
 "i1d-Er-qST.title" = "Меньше";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
-"iWV-c2-BJD.title" = "Параметры открытой системы";
+"iWV-c2-BJD.title" = "Открыть системные настройки";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
-"iXo-XL-T6q.title" = "Разрешить Rectangle";
+"iXo-XL-T6q.title" = "Дать Rectangle доступ";
 
 /* Class = "NSMenu"; title = "Baseline"; ObjectID = "ijk-EB-dga"; */
 "ijk-EB-dga.title" = "Базовый показатель";
@@ -432,13 +432,13 @@
 "jxT-CU-nIS.title" = "Формат";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "jxe-nr-LDQ"; */
-"jxe-nr-LDQ.title" = "О";
+"jxe-nr-LDQ.title" = "О Rectangle";
 
 /* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
 "kIP-vf-haE.title" = "Показать боковую панель";
 
 /* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
-"lgE-cR-cQ5.title" = "Перейдите в Системные настройки → Безопасность и конфиденциальность → Конфиденциальность → Доступность → Доступность";
+"lgE-cR-cQ5.title" = "Перейдите в Системные настройки → Защита и безопасность → Конфиденциальность → Универсальный доступ";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
 "ltc-mf-BHr.title" = "Если значок строки меню скрыт, перезапустите программу Rectangle из Finder, чтобы открыть меню.";
@@ -447,13 +447,13 @@
 "mK6-2p-4JG.title" = "Проверить грамматику с помощью правописания";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "Разрешить любой сочетание клавиш";
+"n4U-FC-L9s.title" = "Разрешить любое сочетание клавиш";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "Лигатуры";
 
 /* Class = "NSMenu"; title = "Open Recent"; ObjectID = "oas-Oc-fiZ"; */
-"oas-Oc-fiZ.title" = "Открыть Недавно";
+"oas-Oc-fiZ.title" = "Открыть недавнее";
 
 /* Class = "NSMenuItem"; title = "Loosen"; ObjectID = "ogc-rX-tC1"; */
 "ogc-rX-tC1.title" = "Расслабьтесь";
@@ -462,28 +462,28 @@
 "pa3-QI-u2k.title" = "Удалить";
 
 /* Class = "NSMenuItem"; title = "Save…"; ObjectID = "pxx-59-PXV"; */
-"pxx-59-PXV.title" = "Спасти…";
+"pxx-59-PXV.title" = "Сохранить…";
 
 /* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
 "q09-fT-Sye.title" = "Найти дальше";
 
 /* Class = "NSMenuItem"; title = "Page Setup…"; ObjectID = "qIS-W8-SiK"; */
-"qIS-W8-SiK.title" = "Настройка страницы…";
+"qIS-W8-SiK.title" = "Настройки страницы…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "Скрыть значок строки меню";
+"qlg-kC-FMr.title" = "Скрыть значок из строки меню";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "Проверка орфографии при наборе текста";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
-"rgM-f4-ycn.title" = "Интеллектуальные тире";
+"rgM-f4-ycn.title" = "Умные тире";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "Автоматическая проверка наличия обновлений";
+"rmV-YD-Hzj.title" = "Проверять обновления автоматически";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
-"rzr-Qq-702.title" = "Вправо";
+"rzr-Qq-702.title" = "Направо";
 
 /* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
 "snW-S8-Cw5.title" = "Показать панель инструментов";
@@ -495,13 +495,13 @@
 "tRr-pd-1PS.title" = "Детекторы данных";
 
 /* Class = "NSMenuItem"; title = "Open Recent"; ObjectID = "tXI-mr-wws"; */
-"tXI-mr-wws.title" = "Открыть Недавно";
+"tXI-mr-wws.title" = "Открыть недавнее";
 
 /* Class = "NSMenu"; title = "Kern"; ObjectID = "tlD-Oa-oAM"; */
 "tlD-Oa-oAM.title" = "Керн";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "Восстановление профилей по умолчанию";
+"uLF-Uf-tBt.title" = "Восстановить сочетания клавиш по умолчанию";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
@@ -513,16 +513,16 @@
 "v2f-bX-xiM.title" = "Налево";
 
 /* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
-"vKC-jM-MkH.title" = "Стиль пасты";
+"vKC-jM-MkH.title" = "Стиль вставки";
 
 /* Class = "NSMenuItem"; title = "Show Ruler"; ObjectID = "vLm-3I-IUL"; */
-"vLm-3I-IUL.title" = "Показать правителю";
+"vLm-3I-IUL.title" = "Показать линейку";
 
 /* Class = "NSMenuItem"; title = "Clear Menu"; ObjectID = "vNY-rz-j42"; */
 "vNY-rz-j42.title" = "Очистить меню";
 
 /* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
-"vmV-6d-7jI.title" = "Сделать верхний случай";
+"vmV-6d-7jI.title" = "Сделать всё в верхнем регистре";
 
 /* Class = "NSMenu"; title = "Ligatures"; ObjectID = "w0m-vy-SC9"; */
 "w0m-vy-SC9.title" = "Лигатуры";
@@ -537,7 +537,7 @@
 "x3v-GG-iWU.title" = "Копировать";
 
 /* Class = "NSMenuItem"; title = "Use All"; ObjectID = "xQD-1f-W4t"; */
-"xQD-1f-W4t.title" = "Использовать все";
+"xQD-1f-W4t.title" = "Использовать всё";
 
 /* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
 "xrE-MZ-jX0.title" = "Речь";
