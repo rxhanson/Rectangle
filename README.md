@@ -31,6 +31,11 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
+### Ignore an app
+
+   1. Focus the app that you want to ignore (make a window from that app frontmost).
+   2. Open the Rectangle menu and select "Ignore app"
+
 ## Keyboard Shortcuts
 The default keyboard shortcuts are based on Spectacle, but there is a recommended alternative set of defaults based on the Magnet app. This can be enabled by setting "alternateDefaultShortcuts" to true in NSUserDefaults for Rectangle with the following Terminal command:
 
