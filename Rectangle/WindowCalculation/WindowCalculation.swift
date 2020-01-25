@@ -10,16 +10,16 @@ import Cocoa
 
 protocol Calculation {
     
-    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
+    func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
     
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
+    func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
 }
 
 class WindowCalculation: Calculation {
     
-    func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
-        let rectResult = calculateRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action)
+        let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action)
         
         if rectResult.rect.isNull {
             return nil
@@ -28,7 +28,7 @@ class WindowCalculation: Calculation {
         return WindowCalculationResult(rect: rectResult.rect, screen: usableScreens.currentScreen, resultingAction: action, resultingSubAction: rectResult.subAction)
     }
 
-    func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         return RectResult(CGRect.null)
     }
     
@@ -46,6 +46,11 @@ class WindowCalculation: Calculation {
         return rect.width > rect.height
     }
     
+}
+
+struct Window {
+    let id: Int
+    let rect: CGRect
 }
 
 struct RectResult {

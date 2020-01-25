@@ -105,8 +105,9 @@ class SnappingManager {
                     if newHotSpot == currentHotSpot {
                         return
                     }
+                    let currentWindow = Window(id: windowId, rect: currentRect)
                     
-                    if let newBoxRect = getBoxRect(hotSpot: newHotSpot, currentWindowRect: currentRect) {
+                    if let newBoxRect = getBoxRect(hotSpot: newHotSpot, currentWindow: currentWindow) {
                         box?.setFrame(newBoxRect, display: true)
                         box?.makeKeyAndOrderFront(nil)
                     }
@@ -182,10 +183,10 @@ class SnappingManager {
         return box
     }
     
-    func getBoxRect(hotSpot: HotSpot, currentWindowRect: CGRect) -> CGRect? {
+    func getBoxRect(hotSpot: HotSpot, currentWindow: Window) -> CGRect? {
         if let calculation = windowCalculationFactory.calculation(for: hotSpot.action) {
             
-            let rectResult = calculation.calculateRect(currentWindowRect, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
+            let rectResult = calculation.calculateRect(currentWindow, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
             
             if gapSize > 0, hotSpot.action.gapsApplicable {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge

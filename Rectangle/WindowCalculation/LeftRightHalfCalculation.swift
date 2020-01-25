@@ -10,30 +10,30 @@ import Cocoa
 
 class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     
-    override func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    override func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         switch Defaults.subsequentExecutionMode.value {
             
         case .acrossMonitor:
             if action == .leftHalf {
-                return calculateLeftAcrossDisplays(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
+                return calculateLeftAcrossDisplays(window, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
             } else if action == .rightHalf {
-                return calculateRightAcrossDisplays(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
+                return calculateRightAcrossDisplays(window, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
             }
             return nil
         case .resize:
             let screen = usableScreens.currentScreen
-            let rectResult: RectResult = calculateRepeatedRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: action)
+            let rectResult: RectResult = calculateRepeatedRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: action)
             return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
         case .none:
             let screen = usableScreens.currentScreen
-            let oneHalfRect = calculateFirstRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: action)
+            let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: action)
             return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: action)
         }
         
     }
 
-    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateFirstRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
         var oneHalfRect = visibleFrameOfScreen
         oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
@@ -43,7 +43,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         return RectResult(oneHalfRect)
     }
 
-    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateSecondRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var twoThirdsRect = visibleFrameOfScreen
         twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
@@ -53,7 +53,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         return RectResult(twoThirdsRect)
     }
 
-    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateThirdRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
         var oneThirdRect = visibleFrameOfScreen
         oneThirdRect.size.width = floor(visibleFrameOfScreen.width / 3.0)
@@ -63,39 +63,39 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         return RectResult(oneThirdRect)
     }
 
-    func calculateLeftAcrossDisplays(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
+    func calculateLeftAcrossDisplays(_ window: Window, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
                 
         if let lastAction = lastAction, lastAction.action == .leftHalf {
             let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-            if normalizedLastRect == windowRect {
+            if normalizedLastRect == window.rect {
                 if let prevScreen = usableScreens.adjacentScreens?.prev {
-                    return calculateRightAcrossDisplays(windowRect, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
+                    return calculateRightAcrossDisplays(window, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
                 }
             }
         }
         
-        let oneHalfRect = calculateFirstRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: .leftHalf)
+        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: .leftHalf)
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .leftHalf)
     }
     
     
-    func calculateRightAcrossDisplays(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
+    func calculateRightAcrossDisplays(_ window: Window, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
         if let lastAction = lastAction, lastAction.action == .rightHalf {
             let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-            if normalizedLastRect == windowRect {
+            if normalizedLastRect == window.rect {
                 if let nextScreen = usableScreens.adjacentScreens?.next {
-                    return calculateLeftAcrossDisplays(windowRect, lastAction: lastAction, screen: nextScreen, usableScreens: usableScreens)
+                    return calculateLeftAcrossDisplays(window, lastAction: lastAction, screen: nextScreen, usableScreens: usableScreens)
                 }
             }
         }
         
-        let oneHalfRect = calculateFirstRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: .rightHalf)
+        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: .rightHalf)
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .rightHalf)
     }
 
     // Used to draw box for snapping
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         if action == .leftHalf {
             var oneHalfRect = visibleFrameOfScreen
             oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)

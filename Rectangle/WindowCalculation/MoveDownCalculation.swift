@@ -10,16 +10,16 @@ import Foundation
 
 class MoveDownCalculation: WindowCalculation {
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
-        var calculatedWindowRect = windowRect
+        var calculatedWindowRect = window.rect
         calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
         
-        if windowRect.width >= visibleFrameOfScreen.width {
+        if window.rect.width >= visibleFrameOfScreen.width {
             calculatedWindowRect.size.width = visibleFrameOfScreen.width
             calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
         } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - windowRect.width) / 2.0) + visibleFrameOfScreen.minX
+            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - window.rect.width) / 2.0) + visibleFrameOfScreen.minX
         }
         return RectResult(calculatedWindowRect)
 

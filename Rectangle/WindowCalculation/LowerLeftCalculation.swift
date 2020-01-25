@@ -10,17 +10,17 @@ import Foundation
 
 class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
 
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
         if Defaults.subsequentExecutionMode.value == .none
             || lastAction == nil {
-            return calculateFirstRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            return calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
         }
         
-        return calculateRepeatedRect(windowRect, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        return calculateRepeatedRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
     }
     
-    func calculateFirstRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateFirstRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var oneQuarterRect = visibleFrameOfScreen
         oneQuarterRect.size.width = floor(visibleFrameOfScreen.width / 2.0)
@@ -28,7 +28,7 @@ class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         return RectResult(oneQuarterRect)
     }
     
-    func calculateSecondRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateSecondRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var twoThirdsRect = visibleFrameOfScreen
         twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
@@ -36,7 +36,7 @@ class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsCalculation {
         return RectResult(twoThirdsRect)
     }
     
-    func calculateThirdRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateThirdRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         
         var oneThirdRect = visibleFrameOfScreen
         oneThirdRect.size.width = floor(visibleFrameOfScreen.width / 3.0)

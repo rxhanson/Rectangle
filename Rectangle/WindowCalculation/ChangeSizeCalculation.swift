@@ -10,13 +10,13 @@ import Foundation
 
 class ChangeSizeCalculation: WindowCalculation {
     
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         let sizeOffset: CGFloat = action == .smaller ? -30.0 : 30.0
         
-        var resizedWindowRect = windowRect
+        var resizedWindowRect = window.rect
         resizedWindowRect.size.width = resizedWindowRect.width + sizeOffset
         resizedWindowRect.origin.x = resizedWindowRect.origin.x - floor(sizeOffset / 2.0)
-        resizedWindowRect = adjustedWindowRectAgainstLeftAndRightEdgesOfScreen(originalWindowRect: windowRect,
+        resizedWindowRect = adjustedWindowRectAgainstLeftAndRightEdgesOfScreen(originalWindowRect: window.rect,
                                                                                resizedWindowRect: resizedWindowRect,
                                                                                visibleFrameOfScreen: visibleFrameOfScreen)
         if resizedWindowRect.width >= visibleFrameOfScreen.width {
@@ -24,21 +24,21 @@ class ChangeSizeCalculation: WindowCalculation {
         }
         resizedWindowRect.size.height = resizedWindowRect.height + sizeOffset
         resizedWindowRect.origin.y = resizedWindowRect.origin.y - floor(sizeOffset / 2.0)
-        resizedWindowRect = adjustedWindowRectAgainstTopAndBottomEdgesOfScreen(originalWindowRect: windowRect,
+        resizedWindowRect = adjustedWindowRectAgainstTopAndBottomEdgesOfScreen(originalWindowRect: window.rect,
                                                                                resizedWindowRect: resizedWindowRect,
                                                                                visibleFrameOfScreen: visibleFrameOfScreen)
         if resizedWindowRect.height >= visibleFrameOfScreen.height {
             resizedWindowRect.size.height = visibleFrameOfScreen.height
-            resizedWindowRect.origin.y = windowRect.origin.y
+            resizedWindowRect.origin.y = window.rect.origin.y
         }
-        if againstAllEdgesOfScreen(windowRect: windowRect, visibleFrameOfScreen: visibleFrameOfScreen) && (sizeOffset < 0) {
-            resizedWindowRect.size.width = windowRect.width + sizeOffset
-            resizedWindowRect.origin.x = windowRect.origin.x - floor(sizeOffset / 2.0)
-            resizedWindowRect.size.height = windowRect.height + sizeOffset
-            resizedWindowRect.origin.y = windowRect.origin.y - floor(sizeOffset / 2.0)
+        if againstAllEdgesOfScreen(windowRect: window.rect, visibleFrameOfScreen: visibleFrameOfScreen) && (sizeOffset < 0) {
+            resizedWindowRect.size.width = window.rect.width + sizeOffset
+            resizedWindowRect.origin.x = window.rect.origin.x - floor(sizeOffset / 2.0)
+            resizedWindowRect.size.height = window.rect.height + sizeOffset
+            resizedWindowRect.origin.y = window.rect.origin.y - floor(sizeOffset / 2.0)
         }
         if resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
-            resizedWindowRect = windowRect
+            resizedWindowRect = window.rect
         }
         return RectResult(resizedWindowRect)
     }

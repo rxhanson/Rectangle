@@ -10,26 +10,26 @@ import Cocoa
 
 class MoveLeftRightCalculation: WindowCalculation {
     
-    override func calculate(_ windowRect: CGRect, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    override func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
         if action == .moveLeft {
-            return calculateLeft(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
+            return calculateLeft(window, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
         } else if action == .moveRight {
-            return calculateRight(windowRect, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
+            return calculateRight(window, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
         }
         
         return nil
     }
     
-    func calculateLeft(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
+    func calculateLeft(_ window: Window, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
         if Defaults.subsequentExecutionMode.value == .acrossMonitor {
             
             if let lastAction = lastAction, lastAction.action == .moveLeft {
                 let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-                if normalizedLastRect == windowRect {
+                if normalizedLastRect == window.rect {
                     if let prevScreen = usableScreens.adjacentScreens?.prev {
-                        return calculateRight(windowRect, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
+                        return calculateRight(window, lastAction: lastAction, screen: prevScreen, usableScreens: usableScreens)
                     }
                 }
             }
@@ -37,29 +37,29 @@ class MoveLeftRightCalculation: WindowCalculation {
 
         let visibleFrameOfScreen = screen.visibleFrame
         
-        var calculatedWindowRect = windowRect
+        var calculatedWindowRect = window.rect
         calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
         
-        if windowRect.height >= visibleFrameOfScreen.height {
+        if window.rect.height >= visibleFrameOfScreen.height {
             calculatedWindowRect.size.height = visibleFrameOfScreen.height
             calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
         } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - windowRect.height) / 2.0) + visibleFrameOfScreen.minY
+            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - window.rect.height) / 2.0) + visibleFrameOfScreen.minY
         }
         return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveLeft)
         
     }
     
     
-    func calculateRight(_ windowRect: CGRect, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
+    func calculateRight(_ window: Window, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
         if Defaults.subsequentExecutionMode.value == .acrossMonitor {
             
             if let lastAction = lastAction, lastAction.action == .moveRight {
                 let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-                if normalizedLastRect == windowRect {
+                if normalizedLastRect == window.rect {
                     if let nextScreen = usableScreens.adjacentScreens?.next {
-                        return calculateLeft(windowRect, lastAction: lastAction, screen: nextScreen, usableScreens: usableScreens)
+                        return calculateLeft(window, lastAction: lastAction, screen: nextScreen, usableScreens: usableScreens)
                     }
                 }
             }
@@ -67,21 +67,21 @@ class MoveLeftRightCalculation: WindowCalculation {
         
         let visibleFrameOfScreen = screen.visibleFrame
         
-        var calculatedWindowRect = windowRect
-        calculatedWindowRect.origin.x = visibleFrameOfScreen.maxX - windowRect.width
+        var calculatedWindowRect = window.rect
+        calculatedWindowRect.origin.x = visibleFrameOfScreen.maxX - window.rect.width
         
-        if windowRect.height >= visibleFrameOfScreen.height {
+        if window.rect.height >= visibleFrameOfScreen.height {
             calculatedWindowRect.size.height = visibleFrameOfScreen.height
             calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
         } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - windowRect.height) / 2.0) + visibleFrameOfScreen.minY
+            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - window.rect.height) / 2.0) + visibleFrameOfScreen.minY
         }
         return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveRight)
 
     }
     
     // unused
-    override func calculateRect(_ windowRect: CGRect, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         return RectResult(CGRect.null)
     }
     

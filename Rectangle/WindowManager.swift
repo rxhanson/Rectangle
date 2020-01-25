@@ -83,10 +83,11 @@ class WindowManager {
         }
 
         let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect, frameOfScreen: usableScreens.frameOfCurrentScreen)
+        let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
         
         let windowCalculation = windowCalculationFactory.calculation(for: action)
         
-        guard var calcResult = windowCalculation?.calculate(currentNormalizedRect, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
+        guard var calcResult = windowCalculation?.calculate(currentWindow, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
             NSSound.beep()
             return
         }
