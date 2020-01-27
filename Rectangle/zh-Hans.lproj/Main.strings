@@ -1,15 +1,15 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "如果重复按移动窗口或设置窗口大小按键，则窗口将移至下一个显示器显示，而不是 1/2、2/3 和 1/3 大小。";
+"01Z-t3-cBm.title" = "如果重复按移动窗口或设置窗口大小按键，则窗口将被移至下一个显示器显示，而不是被设置为 1/2、2/3 和 1/3 大小。";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "最后三分之二";
+"08q-Ce-1QL.title" = "右三分之二";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
 "0Ak-33-SM7.title" = "右上";
 
 /* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
-"1Rc-Od-eP5.title" = "下移";
+"1Rc-Od-eP5.title" = "贴下";
 
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
 "1UK-8n-QPP.title" = "自定义工具栏…";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "言语";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "前三分之二";
+"3zd-xE-oWl.title" = "左三分之二";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "紧缩";
@@ -78,7 +78,7 @@
 "78Y-hA-62v.title" = "自动纠正拼写";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "三分之一居中";
+"7YK-9Z-lzw.title" = "中间三分之一";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
 "8Bg-SZ-hDO.title" = "居中";
@@ -132,7 +132,7 @@
 "Eah-KL-kbn.title" = "变大";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "前三分之一";
+"F12-EV-Lfz.title" = "左三分之一";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "帮助";
@@ -177,7 +177,7 @@
 "HIK-3r-i7E.title" = "检查更新…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
-"HOm-BV-2jc.title" = "上移";
+"HOm-BV-2jc.title" = "贴上";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
 "HyV-fh-RgO.title" = "视图";
@@ -339,7 +339,7 @@
 "aXa-aM-Jaq.title" = "字体";
 
 /* Class = "NSTextFieldCell"; title = "Top Left"; ObjectID = "adp-cN-qkh"; */
-"adp-cN-qkh.title" = "左上方";
+"adp-cN-qkh.title" = "左上";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "agt-UL-0e3"; */
 "agt-UL-0e3.title" = "使用默认值";
@@ -363,7 +363,7 @@
 "cDB-IK-hbR.title" = "不使用";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "后三分之一";
+"cRm-wn-Yv6.title" = "右三分之一";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "选择";
@@ -489,7 +489,7 @@
 "rmV-YD-Hzj.title" = "自动检查更新";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
-"rzr-Qq-702.title" = "右移";
+"rzr-Qq-702.title" = "贴右";
 
 /* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
 "snW-S8-Cw5.title" = "显示工具栏";
@@ -519,7 +519,7 @@
 "uw2-9W-2jq.label" = "键盘快捷键";
 
 /* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
-"v2f-bX-xiM.title" = "左移";
+"v2f-bX-xiM.title" = "贴左";
 
 /* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
 "vKC-jM-MkH.title" = "粘贴样式";
