@@ -105,7 +105,7 @@ Followed by a restart of the app.
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. If you contribute significant code or localizations that get merged into Rectangle, you get a free license of Multitouch. Contributors to Sparkle, MASShortcut, or Spectacle can also receive a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
 
 ### Localization
-Localization was done using [DeepL](https://www.deepl.com/translator) and Google Translate. Since it wasn't done by a person, it's likely that the translations can be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language.
+Initial localizations were done using [DeepL](https://www.deepl.com/translator) and Google Translate, but many of them have been updated by contributors. Translations that weren't done by humans can definitely be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language. If you would like to add a localization but one doesn't currently exist and you don't know how to create one, create an issue and a translation file can be initialized.
 
 Pull requests for new localizations or improvements on existing localizations are welcome.
 
