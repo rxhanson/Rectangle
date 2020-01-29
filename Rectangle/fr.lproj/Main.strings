@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "Ceci ne s'applique qu'aux actions de déplacement ou de demi-mouvement. Les demi-actions n'exécuteront pas les comportements 2/3 et 1/3 lorsqu'elles sont activées.";
+"01Z-t3-cBm.title" = "Lorsque les actions de déplacement ou de moitié d'écran sont répétées, déplacer sur le moniteur suivant (au lieu du comportement d'alternance: 1/2, 2/3, 1/3).";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "Deux tiers droit";
