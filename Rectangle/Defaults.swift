@@ -20,6 +20,7 @@ class Defaults {
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
     static let gapSize = FloatDefault(key: "gapSize")
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
+    static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
 }
 
 class BoolDefault {
@@ -105,6 +106,25 @@ class FloatDefault {
     init(key: String) {
         self.key = key
         value = UserDefaults.standard.float(forKey: key)
+        initialized = true
+    }
+}
+
+class IntDefault {
+    private let key: String
+    private var initialized = false
+    
+    var value: Int {
+        didSet {
+            if initialized {
+                UserDefaults.standard.set(value, forKey: key)
+            }
+        }
+    }
+    
+    init(key: String) {
+        self.key = key
+        value = UserDefaults.standard.integer(forKey: key)
         initialized = true
     }
 }

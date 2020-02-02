@@ -17,13 +17,14 @@ class SnappingManager {
     var frontmostWindow: AccessibilityElement?
     var windowMoving: Bool = false
     var initialWindowRect: CGRect?
-    var currentHotSpot: HotSpot?
+    var currentHotSpot: SnapArea?
     
     var box: NSWindow?
     
     let screenDetection = ScreenDetection()
     
     private let gapSize = Defaults.gapSize.value
+    private let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
@@ -183,7 +184,7 @@ class SnappingManager {
         return box
     }
     
-    func getBoxRect(hotSpot: HotSpot, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
         if let calculation = windowCalculationFactory.calculation(for: hotSpot.action) {
             
             let rectResult = calculation.calculateRect(currentWindow, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
@@ -199,7 +200,7 @@ class SnappingManager {
         return nil
     }
     
-    func getMouseHotSpot(priorHotSpot: HotSpot?) -> HotSpot? {
+    func getMouseHotSpot(priorHotSpot: SnapArea?) -> SnapArea? {
         
         for screen in NSScreen.screens {
             let frame = screen.frame
@@ -208,22 +209,22 @@ class SnappingManager {
             if loc.x >= frame.minX {
                 if loc.x < frame.minX + 25 {
                     if loc.y >= frame.maxY - 25 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topLeft)
+                        return SnapArea(screen: screen, action: .topLeft)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.minY + 25 {
-                        return HotSpot(screen: screen, action: .bottomLeft)
+                        return SnapArea(screen: screen, action: .bottomLeft)
                     }
                 }
                 
                 if loc.x < frame.minX + 5 {
                     if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
-                        return HotSpot(screen: screen, action: .bottomHalf)
+                        return SnapArea(screen: screen, action: .bottomHalf)
                     }
                     if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topHalf)
+                        return SnapArea(screen: screen, action: .topHalf)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .leftHalf)
+                        return SnapArea(screen: screen, action: .leftHalf)
                     }
                 }
             }
@@ -231,23 +232,23 @@ class SnappingManager {
             if loc.x <= frame.maxX {
                 if loc.x > frame.maxX - 25 {
                     if loc.y >= frame.maxY - 25 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topRight)
+                        return SnapArea(screen: screen, action: .topRight)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.minY + 25 {
-                        return HotSpot(screen: screen, action: .bottomRight)
+                        return SnapArea(screen: screen, action: .bottomRight)
                     }
                 }
 
                 
                 if loc.x > frame.maxX - 5 {
                     if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
-                        return HotSpot(screen: screen, action: .bottomHalf)
+                        return SnapArea(screen: screen, action: .bottomHalf)
                     }
                     if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topHalf)
+                        return SnapArea(screen: screen, action: .topHalf)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .rightHalf)
+                        return SnapArea(screen: screen, action: .rightHalf)
                     }
                 }
             }
@@ -255,7 +256,7 @@ class SnappingManager {
             if loc.y >= frame.minY && loc.y < frame.minY + 5 {
                 let thirdWidth = floor(frame.width / 3)
                 if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
-                    return HotSpot(screen: screen, action: .firstThird)
+                    return SnapArea(screen: screen, action: .firstThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
                     if let priorAction = priorHotSpot?.action {
@@ -267,18 +268,20 @@ class SnappingManager {
                             action = .lastTwoThirds
                         default: action = .centerThird
                         }
-                        return HotSpot(screen: screen, action: action)
+                        return SnapArea(screen: screen, action: action)
                     }
-                    return HotSpot(screen: screen, action: .centerThird)
+                    return SnapArea(screen: screen, action: .centerThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
-                    return HotSpot(screen: screen, action: .lastThird)
+                    return SnapArea(screen: screen, action: .lastThird)
                 }
             }
             
             if loc.y <= frame.maxY && loc.y > frame.maxY - 5 {
                 if loc.x >= frame.minX && loc.x <= frame.maxX {
-                    return HotSpot(screen: screen, action: .maximize)
+                    if !ignoredSnapAreas.contains(.top) {
+                        return SnapArea(screen: screen, action: .maximize)
+                    }
                 }
             }
             
@@ -289,9 +292,22 @@ class SnappingManager {
     
 }
 
-struct HotSpot: Equatable {
+struct SnapArea: Equatable {
     let screen: NSScreen
     let action: WindowAction
+}
+
+struct SnapAreaOption: OptionSet {
+    let rawValue: Int
+    
+    static let top = SnapAreaOption(rawValue: 1 << 0)
+    static let sides = SnapAreaOption(rawValue: 1 << 1)
+    static let sideEdges = SnapAreaOption(rawValue: 1 << 2)
+    static let corners = SnapAreaOption(rawValue: 1 << 3)
+    static let bottom = SnapAreaOption(rawValue: 1 << 4)
+    
+    static let all: SnapAreaOption = [.top, .sides, .sideEdges, .corners, .bottom]
+    static let none: SnapAreaOption = []
 }
 
 // Updating the location first, followed by the size can reduce some jenkiness
