@@ -130,7 +130,7 @@ class AccessibilityElement {
         return self.value(for: .position)
     }
     
-    private func set(position: CGPoint) {
+    func set(position: CGPoint) {
         if let value = AXValue.from(value: position, type: .cgPoint) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXPositionAttribute as CFString, value)
             if Logger.logging {
@@ -143,7 +143,7 @@ class AccessibilityElement {
         return self.value(for: .size)
     }
     
-    private func set(size: CGSize) {
+    func set(size: CGSize) {
         if let value = AXValue.from(value: size, type: .cgSize) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXSizeAttribute as CFString, value)
             if Logger.logging {
