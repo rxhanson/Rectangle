@@ -15,6 +15,7 @@ class SnappingManager {
     
     var eventMonitor: EventMonitor?
     var frontmostWindow: AccessibilityElement?
+    var frontmostWindowId: Int?
     var windowMoving: Bool = false
     var initialWindowRect: CGRect?
     var currentHotSpot: SnapArea?
@@ -68,9 +69,11 @@ class SnappingManager {
         switch event.type {
         case .leftMouseDown:
             frontmostWindow = AccessibilityElement.frontmostWindow()
+            frontmostWindowId = frontmostWindow?.getIdentifier()
             initialWindowRect = frontmostWindow?.rectOfElement()
         case .leftMouseUp:
             frontmostWindow = nil
+            frontmostWindowId = nil
             windowMoving = false
             initialWindowRect = nil
             if let currentHotSpot = self.currentHotSpot {
@@ -79,8 +82,11 @@ class SnappingManager {
                 self.currentHotSpot = nil
             }
         case .leftMouseDragged:
+            if frontmostWindowId == nil {
+                frontmostWindowId = frontmostWindow?.getIdentifier()
+            }
             guard let currentRect = frontmostWindow?.rectOfElement(),
-                let windowId = frontmostWindow?.getIdentifier()
+                let windowId = frontmostWindowId
             else { return }
             
             if !windowMoving {
