@@ -18,7 +18,7 @@ Or install with brew cask:
 brew cask install rectangle
 ```
 ## How to use it
-They keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used then on Windows or other window management apps.
+The keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used them on Windows or other window management apps.
 
 Drag a window to the edge of the screen. When the mouse cursor reaches the edge of the screen, you'll see a footprint that Rectangle will attempt to resize and move the window to when the click is released.
 
