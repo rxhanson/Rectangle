@@ -30,8 +30,8 @@ class AlmostMaximizeCalculation: WindowCalculation {
         var calculatedWindowRect = visibleFrameOfScreen
         
         // Resize
-        calculatedWindowRect.size.height = visibleFrameOfScreen.height * almostMaximizeHeight
-        calculatedWindowRect.size.width = visibleFrameOfScreen.width * almostMaximizeWidth
+        calculatedWindowRect.size.height = round(visibleFrameOfScreen.height * almostMaximizeHeight)
+        calculatedWindowRect.size.width = round(visibleFrameOfScreen.width * almostMaximizeWidth)
         
         // Center
         calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
