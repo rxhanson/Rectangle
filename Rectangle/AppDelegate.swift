@@ -134,6 +134,7 @@ extension AppDelegate: NSMenuDelegate {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
             ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
             ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
+            ignoreMenuItem.isHidden = false
         } else {
             ignoreMenuItem.isHidden = true
         }
