@@ -198,7 +198,7 @@
 "J7y-lM-qPV.title" = "Keine verwenden";
 
 /* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
-"Jnd-Lc-nlh.title" = "Nächste Anzeige";
+"Jnd-Lc-nlh.title" = "Nächster Bildschirm";
 
 /* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
 "KaW-ft-85H.title" = "Änderungen zurücksetzen";
@@ -249,7 +249,7 @@
 "Q5e-8K-NDq.title" = "Schriften anzeigen";
 
 /* Class = "NSTextFieldCell"; title = "Previous Display"; ObjectID = "QwF-QN-YH7"; */
-"QwF-QN-YH7.title" = "Vorherige Anzeige";
+"QwF-QN-YH7.title" = "Vorheriger Bildschirm";
 
 /* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
 "R4o-n2-Eq4.title" = "Zoom";
