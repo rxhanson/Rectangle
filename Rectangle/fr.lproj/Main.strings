@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "Abaisser";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "Fermer les fenêtres en les faisant glisser";
+"1ui-PL-TkR.title" = "Redimensionner les fenêtres en les faisant glisser";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "Lever";
