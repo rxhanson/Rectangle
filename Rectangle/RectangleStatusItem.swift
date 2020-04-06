@@ -38,7 +38,11 @@ class RectangleStatusItem {
     private func add() {
         nsStatusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         nsStatusItem?.menu = self.statusMenu
-        nsStatusItem?.button?.image = NSImage(named: "StatusTemplate")
+        
+        let disabled = AppDelegate.instance().applicationToggle?.disabledStatus()
+//        let disabled = true;
+        let image = disabled == true ? "StatusDisabledTemplate" : "StatusTemplate"
+        nsStatusItem?.button?.image = NSImage(named: image)
     }
     
     private func remove() {

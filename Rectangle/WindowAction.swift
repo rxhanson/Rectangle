@@ -15,6 +15,33 @@ fileprivate let ctrl = NSEvent.ModifierFlags.control.rawValue
 fileprivate let shift = NSEvent.ModifierFlags.shift.rawValue
 fileprivate let cmd = NSEvent.ModifierFlags.command.rawValue
 
+enum ToggleAction: Int {
+    case disableForAllApps = 0,
+        disableForCurrentApp = 1
+    
+    var notficationName: Notification.Name {
+        return Notification.Name(name)
+    }
+    
+    func post() {
+        NotificationCenter.default.post(name: notficationName, object: nil)
+    }
+    
+    var name: String {
+        switch self {
+        case .disableForAllApps: return "disableForAllApps"
+        case .disableForCurrentApp: return "disableForCurrentApp"
+        }
+    }
+    
+    var defaultShortcut: Shortcut? {
+        switch self {
+        case .disableForAllApps: return Shortcut( 0, kVK_F12 )
+        case .disableForCurrentApp: return Shortcut( cmd, kVK_F12 )
+        }
+    }
+}
+
 enum WindowAction: Int {
     case leftHalf = 0,
     rightHalf = 1,

@@ -12,7 +12,11 @@ import ServiceManagement
 
 class PrefsViewController: NSViewController {
     
-    var actionsToViews = [WindowAction: MASShortcutView]()
+    var windowActionsToViews = [WindowAction: MASShortcutView]()
+    var toggleActionsToViews = [ToggleAction: MASShortcutView]()
+    
+    @IBOutlet weak var disableForAllAppsShortcutView: MASShortcutView!
+    @IBOutlet weak var disableForCurrentAppShortcutView: MASShortcutView!
     
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
@@ -52,7 +56,21 @@ class PrefsViewController: NSViewController {
     // Settings
     override func awakeFromNib() {
         
-        actionsToViews = [
+        toggleActionsToViews = [
+            .disableForAllApps: disableForAllAppsShortcutView,
+            .disableForCurrentApp: disableForCurrentAppShortcutView,
+        ]
+        
+        for (action, view) in toggleActionsToViews {
+            view.associatedUserDefaultsKey = action.name
+        }
+        
+        if Defaults.allowAnyShortcut.enabled {
+            let passThroughValidator = PassthroughShortcutValidator()
+            toggleActionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
+        }
+        
+        windowActionsToViews = [
             .leftHalf: leftHalfShortcutView,
             .rightHalf: rightHalfShortcutView,
             .topHalf: topHalfShortcutView,
@@ -81,13 +99,13 @@ class PrefsViewController: NSViewController {
             .almostMaximize: almostMaximizeShortcutView
         ]
         
-        for (action, view) in actionsToViews {
+        for (action, view) in windowActionsToViews {
             view.associatedUserDefaultsKey = action.name
         }
         
         if Defaults.allowAnyShortcut.enabled {
             let passThroughValidator = PassthroughShortcutValidator()
-            actionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
+            windowActionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
         }
         
         subscribeToAllowAnyShortcutToggle()
@@ -100,7 +118,9 @@ class PrefsViewController: NSViewController {
     @objc func allowAnyShortcutToggled(notification: Notification) {
         guard let enabled = notification.object as? Bool else { return }
         let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
-        actionsToViews.values.forEach { $0.shortcutValidator = validator }
+        toggleActionsToViews.values.forEach { $0.shortcutValidator = validator }
+        windowActionsToViews.values.forEach { $0.shortcutValidator = validator }
+        
     }
 }
 

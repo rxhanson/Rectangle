@@ -21,6 +21,7 @@ class Defaults {
     static let gapSize = FloatDefault(key: "gapSize")
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
+    static let disabledForAll = BoolDefault(key: "disabledForAll")
 }
 
 class BoolDefault {

@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var shortcutManager: ShortcutManager!
     private var windowManager: WindowManager!
-    private var applicationToggle: ApplicationToggle!
+    private(set) var applicationToggle: ApplicationToggle!
     private var windowCalculationFactory: WindowCalculationFactory!
     private var snappingManager: SnappingManager!
     
@@ -30,9 +30,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var mainStatusMenu: NSMenu!
     @IBOutlet weak var unauthorizedMenu: NSMenu!
+    @IBOutlet weak var disableMenuItem: NSMenuItem!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
+    
+    static func instance() -> AppDelegate {
+      return NSApplication.shared.delegate as! AppDelegate
+    }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         mainStatusMenu.delegate = self
@@ -89,12 +94,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Logger.showLogging(sender: sender)
     }
     
+    @IBAction func toggleDisableForAllApps(_ sender: NSMenuItem) {
+        applicationToggle.toggleDisableForAllApps()
+    }
+    
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
-        if sender.state == .on {
-            applicationToggle.enableFrontApp()
-        } else {
-            applicationToggle.disableFrontApp()
-        }
+        applicationToggle.toggleDisableForCurrentApp()
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -130,9 +135,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate: NSMenuDelegate {
     
     func menuWillOpen(_ menu: NSMenu) {
-        if let frontAppName = applicationToggle.frontAppName {
+        disableMenuItem.state = applicationToggle.shortcutsDisabledForAll ? .on : .off
+        if applicationToggle.shortcutsDisabledForAll {
+            ignoreMenuItem.isHidden = true
+        } else if let currentAppName = applicationToggle.currentAppName {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
-            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
+            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: currentAppName)
             ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
             ignoreMenuItem.isHidden = false
         } else {
