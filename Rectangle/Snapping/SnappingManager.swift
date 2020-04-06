@@ -25,10 +25,10 @@ class SnappingManager {
     let screenDetection = ScreenDetection()
     
     private let gapSize = Defaults.gapSize.value
-    private let marginTop = Defaults.marginTop.value
-    private let marginBottom = Defaults.marginBottom.value
-    private let marginLeft = Defaults.marginLeft.value
-    private let marginRight = Defaults.marginRight.value
+    private let marginTop = Defaults.snapEdgeMarginTop.value
+    private let marginBottom = Defaults.snapEdgeMarginBottom.value
+    private let marginLeft = Defaults.snapEdgeMarginLeft.value
+    private let marginRight = Defaults.snapEdgeMarginRight.value
     private let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
