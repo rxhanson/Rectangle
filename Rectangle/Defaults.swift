@@ -19,6 +19,10 @@ class Defaults {
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
     static let gapSize = FloatDefault(key: "gapSize")
+    static let snapEdgeMarginTop = FloatDefault(key: "snapEdgeMarginTop", defaultValue: 5)
+    static let snapEdgeMarginBottom = FloatDefault(key: "snapEdgeMarginBottom", defaultValue: 5)
+    static let snapEdgeMarginLeft = FloatDefault(key: "snapEdgeMarginLeft", defaultValue: 5)
+    static let snapEdgeMarginRight = FloatDefault(key: "snapEdgeMarginRight", defaultValue: 5)
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
 }
@@ -103,9 +107,12 @@ class FloatDefault {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Float = 0) {
         self.key = key
         value = UserDefaults.standard.float(forKey: key)
+        if(defaultValue != 0 && value == 0) {
+            value = defaultValue
+        }
         initialized = true
     }
 }

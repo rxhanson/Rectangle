@@ -25,6 +25,10 @@ class SnappingManager {
     let screenDetection = ScreenDetection()
     
     private let gapSize = Defaults.gapSize.value
+    private let marginTop = Defaults.snapEdgeMarginTop.value
+    private let marginBottom = Defaults.snapEdgeMarginBottom.value
+    private let marginLeft = Defaults.snapEdgeMarginLeft.value
+    private let marginRight = Defaults.snapEdgeMarginRight.value
     private let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
@@ -194,20 +198,20 @@ class SnappingManager {
             let loc = NSEvent.mouseLocation
             
             if loc.x >= frame.minX {
-                if loc.x < frame.minX + 25 {
-                    if loc.y >= frame.maxY - 25 && loc.y <= frame.maxY {
+                if loc.x < frame.minX + CGFloat(marginLeft) + 20 {
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 20 && loc.y <= frame.maxY {
                         return SnapArea(screen: screen, action: .topLeft)
                     }
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 25 {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 20 {
                         return SnapArea(screen: screen, action: .bottomLeft)
                     }
                 }
                 
-                if loc.x < frame.minX + 5 {
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
+                if loc.x < frame.minX + CGFloat(marginLeft) {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 145 {
                         return SnapArea(screen: screen, action: .bottomHalf)
                     }
-                    if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 145 && loc.y <= frame.maxY {
                         return SnapArea(screen: screen, action: .topHalf)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
@@ -217,21 +221,21 @@ class SnappingManager {
             }
             
             if loc.x <= frame.maxX {
-                if loc.x > frame.maxX - 25 {
-                    if loc.y >= frame.maxY - 25 && loc.y <= frame.maxY {
+                if loc.x > frame.maxX - CGFloat(marginRight) - 20 {
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 20 && loc.y <= frame.maxY {
                         return SnapArea(screen: screen, action: .topRight)
                     }
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 25 {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 20 {
                         return SnapArea(screen: screen, action: .bottomRight)
                     }
                 }
 
                 
-                if loc.x > frame.maxX - 5 {
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
+                if loc.x > frame.maxX - CGFloat(marginRight) {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 145 {
                         return SnapArea(screen: screen, action: .bottomHalf)
                     }
-                    if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 145 && loc.y <= frame.maxY {
                         return SnapArea(screen: screen, action: .topHalf)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
@@ -240,7 +244,7 @@ class SnappingManager {
                 }
             }
             
-            if loc.y >= frame.minY && loc.y < frame.minY + 5 {
+            if loc.y >= frame.minY && loc.y < frame.minY + CGFloat(marginBottom) {
                 let thirdWidth = floor(frame.width / 3)
                 if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
                     return SnapArea(screen: screen, action: .firstThird)
@@ -264,7 +268,7 @@ class SnappingManager {
                 }
             }
             
-            if loc.y <= frame.maxY && loc.y > frame.maxY - 5 {
+            if loc.y <= frame.maxY && loc.y > frame.maxY - CGFloat(marginTop) {
                 if loc.x >= frame.minX && loc.x <= frame.maxX {
                     if !ignoredSnapAreas.contains(.top) {
                         return SnapArea(screen: screen, action: .maximize)
