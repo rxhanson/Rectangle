@@ -40,7 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         checkLaunchOnLogin()
         
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
-            self.openPreferences(self)
+            self.showWelcomeWindow()
             self.statusItem.statusMenu = self.mainStatusMenu
             self.accessibilityTrusted()
         }
@@ -63,6 +63,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
+    }
+    
+    private func showWelcomeWindow() {
+        let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
+        
+        NSApp.activate(ignoringOtherApps: true)
+        welcomeWindowController?.showWindow(self)
+        welcomeWindowController?.window?.makeKey()
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
