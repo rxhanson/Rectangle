@@ -25,6 +25,7 @@ class Defaults {
     static let snapEdgeMarginRight = FloatDefault(key: "snapEdgeMarginRight", defaultValue: 5)
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
+    static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
 }
 
 class BoolDefault {
