@@ -554,3 +554,6 @@
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
 "xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
 
+/* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
+"HtH-yF-lBR.title" = "Welcome!";
+
