@@ -12,6 +12,7 @@ enum SubsequentExecutionMode: Int {
     case resize = 0 // based on Spectacle
     case acrossMonitor = 1
     case none = 2
+    case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
 }
 
 class SubsequentExecutionDefault {
@@ -31,4 +32,12 @@ class SubsequentExecutionDefault {
         value = SubsequentExecutionMode(rawValue: intValue) ?? .resize
         initialized = true
     }
+    
+    var resizes: Bool {
+        switch value{
+        case .resize, .acrossAndResize: return true
+        default: return false
+        }
+    }
+
 }

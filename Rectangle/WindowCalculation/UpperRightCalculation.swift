@@ -12,8 +12,7 @@ class UpperRightCalculation: WindowCalculation, RepeatedExecutionsCalculation {
 
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
-        if Defaults.subsequentExecutionMode.value == .none
-            || lastAction == nil {
+        if lastAction == nil || !Defaults.subsequentExecutionMode.resizes {
             return calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
         }
         
