@@ -548,3 +548,21 @@
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
 "z6F-FW-3nz.title" = "Ersetzungen einblenden";
 
+/* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
+"kYm-Ye-gOR.title" = "Welcome to Rectangle!";
+
+/* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
+"gEd-S9-Cfp.title" = "Please select your default shortcuts and behavior";
+
+/* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
+"HOp-Kd-vhY.title" = "Recommended";
+
+/* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
+"kXi-dT-zSF.title" = "Spectacle shortcuts are more likely to conflict with other shortcuts";
+
+/* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
+"xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
+
+/* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
+"HtH-yF-lBR.title" = "Welcome!";
+

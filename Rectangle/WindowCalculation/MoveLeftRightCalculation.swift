@@ -23,7 +23,7 @@ class MoveLeftRightCalculation: WindowCalculation {
     
     func calculateLeft(_ window: Window, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
-        if Defaults.subsequentExecutionMode.value == .acrossMonitor {
+        if Defaults.subsequentExecutionMode.traversesDisplays {
             
             if let lastAction = lastAction, lastAction.action == .moveLeft {
                 let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
@@ -53,7 +53,7 @@ class MoveLeftRightCalculation: WindowCalculation {
     
     func calculateRight(_ window: Window, lastAction: RectangleAction?, screen: NSScreen, usableScreens: UsableScreens) -> WindowCalculationResult? {
         
-        if Defaults.subsequentExecutionMode.value == .acrossMonitor {
+        if Defaults.subsequentExecutionMode.traversesDisplays {
             
             if let lastAction = lastAction, lastAction.action == .moveRight {
                 let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
