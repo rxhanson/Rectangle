@@ -34,10 +34,16 @@ class SubsequentExecutionDefault {
     }
     
     var resizes: Bool {
-        switch value{
+        switch value {
         case .resize, .acrossAndResize: return true
         default: return false
         }
     }
 
+    var traversesDisplays: Bool {
+        switch value {
+        case .acrossMonitor, .acrossAndResize: return true
+        default: return false
+        }
+    }
 }
