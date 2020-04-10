@@ -55,9 +55,10 @@ Spectacle used its own keyboard shortcut recorder, while Rectangle uses [MASShor
 * Windows will snap when dragged to edges/corners of the screen. This can be disabled.
 
 ### Details on halves to thirds (subsequent execution of half and quarter actions)
-The default behavior for Rectangle is based on Spectacle. Each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
+Halves to thirds is controlled by the "Cycle displays" setting in the preferences. 
+If the cycle displays setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
 
-This behavior can be disabled with the following terminal command:
+The cycling behavior can be disabled with the following terminal command:
 
 ```bash
 defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
@@ -65,7 +66,11 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 
 Followed by a restart of the app.
 
-Note that the `subsequentExecutionMode` is also tied to the setting for traversing displays in the prefs.
+`subsequentExecutionMode` accepts the following values:
+0: halves to thirds Spectacle behavior (box unchecked)
+1: cycle displays (box checked)
+2: disabled
+3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
 ### Details on Almost Maximize
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
