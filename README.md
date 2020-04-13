@@ -7,7 +7,7 @@ Rectangle is a window management app based on Spectacle, written in Swift.
 ![image](https://user-images.githubusercontent.com/13651296/71896594-7cdb9280-3154-11ea-83a7-70b71c6df9d4.png)
 
 ## System Requirements
-Rectangle arbitrarily supports macOS v10.12+. If you're willing to test on earlier versions of macOS, this can be updated.
+Rectangle supports macOS v10.11+. If you're willing to test on earlier versions of macOS, this can be updated.
 
 ## Installation
 You can download the latest dmg from https://rectangleapp.com or the [Releases page](https://github.com/rxhanson/Rectangle/releases).
@@ -18,7 +18,7 @@ Or install with brew cask:
 brew cask install rectangle
 ```
 ## How to use it
-They keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used then on Windows or other window management apps.
+The keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used them on Windows or other window management apps.
 
 Drag a window to the edge of the screen. When the mouse cursor reaches the edge of the screen, you'll see a footprint that Rectangle will attempt to resize and move the window to when the click is released.
 
@@ -55,9 +55,10 @@ Spectacle used its own keyboard shortcut recorder, while Rectangle uses [MASShor
 * Windows will snap when dragged to edges/corners of the screen. This can be disabled.
 
 ### Details on halves to thirds (subsequent execution of half and quarter actions)
-The default behavior for Rectangle is based on Spectacle. Each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
+Halves to thirds is controlled by the "Cycle displays" setting in the preferences. 
+If the cycle displays setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
 
-This behavior can be disabled with the following terminal command:
+The cycling behavior can be disabled with the following terminal command:
 
 ```bash
 defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
@@ -65,7 +66,11 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 
 Followed by a restart of the app.
 
-Note that the `subsequentExecutionMode` is also tied to the setting for traversing displays in the prefs.
+`subsequentExecutionMode` accepts the following values:
+0: halves to thirds Spectacle behavior (box unchecked)
+1: cycle displays (box checked)
+2: disabled
+3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
 ### Details on Almost Maximize
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
@@ -102,7 +107,7 @@ defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 Followed by a restart of the app.
 
 ## Contributing
-Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. If you contribute significant code or localizations that get merged into Rectangle, you get a free license of Multitouch. Contributors to Sparkle, MASShortcut, or Spectacle can also receive a free license of Multitouch (just send me a direct message on [Gitter](https://gitter.im)). 
+Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. The [Hookshot](https://hookshot.app) app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, you get free licenses of Multitouch and Hookshot. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Hookshot licenses (just send me a direct message on [Gitter](https://gitter.im)). 
 
 ### Localization
 Initial localizations were done using [DeepL](https://www.deepl.com/translator) and Google Translate, but many of them have been updated by contributors. Translations that weren't done by humans can definitely be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language. If you would like to add a localization but one doesn't currently exist and you don't know how to create one, create an issue and a translation file can be initialized.

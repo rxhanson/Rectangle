@@ -15,15 +15,21 @@ class SnappingManager {
     
     var eventMonitor: EventMonitor?
     var frontmostWindow: AccessibilityElement?
+    var frontmostWindowId: Int?
     var windowMoving: Bool = false
     var initialWindowRect: CGRect?
-    var currentHotSpot: HotSpot?
+    var currentHotSpot: SnapArea?
     
     var box: NSWindow?
     
     let screenDetection = ScreenDetection()
     
     private let gapSize = Defaults.gapSize.value
+    private let marginTop = Defaults.snapEdgeMarginTop.value
+    private let marginBottom = Defaults.snapEdgeMarginBottom.value
+    private let marginLeft = Defaults.snapEdgeMarginLeft.value
+    private let marginRight = Defaults.snapEdgeMarginRight.value
+    private let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
@@ -67,9 +73,11 @@ class SnappingManager {
         switch event.type {
         case .leftMouseDown:
             frontmostWindow = AccessibilityElement.frontmostWindow()
+            frontmostWindowId = frontmostWindow?.getIdentifier()
             initialWindowRect = frontmostWindow?.rectOfElement()
         case .leftMouseUp:
             frontmostWindow = nil
+            frontmostWindowId = nil
             windowMoving = false
             initialWindowRect = nil
             if let currentHotSpot = self.currentHotSpot {
@@ -78,22 +86,28 @@ class SnappingManager {
                 self.currentHotSpot = nil
             }
         case .leftMouseDragged:
+            if frontmostWindowId == nil {
+                frontmostWindowId = frontmostWindow?.getIdentifier()
+            }
             guard let currentRect = frontmostWindow?.rectOfElement(),
-                let windowId = frontmostWindow?.getIdentifier()
+                let windowId = frontmostWindowId
             else { return }
             
             if !windowMoving {
-                if currentRect.size == initialWindowRect?.size
-                    && currentRect.origin != initialWindowRect?.origin {
-                    windowMoving = true
-                    
-                    // if window was put there by rectangle, restore
-                    if let restoreRect = obtainRestoreRect(windowId: windowId, currentRect: currentRect) {
-                        frontmostWindow?.setRectOf(restoreRect.locationRect)
-                        frontmostWindow?.setRectOf(restoreRect.sizeRect)
-                        windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                    } else {
-                        windowHistory.restoreRects[windowId] = initialWindowRect
+                if currentRect.size == initialWindowRect?.size {
+                    if currentRect.origin != initialWindowRect?.origin {
+                        windowMoving = true
+
+                        // if window was put there by rectangle, restore size
+                        if let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
+                            lastRect == initialWindowRect,
+                            let restoreRect = windowHistory.restoreRects[windowId] {
+                            
+                            frontmostWindow?.set(size: restoreRect.size)
+                            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                        } else {
+                            windowHistory.restoreRects[windowId] = initialWindowRect
+                        }
                     }
                 }
                 else {
@@ -123,28 +137,6 @@ class SnappingManager {
         default:
             return
         }
-    }
-    
-    private func obtainRestoreRect(windowId: WindowId, currentRect: CGRect) -> TwoStageResizeRect? {
-        guard let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
-            lastRect == initialWindowRect,
-            let restoreRect = windowHistory.restoreRects[windowId]
-        else { return nil }
-        
-        // Set x and y WRT the current rect to reduce jenkiness
-        let sizeRect = CGRect(
-            x: currentRect.minX,
-            y: currentRect.minY,
-            width: restoreRect.width,
-            height: restoreRect.height)
-        
-        let locationRect = CGRect(
-            x: currentRect.minX,
-            y: currentRect.minY + currentRect.height - restoreRect.height,
-            width: currentRect.width,
-            height: currentRect.height)
-        
-        return TwoStageResizeRect(sizeRect: sizeRect, locationRect: locationRect)
     }
     
     // Make the box semi-opaque with a border and rounded corners
@@ -183,7 +175,7 @@ class SnappingManager {
         return box
     }
     
-    func getBoxRect(hotSpot: HotSpot, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
         if let calculation = windowCalculationFactory.calculation(for: hotSpot.action) {
             
             let rectResult = calculation.calculateRect(currentWindow, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
@@ -199,63 +191,63 @@ class SnappingManager {
         return nil
     }
     
-    func getMouseHotSpot(priorHotSpot: HotSpot?) -> HotSpot? {
+    func getMouseHotSpot(priorHotSpot: SnapArea?) -> SnapArea? {
         
         for screen in NSScreen.screens {
             let frame = screen.frame
             let loc = NSEvent.mouseLocation
             
             if loc.x >= frame.minX {
-                if loc.x < frame.minX + 25 {
-                    if loc.y >= frame.maxY - 25 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topLeft)
+                if loc.x < frame.minX + CGFloat(marginLeft) + 20 {
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 20 && loc.y <= frame.maxY {
+                        return SnapArea(screen: screen, action: .topLeft)
                     }
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 25 {
-                        return HotSpot(screen: screen, action: .bottomLeft)
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 20 {
+                        return SnapArea(screen: screen, action: .bottomLeft)
                     }
                 }
                 
-                if loc.x < frame.minX + 5 {
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
-                        return HotSpot(screen: screen, action: .bottomHalf)
+                if loc.x < frame.minX + CGFloat(marginLeft) {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 145 {
+                        return SnapArea(screen: screen, action: .bottomHalf)
                     }
-                    if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topHalf)
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 145 && loc.y <= frame.maxY {
+                        return SnapArea(screen: screen, action: .topHalf)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .leftHalf)
+                        return SnapArea(screen: screen, action: .leftHalf)
                     }
                 }
             }
             
             if loc.x <= frame.maxX {
-                if loc.x > frame.maxX - 25 {
-                    if loc.y >= frame.maxY - 25 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topRight)
+                if loc.x > frame.maxX - CGFloat(marginRight) - 20 {
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 20 && loc.y <= frame.maxY {
+                        return SnapArea(screen: screen, action: .topRight)
                     }
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 25 {
-                        return HotSpot(screen: screen, action: .bottomRight)
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 20 {
+                        return SnapArea(screen: screen, action: .bottomRight)
                     }
                 }
 
                 
-                if loc.x > frame.maxX - 5 {
-                    if loc.y >= frame.minY && loc.y <= frame.minY + 150 {
-                        return HotSpot(screen: screen, action: .bottomHalf)
+                if loc.x > frame.maxX - CGFloat(marginRight) {
+                    if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 145 {
+                        return SnapArea(screen: screen, action: .bottomHalf)
                     }
-                    if loc.y >= frame.maxY - 150 && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .topHalf)
+                    if loc.y >= frame.maxY - CGFloat(marginTop) - 145 && loc.y <= frame.maxY {
+                        return SnapArea(screen: screen, action: .topHalf)
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        return HotSpot(screen: screen, action: .rightHalf)
+                        return SnapArea(screen: screen, action: .rightHalf)
                     }
                 }
             }
             
-            if loc.y >= frame.minY && loc.y < frame.minY + 5 {
+            if loc.y >= frame.minY && loc.y < frame.minY + CGFloat(marginBottom) {
                 let thirdWidth = floor(frame.width / 3)
                 if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
-                    return HotSpot(screen: screen, action: .firstThird)
+                    return SnapArea(screen: screen, action: .firstThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
                     if let priorAction = priorHotSpot?.action {
@@ -267,18 +259,20 @@ class SnappingManager {
                             action = .lastTwoThirds
                         default: action = .centerThird
                         }
-                        return HotSpot(screen: screen, action: action)
+                        return SnapArea(screen: screen, action: action)
                     }
-                    return HotSpot(screen: screen, action: .centerThird)
+                    return SnapArea(screen: screen, action: .centerThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
-                    return HotSpot(screen: screen, action: .lastThird)
+                    return SnapArea(screen: screen, action: .lastThird)
                 }
             }
             
-            if loc.y <= frame.maxY && loc.y > frame.maxY - 5 {
+            if loc.y <= frame.maxY && loc.y > frame.maxY - CGFloat(marginTop) {
                 if loc.x >= frame.minX && loc.x <= frame.maxX {
-                    return HotSpot(screen: screen, action: .maximize)
+                    if !ignoredSnapAreas.contains(.top) {
+                        return SnapArea(screen: screen, action: .maximize)
+                    }
                 }
             }
             
@@ -289,14 +283,20 @@ class SnappingManager {
     
 }
 
-struct HotSpot: Equatable {
+struct SnapArea: Equatable {
     let screen: NSScreen
     let action: WindowAction
 }
 
-// Updating the location first, followed by the size can reduce some jenkiness
-// This leads to a smoother restore when dragging a previously snapped window
-struct TwoStageResizeRect {
-    let sizeRect: CGRect
-    let locationRect: CGRect
+struct SnapAreaOption: OptionSet {
+    let rawValue: Int
+    
+    static let top = SnapAreaOption(rawValue: 1 << 0)
+    static let sides = SnapAreaOption(rawValue: 1 << 1)
+    static let sideEdges = SnapAreaOption(rawValue: 1 << 2)
+    static let corners = SnapAreaOption(rawValue: 1 << 3)
+    static let bottom = SnapAreaOption(rawValue: 1 << 4)
+    
+    static let all: SnapAreaOption = [.top, .sides, .sideEdges, .corners, .bottom]
+    static let none: SnapAreaOption = []
 }

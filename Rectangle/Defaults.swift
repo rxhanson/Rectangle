@@ -19,7 +19,13 @@ class Defaults {
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
     static let gapSize = FloatDefault(key: "gapSize")
+    static let snapEdgeMarginTop = FloatDefault(key: "snapEdgeMarginTop", defaultValue: 5)
+    static let snapEdgeMarginBottom = FloatDefault(key: "snapEdgeMarginBottom", defaultValue: 5)
+    static let snapEdgeMarginLeft = FloatDefault(key: "snapEdgeMarginLeft", defaultValue: 5)
+    static let snapEdgeMarginRight = FloatDefault(key: "snapEdgeMarginRight", defaultValue: 5)
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
+    static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
+    static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
 }
 
 class BoolDefault {
@@ -102,9 +108,31 @@ class FloatDefault {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Float = 0) {
         self.key = key
         value = UserDefaults.standard.float(forKey: key)
+        if(defaultValue != 0 && value == 0) {
+            value = defaultValue
+        }
+        initialized = true
+    }
+}
+
+class IntDefault {
+    private let key: String
+    private var initialized = false
+    
+    var value: Int {
+        didSet {
+            if initialized {
+                UserDefaults.standard.set(value, forKey: key)
+            }
+        }
+    }
+    
+    init(key: String) {
+        self.key = key
+        value = UserDefaults.standard.integer(forKey: key)
         initialized = true
     }
 }

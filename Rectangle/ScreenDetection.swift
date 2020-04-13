@@ -15,7 +15,10 @@ class ScreenDetection {
         guard let firstScreen = screens.first else { return nil }
         
         if screens.count == 1 {
-            let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
+            let adjacentScreens = Defaults.traverseSingleScreen.enabled == true
+            ? AdjacentScreens(prev: firstScreen, next: firstScreen)
+            : nil
+            
             return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
         }
         

@@ -40,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         checkLaunchOnLogin()
         
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
+            self.showWelcomeWindow()
             self.openPreferences(self)
             self.statusItem.statusMenu = self.mainStatusMenu
             self.accessibilityTrusted()
@@ -63,6 +64,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
+    }
+    
+    private func showWelcomeWindow() {
+        let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil)
+            .instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
+        guard let welcomeWindow = welcomeWindowController?.window else { return }
+        
+        NSApp.activate(ignoringOtherApps: true)
+        
+        let response = NSApp.runModal(for: welcomeWindow)
+        
+        let usingRecommended = response == .alertFirstButtonReturn
+        
+        Defaults.alternateDefaultShortcuts.enabled = usingRecommended
+        
+        Defaults.subsequentExecutionMode.value = usingRecommended ? .acrossMonitor : .resize
+        
+        welcomeWindowController?.close()
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
@@ -134,6 +153,7 @@ extension AppDelegate: NSMenuDelegate {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
             ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
             ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
+            ignoreMenuItem.isHidden = false
         } else {
             ignoreMenuItem.isHidden = true
         }

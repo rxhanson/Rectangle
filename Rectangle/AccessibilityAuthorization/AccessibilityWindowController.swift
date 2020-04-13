@@ -12,7 +12,6 @@ class AccessibilityWindowController: NSWindowController {
     
     override func windowDidLoad() {
         super.windowDidLoad()
-        self.window?.titlebarAppearsTransparent = true
         let closeButton = self.window?.standardWindowButton(.closeButton)
         closeButton?.target = self
         closeButton?.action = #selector(quit)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -2411,7 +2411,7 @@
         <scene sceneID="lEt-lj-rQC">
             <objects>
                 <windowController storyboardIdentifier="AccessibilityWindowController" id="GjB-3W-g3G" customClass="AccessibilityWindowController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Authorize Rectangle" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titleVisibility="hidden" id="9JD-tZ-7jf">
+                    <window key="window" title="Authorize Rectangle" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="9JD-tZ-7jf">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" fullSizeContentView="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="245" y="301" width="480" height="270"/>
@@ -2476,6 +2476,9 @@
                                         <buttonCell key="cell" type="bevel" title="Open System Preferences" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iWV-c2-BJD">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
+                                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                                         </buttonCell>
                                         <connections>
                                             <action selector="openSystemPrefs:" target="5D9-0a-Mbi" id="6dM-UK-KBu"/>
@@ -2533,6 +2536,142 @@
                 <customObject id="Pz3-OM-dTg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="656" y="817.5"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="QT5-BH-OxD">
+            <objects>
+                <windowController storyboardIdentifier="WelcomeWindowController" id="QOv-q0-4lf" sceneMemberID="viewController">
+                    <window key="window" title="Welcome!" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="HtH-yF-lBR">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" fullSizeContentView="YES"/>
+                        <rect key="contentRect" x="245" y="301" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <connections>
+                            <outlet property="delegate" destination="QOv-q0-4lf" id="2a5-83-wY9"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="suu-55-jFR" kind="relationship" relationship="window.shadowedContentViewController" id="naP-lh-keh"/>
+                    </connections>
+                </windowController>
+                <customObject id="OlH-rB-ig8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1196" y="356"/>
+        </scene>
+        <!--Welcome View Controller-->
+        <scene sceneID="fYD-GK-ZAf">
+            <objects>
+                <viewController storyboardIdentifier="WelcomeViewController" id="suu-55-jFR" customClass="WelcomeViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="BAr-aA-3ku">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="306"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YO5-zp-VfI">
+                                <rect key="frame" x="20" y="20" width="250" height="266"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C9S-bS-jaE">
+                                        <rect key="frame" x="14" y="240" width="223" height="26"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Welcome to Rectangle!" id="kYm-Ye-gOR">
+                                            <font key="font" metaFont="system" size="22"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g2U-cD-gRF">
+                                        <rect key="frame" x="-2" y="186" width="254" height="32"/>
+                                        <textFieldCell key="cell" alignment="center" title="Please select your default shortcuts and behavior" id="gEd-S9-Cfp">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NR8-n2-Yhs">
+                                        <rect key="frame" x="55" y="100" width="141" height="64"/>
+                                        <subviews>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mYO-is-OgK">
+                                                <rect key="frame" x="-6" y="36" width="153" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Recommended" bezelStyle="rounded" image="Untilted" imagePosition="left" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HOp-Kd-vhY">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="selectRecommended:" target="suu-55-jFR" id="yQE-qI-owh"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Dw-0R-Da9">
+                                                <rect key="frame" x="-6" y="-7" width="153" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Spectacle" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2XJ-Ca-9di">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="selectSpectacle:" target="suu-55-jFR" id="FqP-IO-RUQ"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="6Dw-0R-Da9" firstAttribute="trailing" secondItem="mYO-is-OgK" secondAttribute="trailing" id="RrI-ig-8Jn"/>
+                                            <constraint firstItem="6Dw-0R-Da9" firstAttribute="leading" secondItem="mYO-is-OgK" secondAttribute="leading" id="rah-Kq-8aZ"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Uey-tt-ecv">
+                                        <rect key="frame" x="-2" y="50" width="254" height="28"/>
+                                        <textFieldCell key="cell" alignment="center" title="Spectacle shortcuts are more likely to conflict with other shortcuts" id="kXi-dT-zSF">
+                                            <font key="font" metaFont="menu" size="11"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Y0r-Cp-GEM">
+                                        <rect key="frame" x="-2" y="0.0" width="254" height="28"/>
+                                        <textFieldCell key="cell" alignment="center" title="Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts" id="xcE-uL-2J0">
+                                            <font key="font" metaFont="menu" size="11"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="9Te-qi-H02"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="999" constant="250" id="Uhe-KD-lTI"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="YO5-zp-VfI" firstAttribute="top" secondItem="BAr-aA-3ku" secondAttribute="top" constant="20" symbolic="YES" id="6dg-pJ-fuJ"/>
+                            <constraint firstAttribute="trailing" secondItem="YO5-zp-VfI" secondAttribute="trailing" constant="20" symbolic="YES" id="Ca7-3S-B6a"/>
+                            <constraint firstItem="YO5-zp-VfI" firstAttribute="leading" secondItem="BAr-aA-3ku" secondAttribute="leading" constant="20" symbolic="YES" id="fXv-Pw-H1B"/>
+                            <constraint firstAttribute="bottom" secondItem="YO5-zp-VfI" secondAttribute="bottom" constant="20" symbolic="YES" id="iug-er-2mw"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="iTO-LQ-hyN" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1196" y="776"/>
         </scene>
     </scenes>
     <resources>

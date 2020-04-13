@@ -14,7 +14,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         
         switch Defaults.subsequentExecutionMode.value {
             
-        case .acrossMonitor:
+        case .acrossMonitor, .acrossAndResize:
             if action == .leftHalf {
                 return calculateLeftAcrossDisplays(window, lastAction: lastAction, screen: usableScreens.currentScreen, usableScreens: usableScreens)
             } else if action == .rightHalf {

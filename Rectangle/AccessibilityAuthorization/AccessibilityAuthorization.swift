@@ -47,8 +47,4 @@ class AccessibilityAuthorization {
         NSApp.activate(ignoringOtherApps: true)
     }
     
-    @objc func quit() {
-        exit(0)
-    }
-    
 }
