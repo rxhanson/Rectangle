@@ -17,19 +17,15 @@ class WindowManager {
     private let windowHistory: WindowHistory
     private let gapSize = Defaults.gapSize.value
     
+    private let standardWindowMover = StandardWindowMover()
+    private let bestEffortWindowMover = BestEffortWindowMover()
+    private let centeringFixedSizedMover = CenteringFixedSizedWindowMover()
+    
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
         self.windowHistory = windowHistory
-        standardWindowMoverChain = [
-            StandardWindowMover(),
-            // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
-            BestEffortWindowMover()
-        ]
-        
-        fixedSizeWindowMoverChain = [
-            CenteringFixedSizedWindowMover(),
-            BestEffortWindowMover()
-        ]
+        standardWindowMoverChain = [standardWindowMover, bestEffortWindowMover]
+        fixedSizeWindowMoverChain = [centeringFixedSizedMover, bestEffortWindowMover]
     }
     
     func execute(_ parameters: ExecutionParameters) {
@@ -44,10 +40,15 @@ class WindowManager {
         
         if action == .restore {
             if let restoreRect = windowHistory.restoreRects[windowId] {
-                frontmostWindowElement.setRectOf(restoreRect)
+                if Defaults.animationDelay.value > 0 {
+                    frontmostWindowElement.setRectOf(restoreRect, completion: nil)
+                } else {
+                    frontmostWindowElement.setRectOf(restoreRect) { success in
+                        self.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                    }
+                }
+                return
             }
-            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-            return
         }
         
         var screens: UsableScreens?
@@ -108,14 +109,38 @@ class WindowManager {
         let visibleFrameOfDestinationScreen = NSRectToCGRect(calcResult.screen.visibleFrame)
 
         let useFixedSizeMover = !frontmostWindowElement.isResizable() && action.resizes
-        let windowMoverChain = useFixedSizeMover
-            ? fixedSizeWindowMoverChain
-            : standardWindowMoverChain
-
-        for windowMover in windowMoverChain {
-            windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
+        
+        if Defaults.animationDelay.value > 0 {
+            if useFixedSizeMover {
+                centeringFixedSizedMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action) {_ in
+                    self.bestEffortWindowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action) {_ in
+                        
+                        self.windowMovementComplete(frontmostWindowElement: frontmostWindowElement, calcResult: calcResult, lastRectangleAction: lastRectangleAction, windowId: windowId, usableScreens: usableScreens, newNormalizedRect: newNormalizedRect, action: action, visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen)
+                    }
+                }
+            } else {
+                standardWindowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action) {_ in
+                    self.bestEffortWindowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action) {_ in
+                        
+                        self.windowMovementComplete(frontmostWindowElement: frontmostWindowElement, calcResult: calcResult, lastRectangleAction: lastRectangleAction, windowId: windowId, usableScreens: usableScreens, newNormalizedRect: newNormalizedRect, action: action, visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen)
+                    }
+                }
+            }
         }
+        else {
+            let windowMoverChain = useFixedSizeMover
+                ? fixedSizeWindowMoverChain
+                : standardWindowMoverChain
+            
+            for windowMover in windowMoverChain {
+                windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action, completion: nil)
+            }
 
+            windowMovementComplete(frontmostWindowElement: frontmostWindowElement, calcResult: calcResult, lastRectangleAction: lastRectangleAction, windowId: windowId, usableScreens: usableScreens, newNormalizedRect: newNormalizedRect, action: action, visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen)
+        }
+    }
+    
+    private func windowMovementComplete(frontmostWindowElement: AccessibilityElement, calcResult: WindowCalculationResult, lastRectangleAction: RectangleAction?, windowId: Int, usableScreens: UsableScreens, newNormalizedRect: CGRect, action: WindowAction, visibleFrameOfDestinationScreen: CGRect) {
         let resultingRect = frontmostWindowElement.rectOfElement()
         
         var newCount = 1

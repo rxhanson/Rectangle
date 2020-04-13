@@ -13,7 +13,7 @@ import Foundation
  */
 
 class BestEffortWindowMover: WindowMover {
-    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
+    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?, completion: ((Bool)->())?) {
         guard let currentWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
         
         var adjustedWindowRect: CGRect = currentWindowRect
@@ -39,7 +39,7 @@ class BestEffortWindowMover: WindowMover {
         
         adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect, frameOfScreen: frameOfScreen)
         if !currentWindowRect.equalTo(adjustedWindowRect) {
-            frontmostWindowElement?.setRectOf(adjustedWindowRect)
+            frontmostWindowElement?.setRectOf(adjustedWindowRect, completion: completion)
         }
     }
 }

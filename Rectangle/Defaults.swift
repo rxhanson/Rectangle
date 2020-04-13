@@ -26,6 +26,7 @@ class Defaults {
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
+    static let animationDelay = IntDefault(key: "animationDelay")
 }
 
 class BoolDefault {

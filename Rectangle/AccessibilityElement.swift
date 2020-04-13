@@ -57,11 +57,22 @@ class AccessibilityElement {
         }
         return CGRect(x: position.x, y: position.y, width: size.width, height: size.height)
     }
-    
-    func setRectOf(_ rect: CGRect) {
+        
+    func setRectOf(_ rect: CGRect, completion: ((Bool) -> ())?) {
+        set(size: rect.size)
+        if let completion = completion {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Defaults.animationDelay.value)) {
+                self.set(position: rect.origin)
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Defaults.animationDelay.value)) {
+                    self.set(size: rect.size)
+                    completion(rect == self.rectOfElement())
+                }
+            }
+        } else {
             set(size: rect.size)
             set(position: rect.origin)
             set(size: rect.size)
+        }
     }
     
     func isResizable() -> Bool {
