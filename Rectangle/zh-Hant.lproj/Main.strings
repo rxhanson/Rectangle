@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "如果重複按左半、右半、靠左或靠右按鈕，視窗將移至下一個顯示器，而不是調整成1/2、2/3和1/3大小。";
+"01Z-t3-cBm.title" = "如果重複按左半、右半、靠左或靠右按鈕，視窗將移至下一個顯示器，而非調整為螢幕的1/2、2/3和1/3寬。";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "右三分之二";
@@ -570,7 +570,7 @@
 "kXi-dT-zSF.title" = "Spectacle 快捷鍵較可能會與其他快捷鍵相衝突";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "選擇 Spectacle 後，重複按下快捷鍵亦會將視窗順序調整成1/2、2/3和1/3大小";
+"xcE-uL-2J0.title" = "選擇 Spectacle 後，重複按下快捷鍵亦會將視窗順序調整為螢幕的1/2、2/3和1/3寬";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
 "HtH-yF-lBR.title" = "歡迎！";
