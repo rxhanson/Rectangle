@@ -9,6 +9,21 @@
 import Foundation
 
 class ChangeSizeCalculation: WindowCalculation {
+
+    let minimumWindowWidth: CGFloat
+    let minimumWindowHeight: CGFloat
+
+    override init() {
+        let defaultHeight = Defaults.minimumWindowHeight.value
+        minimumWindowHeight = (defaultHeight <= 0 || defaultHeight > 1)
+            ? 0.25
+            : CGFloat(defaultHeight)
+
+        let defaultWidth = Defaults.minimumWindowWidth.value
+        minimumWindowWidth = (defaultWidth <= 0 || defaultWidth > 1)
+            ? 0.25
+            : CGFloat(defaultWidth)
+    }
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         let sizeOffset: CGFloat = action == .smaller ? -30.0 : 30.0
@@ -99,8 +114,8 @@ class ChangeSizeCalculation: WindowCalculation {
     }
     
     private func resizedWindowRectIsTooSmall(windowRect: CGRect, visibleFrameOfScreen: CGRect) -> Bool {
-        let minimumWindowRectWidth = floor(visibleFrameOfScreen.width / 4.0)
-        let minimumWindowRectHeight = floor(visibleFrameOfScreen.height / 4.0)
+        let minimumWindowRectWidth = floor(visibleFrameOfScreen.width * minimumWindowWidth)
+        let minimumWindowRectHeight = floor(visibleFrameOfScreen.height * minimumWindowHeight)
         return (windowRect.width <= minimumWindowRectWidth) || (windowRect.height <= minimumWindowRectHeight)
     }
     
