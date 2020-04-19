@@ -106,6 +106,20 @@ defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 ```
 Followed by a restart of the app.
 
+### Details on Make Smaller
+
+By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height). These values can be adjusted with the following terminal commands:
+
+```bash
+defaults write com.knollsoft.Rectangle minimumWindowWidth -float <VALUE_BETWEEN_0_&_1>
+```
+
+```bash
+defaults write com.knollsoft.Rectangle minimumWindowHeight -float <VALUE_BETWEEN_0_&_1>
+```
+
+Followed by a restart of the app.
+
 ## Contributing
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. The [Hookshot](https://hookshot.app) app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, you get free licenses of Multitouch and Hookshot. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Hookshot licenses (just send me a direct message on [Gitter](https://gitter.im)). 
 

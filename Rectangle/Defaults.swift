@@ -26,6 +26,8 @@ class Defaults {
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
+    static let minimumWindowWidth = FloatDefault(key: "minimumWindowWidth")
+    static let minimumWindowHeight = FloatDefault(key: "minimumWindowHeight")
 }
 
 class BoolDefault {
