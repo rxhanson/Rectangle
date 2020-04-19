@@ -132,7 +132,7 @@
 "Eah-KL-kbn.title" = "大きくする";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "最初の3番目";
+"F12-EV-Lfz.title" = "最初の1/3";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "助けて";
@@ -574,4 +574,3 @@
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
 "HtH-yF-lBR.title" = "Welcome!";
-
