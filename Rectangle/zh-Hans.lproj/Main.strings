@@ -3,7 +3,7 @@
 "01Z-t3-cBm.title" = "如果重复按移动窗口或设置窗口大小按键，则窗口将被移至下一个显示器显示，而不是被设置为 1/2、2/3 和 1/3 大小。";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "右三分之二";
+"08q-Ce-1QL.title" = "右 2/3";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
 "0Ak-33-SM7.title" = "右上";
@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "降低";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "通过拖动捕捉窗口";
+"1ui-PL-TkR.title" = "通过拖拽调整窗口";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "提高";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "语音";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "左三分之二";
+"3zd-xE-oWl.title" = "左 2/3";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "紧缩";
@@ -78,7 +78,7 @@
 "78Y-hA-62v.title" = "自动纠正拼写";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "中间三分之一";
+"7YK-9Z-lzw.title" = "中 1/3";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
 "8Bg-SZ-hDO.title" = "居中";
@@ -132,13 +132,13 @@
 "Eah-KL-kbn.title" = "变大";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "左三分之一";
+"F12-EV-Lfz.title" = "左 1/3";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "帮助";
 
 /* Class = "NSTextFieldCell"; title = "Right Half"; ObjectID = "F8S-GI-LiB"; */
-"F8S-GI-LiB.title" = "右半";
+"F8S-GI-LiB.title" = "右";
 
 /* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
 "FKE-Sm-Kum.title" = "Rectangle 帮助";
@@ -306,7 +306,7 @@
 "WeT-3V-zwk.title" = "粘贴并匹配样式";
 
 /* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
-"Xc8-Sm-pig.title" = "左半";
+"Xc8-Sm-pig.title" = "左";
 
 /* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
 "Xz5-n4-O0W.title" = "查找…";
@@ -357,13 +357,13 @@
 "c8a-y6-VQd.title" = "转变";
 
 /* Class = "NSMenuItem"; title = "Not Authorized to Control Your Computer"; ObjectID = "cBj-76-2E7"; */
-"cBj-76-2E7.title" = "未经授权控制您的计算机";
+"cBj-76-2E7.title" = "未授权以控制您的计算机";
 
 /* Class = "NSMenuItem"; title = "Use None"; ObjectID = "cDB-IK-hbR"; */
 "cDB-IK-hbR.title" = "不使用";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "右三分之一";
+"cRm-wn-Yv6.title" = "右 1/3";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "选择";
@@ -372,7 +372,7 @@
 "cwL-P1-jid.title" = "智能链接";
 
 /* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
-"d7y-s8-7GE.title" = "上半";
+"d7y-s8-7GE.title" = "上";
 
 /* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
 "d9M-CD-aMd.title" = "小写";
@@ -393,7 +393,7 @@
 "e9j-DR-MEH.title" = "登录时启动";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
-"ec4-FB-fMa.title" = "下半";
+"ec4-FB-fMa.title" = "下";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
 "gFy-Zj-RGl.title" = "关于";
@@ -444,10 +444,10 @@
 "kIP-vf-haE.title" = "显示侧边栏";
 
 /* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
-"lgE-cR-cQ5.title" = "进入系统偏好设置→安全性与隐私→隐私→辅助功能";
+"lgE-cR-cQ5.title" = "进入 系统偏好设置 → 安全性与隐私 → 隐私 → 辅助功能";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "隐藏菜单栏图标后，从 Finder 重新启动 Rectangle 以再次显示菜单。";
+"ltc-mf-BHr.title" = "隐藏菜单栏图标后，从访达重新启动 Rectangle 以再次显示菜单。";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "检查拼写语法";
@@ -558,20 +558,20 @@
 "z6F-FW-3nz.title" = "显示替代";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
-"kYm-Ye-gOR.title" = "Welcome to Rectangle!";
+"kYm-Ye-gOR.title" = "欢迎使用 Rectangle!";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
-"gEd-S9-Cfp.title" = "Please select your default shortcuts and behavior";
+"gEd-S9-Cfp.title" = "请选择您的默认快捷键";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
-"HOp-Kd-vhY.title" = "Recommended";
+"HOp-Kd-vhY.title" = "推荐";
 
 /* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
-"kXi-dT-zSF.title" = "Spectacle shortcuts are more likely to conflict with other shortcuts";
+"kXi-dT-zSF.title" = "Spectacle 可能会与其他快捷键冲突";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
+"xcE-uL-2J0.title" = "选择 Spectacle 还将在重复的快捷键上循环 1/2、2/3 和 1/3 的窗口宽度";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
-"HtH-yF-lBR.title" = "Welcome!";
+"HtH-yF-lBR.title" = "欢迎!";
 
