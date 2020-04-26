@@ -98,15 +98,17 @@ class SnappingManager {
                     if currentRect.origin != initialWindowRect?.origin {
                         windowMoving = true
 
-                        // if window was put there by rectangle, restore size
-                        if let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
-                            lastRect == initialWindowRect,
-                            let restoreRect = windowHistory.restoreRects[windowId] {
-                            
-                            frontmostWindow?.set(size: restoreRect.size)
-                            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                        } else {
-                            windowHistory.restoreRects[windowId] = initialWindowRect
+                        if Defaults.unsnapRestore.enabled != false {
+                            // if window was put there by rectangle, restore size
+                            if let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
+                                lastRect == initialWindowRect,
+                                let restoreRect = windowHistory.restoreRects[windowId] {
+                                
+                                frontmostWindow?.set(size: restoreRect.size)
+                                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                            } else {
+                                windowHistory.restoreRects[windowId] = initialWindowRect
+                            }
                         }
                     }
                 }
