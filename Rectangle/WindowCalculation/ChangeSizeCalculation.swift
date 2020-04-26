@@ -12,6 +12,7 @@ class ChangeSizeCalculation: WindowCalculation {
 
     let minimumWindowWidth: CGFloat
     let minimumWindowHeight: CGFloat
+    let gapSize: CGFloat
     let sizeOffsetAbs: CGFloat
 
     override init() {
@@ -24,6 +25,9 @@ class ChangeSizeCalculation: WindowCalculation {
         minimumWindowWidth = (defaultWidth <= 0 || defaultWidth > 1)
             ? 0.25
             : CGFloat(defaultWidth)
+
+        let defaultGapSize = Defaults.gapSize.value
+        gapSize = (defaultGapSize <= 0) ? 5.0 : CGFloat(defaultGapSize)
 
         let defaultSizeOffset = Defaults.sizeOffset.value
         sizeOffsetAbs = (defaultSizeOffset <= 0)
@@ -50,7 +54,6 @@ class ChangeSizeCalculation: WindowCalculation {
                                                                                visibleFrameOfScreen: visibleFrameOfScreen)
         if resizedWindowRect.height >= visibleFrameOfScreen.height {
             resizedWindowRect.size.height = visibleFrameOfScreen.height
-            resizedWindowRect.origin.y = window.rect.origin.y
         }
         if againstAllEdgesOfScreen(windowRect: window.rect, visibleFrameOfScreen: visibleFrameOfScreen) && (sizeOffset < 0) {
             resizedWindowRect.size.width = window.rect.width + sizeOffset
@@ -65,11 +68,11 @@ class ChangeSizeCalculation: WindowCalculation {
     }
 
     private func againstEdgeOfScreen(_ gap: CGFloat) -> Bool {
-        return abs(gap) <= 5.0
+        return abs(gap) <= gapSize
     }
 
     private func againstTheLeftEdgeOfScreen(_ windowRect: CGRect, _ visibleFrameOfScreen: CGRect) -> Bool {
-        return againstEdgeOfScreen(windowRect.origin.x - visibleFrameOfScreen.origin.x)
+        return againstEdgeOfScreen(windowRect.minX - visibleFrameOfScreen.minX)
     }
 
     private func againstTheRightEdgeOfScreen(_ windowRect: CGRect, _ visibleFrameOfScreen: CGRect) -> Bool {
