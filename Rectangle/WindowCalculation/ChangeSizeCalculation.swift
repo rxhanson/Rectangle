@@ -12,6 +12,7 @@ class ChangeSizeCalculation: WindowCalculation {
 
     let minimumWindowWidth: CGFloat
     let minimumWindowHeight: CGFloat
+    let sizeOffsetAbs: CGFloat
 
     override init() {
         let defaultHeight = Defaults.minimumWindowHeight.value
@@ -23,11 +24,16 @@ class ChangeSizeCalculation: WindowCalculation {
         minimumWindowWidth = (defaultWidth <= 0 || defaultWidth > 1)
             ? 0.25
             : CGFloat(defaultWidth)
+
+        let defaultSizeOffset = Defaults.sizeOffset.value
+        sizeOffsetAbs = (defaultSizeOffset <= 0)
+            ? 30.0
+            : CGFloat(defaultSizeOffset)
     }
-    
+
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-        let sizeOffset: CGFloat = action == .smaller ? -30.0 : 30.0
-        
+        let sizeOffset: CGFloat = action == .smaller ? -sizeOffsetAbs : sizeOffsetAbs
+
         var resizedWindowRect = window.rect
         resizedWindowRect.size.width = resizedWindowRect.width + sizeOffset
         resizedWindowRect.origin.x = resizedWindowRect.origin.x - floor(sizeOffset / 2.0)
@@ -57,34 +63,34 @@ class ChangeSizeCalculation: WindowCalculation {
         }
         return RectResult(resizedWindowRect)
     }
-    
+
     private func againstEdgeOfScreen(_ gap: CGFloat) -> Bool {
         return abs(gap) <= 5.0
     }
-    
+
     private func againstTheLeftEdgeOfScreen(_ windowRect: CGRect, _ visibleFrameOfScreen: CGRect) -> Bool {
         return againstEdgeOfScreen(windowRect.origin.x - visibleFrameOfScreen.origin.x)
     }
-    
+
     private func againstTheRightEdgeOfScreen(_ windowRect: CGRect, _ visibleFrameOfScreen: CGRect) -> Bool {
         return againstEdgeOfScreen(windowRect.maxX - visibleFrameOfScreen.maxX)
     }
-    
+
     private func againstTheTopEdgeOfScreen(_ windowRect: CGRect, _ visibleFrameOfScreen: CGRect) -> Bool {
         return againstEdgeOfScreen(windowRect.maxY - visibleFrameOfScreen.maxY)
     }
-    
+
     private func againstTheBottomEdgeOfScreen(_ windowRect: CGRect, _ visibleFrameOfScreen: CGRect) -> Bool {
         return againstEdgeOfScreen(windowRect.minY - visibleFrameOfScreen.minY)
     }
-    
+
     private func againstAllEdgesOfScreen(windowRect: CGRect, visibleFrameOfScreen: CGRect) -> Bool {
         return (againstTheLeftEdgeOfScreen(windowRect, visibleFrameOfScreen)
             && againstTheRightEdgeOfScreen(windowRect, visibleFrameOfScreen)
             && againstTheTopEdgeOfScreen(windowRect, visibleFrameOfScreen)
             && againstTheBottomEdgeOfScreen(windowRect, visibleFrameOfScreen))
     }
-    
+
     private func adjustedWindowRectAgainstLeftAndRightEdgesOfScreen(originalWindowRect: CGRect, resizedWindowRect: CGRect, visibleFrameOfScreen: CGRect) -> CGRect {
         var adjustedWindowRect = resizedWindowRect
         if againstTheRightEdgeOfScreen(originalWindowRect, visibleFrameOfScreen) {
@@ -98,7 +104,7 @@ class ChangeSizeCalculation: WindowCalculation {
         }
         return adjustedWindowRect
     }
-    
+
     private func adjustedWindowRectAgainstTopAndBottomEdgesOfScreen(originalWindowRect: CGRect, resizedWindowRect: CGRect, visibleFrameOfScreen: CGRect) -> CGRect{
         var adjustedWindowRect = resizedWindowRect
         if againstTheTopEdgeOfScreen(originalWindowRect, visibleFrameOfScreen) {
@@ -112,11 +118,11 @@ class ChangeSizeCalculation: WindowCalculation {
         }
         return adjustedWindowRect
     }
-    
+
     private func resizedWindowRectIsTooSmall(windowRect: CGRect, visibleFrameOfScreen: CGRect) -> Bool {
         let minimumWindowRectWidth = floor(visibleFrameOfScreen.width * minimumWindowWidth)
         let minimumWindowRectHeight = floor(visibleFrameOfScreen.height * minimumWindowHeight)
         return (windowRect.width <= minimumWindowRectWidth) || (windowRect.height <= minimumWindowRectHeight)
     }
-    
+
 }

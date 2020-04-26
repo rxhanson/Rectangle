@@ -106,7 +106,7 @@ defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 ```
 Followed by a restart of the app.
 
-### Details on Make Smaller (pending the next release)
+### Details on Make Smaller limits (pending the next release)
 
 By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height). These values can be adjusted with the following terminal commands:
 
@@ -116,6 +116,17 @@ defaults write com.knollsoft.Rectangle minimumWindowWidth -float <VALUE_BETWEEN_
 
 ```bash
 defaults write com.knollsoft.Rectangle minimumWindowHeight -float <VALUE_BETWEEN_0_&_1>
+```
+
+Followed by a restart of the app.
+
+### Details on Make Smaller/Make Larger size increments
+
+By default, "Make Smaller" and "Make Larger" change the window height/width by 30 pixels. This can
+be changed with the following command:
+
+```bash
+defaults write com.knollsoft.Rectangle sizeOffset -float <NUM_PIXELS>
 ```
 
 Followed by a restart of the app.
