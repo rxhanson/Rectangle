@@ -41,6 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
             self.showWelcomeWindow()
+            self.checkForConflictingApps()
             self.openPreferences(self)
             self.statusItem.statusMenu = self.mainStatusMenu
             self.accessibilityTrusted()
@@ -64,6 +65,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
+    }
+    
+    func checkForConflictingApps() {
+        let conflictingAppsIds: [String: String] = [
+            "com.divisiblebyzero.Spectacle": "Spectacle",
+            "com.crowdcafe.windowmagnet": "Magnet",
+            "com.hegenberg.BetterSnapTool": "BetterSnapTool",
+            "com.manytricks.Moom": "Moom"
+        ]
+        
+        let runningApps = NSWorkspace.shared.runningApplications
+        for app in runningApps {
+            guard let bundleId = app.bundleIdentifier else { continue }
+            if let conflictingAppName = conflictingAppsIds[bundleId] {
+                AlertUtil.oneButtonAlert(question: "Potential window manager conflict: \(conflictingAppName)", text: "Since \(conflictingAppName) might have some overlapping behavior with Rectangle, it's recommended that you either disable or quit \(conflictingAppName).")
+            }
+        }
+        
     }
     
     private func showWelcomeWindow() {
