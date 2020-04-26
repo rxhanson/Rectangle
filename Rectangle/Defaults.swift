@@ -28,6 +28,7 @@ class Defaults {
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
     static let minimumWindowWidth = FloatDefault(key: "minimumWindowWidth")
     static let minimumWindowHeight = FloatDefault(key: "minimumWindowHeight")
+    static let sizeOffset = FloatDefault(key: "sizeOffset")
 }
 
 class BoolDefault {
