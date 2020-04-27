@@ -36,35 +36,32 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
    1. Focus the app that you want to ignore (make a window from that app frontmost).
    2. Open the Rectangle menu and select "Ignore app"
 
-## Keyboard Shortcuts
-The default keyboard shortcuts are based on Spectacle, but there is a recommended alternative set of defaults based on the Magnet app. This can be enabled by setting "alternateDefaultShortcuts" to true in NSUserDefaults for Rectangle with the following Terminal command:
+## Differences with Spectacle
+* Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut) for keyboard shortcut recording. Spectacle used it's own shortcut recorder.
+* Rectangle has additional window actions: move windows to each edge without resizing, maximize only the height of a window, almost maximizing a window. 
+* Next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Screen orientation is taken into account, as in first third will be left third on landscape and top third on portrait.
+* There's an option to have windows traverse across displays on subsequent left or right executions.
+* Windows will snap when dragged to edges/corners of the screen. This can be disabled.
+
+## Terminal commands
+The preferences window is purposefully slim, but there's a lot that can be modified via Terminal. After executing a terminal command, restart the app as these values are loaded on application startup.
+
+### Keyboard Shortcuts
+If you wish to change the default shortcuts after first launch, use the following command. True is for the recommended shortcuts, false is for Spectacle's.
 
 ```bash
 defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
 ```
 
-Then restart the Rectangle app. 
-
-## Differences with Spectacle
-Spectacle used its own keyboard shortcut recorder, while Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut), a well maintained open source library for shortcut recording in macOS apps. This cuts down dramatically on the number of bugs that were only in Spectacle because of the custom shortcut recorder. 
-
-### Additional features
-* Additional window actions: move windows to each edge without resizing, maximize only the height of a window, almost maximizing a window. 
-* Next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Screen orientation is taken into account, as in first third will be left third on landscape and top third on portrait.
-* There's an option to have windows traverse across displays on subsequent left or right executions, similar to what Microsoft provided in Windows 7.
-* Windows will snap when dragged to edges/corners of the screen. This can be disabled.
-
-### Details on halves to thirds (subsequent execution of half and quarter actions)
+### Halves to thirds (repeated execution of half and quarter actions)
 Halves to thirds is controlled by the "Cycle displays" setting in the preferences. 
 If the cycle displays setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
 
-The cycling behavior can be disabled with the following terminal command:
+The cycling behavior can be disabled entirely with:
 
 ```bash
 defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 ```
-
-Followed by a restart of the app.
 
 `subsequentExecutionMode` accepts the following values:
 0: halves to thirds Spectacle behavior (box unchecked)
@@ -72,8 +69,8 @@ Followed by a restart of the app.
 2: disabled
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
-### Details on Almost Maximize
-By default, "Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
+### Almost Maximize
+"Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
 
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>
@@ -82,31 +79,19 @@ defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEE
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
 ```
-
-Followed by a restart of the app.
-
-### Details on Adding Gaps Between Windows
-
-As of v0.17, gaps between windows can be added with the following command:
+### Adding Gaps Between Windows
 
 ```bash
 defaults write com.knollsoft.Rectangle gapSize -float <NUM_PIXELS>
 ```
-
-Followed by a restart of the app.
-
-### Details on Move Up/Down/Left/Right
+### Move Up/Down/Left/Right centering behavior
 
 The current default behavior of these actions is to center the window along the edge that the window is being moved to. 
-
-As of v0.19, the centering can be disabled with the following command:
 
 ```bash
 defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 ```
-Followed by a restart of the app.
-
-### Details on Make Smaller limits
+### Make Smaller limits
 
 By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height). These values can be adjusted with the following terminal commands:
 
@@ -118,9 +103,7 @@ defaults write com.knollsoft.Rectangle minimumWindowWidth -float <VALUE_BETWEEN_
 defaults write com.knollsoft.Rectangle minimumWindowHeight -float <VALUE_BETWEEN_0_&_1>
 ```
 
-Followed by a restart of the app.
-
-### Details on Make Smaller/Make Larger size increments
+### Make Smaller/Make Larger size increments
 
 By default, "Make Smaller" and "Make Larger" change the window height/width by 30 pixels. This can
 be changed with the following command:
@@ -129,37 +112,42 @@ be changed with the following command:
 defaults write com.knollsoft.Rectangle sizeOffset -float <NUM_PIXELS>
 ```
 
-Followed by a restart of the app.
-
 ### Disabling window restore when moving windows
 
 ```bash
 defaults write com.knollsoft.Rectangle unsnapRestore -int 2
 ```
 
-Followed by a restart of the app.
+## Common Known Issues
 
-## Contributing
-Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. The [Hookshot](https://hookshot.app) app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, you get free licenses of Multitouch and Hookshot. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Hookshot licenses (just send me a direct message on [Gitter](https://gitter.im)). 
+### Rectangle doesn't have the ability to move to other desktops/spaces.
 
-### Localization
-Initial localizations were done using [DeepL](https://www.deepl.com/translator) and Google Translate, but many of them have been updated by contributors. Translations that weren't done by humans can definitely be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language. If you would like to add a localization but one doesn't currently exist and you don't know how to create one, create an issue and a translation file can be initialized.
+Apple never released a public API for Spaces, so any direct interaction with Spaces uses private APIs that are actually a bit shaky. Using the private API adds enough complexity to the app to where I feel it's better off without it. If Apple decides to release a public API for it, I'll add it in.
 
-Pull requests for new localizations or improvements on existing localizations are welcome.
+### Window moving/resizing appears animated/smooth instead of quick, and windows don't end up where you expect
 
-### Running the app in Xcode (for developers)
-Rectangle uses [CocoaPods](https://cocoapods.org/) to install Sparkle and MASShortcut. 
+This is a macOS bug. Here's some things that trigger it:
 
-1. Make sure CocoaPods is installed and up to date on your machine (`sudo gem install cocoapods`).
-1. Execute `pod install` the root directory of the project. 
-1. Open the generated xcworkspace file (`open Rectangle.xcworkspace`).
+* Using the on screen keyboard
+* Unnecessary accessibility privileges for certain apps, like Alfred. Remove accessiblity privileges from apps that don't need them.
+* Running certain apps, like Dragon and Punto Switcher (a Russian app).
+* Certain external monitors trigger this behavior. 
 
-#### Signing
-- When running in Xcode (debug), Rectangle is signed to run locally with no developer ID configured.
-- You can run the app out of the box this way, but you might have to authorize the app in System Prefs every time you run it. 
-- If you don't want to authorize in System Prefs every time you run it and you have a developer ID set up, you'll want to use that to sign it and additionally add the Hardened Runtime capability to the Rectangle and RectangleLauncher targets. 
+If you are a developer, file an issue here:
+https://feedbackassistant.apple.com/
 
-## Troubleshooting
+If you are not a developer, use:
+https://www.apple.com/feedback/macos.html
+
+### Window resizing is off slightly for iTerm2
+
+By default iTerm2 will only resize in increments of character widths. There might be a setting inside iTerm2 to disable this, but you can change it with the following command.
+
+```bash
+defaults write com.googlecode.iterm2 DisableWindowSizeSnap -integer 1
+```
+
+### Troubleshooting
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
 1. Make sure macOS is up to date, if possible.
 1. Restart your machine.
@@ -180,3 +168,25 @@ The configuration for Rectangle is stored using NSUserDefaults, meaning it is st
 `~/Library/Preferences/com.knollsoft.Rectangle.plist`
 
 That file can be backed up or transferred to other machines.
+
+---
+
+## Contributing
+Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. The [Hookshot](https://hookshot.app) app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, you get free licenses of Multitouch and Hookshot. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Hookshot licenses (just send me a direct message on [Gitter](https://gitter.im)). 
+
+### Localization
+Initial localizations were done using [DeepL](https://www.deepl.com/translator) and Google Translate, but many of them have been updated by contributors. Translations that weren't done by humans can definitely be improved. If you would like to contribute to localization, all of the translations are held in the Main.strings per language. If you would like to add a localization but one doesn't currently exist and you don't know how to create one, create an issue and a translation file can be initialized.
+
+Pull requests for new localizations or improvements on existing localizations are welcome.
+
+### Running the app in Xcode (for developers)
+Rectangle uses [CocoaPods](https://cocoapods.org/) to install Sparkle and MASShortcut. 
+
+1. Make sure CocoaPods is installed and up to date on your machine (`sudo gem install cocoapods`).
+1. Execute `pod install` the root directory of the project. 
+1. Open the generated xcworkspace file (`open Rectangle.xcworkspace`).
+
+#### Signing
+- When running in Xcode (debug), Rectangle is signed to run locally with no developer ID configured.
+- You can run the app out of the box this way, but you might have to authorize the app in System Prefs every time you run it. 
+- If you don't want to authorize in System Prefs every time you run it and you have a developer ID set up, you'll want to use that to sign it and additionally add the Hardened Runtime capability to the Rectangle and RectangleLauncher targets. 
