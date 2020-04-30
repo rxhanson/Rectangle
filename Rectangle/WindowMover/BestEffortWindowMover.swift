@@ -18,23 +18,23 @@ class BestEffortWindowMover: WindowMover {
         
         var adjustedWindowRect: CGRect = currentWindowRect
         
-        if adjustedWindowRect.origin.x < visibleFrameOfScreen.origin.x {
+        if adjustedWindowRect.minX < visibleFrameOfScreen.minX {
             
-            adjustedWindowRect.origin.x = visibleFrameOfScreen.origin.x
+            adjustedWindowRect.origin.x = visibleFrameOfScreen.minX
             
-        } else if adjustedWindowRect.origin.x + adjustedWindowRect.size.width > visibleFrameOfScreen.origin.x + visibleFrameOfScreen.size.width {
+        } else if adjustedWindowRect.minX + adjustedWindowRect.width > visibleFrameOfScreen.minX + visibleFrameOfScreen.width {
             
-            adjustedWindowRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.size.width - (adjustedWindowRect.size.width)
+            adjustedWindowRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - (adjustedWindowRect.width) - CGFloat(Defaults.gapSize.value)
         }
         
         adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect , frameOfScreen: frameOfScreen)
-        if adjustedWindowRect.origin.y < visibleFrameOfScreen.origin.y {
+        if adjustedWindowRect.minY < visibleFrameOfScreen.minY {
             
-            adjustedWindowRect.origin.y = visibleFrameOfScreen.origin.y
+            adjustedWindowRect.origin.y = visibleFrameOfScreen.minY
             
-        } else if adjustedWindowRect.origin.y + adjustedWindowRect.size.height > visibleFrameOfScreen.origin.y + visibleFrameOfScreen.size.height {
+        } else if adjustedWindowRect.minY + adjustedWindowRect.height > visibleFrameOfScreen.minY + visibleFrameOfScreen.height {
             
-            adjustedWindowRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.size.height - (adjustedWindowRect.size.height)
+            adjustedWindowRect.origin.y = visibleFrameOfScreen.minY + visibleFrameOfScreen.height - (adjustedWindowRect.height) - CGFloat(Defaults.gapSize.value)
         }
         
         adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect, frameOfScreen: frameOfScreen)
