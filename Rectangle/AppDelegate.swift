@@ -90,12 +90,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil)
             .instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
         guard let welcomeWindow = welcomeWindowController?.window else { return }
+        welcomeWindow.delegate = self
         
         NSApp.activate(ignoringOtherApps: true)
         
         let response = NSApp.runModal(for: welcomeWindow)
         
-        let usingRecommended = response == .alertFirstButtonReturn
+        let usingRecommended = response == .alertFirstButtonReturn || response == .abort
         
         Defaults.alternateDefaultShortcuts.enabled = usingRecommended
         
@@ -237,6 +238,14 @@ extension AppDelegate: NSMenuDelegate {
     @objc func executeMenuWindowAction(sender: NSMenuItem) {
         guard let windowAction = sender.representedObject as? WindowAction else { return }
         windowAction.post()
+    }
+    
+}
+
+extension AppDelegate: NSWindowDelegate {
+    
+    func windowWillClose(_ notification: Notification) {
+        NSApp.abortModal()
     }
     
 }
