@@ -70,7 +70,7 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
 ### Almost Maximize
-"Almost Maximize" will resize the window to 90% of the screen (width & height). These values can be adjusted with the following terminal commands:
+By default, "Almost Maximize" will resize the window to 90% of the screen (width & height).
 
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>
@@ -84,16 +84,16 @@ defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN
 ```bash
 defaults write com.knollsoft.Rectangle gapSize -float <NUM_PIXELS>
 ```
-### Move Up/Down/Left/Right centering behavior
+### Move Up/Down/Left/Right: Don't center on edge
 
-The current default behavior of these actions is to center the window along the edge that the window is being moved to. 
+By default, the directional move will center the window along the edge that the window is being moved to. 
 
 ```bash
 defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 ```
 ### Make Smaller limits
 
-By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height). These values can be adjusted with the following terminal commands:
+By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height).
 
 ```bash
 defaults write com.knollsoft.Rectangle minimumWindowWidth -float <VALUE_BETWEEN_0_&_1>
@@ -105,17 +105,54 @@ defaults write com.knollsoft.Rectangle minimumWindowHeight -float <VALUE_BETWEEN
 
 ### Make Smaller/Make Larger size increments
 
-By default, "Make Smaller" and "Make Larger" change the window height/width by 30 pixels. This can
-be changed with the following command:
+By default, "Make Smaller" and "Make Larger" change the window height/width by 30 pixels.
 
 ```bash
 defaults write com.knollsoft.Rectangle sizeOffset -float <NUM_PIXELS>
+```
+
+### Make Smaller/Make Larger "curtain resize" with gaps
+
+By default, windows touching the edge of the screen will keep those shared edges the same while only resizing the non-shared edge. With window gaps, this is a little ambiguous since the edges don't actually touch the screen, so you can disable it for traditional, floating resizing:
+
+```bash
+defaults write com.knollsoft.Rectangle curtainChangeSize -int 2
 ```
 
 ### Disabling window restore when moving windows
 
 ```bash
 defaults write com.knollsoft.Rectangle unsnapRestore -int 2
+```
+
+### Ignore specific drag to snap areas
+
+Each drag to snap area on the edge of a screen can be ignored with a single Terminal command, but it's a bit field setting so you'll have to determine the bit field for which ones you want to disable.
+
+
+| Bit | Snap Area                 | Window Action       |
+|-----|---------------------------|---------------------|
+| 1   | Top                       | Maximize            |
+| 2   | Bottom                    | Thirds              |
+| 3   | Left                      | Left Half           |
+| 4   | Right                     | Right Half          |
+| 5   | Top Left                  | Top Left Corner     |
+| 6   | Top Right                 | Top Right Corner    |
+| 7   | Bottom Left               | Bottom Left Corner  |
+| 8   | Bottom Right              | Bottom Right Corner |
+| 9   | Top Left Below Corner     | Top Half            |
+| 10  | Top Right Below Corner    | Top Half            |
+| 11  | Bottom Left Above Corner  | Bottom Half         |
+| 12  | Bottom Right Above Corner | Bottom Half         |
+
+To disable the top (maximize) snap area, execute:
+```bash
+defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 1
+```
+
+To disable the Top Half and Bottom Half snap areas, the bit field would be 1111 0000 0000, or 3840
+```bash
+defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 3840
 ```
 
 ## Common Known Issues
