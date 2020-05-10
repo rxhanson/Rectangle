@@ -18,7 +18,7 @@ class SnappingManager {
     var frontmostWindowId: Int?
     var windowMoving: Bool = false
     var initialWindowRect: CGRect?
-    var currentHotSpot: SnapArea?
+    var currentSnapArea: SnapArea?
     
     var box: NSWindow?
     
@@ -30,6 +30,20 @@ class SnappingManager {
     private let marginLeft = Defaults.snapEdgeMarginLeft.value
     private let marginRight = Defaults.snapEdgeMarginRight.value
     private let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
+    
+    private let snapOptionToAction: [SnapAreaOption: WindowAction] = [
+        .top: .maximize,
+        .left: .leftHalf,
+        .right: .rightHalf,
+        .topLeft: .topLeft,
+        .topRight: .topRight,
+        .bottomLeft: .bottomLeft,
+        .bottomRight: .bottomRight,
+        .topLeftShort: .topHalf,
+        .topRightShort: .topHalf,
+        .bottomLeftShort: .bottomHalf,
+        .bottomRightShort: .bottomHalf
+    ]
     
     init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
         self.windowCalculationFactory = windowCalculationFactory
@@ -80,10 +94,10 @@ class SnappingManager {
             frontmostWindowId = nil
             windowMoving = false
             initialWindowRect = nil
-            if let currentHotSpot = self.currentHotSpot {
+            if let currentSnapArea = self.currentSnapArea {
                 box?.close()
-                currentHotSpot.action.postSnap(screen: currentHotSpot.screen)
-                self.currentHotSpot = nil
+                currentSnapArea.action.postSnap(screen: currentSnapArea.screen)
+                self.currentSnapArea = nil
             }
         case .leftMouseDragged:
             if frontmostWindowId == nil {
@@ -117,22 +131,22 @@ class SnappingManager {
                 }
             }
             if windowMoving {
-                if let newHotSpot = getMouseHotSpot(priorHotSpot: currentHotSpot) {
-                    if newHotSpot == currentHotSpot {
+                if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea) {
+                    if snapArea == currentSnapArea {
                         return
                     }
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
-                    if let newBoxRect = getBoxRect(hotSpot: newHotSpot, currentWindow: currentWindow) {
+                    if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
                         box?.setFrame(newBoxRect, display: true)
                         box?.makeKeyAndOrderFront(nil)
                     }
                     
-                    currentHotSpot = newHotSpot
+                    currentSnapArea = snapArea
                 } else {
-                    if currentHotSpot != nil {
+                    if currentSnapArea != nil {
                         box?.close()
-                        currentHotSpot = nil
+                        currentSnapArea = nil
                     }
                 }
             }
@@ -193,31 +207,41 @@ class SnappingManager {
         return nil
     }
     
-    func getMouseHotSpot(priorHotSpot: SnapArea?) -> SnapArea? {
+    func snapAreaContainingCursor(priorSnapArea: SnapArea?) -> SnapArea? {
+        let loc = NSEvent.mouseLocation
         
         for screen in NSScreen.screens {
             let frame = screen.frame
-            let loc = NSEvent.mouseLocation
             
             if loc.x >= frame.minX {
                 if loc.x < frame.minX + CGFloat(marginLeft) + 20 {
                     if loc.y >= frame.maxY - CGFloat(marginTop) - 20 && loc.y <= frame.maxY {
-                        return SnapArea(screen: screen, action: .topLeft)
+                        if let area = snapArea(for: .topLeft, on: screen) {
+                            return area
+                        }
                     }
                     if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 20 {
-                        return SnapArea(screen: screen, action: .bottomLeft)
+                        if let area = snapArea(for: .bottomLeft, on: screen) {
+                            return area
+                        }
                     }
                 }
                 
                 if loc.x < frame.minX + CGFloat(marginLeft) {
                     if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 145 {
-                        return SnapArea(screen: screen, action: .bottomHalf)
+                        if let area = snapArea(for: .bottomLeftShort, on: screen) {
+                            return area
+                        }
                     }
                     if loc.y >= frame.maxY - CGFloat(marginTop) - 145 && loc.y <= frame.maxY {
-                        return SnapArea(screen: screen, action: .topHalf)
+                        if let area = snapArea(for: .topLeftShort, on: screen) {
+                            return area
+                        }
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        return SnapArea(screen: screen, action: .leftHalf)
+                        if let area = snapArea(for: .left, on: screen) {
+                            return area
+                        }
                     }
                 }
             }
@@ -225,34 +249,51 @@ class SnappingManager {
             if loc.x <= frame.maxX {
                 if loc.x > frame.maxX - CGFloat(marginRight) - 20 {
                     if loc.y >= frame.maxY - CGFloat(marginTop) - 20 && loc.y <= frame.maxY {
-                        return SnapArea(screen: screen, action: .topRight)
+                        if let area = snapArea(for: .topRight, on: screen) {
+                            return area
+                        }
                     }
                     if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 20 {
-                        return SnapArea(screen: screen, action: .bottomRight)
+                        if let area = snapArea(for: .bottomRight, on: screen) {
+                            return area
+                        }
                     }
                 }
-
                 
                 if loc.x > frame.maxX - CGFloat(marginRight) {
                     if loc.y >= frame.minY && loc.y <= frame.minY + CGFloat(marginBottom) + 145 {
-                        return SnapArea(screen: screen, action: .bottomHalf)
+                        if let area = snapArea(for: .bottomRightShort, on: screen) {
+                            return area
+                        }
                     }
                     if loc.y >= frame.maxY - CGFloat(marginTop) - 145 && loc.y <= frame.maxY {
-                        return SnapArea(screen: screen, action: .topHalf)
+                        if let area = snapArea(for: .topRightShort, on: screen) {
+                            return area
+                        }
                     }
                     if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        return SnapArea(screen: screen, action: .rightHalf)
+                        if let area = snapArea(for: .right, on: screen) {
+                            return area
+                        }
                     }
                 }
             }
             
-            if loc.y >= frame.minY && loc.y < frame.minY + CGFloat(marginBottom) {
+            if loc.y <= frame.maxY && loc.y > frame.maxY - CGFloat(marginTop) {
+                if loc.x >= frame.minX && loc.x <= frame.maxX {
+                    if let area = snapArea(for: .top, on: screen) {
+                        return area
+                    }
+                }
+            }
+            
+            if loc.y >= frame.minY && loc.y < frame.minY + CGFloat(marginBottom) && !ignoredSnapAreas.contains(.bottom) {
                 let thirdWidth = floor(frame.width / 3)
                 if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
                     return SnapArea(screen: screen, action: .firstThird)
                 }
                 if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
-                    if let priorAction = priorHotSpot?.action {
+                    if let priorAction = priorSnapArea?.action {
                         let action: WindowAction
                         switch priorAction {
                         case .firstThird, .firstTwoThirds:
@@ -270,16 +311,16 @@ class SnappingManager {
                 }
             }
             
-            if loc.y <= frame.maxY && loc.y > frame.maxY - CGFloat(marginTop) {
-                if loc.x >= frame.minX && loc.x <= frame.maxX {
-                    if !ignoredSnapAreas.contains(.top) {
-                        return SnapArea(screen: screen, action: .maximize)
-                    }
-                }
-            }
-            
         }
         
+        return nil
+    }
+    
+    private func snapArea(for snapOption: SnapAreaOption, on screen: NSScreen) -> SnapArea? {
+        if ignoredSnapAreas.contains(snapOption) { return nil }
+        if let action = snapOptionToAction[snapOption] {
+            return SnapArea(screen: screen, action: action)
+        }
         return nil
     }
     
@@ -290,15 +331,22 @@ struct SnapArea: Equatable {
     let action: WindowAction
 }
 
-struct SnapAreaOption: OptionSet {
+struct SnapAreaOption: OptionSet, Hashable {
     let rawValue: Int
     
     static let top = SnapAreaOption(rawValue: 1 << 0)
-    static let sides = SnapAreaOption(rawValue: 1 << 1)
-    static let sideEdges = SnapAreaOption(rawValue: 1 << 2)
-    static let corners = SnapAreaOption(rawValue: 1 << 3)
-    static let bottom = SnapAreaOption(rawValue: 1 << 4)
+    static let bottom = SnapAreaOption(rawValue: 1 << 1)
+    static let left = SnapAreaOption(rawValue: 1 << 2)
+    static let right = SnapAreaOption(rawValue: 1 << 3)
+    static let topLeft = SnapAreaOption(rawValue: 1 << 4)
+    static let topRight = SnapAreaOption(rawValue: 1 << 5)
+    static let bottomLeft = SnapAreaOption(rawValue: 1 << 6)
+    static let bottomRight = SnapAreaOption(rawValue: 1 << 7)
+    static let topLeftShort = SnapAreaOption(rawValue: 1 << 8)
+    static let topRightShort = SnapAreaOption(rawValue: 1 << 9)
+    static let bottomLeftShort = SnapAreaOption(rawValue: 1 << 10)
+    static let bottomRightShort = SnapAreaOption(rawValue: 1 << 11)
     
-    static let all: SnapAreaOption = [.top, .sides, .sideEdges, .corners, .bottom]
+    static let all: SnapAreaOption = [.top, .bottom, .left, .right, .topLeft, .topRight, .bottomLeft, .bottomRight, .topLeftShort, .topRightShort, .bottomLeftShort, .bottomRightShort]
     static let none: SnapAreaOption = []
 }
