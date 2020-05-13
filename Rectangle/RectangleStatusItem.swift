@@ -30,18 +30,22 @@ class RectangleStatusItem {
     }
     
     public func openMenu() {
-        if let menu = statusMenu {
-            NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength).popUpMenu(menu)
+        if !added {
+            add()
         }
+        nsStatusItem?.button?.performClick(self)
+        refreshVisibility()
     }
     
     private func add() {
+        added = true
         nsStatusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         nsStatusItem?.menu = self.statusMenu
         nsStatusItem?.button?.image = NSImage(named: "StatusTemplate")
     }
     
     private func remove() {
+        added = false
         guard let nsStatusItem = nsStatusItem else { return }
         NSStatusBar.system.removeStatusItem(nsStatusItem)
     }
