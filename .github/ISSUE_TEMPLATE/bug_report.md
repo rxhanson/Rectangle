@@ -9,3 +9,4 @@ assignees: ''
 
 macOS version:
 Rectangle version:
+[logs](https://github.com/rxhanson/Rectangle#view-debug-logging): 
