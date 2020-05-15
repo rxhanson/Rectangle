@@ -273,7 +273,7 @@
 "STb-JK-oB1.title" = "Rectangle 偏好設定";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "透過重複左右移動以在顯示器間循環切換";
+"SXx-HZ-GkB.title" = "透過重複左右移動以在顯示器之間循環切換";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "視窗";
@@ -357,7 +357,7 @@
 "c8a-y6-VQd.title" = "轉換";
 
 /* Class = "NSMenuItem"; title = "Not Authorized to Control Your Computer"; ObjectID = "cBj-76-2E7"; */
-"cBj-76-2E7.title" = "未取得權限來控制您的電腦";
+"cBj-76-2E7.title" = "尚未取得控制您電腦的授權";
 
 /* Class = "NSMenuItem"; title = "Use None"; ObjectID = "cDB-IK-hbR"; */
 "cDB-IK-hbR.title" = "不使用";
@@ -405,7 +405,7 @@
 "gtf-PD-IHm.label" = "設定值";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangle 需要您的授予取用權限來控制視窗位置。";
+"gyg-xl-dPn.title" = "Rectangle 需要您授予取用權限來控制視窗位置。";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
 "hQb-2v-fYv.title" = "智慧型引用";
@@ -462,7 +462,7 @@
 "oas-Oc-fiZ.title" = "最近開放";
 
 /* Class = "NSMenuItem"; title = "Loosen"; ObjectID = "ogc-rX-tC1"; */
-"ogc-rX-tC1.title" = "鬆開";
+"ogc-rX-tC1.title" = "寬鬆";
 
 /* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
 "pa3-QI-u2k.title" = "刪除";
@@ -480,7 +480,7 @@
 "qlg-kC-FMr.title" = "隱藏選單列圖示";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
-"rbD-Rh-wIN.title" = "鍵入時檢查拼寫";
+"rbD-Rh-wIN.title" = "輸入時檢查拼寫";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
 "rgM-f4-ycn.title" = "智慧型引號";
