@@ -205,6 +205,10 @@
 		98ED1C782393DF0900CD0955 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C792393DF0900CD0955 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Main.strings; sourceTree = "<group>"; };
 		98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsCalculation.swift; sourceTree = "<group>"; };
+		98FE8974246E79A600871535 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/Main.strings"; sourceTree = "<group>"; };
+		98FE8975246E79A600871535 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/Main.strings"; sourceTree = "<group>"; };
+		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
+		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -570,6 +574,8 @@
 				"zh-Hans",
 				"zh-Hant",
 				ko,
+				"zh-Hant-TW",
+				"zh-Hant-HK",
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -804,6 +810,8 @@
 				98ED1C752393DEF200CD0955 /* zh-Hans */,
 				98ED1C772393DEFC00CD0955 /* zh-Hant */,
 				98ED1C792393DF0900CD0955 /* ko */,
+				98FE8975246E79A600871535 /* zh-Hant-TW */,
+				98FE8977246E79C400871535 /* zh-Hant-HK */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -826,6 +834,8 @@
 				98ED1C742393DEF200CD0955 /* zh-Hans */,
 				98ED1C762393DEFC00CD0955 /* zh-Hant */,
 				98ED1C782393DF0900CD0955 /* ko */,
+				98FE8974246E79A600871535 /* zh-Hant-TW */,
+				98FE8976246E79C400871535 /* zh-Hant-HK */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
