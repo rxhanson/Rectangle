@@ -22,7 +22,6 @@ class WindowManager {
         self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
-            // QuantizedWindowMover(), // This was used in Spectacle, but doesn't seem to help on any windows I've tried. It just makes some actions feel more jenky
             BestEffortWindowMover()
         ]
         
@@ -59,6 +58,7 @@ class WindowManager {
         
         guard let usableScreens = screens else {
             NSSound.beep()
+            Logger.log("Unable to obtain usable screens")
             return
         }
         
@@ -79,6 +79,7 @@ class WindowManager {
             || usableScreens.frameOfCurrentScreen.isNull
             || usableScreens.visibleFrameOfCurrentScreen.isNull {
             NSSound.beep()
+            Logger.log("Window is not snappable or usable screen is not valid")
             return
         }
 
@@ -89,6 +90,7 @@ class WindowManager {
         
         guard var calcResult = windowCalculation?.calculate(currentWindow, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
             NSSound.beep()
+            Logger.log("Nil calculation result")
             return
         }
         
@@ -102,6 +104,7 @@ class WindowManager {
 
         if currentNormalizedRect.equalTo(newNormalizedRect) {
             NSSound.beep()
+            Logger.log("Current frame is equal to new frame")
             return
         }
 

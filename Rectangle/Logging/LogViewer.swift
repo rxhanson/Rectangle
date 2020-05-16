@@ -24,7 +24,9 @@ class Logger {
     }
     
     static func log(_ string: String) {
-        logWindowController?.append(string)
+        if logging {
+            logWindowController?.append(string)
+        }
     }
 }
 

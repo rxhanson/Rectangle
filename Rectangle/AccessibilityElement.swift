@@ -26,9 +26,7 @@ class AccessibilityElement {
     
     static func frontmostWindow() -> AccessibilityElement? {
         guard let frontmostApplicationElement = AccessibilityElement.frontmostApplication() else {
-            if Logger.logging {
-                Logger.log("Failed to find the application that currently has focus.")
-            }
+            Logger.log("Failed to find the application that currently has focus.")
             return nil
         }
         let focusedAttr = NSAccessibility.Attribute.focusedWindow as CFString
@@ -43,9 +41,7 @@ class AccessibilityElement {
                 return AccessibilityElement(copiedUnderlyingElement as! AXUIElement)
             }
         }
-        if Logger.logging {
-            Logger.log("Unable to obtain accessibility element")
-        }
+        Logger.log("Unable to obtain accessibility element")
         return nil
     }
     
@@ -69,9 +65,7 @@ class AccessibilityElement {
         let status = AXUIElementIsAttributeSettable(self.underlyingElement, kAXSizeAttribute as CFString, &resizable)
         
         if status != .success {
-            if Logger.logging {
-                Logger.log("Unable to determine if window is resizeable. Assuming it is.")
-            }
+            Logger.log("Unable to determine if window is resizeable. Assuming it is.")
         }
         return resizable.boolValue
     }
@@ -117,6 +111,7 @@ class AccessibilityElement {
                 return firstMatch[kCGWindowNumber as String] as? Int
             }
         }
+        Logger.log("Unable to obtain window id")
         return nil
     }
     
@@ -133,9 +128,7 @@ class AccessibilityElement {
     func set(position: CGPoint) {
         if let value = AXValue.from(value: position, type: .cgPoint) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXPositionAttribute as CFString, value)
-            if Logger.logging {
-                Logger.log("AX position proposed: \(position.debugDescription), result: \(getPosition()?.debugDescription ?? "N/A")")
-            }
+            Logger.log("AX position proposed: \(position.debugDescription), result: \(getPosition()?.debugDescription ?? "N/A")")
         }
     }
     
@@ -146,9 +139,7 @@ class AccessibilityElement {
     func set(size: CGSize) {
         if let value = AXValue.from(value: size, type: .cgSize) {
             AXUIElementSetAttributeValue(self.underlyingElement, kAXSizeAttribute as CFString, value)
-            if Logger.logging {
-                Logger.log("AX sizing proposed: \(size.debugDescription), result: \(getSize()?.debugDescription ?? "N/A")")
-            }
+            Logger.log("AX sizing proposed: \(size.debugDescription), result: \(getSize()?.debugDescription ?? "N/A")")
         }
     }
     
