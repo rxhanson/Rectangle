@@ -100,13 +100,13 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: gapSharedEdges, gapSize: gapSize)
         }
 
-        let newNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-
-        if currentNormalizedRect.equalTo(newNormalizedRect) {
+        if currentNormalizedRect.equalTo(calcResult.rect) {
             NSSound.beep()
             Logger.log("Current frame is equal to new frame")
             return
         }
+        
+        let newRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
 
         let visibleFrameOfDestinationScreen = NSRectToCGRect(calcResult.screen.visibleFrame)
 
@@ -116,7 +116,7 @@ class WindowManager {
             : standardWindowMoverChain
 
         for windowMover in windowMoverChain {
-            windowMover.moveWindowRect(newNormalizedRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
+            windowMover.moveWindowRect(newRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
         }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
@@ -144,7 +144,7 @@ class WindowManager {
                 }
             }
             
-            Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newNormalizedRect.debugDescription), resultRect: \(resultingRect.debugDescription)\(srcDestScreens)")
+            Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newRect.debugDescription), resultRect: \(resultingRect.debugDescription)\(srcDestScreens)")
         }
     }
 }
