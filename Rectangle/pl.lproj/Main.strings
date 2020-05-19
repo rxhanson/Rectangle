@@ -1,9 +1,9 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "Jeżeli powtórzysz ruch bądź połowę akcji, okno przeniesie się do następnego pulpitu zamiast do 1/2, 2/3 bądź 1/3 rozmiaru.";
+"01Z-t3-cBm.title" = "Jeżeli powtórzysz akcję przenoszącą okno, bądź zmieniającą jego rozmiar, okno przeniesie się do następnego pulpitu zamiast zmniejszać się do 1/2, 2/3 bądź 1/3 swego rozmiaru.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "Ostatnie dwie trzecie";
+"08q-Ce-1QL.title" = "Dwie trzecie z prawej";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
 "0Ak-33-SM7.title" = "Prawy górny róg";
@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "Niżej";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "Złap okna poprzez przeciąganie.";
+"1ui-PL-TkR.title" = "Złap okna poprzez przeciąganie";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "Podnieś";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "Mowa";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "Pierwsze dwie trzecie";
+"3zd-xE-oWl.title" = "Dwie trzecie z lewej";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "Ściśnij";
@@ -78,7 +78,7 @@
 "78Y-hA-62v.title" = "Popraw pisownię automatycznie";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "Środkowa jedna trzecia";
+"7YK-9Z-lzw.title" = "Jedna trzecia na środku";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
 "8Bg-SZ-hDO.title" = "Środek";
@@ -132,7 +132,7 @@
 "Eah-KL-kbn.title" = "Powiększ";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "Pierwsza jedna trzecia";
+"F12-EV-Lfz.title" = "Jedna trzecia z lewej";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "Pomoc";
@@ -201,7 +201,7 @@
 "Jnd-Lc-nlh.title" = "Następny ekran";
 
 /* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
-"KaW-ft-85H.title" = "Przywróc do zapisanego";
+"KaW-ft-85H.title" = "Przywróć do zapisanego";
 
 /* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
 "Kd2-mp-pUS.title" = "Pokaż wszystko";
@@ -303,7 +303,7 @@
 "WeT-3V-zwk.title" = "Wklej i dopasuj styl";
 
 /* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
-"Xc8-Sm-pig.title" = "Lewa Połowa";
+"Xc8-Sm-pig.title" = "Lewa połowa";
 
 /* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
 "Xz5-n4-O0W.title" = "Znajdź…";
@@ -357,10 +357,10 @@
 "cBj-76-2E7.title" = "Brak autoryzacji do kontroli komputera";
 
 /* Class = "NSMenuItem"; title = "Use None"; ObjectID = "cDB-IK-hbR"; */
-"cDB-IK-hbR.title" = "Nie używaj żandego";
+"cDB-IK-hbR.title" = "Nie używaj żadnego";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "Ostatnia jedna trzecia";
+"cRm-wn-Yv6.title" = "Jedna trzecia z prawej";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "Wybór";
@@ -432,7 +432,7 @@
 "jxT-CU-nIS.title" = "Format";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "jxe-nr-LDQ"; */
-"jxe-nr-LDQ.title" = "O Rectange";
+"jxe-nr-LDQ.title" = "O Rectangle";
 
 /* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
 "kIP-vf-haE.title" = "Pokaż pasek boczny";
@@ -447,7 +447,7 @@
 "mK6-2p-4JG.title" = "Sprawdź gramatykę";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "Pozwól na użycie dowolnego skrótu klawiaturowego.";
+"n4U-FC-L9s.title" = "Pozwól na użycie dowolnego skrótu klawiaturowego";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "Ligatury";
@@ -510,7 +510,7 @@
 "uRl-iY-unG.title" = "Wytnij";
 
 /* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
-"v2f-bX-xiM.title" = "Przesuń w lewo.";
+"v2f-bX-xiM.title" = "Przesuń w lewo";
 
 /* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
 "vKC-jM-MkH.title" = "Wklej Styl";
