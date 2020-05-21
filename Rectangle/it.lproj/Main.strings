@@ -447,7 +447,7 @@
 "mK6-2p-4JG.title" = "Controlla la grammatica con l'ortografia";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "Consenti qualsiasi scorciatoia da tastiera";
+"n4U-FC-L9s.title" = "Consenti qualsiasi abbreviazioni da tastiera";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "Legature";
