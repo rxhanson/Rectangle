@@ -125,6 +125,17 @@ defaults write com.knollsoft.Rectangle curtainChangeSize -int 2
 defaults write com.knollsoft.Rectangle unsnapRestore -int 2
 ```
 
+### Changing the margin for the snap areas
+
+Each margin is configured separately, and has a default value of 5
+
+```bash
+defaults write com.knollsoft.Rectangle snapEdgeMarginTop -int 10
+defaults write com.knollsoft.Rectangle snapEdgeMarginBottom -int 10
+defaults write com.knollsoft.Rectangle snapEdgeMarginLeft -int 10
+defaults write com.knollsoft.Rectangle snapEdgeMarginRight -int 10
+```
+
 ### Ignore specific drag to snap areas
 
 Each drag to snap area on the edge of a screen can be ignored with a single Terminal command, but it's a bit field setting so you'll have to determine the bit field for which ones you want to disable.
