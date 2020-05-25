@@ -501,7 +501,7 @@
 "tlD-Oa-oAM.title" = "Zeichenabstand";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "Standard-Verknüpfungen wiederherstellen";
+"uLF-Uf-tBt.title" = "Standard-Kurzbefehle wiederherstellen";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
