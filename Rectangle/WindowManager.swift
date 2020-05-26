@@ -101,7 +101,6 @@ class WindowManager {
         }
 
         if currentNormalizedRect.equalTo(calcResult.rect) {
-            NSSound.beep()
             Logger.log("Current frame is equal to new frame")
             return
         }
