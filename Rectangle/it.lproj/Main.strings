@@ -414,7 +414,7 @@
 "i1d-Er-qST.title" = "Più piccolo";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
-"iWV-c2-BJD.title" = "Apri Preferenze di sistema apert";
+"iWV-c2-BJD.title" = "Apri Preferenze di sistema";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
 "iXo-XL-T6q.title" = "Autorizza Rectangle";
