@@ -106,7 +106,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        statusItem.openMenu()
+        if Defaults.relaunchOpensMenu.enabled {
+            statusItem.openMenu()
+        } else {
+            openPreferences(sender)
+        }
         return true
     }
     
