@@ -16,11 +16,13 @@ class SettingsViewController: NSViewController {
     static let windowSnappingNotificationName = Notification.Name("windowSnappingToggle")
     
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
+    @IBOutlet weak var versionLabel: NSTextField!
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
     @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesAutomaticallyCheckbox: NSButton!
+    @IBOutlet weak var checkForUpdatesButton: NSButton!
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -56,6 +58,10 @@ class SettingsViewController: NSViewController {
         NotificationCenter.default.post(name: SettingsViewController.allowAnyShortcutNotificationName, object: newSetting)
     }
     
+    @IBAction func checkForUpdates(_ sender: Any) {
+        SUUpdater.shared()?.checkForUpdates(sender)
+    }
+    
     @IBAction func restoreDefaults(_ sender: Any) {
         WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
     }
@@ -84,6 +90,13 @@ class SettingsViewController: NSViewController {
         if let updater = SUUpdater.shared() {
             checkForUpdatesAutomaticallyCheckbox.bind(.value, to: updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
         }
+        
+        let appVersionString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+        let buildString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+
+        versionLabel.stringValue = "v" + appVersionString + " (" + buildString + ")"
+        
+        checkForUpdatesButton.title = NSLocalizedString("HIK-3r-i7E.title", tableName: "Main", value: "Check for Updates…", comment: "")
     }
 
 }
