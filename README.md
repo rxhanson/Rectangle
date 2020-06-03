@@ -176,12 +176,14 @@ Apple never released a public API for Spaces, so any direct interaction with Spa
 
 This is a macOS bug. Here's some things that trigger it:
 
-* Using the on screen keyboard
+* Using the on-screen keyboard
 * Unnecessary accessibility privileges for certain apps, like Alfred. Remove accessiblity privileges from apps that don't need them.
 * Running certain apps, like Dragon and Punto Switcher (a Russian app).
-* Certain external monitors trigger this behavior. 
+* Certain external monitors trigger this behavior.
 
-You can use this workaround release of Rectangle: [v0.25.1](https://github.com/rxhanson/Rectangle/releases/tag/v0.25.1), but it's just a better experience to avoid the items that trigger it and use the latest version of Rectangle. The ideal scenario is that Apple gets around to fixing it. This scenario will only happen if _a lot_ of people file the issue.
+You can try enabling "Reduce motion" in the "Display" section of the "Accessibility" System Preferences. This doesn't appear to work with the on-screen keyboard, but might work for other triggers of the issue. Note that this setting will replace the Spaces/Mission Control/Exposé animations with fades.
+
+As a last resort, you can use this workaround release of Rectangle: [v0.25.1](https://github.com/rxhanson/Rectangle/releases/tag/v0.25.1), but it's just a better experience to avoid the items that trigger it and use the latest version of Rectangle. The ideal scenario is that Apple gets around to fixing it. This scenario will only happen if _a lot_ of people file the issue.
 
 If you are a developer, file an issue here:
 https://feedbackassistant.apple.com/
