@@ -177,7 +177,7 @@ Apple never released a public API for Spaces, so any direct interaction with Spa
 This is a macOS bug. Here's some things that trigger it:
 
 * Using the on-screen keyboard
-* Unnecessary accessibility privileges for certain apps, like Alfred. Remove accessiblity privileges from apps that don't need them.
+* Unnecessary accessibility privileges for certain apps, like Alfred. Remove accessibility privileges from apps that don't need them.
 * Running certain apps, like Dragon and Punto Switcher (a Russian app).
 * Certain external monitors trigger this behavior.
 
