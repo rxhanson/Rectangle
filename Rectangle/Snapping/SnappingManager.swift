@@ -14,8 +14,8 @@ class SnappingManager {
     let windowHistory: WindowHistory
     
     var eventMonitor: EventMonitor?
-    var frontmostWindow: AccessibilityElement?
-    var frontmostWindowId: Int?
+    var windowElement: AccessibilityElement?
+    var windowId: Int?
     var windowMoving: Bool = false
     var initialWindowRect: CGRect?
     var currentSnapArea: SnapArea?
@@ -86,12 +86,14 @@ class SnappingManager {
         guard let event = event else { return }
         switch event.type {
         case .leftMouseDown:
-            frontmostWindow = AccessibilityElement.frontmostWindow()
-            frontmostWindowId = frontmostWindow?.getIdentifier()
-            initialWindowRect = frontmostWindow?.rectOfElement()
+            if !Defaults.obtainWindowOnClick.userDisabled {
+                windowElement = AccessibilityElement.windowUnderCursor()
+                windowId = windowElement?.getIdentifier()
+                initialWindowRect = windowElement?.rectOfElement()
+            }
         case .leftMouseUp:
-            frontmostWindow = nil
-            frontmostWindowId = nil
+            windowElement = nil
+            windowId = nil
             windowMoving = false
             initialWindowRect = nil
             if let currentSnapArea = self.currentSnapArea {
@@ -100,11 +102,13 @@ class SnappingManager {
                 self.currentSnapArea = nil
             }
         case .leftMouseDragged:
-            if frontmostWindowId == nil {
-                frontmostWindowId = frontmostWindow?.getIdentifier()
+            if windowId == nil {
+                windowElement = AccessibilityElement.windowUnderCursor()
+                windowId = windowElement?.getIdentifier()
+                initialWindowRect = windowElement?.rectOfElement()
             }
-            guard let currentRect = frontmostWindow?.rectOfElement(),
-                let windowId = frontmostWindowId
+            guard let currentRect = windowElement?.rectOfElement(),
+                let windowId = windowId
             else { return }
             
             if !windowMoving {
@@ -118,7 +122,7 @@ class SnappingManager {
                                 lastRect == initialWindowRect,
                                 let restoreRect = windowHistory.restoreRects[windowId] {
                                 
-                                frontmostWindow?.set(size: restoreRect.size)
+                                windowElement?.set(size: restoreRect.size)
                                 windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                             } else {
                                 windowHistory.restoreRects[windowId] = initialWindowRect

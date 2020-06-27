@@ -11,6 +11,8 @@ import Carbon
 import Cocoa
 
 class AccessibilityElement {
+    static let systemWideElement = AccessibilityElement(AXUIElementCreateSystemWide())
+
     private let underlyingElement: AXUIElement
     
     required init(_ axUIElement: AXUIElement) {
@@ -31,6 +33,20 @@ class AccessibilityElement {
         }
         let focusedAttr = NSAccessibility.Attribute.focusedWindow as CFString
         return frontmostApplicationElement.withAttribute(focusedAttr)
+    }
+    
+    static func windowUnderCursor() -> AccessibilityElement? {
+        guard let location = CGEvent(source: nil)?.location else { return nil }
+        var element: AXUIElement?
+        let result: AXError = AXUIElementCopyElementAtPosition(systemWideElement.underlyingElement, Float(location.x), Float(location.y), &element)
+        if result == .success {
+            if let element = element {
+                return AccessibilityElement(element).window()
+            }
+        } else {
+            print("Unable to obtain the accessibility element with the specified attribute at mouse location")
+        }
+        return nil
     }
     
     func withAttribute(_ attribute: CFString) -> AccessibilityElement? {
@@ -167,6 +183,27 @@ class AccessibilityElement {
         }
         
         return nil
+    }
+    
+    private func window() -> Self? {
+        var element = self
+        while element.role() != kAXWindowRole {
+            if let nextElement = element.parent() {
+                element = nextElement
+            } else {
+                return nil
+            }
+        }
+        
+        return element
+    }
+    
+    private func parent() -> Self? {
+        return self.value(for: .parent)
+    }
+
+    private func role() -> String? {
+        return self.value(for: .role)
     }
 }
 

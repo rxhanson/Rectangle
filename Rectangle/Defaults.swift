@@ -32,6 +32,7 @@ class Defaults {
     static let unsnapRestore = OptionalBoolDefault(key: "unsnapRestore")
     static let curtainChangeSize = OptionalBoolDefault(key: "curtainChangeSize")
     static let relaunchOpensMenu = BoolDefault(key: "relaunchOpensMenu")
+    static let obtainWindowOnClick = OptionalBoolDefault(key: "obtainWindowOnClick")
 }
 
 class BoolDefault {
@@ -70,6 +71,9 @@ class OptionalBoolDefault {
             }
         }
     }
+    
+    var userDisabled: Bool { enabled == false }
+    var userEnabled: Bool { enabled == true }
     
     init(key: String) {
         self.key = key
