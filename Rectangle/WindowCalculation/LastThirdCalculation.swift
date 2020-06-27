@@ -8,7 +8,7 @@
 
 import Foundation
 
-class LastThirdCalculation: WindowCalculation, RepeatedExecutionsCalculation {
+class LastThirdCalculation: WindowCalculation {
     
     private var firstThirdCalculation: FirstThirdCalculation?
     private var centerThirdCalculation: CenterThirdCalculation?
@@ -21,30 +21,42 @@ class LastThirdCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     }
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-        
-        if Defaults.subsequentExecutionMode.value == .none
-            || lastAction == nil {
-            return calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        guard Defaults.subsequentExecutionMode.value != .none,
+            let last = lastAction, let lastSubAction = last.subAction else {
+                return lastThirdRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
         }
         
-        return calculateRepeatedRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        var calculation: WindowCalculation?
+        
+        if last.action == .lastThird {
+            switch lastSubAction {
+            case .bottomThird, .rightThird:
+                calculation = centerThirdCalculation
+            case .centerHorizontalThird, .centerVerticalThird:
+                calculation = firstThirdCalculation
+            default:
+                break
+            }
+        } else if last.action == .firstThird {
+            switch lastSubAction {
+            case .bottomThird, .rightThird:
+                calculation = centerThirdCalculation
+            default:
+                break
+            }
+        }
+        
+        if let calculation = calculation {
+            return calculation.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        }
+        
+        return lastThirdRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
     }
 
-    func calculateFirstRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-
+    func lastThirdRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         return isLandscape(visibleFrameOfScreen)
             ? RectResult(rightThird(visibleFrameOfScreen), subAction: .rightThird)
             : RectResult(bottomThird(visibleFrameOfScreen), subAction: .bottomThird)
-    }
-    
-    func calculateSecondRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-        return centerThirdCalculation?.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
-        ?? calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
-    }
-    
-    func calculateThirdRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-        return firstThirdCalculation?.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
-        ?? calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
     }
     
     private func rightThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
