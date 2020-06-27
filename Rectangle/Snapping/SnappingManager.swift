@@ -142,6 +142,9 @@ class SnappingManager {
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
+                        if box == nil {
+                            box = generateBoxWindow()
+                        }
                         box?.setFrame(newBoxRect, display: true)
                         box?.makeKeyAndOrderFront(nil)
                     }
