@@ -447,7 +447,7 @@
 "mK6-2p-4JG.title" = "Controlla la grammatica con l'ortografia";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "Consenti qualsiasi abbreviazioni da tastiera";
+"n4U-FC-L9s.title" = "Consenti qualsiasi abbreviazione da tastiera";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "Legature";
@@ -501,7 +501,7 @@
 "tlD-Oa-oAM.title" = "Kern";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "Ripristina i le scorciatoie da tastiera predefinite";
+"uLF-Uf-tBt.title" = "Ripristina le abbreviazioni da tastiera predefinite";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
