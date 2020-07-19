@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "아래로";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "드래그하여 창 배치";
+"1ui-PL-TkR.title" = "드래그하여 창 배치하기";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "올리기";
@@ -273,7 +273,7 @@
 "STb-JK-oB1.title" = "Rectangle 환경설정";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령 반복시 디스플레이 순환하기";
+"SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령을 반복하여 디스플레이 순환";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "윈도우";
@@ -390,7 +390,7 @@
 "e57-QJ-6bL.title" = "거의 최대화";
 
 /* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
-"e9j-DR-MEH.title" = "로그인 시 시작";
+"e9j-DR-MEH.title" = "로그인 시 실행";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
 "ec4-FB-fMa.title" = "아래쪽 절반";
@@ -477,7 +477,7 @@
 "qIS-W8-SiK.title" = "페이지 설정…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "메뉴 막대 아이콘 숨기기";
+"qlg-kC-FMr.title" = "메뉴 막대 아이콘 숨김";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "입력하는 동안 맞춤법 검사";
@@ -486,7 +486,7 @@
 "rgM-f4-ycn.title" = "스마트 대시";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "자동으로 업데이트 확인";
+"rmV-YD-Hzj.title" = "업데이트 확인";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
 "rzr-Qq-702.title" = "오른쪽으로 이동";
@@ -507,7 +507,7 @@
 "tlD-Oa-oAM.title" = "자간";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "기본 단축기 복원";
+"uLF-Uf-tBt.title" = "기본 단축키 복원";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
@@ -558,20 +558,20 @@
 "z6F-FW-3nz.title" = "대체 보기";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
-"kYm-Ye-gOR.title" = "Welcome to Rectangle!";
+"kYm-Ye-gOR.title" = "Rectangle에 오신 것을 환영합니다!";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
-"gEd-S9-Cfp.title" = "Please select your default shortcuts and behavior";
+"gEd-S9-Cfp.title" = "기본값의 단축키와 작업을 선택하십시오";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
-"HOp-Kd-vhY.title" = "Recommended";
+"HOp-Kd-vhY.title" = "권장 설정";
 
 /* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
-"kXi-dT-zSF.title" = "Spectacle shortcuts are more likely to conflict with other shortcuts";
+"kXi-dT-zSF.title" = "Spectacle 단축키는 다른 키 조합과 충돌할 가능성이 있습니다";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
+"xcE-uL-2J0.title" = "또 Spectacle을 선택한다면 1/2, 2/3, 1/3 설정을 순환할 것입니다.";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
-"HtH-yF-lBR.title" = "Welcome!";
+"HtH-yF-lBR.title" = "환영합니다!";
 
