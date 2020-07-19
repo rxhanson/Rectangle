@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "아래로";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "드래그하여 창 배치";
+"1ui-PL-TkR.title" = "드래그하여 창 배치하기";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "올리기";
@@ -273,7 +273,7 @@
 "STb-JK-oB1.title" = "Rectangle 환경설정";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령 반복시 디스플레이 순환하기";
+"SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령을 반복하여 디스플레이 순환";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "윈도우";
@@ -390,7 +390,7 @@
 "e57-QJ-6bL.title" = "거의 최대화";
 
 /* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
-"e9j-DR-MEH.title" = "로그인 시 시작";
+"e9j-DR-MEH.title" = "로그인 시 실행";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
 "ec4-FB-fMa.title" = "아래쪽 절반";
@@ -477,7 +477,7 @@
 "qIS-W8-SiK.title" = "페이지 설정…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "메뉴 막대 아이콘 숨기기";
+"qlg-kC-FMr.title" = "메뉴 막대 아이콘 숨김";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "입력하는 동안 맞춤법 검사";
@@ -486,7 +486,7 @@
 "rgM-f4-ycn.title" = "스마트 대시";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "자동으로 업데이트 확인";
+"rmV-YD-Hzj.title" = "업데이트 확인";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
 "rzr-Qq-702.title" = "오른쪽으로 이동";
