@@ -507,7 +507,7 @@
 "tlD-Oa-oAM.title" = "자간";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "기본 단축기 복원";
+"uLF-Uf-tBt.title" = "기본 단축키 복원";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
