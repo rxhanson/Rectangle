@@ -270,7 +270,7 @@
 "STb-JK-oB1.title" = "Préférences Rectangle";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "Affichage des déplacements sur les exécutions suivantes à gauche ou à droite";
+"SXx-HZ-GkB.title" = "Déplacer sur les moniteurs lors de commandes gauche ou droite répétées";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "Fenêtre";
