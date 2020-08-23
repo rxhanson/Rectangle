@@ -322,7 +322,8 @@ extension AppDelegate: NSMenuDelegate {
         var menuIndex = 0
         var categoryMenus: [CategoryMenu] = []
         for action in WindowAction.active {
-            let newMenuItem = NSMenuItem(title: action.displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
+            guard let displayName = action.displayName else { continue }
+            let newMenuItem = NSMenuItem(title: displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
             newMenuItem.representedObject = action
 
             if !Defaults.showAllActionsInMenu.userEnabled, let category = action.category {

@@ -144,7 +144,8 @@ class WindowCalculationFactory {
     static let bottomLeftSixthCalculation = BottomLeftSixthCalculation()
     static let bottomCenterSixthCalculation = BottomCenterSixthCalculation()
     static let bottomRightSixthCalculation = BottomRightSixthCalculation()
-    
+    static let specifiedCalculation = SpecifiedCalculation()
+
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
      .rightHalf: rightHalfCalculation,
@@ -181,7 +182,8 @@ class WindowCalculationFactory {
      .topRightSixth: topRightSixthCalculation,
      .bottomLeftSixth: bottomLeftSixthCalculation,
      .bottomCenterSixth: bottomCenterSixthCalculation,
-     .bottomRightSixth: bottomRightSixthCalculation
+     .bottomRightSixth: bottomRightSixthCalculation,
+     .specified: specifiedCalculation
         //     .restore: nil
     ]
 }

@@ -53,7 +53,8 @@ enum WindowAction: Int {
     topRightSixth = 37,
     bottomLeftSixth = 38,
     bottomCenterSixth = 39,
-    bottomRightSixth = 40
+    bottomRightSixth = 40,
+    specified = 41
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -63,7 +64,8 @@ enum WindowAction: Int {
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth,
-                         topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth
+                         topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
+                         specified,
     ]
 
     func post() {
@@ -123,10 +125,11 @@ enum WindowAction: Int {
         case .bottomLeftSixth: return "bottomLeftSixth"
         case .bottomCenterSixth: return "bottomCenterSixth"
         case .bottomRightSixth: return "bottomRightSixth"
+        case .specified: return "specified"
         }
     }
 
-    var displayName: String {
+    var displayName: String? {
         var key: String
         var value: String
 
@@ -242,6 +245,8 @@ enum WindowAction: Int {
         case .bottomRightSixth:
             key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
+        case .specified:
+            return nil
         }
 
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
@@ -354,6 +359,7 @@ enum WindowAction: Int {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
+        case .specified: return NSImage()
         }
     }
 
@@ -387,7 +393,7 @@ enum WindowAction: Int {
             return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
         case .maximizeHeight:
             return .vertical
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified:
             return .none
         }
     }
