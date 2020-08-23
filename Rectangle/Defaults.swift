@@ -33,6 +33,8 @@ class Defaults {
     static let curtainChangeSize = OptionalBoolDefault(key: "curtainChangeSize")
     static let relaunchOpensMenu = BoolDefault(key: "relaunchOpensMenu")
     static let obtainWindowOnClick = OptionalBoolDefault(key: "obtainWindowOnClick")
+    static let specifiedHeight = FloatDefault(key: "specifiedHeight", defaultValue: 1050)
+    static let specifiedWidth = FloatDefault(key: "specifiedWidth", defaultValue: 1680)
 }
 
 class BoolDefault {

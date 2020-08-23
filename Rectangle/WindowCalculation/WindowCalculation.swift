@@ -101,6 +101,7 @@ class WindowCalculationFactory {
     let moveUpCalculation = MoveUpCalculation()
     let moveDownCalculation = MoveDownCalculation()
     let almostMaximizeCalculation = AlmostMaximizeCalculation()
+    let specifiedCalculation = SpecifiedCalculation()
     
     func calculation(for action: WindowAction) -> WindowCalculation? {
         
@@ -130,8 +131,10 @@ class WindowCalculationFactory {
         case .moveUp: return moveUpCalculation
         case .moveDown: return moveDownCalculation
         case .almostMaximize: return almostMaximizeCalculation
-        default: return nil
+        case .specified: return specifiedCalculation
+        case .restore:
+            assertionFailure("Unsupported WindowAction: `\(action)`")
+            return nil
         }
     }
-    
 }
