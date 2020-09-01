@@ -49,6 +49,9 @@ class PrefsViewController: NSViewController {
     
     @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
     
+    @IBOutlet weak var showMoreButton: NSButton!
+    @IBOutlet weak var additionalShortcutsStackView: NSStackView!
+    
     // Settings
     override func awakeFromNib() {
         
@@ -91,6 +94,14 @@ class PrefsViewController: NSViewController {
         }
         
         subscribeToAllowAnyShortcutToggle()
+        
+        additionalShortcutsStackView.isHidden = true
+    }
+    
+    @IBAction func toggleShowMore(_ sender: NSButton) {
+        additionalShortcutsStackView.isHidden = !additionalShortcutsStackView.isHidden
+        showMoreButton.title = additionalShortcutsStackView.isHidden
+            ? "▼ ⋯" : "▲"
     }
     
     private func subscribeToAllowAnyShortcutToggle() {
