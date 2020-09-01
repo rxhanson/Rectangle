@@ -14,6 +14,7 @@ class SettingsViewController: NSViewController {
     
     static let allowAnyShortcutNotificationName = Notification.Name("allowAnyShortcutToggle")
     static let windowSnappingNotificationName = Notification.Name("windowSnappingToggle")
+    static let changeDefaultsNotificationName = Notification.Name("changeDefaults")
     
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var versionLabel: NSTextField!
@@ -64,6 +65,13 @@ class SettingsViewController: NSViewController {
     
     @IBAction func restoreDefaults(_ sender: Any) {
         WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
+        let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
+        let response = AlertUtil.twoButtonAlert(question: "Default Shortcuts", text: "You are currently using \(currentDefaults) defaults.\n\nSelect your defaults. ", confirmText: "Rectangle", cancelText: "Spectacle")
+        let rectangleDefaults = response == .alertFirstButtonReturn
+        if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
+            Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
+            NotificationCenter.default.post(name: Self.changeDefaultsNotificationName, object: nil)
+        }
     }
     
     override func awakeFromNib() {

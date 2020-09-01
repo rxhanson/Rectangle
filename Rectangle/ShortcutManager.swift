@@ -21,6 +21,10 @@ class ShortcutManager {
         bindShortcuts()
         
         subscribeAll(selector: #selector(windowActionTriggered))
+        
+        NotificationCenter.default.addObserver(forName: SettingsViewController.changeDefaultsNotificationName, object: nil, queue: nil) { notification in
+            self.registerDefaults()
+        }
     }
     
     public func bindShortcuts() {

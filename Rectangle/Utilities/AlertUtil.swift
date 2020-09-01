@@ -19,4 +19,13 @@ class AlertUtil {
         alert.runModal()
     }
     
+    static func twoButtonAlert(question: String, text: String, confirmText: String = "OK", cancelText: String = "Cancel") -> NSApplication.ModalResponse {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: confirmText)
+        alert.addButton(withTitle: cancelText)
+        return alert.runModal()
+    }
 }
