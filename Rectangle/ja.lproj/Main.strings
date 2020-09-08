@@ -93,7 +93,7 @@
 "9JD-tZ-7jf.title" = "Rectangleを許可";
 
 /* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
-"9XM-Zb-HEb.title" = "チェックボックスが無効になっている場合は、錠をクリックしてパスワードを入力してくさだい";
+"9XM-Zb-HEb.title" = "チェックボックスが無効になっている場合は、カギをクリックしてパスワードを入力してください";
 
 /* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
 "9ic-FL-obx.title" = "置換";
@@ -405,7 +405,7 @@
 "gtf-PD-IHm.label" = "設定";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangleには、ウィンドウの位置を制御するには許可が必要です。";
+"gyg-xl-dPn.title" = "Rectangleがウィンドウの位置を制御するには許可が必要です。";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
 "hQb-2v-fYv.title" = "スマート引用符";
@@ -444,7 +444,7 @@
 "kIP-vf-haE.title" = "サイドバーを表示";
 
 /* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
-"lgE-cR-cQ5.title" = "システム環境設定ー→セキュリティとプライバシー→プライバシー→アクセシビリティに移動してください";
+"lgE-cR-cQ5.title" = "システム環境設定→セキュリティとプライバシー→プライバシー→アクセシビリティに移動してください";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
 "ltc-mf-BHr.title" = "メニューバーのアイコンが非表示になったら、FinderからRectangleを再起動してメニューを開く。";
@@ -561,13 +561,13 @@
 "kYm-Ye-gOR.title" = "Rectangleへようこそ！";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
-"gEd-S9-Cfp.title" = "初期のショットカートと動作を選択してください。";
+"gEd-S9-Cfp.title" = "デフォルトのショートカットと動作を選択してください。";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
-"HOp-Kd-vhY.title" = "推薦";
+"HOp-Kd-vhY.title" = "推奨設定";
 
 /* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
-"kXi-dT-zSF.title" = "Spectacleのショットカートは他のショットカートと競合する可能性があります。";
+"kXi-dT-zSF.title" = "Spectacleのショートカットは、他のショートカットと競合する可能性があります。";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
 "xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
