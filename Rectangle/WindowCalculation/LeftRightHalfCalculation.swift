@@ -23,11 +23,11 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
             return nil
         case .resize:
             let screen = usableScreens.currentScreen
-            let rectResult: RectResult = calculateRepeatedRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: action)
+            let rectResult: RectResult = calculateRepeatedRect(window, lastAction: lastAction, visibleFrameOfScreen: usableScreens.visibleFrameOfCurrentScreen, action: action)
             return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
         case .none:
             let screen = usableScreens.currentScreen
-            let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: action)
+            let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: usableScreens.visibleFrameOfCurrentScreen, action: action)
             return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: action)
         }
         
@@ -74,7 +74,8 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
             }
         }
         
-        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: .leftHalf)
+        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
+        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: .leftHalf)
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .leftHalf)
     }
     
@@ -90,7 +91,8 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
             }
         }
         
-        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.visibleFrame, action: .rightHalf)
+        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
+        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: .rightHalf)
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .rightHalf)
     }
 

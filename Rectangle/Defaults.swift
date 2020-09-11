@@ -33,6 +33,10 @@ class Defaults {
     static let curtainChangeSize = OptionalBoolDefault(key: "curtainChangeSize")
     static let relaunchOpensMenu = BoolDefault(key: "relaunchOpensMenu")
     static let obtainWindowOnClick = OptionalBoolDefault(key: "obtainWindowOnClick")
+    static let screenEdgeGapTop = FloatDefault(key: "screenEdgeGapTop", defaultValue: 0)
+    static let screenEdgeGapBottom = FloatDefault(key: "screenEdgeGapBottom", defaultValue: 0)
+    static let screenEdgeGapLeft = FloatDefault(key: "screenEdgeGapLeft", defaultValue: 0)
+    static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 0)
 }
 
 class BoolDefault {

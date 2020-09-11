@@ -19,7 +19,7 @@ class WindowCalculation: Calculation {
     
     func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
         
-        let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: usableScreens.currentScreen.visibleFrame, action: action)
+        let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: usableScreens.visibleFrameOfCurrentScreen, action: action)
         
         if rectResult.rect.isNull {
             return nil

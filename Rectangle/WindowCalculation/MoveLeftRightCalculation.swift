@@ -35,7 +35,7 @@ class MoveLeftRightCalculation: WindowCalculation {
             }
         }
 
-        let visibleFrameOfScreen = screen.visibleFrame
+        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
         
         var calculatedWindowRect = window.rect
         calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
@@ -65,7 +65,7 @@ class MoveLeftRightCalculation: WindowCalculation {
             }
         }
         
-        let visibleFrameOfScreen = screen.visibleFrame
+        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
         
         var calculatedWindowRect = window.rect
         calculatedWindowRect.origin.x = visibleFrameOfScreen.maxX - window.rect.width

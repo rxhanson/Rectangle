@@ -109,14 +109,14 @@ struct UsableScreens {
     let currentScreen: NSScreen
     let adjacentScreens: AdjacentScreens?
     let frameOfCurrentScreen: CGRect
-    let visibleFrameOfCurrentScreen: CGRect
+    var visibleFrameOfCurrentScreen: CGRect
     let numScreens: Int
     
     init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens
         self.frameOfCurrentScreen = NSRectToCGRect(currentScreen.frame)
-        self.visibleFrameOfCurrentScreen =  NSRectToCGRect(currentScreen.visibleFrame)
+        self.visibleFrameOfCurrentScreen = NSRectToCGRect(currentScreen.visibleFrame)
         self.numScreens = numScreens
     }
 }
