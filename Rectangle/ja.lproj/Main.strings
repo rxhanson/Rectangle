@@ -447,7 +447,7 @@
 "lgE-cR-cQ5.title" = "システム環境設定→セキュリティとプライバシー→プライバシー→アクセシビリティに移動してください";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "メニューバーのアイコンが非表示になったら、FinderからRectangleを再起動してメニューを開く。";
+"ltc-mf-BHr.title" = "メニューバーのアイコンが非表示の場合にメニューを開くには、FinderからRectangleを再起動してください。";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "スペルチェック付き文法";
