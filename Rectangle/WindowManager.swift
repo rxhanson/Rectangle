@@ -56,7 +56,7 @@ class WindowManager {
             screens = screenDetection.detectScreens(using: frontmostWindowElement)
         }
         
-        guard let usableScreens = screens else {
+        guard var usableScreens = screens else {
             NSSound.beep()
             Logger.log("Unable to obtain usable screens")
             return
@@ -82,6 +82,9 @@ class WindowManager {
             Logger.log("Window is not snappable or usable screen is not valid")
             return
         }
+        
+        let adjustedVisibleFrame = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: usableScreens.visibleFrameOfCurrentScreen)
+        usableScreens.visibleFrameOfCurrentScreen = adjustedVisibleFrame
 
         let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect, frameOfScreen: usableScreens.frameOfCurrentScreen)
         let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
