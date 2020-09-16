@@ -16,6 +16,7 @@ class PrefsViewController: NSViewController {
     
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
+    @IBOutlet weak var centerHalfShortcutView: MASShortcutView!
     @IBOutlet weak var topHalfShortcutView: MASShortcutView!
     @IBOutlet weak var bottomHalfShortcutView: MASShortcutView!
     
@@ -31,6 +32,7 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var makeSmallerShortcutView: MASShortcutView!
     
     @IBOutlet weak var maximizeShortcutView: MASShortcutView!
+    @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
     @IBOutlet weak var maximizeHeightShortcutView: MASShortcutView!
     @IBOutlet weak var centerShortcutView: MASShortcutView!
     @IBOutlet weak var restoreShortcutView: MASShortcutView!
@@ -47,7 +49,18 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var moveUpShortcutView: MASShortcutView!
     @IBOutlet weak var moveDownShortcutView: MASShortcutView!
     
-    @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
+    @IBOutlet weak var firstFourthShortcutView: MASShortcutView!
+    @IBOutlet weak var secondFourthShortcutView: MASShortcutView!
+    @IBOutlet weak var thirdFourthShortcutView: MASShortcutView!
+    @IBOutlet weak var lastFourthShortcutView: MASShortcutView!
+
+    @IBOutlet weak var topLeftSixthShortcutView: MASShortcutView!
+    @IBOutlet weak var topCenterSixthShortcutView: MASShortcutView!
+    @IBOutlet weak var topRightSixthShortcutView: MASShortcutView!
+    @IBOutlet weak var bottomLeftSixthShortcutView: MASShortcutView!
+    @IBOutlet weak var bottomCenterSixthShortcutView: MASShortcutView!
+    @IBOutlet weak var bottomRightSixthShortcutView: MASShortcutView!
+
     
     @IBOutlet weak var showMoreButton: NSButton!
     @IBOutlet weak var additionalShortcutsStackView: NSStackView!
@@ -58,6 +71,7 @@ class PrefsViewController: NSViewController {
         actionsToViews = [
             .leftHalf: leftHalfShortcutView,
             .rightHalf: rightHalfShortcutView,
+            .centerHalf: centerHalfShortcutView,
             .topHalf: topHalfShortcutView,
             .bottomHalf: bottomHalfShortcutView,
             .topLeft: topLeftShortcutView,
@@ -67,6 +81,7 @@ class PrefsViewController: NSViewController {
             .nextDisplay: nextDisplayShortcutView,
             .previousDisplay: previousDisplayShortcutView,
             .maximize: maximizeShortcutView,
+            .almostMaximize: almostMaximizeShortcutView,
             .maximizeHeight: maximizeHeightShortcutView,
             .center: centerShortcutView,
             .larger: makeLargerShortcutView,
@@ -81,7 +96,16 @@ class PrefsViewController: NSViewController {
             .moveRight: moveRightShortcutView,
             .moveUp: moveUpShortcutView,
             .moveDown: moveDownShortcutView,
-            .almostMaximize: almostMaximizeShortcutView
+            .firstFourth: firstFourthShortcutView,
+            .secondFourth: secondFourthShortcutView,
+            .thirdFourth: thirdFourthShortcutView,
+            .lastFourth: lastFourthShortcutView,
+            .topLeftSixth: topLeftSixthShortcutView,
+            .topCenterSixth: topCenterSixthShortcutView,
+            .topRightSixth: topRightSixthShortcutView,
+            .bottomLeftSixth: bottomLeftSixthShortcutView,
+            .bottomCenterSixth: bottomCenterSixthShortcutView,
+            .bottomRightSixth: bottomRightSixthShortcutView
         ]
         
         for (action, view) in actionsToViews {

@@ -41,15 +41,29 @@ enum WindowAction: Int {
     moveRight = 26,
     moveUp = 27,
     moveDown = 28,
-    almostMaximize = 29
+    almostMaximize = 29,
+    centerHalf = 30,
+    firstFourth = 31,
+    secondFourth = 32,
+    thirdFourth = 33,
+    lastFourth = 34,
+    topLeftSixth = 35,
+    topCenterSixth = 36,
+    topRightSixth = 37,
+    bottomLeftSixth = 38,
+    bottomCenterSixth = 39,
+    bottomRightSixth = 40
     
     // Order matters here - it's used in the menu
-    static let active = [leftHalf, rightHalf, topHalf, bottomHalf,
+    static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
                          firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird,
                          maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
                          nextDisplay, previousDisplay,
-                         moveLeft, moveRight, moveUp, moveDown]
+                         moveLeft, moveRight, moveUp, moveDown,
+                         firstFourth, secondFourth, thirdFourth, lastFourth,
+                         topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth
+]
     
     func post() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
@@ -97,6 +111,17 @@ enum WindowAction: Int {
         case .moveUp: return "moveUp"
         case .moveDown: return "moveDown"
         case .almostMaximize: return "almostMaximize"
+        case .centerHalf: return "centerHalf"
+        case .firstFourth: return "firstFourth"
+        case .secondFourth: return "secondFourth"
+        case .thirdFourth: return "thirdFourth"
+        case .lastFourth: return "lastFourth"
+        case .topLeftSixth: return "topLeftSixth"
+        case .topCenterSixth: return "topCenterSixth"
+        case .topRightSixth: return "topRightSixth"
+        case .bottomLeftSixth: return "bottomLeftSixth"
+        case .bottomCenterSixth: return "bottomCenterSixth"
+        case .bottomRightSixth: return "bottomRightSixth"
         }
     }
 
@@ -183,6 +208,39 @@ enum WindowAction: Int {
         case .almostMaximize:
             key = "e57-QJ-6bL.title"
             value = "Almost Maximize"
+        case .centerHalf:
+            key = ""
+            value = "Center Half"
+        case .firstFourth:
+            key = ""
+            value = "First Fourth"
+        case .secondFourth:
+            key = ""
+            value = "Second Fourth"
+        case .thirdFourth:
+            key = ""
+            value = "Third Fourth"
+        case .lastFourth:
+            key = ""
+            value = "Last Fourth"
+        case .topLeftSixth:
+            key = ""
+            value = "Top Left Sixth"
+        case .topCenterSixth:
+            key = ""
+            value = "Top Center Sixth"
+        case .topRightSixth:
+            key = ""
+            value = "Top Right Sixth"
+        case .bottomLeftSixth:
+            key = ""
+            value = "Bottom Left Sixth"
+        case .bottomCenterSixth:
+            key = ""
+            value = "Bottom Center Sixth"
+        case .bottomRightSixth:
+            key = ""
+            value = "Bottom Right Sixth"
         }
         
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
@@ -283,6 +341,17 @@ enum WindowAction: Int {
         case .moveUp: return NSImage(imageLiteralResourceName: "moveUpTemplate")
         case .moveDown: return NSImage(imageLiteralResourceName: "moveDownTemplate")
         case .almostMaximize: return NSImage(imageLiteralResourceName: "almostMaximizeTemplate")
+        case .centerHalf: return NSImage(imageLiteralResourceName: "halfWidthCenterTemplate")
+        case .firstFourth: return NSImage(imageLiteralResourceName: "leftFourthTemplate")
+        case .secondFourth: return NSImage(imageLiteralResourceName: "centerLeftFourthTemplate")
+        case .thirdFourth: return NSImage(imageLiteralResourceName: "centerRightFourthTemplate")
+        case .lastFourth: return NSImage(imageLiteralResourceName: "rightFourthTemplate")
+        case .topLeftSixth: return NSImage(imageLiteralResourceName: "topLeftSixthTemplate")
+        case .topCenterSixth: return NSImage(imageLiteralResourceName: "topCenterSixthTemplate")
+        case .topRightSixth: return NSImage(imageLiteralResourceName: "topRightSixthTemplate")
+        case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
+        case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
+        case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
         }
     }
     
