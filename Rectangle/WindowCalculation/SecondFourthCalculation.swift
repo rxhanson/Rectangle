@@ -55,8 +55,8 @@ class SecondFourthCalculation: WindowCalculation {
     
     func fourthRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         return isLandscape(visibleFrameOfScreen)
-            ? RectResult(landscapeFourth(visibleFrameOfScreen), subAction: .leftThird)
-            : RectResult(portraitFourth(visibleFrameOfScreen), subAction: .topThird)
+            ? RectResult(landscapeFourth(visibleFrameOfScreen), subAction: .centerLeftFourth)
+            : RectResult(portraitFourth(visibleFrameOfScreen), subAction: .centerTopFourth)
     }
     
     private func landscapeFourth(_ visibleFrameOfScreen: CGRect) -> CGRect {

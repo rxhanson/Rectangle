@@ -9,54 +9,44 @@
 import Foundation
 
 class FirstFourthCalculation: WindowCalculation {
-    
-//    private var centerThirdCalculation: CenterThirdCalculation?
-//    private var lastThirdCalculation: LastThirdCalculation?
-//
-//    init(repeatable: Bool = true) {
-//        if repeatable && Defaults.subsequentExecutionMode.value != .none {
-//            centerThirdCalculation = CenterThirdCalculation()
-//            lastThirdCalculation = LastThirdCalculation(repeatable: false)
-//        }
-//    }
-    
+
+    private var secondFourthCalculation = SecondFourthCalculation()
+    private var thirdFourthCalculation = ThirdFourthCalculation()
+    private var lastFourthCalculation = LastFourthCalculation()
+
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         guard Defaults.subsequentExecutionMode.value != .none,
-            let last = lastAction, let lastSubAction = last.subAction else {
-                return firstFourthRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            action == .firstFourth,
+            let last = lastAction,
+            last.action == .firstFourth,
+            let lastSubAction = last.subAction
+        else {
+            return firstFourthRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
         }
         
-//        var calculation: WindowCalculation?
-//
-//        if last.action == .firstThird {
-//            switch lastSubAction {
-//            case .topThird, .leftThird:
-//                calculation = centerThirdCalculation
-//            case .centerHorizontalThird, .centerVerticalThird:
-//                calculation = lastThirdCalculation
-//            default:
-//                break
-//            }
-//        } else if last.action == .lastThird {
-//            switch lastSubAction {
-//            case .topThird, .leftThird:
-//                calculation = centerThirdCalculation
-//            default:
-//                break
-//            }
-//        }
-//
-//        if let calculation = calculation {
-//            return calculation.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
-//        }
+        var calculation: WindowCalculation?
+        switch lastSubAction {
+        case .topFourth, .leftFourth:
+            calculation = secondFourthCalculation
+        case .centerTopFourth, .centerLeftFourth:
+            calculation = thirdFourthCalculation
+        case .centerBottomFourth, .centerRightFourth:
+            calculation = lastFourthCalculation
+        default:
+            break
+        }
+
+        if let calculation = calculation {
+            return calculation.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        }
         
         return firstFourthRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
     }
     
     func firstFourthRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         return isLandscape(visibleFrameOfScreen)
-            ? RectResult(leftFourth(visibleFrameOfScreen), subAction: .leftThird)
-            : RectResult(topFourth(visibleFrameOfScreen), subAction: .topThird)
+            ? RectResult(leftFourth(visibleFrameOfScreen), subAction: .leftFourth)
+            : RectResult(topFourth(visibleFrameOfScreen), subAction: .topFourth)
     }
     
     private func leftFourth(_ visibleFrameOfScreen: CGRect) -> CGRect {
