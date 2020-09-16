@@ -63,6 +63,17 @@
 		98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98987AA22391890300BE72C4 /* LogViewer.storyboard */; };
 		98987AA52391890400BE72C4 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98987AA32391890400BE72C4 /* LogViewer.swift */; };
 		989DA30E243FC0DF008C7AA4 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */; };
+		98A009AB2512491300CFBF0C /* CenterHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009AA2512491300CFBF0C /* CenterHalfCalculation.swift */; };
+		98A009AD2512498000CFBF0C /* FirstFourthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009AC2512498000CFBF0C /* FirstFourthCalculation.swift */; };
+		98A009AF2512517900CFBF0C /* SecondFourthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009AE2512517900CFBF0C /* SecondFourthCalculation.swift */; };
+		98A009B1251252C900CFBF0C /* ThirdFourthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009B0251252C900CFBF0C /* ThirdFourthCalculation.swift */; };
+		98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009B22512536800CFBF0C /* LastFourthCalculation.swift */; };
+		98A009B52512537800CFBF0C /* TopLeftSixthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009B42512537800CFBF0C /* TopLeftSixthCalculation.swift */; };
+		98A009B72512538200CFBF0C /* TopCenterSixthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009B62512538200CFBF0C /* TopCenterSixthCalculation.swift */; };
+		98A009B92512538D00CFBF0C /* TopRightSixthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009B82512538D00CFBF0C /* TopRightSixthCalculation.swift */; };
+		98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009BA2512539900CFBF0C /* BottomLeftSixthCalculation.swift */; };
+		98A009BD251253A000CFBF0C /* BottomCenterSixthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009BC251253A000CFBF0C /* BottomCenterSixthCalculation.swift */; };
+		98A009BF251253AB00CFBF0C /* BottomRightSixthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009BE251253AB00CFBF0C /* BottomRightSixthCalculation.swift */; };
 		98B3559823CE025700E410E0 /* CenteringFixedSizedWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98B3559723CE025700E410E0 /* CenteringFixedSizedWindowMover.swift */; };
 		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
 		98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */; };
@@ -190,6 +201,17 @@
 		98987AA22391890300BE72C4 /* LogViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LogViewer.storyboard; sourceTree = "<group>"; };
 		98987AA32391890400BE72C4 /* LogViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		98A009AA2512491300CFBF0C /* CenterHalfCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CenterHalfCalculation.swift; sourceTree = "<group>"; };
+		98A009AC2512498000CFBF0C /* FirstFourthCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstFourthCalculation.swift; sourceTree = "<group>"; };
+		98A009AE2512517900CFBF0C /* SecondFourthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondFourthCalculation.swift; sourceTree = "<group>"; };
+		98A009B0251252C900CFBF0C /* ThirdFourthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdFourthCalculation.swift; sourceTree = "<group>"; };
+		98A009B22512536800CFBF0C /* LastFourthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFourthCalculation.swift; sourceTree = "<group>"; };
+		98A009B42512537800CFBF0C /* TopLeftSixthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftSixthCalculation.swift; sourceTree = "<group>"; };
+		98A009B62512538200CFBF0C /* TopCenterSixthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopCenterSixthCalculation.swift; sourceTree = "<group>"; };
+		98A009B82512538D00CFBF0C /* TopRightSixthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRightSixthCalculation.swift; sourceTree = "<group>"; };
+		98A009BA2512539900CFBF0C /* BottomLeftSixthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixthCalculation.swift; sourceTree = "<group>"; };
+		98A009BC251253A000CFBF0C /* BottomCenterSixthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomCenterSixthCalculation.swift; sourceTree = "<group>"; };
+		98A009BE251253AB00CFBF0C /* BottomRightSixthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomRightSixthCalculation.swift; sourceTree = "<group>"; };
 		98B3559723CE025700E410E0 /* CenteringFixedSizedWindowMover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenteringFixedSizedWindowMover.swift; sourceTree = "<group>"; };
 		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
 		98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevDisplayCalculation.swift; sourceTree = "<group>"; };
@@ -291,6 +313,17 @@
 		982140E922B7DA3100ABFB3F /* WindowCalculation */ = {
 			isa = PBXGroup;
 			children = (
+				98A009AA2512491300CFBF0C /* CenterHalfCalculation.swift */,
+				98A009AC2512498000CFBF0C /* FirstFourthCalculation.swift */,
+				98A009AE2512517900CFBF0C /* SecondFourthCalculation.swift */,
+				98A009B0251252C900CFBF0C /* ThirdFourthCalculation.swift */,
+				98A009B22512536800CFBF0C /* LastFourthCalculation.swift */,
+				98A009B42512537800CFBF0C /* TopLeftSixthCalculation.swift */,
+				98A009B62512538200CFBF0C /* TopCenterSixthCalculation.swift */,
+				98A009B82512538D00CFBF0C /* TopRightSixthCalculation.swift */,
+				98A009BA2512539900CFBF0C /* BottomLeftSixthCalculation.swift */,
+				98A009BC251253A000CFBF0C /* BottomCenterSixthCalculation.swift */,
+				98A009BE251253AB00CFBF0C /* BottomRightSixthCalculation.swift */,
 				9824704822B189250037B409 /* WindowCalculation.swift */,
 				9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */,
 				9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */,
@@ -722,7 +755,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
+				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
+				98A009AB2512491300CFBF0C /* CenterHalfCalculation.swift in Sources */,
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
 				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
@@ -732,8 +768,10 @@
 				98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */,
 				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
 				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
+				98A009BD251253A000CFBF0C /* BottomCenterSixthCalculation.swift in Sources */,
 				98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */,
 				0B3E1716250A61FB00D016C0 /* ScreenEdgeGap.swift in Sources */,
+				98A009AF2512517900CFBF0C /* SecondFourthCalculation.swift in Sources */,
 				9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
@@ -745,12 +783,14 @@
 				98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */,
 				985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */,
 				988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */,
+				98A009B1251252C900CFBF0C /* ThirdFourthCalculation.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
 				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,
 				9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */,
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
 				98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
+				98A009B92512538D00CFBF0C /* TopRightSixthCalculation.swift in Sources */,
 				98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
@@ -765,9 +805,13 @@
 				988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */,
 				98C6DEF023CE191700CC0C1E /* GapCalculation.swift in Sources */,
 				98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */,
+				98A009AD2512498000CFBF0C /* FirstFourthCalculation.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
+				98A009BF251253AB00CFBF0C /* BottomRightSixthCalculation.swift in Sources */,
+				98A009B52512537800CFBF0C /* TopLeftSixthCalculation.swift in Sources */,
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
+				98A009B72512538200CFBF0C /* TopCenterSixthCalculation.swift in Sources */,
 				9821403322B38A1B00ABFB3F /* UpperLeftCalculation.swift in Sources */,
 				98987AA52391890400BE72C4 /* LogViewer.swift in Sources */,
 				9824704C22B189250037B409 /* WindowMover.swift in Sources */,

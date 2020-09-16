@@ -81,6 +81,7 @@ class WindowCalculationFactory {
     
     let leftHalfCalculation = LeftRightHalfCalculation()
     let rightHalfCalculation = LeftRightHalfCalculation()
+    let centerHalfCalculation = CenterHalfCalculation()
     let bottomHalfCalculation = BottomHalfCalculation()
     let topHalfCalculation = TopHalfCalculation()
     let centerCalculation = CenterCalculation()
@@ -101,6 +102,16 @@ class WindowCalculationFactory {
     let moveUpCalculation = MoveUpCalculation()
     let moveDownCalculation = MoveDownCalculation()
     let almostMaximizeCalculation = AlmostMaximizeCalculation()
+    let firstFourthCalculation = FirstFourthCalculation()
+    let secondFourthCalculation = SecondFourthCalculation()
+    let thirdFourthCalculation = ThirdFourthCalculation()
+    let lastFourthCalculation = LastFourthCalculation()
+    let topLeftSixthCalculation = TopLeftSixthCalculation()
+    let topCenterSixthCalculation = TopCenterSixthCalculation()
+    let topRightSixthCalculation = TopRightSixthCalculation()
+    let bottomLeftSixthCalculation = BottomLeftSixthCalculation()
+    let bottomCenterSixthCalculation = BottomCenterSixthCalculation()
+    let bottomRightSixthCalculation = BottomRightSixthCalculation()
     
     func calculation(for action: WindowAction) -> WindowCalculation? {
         
@@ -130,7 +141,18 @@ class WindowCalculationFactory {
         case .moveUp: return moveUpCalculation
         case .moveDown: return moveDownCalculation
         case .almostMaximize: return almostMaximizeCalculation
-        default: return nil
+        case .restore: return nil
+        case .centerHalf: return centerHalfCalculation
+        case .firstFourth: return firstFourthCalculation
+        case .secondFourth: return secondFourthCalculation
+        case .thirdFourth: return thirdFourthCalculation
+        case .lastFourth: return lastFourthCalculation
+        case .topLeftSixth: return topLeftSixthCalculation
+        case .topCenterSixth: return topCenterSixthCalculation
+        case .topRightSixth: return topRightSixthCalculation
+        case .bottomLeftSixth: return bottomLeftSixthCalculation
+        case .bottomCenterSixth: return bottomCenterSixthCalculation
+        case .bottomRightSixth: return bottomRightSixthCalculation
         }
     }
     
