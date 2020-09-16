@@ -68,8 +68,9 @@ class BottomRightSixthCalculation: WindowCalculation {
     
     private func portraitSixth(_ visibleFrameOfScreen: CGRect) -> CGRect {
         var rect = visibleFrameOfScreen
-        //            rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
-        //            rect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.height - (rect.height * 2.0)
+        rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
+        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
+        rect.origin.x = visibleFrameOfScreen.origin.x + (rect.width * 2)
         return rect
     }
 }
