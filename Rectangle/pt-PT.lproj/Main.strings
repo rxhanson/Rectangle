@@ -39,7 +39,7 @@
 "3Om-Ey-2VK.title" = "Usar Padrão";
 
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
-"3rS-ZA-NoH.title" = "Discurso";
+"3rS-ZA-NoH.title" = "Fala";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
 "3zd-xE-oWl.title" = "Primeiros Dois Terços";
@@ -540,7 +540,7 @@
 "xQD-1f-W4t.title" = "Usar Todos";
 
 /* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
-"xrE-MZ-jX0.title" = "Discurso";
+"xrE-MZ-jX0.title" = "Fala";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
 "yvN-PE-bxn.title" = "Sair do Rectangle";
