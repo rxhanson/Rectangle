@@ -8,14 +8,26 @@
 
 import Foundation
 
-class BottomRightSixthCalculation: WindowCalculation, OrientationAware {
+class BottomRightSixthCalculation: WindowCalculation, OrientationAware, SixthsRepeated {
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         guard Defaults.subsequentExecutionMode.value != .none,
-            let last = lastAction, let lastSubAction = last.subAction else {
+            let last = lastAction,
+            let lastSubAction = last.subAction
+        else {
             return orientationBasedRect(visibleFrameOfScreen)
         }
         
+        if last.action != .bottomRightSixth
+            && lastSubAction != .bottomRightSixthLandscape
+            && lastSubAction != .bottomRightSixthPortrait {
+            return orientationBasedRect(visibleFrameOfScreen)
+        }
+        
+        if let calculation = self.nextCalculation(subAction: lastSubAction, direction: .left) {
+            return calculation(visibleFrameOfScreen)
+        }
+
         return orientationBasedRect(visibleFrameOfScreen)
     }
     
