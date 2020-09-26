@@ -8,67 +8,28 @@
 
 import Foundation
 
-class BottomLeftSixthCalculation: WindowCalculation {
-        //    private var centerThirdCalculation: CenterThirdCalculation?
-        //    private var lastThirdCalculation: LastThirdCalculation?
-        //
-        //    init(repeatable: Bool = true) {
-        //        if repeatable && Defaults.subsequentExecutionMode.value != .none {
-        //            centerThirdCalculation = CenterThirdCalculation()
-        //            lastThirdCalculation = LastThirdCalculation(repeatable: false)
-        //        }
-        //    }
-        
-        override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-            guard Defaults.subsequentExecutionMode.value != .none,
-                let last = lastAction, let lastSubAction = last.subAction else {
-                    return sixthRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
-            }
-            
-            //        var calculation: WindowCalculation?
-            //
-            //        if last.action == .firstThird {
-            //            switch lastSubAction {
-            //            case .topThird, .leftThird:
-            //                calculation = centerThirdCalculation
-            //            case .centerHorizontalThird, .centerVerticalThird:
-            //                calculation = lastThirdCalculation
-            //            default:
-            //                break
-            //            }
-            //        } else if last.action == .lastThird {
-            //            switch lastSubAction {
-            //            case .topThird, .leftThird:
-            //                calculation = centerThirdCalculation
-            //            default:
-            //                break
-            //            }
-            //        }
-            //
-            //        if let calculation = calculation {
-            //            return calculation.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
-            //        }
-            
-            return sixthRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+class BottomLeftSixthCalculation: WindowCalculation, OrientationAware {
+    
+    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+        guard Defaults.subsequentExecutionMode.value != .none,
+              let last = lastAction, let lastSubAction = last.subAction else {
+            return orientationBasedRect(visibleFrameOfScreen)
         }
         
-        func sixthRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-            return isLandscape(visibleFrameOfScreen)
-                ? RectResult(landscapeSixth(visibleFrameOfScreen), subAction: .leftThird)
-                : RectResult(portraitSixth(visibleFrameOfScreen), subAction: .topThird)
-        }
-        
-        private func landscapeSixth(_ visibleFrameOfScreen: CGRect) -> CGRect {
-            var rect = visibleFrameOfScreen
-            rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
-            rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-            return rect
-        }
-        
-        private func portraitSixth(_ visibleFrameOfScreen: CGRect) -> CGRect {
-            var rect = visibleFrameOfScreen
-            rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
-            rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-            return rect
-        }
+        return orientationBasedRect(visibleFrameOfScreen)
     }
+    
+    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
+        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
+        return RectResult(rect, subAction: .bottomLeftSixthLandscape)
+    }
+    
+    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
+        rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
+        return RectResult(rect, subAction: .bottomLeftSixthPortrait)
+    }
+}

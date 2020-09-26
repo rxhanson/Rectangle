@@ -409,8 +409,22 @@ enum SubWindowAction {
     topThreeFourths,
     
     centerVerticalHalf,
-    centerHorizontalHalf
+    centerHorizontalHalf,
     
+    topLeftSixthLandscape,
+    topCenterSixthLandscape,
+    topRightSixthLandscape,
+    bottomLeftSixthLandscape,
+    bottomCenterSixthLandscape,
+    bottomRightSixthLandscape,
+    
+    topLeftSixthPortrait,
+    topRightSixthPortrait,
+    leftCenterSixthPortrait,
+    rightCenterSixthPortrait,
+    bottomLeftSixthPortrait,
+    bottomRightSixthPortrait
+
     var gapSharedEdge: Edge {
         switch self {
         case .leftThird: return .right
@@ -437,7 +451,18 @@ enum SubWindowAction {
         case .topThreeFourths: return .bottom
         case .centerVerticalHalf: return [.right, .left]
         case .centerHorizontalHalf: return [.top, .bottom]
-            
+        case .topLeftSixthLandscape: return [.right, .bottom]
+        case .topCenterSixthLandscape: return [.right, .left, .bottom]
+        case .topRightSixthLandscape: return [.left, .bottom]
+        case .bottomLeftSixthLandscape: return [.top, .right]
+        case .bottomCenterSixthLandscape: return [.left, .right, .top]
+        case .bottomRightSixthLandscape: return [.left, .top]
+        case .topLeftSixthPortrait: return [.right, .bottom]
+        case .topRightSixthPortrait: return [.left, .bottom]
+        case .leftCenterSixthPortrait: return [.top, .bottom, .right]
+        case .rightCenterSixthPortrait: return [.left, .top, .bottom]
+        case .bottomLeftSixthPortrait: return [.top, .right]
+        case .bottomRightSixthPortrait: return [.left, .top]
         }
     }
 }
