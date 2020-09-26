@@ -11,7 +11,6 @@ import Foundation
 class ThirdFourthCalculation: WindowCalculation, OrientationAware {
     
     let threeFourthsCalculation = LeftOrTopThreeFourthsCalculation()
-    let centerHalfCalculation = CenterHalfCalculation()
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         guard Defaults.subsequentExecutionMode.value != .none,
@@ -29,9 +28,9 @@ class ThirdFourthCalculation: WindowCalculation, OrientationAware {
         case .centerBottomFourth:
             calc = threeFourthsCalculation.portraitRect
         case .leftThreeFourths:
-            calc = centerHalfCalculation.landscapeRect
+            calc = WindowCalculationFactory.centerHalfCalculation.landscapeRect
         case .topThreeFourths:
-            calc = centerHalfCalculation.portraitRect
+            calc = WindowCalculationFactory.centerHalfCalculation.portraitRect
         default:
             calc = orientationBasedRect
         }
