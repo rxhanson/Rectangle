@@ -401,7 +401,15 @@ enum SubWindowAction {
     topFourth,
     centerTopFourth,
     centerBottomFourth,
-    bottomFourth
+    bottomFourth,
+    
+    rightThreeFourths,
+    bottomThreeFourths,
+    leftThreeFourths,
+    topThreeFourths,
+    
+    centerVerticalHalf,
+    centerHorizontalHalf
     
     var gapSharedEdge: Edge {
         switch self {
@@ -423,6 +431,13 @@ enum SubWindowAction {
         case .centerTopFourth: return [.top, .bottom]
         case .centerBottomFourth: return [.top, .bottom]
         case .bottomFourth: return .top
+        case .rightThreeFourths: return .left
+        case .bottomThreeFourths: return .top
+        case .leftThreeFourths: return .right
+        case .topThreeFourths: return .bottom
+        case .centerVerticalHalf: return [.right, .left]
+        case .centerHorizontalHalf: return [.top, .bottom]
+            
         }
     }
 }

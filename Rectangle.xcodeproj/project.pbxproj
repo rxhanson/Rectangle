@@ -46,6 +46,7 @@
 		9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704922B189250037B409 /* QuantizedWindowMover.swift */; };
 		9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704A22B189250037B409 /* BestEffortWindowMover.swift */; };
 		9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */; };
+		9851A5C3251BEBA300ECF78C /* OrientationAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9851A5C2251BEBA300ECF78C /* OrientationAware.swift */; };
 		985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */; };
 		985B9BF822BB6F5100A2E8F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 985B9BF622BB6F5000A2E8F0 /* MessageView.xib */; };
 		985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF722BB6F5000A2E8F0 /* MessageView.swift */; };
@@ -164,6 +165,7 @@
 		9824704922B189250037B409 /* QuantizedWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuantizedWindowMover.swift; sourceTree = "<group>"; };
 		9824704A22B189250037B409 /* BestEffortWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BestEffortWindowMover.swift; sourceTree = "<group>"; };
 		9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftRightHalfCalculation.swift; sourceTree = "<group>"; };
+		9851A5C2251BEBA300ECF78C /* OrientationAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationAware.swift; sourceTree = "<group>"; };
 		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
 		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		985B9BF722BB6F5000A2E8F0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
@@ -348,6 +350,7 @@
 				98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */,
 				98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */,
 				98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */,
+				9851A5C2251BEBA300ECF78C /* OrientationAware.swift */,
 			);
 			path = WindowCalculation;
 			sourceTree = "<group>";
@@ -558,7 +561,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Ryan Hanson";
 				TargetAttributes = {
 					9821403B22B3EBD900ABFB3F = {
@@ -800,6 +803,7 @@
 				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
 				9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */,
 				98910B42231476B30066EC23 /* PrefsViewController.swift in Sources */,
+				9851A5C3251BEBA300ECF78C /* OrientationAware.swift in Sources */,
 				9824702C22AFA22E0037B409 /* AccessibilityWindowController.swift in Sources */,
 				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
 				988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */,
@@ -968,6 +972,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1030,6 +1035,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

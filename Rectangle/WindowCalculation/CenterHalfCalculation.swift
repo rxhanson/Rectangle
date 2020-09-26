@@ -8,22 +8,41 @@
 
 import Foundation
 
-class CenterHalfCalculation: WindowCalculation {
+class CenterHalfCalculation: WindowCalculation, OrientationAware {
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
 
-        var calculatedWindowRect = visibleFrameOfScreen
+        return orientationBasedRect(visibleFrameOfScreen)
+    }
+    
+    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
         
         // Resize
-        calculatedWindowRect.size.height = visibleFrameOfScreen.height
-        calculatedWindowRect.size.width = round(visibleFrameOfScreen.width / 2.0)
+        rect.size.height = visibleFrameOfScreen.height
+        rect.size.width = round(visibleFrameOfScreen.width / 2.0)
         
         // Center
-        calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
-        calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - calculatedWindowRect.height) / 2.0) + visibleFrameOfScreen.minY
+        rect.origin.x = round((visibleFrameOfScreen.width - rect.width) / 2.0) + visibleFrameOfScreen.minX
+        rect.origin.y = round((visibleFrameOfScreen.height - rect.height) / 2.0) + visibleFrameOfScreen.minY
         
-        return RectResult(calculatedWindowRect)
+        return RectResult(rect, subAction: .centerVerticalHalf)
     }
+
+    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        
+        // Resize
+        rect.size.width = visibleFrameOfScreen.width
+        rect.size.height = round(visibleFrameOfScreen.height / 2.0)
+        
+        // Center
+        rect.origin.x = round((visibleFrameOfScreen.width - rect.width) / 2.0) + visibleFrameOfScreen.minX
+        rect.origin.y = round((visibleFrameOfScreen.height - rect.height) / 2.0) + visibleFrameOfScreen.minY
+        
+        return RectResult(rect, subAction: .centerHorizontalHalf)
+    }
+
     
 }
 
