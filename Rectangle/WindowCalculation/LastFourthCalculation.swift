@@ -9,18 +9,6 @@
 import Foundation
 
 class LastFourthCalculation: WindowCalculation, OrientationAware {
-
-    private var firstFourthCalculation: FirstFourthCalculation?
-    private var secondFourthCalculation: SecondFourthCalculation?
-    private var thirdFourthCalculation: ThirdFourthCalculation?
-    
-    init(repeatable: Bool = true) {
-        if repeatable && Defaults.subsequentExecutionMode.value != .none {
-            firstFourthCalculation = FirstFourthCalculation(repeatable: false)
-            secondFourthCalculation = SecondFourthCalculation()
-            thirdFourthCalculation = ThirdFourthCalculation()
-        }
-    }
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         guard Defaults.subsequentExecutionMode.value != .none,
@@ -32,18 +20,18 @@ class LastFourthCalculation: WindowCalculation, OrientationAware {
         if last.action == .lastFourth {
             switch lastSubAction {
             case .bottomFourth, .rightFourth:
-                calculation = thirdFourthCalculation
+                calculation = WindowCalculationFactory.thirdFourthCalculation
             case .centerBottomFourth, .centerRightFourth:
-                calculation = secondFourthCalculation
+                calculation = WindowCalculationFactory.secondFourthCalculation
             case .centerTopFourth, .centerLeftFourth:
-                calculation = firstFourthCalculation
+                calculation = WindowCalculationFactory.firstFourthCalculation
             default:
                 break
             }
         } else if last.action == .firstFourth {
             switch lastSubAction {
             case .bottomFourth, .rightFourth:
-                calculation = thirdFourthCalculation
+                calculation = WindowCalculationFactory.thirdFourthCalculation
             default:
                 break
             }

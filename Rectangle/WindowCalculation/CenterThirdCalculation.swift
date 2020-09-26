@@ -8,31 +8,28 @@
 
 import Foundation
 
-class CenterThirdCalculation: WindowCalculation {
+class CenterThirdCalculation: WindowCalculation, OrientationAware {
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-        
-        return isLandscape(visibleFrameOfScreen)
-            ? RectResult(centeredVerticalThird(visibleFrameOfScreen), subAction: .centerVerticalThird)
-            : RectResult(centeredHorizontal(visibleFrameOfScreen), subAction: .centerHorizontalThird)
+        return orientationBasedRect(visibleFrameOfScreen)
     }
     
-    private func centeredVerticalThird(_ visibleFrameOfScreen: CGRect) -> CGRect {
-        var centerThirdRect = visibleFrameOfScreen
-        centerThirdRect.origin.x = visibleFrameOfScreen.minX + floor(visibleFrameOfScreen.width / 3.0)
-        centerThirdRect.origin.y = visibleFrameOfScreen.minY
-        centerThirdRect.size.width = visibleFrameOfScreen.width / 3.0
-        centerThirdRect.size.height = visibleFrameOfScreen.height
-        return centerThirdRect
+    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.origin.x = visibleFrameOfScreen.minX + floor(visibleFrameOfScreen.width / 3.0)
+        rect.origin.y = visibleFrameOfScreen.minY
+        rect.size.width = visibleFrameOfScreen.width / 3.0
+        rect.size.height = visibleFrameOfScreen.height
+        return RectResult(rect, subAction: .centerVerticalThird)
     }
     
-    private func centeredHorizontal(_ visibleFrameOfScreen: CGRect) -> CGRect {
-        var centerThirdRect = visibleFrameOfScreen
-        centerThirdRect.origin.x = visibleFrameOfScreen.minX
-        centerThirdRect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 3.0)
-        centerThirdRect.size.width = visibleFrameOfScreen.width
-        centerThirdRect.size.height = visibleFrameOfScreen.height / 3.0
-        return centerThirdRect
+    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.origin.x = visibleFrameOfScreen.minX
+        rect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 3.0)
+        rect.size.width = visibleFrameOfScreen.width
+        rect.size.height = visibleFrameOfScreen.height / 3.0
+        return RectResult(rect, subAction: .centerHorizontalThird)
     }
 }
 

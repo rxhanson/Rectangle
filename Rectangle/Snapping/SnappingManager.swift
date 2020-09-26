@@ -10,7 +10,6 @@ import Cocoa
 
 class SnappingManager {
 
-    let windowCalculationFactory: WindowCalculationFactory
     let windowHistory: WindowHistory
     
     var eventMonitor: EventMonitor?
@@ -45,8 +44,7 @@ class SnappingManager {
         .bottomRightShort: .bottomHalf
     ]
     
-    init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
-        self.windowCalculationFactory = windowCalculationFactory
+    init(windowHistory: WindowHistory) {
         self.windowHistory = windowHistory
         
         if Defaults.windowSnapping.enabled != false {
@@ -199,7 +197,7 @@ class SnappingManager {
     }
     
     func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
-        if let calculation = windowCalculationFactory.calculation(for: hotSpot.action) {
+        if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
             let rectResult = calculation.calculateRect(currentWindow, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
             

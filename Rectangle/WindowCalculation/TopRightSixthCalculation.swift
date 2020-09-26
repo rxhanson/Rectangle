@@ -10,6 +10,13 @@ import Foundation
 
 class TopRightSixthCalculation: WindowCalculation, OrientationAware {
     
+    private var topLeftCalculation: TopLeftSixthCalculation?
+    private var topCenterCalculation: TopCenterSixthCalculation?
+    private var topRightCalculation: TopRightSixthCalculation?
+    private var bottomLeftCalculation: BottomLeftSixthCalculation?
+    private var bottomCenterCalculation: BottomCenterSixthCalculation?
+    private var bottomRightCalculation: BottomRightSixthCalculation?
+    
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
         guard Defaults.subsequentExecutionMode.value != .none,
               let last = lastAction, let lastSubAction = last.subAction else {

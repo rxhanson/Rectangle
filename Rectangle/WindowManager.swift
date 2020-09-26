@@ -13,12 +13,10 @@ class WindowManager {
     private let screenDetection = ScreenDetection()
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
-    private let windowCalculationFactory: WindowCalculationFactory
     private let windowHistory: WindowHistory
     private let gapSize = Defaults.gapSize.value
     
-    init(windowCalculationFactory: WindowCalculationFactory, windowHistory: WindowHistory) {
-        self.windowCalculationFactory = windowCalculationFactory
+    init(windowHistory: WindowHistory) {
         self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
@@ -89,7 +87,7 @@ class WindowManager {
         let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect, frameOfScreen: usableScreens.frameOfCurrentScreen)
         let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
         
-        let windowCalculation = windowCalculationFactory.calculation(for: action)
+        let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
         
         guard var calcResult = windowCalculation?.calculate(currentWindow, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
             NSSound.beep()

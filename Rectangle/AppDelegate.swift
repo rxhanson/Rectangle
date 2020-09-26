@@ -61,10 +61,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
-        self.windowManager = WindowManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
+        self.windowManager = WindowManager(windowHistory: windowHistory)
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
-        self.snappingManager = SnappingManager(windowCalculationFactory: windowCalculationFactory, windowHistory: windowHistory)
+        self.snappingManager = SnappingManager(windowHistory: windowHistory)
     }
     
     func checkForConflictingApps() {
