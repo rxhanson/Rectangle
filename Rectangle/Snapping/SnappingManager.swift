@@ -23,7 +23,6 @@ class SnappingManager {
     
     let screenDetection = ScreenDetection()
     
-    private let gapSize = Defaults.gapSize.value
     private let marginTop = Defaults.snapEdgeMarginTop.value
     private let marginBottom = Defaults.snapEdgeMarginBottom.value
     private let marginLeft = Defaults.snapEdgeMarginLeft.value
@@ -201,10 +200,10 @@ class SnappingManager {
             
             let rectResult = calculation.calculateRect(currentWindow, lastAction: nil, visibleFrameOfScreen: hotSpot.screen.visibleFrame, action: hotSpot.action)
             
-            if gapSize > 0, hotSpot.action.gapsApplicable {
+            if Defaults.gapSize.value > 0, hotSpot.action.gapsApplicable {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
 
-                return GapCalculation.applyGaps(rectResult.rect, sharedEdges: gapSharedEdges, gapSize: gapSize)
+                return GapCalculation.applyGaps(rectResult.rect, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
             }
             
             return rectResult.rect

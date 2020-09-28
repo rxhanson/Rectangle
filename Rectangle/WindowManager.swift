@@ -14,7 +14,6 @@ class WindowManager {
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowHistory: WindowHistory
-    private let gapSize = Defaults.gapSize.value
     
     init(windowHistory: WindowHistory) {
         self.windowHistory = windowHistory
@@ -95,10 +94,10 @@ class WindowManager {
             return
         }
         
-        if gapSize > 0, calcResult.resultingAction.gapsApplicable {
+        if Defaults.gapSize.value > 0, calcResult.resultingAction.gapsApplicable {
             let gapSharedEdges = calcResult.resultingSubAction?.gapSharedEdge ?? calcResult.resultingAction.gapSharedEdge
             
-            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: gapSharedEdges, gapSize: gapSize)
+            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
         }
 
         if currentNormalizedRect.equalTo(calcResult.rect) {
