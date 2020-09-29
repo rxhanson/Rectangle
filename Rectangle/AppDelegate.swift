@@ -35,6 +35,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var quitMenuItem: NSMenuItem!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
@@ -154,6 +156,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if isRunning {
             let killNotification = Notification.Name("killLauncher")
             DistributedNotificationCenter.default().post(name: killNotification, object: Bundle.main.bundleIdentifier!)
+        }
+        if !Defaults.SUHasLaunchedBefore {
+            Defaults.launchOnLogin.enabled = true
         }
         
         // Even if we are already set up to launch on login, setting it again since macOS can be buggy with this type of launch on login.
