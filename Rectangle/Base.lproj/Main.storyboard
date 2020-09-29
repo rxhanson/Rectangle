@@ -3371,14 +3371,14 @@ DQ
         <scene sceneID="fYD-GK-ZAf">
             <objects>
                 <viewController storyboardIdentifier="WelcomeViewController" id="suu-55-jFR" customClass="WelcomeViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="BAr-aA-3ku">
+                    <view key="view" misplaced="YES" id="BAr-aA-3ku">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="306"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YO5-zp-VfI">
                                 <rect key="frame" x="20" y="20" width="250" height="266"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C9S-bS-jaE">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="C9S-bS-jaE">
                                         <rect key="frame" x="14" y="240" width="223" height="26"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" title="Welcome to Rectangle!" id="kYm-Ye-gOR">
                                             <font key="font" metaFont="system" size="22"/>
@@ -3386,7 +3386,7 @@ DQ
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g2U-cD-gRF">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="g2U-cD-gRF">
                                         <rect key="frame" x="-2" y="186" width="254" height="32"/>
                                         <textFieldCell key="cell" alignment="center" title="Please select your default shortcuts and behavior" id="gEd-S9-Cfp">
                                             <font key="font" metaFont="system"/>
@@ -3434,7 +3434,7 @@ DQ
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Uey-tt-ecv">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Uey-tt-ecv">
                                         <rect key="frame" x="-2" y="50" width="254" height="28"/>
                                         <textFieldCell key="cell" alignment="center" title="Spectacle shortcuts are more likely to conflict with other shortcuts" id="kXi-dT-zSF">
                                             <font key="font" metaFont="message" size="11"/>
@@ -3442,7 +3442,7 @@ DQ
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Y0r-Cp-GEM">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Y0r-Cp-GEM">
                                         <rect key="frame" x="-2" y="0.0" width="254" height="28"/>
                                         <textFieldCell key="cell" alignment="center" title="Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts" id="xcE-uL-2J0">
                                             <font key="font" metaFont="message" size="11"/>
@@ -3452,8 +3452,8 @@ DQ
                                     </textField>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="250" id="9Te-qi-H02"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="999" constant="250" id="Uhe-KD-lTI"/>
+                                    <constraint firstAttribute="width" priority="750" constant="250" id="9Te-qi-H02"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="750" constant="250" id="Uhe-KD-lTI"/>
                                 </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
