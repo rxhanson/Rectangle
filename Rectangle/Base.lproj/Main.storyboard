@@ -762,16 +762,6 @@
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <rect key="contentRect" x="245" y="301" width="433" height="270"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <toolbar key="toolbar" implicitIdentifier="4FD93C26-DB3D-488E-AE3A-84BA87AB70DB" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="j0r-FW-2lj">
-                            <allowedToolbarItems>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="CDu-t6-A6x"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="eG9-S1-Xf8"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="hME-Tt-dJ8"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="wTi-wf-YAw"/>
-                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="ZZO-CT-KZR"/>
-                            </allowedToolbarItems>
-                            <defaultToolbarItems/>
-                        </toolbar>
                         <connections>
                             <outlet property="delegate" destination="fmq-Go-Xew" id="Jj5-zM-epV"/>
                         </connections>

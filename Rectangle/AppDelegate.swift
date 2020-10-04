@@ -227,25 +227,53 @@ extension AppDelegate: NSMenuDelegate {
         }
     }
     
+    @objc func executeMenuWindowAction(sender: NSMenuItem) {
+        guard let windowAction = sender.representedObject as? WindowAction else { return }
+        windowAction.post()
+    }
+    
     func addWindowActionMenuItems() {
         var menuIndex = 0
+        var categoryMenus: [CategoryMenu] = []
         for action in WindowAction.active {
+            let newMenuItem = NSMenuItem(title: action.displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
+            newMenuItem.representedObject = action
+
+            if !Defaults.showAllActionsInMenu.userEnabled, let category = action.category {
+                if menuIndex != 0 && action.firstInGroup {
+                    categoryMenus.append(CategoryMenu(menu: NSMenu(title: category.displayName), category: category))
+                }
+                categoryMenus.last?.menu.addItem(newMenuItem)
+                continue
+            }
+            
             if menuIndex != 0 && action.firstInGroup {
                 mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
                 menuIndex += 1
             }
-            
-            let newMenuItem = NSMenuItem(title: action.displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
-            newMenuItem.representedObject = action
             mainStatusMenu.insertItem(newMenuItem, at: menuIndex)
             menuIndex += 1
         }
+
+        if !categoryMenus.isEmpty {
+            mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
+            menuIndex += 1
+            
+            for categoryMenu in categoryMenus {
+                categoryMenu.menu.delegate = self
+                let menuMenuItem = NSMenuItem(title: categoryMenu.category.displayName, action: nil, keyEquivalent: "")
+                mainStatusMenu.insertItem(menuMenuItem, at: menuIndex)
+                mainStatusMenu.setSubmenu(categoryMenu.menu, for: menuMenuItem)
+                menuIndex += 1
+            }
+        }
+        
         mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
     }
     
-    @objc func executeMenuWindowAction(sender: NSMenuItem) {
-        guard let windowAction = sender.representedObject as? WindowAction else { return }
-        windowAction.post()
+    struct CategoryMenu {
+        let menu: NSMenu
+        let category: WindowActionCategory
     }
     
 }

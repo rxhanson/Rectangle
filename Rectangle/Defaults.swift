@@ -38,6 +38,7 @@ class Defaults {
     static let screenEdgeGapLeft = FloatDefault(key: "screenEdgeGapLeft", defaultValue: 0)
     static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 0)
     static let lastVersion = StringDefault(key: "lastVersion")
+    static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static var SUHasLaunchedBefore: Bool {
         UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore")
     }

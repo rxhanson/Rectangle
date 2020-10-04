@@ -63,7 +63,7 @@ enum WindowAction: Int {
                          moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth
-]
+    ]
     
     func post() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
@@ -377,6 +377,15 @@ enum WindowAction: Int {
             return true
         default:
             return false
+        }
+    }
+    
+    var category: WindowActionCategory? { // used to specify a submenu
+        switch self {
+        case .firstFourth, .secondFourth, .thirdFourth, .lastFourth: return .fourths
+        case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
+        case .moveUp, .moveDown, .moveLeft, .moveRight: return .move
+        default: return nil
         }
     }
 }
