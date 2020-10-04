@@ -178,6 +178,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate: NSMenuDelegate {
     
     func menuWillOpen(_ menu: NSMenu) {
+        if menu != mainStatusMenu {
+            updateWindowActionMenuItems(menu: menu)
+            return
+        }
+        
         if let frontAppName = applicationToggle.frontAppName {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
             ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
@@ -187,9 +192,17 @@ extension AppDelegate: NSMenuDelegate {
             ignoreMenuItem.isHidden = true
         }
         
+        updateWindowActionMenuItems(menu: menu)
+        
+        viewLoggingMenuItem.keyEquivalentModifierMask = .option
+        quitMenuItem.keyEquivalent = "q"
+        quitMenuItem.keyEquivalentModifierMask = .command
+    }
+    
+    private func updateWindowActionMenuItems(menu: NSMenu) {
         let frontmostWindow = AccessibilityElement.frontmostWindow()
         let screenCount = NSScreen.screens.count
-        
+
         for menuItem in menu.items {
             guard let windowAction = menuItem.representedObject as? WindowAction else { continue }
 
@@ -211,10 +224,6 @@ extension AppDelegate: NSMenuDelegate {
                 menuItem.isEnabled = false
             }
         }
-        
-        viewLoggingMenuItem.keyEquivalentModifierMask = .option
-        quitMenuItem.keyEquivalent = "q"
-        quitMenuItem.keyEquivalentModifierMask = .command
     }
     
     func menuDidClose(_ menu: NSMenu) {
@@ -241,7 +250,9 @@ extension AppDelegate: NSMenuDelegate {
 
             if !Defaults.showAllActionsInMenu.userEnabled, let category = action.category {
                 if menuIndex != 0 && action.firstInGroup {
-                    categoryMenus.append(CategoryMenu(menu: NSMenu(title: category.displayName), category: category))
+                    let menu = NSMenu(title: category.displayName)
+                    menu.autoenablesItems = false
+                    categoryMenus.append(CategoryMenu(menu: menu, category: category))
                 }
                 categoryMenus.last?.menu.addItem(newMenuItem)
                 continue
