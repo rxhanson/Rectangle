@@ -136,6 +136,17 @@ defaults write com.knollsoft.Rectangle snapEdgeMarginLeft -int 10
 defaults write com.knollsoft.Rectangle snapEdgeMarginRight -int 10
 ```
 
+### Setting gaps at the screen edges
+
+You can specify gaps at the edges of your screen that will be left uncovered by window resizing operations. This is useful if, for example, you use a dock replacement that should not have windows overlapping it.
+
+```bash
+defaults write com.knollsoft.Rectangle screenEdgeGapTop -int 10
+defaults write com.knollsoft.Rectangle screenEdgeGapBottom -int 10
+defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 10
+defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 10
+```
+
 ### Ignore specific drag to snap areas
 
 Each drag to snap area on the edge of a screen can be ignored with a single Terminal command, but it's a bit field setting so you'll have to determine the bit field for which ones you want to disable.
