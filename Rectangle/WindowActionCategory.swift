@@ -14,16 +14,26 @@ enum WindowActionCategory {
     
     var displayName: String {
         switch self {
-        case .halves: return "Halves"
-        case .corners: return "Corners"
-        case .thirds: return "Thirds"
-        case .max: return "Maximize"
-        case .size: return "Size"
-        case .display: return "Display"
-        case .other: return "Other"
-        case .move: return "Move to Edge"
-        case .fourths: return "Fourths"
-        case .sixths: return "Sixths"
+        case .halves:
+            return NSLocalizedString("Halves", tableName: "Main", value: "", comment: "")
+        case .corners:
+            return NSLocalizedString("Corners", tableName: "Main", value: "", comment: "")
+        case .thirds:
+            return NSLocalizedString("Thirds", tableName: "Main", value: "", comment: "")
+        case .max:
+            return NSLocalizedString("Maximize", tableName: "Main", value: "", comment: "")
+        case .size:
+            return NSLocalizedString("Size", tableName: "Main", value: "", comment: "")
+        case .display:
+            return NSLocalizedString("Display", tableName: "Main", value: "", comment: "")
+        case .other:
+            return NSLocalizedString("Other", tableName: "Main", value: "", comment: "")
+        case .move:
+            return NSLocalizedString("Move to Edge", tableName: "Main", value: "", comment: "")
+        case .fourths:
+            return NSLocalizedString("Fourths", tableName: "Main", value: "", comment: "")
+        case .sixths:
+            return NSLocalizedString("Sixths", tableName: "Main", value: "", comment: "")
         }
     }
 }
