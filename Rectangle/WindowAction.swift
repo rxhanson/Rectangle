@@ -209,37 +209,37 @@ enum WindowAction: Int {
             key = "e57-QJ-6bL.title"
             value = "Almost Maximize"
         case .centerHalf:
-            key = ""
+            key = "bRX-dV-iAR.title"
             value = "Center Half"
         case .firstFourth:
-            key = ""
+            key = "Q6Q-6J-okH.title"
             value = "First Fourth"
         case .secondFourth:
-            key = ""
+            key = "Fko-xs-gN5.title"
             value = "Second Fourth"
         case .thirdFourth:
-            key = ""
+            key = "ZTK-rS-b17.title"
             value = "Third Fourth"
         case .lastFourth:
-            key = ""
+            key = "6HX-rn-VIp.title"
             value = "Last Fourth"
         case .topLeftSixth:
-            key = ""
+            key = "mFt-Kg-UYG.title"
             value = "Top Left Sixth"
         case .topCenterSixth:
-            key = ""
+            key = "TTx-7X-Wie.title"
             value = "Top Center Sixth"
         case .topRightSixth:
-            key = ""
+            key = "f3Q-q7-Pcy.title"
             value = "Top Right Sixth"
         case .bottomLeftSixth:
-            key = ""
+            key = "LqQ-pM-jRN.title"
             value = "Bottom Left Sixth"
         case .bottomCenterSixth:
-            key = ""
+            key = "iOQ-1e-esP.title"
             value = "Bottom Center Sixth"
         case .bottomRightSixth:
-            key = ""
+            key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
         }
         
