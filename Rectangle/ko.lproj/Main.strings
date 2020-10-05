@@ -227,7 +227,7 @@
 /* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "Nop-cj-93Q"; */
 "Nop-cj-93Q.title" = "\t기본";
 
-/* Class = "NSMenuItem"; title = "View Logging..."; ObjectID = "O8K-y6-bva"; */
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
 "O8K-y6-bva.title" = "로그 보기…";
 
 /* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
@@ -608,8 +608,8 @@
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
 "m2F-eA-g7w.title" = "Bottom Right Sixth";
 
-/* Class = "NSMenuItem"; title = "View Logging..."; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "View Logging...";
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
+"O8K-y6-bva.title" = "View Logging…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
 "gtf-PD-IHm.label" = "Settings";

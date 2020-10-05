@@ -599,7 +599,7 @@
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
 "m2F-eA-g7w.title" = "Unteres rechtes Sechstel";
 
-/* Class = "NSMenuItem"; title = "View Logging..."; ObjectID = "O8K-y6-bva"; */
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
 "O8K-y6-bva.title" = "Protokolle anzeigen…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
