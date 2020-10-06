@@ -207,13 +207,13 @@
 "Kd2-mp-pUS.title" = "Mostrar todos";
 
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
-"LE2-aR-0XJ.title" = "Traga tudo para a frente";
+"LE2-aR-0XJ.title" = "Trazer tudo para a frente";
 
 /* Class = "NSMenuItem"; title = "Paste Ruler"; ObjectID = "LVM-kO-fVI"; */
 "LVM-kO-fVI.title" = "Régua de Colar";
 
 /* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "Lbh-J2-qVU"; */
-"Lbh-J2-qVU.title" = "\tDa Esquerda para a direita";
+"Lbh-J2-qVU.title" = "\tDa Esquerda para a Direita";
 
 /* Class = "NSMenuItem"; title = "Copy Ruler"; ObjectID = "MkV-Pr-PK5"; */
 "MkV-Pr-PK5.title" = "Régua de Cópia";
@@ -345,7 +345,7 @@
 "bgn-CT-cEk.title" = "Mostrar Cores";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
-"bib-Uj-vzu.title" = "Ficehiro";
+"bib-Uj-vzu.title" = "Ficheiro";
 
 /* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
 "buJ-ug-pKt.title" = "Usar seleção para procurar";
@@ -495,7 +495,7 @@
 "tRr-pd-1PS.title" = "Detectores de dados";
 
 /* Class = "NSMenuItem"; title = "Open Recent"; ObjectID = "tXI-mr-wws"; */
-"tXI-mr-wws.title" = "Aberir Recente";
+"tXI-mr-wws.title" = "Abrir Recente";
 
 /* Class = "NSMenu"; title = "Kern"; ObjectID = "tlD-Oa-oAM"; */
 "tlD-Oa-oAM.title" = "Kern";
@@ -567,60 +567,60 @@
 "HtH-yF-lBR.title" = "Bem-vindo!";
 
 /* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
-"bRX-dV-iAR.title" = "Center Half";
+"bRX-dV-iAR.title" = "Metade Central";
 
 /* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
-"Q6Q-6J-okH.title" = "First Fourth";
+"Q6Q-6J-okH.title" = "Primeiro Quarto";
 
 /* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
-"Fko-xs-gN5.title" = "Second Fourth";
+"Fko-xs-gN5.title" = "Segundo Quarto";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
-"ZTK-rS-b17.title" = "Third Fourth";
+"ZTK-rS-b17.title" = "Terceiro Quarto";
 
 /* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
-"6HX-rn-VIp.title" = "Last Fourth";
+"6HX-rn-VIp.title" = "Último Quarto";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Top Left Sixth";
+"mFt-Kg-UYG.title" = "Sexto Esquerdo Superior";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "Top Center Sixth";
+"TTx-7X-Wie.title" = "Sexto Central Superior";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
-"f3Q-q7-Pcy.title" = "Top Right Sixth";
+"f3Q-q7-Pcy.title" = "Sexto Direito Superior";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
-"LqQ-pM-jRN.title" = "Bottom Left Sixth";
+"LqQ-pM-jRN.title" = "Sexto Esquerdo Inferior";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Bottom Center Sixth";
+"iOQ-1e-esP.title" = "Sexto Central Inferior";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
-"m2F-eA-g7w.title" = "Bottom Right Sixth";
+"m2F-eA-g7w.title" = "Sexto Direito Inferior";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "View Logging…";
+"O8K-y6-bva.title" = "Ver Registos…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "Settings";
+"gtf-PD-IHm.label" = "Definições";
 
 /* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
-"uw2-9W-2jq.label" = "Keyboard Shortcuts";
+"uw2-9W-2jq.label" = "Atalhos de Teclado";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "Restore window size when unsnapped";
+"UZP-5q-D5Y.title" = "Restaurar tamanho de janela quando desencaixada";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Gaps between windows";
+"bg9-nw-YvU.title" = "Espaços entre janelas";
 
-"Halves" = "Halves"
-"Corners" = "Corners"
-"Thirds" = "Thirds"
-"Maximize" = "Maximize"
-"Size" = "Size"
-"Display" = "Display"
-"Other" = "Other"
-"Move to Edge" = "Move to Edge"
-"Fourths" = "Fourths"
-"Sixths" = "Sixths"
+"Halves" = "Metades"
+"Corners" = "Cantos"
+"Thirds" = "Terços"
+"Maximize" = "Maximizar"
+"Size" = "Tamanho"
+"Display" = "Ecrã"
+"Other" = "Outro"
+"Move to Edge" = "Mover para o lado"
+"Fourths" = "Quartos"
+"Sixths" = "Sextos"
