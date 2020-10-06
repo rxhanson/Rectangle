@@ -599,8 +599,8 @@
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
 "m2F-eA-g7w.title" = "Sexto Direito Inferior";
 
-/* Class = "NSMenuItem"; title = "View Logging..."; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "Ver Registos...";
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
+"O8K-y6-bva.title" = "Ver Registos…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
 "gtf-PD-IHm.label" = "Definições";

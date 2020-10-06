@@ -707,7 +707,7 @@
                                 <action selector="showAbout:" target="Voe-Tx-rLC" id="dGA-Fy-dtB"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="View Logging..." alternate="YES" id="O8K-y6-bva">
+                        <menuItem title="View Logging…" alternate="YES" id="O8K-y6-bva">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="viewLogging:" target="Voe-Tx-rLC" id="8cH-2P-yKC"/>
