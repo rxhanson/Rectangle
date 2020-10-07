@@ -54,7 +54,7 @@
 "78Y-hA-62v.title" = "Corrigir Erros Ortográficos Automaticamente";
 
 /* Class = "NSMenu"; title = "Writing Direction"; ObjectID = "8mr-sm-Yjd"; */
-"8mr-sm-Yjd.title" = "Direção e Escrita";
+"8mr-sm-Yjd.title" = "Direção de Escrita";
 
 /* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
 "9ic-FL-obx.title" = "Substituições";
@@ -99,7 +99,7 @@
 "GEO-Iw-cKr.title" = "Formato";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "GUa-eO-cwY"; */
-"GUa-eO-cwY.title" = "Usa Padrão";
+"GUa-eO-cwY.title" = "Usar Padrão";
 
 /* Class = "NSMenuItem"; title = "Font"; ObjectID = "Gi5-1S-RQB"; */
 "Gi5-1S-RQB.title" = "Tipo de Letra";
