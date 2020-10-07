@@ -614,13 +614,13 @@
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "Espacio entre ventanas";
 
-"Halves" = "Halves"
-"Corners" = "Corners"
-"Thirds" = "Thirds"
-"Maximize" = "Maximize"
-"Size" = "Size"
-"Display" = "Display"
-"Other" = "Other"
-"Move to Edge" = "Move to Edge"
-"Fourths" = "Fourths"
-"Sixths" = "Sixths"
+"Halves" = "Mitades"
+"Corners" = "Esquinas"
+"Thirds" = "Tercios"
+"Maximize" = "Maximizar"
+"Size" = "Tamaño"
+"Display" = "Pantalla"
+"Other" = "Otros"
+"Move to Edge" = "Desplazar al borde"
+"Fourths" = "Cuartos"
+"Sixths" = "Sextos"
