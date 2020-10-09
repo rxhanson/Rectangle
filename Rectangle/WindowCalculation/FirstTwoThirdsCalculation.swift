@@ -8,26 +8,34 @@
 
 import Foundation
 
-class FirstTwoThirdsCalculation: WindowCalculation {
+class FirstTwoThirdsCalculation: WindowCalculation, OrientationAware {
+    
     
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+        guard Defaults.subsequentExecutionMode.value != .none,
+            let last = lastAction, let lastSubAction = last.subAction else {
+            return orientationBasedRect(visibleFrameOfScreen)
+        }
+
+        if lastSubAction == .leftTwoThirds || lastSubAction == .topTwoThirds {
+            return WindowCalculationFactory.lastTwoThirdsCalculation.orientationBasedRect(visibleFrameOfScreen)
+        }
         
-        return isLandscape(visibleFrameOfScreen)
-            ? RectResult(leftTwoThirds(visibleFrameOfScreen), subAction: .leftTwoThirds)
-            : RectResult(topTwoThirds(visibleFrameOfScreen), subAction: .topTwoThirds)
+        return orientationBasedRect(visibleFrameOfScreen)
     }
     
-    private func leftTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
-        var twoThirdsRect = visibleFrameOfScreen
-        twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
-        return twoThirdsRect
+    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
+        return RectResult(rect, subAction: .leftTwoThirds)
     }
     
-    private func topTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
-        var twoThirdsRect = visibleFrameOfScreen
-        twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
-        twoThirdsRect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.height - twoThirdsRect.height
-        return twoThirdsRect
+    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
+        rect.origin.y = visibleFrameOfScreen.origin.y + visibleFrameOfScreen.height - rect.height
+        return RectResult(rect, subAction: .topTwoThirds)
     }
+    
 }
 

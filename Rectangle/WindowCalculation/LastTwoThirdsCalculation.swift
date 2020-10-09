@@ -8,28 +8,32 @@
 
 import Foundation
 
-class LastTwoThirdsCalculation: WindowCalculation {
-    
+class LastTwoThirdsCalculation: WindowCalculation, OrientationAware {
+
     override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+        guard Defaults.subsequentExecutionMode.value != .none,
+            let last = lastAction, let lastSubAction = last.subAction else {
+            return orientationBasedRect(visibleFrameOfScreen)
+        }
+
+        if lastSubAction == .rightTwoThirds || lastSubAction == .bottomTwoThirds {
+            return WindowCalculationFactory.firstTwoThirdsCalculation.orientationBasedRect(visibleFrameOfScreen)
+        }
         
-        return isLandscape(visibleFrameOfScreen)
-            ? RectResult(rightTwoThirds(visibleFrameOfScreen), subAction: .rightTwoThirds)
-            : RectResult(bottomTwoThirds(visibleFrameOfScreen), subAction: .bottomTwoThirds)
+        return orientationBasedRect(visibleFrameOfScreen)
     }
     
-    private func rightTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
-        
-        var twoThirdsRect = visibleFrameOfScreen
-        twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
-        twoThirdsRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - twoThirdsRect.width
-        return twoThirdsRect
+    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
+        rect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - rect.width
+        return RectResult(rect, subAction: .rightTwoThirds)
     }
     
-    private func bottomTwoThirds(_ visibleFrameOfScreen: CGRect) -> CGRect {
-        
-        var twoThirdsRect = visibleFrameOfScreen
-        twoThirdsRect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
-        return twoThirdsRect
+    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.height = floor(visibleFrameOfScreen.height * 2 / 3.0)
+        return RectResult(rect, subAction: .bottomTwoThirds)
     }
 }
 
