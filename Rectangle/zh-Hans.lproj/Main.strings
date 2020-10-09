@@ -623,13 +623,13 @@
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "窗口间距";
 
-"Halves" = "两等分"
-"Corners" = "角落"
-"Thirds" = "三分之一"
-"Maximize" = "最大化"
-"Size" = "大小"
-"Display" = "显示器"
-"Other" = "其他"
-"Move to Edge" = "移动到边缘"
-"Fourths" = "四分之一"
-"Sixths" = "六分之一"
+"Halves" = "两等分";
+"Corners" = "角落";
+"Thirds" = "三分之一";
+"Maximize" = "最大化";
+"Size" = "大小";
+"Display" = "显示器";
+"Other" = "其他";
+"Move to Edge" = "移动到边缘";
+"Fourths" = "四分之一";
+"Sixths" = "六分之一";
