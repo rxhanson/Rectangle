@@ -270,7 +270,7 @@
 "STb-JK-oB1.title" = "Rectangle-Einstellungen";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "Monitorwechsel bei wiederholten links/rechts-Befehlen";
+"SXx-HZ-GkB.title" = "Monitorwechsel bei wiederholten Links/Rechts-Befehlen";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "Fenster";
@@ -441,7 +441,7 @@
 "lgE-cR-cQ5.title" = "Gehen Sie zu Systemeinstellungen → Sicherheit → Datenschutz → Bedienungshilfen";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "Um das Menü zu öffnen, wenn das Symbol in der Menüleiste ausgeblendet ist, starten Sie Rectangle im Finder neu.";
+"ltc-mf-BHr.title" = "Starte Rectangle erneut vom Finder aus, um das Menü zu öffnen, wenn das Menüleistensymbol ausgeblendet ist.";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Grammatik mit Rechtschreibung prüfen";
@@ -612,7 +612,7 @@
 "UZP-5q-D5Y.title" = "Fenstergröße beim Entrasten zurücksetzen";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Lücken zwischen Fenster";
+"bg9-nw-YvU.title" = "Lücken zwischen Fenstern";
 
 "Halves" = "Hälften";
 "Corners" = "Ecken";
@@ -621,6 +621,6 @@
 "Size" = "Größe";
 "Display" = "Bildschirm";
 "Other" = "Mehr";
-"Move to Edge" = "An Rand bewegen";
+"Move to Edge" = "An den Rand bewegen";
 "Fourths" = "Viertel";
 "Sixths" = "Sechstel";
