@@ -441,7 +441,7 @@
 "lgE-cR-cQ5.title" = "Gehen Sie zu Systemeinstellungen → Sicherheit → Datenschutz → Bedienungshilfen";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "Starte Rectangle erneut vom Finder aus, um das Menü zu öffnen, wenn das Menüleistensymbol ausgeblendet ist.";
+"ltc-mf-BHr.title" = "Starte Rectangle erneut vom Finder aus, wenn das Menüleistensymbol ausgeblendet ist.";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Grammatik mit Rechtschreibung prüfen";
