@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "При повторе перемещения или изменения размеров до трети или половины окна оно будет перемещено на следующий экран вместо изменения размеров";
+"01Z-t3-cBm.title" = "При повторе перемещения или изменения размеров до трети или половины окна оно будет перемещено на следующий экран вместо изменения размеров.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "Правые две трети";
@@ -93,7 +93,7 @@
 "9JD-tZ-7jf.title" = "Разрешить Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
-"9XM-Zb-HEb.title" = "Если флажок отключен, щелкните на замок и введите свой пароль.";
+"9XM-Zb-HEb.title" = "Если флажок отключен, щелкните на замок и введите свой пароль";
 
 /* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
 "9ic-FL-obx.title" = "замены";
@@ -186,7 +186,7 @@
 "I0S-gh-46l.title" = "Подписчик";
 
 /* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
-"IAo-SY-fd9.title" = "Открыть";
+"IAo-SY-fd9.title" = "Открыть…";
 
 /* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
 "J5U-5w-g23.title" = "Выровнять";
@@ -414,7 +414,7 @@
 "i1d-Er-qST.title" = "Меньше";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
-"iWV-c2-BJD.title" = "Открыть системные настройки";
+"iWV-c2-BJD.title" = "Открыть Cистемные настройки";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
 "iXo-XL-T6q.title" = "Дать Rectangle доступ";
@@ -549,78 +549,78 @@
 "z6F-FW-3nz.title" = "Показать замены";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
-"kYm-Ye-gOR.title" = "Welcome to Rectangle!";
+"kYm-Ye-gOR.title" = "Добро пожаловать в Rectangle!";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
-"gEd-S9-Cfp.title" = "Please select your default shortcuts and behavior";
+"gEd-S9-Cfp.title" = "Пожалуйста, выберите ярлыки и поведение по умолчанию";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
-"HOp-Kd-vhY.title" = "Recommended";
+"HOp-Kd-vhY.title" = "Рекомендуемое";
 
 /* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
-"kXi-dT-zSF.title" = "Spectacle shortcuts are more likely to conflict with other shortcuts";
+"kXi-dT-zSF.title" = "Spectacle ярлыки с большой вероятностью будут конфликтовать с другими ярлыками";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
+"xcE-uL-2J0.title" = "Выбор Spectacle также зациклит 1/2, 2/3 и 1/3 ширины окна при повторяющихся сочетаниях клавиш.";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
-"HtH-yF-lBR.title" = "Welcome!";
+"HtH-yF-lBR.title" = "Добро пожаловать!";
 
 /* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
-"bRX-dV-iAR.title" = "Center Half";
+"bRX-dV-iAR.title" = "Центральная половина";
 
 /* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
-"Q6Q-6J-okH.title" = "First Fourth";
+"Q6Q-6J-okH.title" = "Первая четверть";
 
 /* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
-"Fko-xs-gN5.title" = "Second Fourth";
+"Fko-xs-gN5.title" = "Вторая четверть";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
-"ZTK-rS-b17.title" = "Third Fourth";
+"ZTK-rS-b17.title" = "Третья четверть";
 
 /* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
-"6HX-rn-VIp.title" = "Last Fourth";
+"6HX-rn-VIp.title" = "Последняя четверть";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Top Left Sixth";
+"mFt-Kg-UYG.title" = "Верхний левый угол";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "Top Center Sixth";
+"TTx-7X-Wie.title" = "Правый центральный угол";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
-"f3Q-q7-Pcy.title" = "Top Right Sixth";
+"f3Q-q7-Pcy.title" = "Верхний правый угол";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
-"LqQ-pM-jRN.title" = "Bottom Left Sixth";
+"LqQ-pM-jRN.title" = "Нижний левый угол";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Bottom Center Sixth";
+"iOQ-1e-esP.title" = "Нижний центральный угол";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
-"m2F-eA-g7w.title" = "Bottom Right Sixth";
+"m2F-eA-g7w.title" = "Нижний правый угол";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "View Logging…";
+"O8K-y6-bva.title" = "Просмотр журнала…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "Settings";
+"gtf-PD-IHm.label" = "Настройки";
 
 /* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
-"uw2-9W-2jq.label" = "Keyboard Shortcuts";
+"uw2-9W-2jq.label" = "Горячие клавиши";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "Restore window size when unsnapped";
+"UZP-5q-D5Y.title" = "Восстановить размер окна после снятия привязки";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Gaps between windows";
+"bg9-nw-YvU.title" = "Промежутки между окнами";
 
-"Halves" = "Halves";
-"Corners" = "Corners";
-"Thirds" = "Thirds";
-"Maximize" = "Maximize";
-"Size" = "Size";
-"Display" = "Display";
-"Other" = "Other";
-"Move to Edge" = "Move to Edge";
-"Fourths" = "Fourths";
-"Sixths" = "Sixths";
+"Halves" = "Половинки";
+"Corners" = "Углы";
+"Thirds" = "Трети";
+"Maximize" = "Максимизировать";
+"Size" = "Размер";
+"Display" = "Дисплей";
+"Other" = "Другое";
+"Move to Edge" = "Переместить к краю";
+"Fourths" = "Четверть";
+"Sixths" = "Угол";
