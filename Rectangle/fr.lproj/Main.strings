@@ -174,7 +174,7 @@
 "HFo-cy-zxI.title" = "Afficher l'orthographe et la grammaire";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
-"HIK-3r-i7E.title" = "Rechercher les mises à jour…";
+"HIK-3r-i7E.title" = "Mettre à jour…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
 "HOm-BV-2jc.title" = "Déplacer en haut";
