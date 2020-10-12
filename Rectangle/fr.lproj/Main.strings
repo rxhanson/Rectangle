@@ -387,7 +387,7 @@
 "e57-QJ-6bL.title" = "Quasi maximiser";
 
 /* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
-"e9j-DR-MEH.title" = "Lancement au démarrage";
+"e9j-DR-MEH.title" = "Démarrer avec la session";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
 "ec4-FB-fMa.title" = "Moitié du bas";
