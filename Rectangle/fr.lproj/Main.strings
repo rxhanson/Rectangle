@@ -48,7 +48,7 @@
 "46P-cB-AYj.title" = "Serrer";
 
 /* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
-"4EN-yA-p0u.title" = "Trouver";
+"4EN-yA-p0u.title" = "Rechercher";
 
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
 "4J7-dP-txa.title" = "Passer en plein écran";
@@ -465,7 +465,7 @@
 "pxx-59-PXV.title" = "Sauvegarder…";
 
 /* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
-"q09-fT-Sye.title" = "Trouver le suivant";
+"q09-fT-Sye.title" = "Rechercher le suivant";
 
 /* Class = "NSMenuItem"; title = "Page Setup…"; ObjectID = "qIS-W8-SiK"; */
 "qIS-W8-SiK.title" = "Mise en page…";
@@ -603,7 +603,7 @@
 "UZP-5q-D5Y.title" = "Restaurer la taille de fenêtre en annulant le glissement";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Écarts entre fenêtressn";
+"bg9-nw-YvU.title" = "Écart entre fenêtres";
 
 "Halves" = "Moitiés";
 "Corners" = "Coins";
