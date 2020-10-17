@@ -19,7 +19,7 @@ class SnappingManager {
     var initialWindowRect: CGRect?
     var currentSnapArea: SnapArea?
     
-    var box: NSWindow?
+    var box: FootprintWindow?
     
     let screenDetection = ScreenDetection()
     
@@ -67,7 +67,7 @@ class SnappingManager {
     }
     
     private func enableSnapping() {
-        box = generateBoxWindow()
+        box = FootprintWindow()
         eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged], handler: handle)
         eventMonitor?.start()
     }
@@ -140,7 +140,7 @@ class SnappingManager {
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
                         if box == nil {
-                            box = generateBoxWindow()
+                            box = FootprintWindow()
                         }
                         box?.setFrame(newBoxRect, display: true)
                         box?.makeKeyAndOrderFront(nil)
@@ -157,42 +157,6 @@ class SnappingManager {
         default:
             return
         }
-    }
-    
-    // Make the box semi-opaque with a border and rounded corners
-    private func generateBoxWindow() -> NSWindow {
-        
-        let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
-        let box = NSWindow(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
-
-        box.title = "Rectangle"
-        box.alphaValue = CGFloat(Defaults.footprintAlpha.value)
-        box.isOpaque = false
-        box.level = .modalPanel
-        box.hasShadow = false
-        box.isReleasedWhenClosed = false
-  
-        box.styleMask.insert(.fullSizeContentView)
-        box.titleVisibility = .hidden
-        box.titlebarAppearsTransparent = true
-        box.collectionBehavior.insert(.transient)
-        box.standardWindowButton(.closeButton)?.isHidden = true
-        box.standardWindowButton(.miniaturizeButton)?.isHidden = true
-        box.standardWindowButton(.zoomButton)?.isHidden = true
-        box.standardWindowButton(.toolbarButton)?.isHidden = true
-        
-        let boxView = NSBox()
-        boxView.boxType = .custom
-        boxView.borderColor = .lightGray
-        boxView.borderType = .lineBorder
-        boxView.borderWidth = CGFloat(Defaults.footprintBorderWidth.value)
-        boxView.cornerRadius = 5
-        boxView.wantsLayer = true
-        boxView.fillColor = NSColor.black
-        
-        box.contentView = boxView
-        
-        return box
     }
     
     func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
