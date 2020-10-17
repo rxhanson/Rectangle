@@ -166,7 +166,7 @@ class SnappingManager {
         let box = NSWindow(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
 
         box.title = "Rectangle"
-        box.backgroundColor = .clear
+        box.alphaValue = CGFloat(Defaults.footprintAlpha.value)
         box.isOpaque = false
         box.level = .modalPanel
         box.hasShadow = false
@@ -185,10 +185,10 @@ class SnappingManager {
         boxView.boxType = .custom
         boxView.borderColor = .lightGray
         boxView.borderType = .lineBorder
-        boxView.borderWidth = 0.5
+        boxView.borderWidth = CGFloat(Defaults.footprintBorderWidth.value)
         boxView.cornerRadius = 5
         boxView.wantsLayer = true
-        boxView.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.3).cgColor
+        boxView.fillColor = NSColor.black
         
         box.contentView = boxView
         

@@ -39,9 +39,9 @@ class Defaults {
     static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 0)
     static let lastVersion = StringDefault(key: "lastVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
-    static var SUHasLaunchedBefore: Bool {
-        UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore")
-    }
+    static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
+    static var footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
+    static var footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
 }
 
 class BoolDefault {
