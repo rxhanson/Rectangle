@@ -10,3 +10,6 @@ Please match the existing coding style as much as possible.
 
 ## License
 By contributing to Rectangle you agree that your contributions will be licensed under its MIT license.
+
+## Incentives
+Logic from Rectangle is used in the Multitouch app. The Hookshot app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, you get a free license of Multitouch or Hookshot. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Hookshot licenses. Either send me a message on https://gitter.im or email me from the email address specified on your GitHub profile after you're pull request has been merged.
