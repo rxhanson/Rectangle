@@ -79,10 +79,24 @@ defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEE
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
 ```
-### Adding Gaps Between Windows
+### Modify the "footprint" displayed for drag to snap area
+
+Adjust the alpha (transparency). Default is 0.3.
 
 ```bash
-defaults write com.knollsoft.Rectangle gapSize -float <NUM_PIXELS>
+defaults write com.knollsoft.Rectangle footprintAlpha -float <VALUE_BETWEEN_0_&_1>
+```
+
+Change the border width. Default is 2 (used to be 1).
+
+```bash
+defaults write com.knollsoft.Rectangle footprintBorderWidth -float <NUM_PIXELS>
+```
+
+Disable the fade.
+
+```bash
+defaults write com.knollsoft.Rectangle footprintFade -int 2
 ```
 ### Move Up/Down/Left/Right: Don't center on edge
 
