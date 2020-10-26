@@ -3,7 +3,7 @@
 "01Z-t3-cBm.title" = "「移動」または「半分」の動作を繰り返すと、ウィンドウは1/2、2/3、1/3サイズに変更する代わりに、次のディスプレイに移動します。";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
-"08q-Ce-1QL.title" = "最後の2/3";
+"08q-Ce-1QL.title" = "2/3にして右寄せ";
 
 /* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
 "0Ak-33-SM7.title" = "右上";
@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "下";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "ドラッグしてウィンドウをスナップする";
+"1ui-PL-TkR.title" = "ドラッグしてウィンドウをスナップ";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "上げる";
@@ -42,7 +42,7 @@
 "3rS-ZA-NoH.title" = "スピーチ";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "最初の2/3";
+"3zd-xE-oWl.title" = "2/3にして左寄せ";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
 "46P-cB-AYj.title" = "締める";
@@ -51,7 +51,7 @@
 "4EN-yA-p0u.title" = "検索";
 
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
-"4J7-dP-txa.title" = "フルスクリーンに入る";
+"4J7-dP-txa.title" = "フルスクリーンにする";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
 "4sb-4s-VLi.title" = "Rectangleを終了";
@@ -75,16 +75,16 @@
 "6ma-hP-5xX.title" = "左下";
 
 /* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
-"78Y-hA-62v.title" = "スペルを自動的に修正する";
+"78Y-hA-62v.title" = "スペルを自動的に修正";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "中央の1/3";
+"7YK-9Z-lzw.title" = "2/3にして中央に表示";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
-"8Bg-SZ-hDO.title" = "中央";
+"8Bg-SZ-hDO.title" = "中央に表示";
 
 /* Class = "NSMenu"; title = "Writing Direction"; ObjectID = "8mr-sm-Yjd"; */
-"8mr-sm-Yjd.title" = "執筆方向";
+"8mr-sm-Yjd.title" = "文字の向き";
 
 /* Class = "NSTextFieldCell"; title = "Maximize"; ObjectID = "8oe-J2-oUU"; */
 "8oe-J2-oUU.title" = "最大化";
@@ -108,7 +108,7 @@
 "AYu-sK-qS6.title" = "メインメニュー";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
-"BOF-NM-1cW.title" = "設定…";
+"BOF-NM-1cW.title" = "環境設定…";
 
 /* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "BgM-ve-c93"; */
 "BgM-ve-c93.title" = "\t左から右";
@@ -132,7 +132,7 @@
 "Eah-KL-kbn.title" = "大きくする";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
-"F12-EV-Lfz.title" = "最初の1/3";
+"F12-EV-Lfz.title" = "1/3にして左寄せ";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
 "F2S-fz-NVQ.title" = "ヘルプ";
@@ -156,22 +156,22 @@
 "GEO-Iw-cKr.title" = "フォーマット";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "GUa-eO-cwY"; */
-"GUa-eO-cwY.title" = "デフォルトを使用する";
+"GUa-eO-cwY.title" = "デフォルトを使用";
 
 /* Class = "NSMenuItem"; title = "Font"; ObjectID = "Gi5-1S-RQB"; */
 "Gi5-1S-RQB.title" = "フォント";
 
 /* Class = "NSMenuItem"; title = "Writing Direction"; ObjectID = "H1b-Si-o9J"; */
-"H1b-Si-o9J.title" = "執筆方向";
+"H1b-Si-o9J.title" = "文字の向き";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
-"H8h-7b-M4v.title" = "表示する";
+"H8h-7b-M4v.title" = "表示";
 
 /* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
 "HFQ-gK-NFA.title" = "テキスト置換";
 
 /* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
-"HFo-cy-zxI.title" = "スペルと文法を表示する";
+"HFo-cy-zxI.title" = "スペルと文法を表示";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
 "HIK-3r-i7E.title" = "アップデートを確認…";
@@ -180,7 +180,7 @@
 "HOm-BV-2jc.title" = "上に移動";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
-"HyV-fh-RgO.title" = "表示する";
+"HyV-fh-RgO.title" = "表示";
 
 /* Class = "NSMenuItem"; title = "Subscript"; ObjectID = "I0S-gh-46l"; */
 "I0S-gh-46l.title" = "添字";
@@ -204,22 +204,22 @@
 "KaW-ft-85H.title" = "保存済みに戻す";
 
 /* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
-"Kd2-mp-pUS.title" = "すべて表示する";
+"Kd2-mp-pUS.title" = "すべて表示";
 
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
 "LE2-aR-0XJ.title" = "すべてを前面に";
 
 /* Class = "NSMenuItem"; title = "Paste Ruler"; ObjectID = "LVM-kO-fVI"; */
-"LVM-kO-fVI.title" = "定規を貼り付け";
+"LVM-kO-fVI.title" = "定規をペースト";
 
 /* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "Lbh-J2-qVU"; */
-"Lbh-J2-qVU.title" = "\t左から右へ";
+"Lbh-J2-qVU.title" = "\t左から右";
 
 /* Class = "NSMenuItem"; title = "Copy Ruler"; ObjectID = "MkV-Pr-PK5"; */
-"MkV-Pr-PK5.title" = "ルーラーをコピー";
+"MkV-Pr-PK5.title" = "定規をコピー";
 
 /* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
-"MzN-CJ-ASD.title" = "小さくする";
+"MzN-CJ-ASD.title" = "縮小";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
 "NMo-om-nkz.title" = "サービス";
@@ -243,10 +243,10 @@
 "OwM-mh-QMV.title" = "前を検索";
 
 /* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
-"Oyz-dy-DGm.title" = "話すのをやめる";
+"Oyz-dy-DGm.title" = "読み上げを停止";
 
 /* Class = "NSMenuItem"; title = "Bigger"; ObjectID = "Ptp-SP-VEL"; */
-"Ptp-SP-VEL.title" = "より大きい";
+"Ptp-SP-VEL.title" = "拡大";
 
 /* Class = "NSMenuItem"; title = "Show Fonts"; ObjectID = "Q5e-8K-NDq"; */
 "Q5e-8K-NDq.title" = "フォントを表示";
@@ -258,7 +258,7 @@
 "R4o-n2-Eq4.title" = "ズーム";
 
 /* Class = "NSMenuItem"; title = "\tRight to Left"; ObjectID = "RB4-Sm-HuC"; */
-"RB4-Sm-HuC.title" = "\t右から左へ";
+"RB4-Sm-HuC.title" = "\t右から左;
 
 /* Class = "NSMenuItem"; title = "Superscript"; ObjectID = "Rqc-34-cIF"; */
 "Rqc-34-cIF.title" = "上付き";
@@ -270,7 +270,7 @@
 "S0p-oC-mLd.title" = "選択部分へジャンプ";
 
 /* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
-"STb-JK-oB1.title" = "Rectangleの設定";
+"STb-JK-oB1.title" = "Rectangle環境設定";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
 "SXx-HZ-GkB.title" = "繰り返される左右コマンドでディスプレイを切り替える";
@@ -282,13 +282,13 @@
 "UEZ-Bs-lqG.title" = "大文字にする";
 
 /* Class = "NSMenuItem"; title = "Center"; ObjectID = "VIY-Ag-zcb"; */
-"VIY-Ag-zcb.title" = "中央";
+"VIY-Ag-zcb.title" = "中央に表示";
 
 /* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
 "VIf-4h-MJW.title" = "許可…";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
-"Vdr-fp-XzO.title" = "他を隠す";
+"Vdr-fp-XzO.title" = "ほかを隠す";
 
 /* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
 "Vjx-xi-njq.title" = "イタリック";
@@ -318,7 +318,7 @@
 "YGs-j5-SAR.title" = "\tデフォルト";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "YRC-4a-xGg"; */
-"YRC-4a-xGg.title" = "設定…";
+"YRC-4a-xGg.title" = "環境設定…";
 
 /* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
 "Ynk-f8-cLZ.title" = "読み上げを開始";
@@ -342,7 +342,7 @@
 "adp-cN-qkh.title" = "左上";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "agt-UL-0e3"; */
-"agt-UL-0e3.title" = "デフォルトを使用します";
+"agt-UL-0e3.title" = "デフォルトを使用";
 
 /* Class = "NSMenuItem"; title = "Show Colors"; ObjectID = "bgn-CT-cEk"; */
 "bgn-CT-cEk.title" = "色を表示";
@@ -351,7 +351,7 @@
 "bib-Uj-vzu.title" = "ファイル";
 
 /* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
-"buJ-ug-pKt.title" = "検索に選択を使用";
+"buJ-ug-pKt.title" = "選択部分を検索に使用";
 
 /* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
 "c8a-y6-VQd.title" = "変換";
@@ -363,7 +363,7 @@
 "cDB-IK-hbR.title" = "使用しない";
 
 /* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
-"cRm-wn-Yv6.title" = "最後の1/3";
+"cRm-wn-Yv6.title" = "1/3にして右寄せ";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
 "cqv-fj-IhA.title" = "選択";
@@ -402,7 +402,7 @@
 "gVA-U4-sdL.title" = "ペースト";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "設定";
+"gtf-PD-IHm.label" = "環境設定";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
 "gyg-xl-dPn.title" = "Rectangleがウィンドウの位置を制御するには許可が必要です。";
@@ -417,7 +417,7 @@
 "hz9-B4-Xy5.title" = "サービス";
 
 /* Class = "NSMenuItem"; title = "Smaller"; ObjectID = "i1d-Er-qST"; */
-"i1d-Er-qST.title" = "小さい";
+"i1d-Er-qST.title" = "縮小";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
 "iWV-c2-BJD.title" = "システム環境設定を開く";
@@ -429,7 +429,7 @@
 "ijk-EB-dga.title" = "ベースライン";
 
 /* Class = "NSMenuItem"; title = "Kern"; ObjectID = "jBQ-r6-VK2"; */
-"jBQ-r6-VK2.title" = "カーン";
+"jBQ-r6-VK2.title" = "カーニング";
 
 /* Class = "NSMenuItem"; title = "\tRight to Left"; ObjectID = "jFq-tB-4Kx"; */
 "jFq-tB-4Kx.title" = "\t右から左";
@@ -450,10 +450,10 @@
 "ltc-mf-BHr.title" = "メニューバーのアイコンが非表示の場合にメニューを開くには、FinderからRectangleを再起動してください。";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
-"mK6-2p-4JG.title" = "スペルチェック付き文法";
+"mK6-2p-4JG.title" = "スペルと一緒に文法をチェック";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "キーボードショートカットを許可する";
+"n4U-FC-L9s.title" = "すべてのキーボードショートカットを許可";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "合字";
@@ -480,16 +480,16 @@
 "qlg-kC-FMr.title" = "メニューバーアイコンを非表示";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
-"rbD-Rh-wIN.title" = "入力中にスペルをチェック";
+"rbD-Rh-wIN.title" = "入力中にスペルチェック";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
 "rgM-f4-ycn.title" = "スマートダッシュ";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "アップデートを自動的に確認する";
+"rmV-YD-Hzj.title" = "アップデートを自動的に確認";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
-"rzr-Qq-702.title" = "右に動く";
+"rzr-Qq-702.title" = "右に移動";
 
 /* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
 "snW-S8-Cw5.title" = "ツールバーを表示";
@@ -504,7 +504,7 @@
 "tXI-mr-wws.title" = "最近使った項目を開く";
 
 /* Class = "NSMenu"; title = "Kern"; ObjectID = "tlD-Oa-oAM"; */
-"tlD-Oa-oAM.title" = "カーン";
+"tlD-Oa-oAM.title" = "カーニング";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
 "uLF-Uf-tBt.title" = "ショートカットを初期化";
@@ -561,13 +561,13 @@
 "kYm-Ye-gOR.title" = "Rectangleへようこそ！";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
-"gEd-S9-Cfp.title" = "デフォルトのショートカットと動作を選択してください。";
+"gEd-S9-Cfp.title" = "デフォルトのショートカットと動作を選択してください";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
 "HOp-Kd-vhY.title" = "推奨設定";
 
 /* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
-"kXi-dT-zSF.title" = "Spectacleのショートカットは、他のショートカットと競合する可能性があります。";
+"kXi-dT-zSF.title" = "Spectacleのショートカットがほかのショートカットと競合する可能性が高まります";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
 "xcE-uL-2J0.title" = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts";
@@ -576,61 +576,61 @@
 "HtH-yF-lBR.title" = "ようこそ！";
 
 /* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
-"bRX-dV-iAR.title" = "Center Half";
+"bRX-dV-iAR.title" = "半分にして中央に表示";
 
 /* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
-"Q6Q-6J-okH.title" = "First Fourth";
+"Q6Q-6J-okH.title" = "左から1番目";
 
 /* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
-"Fko-xs-gN5.title" = "Second Fourth";
+"Fko-xs-gN5.title" = "左から2番目";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
-"ZTK-rS-b17.title" = "Third Fourth";
+"ZTK-rS-b17.title" = "左から3番目";
 
 /* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
-"6HX-rn-VIp.title" = "Last Fourth";
+"6HX-rn-VIp.title" = "左から4番目";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Top Left Sixth";
+"mFt-Kg-UYG.title" = "左上";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "Top Center Sixth";
+"TTx-7X-Wie.title" = "左中央";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
-"f3Q-q7-Pcy.title" = "Top Right Sixth";
+"f3Q-q7-Pcy.title" = "右上";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
-"LqQ-pM-jRN.title" = "Bottom Left Sixth";
+"LqQ-pM-jRN.title" = "左下";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Bottom Center Sixth";
+"iOQ-1e-esP.title" = "左中央";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
-"m2F-eA-g7w.title" = "Bottom Right Sixth";
+"m2F-eA-g7w.title" = "右下";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "View Logging…";
+"O8K-y6-bva.title" = "ログを表示…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "Settings";
+"gtf-PD-IHm.label" = "環境設定";
 
 /* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
-"uw2-9W-2jq.label" = "Keyboard Shortcuts";
+"uw2-9W-2jq.label" = "キーボードショートカット";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "Restore window size when unsnapped";
+"UZP-5q-D5Y.title" = "スナップが解除されたらウィンドウサイズを元に戻す";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Gaps between windows";
+"bg9-nw-YvU.title" = "ウィンドウの間隔";
 
-"Halves" = "Halves";
-"Corners" = "Corners";
-"Thirds" = "Thirds";
-"Maximize" = "Maximize";
-"Size" = "Size";
-"Display" = "Display";
-"Other" = "Other";
-"Move to Edge" = "Move to Edge";
-"Fourths" = "Fourths";
-"Sixths" = "Sixths";
+"Halves" = "半分";
+"Corners" = "画面端";
+"Thirds" = "3分割";
+"Maximize" = "最大化";
+"Size" = "サイズ";
+"Display" = "ディスプレイ";
+"Other" = "そのほか";
+"Move to Edge" = "画面端に移動";
+"Fourths" = "4分割";
+"Sixths" = "6分割";
 
