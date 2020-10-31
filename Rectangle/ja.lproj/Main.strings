@@ -258,7 +258,7 @@
 "R4o-n2-Eq4.title" = "ズーム";
 
 /* Class = "NSMenuItem"; title = "\tRight to Left"; ObjectID = "RB4-Sm-HuC"; */
-"RB4-Sm-HuC.title" = "\t右から左;
+"RB4-Sm-HuC.title" = "\t右から左";
 
 /* Class = "NSMenuItem"; title = "Superscript"; ObjectID = "Rqc-34-cIF"; */
 "Rqc-34-cIF.title" = "上付き";
