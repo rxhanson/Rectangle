@@ -205,6 +205,19 @@ class AccessibilityElement {
     private func role() -> String? {
         return self.value(for: .role)
     }
+    
+    func bringToFront(force: Bool = false) {
+        let isMainWindow = self.rawValue(for: .main) as? Bool
+        if isMainWindow != true {
+            AXUIElementSetAttributeValue(self.underlyingElement, NSAccessibility.Attribute.main.rawValue as CFString, true as CFTypeRef)
+        }
+
+        if let app = NSRunningApplication(processIdentifier: getPid()) {
+            if !app.isActive || force {
+                app.activate(options: .activateIgnoringOtherApps)
+            }
+        }
+    }
 }
 
 extension AXValue {

@@ -117,6 +117,10 @@ class WindowManager {
         for windowMover in windowMoverChain {
             windowMover.moveWindowRect(newRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
         }
+        
+        if usableScreens.currentScreen != calcResult.screen {
+            frontmostWindowElement.bringToFront(force: true)
+        }
 
         let resultingRect = frontmostWindowElement.rectOfElement()
         
