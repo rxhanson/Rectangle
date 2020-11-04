@@ -115,8 +115,8 @@ struct UsableScreens {
     init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens
-        self.frameOfCurrentScreen = NSRectToCGRect(currentScreen.frame)
-        self.visibleFrameOfCurrentScreen = NSRectToCGRect(currentScreen.visibleFrame)
+        self.frameOfCurrentScreen = currentScreen.frame
+        self.visibleFrameOfCurrentScreen = currentScreen.adjustedVisibleFrame
         self.numScreens = numScreens
     }
 }
@@ -124,4 +124,26 @@ struct UsableScreens {
 struct AdjacentScreens {
     let prev: NSScreen
     let next: NSScreen
+}
+
+extension NSScreen {
+    var adjustedVisibleFrame: CGRect {
+        get {
+            let topGap = CGFloat(Defaults.screenEdgeGapTop.value)
+            let bottomGap = CGFloat(Defaults.screenEdgeGapBottom.value)
+            let leftGap = CGFloat(Defaults.screenEdgeGapLeft.value)
+            let rightGap = CGFloat(Defaults.screenEdgeGapRight.value)
+            
+            let origin = CGPoint(
+                x: visibleFrame.origin.x + leftGap,
+                y: visibleFrame.origin.y + bottomGap
+            )
+            let size = CGSize(
+                width: visibleFrame.width - leftGap - rightGap,
+                height: visibleFrame.height - topGap - bottomGap
+            )
+            
+            return CGRect(origin: origin, size: size)
+        }
+    }
 }

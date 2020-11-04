@@ -35,16 +35,14 @@ class MoveLeftRightCalculation: WindowCalculation {
             }
         }
 
-        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
-        
         var calculatedWindowRect = window.rect
-        calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
+        calculatedWindowRect.origin.x = screen.adjustedVisibleFrame.minX
         
-        if window.rect.height >= visibleFrameOfScreen.height {
-            calculatedWindowRect.size.height = visibleFrameOfScreen.height
-            calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
+        if window.rect.height >= screen.adjustedVisibleFrame.height {
+            calculatedWindowRect.size.height = screen.adjustedVisibleFrame.height
+            calculatedWindowRect.origin.y = screen.adjustedVisibleFrame.minY
         } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - window.rect.height) / 2.0) + visibleFrameOfScreen.minY
+            calculatedWindowRect.origin.y = round((screen.adjustedVisibleFrame.height - window.rect.height) / 2.0) + screen.adjustedVisibleFrame.minY
         }
         return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveLeft)
         
@@ -65,16 +63,14 @@ class MoveLeftRightCalculation: WindowCalculation {
             }
         }
         
-        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
-        
         var calculatedWindowRect = window.rect
-        calculatedWindowRect.origin.x = visibleFrameOfScreen.maxX - window.rect.width
+        calculatedWindowRect.origin.x = screen.adjustedVisibleFrame.maxX - window.rect.width
         
-        if window.rect.height >= visibleFrameOfScreen.height {
-            calculatedWindowRect.size.height = visibleFrameOfScreen.height
-            calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
+        if window.rect.height >= screen.adjustedVisibleFrame.height {
+            calculatedWindowRect.size.height = screen.adjustedVisibleFrame.height
+            calculatedWindowRect.origin.y = screen.adjustedVisibleFrame.minY
         } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - window.rect.height) / 2.0) + visibleFrameOfScreen.minY
+            calculatedWindowRect.origin.y = round((screen.adjustedVisibleFrame.height - window.rect.height) / 2.0) + screen.adjustedVisibleFrame.minY
         }
         return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveRight)
 

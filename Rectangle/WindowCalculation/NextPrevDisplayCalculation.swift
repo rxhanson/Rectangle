@@ -25,8 +25,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
         }
 
         if let screen = screen {
-            let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
-            let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.adjustedVisibleFrame, action: action)
             return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
         }
         

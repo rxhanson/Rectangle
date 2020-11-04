@@ -74,8 +74,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
             }
         }
         
-        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
-        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: .leftHalf)
+        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.adjustedVisibleFrame, action: .leftHalf)
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .leftHalf)
     }
     
@@ -91,8 +90,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
             }
         }
         
-        let visibleFrameOfScreen = ScreenEdgeGap.adjustVisibleFrame(visibleFrame: screen.visibleFrame)
-        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: .rightHalf)
+        let oneHalfRect = calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.adjustedVisibleFrame, action: .rightHalf)
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .rightHalf)
     }
 
