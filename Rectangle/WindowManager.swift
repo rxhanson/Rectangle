@@ -104,7 +104,7 @@ class WindowManager {
         
         let newRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
 
-        let visibleFrameOfDestinationScreen = NSRectToCGRect(calcResult.screen.visibleFrame)
+        let visibleFrameOfDestinationScreen = calcResult.screen.adjustedVisibleFrame
 
         let useFixedSizeMover = !frontmostWindowElement.isResizable() && action.resizes
         let windowMoverChain = useFixedSizeMover
