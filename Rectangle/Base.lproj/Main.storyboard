@@ -3064,7 +3064,7 @@
                                             <action selector="toggleSubsequentExecutionBehavior:" target="yhc-gS-h02" id="dzP-GJ-Pbr"/>
                                         </connections>
                                     </button>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
                                         <rect key="frame" x="-2" y="74" width="454" height="14"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="14" id="2rH-Yi-ZZL"/>
