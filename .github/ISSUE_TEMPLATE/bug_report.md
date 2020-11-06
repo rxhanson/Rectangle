@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+- [ ] This is a new bug that hasn't been documented in a closed issue or in the Readme.
+
 macOS version:
 Rectangle version:
-logs (In Rectangle menu, hold option, "View Logging..."): 
+Logs if applicable (In Rectangle menu, hold option, "View Logging..."): 
