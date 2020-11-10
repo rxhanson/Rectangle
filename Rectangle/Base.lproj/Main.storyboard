@@ -1771,20 +1771,20 @@
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gmc-Bu-ioG">
-                                        <rect key="frame" x="0.0" y="273" width="141" height="32"/>
+                                        <rect key="frame" x="0.0" y="273" width="138" height="32"/>
                                         <subviews>
                                             <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WPl-J4-Y8A">
-                                                <rect key="frame" x="0.0" y="8" width="35" height="16"/>
-                                                <buttonCell key="cell" type="bevel" title=" ▼ ⋯" bezelStyle="rounded" imagePosition="right" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="MKW-qf-Q2C">
+                                                <rect key="frame" x="0.0" y="8" width="32" height="16"/>
+                                                <buttonCell key="cell" type="bevel" title="▶︎ ⋯" bezelStyle="rounded" imagePosition="right" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="MKW-qf-Q2C">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
+                                                    <font key="font" size="13" name=".SFNS-Regular"/>
                                                 </buttonCell>
                                                 <connections>
                                                     <action selector="toggleShowMore:" target="zlF-FD-XEr" id="sGL-ip-4gD"/>
                                                 </connections>
                                             </button>
                                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="rsX-Dg-tQM">
-                                                <rect key="frame" x="45" y="14" width="96" height="5"/>
+                                                <rect key="frame" x="42" y="14" width="96" height="5"/>
                                             </box>
                                         </subviews>
                                         <constraints>

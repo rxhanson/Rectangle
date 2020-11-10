@@ -125,7 +125,7 @@ class PrefsViewController: NSViewController {
     @IBAction func toggleShowMore(_ sender: NSButton) {
         additionalShortcutsStackView.isHidden = !additionalShortcutsStackView.isHidden
         showMoreButton.title = additionalShortcutsStackView.isHidden
-            ? "▼ ⋯" : "▲"
+            ? "▶︎ ⋯" : "▼"
     }
     
     private func subscribeToAllowAnyShortcutToggle() {
