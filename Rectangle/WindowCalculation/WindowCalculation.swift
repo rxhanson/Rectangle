@@ -10,25 +10,25 @@ import Cocoa
 
 protocol Calculation {
     
-    func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult?
+     func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult?
     
-    func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
+    func calculateRect(_ params: RectCalculationParameters) -> RectResult
 }
 
 class WindowCalculation: Calculation {
     
-    func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+     func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         
-        let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: usableScreens.visibleFrameOfCurrentScreen, action: action)
+        let rectResult = calculateRect(params.asRectParams())
         
         if rectResult.rect.isNull {
             return nil
         }
         
-        return WindowCalculationResult(rect: rectResult.rect, screen: usableScreens.currentScreen, resultingAction: action, resultingSubAction: rectResult.subAction)
+        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: params.action, resultingSubAction: rectResult.subAction)
     }
 
-    func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         return RectResult(CGRect.null)
     }
     
@@ -51,6 +51,24 @@ class WindowCalculation: Calculation {
 struct Window {
     let id: Int
     let rect: CGRect
+}
+
+struct WindowCalculationParameters {
+    let window: Window
+    let usableScreens: UsableScreens
+    let action: WindowAction
+    let lastAction: RectangleAction?
+    
+    func asRectParams(visibleFrame: CGRect? = nil, differentAction: WindowAction? = nil) -> RectCalculationParameters {
+        RectCalculationParameters(window: window, visibleFrameOfScreen: visibleFrame ?? usableScreens.visibleFrameOfCurrentScreen, action: differentAction ?? action, lastAction: lastAction)
+    }
+}
+
+struct RectCalculationParameters {
+    let window: Window
+    let visibleFrameOfScreen: CGRect
+    let action: WindowAction
+    let lastAction: RectangleAction?
 }
 
 struct RectResult {

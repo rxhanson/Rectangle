@@ -10,11 +10,13 @@ import Foundation
 
 class FirstFourthCalculation: WindowCalculation, OrientationAware {
 
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
+        
         guard Defaults.subsequentExecutionMode.value != .none,
-            action == .firstFourth,
-            let last = lastAction,
-            let lastSubAction = last.subAction
+              params.action == .firstFourth,
+              let last = params.lastAction,
+              let lastSubAction = last.subAction
         else {
             return orientationBasedRect(visibleFrameOfScreen)
         }
@@ -41,7 +43,7 @@ class FirstFourthCalculation: WindowCalculation, OrientationAware {
         }
 
         if let calculation = calculation {
-            return calculation.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            return calculation.calculateRect(params)
         }
         
         return orientationBasedRect(visibleFrameOfScreen)

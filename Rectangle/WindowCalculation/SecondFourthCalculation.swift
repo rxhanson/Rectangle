@@ -12,10 +12,12 @@ class SecondFourthCalculation: WindowCalculation, OrientationAware {
     
     let threeFourthsCalculation = RightOrBottomThreeFourthsCalculation()
     
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
         
         guard Defaults.subsequentExecutionMode.value != .none,
-            let last = lastAction,
+            let last = params.lastAction,
             let lastSubAction = last.subAction,
             last.action == .secondFourth
         else {

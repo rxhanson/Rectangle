@@ -10,10 +10,12 @@ import Foundation
 
 class BottomRightSixthCalculation: WindowCalculation, OrientationAware, SixthsRepeated {
     
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
         guard Defaults.subsequentExecutionMode.value != .none,
-            let last = lastAction,
-            let lastSubAction = last.subAction
+              let last = params.lastAction,
+              let lastSubAction = last.subAction
         else {
             return orientationBasedRect(visibleFrameOfScreen)
         }

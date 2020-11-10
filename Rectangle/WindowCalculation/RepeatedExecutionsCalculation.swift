@@ -10,33 +10,33 @@ import Foundation
 
 protocol RepeatedExecutionsCalculation {
     
-    func calculateFirstRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
+    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult
     
-    func calculateSecondRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
+    func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult
 
-    func calculateThirdRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult
+    func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult
 
 }
 
 extension RepeatedExecutionsCalculation {
     
-    func calculateRepeatedRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
         
-        guard let count = lastAction?.count,
-            lastAction?.action == action
+        guard let count = params.lastAction?.count,
+              params.lastAction?.action == params.action
         else {
-            return calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            return calculateFirstRect(params)
         }
                 
         let position = count % 3
         
         switch (position) {
         case 1:
-            return calculateSecondRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            return calculateSecondRect(params)
         case 2:
-            return calculateThirdRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            return calculateThirdRect(params)
         default:
-            return calculateFirstRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+            return calculateFirstRect(params)
         }
         
     }

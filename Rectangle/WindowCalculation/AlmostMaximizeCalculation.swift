@@ -25,8 +25,9 @@ class AlmostMaximizeCalculation: WindowCalculation {
             : CGFloat(defaultWidth)
     }
     
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
         var calculatedWindowRect = visibleFrameOfScreen
         
         // Resize

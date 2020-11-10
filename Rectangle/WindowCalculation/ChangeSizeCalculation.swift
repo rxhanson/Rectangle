@@ -36,8 +36,11 @@ class ChangeSizeCalculation: WindowCalculation {
             : CGFloat(defaultSizeOffset)
     }
 
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
-        let sizeOffset: CGFloat = action == .smaller ? -sizeOffsetAbs : sizeOffsetAbs
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        let sizeOffset: CGFloat = params.action == .smaller ? -sizeOffsetAbs : sizeOffsetAbs
+
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
+        let window = params.window
 
         var resizedWindowRect = window.rect
         resizedWindowRect.size.width = resizedWindowRect.width + sizeOffset
@@ -59,13 +62,13 @@ class ChangeSizeCalculation: WindowCalculation {
         
         if resizedWindowRect.height >= visibleFrameOfScreen.height {
             resizedWindowRect.size.height = visibleFrameOfScreen.height
-            resizedWindowRect.origin.y = window.rect.minY
+            resizedWindowRect.origin.y = params.window.rect.minY
         }
         if againstAllScreenEdges(windowRect: window.rect, visibleFrameOfScreen: visibleFrameOfScreen) && (sizeOffset < 0) {
-            resizedWindowRect.size.width = window.rect.width + sizeOffset
-            resizedWindowRect.origin.x = window.rect.origin.x - floor(sizeOffset / 2.0)
-            resizedWindowRect.size.height = window.rect.height + sizeOffset
-            resizedWindowRect.origin.y = window.rect.origin.y - floor(sizeOffset / 2.0)
+            resizedWindowRect.size.width = params.window.rect.width + sizeOffset
+            resizedWindowRect.origin.x = params.window.rect.origin.x - floor(sizeOffset / 2.0)
+            resizedWindowRect.size.height = params.window.rect.height + sizeOffset
+            resizedWindowRect.origin.y = params.window.rect.origin.y - floor(sizeOffset / 2.0)
         }
         
         if resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {

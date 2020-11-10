@@ -85,7 +85,8 @@ class WindowManager {
         
         let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
         
-        guard var calcResult = windowCalculation?.calculate(currentWindow, lastAction: lastRectangleAction, usableScreens: usableScreens, action: action) else {
+        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction)
+        guard var calcResult = windowCalculation?.calculate(calculationParams) else {
             NSSound.beep()
             Logger.log("Nil calculation result")
             return

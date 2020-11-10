@@ -13,11 +13,13 @@ class TopCenterSixthCalculation: WindowCalculation, OrientationAware {
     private let topRightTwoSixths = TopRightTwoSixthsCalculation()
     private let topLeftTwoSixths = TopLeftTwoSixthsCalculation()
     
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
         guard Defaults.subsequentExecutionMode.value != .none,
-            let last = lastAction,
-            let lastSubAction = last.subAction,
-            action == .topCenterSixth
+              let last = params.lastAction,
+              let lastSubAction = last.subAction,
+              params.action == .topCenterSixth
         else {
             return orientationBasedRect(visibleFrameOfScreen)
         }

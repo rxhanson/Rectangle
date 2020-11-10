@@ -12,28 +12,30 @@ class NextPrevDisplayCalculation: WindowCalculation {
     
     let centerCalculation = CenterCalculation()
     
-    override func calculate(_ window: Window, lastAction: RectangleAction?, usableScreens: UsableScreens, action: WindowAction) -> WindowCalculationResult? {
+    override  func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        let usableScreens = params.usableScreens
         
         guard usableScreens.numScreens > 1 else { return nil }
 
         var screen: NSScreen?
         
-        if action == .nextDisplay {
+        if params.action == .nextDisplay {
             screen = usableScreens.adjacentScreens?.next
-        } else if action == .previousDisplay {
+        } else if params.action == .previousDisplay {
             screen = usableScreens.adjacentScreens?.prev
         }
 
         if let screen = screen {
-            let rectResult = calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: screen.adjustedVisibleFrame, action: action)
-            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
+            let rectParams = params.asRectParams(visibleFrame: screen.adjustedVisibleFrame)
+            let rectResult = calculateRect(rectParams)
+            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
         }
         
         return nil
     }
     
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         
-        return centerCalculation.calculateRect(window, lastAction: lastAction, visibleFrameOfScreen: visibleFrameOfScreen, action: action)
+        return centerCalculation.calculateRect(params)
     }
 }

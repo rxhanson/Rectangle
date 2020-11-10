@@ -13,11 +13,12 @@ class BottomCenterSixthCalculation: WindowCalculation, OrientationAware {
     private let bottomRightTwoSixths = BottomRightTwoSixthsCalculation()
     private let bottomLeftTwoSixths = BottomLeftTwoSixthsCalculation()
     
-    override func calculateRect(_ window: Window, lastAction: RectangleAction?, visibleFrameOfScreen: CGRect, action: WindowAction) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
         guard Defaults.subsequentExecutionMode.value != .none,
-              let last = lastAction,
+              let last = params.lastAction,
               let lastSubAction = last.subAction,
-              action == .bottomCenterSixth
+              params.action == .bottomCenterSixth
         else {
             return orientationBasedRect(visibleFrameOfScreen)
         }
