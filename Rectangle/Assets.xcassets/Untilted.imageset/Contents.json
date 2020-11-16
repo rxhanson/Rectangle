@@ -1,8 +1,8 @@
 {
   "images" : [
     {
+      "filename" : "mac256pts1x.png",
       "idiom" : "universal",
-      "filename" : "Untilted.png",
       "scale" : "1x"
     },
     {
@@ -15,7 +15,7 @@
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }
