@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "下";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "ドラッグしてウィンドウをスナップ";
+"1ui-PL-TkR.title" = "ドラッグでウィンドウをスナップ";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "上げる";
@@ -99,7 +99,7 @@
 "9ic-FL-obx.title" = "置換";
 
 /* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
-"9yt-4B-nSM.title" = "スマートコピー/ペースト";
+"9yt-4B-nSM.title" = "スマートコピー／ペースト";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
 "A66-A4-cGD.title" = "Rectangleを終了";
@@ -117,7 +117,7 @@
 "Bw7-FT-i3A.title" = "名前を付けて保存…";
 
 /* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
-"C9v-g0-DH8.title" = "リストア";
+"C9v-g0-DH8.title" = "元に戻す";
 
 /* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
 "D99-0O-MB6.title" = "frontmost.appを無視する";
@@ -129,7 +129,7 @@
 "Dv1-io-Yv7.title" = "スペルおよび文法";
 
 /* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
-"Eah-KL-kbn.title" = "大きくする";
+"Eah-KL-kbn.title" = "拡大";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
 "F12-EV-Lfz.title" = "1/3にして左寄せ";
@@ -477,13 +477,13 @@
 "qIS-W8-SiK.title" = "ページ設定…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "メニューバーアイコンを非表示";
+"qlg-kC-FMr.title" = "メニューバーにアイコンを表示しない";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "入力中にスペルチェック";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
-"rgM-f4-ycn.title" = "スマートダッシュ";
+"rgM-f4-ycn.title" = "スマートダッシュ記号";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
 "rmV-YD-Hzj.title" = "アップデートを自動的に確認";
@@ -498,7 +498,7 @@
 "t7n-mU-75I.title" = "Rectangle.appを確認してください";
 
 /* Class = "NSMenuItem"; title = "Data Detectors"; ObjectID = "tRr-pd-1PS"; */
-"tRr-pd-1PS.title" = "データ検出器";
+"tRr-pd-1PS.title" = "データ検出";
 
 /* Class = "NSMenuItem"; title = "Open Recent"; ObjectID = "tXI-mr-wws"; */
 "tXI-mr-wws.title" = "最近使った項目を開く";
@@ -531,7 +531,7 @@
 "vNY-rz-j42.title" = "メニューをクリア";
 
 /* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
-"vmV-6d-7jI.title" = "大文字にする";
+"vmV-6d-7jI.title" = "語頭を大文字にする";
 
 /* Class = "NSMenu"; title = "Ligatures"; ObjectID = "w0m-vy-SC9"; */
 "w0m-vy-SC9.title" = "合字";
@@ -555,7 +555,7 @@
 "yvN-PE-bxn.title" = "Rectangleを終了";
 
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
-"z6F-FW-3nz.title" = "置換を表示";
+"z6F-FW-3nz.title" = "自動置換を表示";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
 "kYm-Ye-gOR.title" = "Rectangleへようこそ！";
