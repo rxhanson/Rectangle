@@ -89,15 +89,15 @@ class SnappingManager {
                 initialWindowRect = windowElement?.rectOfElement()
             }
         case .leftMouseUp:
+            if let currentSnapArea = self.currentSnapArea {
+                box?.close()
+                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
+                self.currentSnapArea = nil
+            }
             windowElement = nil
             windowId = nil
             windowMoving = false
             initialWindowRect = nil
-            if let currentSnapArea = self.currentSnapArea {
-                box?.close()
-                currentSnapArea.action.postSnap(screen: currentSnapArea.screen)
-                self.currentSnapArea = nil
-            }
         case .leftMouseDragged:
             if windowId == nil {
                 windowElement = AccessibilityElement.windowUnderCursor()

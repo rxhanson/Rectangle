@@ -29,8 +29,8 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
-        guard let frontmostWindowElement = AccessibilityElement.frontmostWindow(),
-            let windowId = frontmostWindowElement.getIdentifier()
+        guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
+              let windowId = parameters.windowId ?? frontmostWindowElement.getIdentifier()
         else {
             NSSound.beep()
             return
@@ -162,10 +162,14 @@ struct ExecutionParameters {
     let action: WindowAction
     let updateRestoreRect: Bool
     let screen: NSScreen?
-    
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil) {
+    let windowElement: AccessibilityElement?
+    let windowId: Int?
+
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: Int? = nil) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
+        self.windowElement = windowElement
+        self.windowId = windowId
     }
 }
