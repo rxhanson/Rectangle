@@ -150,7 +150,7 @@
 "FeM-D8-WVr.title" = "Sustituciones";
 
 /* Class = "NSMenuItem"; title = "Bold"; ObjectID = "GB9-OM-e27"; */
-"GB9-OM-e27.title" = "Audaz";
+"GB9-OM-e27.title" = "Negrita";
 
 /* Class = "NSMenu"; title = "Format"; ObjectID = "GEO-Iw-cKr"; */
 "GEO-Iw-cKr.title" = "Formato";
@@ -198,7 +198,7 @@
 "J7y-lM-qPV.title" = "Uso Ninguno";
 
 /* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
-"Jnd-Lc-nlh.title" = "Visualización siguiente";
+"Jnd-Lc-nlh.title" = "Siguiente Visualización";
 
 /* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
 "KaW-ft-85H.title" = "Volver a Guardado";
@@ -291,7 +291,7 @@
 "Vjx-xi-njq.title" = "Cursiva";
 
 /* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
-"W48-6f-4Dl.title" = "Tratar";
+"W48-6f-4Dl.title" = "Modificar";
 
 /* Class = "NSMenuItem"; title = "Underline"; ObjectID = "WRG-CD-K1S"; */
 "WRG-CD-K1S.title" = "Subrayar";
@@ -609,7 +609,7 @@
 "uw2-9W-2jq.label" = "Atajos de teclado";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "Resetear el tamaño de la ventana al despegarla";
+"UZP-5q-D5Y.title" = "Restablecer el tamaño de la ventana al despegarla";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "Espacio entre ventanas";
