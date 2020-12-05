@@ -11,6 +11,12 @@
 /* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
 "1Rc-Od-eP5.title" = "아래로 이동";
 
+/* Class = "NSTextFieldCell"; title = "Move to Top Half"; ObjectID = "0rf-ah-vp8"; */
+"0rf-ah-vp8.title" = "Move to Top Half"; // TODO
+
+/* Class = "NSTextFieldCell"; title = "Move to Bottom Half"; ObjectID = "sBO-Jw-Kvu"; */
+"sBO-Jw-Kvu.title" = "Move to Bottom Half"; // TODO
+
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
 "1UK-8n-QPP.title" = "도구 막대 사용자화…";
 

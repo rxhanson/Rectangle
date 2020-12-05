@@ -119,6 +119,8 @@ class WindowCalculationFactory {
     static let moveLeftRightCalculation = MoveLeftRightCalculation()
     static let moveUpCalculation = MoveUpCalculation()
     static let moveDownCalculation = MoveDownCalculation()
+    static let moveTopHalfCalculation = MoveTopHalfCalculation()
+    static let moveBottomHalfCalculation = MoveBottomHalfCalculation()
     static let almostMaximizeCalculation = AlmostMaximizeCalculation()
     static let firstFourthCalculation = FirstFourthCalculation()
     static let secondFourthCalculation = SecondFourthCalculation()
@@ -156,6 +158,8 @@ class WindowCalculationFactory {
      .moveRight: moveLeftRightCalculation,
      .moveUp: moveUpCalculation,
      .moveDown: moveDownCalculation,
+     .moveTopHalf: moveTopHalfCalculation,
+     .moveBottomHalf: moveBottomHalfCalculation,
      .almostMaximize: almostMaximizeCalculation,
      .centerHalf: centerHalfCalculation,
      .firstFourth: firstFourthCalculation,
