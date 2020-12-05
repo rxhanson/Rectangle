@@ -12,6 +12,7 @@ class TopCenterSixthCalculation: WindowCalculation, OrientationAware {
     
     private let topRightTwoSixths = TopRightTwoSixthsCalculation()
     private let topLeftTwoSixths = TopLeftTwoSixthsCalculation()
+    private let bottomLeftTwoSixths = BottomLeftTwoSixthsCalculation()
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         
@@ -26,9 +27,11 @@ class TopCenterSixthCalculation: WindowCalculation, OrientationAware {
         
         let calc: SimpleCalc
         switch lastSubAction{
-        case .topCenterSixthLandscape, .leftCenterSixthPortrait:
+        case .topCenterSixthLandscape:
             calc = topRightTwoSixths.orientationBasedRect
-        case .topRightTwoSixthsLandscape, .topRightTwoSixthsPortrait:
+        case .leftCenterSixthPortrait:
+            calc = bottomLeftTwoSixths.orientationBasedRect
+        case .topRightTwoSixthsLandscape, .bottomLeftTwoSixthsPortrait:
             calc = topLeftTwoSixths.orientationBasedRect
         default: calc = orientationBasedRect
         }
@@ -69,6 +72,8 @@ class TopRightTwoSixthsCalculation: WindowCalculation, OrientationAware {
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height * 2.0 / 3.0)
+        rect.origin.x = visibleFrameOfScreen.maxX - rect.width
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topRightTwoSixthsPortrait)
     }
 }
@@ -87,7 +92,7 @@ class TopLeftTwoSixthsCalculation: WindowCalculation, OrientationAware {
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height * 2.0 / 3.0)
-        rect.origin.y = visibleFrameOfScreen.minY + rect.height
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topLeftTwoSixthsPortrait)
     }
 }
