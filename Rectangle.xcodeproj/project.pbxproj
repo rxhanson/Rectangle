@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		12D896200936C0DE9FF41FB4 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		6327EAA4FEECF2AE087FCD30 /* Pods_RectangleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */; };
-		86DC01EE257BFD7F00F4E77C /* GapCounteractionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DC01ED257BFD7F00F4E77C /* GapCounteractionCalculation.swift */; };
 		981F27D12340E3E1006CD263 /* InternetAccessPolicy.plist in Resources */ = {isa = PBXBuildFile; fileRef = 981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */; };
 		9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */; };
 		9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402222B3886100ABFB3F /* CenterCalculation.swift */; };
@@ -121,7 +120,6 @@
 		53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.debug.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.debug.xcconfig"; sourceTree = "<group>"; };
 		80B094EEF6AE857D468B639A /* Pods-RectangleLauncher.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleLauncher.debug.xcconfig"; path = "Target Support Files/Pods-RectangleLauncher/Pods-RectangleLauncher.debug.xcconfig"; sourceTree = "<group>"; };
 		81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		86DC01ED257BFD7F00F4E77C /* GapCounteractionCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GapCounteractionCalculation.swift; sourceTree = "<group>"; };
 		9808018523D05C0B0077774A /* RectangleRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RectangleRelease.entitlements; sourceTree = "<group>"; };
 		9808018623D05C1F0077774A /* RectangleLauncherRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RectangleLauncherRelease.entitlements; sourceTree = "<group>"; };
 		981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InternetAccessPolicy.plist; sourceTree = "<group>"; };
@@ -352,7 +350,6 @@
 				988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */,
 				98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */,
 				98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */,
-				86DC01ED257BFD7F00F4E77C /* GapCounteractionCalculation.swift */,
 				98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */,
 				9851A5C2251BEBA300ECF78C /* OrientationAware.swift */,
 				98A6EDDC251F3F4A00F74B10 /* SixthsRepeated.swift */,
@@ -797,7 +794,6 @@
 				9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */,
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
 				98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */,
-				86DC01EE257BFD7F00F4E77C /* GapCounteractionCalculation.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
 				98A009B92512538D00CFBF0C /* TopRightSixthCalculation.swift in Sources */,
 				98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */,
