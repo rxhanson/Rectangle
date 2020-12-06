@@ -10,7 +10,7 @@ import Cocoa
 
 protocol Calculation {
     
-     func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult?
+    func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult?
     
     func calculateRect(_ params: RectCalculationParameters) -> RectResult
 }
@@ -44,6 +44,14 @@ class WindowCalculation: Calculation {
     
     func isLandscape(_ rect: CGRect) -> Bool {
         return rect.width > rect.height
+    }
+    
+    func isRepeatedCommand(_ params: WindowCalculationParameters) -> Bool {
+        if let lastAction = params.lastAction, lastAction.action == params.action {
+            let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: params.usableScreens.frameOfCurrentScreen)
+            return normalizedLastRect == params.window.rect
+        }
+        return false
     }
     
 }

@@ -8,77 +8,102 @@
 
 import Cocoa
 
-class MoveLeftRightCalculation: WindowCalculation {
+// Applicable options:
+// Defaults.subsequentExecutionMode.traversesDisplays (if enabled, resizing will be limited to a single 50%)
+// Defaults.centeredDirectionalMove.enabled (independent)
+// Defaults.resizeOnDirectionalMove.enabled
+
+class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
-        let usableScreens = params.usableScreens
-        if params.action == .moveLeft {
-            return calculateLeft(params, screen: usableScreens.currentScreen)
-        } else if params.action == .moveRight {
-            return calculateRight(params, screen: usableScreens.currentScreen)
+        
+        if !Defaults.subsequentExecutionMode.traversesDisplays {
+            return super.calculate(params)
         }
         
-        return nil
-    }
-    
-    func calculateLeft(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
+        var rectResult = calculateRect(params.asRectParams())
+        var screen = params.usableScreens.currentScreen
+        var action = params.action
         
-        if Defaults.subsequentExecutionMode.traversesDisplays {
-            let usableScreens = params.usableScreens
-            if let lastAction = params.lastAction, lastAction.action == .moveLeft {
-                let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-                if normalizedLastRect == params.window.rect {
-                    if let prevScreen = usableScreens.adjacentScreens?.prev {
-                        return calculateRight(params, screen: prevScreen)
-                    }
+        if isRepeatedCommand(params) {
+                
+            if action == .moveLeft {
+                if let prevScreen = params.usableScreens.adjacentScreens?.prev {
+                    screen = prevScreen
                 }
-            }
-        }
-
-        var calculatedWindowRect = params.window.rect
-        calculatedWindowRect.origin.x = screen.adjustedVisibleFrame.minX
-        
-        if params.window.rect.height >= screen.adjustedVisibleFrame.height {
-            calculatedWindowRect.size.height = screen.adjustedVisibleFrame.height
-            calculatedWindowRect.origin.y = screen.adjustedVisibleFrame.minY
-        } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.y = round((screen.adjustedVisibleFrame.height - params.window.rect.height) / 2.0) + screen.adjustedVisibleFrame.minY
-        }
-        return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveLeft)
-        
-    }
-    
-    
-    func calculateRight(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
-        
-        if Defaults.subsequentExecutionMode.traversesDisplays {
-            let usableScreens = params.usableScreens
-            if let lastAction = params.lastAction, lastAction.action == .moveRight {
-                let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
-                if normalizedLastRect == params.window.rect {
-                    if let nextScreen = usableScreens.adjacentScreens?.next {
-                        return calculateLeft(params, screen: nextScreen)
-                    }
+                action = .moveRight
+            } else {
+                if let nextScreen = params.usableScreens.adjacentScreens?.next {
+                    screen = nextScreen
                 }
+                action = .moveLeft
             }
+            
+            rectResult = calculateRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame, differentAction: action))
+        
         }
         
-        var calculatedWindowRect = params.window.rect
-        calculatedWindowRect.origin.x = screen.adjustedVisibleFrame.maxX - params.window.rect.width
         
-        if params.window.rect.height >= screen.adjustedVisibleFrame.height {
-            calculatedWindowRect.size.height = screen.adjustedVisibleFrame.height
-            calculatedWindowRect.origin.y = screen.adjustedVisibleFrame.minY
-        } else if Defaults.centeredDirectionalMove.enabled != false {
-            calculatedWindowRect.origin.y = round((screen.adjustedVisibleFrame.height - params.window.rect.height) / 2.0) + screen.adjustedVisibleFrame.minY
-        }
-        return WindowCalculationResult(rect: calculatedWindowRect, screen: screen, resultingAction: .moveRight)
+        return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
 
     }
     
-    // unused
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
-        return RectResult(CGRect.null)
+        
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
+        
+        var calculatedWindowRect: CGRect
+        
+        print("Defaults.subsequentExecutionMode.traversesDisplays", Defaults.subsequentExecutionMode.traversesDisplays)
+        print("Defaults.resizeOnDirectionalMove.enabled", Defaults.resizeOnDirectionalMove.enabled)
+        if !Defaults.subsequentExecutionMode.traversesDisplays && Defaults.resizeOnDirectionalMove.enabled {
+            calculatedWindowRect = calculateRepeatedRect(params).rect
+        } else if Defaults.resizeOnDirectionalMove.enabled {
+            calculatedWindowRect = calculateGenericRect(params, fraction: 1 / 2.0).rect
+        } else {
+            calculatedWindowRect = calculateGenericRect(params).rect
+        }
+        
+        if Defaults.centeredDirectionalMove.enabled != false {
+            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - calculatedWindowRect.height) / 2.0) + visibleFrameOfScreen.minY
+        }
+        
+        if params.window.rect.height >= visibleFrameOfScreen.height {
+            calculatedWindowRect.size.height = visibleFrameOfScreen.height
+            calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
+        }
+        
+        return RectResult(calculatedWindowRect)
+
+    }
+    
+    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
+        return calculateGenericRect(params, fraction: 1 / 2.0)
+    }
+    
+    func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult {
+        return calculateGenericRect(params, fraction: 2 / 3.0)
+    }
+    
+    func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult {
+        return calculateGenericRect(params, fraction: 1 / 3.0)
+    }
+    
+    func calculateGenericRect(_ params: RectCalculationParameters, fraction: Float? = nil) -> RectResult {
+        let visibleFrameOfScreen = params.visibleFrameOfScreen
+        
+        var rect = params.window.rect
+        if let requestedFraction = fraction {
+            rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(requestedFraction))
+        }
+        
+        if params.action == .moveRight {
+            rect.origin.x = visibleFrameOfScreen.maxX - rect.width
+        } else {
+            rect.origin.x = visibleFrameOfScreen.minX
+        }
+        
+        return RectResult(rect)
     }
     
 }

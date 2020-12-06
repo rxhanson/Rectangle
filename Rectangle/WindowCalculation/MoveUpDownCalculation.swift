@@ -20,10 +20,10 @@ class MoveUpDownCalculation: WindowCalculation, RepeatedExecutionsCalculation {
             calculatedWindowRect = calculateRepeatedRect(params).rect
         } else {
             calculatedWindowRect = calculateGenericRect(params).rect
-            
-            if Defaults.centeredDirectionalMove.enabled != false {
-                calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
-            }
+        }
+        
+        if Defaults.centeredDirectionalMove.enabled != false {
+            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
         }
         
         if params.window.rect.width >= visibleFrameOfScreen.width {
@@ -36,23 +36,23 @@ class MoveUpDownCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     }
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, heightFraction: 1 / 2.0)
+        return calculateGenericRect(params, fraction: 1 / 2.0)
     }
     
     func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, heightFraction: 2 / 3.0)
+        return calculateGenericRect(params, fraction: 2 / 3.0)
     }
     
     func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, heightFraction: 1 / 3.0)
+        return calculateGenericRect(params, fraction: 1 / 3.0)
     }
     
-    func calculateGenericRect(_ params: RectCalculationParameters, heightFraction: Float? = nil) -> RectResult {
+    func calculateGenericRect(_ params: RectCalculationParameters, fraction: Float? = nil) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
         
         var rect = params.window.rect
-        if let requestedHeightFraction = heightFraction {
-            rect.size.height = floor(visibleFrameOfScreen.height * CGFloat(requestedHeightFraction))
+        if let requestedFraction = fraction {
+            rect.size.height = floor(visibleFrameOfScreen.height * CGFloat(requestedFraction))
         }
         
         if params.action == .moveUp {

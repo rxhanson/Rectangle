@@ -70,12 +70,9 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
 
     func calculateLeftAcrossDisplays(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
                 
-        if let lastAction = params.lastAction, lastAction.action == .leftHalf {
-            let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: params.usableScreens.frameOfCurrentScreen)
-            if normalizedLastRect == params.window.rect {
-                if let prevScreen = params.usableScreens.adjacentScreens?.prev {
-                    return calculateRightAcrossDisplays(params, screen: prevScreen)
-                }
+        if isRepeatedCommand(params) {
+            if let prevScreen = params.usableScreens.adjacentScreens?.prev {
+                return calculateRightAcrossDisplays(params, screen: prevScreen)
             }
         }
         
@@ -86,12 +83,9 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
     
     func calculateRightAcrossDisplays(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
         
-        if let lastAction = params.lastAction, lastAction.action == .rightHalf {
-            let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: params.usableScreens.frameOfCurrentScreen)
-            if normalizedLastRect == params.window.rect {
-                if let nextScreen = params.usableScreens.adjacentScreens?.next {
-                    return calculateLeftAcrossDisplays(params, screen: nextScreen)
-                }
+        if isRepeatedCommand(params) {
+            if let nextScreen = params.usableScreens.adjacentScreens?.next {
+                return calculateLeftAcrossDisplays(params, screen: nextScreen)
             }
         }
         
