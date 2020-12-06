@@ -12,6 +12,7 @@ class BottomCenterSixthCalculation: WindowCalculation, OrientationAware {
     
     private let bottomRightTwoSixths = BottomRightTwoSixthsCalculation()
     private let bottomLeftTwoSixths = BottomLeftTwoSixthsCalculation()
+    private let topRightTwoSixths = TopRightTwoSixthsCalculation()
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
@@ -27,8 +28,10 @@ class BottomCenterSixthCalculation: WindowCalculation, OrientationAware {
         switch lastSubAction{
         case .bottomCenterSixthLandscape, .rightCenterSixthPortrait:
             calc = bottomRightTwoSixths.orientationBasedRect
-        case .bottomRightTwoSixthsLandscape, .bottomRightTwoSixthsPortrait:
+        case .bottomRightTwoSixthsLandscape:
             calc = bottomLeftTwoSixths.orientationBasedRect
+        case .bottomRightTwoSixthsPortrait:
+            calc = topRightTwoSixths.orientationBasedRect
         default: calc = orientationBasedRect
         }
         
