@@ -13,7 +13,7 @@ import Cocoa
 // Defaults.centeredDirectionalMove.enabled
 // Defaults.resizeOnDirectionalMove.enabled (resizes in thirds, or just to half-width if traversesDisplays is enabled
 
-class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation {
+class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation {
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         
@@ -75,16 +75,8 @@ class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation
 
     }
     
-    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, fraction: 1 / 2.0)
-    }
-    
-    func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, fraction: 2 / 3.0)
-    }
-    
-    func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, fraction: 1 / 3.0)
+    func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
+        return calculateGenericRect(params, fraction: fraction)
     }
     
     func calculateGenericRect(_ params: RectCalculationParameters, fraction: Float? = nil) -> RectResult {
