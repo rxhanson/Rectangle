@@ -10,49 +10,51 @@ import Foundation
 
 class GapCalculation {
     
-    static func applyGaps(_ rect: CGRect, sharedEdges: Edge = .none, gapSize: Float) -> CGRect {
+    static func applyGaps(_ rect: CGRect, dimension: Dimension = .both, sharedEdges: Edge = .none, gapSize: Float) -> CGRect {
         
-        let cgGapSize = CGFloat(gapSize)
-        var withGaps = rect.insetBy(dx: cgGapSize, dy: cgGapSize)
+        let cgGapSize = CGFloat(gapSize) / 2
+        let halfGapSize = cgGapSize / 2
         
-        if (sharedEdges.contains(.left)) {
-            withGaps = CGRect(
-                x: withGaps.origin.x - (cgGapSize / 2),
-                y: withGaps.origin.y,
-                width: withGaps.width + (cgGapSize / 2),
-                height: withGaps.height
-            )
+        var withGaps = rect.insetBy(
+            dx: dimension.contains(.horizontal) ? cgGapSize : 0,
+            dy: dimension.contains(.vertical) ? cgGapSize : 0
+        )
+        
+        if dimension.contains(.horizontal) {
+            if sharedEdges.contains(.left) {
+                withGaps.origin.x -= halfGapSize
+                withGaps.size.width += halfGapSize
+            }
+            
+            if sharedEdges.contains(.right) {
+                withGaps.size.width += halfGapSize
+            }
         }
         
-        if (sharedEdges.contains(.right)) {
-            withGaps = CGRect(
-                x: withGaps.origin.x,
-                y: withGaps.origin.y,
-                width: withGaps.width + (cgGapSize / 2),
-                height: withGaps.height
-            )
-        }
         
-        if (sharedEdges.contains(.bottom)) {
-            withGaps = CGRect(
-                x: withGaps.origin.x,
-                y: withGaps.origin.y - (cgGapSize / 2),
-                width: withGaps.width,
-                height: withGaps.height + (cgGapSize / 2)
-            )
-        }
-        
-        if (sharedEdges.contains(.top)) {
-            withGaps = CGRect(
-                x: withGaps.origin.x,
-                y: withGaps.origin.y,
-                width: withGaps.width,
-                height: withGaps.height + (cgGapSize / 2)
-            )
+        if dimension.contains(.vertical) {
+            if sharedEdges.contains(.bottom) {
+                withGaps.origin.y -= halfGapSize
+                withGaps.size.height += halfGapSize
+            }
+            
+            if sharedEdges.contains(.top) {
+                withGaps.size.height += halfGapSize
+            }
         }
         
         return withGaps
     }
+}
+
+struct Dimension: OptionSet {
+    let rawValue: Int
+    
+    static let horizontal = Dimension(rawValue: 1 << 0)
+    static let vertical = Dimension(rawValue: 1 << 1)
+    
+    static let both: Dimension = [.horizontal, .vertical]
+    static let none: Dimension = []
 }
 
 struct Edge: OptionSet {

@@ -92,10 +92,12 @@ class WindowManager {
             return
         }
         
-        if Defaults.gapSize.value > 0, calcResult.resultingAction.gapsApplicable {
+        let gapsApplicable = calcResult.resultingAction.gapsApplicable
+        
+        if Defaults.gapSize.value > 0, gapsApplicable != .none {
             let gapSharedEdges = calcResult.resultingSubAction?.gapSharedEdge ?? calcResult.resultingAction.gapSharedEdge
             
-            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
+            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
         }
 
         if currentNormalizedRect.equalTo(calcResult.rect) {
