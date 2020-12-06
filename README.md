@@ -69,6 +69,16 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 2: disabled
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
+### Resize on Directional Move
+By default, the commands to move to certain edges will not resize the window.
+If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
+This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
+This size will cycle between 1/2 -> 2/3 -> 1/3 of the screen’s width/height.
+
+```bash
+defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
+```
+
 ### Almost Maximize
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height).
 
