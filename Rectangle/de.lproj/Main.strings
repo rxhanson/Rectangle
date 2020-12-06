@@ -11,12 +11,6 @@
 /* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
 "1Rc-Od-eP5.title" = "Nach unten bewegen";
 
-/* Class = "NSTextFieldCell"; title = "Move to Top Half"; ObjectID = "0rf-ah-vp8"; */
-"0rf-ah-vp8.title" = "Nach obere Hälfte bewegen";
-
-/* Class = "NSTextFieldCell"; title = "Move to Bottom Half"; ObjectID = "sBO-Jw-Kvu"; */
-"sBO-Jw-Kvu.title" = "Nach untere Hälfte bewegen";
-
 /* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
 "1UK-8n-QPP.title" = "Symbolleiste anpassen…";
 

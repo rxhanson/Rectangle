@@ -41,20 +41,18 @@ enum WindowAction: Int {
     moveRight = 26,
     moveUp = 27,
     moveDown = 28,
-    moveTopHalf = 29,
-    moveBottomHalf = 30,
-    almostMaximize = 31,
-    centerHalf = 32,
-    firstFourth = 33,
-    secondFourth = 34,
-    thirdFourth = 35,
-    lastFourth = 36,
-    topLeftSixth = 37,
-    topCenterSixth = 38,
-    topRightSixth = 39,
-    bottomLeftSixth = 40,
-    bottomCenterSixth = 41,
-    bottomRightSixth = 42
+    almostMaximize = 29,
+    centerHalf = 30,
+    firstFourth = 31,
+    secondFourth = 32,
+    thirdFourth = 33,
+    lastFourth = 34,
+    topLeftSixth = 35,
+    topCenterSixth = 36,
+    topRightSixth = 37,
+    bottomLeftSixth = 38,
+    bottomCenterSixth = 39,
+    bottomRightSixth = 40
     
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -62,7 +60,7 @@ enum WindowAction: Int {
                          firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird,
                          maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
                          nextDisplay, previousDisplay,
-                         moveLeft, moveRight, moveUp, moveDown, moveTopHalf, moveBottomHalf,
+                         moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth
     ]
@@ -112,8 +110,6 @@ enum WindowAction: Int {
         case .moveRight: return "moveRight"
         case .moveUp: return "moveUp"
         case .moveDown: return "moveDown"
-        case .moveTopHalf: return "moveTopHalf"
-        case .moveBottomHalf: return "moveBottomHalf"
         case .almostMaximize: return "almostMaximize"
         case .centerHalf: return "centerHalf"
         case .firstFourth: return "firstFourth"
@@ -209,12 +205,6 @@ enum WindowAction: Int {
         case .moveDown:
             key = "1Rc-Od-eP5.title"
             value = "Move Down"
-        case .moveTopHalf:
-            key = "0rf-ah-vp8.title"
-            value = "Move to Top Half"
-        case .moveBottomHalf:
-            key = "sBO-Jw-Kvu.title"
-            value = "Move to Bottom Half"
         case .almostMaximize:
             key = "e57-QJ-6bL.title"
             value = "Almost Maximize"
@@ -351,8 +341,6 @@ enum WindowAction: Int {
         case .moveRight: return NSImage(imageLiteralResourceName: "moveRightTemplate")
         case .moveUp: return NSImage(imageLiteralResourceName: "moveUpTemplate")
         case .moveDown: return NSImage(imageLiteralResourceName: "moveDownTemplate")
-        case .moveTopHalf: return NSImage(imageLiteralResourceName: "moveUpTemplate")
-        case .moveBottomHalf: return NSImage(imageLiteralResourceName: "moveDownTemplate")
         case .almostMaximize: return NSImage(imageLiteralResourceName: "almostMaximizeTemplate")
         case .centerHalf: return NSImage(imageLiteralResourceName: "halfWidthCenterTemplate")
         case .firstFourth: return NSImage(imageLiteralResourceName: "leftFourthTemplate")
@@ -378,8 +366,10 @@ enum WindowAction: Int {
         case .bottomRight: return [.top, .left]
         case .topLeft: return [.bottom, .right]
         case .topRight: return [.bottom, .left]
-        case .moveTopHalf: return .bottom
-        case .moveBottomHalf: return .top
+        case .moveUp: return Defaults.resizeOnDirectionalMove.enabled ? .bottom : .none
+        case .moveDown: return Defaults.resizeOnDirectionalMove.enabled ? .top : .none
+        case .moveLeft: return Defaults.resizeOnDirectionalMove.enabled ? .right : .none
+        case .moveRight: return Defaults.resizeOnDirectionalMove.enabled ? .left : .none
         default:
             return .none
         }
@@ -388,7 +378,7 @@ enum WindowAction: Int {
     var gapsApplicable: Dimension {
         switch self {
         case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
-             .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth, .moveTopHalf, .moveBottomHalf:
+             .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
@@ -403,7 +393,7 @@ enum WindowAction: Int {
         switch self {
         case .firstFourth, .secondFourth, .thirdFourth, .lastFourth: return .fourths
         case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
-        case .moveUp, .moveDown, .moveLeft, .moveRight, .moveTopHalf, .moveBottomHalf: return .move
+        case .moveUp, .moveDown, .moveLeft, .moveRight: return .move
         default: return nil
         }
     }
