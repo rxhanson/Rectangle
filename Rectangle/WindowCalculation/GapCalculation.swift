@@ -12,7 +12,7 @@ class GapCalculation {
     
     static func applyGaps(_ rect: CGRect, dimension: Dimension = .both, sharedEdges: Edge = .none, gapSize: Float) -> CGRect {
         
-        let cgGapSize = CGFloat(gapSize) / 2
+        let cgGapSize = CGFloat(gapSize)
         let halfGapSize = cgGapSize / 2
         
         var withGaps = rect.insetBy(
