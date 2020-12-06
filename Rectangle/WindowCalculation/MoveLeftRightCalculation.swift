@@ -9,7 +9,7 @@
 import Cocoa
 
 // Applicable options:
-// Defaults.subsequentExecutionMode.traversesDisplays (if enabled, resizing will be limited to a single 50%)
+// Defaults.subsequentExecutionMode.traversesDisplays (only applies when resizeOnDirectionalMove is disabled)
 // Defaults.centeredDirectionalMove.enabled (independent)
 // Defaults.resizeOnDirectionalMove.enabled
 
@@ -17,7 +17,7 @@ class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         
-        if !Defaults.subsequentExecutionMode.traversesDisplays {
+        if Defaults.resizeOnDirectionalMove.enabled {
             return super.calculate(params)
         }
         
@@ -25,7 +25,7 @@ class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation
         var screen = params.usableScreens.currentScreen
         var action = params.action
         
-        if isRepeatedCommand(params) {
+        if Defaults.subsequentExecutionMode.traversesDisplays && isRepeatedCommand(params) {
                 
             if action == .moveLeft {
                 if let prevScreen = params.usableScreens.adjacentScreens?.prev {
@@ -54,12 +54,8 @@ class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation
         
         var calculatedWindowRect: CGRect
         
-        print("Defaults.subsequentExecutionMode.traversesDisplays", Defaults.subsequentExecutionMode.traversesDisplays)
-        print("Defaults.resizeOnDirectionalMove.enabled", Defaults.resizeOnDirectionalMove.enabled)
-        if !Defaults.subsequentExecutionMode.traversesDisplays && Defaults.resizeOnDirectionalMove.enabled {
+        if Defaults.resizeOnDirectionalMove.enabled {
             calculatedWindowRect = calculateRepeatedRect(params).rect
-        } else if Defaults.resizeOnDirectionalMove.enabled {
-            calculatedWindowRect = calculateGenericRect(params, fraction: 1 / 2.0).rect
         } else {
             calculatedWindowRect = calculateGenericRect(params).rect
         }

@@ -75,6 +75,8 @@ If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead 
 This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
 This size will cycle between 1/2 -> 2/3 -> 1/3 of the screen’s width/height.
 
+When this is enabled, `subsequentExecutionMode` has no effect on Move Left/Move Right.
+
 ```bash
 defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 ```
