@@ -197,25 +197,6 @@ defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 3840
 
 Apple never released a public API for Spaces, so any direct interaction with Spaces uses private APIs that are actually a bit shaky. Using the private API adds enough complexity to the app to where I feel it's better off without it. If Apple decides to release a public API for it, I'll add it in.
 
-### Window moving/resizing appears animated/smooth instead of quick, and windows don't end up where you expect
-
-This is a macOS bug. Here's some things that trigger it:
-
-* Using the on-screen keyboard
-* Unnecessary accessibility privileges for certain apps, like Alfred. Remove accessibility privileges from apps that don't need them.
-* Running certain apps, like Dragon and Punto Switcher (a Russian app).
-* Certain external monitors trigger this behavior.
-
-You can try enabling "Reduce motion" in the "Display" section of the "Accessibility" System Preferences. This doesn't appear to work with the on-screen keyboard, but might work for other triggers of the issue. Note that this setting will replace the Spaces/Mission Control/Exposé animations with fades.
-
-As a last resort, you can use this workaround release of Rectangle: [v0.25.1](https://github.com/rxhanson/Rectangle/releases/tag/v0.25.1), but it's just a better experience to avoid the items that trigger it and use the latest version of Rectangle. The ideal scenario is that Apple gets around to fixing it. This scenario will only happen if _a lot_ of people file the issue.
-
-If you are a developer, file an issue here:
-https://feedbackassistant.apple.com/
-
-If you are not a developer, use:
-https://www.apple.com/feedback/macos.html
-
 ### Window resizing is off slightly for iTerm2
 
 By default iTerm2 will only resize in increments of character widths. There might be a setting inside iTerm2 to disable this, but you can change it with the following command.
