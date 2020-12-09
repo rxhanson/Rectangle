@@ -1,6 +1,6 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Feature idea
+about: Please use the Discussions tab to share a feature idea ⬆️
 title: ''
 labels: 'enhancement'
 assignees: ''
