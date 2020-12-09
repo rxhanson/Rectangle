@@ -10,4 +10,4 @@ contact_links:
     about: Please discuss feature ideas here.
 ---
 
-Feature ideas are discussed in the [discussions tab](https://github.com/rxhanson/Rectangle/discussions). Please create your discussion there.
+Feature ideas are now kept in the [discussions tab](https://github.com/rxhanson/Rectangle/discussions). Please create an issue there, not here.
