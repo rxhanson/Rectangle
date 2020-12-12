@@ -28,6 +28,23 @@ class WindowManager {
         ]
     }
     
+    private func recordAction(previous lastRectangleAction: RectangleAction?, windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
+        let newCount: Int
+        if lastRectangleAction?.action == action,
+           let currentCount = lastRectangleAction?.count {
+            newCount = currentCount + 1
+        } else {
+            newCount = 1
+        }
+        
+        windowHistory.lastRectangleActions[windowId] = RectangleAction(
+            action: action,
+            subAction: subAction,
+            rect: resultingRect,
+            count: newCount
+        )
+    }
+    
     func execute(_ parameters: ExecutionParameters) {
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
               let windowId = parameters.windowId ?? frontmostWindowElement.getIdentifier()
@@ -100,6 +117,9 @@ class WindowManager {
 
         if currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
+            
+            recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+            
             return
         }
         
@@ -122,19 +142,7 @@ class WindowManager {
 
         let resultingRect = frontmostWindowElement.rectOfElement()
         
-        var newCount = 1
-        if lastRectangleAction?.action == calcResult.resultingAction,
-            let currentCount = lastRectangleAction?.count {
-            newCount = currentCount + 1
-            newCount %= 3
-        }
-        
-        windowHistory.lastRectangleActions[windowId] = RectangleAction(
-            action: calcResult.resultingAction,
-            subAction: calcResult.resultingSubAction,
-            rect: resultingRect,
-            count: newCount
-        )
+        recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
         
         if Logger.logging {
             var srcDestScreens: String = ""
