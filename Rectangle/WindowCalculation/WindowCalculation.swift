@@ -70,6 +70,10 @@ struct WindowCalculationParameters {
     func asRectParams(visibleFrame: CGRect? = nil, differentAction: WindowAction? = nil) -> RectCalculationParameters {
         RectCalculationParameters(window: window, visibleFrameOfScreen: visibleFrame ?? usableScreens.visibleFrameOfCurrentScreen, action: differentAction ?? action, lastAction: lastAction)
     }
+    
+    func withDifferentAction(_ differentAction: WindowAction) -> WindowCalculationParameters {
+        return WindowCalculationParameters(window: window, usableScreens: usableScreens, action: differentAction, lastAction: lastAction)
+    }
 }
 
 struct RectCalculationParameters {

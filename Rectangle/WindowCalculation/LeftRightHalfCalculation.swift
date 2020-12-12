@@ -72,7 +72,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
                 
         if isRepeatedCommand(params) {
             if let prevScreen = params.usableScreens.adjacentScreens?.prev {
-                return calculateRightAcrossDisplays(params, screen: prevScreen)
+                return calculateRightAcrossDisplays(params.withDifferentAction(.moveRight), screen: prevScreen)
             }
         }
         
@@ -85,7 +85,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         
         if isRepeatedCommand(params) {
             if let nextScreen = params.usableScreens.adjacentScreens?.next {
-                return calculateLeftAcrossDisplays(params, screen: nextScreen)
+                return calculateLeftAcrossDisplays(params.withDifferentAction(.moveLeft), screen: nextScreen)
             }
         }
         

@@ -384,7 +384,9 @@ enum WindowAction: Int {
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
         case .moveLeft, .moveRight:
             return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
-        case .almostMaximize, .maximizeHeight, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore:
+        case .maximizeHeight:
+            return .vertical
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore:
             return .none
         }
     }

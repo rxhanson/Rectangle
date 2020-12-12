@@ -9,24 +9,21 @@
 import Cocoa
 
 // Applicable options:
-// Defaults.subsequentExecutionMode.traversesDisplays (only applies when resizeOnDirectionalMove is disabled)
-// Defaults.centeredDirectionalMove.enabled (independent)
-// Defaults.resizeOnDirectionalMove.enabled
+// Defaults.subsequentExecutionMode.traversesDisplays
+// Defaults.centeredDirectionalMove.enabled
+// Defaults.resizeOnDirectionalMove.enabled (resizes in thirds, or just to half-width if traversesDisplays is enabled
 
 class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         
-        if Defaults.resizeOnDirectionalMove.enabled {
-            return super.calculate(params)
-        }
-        
-        var rectResult = calculateRect(params.asRectParams())
         var screen = params.usableScreens.currentScreen
         var action = params.action
         
-        if Defaults.subsequentExecutionMode.traversesDisplays && isRepeatedCommand(params) {
-                
+        let canTraverseDisplays = Defaults.subsequentExecutionMode.traversesDisplays && params.usableScreens.numScreens > 1
+        
+        let rectResult: RectResult
+        if canTraverseDisplays && isRepeatedCommand(params) {
             if action == .moveLeft {
                 if let prevScreen = params.usableScreens.adjacentScreens?.prev {
                     screen = prevScreen
@@ -40,21 +37,26 @@ class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsCalculation
             }
             
             rectResult = calculateRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame, differentAction: action))
-        
+        } else {
+            rectResult = calculateRect(params.asRectParams())
         }
-        
         
         return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
 
     }
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        calculateRect(params, newDisplay: false)
+    }
+    
+    func calculateRect(_ params: RectCalculationParameters, newDisplay: Bool) -> RectResult {
         
         let visibleFrameOfScreen = params.visibleFrameOfScreen
         
         var calculatedWindowRect: CGRect
-        
-        if Defaults.resizeOnDirectionalMove.enabled {
+        if newDisplay && Defaults.resizeOnDirectionalMove.enabled {
+            calculatedWindowRect = calculateFirstRect(params).rect
+        } else if Defaults.resizeOnDirectionalMove.enabled {
             calculatedWindowRect = calculateRepeatedRect(params).rect
         } else {
             calculatedWindowRect = calculateGenericRect(params).rect
