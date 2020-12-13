@@ -15,7 +15,7 @@ You can download the latest dmg from https://rectangleapp.com or the [Releases p
 Or install with brew cask:
 
 ```bash
-brew cask install rectangle
+brew install --cask rectangle
 ```
 ## How to use it
 The keyboard shortcuts are self explanatory, but the snap areas can use some explanation if you've never used them on Windows or other window management apps.
