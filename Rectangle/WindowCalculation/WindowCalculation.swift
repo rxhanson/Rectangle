@@ -10,7 +10,7 @@ import Cocoa
 
 protocol Calculation {
     
-     func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult?
+    func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult?
     
     func calculateRect(_ params: RectCalculationParameters) -> RectResult
 }
@@ -46,6 +46,14 @@ class WindowCalculation: Calculation {
         return rect.width > rect.height
     }
     
+    func isRepeatedCommand(_ params: WindowCalculationParameters) -> Bool {
+        if let lastAction = params.lastAction, lastAction.action == params.action {
+            let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: params.usableScreens.frameOfCurrentScreen)
+            return normalizedLastRect == params.window.rect
+        }
+        return false
+    }
+    
 }
 
 struct Window {
@@ -61,6 +69,10 @@ struct WindowCalculationParameters {
     
     func asRectParams(visibleFrame: CGRect? = nil, differentAction: WindowAction? = nil) -> RectCalculationParameters {
         RectCalculationParameters(window: window, visibleFrameOfScreen: visibleFrame ?? usableScreens.visibleFrameOfCurrentScreen, action: differentAction ?? action, lastAction: lastAction)
+    }
+    
+    func withDifferentAction(_ differentAction: WindowAction) -> WindowCalculationParameters {
+        return WindowCalculationParameters(window: window, usableScreens: usableScreens, action: differentAction, lastAction: lastAction)
     }
 }
 
@@ -117,8 +129,8 @@ class WindowCalculationFactory {
     static let lastTwoThirdsCalculation = LastTwoThirdsCalculation()
     static let lastThirdCalculation = LastThirdCalculation()
     static let moveLeftRightCalculation = MoveLeftRightCalculation()
-    static let moveUpCalculation = MoveUpCalculation()
-    static let moveDownCalculation = MoveDownCalculation()
+    static let moveUpCalculation = MoveUpDownCalculation()
+    static let moveDownCalculation = MoveUpDownCalculation()
     static let almostMaximizeCalculation = AlmostMaximizeCalculation()
     static let firstFourthCalculation = FirstFourthCalculation()
     static let secondFourthCalculation = SecondFourthCalculation()

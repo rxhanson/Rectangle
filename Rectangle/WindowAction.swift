@@ -259,7 +259,8 @@ enum WindowAction: Int {
     
     var resizes: Bool {
         switch self {
-        case .moveUp, .moveDown, .moveLeft, .moveRight, .center, .nextDisplay, .previousDisplay: return false
+        case .center, .nextDisplay, .previousDisplay: return false
+        case .moveUp, .moveDown, .moveLeft, .moveRight: return Defaults.resizeOnDirectionalMove.enabled
         default: return true
         }
     }
@@ -365,18 +366,28 @@ enum WindowAction: Int {
         case .bottomRight: return [.top, .left]
         case .topLeft: return [.bottom, .right]
         case .topRight: return [.bottom, .left]
+        case .moveUp: return Defaults.resizeOnDirectionalMove.enabled ? .bottom : .none
+        case .moveDown: return Defaults.resizeOnDirectionalMove.enabled ? .top : .none
+        case .moveLeft: return Defaults.resizeOnDirectionalMove.enabled ? .right : .none
+        case .moveRight: return Defaults.resizeOnDirectionalMove.enabled ? .left : .none
         default:
             return .none
         }
     }
     
-    var gapsApplicable: Bool {
+    var gapsApplicable: Dimension {
         switch self {
         case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
              .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth:
-            return true
-        default:
-            return false
+            return .both
+        case .moveUp, .moveDown:
+            return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
+        case .moveLeft, .moveRight:
+            return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
+        case .maximizeHeight:
+            return .vertical
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore:
+            return .none
         }
     }
     
