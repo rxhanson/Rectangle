@@ -69,7 +69,7 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 2: disabled
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
-### Resize on Directional Move
+### Resize on Directional Move (will be released in v0.41)
 By default, the commands to move to certain edges will not resize the window.
 If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
 This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
