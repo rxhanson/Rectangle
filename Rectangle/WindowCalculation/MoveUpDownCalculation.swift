@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MoveUpDownCalculation: WindowCalculation, RepeatedExecutionsCalculation {
+class MoveUpDownCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation {
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         
@@ -35,16 +35,8 @@ class MoveUpDownCalculation: WindowCalculation, RepeatedExecutionsCalculation {
 
     }
     
-    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, fraction: 1 / 2.0)
-    }
-    
-    func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, fraction: 2 / 3.0)
-    }
-    
-    func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateGenericRect(params, fraction: 1 / 3.0)
+    func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
+        return calculateGenericRect(params, fraction: fraction)
     }
     
     func calculateGenericRect(_ params: RectCalculationParameters, fraction: Float? = nil) -> RectResult {
@@ -65,4 +57,3 @@ class MoveUpDownCalculation: WindowCalculation, RepeatedExecutionsCalculation {
     }
     
 }
-

@@ -1,5 +1,5 @@
 //
-//  SubsequentThirdsCalculation.swift
+//  RepeatedExecutionsCalculation.swift
 //  Rectangle
 //
 //  Created by Ryan Hanson on 10/18/19.

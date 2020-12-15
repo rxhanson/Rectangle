@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation {
+class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation {
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         
@@ -34,38 +34,18 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsCalculation
         }
         
     }
-
-    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
+    
+    func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
 
-        var oneHalfRect = visibleFrameOfScreen
-        oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
+        var rect = visibleFrameOfScreen
+        
+        rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(fraction))
         if params.action == .rightHalf {
-            oneHalfRect.origin.x += oneHalfRect.size.width
+            rect.origin.x = visibleFrameOfScreen.maxX - rect.width
         }
-        return RectResult(oneHalfRect)
-    }
-
-    func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
-
-        var twoThirdsRect = visibleFrameOfScreen
-        twoThirdsRect.size.width = floor(visibleFrameOfScreen.width * 2 / 3.0)
-        if params.action == .rightHalf {
-            twoThirdsRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - twoThirdsRect.width
-        }
-        return RectResult(twoThirdsRect)
-    }
-
-    func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
-
-        var oneThirdRect = visibleFrameOfScreen
-        oneThirdRect.size.width = floor(visibleFrameOfScreen.width / 3.0)
-        if params.action == .rightHalf {
-            oneThirdRect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.width - oneThirdRect.width
-        }
-        return RectResult(oneThirdRect)
+        
+        return RectResult(rect)
     }
 
     func calculateLeftAcrossDisplays(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
