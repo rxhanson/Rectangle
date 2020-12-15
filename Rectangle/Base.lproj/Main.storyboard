@@ -2923,14 +2923,14 @@
             <objects>
                 <viewController storyboardIdentifier="SettingsViewController" id="yhc-gS-h02" customClass="SettingsViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mTk-eQ-4uf">
-                        <rect key="frame" x="0.0" y="0.0" width="490" height="352"/>
+                        <rect key="frame" x="0.0" y="0.0" width="490" height="372"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tUi-Ja-evb">
-                                <rect key="frame" x="20" y="61" width="450" height="271"/>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="1000" verticalCompressionResistancePriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tUi-Ja-evb">
+                                <rect key="frame" x="20" y="20" width="450" height="332"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7ew-iJ-cZQ">
-                                        <rect key="frame" x="0.0" y="255" width="450" height="16"/>
+                                        <rect key="frame" x="0.0" y="316" width="450" height="16"/>
                                         <subviews>
                                             <button verticalHuggingPriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="eQJ-O3-a8H">
                                                 <rect key="frame" x="-2" y="0.0" width="396" height="16"/>
@@ -2970,7 +2970,7 @@
                                         </customSpacing>
                                     </stackView>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
-                                        <rect key="frame" x="-2" y="230" width="452" height="16"/>
+                                        <rect key="frame" x="-2" y="291" width="452" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="yMd-x3-8KI"/>
                                         </constraints>
@@ -2983,7 +2983,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wBT-R4-q9s">
-                                        <rect key="frame" x="-2" y="206" width="452" height="16"/>
+                                        <rect key="frame" x="-2" y="267" width="452" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="sLl-cZ-1BZ"/>
                                         </constraints>
@@ -2996,7 +2996,7 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="gIp-Hu-6ns">
-                                        <rect key="frame" x="-2" y="183" width="454" height="14"/>
+                                        <rect key="frame" x="-2" y="244" width="454" height="14"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="14" id="3mn-6C-DhR"/>
                                         </constraints>
@@ -3007,7 +3007,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AmL-wm-e8w">
-                                        <rect key="frame" x="0.0" y="152" width="450" height="21"/>
+                                        <rect key="frame" x="0.0" y="213" width="450" height="21"/>
                                         <subviews>
                                             <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HcU-0y-wJU">
                                                 <rect key="frame" x="-2" y="3" width="298" height="16"/>
@@ -3046,13 +3046,13 @@
                                         </customSpacing>
                                     </stackView>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ujo-nl-syC">
-                                        <rect key="frame" x="0.0" y="120" width="450" height="24"/>
+                                        <rect key="frame" x="0.0" y="181" width="450" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="HTM-FQ-j4S"/>
                                         </constraints>
                                     </box>
                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="95T-Ls-2ah">
-                                        <rect key="frame" x="-2" y="97" width="452" height="16"/>
+                                        <rect key="frame" x="-2" y="158" width="452" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="Pgy-9j-mBF"/>
                                         </constraints>
@@ -3065,7 +3065,7 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Pe4-di-byb">
-                                        <rect key="frame" x="-2" y="74" width="454" height="14"/>
+                                        <rect key="frame" x="-2" y="135" width="454" height="14"/>
                                         <constraints>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="14" id="2rH-Yi-ZZL"/>
                                         </constraints>
@@ -3076,7 +3076,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xcu-aJ-4bm">
-                                        <rect key="frame" x="0.0" y="48" width="450" height="16"/>
+                                        <rect key="frame" x="0.0" y="109" width="450" height="16"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="WkQ-lb-VGR">
                                                 <rect key="frame" x="-2" y="0.0" width="147" height="16"/>
@@ -3114,7 +3114,7 @@
                                         </customSpacing>
                                     </stackView>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UY7-Nt-G3K">
-                                        <rect key="frame" x="-2" y="23" width="452" height="16"/>
+                                        <rect key="frame" x="-2" y="84" width="452" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="oIj-Km-Jec"/>
                                         </constraints>
@@ -3127,7 +3127,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
-                                        <rect key="frame" x="-2" y="-1" width="452" height="16"/>
+                                        <rect key="frame" x="-2" y="60" width="452" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="EoK-dI-REU"/>
                                         </constraints>
@@ -3139,6 +3139,60 @@
                                             <action selector="toggleUnsnapRestore:" target="yhc-gS-h02" id="XP7-y7-mgO"/>
                                         </connections>
                                     </button>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="evn-f6-2bW">
+                                        <rect key="frame" x="0.0" y="29" width="450" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="bBf-fp-7rI"/>
+                                        </constraints>
+                                    </box>
+                                    <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OhI-U9-bZb">
+                                        <rect key="frame" x="0.0" y="0.0" width="450" height="21"/>
+                                        <subviews>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
+                                                <rect key="frame" x="-7" y="-7" width="191" height="33"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="21" id="OsD-Zi-VLm"/>
+                                                </constraints>
+                                                <buttonCell key="cell" type="push" title="Restore Default Shortcuts" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uLF-Uf-tBt">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="restoreDefaults:" target="yhc-gS-h02" id="Xfb-Cc-xFM"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJG-z6-2Z1">
+                                                <rect key="frame" x="203" y="-6" width="118" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Export Config" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IO3-Hi-7gC">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="exportConfig:" target="yhc-gS-h02" id="UTa-bz-fXM"/>
+                                                </connections>
+                                            </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1qy-0d-Se1">
+                                                <rect key="frame" x="339" y="-6" width="118" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Import Config" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RgZ-Jw-XQZ">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="importConfig:" target="yhc-gS-h02" id="GGM-3r-onY"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="width" priority="999" constant="450" id="Db3-zB-dtQ"/>
@@ -3147,6 +3201,8 @@
                                     <constraint firstAttribute="height" priority="750" constant="150" id="bDD-of-gYL"/>
                                 </constraints>
                                 <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
@@ -3171,30 +3227,16 @@
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
-                                <rect key="frame" x="13" y="13" width="191" height="33"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="OsD-Zi-VLm"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Restore Default Shortcuts" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uLF-Uf-tBt">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="restoreDefaults:" target="yhc-gS-h02" id="Xfb-Cc-xFM"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="An0-XX-dT6" firstAttribute="leading" secondItem="mTk-eQ-4uf" secondAttribute="leading" constant="20" symbolic="YES" id="GEu-1V-MTp"/>
+                            <constraint firstAttribute="bottom" secondItem="tUi-Ja-evb" secondAttribute="bottom" constant="20" symbolic="YES" id="8bF-fp-d6W"/>
                             <constraint firstItem="tUi-Ja-evb" firstAttribute="leading" secondItem="mTk-eQ-4uf" secondAttribute="leading" constant="20" symbolic="YES" id="PU9-U5-pGX"/>
                             <constraint firstAttribute="trailing" secondItem="tUi-Ja-evb" secondAttribute="trailing" constant="20" symbolic="YES" id="R8R-By-UBl"/>
                             <constraint firstItem="tUi-Ja-evb" firstAttribute="top" secondItem="mTk-eQ-4uf" secondAttribute="top" constant="20" symbolic="YES" id="bII-EW-hnd"/>
-                            <constraint firstAttribute="bottom" secondItem="An0-XX-dT6" secondAttribute="bottom" constant="20" symbolic="YES" id="r2n-eW-Mqv"/>
-                            <constraint firstItem="An0-XX-dT6" firstAttribute="top" secondItem="tUi-Ja-evb" secondAttribute="bottom" constant="20" symbolic="YES" id="xYd-Jk-W0s"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="An0-XX-dT6" secondAttribute="trailing" constant="20" symbolic="YES" id="yec-AN-9DB"/>
                         </constraints>
                     </view>
                     <connections>
@@ -3213,7 +3255,7 @@
                 </viewController>
                 <customObject id="c9e-yT-Dp7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="372" y="1293"/>
+            <point key="canvasLocation" x="372" y="1288"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="lEt-lj-rQC">

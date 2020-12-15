@@ -93,6 +93,26 @@ class SettingsViewController: NSViewController {
         }
     }
     
+    @IBAction func exportConfig(_ sender: NSButton) {
+        let savePanel = NSSavePanel()
+        savePanel.allowedFileTypes = ["json"]
+        let response = savePanel.runModal()
+        if response == .OK, let url = savePanel.url {
+            do {
+                if let jsonString = Defaults.encoded() {
+                    try jsonString.write(to: url, atomically: false, encoding: .utf8)
+                }
+            }
+            catch {
+                Logger.log(error.localizedDescription)
+            }
+        }
+    }
+    
+    @IBAction func importConfig(_ sender: NSButton) {
+        
+    }
+    
     override func awakeFromNib() {
         if Defaults.launchOnLogin.enabled {
             launchOnLoginCheckbox.state = .on

@@ -84,6 +84,7 @@
 		98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C27560231FFA5F009B9292 /* SnappingManager.swift */; };
 		98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C275662322E2DA009B9292 /* WindowHistory.swift */; };
 		98C6DEF023CE191700CC0C1E /* GapCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */; };
+		98C97FFD25893B040061F01F /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C97FFC25893B040061F01F /* Config.swift */; };
 		98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1441224560B1E0090C603 /* AlertUtil.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
@@ -225,6 +226,7 @@
 		98C27560231FFA5F009B9292 /* SnappingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingManager.swift; sourceTree = "<group>"; };
 		98C275662322E2DA009B9292 /* WindowHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHistory.swift; sourceTree = "<group>"; };
 		98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapCalculation.swift; sourceTree = "<group>"; };
+		98C97FFC25893B040061F01F /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		98D1441224560B1E0090C603 /* AlertUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtil.swift; sourceTree = "<group>"; };
 		98ED1C722393DEE600CD0955 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C732393DEE600CD0955 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
@@ -469,6 +471,7 @@
 			children = (
 				98910B41231476B30066EC23 /* PrefsViewController.swift */,
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
+				98C97FFC25893B040061F01F /* Config.swift */,
 			);
 			path = PrefsWindow;
 			sourceTree = "<group>";
@@ -803,6 +806,7 @@
 				98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
+				98C97FFD25893B040061F01F /* Config.swift in Sources */,
 				989DA30E243FC0DF008C7AA4 /* WelcomeViewController.swift in Sources */,
 				98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */,
 				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
