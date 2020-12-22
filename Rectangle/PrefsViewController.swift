@@ -109,7 +109,7 @@ class PrefsViewController: NSViewController {
         ]
         
         for (action, view) in actionsToViews {
-            view.associatedUserDefaultsKey = action.name
+            view.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
         }
         
         if Defaults.allowAnyShortcut.enabled {

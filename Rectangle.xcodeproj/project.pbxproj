@@ -86,6 +86,7 @@
 		98C6DEF023CE191700CC0C1E /* GapCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */; };
 		98C97FFD25893B040061F01F /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C97FFC25893B040061F01F /* Config.swift */; };
 		98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1441224560B1E0090C603 /* AlertUtil.swift */; };
+		98D16A442592AD55005228CB /* MASShortcutMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D16A432592AD55005228CB /* MASShortcutMigration.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
@@ -228,6 +229,7 @@
 		98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapCalculation.swift; sourceTree = "<group>"; };
 		98C97FFC25893B040061F01F /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		98D1441224560B1E0090C603 /* AlertUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtil.swift; sourceTree = "<group>"; };
+		98D16A432592AD55005228CB /* MASShortcutMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MASShortcutMigration.swift; sourceTree = "<group>"; };
 		98ED1C722393DEE600CD0955 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C732393DEE600CD0955 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C742393DEF200CD0955 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 			children = (
 				9824703A22B139780037B409 /* CUtil.swift */,
 				98D1441224560B1E0090C603 /* AlertUtil.swift */,
+				98D16A432592AD55005228CB /* MASShortcutMigration.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -779,6 +782,7 @@
 				9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */,
 				98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */,
 				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
+				98D16A442592AD55005228CB /* MASShortcutMigration.swift in Sources */,
 				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
 				98A009BD251253A000CFBF0C /* BottomCenterSixthCalculation.swift in Sources */,
 				98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */,

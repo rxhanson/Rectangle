@@ -35,6 +35,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var quitMenuItem: NSMenuItem!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        if let lastVersion = Defaults.lastVersion.value,
+           let intLastVersion = Int(lastVersion) {
+            if intLastVersion < 41 {
+                MASShortcutMigration.migrate()
+            }
+        }
+        
         Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
 
         mainStatusMenu.delegate = self

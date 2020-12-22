@@ -16,6 +16,8 @@ class ShortcutManager {
     init(windowManager: WindowManager) {
         self.windowManager = windowManager
         
+        MASShortcutBinder.shared()?.bindingOptions = [NSBindingOption.valueTransformerName: MASDictionaryTransformerName]
+        
         registerDefaults()
 
         bindShortcuts()
