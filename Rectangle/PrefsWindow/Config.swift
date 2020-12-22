@@ -11,15 +11,24 @@ import MASShortcut
 
 extension Defaults {
     static func encoded() -> String? {
+        guard let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else { return nil }
         
-        var shortcuts = [String: KeyboardShortcut]()
+        var shortcuts = [String: Shortcut]()
         for action in WindowAction.active {
             if let masShortcut =  MASShortcutBinder.shared()?.value(forKey: action.name) as? MASShortcut {
-                shortcuts[action.name] = KeyboardShortcut(masShortcut: masShortcut)
+                shortcuts[action.name] = Shortcut(masShortcut: masShortcut)
             }
         }
         
-        let config = Config(bundleId: "com.knollsoft.Rectangle", shortcuts: shortcuts)
+        var codableDefaults = [String: CodableDefault]()
+        for exportableDefault in Defaults.array {
+            codableDefaults[exportableDefault.key] = exportableDefault.toCodable()
+        }
+                
+        let config = Config(bundleId: "com.knollsoft.Rectangle",
+                            version: version,
+                            shortcuts: shortcuts,
+                            defaults: codableDefaults)
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -32,33 +41,33 @@ extension Defaults {
         return nil
     }
     
-    static func from(string: String) -> Config? {
+    static func convert(jsonString: String) -> Config? {
+        guard let jsonData = jsonString.data(using: .utf8) else { return nil }
         let decoder = JSONDecoder()
-        guard let jsonData = string.data(using: .utf8) else { return nil }
         return try? decoder.decode(Config.self, from: jsonData)
+    }
+    
+    static func load(fileUrl: URL) {
+        if let jsonString = try? String(contentsOf: fileUrl, encoding: .utf8),
+           let config = convert(jsonString: jsonString) {
+            for availableDefault in Defaults.array {
+                if let codedDefault = config.defaults[availableDefault.key] {
+                    availableDefault.load(from: codedDefault)
+                }
+            }
+            
+            for action in WindowAction.active {
+                if let masShortcut = config.shortcuts[action.name]?.toMASSHortcut() {
+                    // TODO encode and set UserDefault shortcut for action
+                }
+            }
+        }
     }
 }
 
 struct Config: Codable {
     let bundleId: String
-    let shortcuts: [String: KeyboardShortcut]
-}
-
-struct KeyboardShortcut: Codable, Equatable {
-    let keyCode: Int
-    let modifierFlags: UInt
-    
-    init(masShortcut: MASShortcut) {
-        self.keyCode = masShortcut.keyCode
-        self.modifierFlags = masShortcut.modifierFlags.rawValue
-    }
-    
-    func toMASSHortcut() -> MASShortcut {
-        MASShortcut(keyCode: keyCode, modifierFlags: NSEvent.ModifierFlags(rawValue: modifierFlags))
-    }
-    
-    func displayString() -> String {
-        let masShortcut = toMASSHortcut()
-        return masShortcut.modifierFlagsString + masShortcut.keyCodeString
-    }
+    let version: String
+    let shortcuts: [String: Shortcut]
+    let defaults: [String: CodableDefault]
 }

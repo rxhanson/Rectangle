@@ -15,8 +15,8 @@ enum SubsequentExecutionMode: Int {
     case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
 }
 
-class SubsequentExecutionDefault {
-    private let key: String = "subsequentExecutionMode"
+class SubsequentExecutionDefault: Default {
+    public private(set) var key: String = "subsequentExecutionMode"
     private var initialized = false
     
     var value: SubsequentExecutionMode {
@@ -46,4 +46,16 @@ class SubsequentExecutionDefault {
         default: return false
         }
     }
+
+    func load(from codable: CodableDefault) {
+        if let int = codable.int,
+           let mode = SubsequentExecutionMode(rawValue: int) {
+            value = mode
+        }
+    }
+    
+    func toCodable() -> CodableDefault {
+        return CodableDefault(int: value.rawValue)
+    }
+
 }

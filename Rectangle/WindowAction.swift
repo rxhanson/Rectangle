@@ -9,6 +9,7 @@
 import Foundation
 import Carbon
 import Cocoa
+import MASShortcut
 
 fileprivate let alt = NSEvent.ModifierFlags.option.rawValue
 fileprivate let ctrl = NSEvent.ModifierFlags.control.rawValue
@@ -506,7 +507,7 @@ enum SubWindowAction {
     }
 }
 
-struct Shortcut {
+struct Shortcut: Codable {
     let keyCode: Int
     let modifierFlags: UInt
     
@@ -515,7 +516,17 @@ struct Shortcut {
         self.modifierFlags = modifierFlags
     }
     
-    var dict: [String: UInt] {
-        return ["keyCode": UInt(keyCode), "modifierFlags": modifierFlags]
+    init(masShortcut: MASShortcut) {
+        self.keyCode = masShortcut.keyCode
+        self.modifierFlags = masShortcut.modifierFlags.rawValue
+    }
+    
+    func toMASSHortcut() -> MASShortcut {
+        MASShortcut(keyCode: keyCode, modifierFlags: NSEvent.ModifierFlags(rawValue: modifierFlags))
+    }
+    
+    func displayString() -> String {
+        let masShortcut = toMASSHortcut()
+        return masShortcut.modifierFlagsString + masShortcut.keyCodeString
     }
 }

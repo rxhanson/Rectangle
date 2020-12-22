@@ -110,7 +110,12 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func importConfig(_ sender: NSButton) {
-        
+        let openPanel = NSOpenPanel()
+        openPanel.allowedFileTypes = ["json"]
+        let response = openPanel.runModal()
+        if response == .OK, let url = openPanel.url {
+            Defaults.load(fileUrl: url)
+        }
     }
     
     override func awakeFromNib() {
