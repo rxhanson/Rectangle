@@ -119,6 +119,15 @@ class SettingsViewController: NSViewController {
     }
     
     override func awakeFromNib() {
+        initializeUI()
+        
+        Notification.Name.configImported.onPost(using: {_ in
+            self.initializeUI()
+        })
+    }
+    
+    func initializeUI() {
+        
         if Defaults.launchOnLogin.enabled {
             launchOnLoginCheckbox.state = .on
         }
@@ -145,7 +154,7 @@ class SettingsViewController: NSViewController {
         
         let appVersionString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
         let buildString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-
+        
         versionLabel.stringValue = "v" + appVersionString + " (" + buildString + ")"
         
         gapSlider.intValue = Int32(Defaults.gapSize.value)

@@ -66,6 +66,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
+        
+        Notification.Name.configImported.onPost(using: { _ in
+            self.accessibilityTrusted() })
     }
     
     func accessibilityTrusted() {
