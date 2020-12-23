@@ -67,8 +67,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
         
+        checkAutoCheckForUpdates()
+        
         Notification.Name.configImported.onPost(using: { _ in
-            self.accessibilityTrusted() })
+            self.checkAutoCheckForUpdates()
+            self.statusItem.refreshVisibility()
+            self.accessibilityTrusted()
+        })
+    }
+    
+    func checkAutoCheckForUpdates() {
+        SUUpdater.shared()?.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
     
     func accessibilityTrusted() {

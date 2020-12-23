@@ -41,9 +41,10 @@ class Defaults {
     static let lastVersion = StringDefault(key: "lastVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
-    static var footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
-    static var footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
-    static var footprintFade = OptionalBoolDefault(key: "footprintFade")
+    static let footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
+    static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
+    static let footprintFade = OptionalBoolDefault(key: "footprintFade")
+    static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     
     static var array: [Default] = [
         launchOnLogin,
@@ -78,7 +79,8 @@ class Defaults {
         showAllActionsInMenu,
         footprintAlpha,
         footprintBorderWidth,
-        footprintFade
+        footprintFade,
+        SUEnableAutomaticChecks
     ]
 }
 

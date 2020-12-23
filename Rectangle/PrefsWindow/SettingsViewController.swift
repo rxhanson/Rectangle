@@ -138,6 +138,7 @@ class SettingsViewController: NSViewController {
     }
     
     func initializeToggles() {
+        checkForUpdatesAutomaticallyCheckbox.state = Defaults.SUEnableAutomaticChecks.enabled ? .on : .off
         
         launchOnLoginCheckbox.state = Defaults.launchOnLogin.enabled ? .on : .off
         
