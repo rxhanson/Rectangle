@@ -119,35 +119,8 @@ class SettingsViewController: NSViewController {
     }
     
     override func awakeFromNib() {
-        initializeUI()
-        
-        Notification.Name.configImported.onPost(using: {_ in
-            self.initializeUI()
-        })
-    }
-    
-    func initializeUI() {
-        
-        if Defaults.launchOnLogin.enabled {
-            launchOnLoginCheckbox.state = .on
-        }
-        
-        if Defaults.hideMenuBarIcon.enabled {
-            hideMenuBarIconCheckbox.state = .on
-        }
-        
-        if Defaults.subsequentExecutionMode.value == .acrossMonitor {
-            subsequentExecutionCheckbox.state = .on
-        }
-        
-        if Defaults.allowAnyShortcut.enabled {
-            allowAnyShortcutCheckbox.state = .on
-        }
-        
-        if Defaults.windowSnapping.enabled == false {
-            windowSnappingCheckbox.state = .off
-        }
-        
+        initializeToggles()
+
         if let updater = SUUpdater.shared() {
             checkForUpdatesAutomaticallyCheckbox.bind(.value, to: updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
         }
@@ -156,16 +129,31 @@ class SettingsViewController: NSViewController {
         let buildString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
         
         versionLabel.stringValue = "v" + appVersionString + " (" + buildString + ")"
+
+        checkForUpdatesButton.title = NSLocalizedString("HIK-3r-i7E.title", tableName: "Main", value: "Check for Updates…", comment: "")
+
+        Notification.Name.configImported.onPost(using: {_ in
+            self.initializeToggles()
+        })
+    }
+    
+    func initializeToggles() {
+        
+        launchOnLoginCheckbox.state = Defaults.launchOnLogin.enabled ? .on : .off
+        
+        hideMenuBarIconCheckbox.state = Defaults.hideMenuBarIcon.enabled ? .on : .off
+        
+        subsequentExecutionCheckbox.state = Defaults.subsequentExecutionMode.value == .acrossMonitor ? .on : .off
+        
+        allowAnyShortcutCheckbox.state = Defaults.allowAnyShortcut.enabled ? .on : .off
+        
+        windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         
         gapSlider.intValue = Int32(Defaults.gapSize.value)
         gapLabel.stringValue = "\(gapSlider.intValue) px"
         gapSlider.isContinuous = true
         
-        if Defaults.unsnapRestore.userDisabled {
-            unsnapRestoreButton.state = .off
-        }
-        
-        checkForUpdatesButton.title = NSLocalizedString("HIK-3r-i7E.title", tableName: "Main", value: "Check for Updates…", comment: "")
+        unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
     }
 
 }
