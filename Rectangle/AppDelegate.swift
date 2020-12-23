@@ -37,7 +37,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if let lastVersion = Defaults.lastVersion.value,
            let intLastVersion = Int(lastVersion) {
-            if intLastVersion < 41 {
+            if intLastVersion < 46 {
                 MASShortcutMigration.migrate()
             }
         }
