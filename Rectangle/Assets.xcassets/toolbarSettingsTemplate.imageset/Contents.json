@@ -1,11 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "toolbarSettingsTemplate copy.png",
       "idiom" : "universal",
-      "filename" : "toolbarSettingsTemplate.png",
       "scale" : "1x"
     },
     {
+      "filename" : "toolbarSettingsTemplate.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -15,7 +16,7 @@
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

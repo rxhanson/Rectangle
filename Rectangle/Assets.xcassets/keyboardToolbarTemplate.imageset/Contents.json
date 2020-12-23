@@ -1,11 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "keyboardToolbarTemplate copy.png",
       "idiom" : "universal",
-      "filename" : "keyboardToolbarTemplate.png",
       "scale" : "1x"
     },
     {
+      "filename" : "keyboardToolbarTemplate.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -15,7 +16,7 @@
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }
