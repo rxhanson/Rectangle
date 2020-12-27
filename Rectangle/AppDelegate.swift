@@ -72,7 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Notification.Name.configImported.onPost(using: { _ in
             self.checkAutoCheckForUpdates()
             self.statusItem.refreshVisibility()
-            self.accessibilityTrusted()
+            self.applicationToggle.reloadFromDefaults()
+            self.shortcutManager.reloadFromDefaults()
+            self.snappingManager.reloadFromDefaults()
         })
     }
     

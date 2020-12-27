@@ -57,6 +57,18 @@ class SnappingManager {
         NotificationCenter.default.addObserver(self, selector: #selector(windowSnappingToggled), name: SettingsViewController.windowSnappingNotificationName, object: nil)
     }
     
+    public func reloadFromDefaults() {
+        if Defaults.windowSnapping.userDisabled {
+            if eventMonitor?.running == true {
+                disableSnapping()
+            }
+        } else {
+            if eventMonitor?.running != true {
+                enableSnapping()
+            }
+        }
+    }
+        
     @objc func windowSnappingToggled(notification: Notification) {
         guard let enabled = notification.object as? Bool else { return }
         if enabled {

@@ -26,6 +26,14 @@ class ApplicationToggle: NSObject {
         }
     }
     
+    public func reloadFromDefaults() {
+        if let disabledApps = getDisabledApps() {
+            self.disabledApps = disabledApps
+        } else {
+            disabledApps.removeAll()
+        }
+    }
+    
     private func saveDisabledApps() {
         let encoder = JSONEncoder()
         if let jsonDisabledApps = try? encoder.encode(disabledApps) {

@@ -12,6 +12,8 @@ public class EventMonitor {
     private var monitor: Any?
     private let mask: NSEvent.EventTypeMask
     private let handler: (NSEvent?) -> Void
+
+    var running: Bool { monitor != nil }
     
     public init(mask: NSEvent.EventTypeMask, handler: @escaping (NSEvent?) -> Void) {
         self.mask = mask

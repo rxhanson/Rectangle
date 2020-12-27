@@ -29,6 +29,14 @@ class ShortcutManager {
         }
     }
     
+    public func reloadFromDefaults() {
+        unsubscribe()
+        unbindShortcuts()
+        registerDefaults()
+        bindShortcuts()
+        subscribeAll(selector: #selector(windowActionTriggered))
+    }
+    
     public func bindShortcuts() {
         for action in WindowAction.active {
             MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: action.name, toAction: action.post)
