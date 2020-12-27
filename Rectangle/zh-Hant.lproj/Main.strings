@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "降低";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "通過拖動貼齊窗口";
+"1ui-PL-TkR.title" = "通過拖動貼齊視窗";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "提高";
@@ -48,7 +48,7 @@
 "46P-cB-AYj.title" = "緊縮";
 
 /* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
-"4EN-yA-p0u.title" = "找";
+"4EN-yA-p0u.title" = "尋找";
 
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
 "4J7-dP-txa.title" = "進入全屏";
@@ -120,16 +120,16 @@
 "C9v-g0-DH8.title" = "還原";
 
 /* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
-"D99-0O-MB6.title" = "忽略frontmost.app";
+"D99-0O-MB6.title" = "忽略 frontmost.app";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
-"DVo-aG-piG.title" = "關";
+"DVo-aG-piG.title" = "關閉";
 
 /* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
 "Dv1-io-Yv7.title" = "拼寫和語法";
 
 /* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
-"Eah-KL-kbn.title" = "變大";
+"Eah-KL-kbn.title" = "放大";
 
 /* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
 "F12-EV-Lfz.title" = "左三分之一";
@@ -189,7 +189,7 @@
 "IAo-SY-fd9.title" = "打開…";
 
 /* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
-"J5U-5w-g23.title" = "證明";
+"J5U-5w-g23.title" = "左右對齊";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
 "J6t-sg-Wwz.title" = "右下";
@@ -219,7 +219,7 @@
 "MkV-Pr-PK5.title" = "複製標尺";
 
 /* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
-"MzN-CJ-ASD.title" = "變小";
+"MzN-CJ-ASD.title" = "縮小";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
 "NMo-om-nkz.title" = "服務";
@@ -228,7 +228,7 @@
 "Nop-cj-93Q.title" = "\t預設";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "檢視記錄⋯";
+"O8K-y6-bva.title" = "檢視日誌⋯";
 
 /* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
 "OY7-WF-poV.title" = "最小化";
@@ -240,10 +240,10 @@
 "Olw-nP-bQN.title" = "隱藏 Rectangle";
 
 /* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
-"OwM-mh-QMV.title" = "查找上一個";
+"OwM-mh-QMV.title" = "尋找上一個";
 
 /* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
-"Oyz-dy-DGm.title" = "停止說話";
+"Oyz-dy-DGm.title" = "停止朗讀";
 
 /* Class = "NSMenuItem"; title = "Bigger"; ObjectID = "Ptp-SP-VEL"; */
 "Ptp-SP-VEL.title" = "大";
@@ -276,7 +276,7 @@
 "SXx-HZ-GkB.title" = "通過重複左移或右移在顯示器之間循環移動";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
-"Td7-aD-5lo.title" = "窗口";
+"Td7-aD-5lo.title" = "視窗";
 
 /* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
 "UEZ-Bs-lqG.title" = "大寫";
@@ -297,7 +297,7 @@
 "W48-6f-4Dl.title" = "編輯";
 
 /* Class = "NSMenuItem"; title = "Underline"; ObjectID = "WRG-CD-K1S"; */
-"WRG-CD-K1S.title" = "強調";
+"WRG-CD-K1S.title" = "底線";
 
 /* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
 "Was-JA-tGl.title" = "新";
@@ -309,10 +309,10 @@
 "Xc8-Sm-pig.title" = "左半";
 
 /* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
-"Xz5-n4-O0W.title" = "找…";
+"Xz5-n4-O0W.title" = "尋找…";
 
 /* Class = "NSMenuItem"; title = "Find and Replace…"; ObjectID = "YEy-JH-Tfz"; */
-"YEy-JH-Tfz.title" = "查找和替換…";
+"YEy-JH-Tfz.title" = "尋找和取代…";
 
 /* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "YGs-j5-SAR"; */
 "YGs-j5-SAR.title" = "\t默認";
@@ -321,19 +321,19 @@
 "YRC-4a-xGg.title" = "偏好設定⋯";
 
 /* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
-"Ynk-f8-cLZ.title" = "開始說話";
+"Ynk-f8-cLZ.title" = "開始朗讀";
 
 /* Class = "NSMenuItem"; title = "Align Left"; ObjectID = "ZM1-6Q-yy1"; */
-"ZM1-6Q-yy1.title" = "左對齊";
+"ZM1-6Q-yy1.title" = "向左對齊";
 
 /* Class = "NSMenuItem"; title = "Paragraph"; ObjectID = "ZvO-Gk-QUH"; */
-"ZvO-Gk-QUH.title" = "段";
+"ZvO-Gk-QUH.title" = "段落";
 
 /* Class = "NSMenuItem"; title = "Print…"; ObjectID = "aTl-1u-JFS"; */
 "aTl-1u-JFS.title" = "打印…";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
-"aUF-d1-5bR.title" = "窗口";
+"aUF-d1-5bR.title" = "視窗";
 
 /* Class = "NSMenu"; title = "Font"; ObjectID = "aXa-aM-Jaq"; */
 "aXa-aM-Jaq.title" = "字型";
@@ -351,7 +351,7 @@
 "bib-Uj-vzu.title" = "文件";
 
 /* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
-"buJ-ug-pKt.title" = "使用選擇進行查找";
+"buJ-ug-pKt.title" = "使用選擇進行尋找";
 
 /* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
 "c8a-y6-VQd.title" = "轉變";
@@ -366,10 +366,10 @@
 "cRm-wn-Yv6.title" = "右三分之一";
 
 /* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
-"cqv-fj-IhA.title" = "選拔";
+"cqv-fj-IhA.title" = "選擇";
 
 /* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
-"cwL-P1-jid.title" = "智能鏈接";
+"cwL-P1-jid.title" = "智慧型連結";
 
 /* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
 "d7y-s8-7GE.title" = "上半";
@@ -378,13 +378,13 @@
 "d9M-CD-aMd.title" = "小寫";
 
 /* Class = "NSMenu"; title = "Text"; ObjectID = "d9c-me-L2H"; */
-"d9c-me-L2H.title" = "文本";
+"d9c-me-L2H.title" = "文字";
 
 /* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
-"dMs-cI-mzQ.title" = "文件";
+"dMs-cI-mzQ.title" = "檔案";
 
 /* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
-"dRJ-4n-Yzg.title" = "撤消";
+"dRJ-4n-Yzg.title" = "復原";
 
 /* Class = "NSTextFieldCell"; title = "Almost Maximize"; ObjectID = "e57-QJ-6bL"; */
 "e57-QJ-6bL.title" = "接近最大化";
@@ -480,7 +480,7 @@
 "qlg-kC-FMr.title" = "隱藏選單列圖示";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
-"rbD-Rh-wIN.title" = "鍵入時檢查拼寫";
+"rbD-Rh-wIN.title" = "輸入時檢查拼寫";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
 "rgM-f4-ycn.title" = "智慧型引號";
@@ -537,7 +537,7 @@
 "w0m-vy-SC9.title" = "連字";
 
 /* Class = "NSMenuItem"; title = "Align Right"; ObjectID = "wb2-vD-lq4"; */
-"wb2-vD-lq4.title" = "右對齊";
+"wb2-vD-lq4.title" = "向右對齊";
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
 "wpr-3q-Mcd.title" = "輔助說明";
@@ -549,7 +549,7 @@
 "xQD-1f-W4t.title" = "全部使用";
 
 /* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
-"xrE-MZ-jX0.title" = "言語";
+"xrE-MZ-jX0.title" = "朗讀";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
 "yvN-PE-bxn.title" = "結束 Rectangle";
@@ -576,62 +576,60 @@
 "HtH-yF-lBR.title" = "歡迎！";
 
 /* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
-"bRX-dV-iAR.title" = "Center Half";
+"bRX-dV-iAR.title" = "置中一半";
 
 /* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
-"Q6Q-6J-okH.title" = "First Fourth";
+"Q6Q-6J-okH.title" = "第一（左側）四等分";
 
 /* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
-"Fko-xs-gN5.title" = "Second Fourth";
+"Fko-xs-gN5.title" = "第二（中間偏左）四等分";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
-"ZTK-rS-b17.title" = "Third Fourth";
+"ZTK-rS-b17.title" = "第三（中間偏右）四等分";
 
 /* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
-"6HX-rn-VIp.title" = "Last Fourth";
+"6HX-rn-VIp.title" = "第四（右側）四等分";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Top Left Sixth";
+"mFt-Kg-UYG.title" = "左上六等分";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "Top Center Sixth";
+"TTx-7X-Wie.title" = "中上六等分";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
-"f3Q-q7-Pcy.title" = "Top Right Sixth";
+"f3Q-q7-Pcy.title" = "右上六等分";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
-"LqQ-pM-jRN.title" = "Bottom Left Sixth";
+"LqQ-pM-jRN.title" = "左下六等分";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Bottom Center Sixth";
+"iOQ-1e-esP.title" = "中下六等分";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
-"m2F-eA-g7w.title" = "Bottom Right Sixth";
+"m2F-eA-g7w.title" = "右下六等分";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "View Logging…";
+"O8K-y6-bva.title" = "檢視日誌⋯";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "Settings";
+"gtf-PD-IHm.label" = "設定";
 
 /* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
-"uw2-9W-2jq.label" = "Keyboard Shortcuts";
+"uw2-9W-2jq.label" = "鍵盤快捷鍵";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "Restore window size when unsnapped";
+"UZP-5q-D5Y.title" = "取消貼齊時還原視窗尺寸";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Gaps between windows";
+"bg9-nw-YvU.title" = "視窗間距";
 
-"Halves" = "Halves";
-"Corners" = "Corners";
-"Thirds" = "Thirds";
-"Maximize" = "Maximize";
-"Size" = "Size";
-"Display" = "Display";
-"Other" = "Other";
-"Move to Edge" = "Move to Edge";
-"Fourths" = "Fourths";
-"Sixths" = "Sixths";
-
-
+"Halves" = "半分";
+"Corners" = "角落";
+"Thirds" = "三等分";
+"Maximize" = "最大化";
+"Size" = "尺寸";
+"Display" = "顯示";
+"Other" = "其他";
+"Move to Edge" = "移動到邊緣";
+"Fourths" = "四等分";
+"Sixths" = "六等分";
