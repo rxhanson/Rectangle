@@ -609,7 +609,7 @@
 "m2F-eA-g7w.title" = "右下六等分";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "檢視日誌…";
+"O8K-y6-bva.title" = "檢視日誌⋯";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
 "gtf-PD-IHm.label" = "設定";
@@ -618,7 +618,7 @@
 "uw2-9W-2jq.label" = "鍵盤快速鍵";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "重置Restore window size when unsnapped";
+"UZP-5q-D5Y.title" = "取消貼齊時還原視窗尺寸";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "視窗間間距";
@@ -627,11 +627,9 @@
 "Corners" = "角落";
 "Thirds" = "三等分";
 "Maximize" = "最大化";
-"Size" = "Size";
+"Size" = "尺寸";
 "Display" = "顯示";
 "Other" = "其他";
 "Move to Edge" = "移動到邊緣";
 "Fourths" = "四等分";
 "Sixths" = "六等分";
-
-
