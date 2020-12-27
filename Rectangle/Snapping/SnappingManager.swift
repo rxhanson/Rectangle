@@ -15,6 +15,8 @@ class SnappingManager {
     var eventMonitor: EventMonitor?
     var windowElement: AccessibilityElement?
     var windowId: Int?
+    var windowIdAttempt: Int = 0
+    var lastWindowIdAttempt: TimeInterval?
     var windowMoving: Bool = false
     var initialWindowRect: CGRect?
     var currentSnapArea: SnapArea?
@@ -110,11 +112,20 @@ class SnappingManager {
             windowId = nil
             windowMoving = false
             initialWindowRect = nil
+            windowIdAttempt = 0
+            lastWindowIdAttempt = nil
         case .leftMouseDragged:
-            if windowId == nil {
+            if windowId == nil, windowIdAttempt < 20 {
+                if let lastWindowIdAttempt = lastWindowIdAttempt {
+                    if event.timestamp - lastWindowIdAttempt < 0.2 {
+                        return
+                    }
+                }
                 windowElement = AccessibilityElement.windowUnderCursor()
                 windowId = windowElement?.getIdentifier()
                 initialWindowRect = windowElement?.rectOfElement()
+                windowIdAttempt += 1
+                lastWindowIdAttempt = event.timestamp
             }
             guard let currentRect = windowElement?.rectOfElement(),
                 let windowId = windowId
