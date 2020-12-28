@@ -236,6 +236,7 @@ If windows aren't resizing or moving as you expect, here's some initial steps to
 ## Preferences Storage
 The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:
 `~/Library/Preferences/com.knollsoft.Rectangle.plist`
+Note that shortcuts in v0.41+ are stored in a different format and will not load in prior versions.
 
 That file can be backed up or transferred to other machines.
 
