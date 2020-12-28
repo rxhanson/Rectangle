@@ -3118,7 +3118,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="14" id="oIj-Km-Jec"/>
                                         </constraints>
-                                        <buttonCell key="cell" type="check" title="Allow any keyboard shortcut" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n4U-FC-L9s">
+                                        <buttonCell key="cell" type="check" title="Remove keyboard shortcut restrictions" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n4U-FC-L9s">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -3145,7 +3145,7 @@
                                             <constraint firstAttribute="height" constant="20" id="bBf-fp-7rI"/>
                                         </constraints>
                                     </box>
-                                    <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OhI-U9-bZb">
+                                    <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="OhI-U9-bZb">
                                         <rect key="frame" x="0.0" y="0.0" width="450" height="21"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
@@ -3254,6 +3254,7 @@
                         <outlet property="allowAnyShortcutCheckbox" destination="UY7-Nt-G3K" id="0dH-iu-gSs"/>
                         <outlet property="checkForUpdatesAutomaticallyCheckbox" destination="HcU-0y-wJU" id="ueY-S8-Ec0"/>
                         <outlet property="checkForUpdatesButton" destination="bn6-rz-AHw" id="9jf-az-Lvw"/>
+                        <outlet property="exportImportStackView" destination="TgL-lF-gWJ" id="euQ-P3-nzA"/>
                         <outlet property="gapLabel" destination="jd8-SJ-lza" id="pqG-fr-nwW"/>
                         <outlet property="gapSlider" destination="O9H-ZD-bqL" id="H7T-4Y-g8e"/>
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>

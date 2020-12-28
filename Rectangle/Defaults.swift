@@ -45,6 +45,7 @@ class Defaults {
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
+    static let showExportImport = BoolDefault(key: "showExportImport")
     
     static var array: [Default] = [
         launchOnLogin,
