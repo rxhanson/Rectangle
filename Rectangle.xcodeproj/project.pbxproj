@@ -90,6 +90,7 @@
 		98D16A492592B460005228CB /* NotificationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D16A482592B460005228CB /* NotificationExtension.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
+		CDD433A7259CE6F7000DB779 /* TodoVisibilityMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD433A6259CE6F7000DB779 /* TodoVisibilityMover.swift */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
 /* End PBXBuildFile section */
 
@@ -246,6 +247,7 @@
 		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
+		CDD433A6259CE6F7000DB779 /* TodoVisibilityMover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoVisibilityMover.swift; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
 		F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -374,6 +376,7 @@
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
 				98B3559723CE025700E410E0 /* CenteringFixedSizedWindowMover.swift */,
+				CDD433A6259CE6F7000DB779 /* TodoVisibilityMover.swift */,
 			);
 			path = WindowMover;
 			sourceTree = "<group>";
@@ -776,6 +779,7 @@
 				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
+				CDD433A7259CE6F7000DB779 /* TodoVisibilityMover.swift in Sources */,
 				98A009AB2512491300CFBF0C /* CenterHalfCalculation.swift in Sources */,
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,

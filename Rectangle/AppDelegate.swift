@@ -33,6 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
+    @IBOutlet weak var todoModeMenuItem: NSMenuItem!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if let lastVersion = Defaults.lastVersion.value,
@@ -163,6 +164,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    @IBAction func toggleTodoMode(_ sender: NSMenuItem) {
+        if sender.state == .off {
+            Defaults.todoMode.enabled = true
+        } else {
+            Defaults.todoMode.enabled = false
+        }
+    }
+
     @IBAction func checkForUpdates(_ sender: Any) {
         SUUpdater.shared()?.checkForUpdates(sender)
     }
@@ -213,6 +222,8 @@ extension AppDelegate: NSMenuDelegate {
             ignoreMenuItem.isHidden = true
         }
         
+        todoModeMenuItem.state = Defaults.todoMode.enabled ? .on : .off
+
         updateWindowActionMenuItems(menu: menu)
         
         viewLoggingMenuItem.keyEquivalentModifierMask = .option

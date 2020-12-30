@@ -19,7 +19,8 @@ class WindowManager {
         self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
-            BestEffortWindowMover()
+            BestEffortWindowMover(),
+            TodoVisibilityWindowMover()
         ]
         
         fixedSizeWindowMoverChain = [

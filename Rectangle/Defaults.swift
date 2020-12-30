@@ -46,6 +46,7 @@ class Defaults {
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let showExportImport = BoolDefault(key: "showExportImport")
+    static let todoMode = BoolDefault(key: "todoMode")
     
     static var array: [Default] = [
         launchOnLogin,
