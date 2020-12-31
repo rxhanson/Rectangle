@@ -18,13 +18,13 @@ class TodoVisibilityWindowMover: WindowMover {
         for w in windows {
             if windowNeedsAdjustment(w) {
                 w.setRectOf(shrunkenDimensionsFor(w))
-                
+
                 if windowNeedsAdjustment(w) {
                     w.setRectOf(translatedDimensionsFor(w))
                 }
             }
         }
-        
+
         if let todoApplication = AccessibilityElement.todoWindow() {
             var rect = todoApplication.rectOfElement()
             let screen = NSScreen.screens[0].frame as CGRect
