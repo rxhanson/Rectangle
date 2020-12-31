@@ -15,16 +15,13 @@ class TodoVisibilityWindowMover: WindowMover {
 
     func moveAll() {
         let windows = AccessibilityElement.allWindows()
-        for w in windows {
-            if windowNeedsAdjustment(w) {
-                w.setRectOf(shrunkenDimensionsFor(w))
 
-                if windowNeedsAdjustment(w) {
-                    w.setRectOf(translatedDimensionsFor(w))
-                }
-            }
+        // Clear all windows from the todo app sidebar
+        for w in windows {
+            shiftWindowOffSidebar(w)
         }
 
+        // Place the todo app in the sidebar
         if let todoApplication = AccessibilityElement.todoWindow() {
             var rect = todoApplication.rectOfElement()
             let screen = NSScreen.screens[0].frame as CGRect
@@ -33,40 +30,40 @@ class TodoVisibilityWindowMover: WindowMover {
             todoApplication.setRectOf(rect)
         }
     }
-
-    func windowNeedsAdjustment(_ window: AccessibilityElement) -> Bool {
+    
+    func shiftWindowOffSidebar(_ w: AccessibilityElement) {
+        var rect = w.rectOfElement()
         let screen = NSScreen.screens[0].frame as CGRect
-        return window.rectOfElement().maxX > (screen.maxX - kTodoWidth)
+
+        if (rect.maxX > (screen.maxX - kTodoWidth)) {
+            // Shift it to the left
+            rect.origin.x = max (0, rect.origin.x - (rect.maxX - (screen.maxX - kTodoWidth)))
+
+            // If it's still too wide, scale it down
+            if (rect.origin.x == 0) {
+                rect.size.width = min(rect.size.width, screen.maxX - kTodoWidth)
+            }
+
+            w.setRectOf(rect)
+        }
     }
 
-    func shrunkenDimensionsFor(_ window: AccessibilityElement) -> CGRect {
+    func scaledDimensionsFor (_ window: AccessibilityElement) -> CGRect {
         var rect = window.rectOfElement()
         let screen = NSScreen.screens[0].frame as CGRect
-        rect.size.width -= (screen.maxX - (screen.maxX - kTodoWidth))
-        return rect
-    }
 
-    func translatedDimensionsFor(_ window: AccessibilityElement) -> CGRect {
-        var rect = window.rectOfElement()
-        let screen = NSScreen.screens[0].frame as CGRect
-        rect.origin.x -= (screen.maxX - (screen.maxX - kTodoWidth))
+        rect.size.width *= (screen.maxX - kTodoWidth) / screen.maxX
+        rect.origin.x *= (screen.maxX - kTodoWidth) / screen.maxX
+        
         return rect
     }
 
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
         if(Defaults.todoMode.enabled) {
-            guard let beforeCorrection: CGRect = frontmostWindowElement?.rectOfElement() else { return }
             guard let window: AccessibilityElement = frontmostWindowElement else { return }
-            let todoAccommodatingMaxX = visibleFrameOfScreen.maxX - kTodoWidth
 
-
-            if beforeCorrection.maxX > todoAccommodatingMaxX {
-                window.setRectOf(shrunkenDimensionsFor(window))
-
-                if windowNeedsAdjustment(window) {
-                    window.setRectOf(translatedDimensionsFor(window))
-                }
-            }
+            window.setRectOf(scaledDimensionsFor(window))
+            shiftWindowOffSidebar(window)
         }
     }
 }
