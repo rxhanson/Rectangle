@@ -14,18 +14,20 @@ class WindowManager {
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowHistory: WindowHistory
+    private let todoVisibilityWindowMover = TodoVisibilityWindowMover()
     
     init(windowHistory: WindowHistory) {
         self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
             BestEffortWindowMover(),
-            TodoVisibilityWindowMover()
+            todoVisibilityWindowMover
         ]
         
         fixedSizeWindowMoverChain = [
             CenteringFixedSizedWindowMover(),
-            BestEffortWindowMover()
+            BestEffortWindowMover(),
+            todoVisibilityWindowMover
         ]
     }
     
@@ -44,6 +46,10 @@ class WindowManager {
             rect: resultingRect,
             count: newCount
         )
+    }
+    
+    func activateTodoMode() {
+        todoVisibilityWindowMover.moveAll()
     }
     
     func execute(_ parameters: ExecutionParameters) {

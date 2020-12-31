@@ -77,6 +77,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.shortcutManager.reloadFromDefaults()
             self.snappingManager.reloadFromDefaults()
         })
+        
+//        Defaults.todoApplication.value = "com.google.Chrome.app.gmhpgfbjacdocjngbdbmhkgcpochhnge"
     }
     
     func checkAutoCheckForUpdates() {
@@ -167,6 +169,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func toggleTodoMode(_ sender: NSMenuItem) {
         if sender.state == .off {
             Defaults.todoMode.enabled = true
+            windowManager.activateTodoMode()
         } else {
             Defaults.todoMode.enabled = false
         }
