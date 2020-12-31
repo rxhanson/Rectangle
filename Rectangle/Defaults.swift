@@ -86,7 +86,8 @@ class Defaults {
         footprintFade,
         SUEnableAutomaticChecks,
         todoMode,
-        todoApplication
+        todoApplication,
+        todoSidebarWidth
     ]
 }
 

@@ -9,41 +9,55 @@
 import Foundation
 import AppKit
 import CoreFoundation
+import Cocoa
 
 class TodoManager {
+    static var todoScreen : NSScreen?
+    
+    static func refreshTodoScreen() {
+        let todoWindow = AccessibilityElement.todoWindow()
+        let screens = ScreenDetection().detectScreens(using: todoWindow)
+        TodoManager.todoScreen = screens?.currentScreen
+    }
+    
     func moveAll() {
+        TodoManager.refreshTodoScreen()
+
         let windows = AccessibilityElement.allWindows()
 
-        if let todoApplication = AccessibilityElement.todoWindow() {
-            // Clear all windows from the todo app sidebar
-            for w in windows {
-                if w.getIdentifier() != todoApplication.getIdentifier() {
-                    shiftWindowOffSidebar(w)
+        if let todoWindow = AccessibilityElement.todoWindow() {
+            if let screen = TodoManager.todoScreen {
+                let screenFrame = screen.frame as CGRect
+                let sd = ScreenDetection()
+                // Clear all windows from the todo app sidebar
+                for w in windows {
+                    let wScreen = sd.detectScreens(using: w)?.currentScreen
+                    if w.getIdentifier() != todoWindow.getIdentifier() &&
+                        wScreen == TodoManager.todoScreen {
+                        shiftWindowOffSidebar(w, screenFrame: screenFrame)
+                    }
                 }
-            }
 
-            var rect = todoApplication.rectOfElement()
-            let screen = NSScreen.screens[0]
-            let screenFrame = screen.frame as CGRect
-            rect.origin.x = screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value)
-            rect.origin.y = screen.adjustedVisibleFrame.minY
-            rect.size.height = screen.adjustedVisibleFrame.height
-            rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
-            todoApplication.setRectOf(rect)
+                var rect = todoWindow.rectOfElement()
+                rect.origin.x = screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value)
+                rect.origin.y = screenFrame.minY
+                rect.size.height = screen.adjustedVisibleFrame.height
+                rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
+                todoWindow.setRectOf(rect)
+            }
         }
     }
     
-    func shiftWindowOffSidebar(_ w: AccessibilityElement) {
+    func shiftWindowOffSidebar(_ w: AccessibilityElement, screenFrame: CGRect) {
         var rect = w.rectOfElement()
-        let screen = NSScreen.screens[0].frame as CGRect
 
-        if (rect.maxX > (screen.maxX - CGFloat(Defaults.todoSidebarWidth.value))) {
+        if (rect.maxX > (screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value))) {
             // Shift it to the left
-            rect.origin.x = max (0, rect.origin.x - (rect.maxX - (screen.maxX - CGFloat(Defaults.todoSidebarWidth.value))))
+            rect.origin.x = max (0, rect.origin.x - (rect.maxX - (screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value))))
 
             // If it's still too wide, scale it down
             if (rect.origin.x == 0) {
-                rect.size.width = min(rect.size.width, screen.maxX - CGFloat(Defaults.todoSidebarWidth.value))
+                rect.size.width = min(rect.size.width, screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value))
             }
 
             w.setRectOf(rect)

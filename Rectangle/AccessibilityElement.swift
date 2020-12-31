@@ -65,7 +65,6 @@ class AccessibilityElement {
 
         for app in apps {
             var rawValue: AnyObject? = nil
-            var windowList = [AXUIElement]()
             if AXUIElementCopyAttributeValue(app.underlyingElement,
                                              NSAccessibility.Attribute.windows as CFString,
                                              &rawValue) == .success {

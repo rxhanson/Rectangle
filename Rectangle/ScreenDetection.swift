@@ -134,7 +134,7 @@ extension NSScreen {
             let leftGap = CGFloat(Defaults.screenEdgeGapLeft.value)
             var rightGap = CGFloat(Defaults.screenEdgeGapRight.value)
             
-            if Defaults.todoMode.enabled {
+            if Defaults.todoMode.enabled && (TodoManager.todoScreen == NSScreen.main) {
                 rightGap += CGFloat(Defaults.todoSidebarWidth.value)
             }
             
