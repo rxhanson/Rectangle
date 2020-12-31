@@ -20,14 +20,12 @@ class WindowManager {
         self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
-            BestEffortWindowMover(),
-            todoVisibilityWindowMover
+            BestEffortWindowMover()
         ]
         
         fixedSizeWindowMoverChain = [
             CenteringFixedSizedWindowMover(),
-            BestEffortWindowMover(),
-            todoVisibilityWindowMover
+            BestEffortWindowMover()
         ]
 
         if Defaults.todoMode.enabled {

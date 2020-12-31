@@ -48,6 +48,7 @@ class Defaults {
     static let showExportImport = BoolDefault(key: "showExportImport")
     static let todoMode = BoolDefault(key: "todoMode")
     static let todoApplication = StringDefault(key: "todoApplication")
+    static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
     
     static var array: [Default] = [
         launchOnLogin,
