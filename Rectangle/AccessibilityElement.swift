@@ -31,7 +31,7 @@ class AccessibilityElement {
         let windowListInfo = CGWindowListCopyWindowInfo(options, kCGNullWindowID)
         guard let infoList = (windowListInfo as NSArray?) as? [[String: AnyObject]] else { return [] }
         var PIDs: Set<Int> = []
-        
+
         for w in infoList {
             if let ownerPID = w[kCGWindowOwnerPID as String] as? Int {
                 PIDs.insert(ownerPID)
@@ -40,7 +40,7 @@ class AccessibilityElement {
 
         return PIDs
     }
-    
+
     private static func frontmostApplication() -> AccessibilityElement? {
         guard let frontmostApplication: NSRunningApplication = NSWorkspace.shared.frontmostApplication else { return nil }
         let underlyingElement = AXUIElementCreateApplication(frontmostApplication.processIdentifier)
@@ -75,11 +75,11 @@ class AccessibilityElement {
 
         return windows
     }
-    
+
     static func allWindows() -> [AccessibilityElement] {
         allWindowsForPIDs([Int](PIDsWithWindows()))
     }
-    
+
     static func todoWindow() -> AccessibilityElement? {
         let apps = NSWorkspace.shared.runningApplications
 
@@ -91,10 +91,10 @@ class AccessibilityElement {
                 }
             }
         }
-        
+
         return nil
     }
-    
+
     static func windowUnderCursor() -> AccessibilityElement? {
         guard let location = CGEvent(source: nil)?.location else { return nil }
         var element: AXUIElement?

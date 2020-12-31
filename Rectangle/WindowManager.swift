@@ -51,7 +51,7 @@ class WindowManager {
     func activateTodoMode() {
         todoVisibilityWindowMover.moveAll()
     }
-    
+
     func execute(_ parameters: ExecutionParameters) {
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
               let windowId = parameters.windowId ?? frontmostWindowElement.getIdentifier()

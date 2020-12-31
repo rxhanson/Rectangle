@@ -77,8 +77,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.shortcutManager.reloadFromDefaults()
             self.snappingManager.reloadFromDefaults()
         })
-        
-//        Defaults.todoApplication.value = "com.google.Chrome.app.gmhpgfbjacdocjngbdbmhkgcpochhnge"
     }
     
     func checkAutoCheckForUpdates() {
