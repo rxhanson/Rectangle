@@ -249,7 +249,7 @@ In Todo Mode, all other movement shortcuts on the primary display will treat the
 
 To enable Todo Mode:
 1. Activate your chosen todo application.
-1. In the Rectangle menu, select "Use <Application> as Todo App".
+1. In the Rectangle menu, select "Use [Application] as Todo App".
 1. In the Rectangle menu, enable Todo Mode.
    
 While in Todo Mode, you can force a reflow of the Todo Mode layout (to correct the placement of some errant windows, for example) by selecting "Reflow Todo" in the Rectangle menu, or activating the associated keyboard shortcut.
