@@ -14,13 +14,14 @@ class TodoManager {
     func moveAll() {
         let windows = AccessibilityElement.allWindows()
 
-        // Clear all windows from the todo app sidebar
-        for w in windows {
-            shiftWindowOffSidebar(w)
-        }
-
-        // Place the todo app in the sidebar
         if let todoApplication = AccessibilityElement.todoWindow() {
+            // Clear all windows from the todo app sidebar
+            for w in windows {
+                if w.getIdentifier() != todoApplication.getIdentifier() {
+                    shiftWindowOffSidebar(w)
+                }
+            }
+
             var rect = todoApplication.rectOfElement()
             let screen = NSScreen.screens[0]
             let screenFrame = screen.frame as CGRect
