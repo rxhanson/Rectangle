@@ -10,8 +10,7 @@ import Foundation
 import AppKit
 import CoreFoundation
 
-class TodoVisibilityWindowMover: WindowMover {
-
+class TodoManager {
     func moveAll() {
         let windows = AccessibilityElement.allWindows()
 
@@ -48,10 +47,5 @@ class TodoVisibilityWindowMover: WindowMover {
 
             w.setRectOf(rect)
         }
-    }
-
-    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-
-        return
     }
 }
