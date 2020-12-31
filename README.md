@@ -240,6 +240,20 @@ Note that shortcuts in v0.41+ are stored in a different format and will not load
 
 That file can be backed up or transferred to other machines.
 
+## Todo Mode
+You can use Rectangle to keep a chosen application (presumably, your todo application) visible on the right of your primary screen at all times. It looks like this:
+
+![image](https://user-images.githubusercontent.com/6983/103422756-d607b780-4b57-11eb-96c5-eff3ba2deef8.png)
+
+In Todo Mode, all other movement shortcuts on the primary display will treat the display as shrunken by the size of the todo sidebar.
+
+To enable Todo Mode:
+1. Activate your chosen todo application.
+1. In the Rectangle menu, select "Use [Application] as Todo App".
+1. In the Rectangle menu, enable Todo Mode.
+   
+While in Todo Mode, you can force a reflow of the Todo Mode layout (to correct the placement of some errant windows, for example) by selecting "Reflow Todo" in the Rectangle menu, or activating the associated keyboard shortcut.
+
 ---
 
 ## Contributing
