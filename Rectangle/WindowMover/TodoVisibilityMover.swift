@@ -24,8 +24,11 @@ class TodoVisibilityWindowMover: WindowMover {
         // Place the todo app in the sidebar
         if let todoApplication = AccessibilityElement.todoWindow() {
             var rect = todoApplication.rectOfElement()
-            let screen = NSScreen.screens[0].frame as CGRect
-            rect.origin.x = screen.maxX - kTodoWidth
+            let screen = NSScreen.screens[0]
+            let screenFrame = screen.frame as CGRect
+            rect.origin.x = screenFrame.maxX - kTodoWidth
+            rect.origin.y = screen.adjustedVisibleFrame.minY
+            rect.size.height = screen.adjustedVisibleFrame.height
             rect.size.width = kTodoWidth
             todoApplication.setRectOf(rect)
         }
