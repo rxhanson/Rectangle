@@ -59,6 +59,7 @@ class TodoVisibilityWindowMover: WindowMover {
             guard let window: AccessibilityElement = frontmostWindowElement else { return }
             let todoAccommodatingMaxX = visibleFrameOfScreen.maxX - kTodoWidth
 
+
             if beforeCorrection.maxX > todoAccommodatingMaxX {
                 window.setRectOf(shrunkenDimensionsFor(window))
 

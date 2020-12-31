@@ -680,6 +680,7 @@
                         <outlet property="ignoreMenuItem" destination="D99-0O-MB6" id="iBN-Bc-ds7"/>
                         <outlet property="mainStatusMenu" destination="6wc-Rn-2EG" id="UWt-be-ZH1"/>
                         <outlet property="quitMenuItem" destination="A66-A4-cGD" id="Vul-Dd-RcH"/>
+                        <outlet property="todoAppMenuItem" destination="2aA-39-aUi" id="W9r-9c-Gap"/>
                         <outlet property="todoModeMenuItem" destination="z9y-P3-da0" id="DIO-Dw-Db9"/>
                         <outlet property="unauthorizedMenu" destination="HZt-qn-3MK" id="c4f-hw-GWr"/>
                         <outlet property="viewLoggingMenuItem" destination="O8K-y6-bva" id="31H-se-kyh"/>
@@ -693,6 +694,12 @@
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="toggleTodoMode:" target="Voe-Tx-rLC" id="Tpb-Gt-b5A"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Use frontmost.app as Todo App" id="2aA-39-aUi">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="setTodoApp:" target="Voe-Tx-rLC" id="Gja-Tr-g4V"/>
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="hf9-TP-K3t"/>
