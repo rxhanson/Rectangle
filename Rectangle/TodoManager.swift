@@ -45,6 +45,8 @@ class TodoManager {
                 rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
                 todoWindow.setRectOf(rect)
             }
+
+            todoWindow.bringToFront()
         }
     }
     
