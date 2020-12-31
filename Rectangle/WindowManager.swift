@@ -74,6 +74,11 @@ class WindowManager {
             return
         }
         
+        if action == .reflowTodo {
+            activateTodoMode()
+            return
+        }
+        
         var screens: UsableScreens?
         if let screen = parameters.screen {
             screens = UsableScreens(currentScreen: screen, numScreens: 1)
