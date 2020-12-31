@@ -29,6 +29,10 @@ class WindowManager {
             BestEffortWindowMover(),
             todoVisibilityWindowMover
         ]
+
+        if Defaults.todoMode.enabled {
+            todoVisibilityWindowMover.moveAll()
+        }
     }
     
     private func recordAction(previous lastRectangleAction: RectangleAction?, windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
