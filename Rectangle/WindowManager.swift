@@ -72,7 +72,7 @@ class WindowManager {
             return
         }
         
-        if action == .reflowTodo {
+        if action == .reflowTodo && Defaults.todoMode.enabled {
             activateTodoMode()
             return
         }

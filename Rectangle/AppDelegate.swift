@@ -270,6 +270,9 @@ extension AppDelegate: NSMenuDelegate {
                 && (windowAction == .nextDisplay || windowAction == .previousDisplay) {
                 menuItem.isEnabled = false
             }
+            if windowAction == .reflowTodo && Defaults.todoMode.enabled == false {
+                menuItem.isEnabled = false
+            }
         }
     }
     
