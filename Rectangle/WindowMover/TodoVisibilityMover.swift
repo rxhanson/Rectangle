@@ -18,20 +18,7 @@ class TodoVisibilityWindowMover: WindowMover {
 
         // Clear all windows from the todo app sidebar
         for w in windows {
-            var rect = w.rectOfElement()
-            let screen = NSScreen.screens[0].frame as CGRect
-
-            if (rect.maxX > (screen.maxX - kTodoWidth)) {
-                // Shift it to the left
-                rect.origin.x = max (0, rect.origin.x - (rect.maxX - (screen.maxX - kTodoWidth)))
-
-                // If it's still too wide, scale it down
-                if (rect.origin.x == 0) {
-                    rect.size.width = min(rect.size.width, screen.maxX - kTodoWidth)
-                }
-
-                w.setRectOf(rect)
-            }
+            shiftWindowOffSidebar(w)
         }
 
         // Place the todo app in the sidebar
@@ -43,12 +30,31 @@ class TodoVisibilityWindowMover: WindowMover {
             todoApplication.setRectOf(rect)
         }
     }
+    
+    func shiftWindowOffSidebar(_ w: AccessibilityElement) {
+        var rect = w.rectOfElement()
+        let screen = NSScreen.screens[0].frame as CGRect
+
+        if (rect.maxX > (screen.maxX - kTodoWidth)) {
+            // Shift it to the left
+            rect.origin.x = max (0, rect.origin.x - (rect.maxX - (screen.maxX - kTodoWidth)))
+
+            // If it's still too wide, scale it down
+            if (rect.origin.x == 0) {
+                rect.size.width = min(rect.size.width, screen.maxX - kTodoWidth)
+            }
+
+            w.setRectOf(rect)
+        }
+    }
 
     func scaledDimensionsFor (_ window: AccessibilityElement) -> CGRect {
         var rect = window.rectOfElement()
         let screen = NSScreen.screens[0].frame as CGRect
+
         rect.size.width *= (screen.maxX - kTodoWidth) / screen.maxX
         rect.origin.x *= (screen.maxX - kTodoWidth) / screen.maxX
+        
         return rect
     }
 
@@ -57,6 +63,7 @@ class TodoVisibilityWindowMover: WindowMover {
             guard let window: AccessibilityElement = frontmostWindowElement else { return }
 
             window.setRectOf(scaledDimensionsFor(window))
+            shiftWindowOffSidebar(window)
         }
     }
 }
