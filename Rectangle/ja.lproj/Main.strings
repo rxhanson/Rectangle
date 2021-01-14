@@ -78,7 +78,7 @@
 "78Y-hA-62v.title" = "スペルを自動的に修正";
 
 /* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
-"7YK-9Z-lzw.title" = "2/3にして中央に表示";
+"7YK-9Z-lzw.title" = "1/3にして中央に表示";
 
 /* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
 "8Bg-SZ-hDO.title" = "中央に表示";
