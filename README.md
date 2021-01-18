@@ -40,6 +40,7 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 * Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut) for keyboard shortcut recording. Spectacle used it's own shortcut recorder.
 * Rectangle has additional window actions: move windows to each edge without resizing, maximize only the height of a window, almost maximizing a window. 
 * Next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Screen orientation is taken into account, as in first third will be left third on landscape and top third on portrait.
+  * You can however emulate Spectacle's third cycling using first and last third actions. So, if you repeatedly execute first third, it will cycle through thirds (first, center, last) and vice-versa with the last third.
 * There's an option to have windows traverse across displays on subsequent left or right executions.
 * Windows will snap when dragged to edges/corners of the screen. This can be disabled.
 
