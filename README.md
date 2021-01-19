@@ -70,7 +70,7 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 2: disabled
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
-### Resize on Directional Move (will be released in v0.41)
+### Resize on Directional Move
 By default, the commands to move to certain edges will not resize the window.
 If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
 This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
@@ -81,6 +81,24 @@ Note that if subsequent execution mode is set to cycle displays when this is ena
 ```bash
 defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 ```
+
+### Only allow drag-to-snap when modifier keys are pressed (v0.42)
+
+Modifier key values can be ORed together.
+
+| Modifier Key | Integer Value |
+|--------------|---------------|
+| cmd          | 1048576       |
+| option       | 524288        |
+| ctrl         | 262144        |
+| shift        | 131072        |
+| fn           | 8388608       |
+
+This command would be for restricting snap to the cmd key:
+```bash
+defaults write com.knollsoft.Rectangle snapModifiers -int 1048576
+```
+
 
 ### Almost Maximize
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height).
