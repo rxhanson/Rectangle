@@ -117,11 +117,13 @@ class SnappingManager {
         case .leftMouseDragged:
             if windowId == nil, windowIdAttempt < 20 {
                 if let lastWindowIdAttempt = lastWindowIdAttempt {
-                    if event.timestamp - lastWindowIdAttempt < 0.2 {
+                    if event.timestamp - lastWindowIdAttempt < 0.1 {
                         return
                     }
                 }
-                windowElement = AccessibilityElement.windowUnderCursor()
+                if windowElement == nil {
+                    windowElement = AccessibilityElement.windowUnderCursor()
+                }
                 windowId = windowElement?.getIdentifier()
                 initialWindowRect = windowElement?.rectOfElement()
                 windowIdAttempt += 1

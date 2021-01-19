@@ -229,16 +229,8 @@ class AccessibilityElement {
     }
     
     private func window() -> Self? {
-        var element = self
-        while element.role() != kAXWindowRole {
-            if let nextElement = element.parent() {
-                element = nextElement
-            } else {
-                return nil
-            }
-        }
-        
-        return element
+        if role() == kAXWindowRole { return self }
+        return self.value(for: .window)
     }
     
     private func application() -> Self? {
