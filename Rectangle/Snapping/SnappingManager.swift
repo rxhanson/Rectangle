@@ -157,6 +157,16 @@ class SnappingManager {
                 }
             }
             if windowMoving {
+                if Defaults.snapModifiers.value > 0 {
+                    if event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue != Defaults.snapModifiers.value {
+                        if currentSnapArea != nil {
+                            box?.close()
+                            currentSnapArea = nil
+                        }
+                        return
+                    }
+                }
+                
                 if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea) {
                     if snapArea == currentSnapArea {
                         return

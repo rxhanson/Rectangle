@@ -50,6 +50,7 @@ class Defaults {
     static let todoMode = BoolDefault(key: "todoMode")
     static let todoApplication = StringDefault(key: "todoApplication")
     static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
+    static let snapModifiers = IntDefault(key: "snapModifiers")
 
     static var array: [Default] = [
         launchOnLogin,
