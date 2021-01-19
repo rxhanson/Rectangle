@@ -91,7 +91,9 @@ class Defaults {
         todo,
         todoMode,
         todoApplication,
-        todoSidebarWidth
+        todoSidebarWidth,
+        snapModifiers,
+        retainSizeNextPrevDisplay
     ]
 }
 
