@@ -10,9 +10,7 @@ import Cocoa
 
 class NextPrevDisplayCalculation: WindowCalculation {
     
-    let centerCalculation = CenterCalculation()
-    
-    override  func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+    override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         let usableScreens = params.usableScreens
         
         guard usableScreens.numScreens > 1 else { return nil }
@@ -35,7 +33,11 @@ class NextPrevDisplayCalculation: WindowCalculation {
     }
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        if !Defaults.retainSizeNextPrevDisplay.userEnabled,
+           params.lastAction?.action == .maximize {
+            return WindowCalculationFactory.maximizeCalculation.calculateRect(params)
+        }
         
-        return centerCalculation.calculateRect(params)
+        return WindowCalculationFactory.centerCalculation.calculateRect(params)
     }
 }
