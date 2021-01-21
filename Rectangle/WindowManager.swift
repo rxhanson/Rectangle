@@ -14,6 +14,7 @@ class WindowManager {
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowHistory: WindowHistory
+    private let todoManager = TodoManager()
     
     init(windowHistory: WindowHistory) {
         self.windowHistory = windowHistory
@@ -26,6 +27,10 @@ class WindowManager {
             CenteringFixedSizedWindowMover(),
             BestEffortWindowMover()
         ]
+
+        if Defaults.todoMode.enabled {
+            todoManager.moveAll()
+        }
     }
     
     private func recordAction(previous lastRectangleAction: RectangleAction?, windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
@@ -45,6 +50,10 @@ class WindowManager {
         )
     }
     
+    func activateTodoMode() {
+        todoManager.moveAll()
+    }
+
     func execute(_ parameters: ExecutionParameters) {
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
               let windowId = parameters.windowId ?? frontmostWindowElement.getIdentifier()
@@ -60,6 +69,11 @@ class WindowManager {
                 frontmostWindowElement.setRectOf(restoreRect)
             }
             windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            return
+        }
+        
+        if action == .reflowTodo && Defaults.todoMode.enabled {
+            activateTodoMode()
             return
         }
         

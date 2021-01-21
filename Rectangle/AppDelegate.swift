@@ -33,6 +33,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
+    @IBOutlet weak var todoModeMenuItem: NSMenuItem!
+    @IBOutlet weak var todoAppMenuItem: NSMenuItem!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if let lastVersion = Defaults.lastVersion.value,
@@ -162,7 +164,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             applicationToggle.disableFrontApp()
         }
     }
-    
+
+    @IBAction func setTodoApp(_ sender: NSMenuItem) {
+        applicationToggle.setTodoApp()
+    }
+
+    @IBAction func toggleTodoMode(_ sender: NSMenuItem) {
+        if sender.state == .off {
+            Defaults.todoMode.enabled = true
+            windowManager.activateTodoMode()
+        } else {
+            Defaults.todoMode.enabled = false
+        }
+    }
+
     @IBAction func checkForUpdates(_ sender: Any) {
         SUUpdater.shared()?.checkForUpdates(sender)
     }
@@ -206,13 +221,24 @@ extension AppDelegate: NSMenuDelegate {
         
         if let frontAppName = applicationToggle.frontAppName {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
-            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
+            ignoreMenuItem.title = ignoreString.replacingOccurrences(
+                of: "frontmost.app", with: frontAppName)
             ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
             ignoreMenuItem.isHidden = false
+
+            let appString = NSLocalizedString("2aA-39-aUi.title", tableName: "Main", value: "Use frontmost.app as Todo App", comment: "")
+            todoAppMenuItem.title = appString.replacingOccurrences(
+                of: "frontmost.app", with: frontAppName)
+            todoAppMenuItem.isEnabled = !applicationToggle.todoAppIsActive()
+            todoAppMenuItem.state = applicationToggle.todoAppIsActive() ? .on : .off
+            todoAppMenuItem.isHidden = false
         } else {
             ignoreMenuItem.isHidden = true
+            todoAppMenuItem.isHidden = true
         }
         
+        todoModeMenuItem.state = Defaults.todoMode.enabled ? .on : .off
+
         updateWindowActionMenuItems(menu: menu)
         
         viewLoggingMenuItem.keyEquivalentModifierMask = .option
@@ -242,6 +268,9 @@ extension AppDelegate: NSMenuDelegate {
             }
             if screenCount == 1
                 && (windowAction == .nextDisplay || windowAction == .previousDisplay) {
+                menuItem.isEnabled = false
+            }
+            if windowAction == .reflowTodo && Defaults.todoMode.enabled == false {
                 menuItem.isEnabled = false
             }
         }
