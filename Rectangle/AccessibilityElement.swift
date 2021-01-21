@@ -26,28 +26,13 @@ class AccessibilityElement {
         self.underlyingElement = axUIElement
     }
     
-    private static func PIDsWithWindows() -> Set<Int> {
-        let options = CGWindowListOption(arrayLiteral: CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly)
-        let windowListInfo = CGWindowListCopyWindowInfo(options, kCGNullWindowID)
-        guard let infoList = (windowListInfo as NSArray?) as? [[String: AnyObject]] else { return [] }
-        var PIDs: Set<Int> = []
-
-        for w in infoList {
-            if let ownerPID = w[kCGWindowOwnerPID as String] as? Int {
-                PIDs.insert(ownerPID)
-            }
-        }
-
-        return PIDs
-    }
-
     private static func frontmostApplication() -> AccessibilityElement? {
         guard let frontmostApplication: NSRunningApplication = NSWorkspace.shared.frontmostApplication else { return nil }
         let underlyingElement = AXUIElementCreateApplication(frontmostApplication.processIdentifier)
         let frontmostApplicationElement = AccessibilityElement(underlyingElement)
         return frontmostApplicationElement
     }
-    
+
     static func frontmostWindow() -> AccessibilityElement? {
         guard let frontmostApplicationElement = AccessibilityElement.frontmostApplication() else {
             Logger.log("Failed to find the application that currently has focus.")
@@ -55,43 +40,6 @@ class AccessibilityElement {
         }
         let focusedAttr = NSAccessibility.Attribute.focusedWindow as CFString
         return frontmostApplicationElement.withAttribute(focusedAttr)
-    }
-    
-    static func allWindowsForPIDs(_ pids: [Int]) -> [AccessibilityElement] {
-        let apps = pids.map {
-            AccessibilityElement(AXUIElementCreateApplication(pid_t($0)))
-        }
-        var windows = [AccessibilityElement]()
-
-        for app in apps {
-            var rawValue: AnyObject? = nil
-            if AXUIElementCopyAttributeValue(app.underlyingElement,
-                                             NSAccessibility.Attribute.windows as CFString,
-                                             &rawValue) == .success {
-                windows.append(contentsOf: (rawValue as! [AXUIElement]).map { AccessibilityElement($0) })
-            }
-        }
-
-        return windows
-    }
-
-    static func allWindows() -> [AccessibilityElement] {
-        allWindowsForPIDs([Int](PIDsWithWindows()))
-    }
-
-    static func todoWindow() -> AccessibilityElement? {
-        let apps = NSWorkspace.shared.runningApplications
-
-        for app in apps {
-            if app.bundleIdentifier == Defaults.todoApplication.value {
-                let windows = allWindowsForPIDs([Int(app.processIdentifier)])
-                if(windows.count > 0) {
-                    return windows[0]
-                }
-            }
-        }
-
-        return nil
     }
 
     static func windowUnderCursor() -> AccessibilityElement? {

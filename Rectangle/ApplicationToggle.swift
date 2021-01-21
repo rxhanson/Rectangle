@@ -67,14 +67,6 @@ class ApplicationToggle: NSObject {
         }
     }
 
-    public func setTodoApp() {
-        Defaults.todoApplication.value = self.frontAppId
-    }
-
-    public func todoAppIsActive() -> Bool {
-        return Defaults.todoApplication.value == self.frontAppId
-    }
-
     public func disableFrontApp() {
         if let frontAppId = self.frontAppId {
             disabledApps.insert(frontAppId)

@@ -53,9 +53,8 @@ enum WindowAction: Int {
     topRightSixth = 37,
     bottomLeftSixth = 38,
     bottomCenterSixth = 39,
-    bottomRightSixth = 40,
-    reflowTodo = 41
-    
+    bottomRightSixth = 40
+
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
@@ -64,17 +63,17 @@ enum WindowAction: Int {
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth,
-                         topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth, reflowTodo
+                         topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth
     ]
-    
+
     func post() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
     }
-    
+
     func postSnap(windowElement: AccessibilityElement?, windowId: Int?, screen: NSScreen) {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId))
     }
-    
+
     // Determines where separators should be used in the menu
     var firstInGroup: Bool {
         switch self {
@@ -84,7 +83,7 @@ enum WindowAction: Int {
             return false
         }
     }
-    
+
     var name: String {
         switch self {
         case .leftHalf: return "leftHalf"
@@ -124,14 +123,13 @@ enum WindowAction: Int {
         case .bottomLeftSixth: return "bottomLeftSixth"
         case .bottomCenterSixth: return "bottomCenterSixth"
         case .bottomRightSixth: return "bottomRightSixth"
-        case .reflowTodo: return "reflowTodo"
         }
     }
 
     var displayName: String {
         var key: String
         var value: String
-        
+
         switch self {
         case .leftHalf:
             key = "Xc8-Sm-pig.title"
@@ -244,25 +242,22 @@ enum WindowAction: Int {
         case .bottomRightSixth:
             key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
-        case .reflowTodo:
-            key = "foo"
-            value = "Reflow Todo"
         }
-        
+
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
     }
-    
+
     var notificationName: Notification.Name {
         return Notification.Name(name)
     }
-    
+
     var isMoveToDisplay: Bool {
         switch self {
         case .previousDisplay, .nextDisplay: return true
         default: return false
         }
     }
-    
+
     var resizes: Bool {
         switch self {
         case .center, .nextDisplay, .previousDisplay: return false
@@ -270,7 +265,7 @@ enum WindowAction: Int {
         default: return true
         }
     }
-    
+
     var spectacleDefault: Shortcut? {
         switch self {
         case .leftHalf: return Shortcut( cmd|alt, kVK_LeftArrow )
@@ -292,7 +287,7 @@ enum WindowAction: Int {
         default: return nil
         }
     }
-    
+
     var alternateDefault: Shortcut? {
         switch self {
         case .leftHalf: return Shortcut( ctrl|alt, kVK_LeftArrow )
@@ -316,11 +311,10 @@ enum WindowAction: Int {
         case .centerThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .lastTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
         case .lastThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
-        case .reflowTodo: return Shortcut( ctrl|alt, kVK_ANSI_N )
         default: return nil
         }
     }
-    
+
     var image: NSImage {
         switch self {
         case .leftHalf: return NSImage(imageLiteralResourceName: "leftHalfTemplate")
@@ -360,10 +354,9 @@ enum WindowAction: Int {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
-        case .reflowTodo: return NSImage(imageLiteralResourceName: "restoreTemplate")
         }
     }
-    
+
     var gapSharedEdge: Edge {
         switch self {
         case .leftHalf: return .right
@@ -382,7 +375,7 @@ enum WindowAction: Int {
             return .none
         }
     }
-    
+
     var gapsApplicable: Dimension {
         switch self {
         case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
@@ -394,7 +387,7 @@ enum WindowAction: Int {
             return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
         case .maximizeHeight:
             return .vertical
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .reflowTodo:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore:
             return .none
         }
     }

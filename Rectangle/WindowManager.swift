@@ -14,25 +14,20 @@ class WindowManager {
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowHistory: WindowHistory
-    private let todoManager = TodoManager()
-    
+
     init(windowHistory: WindowHistory) {
         self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
             BestEffortWindowMover()
         ]
-        
+
         fixedSizeWindowMoverChain = [
             CenteringFixedSizedWindowMover(),
             BestEffortWindowMover()
         ]
-
-        if Defaults.todoMode.enabled {
-            todoManager.moveAll()
-        }
     }
-    
+
     private func recordAction(previous lastRectangleAction: RectangleAction?, windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
         let newCount: Int
         if lastRectangleAction?.action == action,
@@ -41,17 +36,13 @@ class WindowManager {
         } else {
             newCount = 1
         }
-        
+
         windowHistory.lastRectangleActions[windowId] = RectangleAction(
             action: action,
             subAction: subAction,
             rect: resultingRect,
             count: newCount
         )
-    }
-    
-    func activateTodoMode() {
-        todoManager.moveAll()
     }
 
     func execute(_ parameters: ExecutionParameters) {
@@ -61,19 +52,14 @@ class WindowManager {
             NSSound.beep()
             return
         }
-        
+
         let action = parameters.action
-        
+
         if action == .restore {
             if let restoreRect = windowHistory.restoreRects[windowId] {
                 frontmostWindowElement.setRectOf(restoreRect)
             }
             windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-            return
-        }
-        
-        if action == .reflowTodo && Defaults.todoMode.enabled {
-            activateTodoMode()
             return
         }
         

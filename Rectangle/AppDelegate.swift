@@ -33,9 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
-    @IBOutlet weak var todoModeMenuItem: NSMenuItem!
-    @IBOutlet weak var todoAppMenuItem: NSMenuItem!
-    
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if let lastVersion = Defaults.lastVersion.value,
            let intLastVersion = Int(lastVersion) {
@@ -43,13 +41,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 MASShortcutMigration.migrate()
             }
         }
-        
+
         Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
 
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
-        
+
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
             self.showWelcomeWindow()
             self.checkForConflictingApps()
@@ -57,20 +55,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.statusItem.statusMenu = self.mainStatusMenu
             self.accessibilityTrusted()
         }
-        
+
         if alreadyTrusted {
             accessibilityTrusted()
         }
-        
+
         statusItem.statusMenu = alreadyTrusted
             ? mainStatusMenu
             : unauthorizedMenu
-        
+
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
-        
+
         checkAutoCheckForUpdates()
-        
+
         Notification.Name.configImported.onPost(using: { _ in
             self.checkAutoCheckForUpdates()
             self.statusItem.refreshVisibility()
@@ -79,11 +77,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.snappingManager.reloadFromDefaults()
         })
     }
-    
+
     func checkAutoCheckForUpdates() {
         SUUpdater.shared()?.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
-    
+
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
         self.windowManager = WindowManager(windowHistory: windowHistory)
@@ -91,7 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager(windowHistory: windowHistory)
     }
-    
+
     func checkForConflictingApps() {
         let conflictingAppsIds: [String: String] = [
             "com.divisiblebyzero.Spectacle": "Spectacle",
@@ -99,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             "com.hegenberg.BetterSnapTool": "BetterSnapTool",
             "com.manytricks.Moom": "Moom"
         ]
-        
+
         let runningApps = NSWorkspace.shared.runningApplications
         for app in runningApps {
             guard let bundleId = app.bundleIdentifier else { continue }
@@ -108,28 +106,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 break
             }
         }
-        
+
     }
-    
+
     private func showWelcomeWindow() {
         let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil)
             .instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
         guard let welcomeWindow = welcomeWindowController?.window else { return }
         welcomeWindow.delegate = self
-        
+
         NSApp.activate(ignoringOtherApps: true)
-        
+
         let response = NSApp.runModal(for: welcomeWindow)
-        
+
         let usingRecommended = response == .alertFirstButtonReturn || response == .abort
-        
+
         Defaults.alternateDefaultShortcuts.enabled = usingRecommended
-        
+
         Defaults.subsequentExecutionMode.value = usingRecommended ? .acrossMonitor : .resize
-        
+
         welcomeWindowController?.close()
     }
-    
+
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if Defaults.relaunchOpensMenu.enabled {
             statusItem.openMenu()
@@ -138,7 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         return true
     }
-    
+
     @IBAction func openPreferences(_ sender: Any) {
         if prefsWindowController == nil {
             prefsWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "PrefsWindowController") as? NSWindowController
@@ -147,16 +145,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         prefsWindowController?.showWindow(self)
         prefsWindowController?.window?.makeKey()
     }
-    
+
     @IBAction func showAbout(_ sender: Any) {
         NSApp.activate(ignoringOtherApps: true)
         NSApp.orderFrontStandardAboutPanel(sender)
     }
-    
+
     @IBAction func viewLogging(_ sender: Any) {
         Logger.showLogging(sender: sender)
     }
-    
+
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
         if sender.state == .on {
             applicationToggle.enableFrontApp()
@@ -165,23 +163,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @IBAction func setTodoApp(_ sender: NSMenuItem) {
-        applicationToggle.setTodoApp()
-    }
-
-    @IBAction func toggleTodoMode(_ sender: NSMenuItem) {
-        if sender.state == .off {
-            Defaults.todoMode.enabled = true
-            windowManager.activateTodoMode()
-        } else {
-            Defaults.todoMode.enabled = false
-        }
-    }
-
     @IBAction func checkForUpdates(_ sender: Any) {
         SUUpdater.shared()?.checkForUpdates(sender)
     }
-    
+
     @IBAction func authorizeAccessibility(_ sender: Any) {
         accessibilityAuthorization.showAuthorizationWindow()
     }
@@ -196,7 +181,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if !Defaults.SUHasLaunchedBefore {
             Defaults.launchOnLogin.enabled = true
         }
-        
+
         // Even if we are already set up to launch on login, setting it again since macOS can be buggy with this type of launch on login.
         if Defaults.launchOnLogin.enabled {
             let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
@@ -208,44 +193,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-    
+
 }
 
 extension AppDelegate: NSMenuDelegate {
-    
+
     func menuWillOpen(_ menu: NSMenu) {
         if menu != mainStatusMenu {
             updateWindowActionMenuItems(menu: menu)
             return
         }
-        
+
         if let frontAppName = applicationToggle.frontAppName {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
-            ignoreMenuItem.title = ignoreString.replacingOccurrences(
-                of: "frontmost.app", with: frontAppName)
+            ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
             ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
             ignoreMenuItem.isHidden = false
-
-            let appString = NSLocalizedString("2aA-39-aUi.title", tableName: "Main", value: "Use frontmost.app as Todo App", comment: "")
-            todoAppMenuItem.title = appString.replacingOccurrences(
-                of: "frontmost.app", with: frontAppName)
-            todoAppMenuItem.isEnabled = !applicationToggle.todoAppIsActive()
-            todoAppMenuItem.state = applicationToggle.todoAppIsActive() ? .on : .off
-            todoAppMenuItem.isHidden = false
         } else {
             ignoreMenuItem.isHidden = true
-            todoAppMenuItem.isHidden = true
         }
-        
-        todoModeMenuItem.state = Defaults.todoMode.enabled ? .on : .off
 
         updateWindowActionMenuItems(menu: menu)
-        
+
         viewLoggingMenuItem.keyEquivalentModifierMask = .option
         quitMenuItem.keyEquivalent = "q"
         quitMenuItem.keyEquivalentModifierMask = .command
     }
-    
+
     private func updateWindowActionMenuItems(menu: NSMenu) {
         let frontmostWindow = AccessibilityElement.frontmostWindow()
         let screenCount = NSScreen.screens.count
@@ -268,9 +242,6 @@ extension AppDelegate: NSMenuDelegate {
             }
             if screenCount == 1
                 && (windowAction == .nextDisplay || windowAction == .previousDisplay) {
-                menuItem.isEnabled = false
-            }
-            if windowAction == .reflowTodo && Defaults.todoMode.enabled == false {
                 menuItem.isEnabled = false
             }
         }
