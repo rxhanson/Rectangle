@@ -40,6 +40,7 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 * Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut) for keyboard shortcut recording. Spectacle used it's own shortcut recorder.
 * Rectangle has additional window actions: move windows to each edge without resizing, maximize only the height of a window, almost maximizing a window. 
 * Next/prev screen thirds is replaced with explicitly first third, first two thirds, center third, last two thirds, and last third. Screen orientation is taken into account, as in first third will be left third on landscape and top third on portrait.
+  * You can however emulate Spectacle's third cycling using first and last third actions. So, if you repeatedly execute first third, it will cycle through thirds (first, center, last) and vice-versa with the last third.
 * There's an option to have windows traverse across displays on subsequent left or right executions.
 * Windows will snap when dragged to edges/corners of the screen. This can be disabled.
 
@@ -69,7 +70,7 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 2: disabled
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
-### Resize on Directional Move (will be released in v0.41)
+### Resize on Directional Move
 By default, the commands to move to certain edges will not resize the window.
 If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
 This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
@@ -80,6 +81,24 @@ Note that if subsequent execution mode is set to cycle displays when this is ena
 ```bash
 defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 ```
+
+### Only allow drag-to-snap when modifier keys are pressed (v0.42)
+
+Modifier key values can be ORed together.
+
+| Modifier Key | Integer Value |
+|--------------|---------------|
+| cmd          | 1048576       |
+| option       | 524288        |
+| ctrl         | 262144        |
+| shift        | 131072        |
+| fn           | 8388608       |
+
+This command would be for restricting snap to the cmd key:
+```bash
+defaults write com.knollsoft.Rectangle snapModifiers -int 1048576
+```
+
 
 ### Almost Maximize
 By default, "Almost Maximize" will resize the window to 90% of the screen (width & height).
@@ -256,8 +275,3 @@ Rectangle uses [CocoaPods](https://cocoapods.org/) to install Sparkle and MASSho
 1. Make sure CocoaPods is installed and up to date on your machine (`sudo gem install cocoapods`).
 1. Execute `pod install` the root directory of the project. 
 1. Open the generated xcworkspace file (`open Rectangle.xcworkspace`).
-
-#### Signing
-- When running in Xcode (debug), Rectangle is signed to run locally with no developer ID configured.
-- You can run the app out of the box this way, but you might have to authorize the app in System Prefs every time you run it. 
-- If you don't want to authorize in System Prefs every time you run it and you have a developer ID set up, you'll want to use that to sign it and additionally add the Hardened Runtime capability to the Rectangle and RectangleLauncher targets. 

@@ -108,3 +108,14 @@ class ApplicationToggle: NSObject {
     }
     
 }
+
+// todo mode
+extension ApplicationToggle {
+    public func setTodoApp() {
+        Defaults.todoApplication.value = self.frontAppId
+    }
+
+    public func todoAppIsActive() -> Bool {
+        return Defaults.todoApplication.value == self.frontAppId
+    }
+}

@@ -117,11 +117,13 @@ class SnappingManager {
         case .leftMouseDragged:
             if windowId == nil, windowIdAttempt < 20 {
                 if let lastWindowIdAttempt = lastWindowIdAttempt {
-                    if event.timestamp - lastWindowIdAttempt < 0.2 {
+                    if event.timestamp - lastWindowIdAttempt < 0.1 {
                         return
                     }
                 }
-                windowElement = AccessibilityElement.windowUnderCursor()
+                if windowElement == nil {
+                    windowElement = AccessibilityElement.windowUnderCursor()
+                }
                 windowId = windowElement?.getIdentifier()
                 initialWindowRect = windowElement?.rectOfElement()
                 windowIdAttempt += 1
@@ -155,6 +157,16 @@ class SnappingManager {
                 }
             }
             if windowMoving {
+                if Defaults.snapModifiers.value > 0 {
+                    if event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue != Defaults.snapModifiers.value {
+                        if currentSnapArea != nil {
+                            box?.close()
+                            currentSnapArea = nil
+                        }
+                        return
+                    }
+                }
+                
                 if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea) {
                     if snapArea == currentSnapArea {
                         return

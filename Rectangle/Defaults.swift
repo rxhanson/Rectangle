@@ -46,6 +46,12 @@ class Defaults {
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let showExportImport = BoolDefault(key: "showExportImport")
+    static let todo = OptionalBoolDefault(key: "todo")
+    static let todoMode = BoolDefault(key: "todoMode")
+    static let todoApplication = StringDefault(key: "todoApplication")
+    static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
+    static let snapModifiers = IntDefault(key: "snapModifiers")
+    static let retainSizeNextPrevDisplay = OptionalBoolDefault(key: "retainSizeNextPrevDisplay")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -81,7 +87,13 @@ class Defaults {
         footprintAlpha,
         footprintBorderWidth,
         footprintFade,
-        SUEnableAutomaticChecks
+        SUEnableAutomaticChecks,
+        todo,
+        todoMode,
+        todoApplication,
+        todoSidebarWidth,
+        snapModifiers,
+        retainSizeNextPrevDisplay
     ]
 }
 
