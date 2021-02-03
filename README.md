@@ -55,8 +55,8 @@ defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
 ```
 
 ### Halves to thirds (repeated execution of half and quarter actions)
-Halves to thirds is controlled by the "Cycle displays" setting in the preferences. 
-If the cycle displays setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
+Halves to thirds is controlled by the `Move to adjacent display on repeated left or right commands` setting in the preferences. 
+If this setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
 
 The cycling behavior can be disabled entirely with:
 
