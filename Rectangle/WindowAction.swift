@@ -265,6 +265,39 @@ enum WindowAction: Int {
         default: return true
         }
     }
+    
+    var isDisplayCyclable: Bool {
+        switch self {
+        case .leftHalf,
+             .rightHalf,
+             .maximize,
+             .bottomHalf,
+             .topHalf,
+             .center,
+             .bottomLeft,
+             .bottomRight,
+             .topLeft,
+             .topRight,
+             .firstThird,
+             .firstTwoThirds,
+             .centerThird,
+             .lastTwoThirds,
+             .lastThird,
+             .almostMaximize,
+             .centerHalf,
+             .firstFourth,
+             .secondFourth,
+             .thirdFourth,
+             .lastFourth,
+             .topLeftSixth,
+             .topCenterSixth,
+             .topRightSixth,
+             .bottomLeftSixth,
+             .bottomCenterSixth,
+             .bottomRightSixth: return true
+        default: return false
+        }
+    }
 
     var spectacleDefault: Shortcut? {
         switch self {

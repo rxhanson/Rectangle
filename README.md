@@ -54,27 +54,64 @@ If you wish to change the default shortcuts after first launch, use the followin
 defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
 ```
 
-### Halves to thirds (repeated execution of half and quarter actions)
-Halves to thirds is controlled by the `Move to adjacent display on repeated left or right commands` setting in the preferences. 
-If this setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
+### Repeated Command Behavior
 
-The cycling behavior can be disabled entirely with:
+Rectangle implements a number of behaviors for handling repeated commands, only some of which are exposed in the preferences.
+
+The cycling behavior can be set with
+
+```bash
+defaults write com.knollsoft.Rectangle subsequentExecutionMode -int <VALUE>
+```
+
+Where `<VALUE>` is one of the following:
+
+#### `0`: Halves to thirds (Spectacle behavior)
+
+Each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 → 2/3 → 1/3.
+This settings is enabled implicitly when the "Move to adjacent display on repeated left or right commands" setting in the preferences is unchecked. This follows the default behavior in Spectacle.
+
+#### `1`: Cycle displays for left / right actions
+
+This settings is enabled when the "Move to adjacent display on repeated left or right commands" setting in the preferences is checked.
+
+#### `2`: Cycling disabled
+
+Disables cycling behavior entirely.
+
+Accessible only through the following terminal command:
 
 ```bash
 defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 ```
 
-`subsequentExecutionMode` accepts the following values:
-0: halves to thirds Spectacle behavior (box unchecked)
-1: cycle displays (box checked)
-2: disabled
-3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
+#### `3`: Cycle displays for left / right actions, and halves to thirds for the rest
+
+Combines the behaviors of settings `0` and `1`, but moves across windows instead of cycling halves / thirds when windows are moved left or right.
+
+Accessible only through the following terminal command:
+
+```bash
+defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 3
+```
+
+#### `4`: Cycle displays (repeated execution of normally idempotent actions)
+
+A hidden preference is available to cycle windows across displays in a spatially consistent way, similar to the "cycle between screens when using shortcuts" a behavior available in the Divvy window manager.
+
+For example, setting a window to "right half" will execute that action first on the window's parent screen. A second execution will move that window to the "right half" of the next display. If a window already satisfies the conditions called for by a shortcut, then it will cycle immediately to the next display.
+
+Accessible only through the following terminal command:
+
+```bash
+defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 4
+```
 
 ### Resize on Directional Move
 By default, the commands to move to certain edges will not resize the window.
 If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
 This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
-This size will cycle between 1/2 -> 2/3 -> 1/3 of the screen’s width/height.
+This size will cycle between 1/2 → 2/3 → 1/3 of the screen’s width/height.
 
 Note that if subsequent execution mode is set to cycle displays when this is enabled, Move Left and Move Right will always resize to 1/2, and pressing it again will move to the next display.
 

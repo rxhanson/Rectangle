@@ -13,6 +13,7 @@ class LastFourthCalculation: WindowCalculation, OrientationAware {
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
         guard Defaults.subsequentExecutionMode.value != .none,
+              Defaults.subsequentExecutionMode.value != .cycleMonitor, // Just check for .resizes instead?
             let last = params.lastAction, let lastSubAction = last.subAction else {
                 return orientationBasedRect(visibleFrameOfScreen)
         }

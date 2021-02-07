@@ -117,14 +117,31 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
         }
 
-        if currentNormalizedRect.equalTo(calcResult.rect) {
+        if currentNormalizedRect.equalTo(calcResult.rect) || (action.isDisplayCyclable && (windowCalculation?.isRepeatedCommand(calculationParams) ?? false) && Defaults.subsequentExecutionMode.value == .cycleMonitor) {
             Logger.log("Current frame is equal to new frame")
-            
-            recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-            
+
+            if Defaults.subsequentExecutionMode.value == .cycleMonitor, action.isDisplayCyclable {
+                recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: calcResult.rect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+
+                Logger.log("Repeat action is cycling window to next screen")
+                if let nextScreen = screens?.adjacentScreens?.next {
+                    let newParameters = ExecutionParameters(
+                        parameters.action,
+                        updateRestoreRect: parameters.updateRestoreRect,
+                        screen: nextScreen,
+                        windowElement: parameters.windowElement,
+                        windowId: parameters.windowId
+                    )
+
+                    execute(newParameters)
+                }
+            } else {
+                recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+            }
+
             return
         }
-        
+
         let newRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect, frameOfScreen: usableScreens.frameOfCurrentScreen)
 
         let visibleFrameOfDestinationScreen = calcResult.screen.adjustedVisibleFrame

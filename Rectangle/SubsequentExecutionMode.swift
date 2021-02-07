@@ -13,6 +13,7 @@ enum SubsequentExecutionMode: Int {
     case acrossMonitor = 1
     case none = 2
     case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
+    case cycleMonitor = 4 // moves window to same (normalized) position on next monitor
 }
 
 class SubsequentExecutionDefault: Default {
