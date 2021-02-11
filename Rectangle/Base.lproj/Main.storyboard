@@ -1775,7 +1775,7 @@
                                         <subviews>
                                             <button focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WPl-J4-Y8A">
                                                 <rect key="frame" x="0.0" y="8" width="32" height="16"/>
-                                                <buttonCell key="cell" type="bevel" title="▶︎ ⋯" bezelStyle="rounded" imagePosition="right" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="MKW-qf-Q2C">
+                                                <buttonCell key="cell" type="bevel" title="▶︎ More..." bezelStyle="rounded" imagePosition="right" alignment="center" focusRingType="none" imageScaling="proportionallyDown" inset="2" id="MKW-qf-Q2C">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
