@@ -137,6 +137,13 @@ Disable the fade.
 ```bash
 defaults write com.knollsoft.Rectangle footprintFade -int 2
 ```
+
+Change the color.
+
+```bash
+defaults write com.knollsoft.Rectangle footprintColor -string "{\"red\":0,\"blue\":0.5,\"green\":0.5}"
+```
+
 ### Move Up/Down/Left/Right: Don't center on edge
 
 By default, the directional move will center the window along the edge that the window is being moved to. 
