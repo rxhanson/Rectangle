@@ -46,7 +46,7 @@ class FootprintWindow: NSWindow {
             boxView.cornerRadius = 5
         }
         boxView.wantsLayer = true
-        boxView.fillColor = NSColor.black
+        boxView.fillColor = Defaults.footprintColor.typedValue?.nsColor ?? NSColor.black
         
         contentView = boxView
     }

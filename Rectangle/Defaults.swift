@@ -6,7 +6,7 @@
 //  Copyright © 2019 Ryan Hanson. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 class Defaults {
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
@@ -44,6 +44,7 @@ class Defaults {
     static let footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
+    static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let showExportImport = BoolDefault(key: "showExportImport")
     static let todo = OptionalBoolDefault(key: "todo")
@@ -87,6 +88,7 @@ class Defaults {
         footprintAlpha,
         footprintBorderWidth,
         footprintFade,
+        footprintColor,
         SUEnableAutomaticChecks,
         todo,
         todoMode,
@@ -281,5 +283,60 @@ class IntDefault: Default {
     
     func toCodable() -> CodableDefault {
         return CodableDefault(int: value)
+    }
+}
+
+class JSONDefault<T: Codable>: StringDefault {
+    
+    private var typeInitialized = false
+    
+    var typedValue: T? {
+        didSet {
+            if typeInitialized {
+                saveToJSON(typedValue)
+            }
+        }
+    }
+    
+    override init(key: String) {
+        super.init(key: key)
+        loadFromJSON()
+        typeInitialized = true
+    }
+    
+    private func loadFromJSON() {
+        guard let jsonString = value else { return }
+        let decoder = JSONDecoder()
+        guard let jsonData = jsonString.data(using: .utf8) else { return }
+        typedValue = try? decoder.decode(T.self, from: jsonData)
+    }
+    
+    private func saveToJSON(_ obj: T?) {
+        let encoder = JSONEncoder()
+        
+        if let jsonData = try? encoder.encode(obj) {
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            if jsonString != value {
+                value = jsonString
+            }
+        }
+    }
+}
+
+struct CodableColor : Codable {
+    var red: CGFloat = 0.0
+    var green: CGFloat = 0.0
+    var blue: CGFloat = 0.0
+    var alpha: CGFloat? = 1.0
+
+    var nsColor : NSColor {
+        return NSColor(red: red, green: green, blue: blue, alpha: alpha ?? 1.0)
+    }
+
+    init(nsColor: NSColor) {
+        self.red = nsColor.redComponent
+        self.green = nsColor.greenComponent
+        self.blue = nsColor.blueComponent
+        self.alpha = nsColor.alphaComponent
     }
 }
