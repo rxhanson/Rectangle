@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "RectangleStatusTemplate24.png",
+      "filename" : "RectangleStatusTemplate22.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "RectangleStatusTemplate48.png",
+      "filename" : "RectangleStatusTemplate44.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
