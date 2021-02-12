@@ -82,7 +82,15 @@ Note that if subsequent execution mode is set to cycle displays when this is ena
 defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 ```
 
-### Only allow drag-to-snap when modifier keys are pressed (v0.42)
+### Enable Todo Mode
+See the [wiki](https://github.com/rxhanson/Rectangle/wiki/Todo-Mode) for more info.
+
+```bash
+defaults write com.knollsoft.Rectangle todo -int 1
+```
+
+
+### Only allow drag-to-snap when modifier keys are pressed
 
 Modifier key values can be ORed together.
 
