@@ -39,7 +39,12 @@ class FootprintWindow: NSWindow {
         boxView.borderColor = .lightGray
         boxView.borderType = .lineBorder
         boxView.borderWidth = CGFloat(Defaults.footprintBorderWidth.value)
-        boxView.cornerRadius = 5
+        
+        if #available(macOS 11.0, *) {
+            boxView.cornerRadius = 10
+        } else {
+            boxView.cornerRadius = 5
+        }
         boxView.wantsLayer = true
         boxView.fillColor = NSColor.black
         
