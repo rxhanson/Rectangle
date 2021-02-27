@@ -120,7 +120,7 @@
 "C9v-g0-DH8.title" = "還原";
 
 /* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
-"D99-0O-MB6.title" = "忽略 frontmost.app";
+"D99-0O-MB6.title" = "忽略「frontmost.app」";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
 "DVo-aG-piG.title" = "關閉";
