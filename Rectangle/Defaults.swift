@@ -46,7 +46,6 @@ class Defaults {
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
-    static let showExportImport = BoolDefault(key: "showExportImport")
     static let todo = OptionalBoolDefault(key: "todo")
     static let todoMode = BoolDefault(key: "todoMode")
     static let todoApplication = StringDefault(key: "todoApplication")

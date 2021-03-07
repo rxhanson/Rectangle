@@ -27,7 +27,6 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var unsnapRestoreButton: NSButton!
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
-    @IBOutlet weak var exportImportStackView: NSStackView!
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -133,8 +132,6 @@ class SettingsViewController: NSViewController {
 
         checkForUpdatesButton.title = NSLocalizedString("HIK-3r-i7E.title", tableName: "Main", value: "Check for Updates…", comment: "")
         
-        exportImportStackView.isHidden = !Defaults.showExportImport.enabled
-
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeToggles()
         })

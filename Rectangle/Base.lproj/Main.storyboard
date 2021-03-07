@@ -3254,7 +3254,6 @@
                         <outlet property="allowAnyShortcutCheckbox" destination="UY7-Nt-G3K" id="0dH-iu-gSs"/>
                         <outlet property="checkForUpdatesAutomaticallyCheckbox" destination="HcU-0y-wJU" id="ueY-S8-Ec0"/>
                         <outlet property="checkForUpdatesButton" destination="bn6-rz-AHw" id="9jf-az-Lvw"/>
-                        <outlet property="exportImportStackView" destination="TgL-lF-gWJ" id="euQ-P3-nzA"/>
                         <outlet property="gapLabel" destination="jd8-SJ-lza" id="pqG-fr-nwW"/>
                         <outlet property="gapSlider" destination="O9H-ZD-bqL" id="H7T-4Y-g8e"/>
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
