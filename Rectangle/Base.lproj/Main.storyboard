@@ -3162,11 +3162,11 @@
                                                 </connections>
                                             </button>
                                             <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TgL-lF-gWJ">
-                                                <rect key="frame" x="378" y="1" width="72" height="20"/>
+                                                <rect key="frame" x="372" y="1" width="78" height="20"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1qy-0d-Se1">
-                                                        <rect key="frame" x="-7" y="-7" width="45" height="32"/>
-                                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="square.and.arrow.down" catalog="system" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RgZ-Jw-XQZ">
+                                                        <rect key="frame" x="-7" y="-7" width="48" height="32"/>
+                                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="square.and.arrow.down" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RgZ-Jw-XQZ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -3175,8 +3175,8 @@
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJG-z6-2Z1">
-                                                        <rect key="frame" x="34" y="-7" width="45" height="32"/>
-                                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="square.and.arrow.up" catalog="system" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IO3-Hi-7gC">
+                                                        <rect key="frame" x="37" y="-7" width="48" height="32"/>
+                                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="square.and.arrow.up" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IO3-Hi-7gC">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -3569,8 +3569,8 @@ DQ
         <image name="restoreTemplate" width="30" height="20"/>
         <image name="rightFourthTemplate" width="30" height="20"/>
         <image name="rightHalfTemplate" width="30" height="20"/>
-        <image name="square.and.arrow.down" catalog="system" width="15" height="16"/>
-        <image name="square.and.arrow.up" catalog="system" width="15" height="17"/>
+        <image name="square.and.arrow.down" width="55" height="56"/>
+        <image name="square.and.arrow.up" width="55" height="56"/>
         <image name="toolbarSettingsTemplate" width="50" height="50"/>
         <image name="topCenterSixthTemplate" width="30" height="20"/>
         <image name="topHalfTemplate" width="30" height="20"/>
