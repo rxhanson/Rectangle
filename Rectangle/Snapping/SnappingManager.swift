@@ -9,8 +9,6 @@
 import Cocoa
 
 class SnappingManager {
-
-    let windowHistory: WindowHistory
     
     var eventMonitor: EventMonitor?
     var windowElement: AccessibilityElement?
@@ -45,8 +43,7 @@ class SnappingManager {
         .bottomRightShort: .bottomHalf
     ]
     
-    init(windowHistory: WindowHistory) {
-        self.windowHistory = windowHistory
+    init() {
         
         if Defaults.windowSnapping.enabled != false {
             enableSnapping()
@@ -156,20 +153,20 @@ class SnappingManager {
 
                         if Defaults.unsnapRestore.enabled != false {
                             // if window was put there by rectangle, restore size
-                            if let lastRect = windowHistory.lastRectangleActions[windowId]?.rect,
+                            if let lastRect = AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect,
                                 lastRect == initialWindowRect,
-                                let restoreRect = windowHistory.restoreRects[windowId] {
+                                let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                                 
                                 windowElement?.set(size: restoreRect.size)
-                                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                             } else {
-                                windowHistory.restoreRects[windowId] = initialWindowRect
+                                AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
                             }
                         }
                     }
                 }
                 else {
-                    windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                    AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
             if windowMoving {

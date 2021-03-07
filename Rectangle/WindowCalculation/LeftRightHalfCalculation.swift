@@ -27,7 +27,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
             let screen = usableScreens.currentScreen
             let rectResult: RectResult = calculateRepeatedRect(params.asRectParams())
             return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
-        case .none:
+        case .none, .cycleMonitor:
             let screen = usableScreens.currentScreen
             let oneHalfRect = calculateFirstRect(params.asRectParams())
             return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: params.action)

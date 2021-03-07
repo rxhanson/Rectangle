@@ -13,10 +13,8 @@ class WindowManager {
     private let screenDetection = ScreenDetection()
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
-    private let windowHistory: WindowHistory
 
-    init(windowHistory: WindowHistory) {
-        self.windowHistory = windowHistory
+    init() {
         standardWindowMoverChain = [
             StandardWindowMover(),
             BestEffortWindowMover()
@@ -37,7 +35,7 @@ class WindowManager {
             newCount = 1
         }
 
-        windowHistory.lastRectangleActions[windowId] = RectangleAction(
+        AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(
             action: action,
             subAction: subAction,
             rect: resultingRect,
@@ -56,10 +54,10 @@ class WindowManager {
         let action = parameters.action
 
         if action == .restore {
-            if let restoreRect = windowHistory.restoreRects[windowId] {
+            if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 frontmostWindowElement.setRectOf(restoreRect)
             }
-            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             return
         }
         
@@ -78,12 +76,12 @@ class WindowManager {
         
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
         
-        let lastRectangleAction = windowHistory.lastRectangleActions[windowId]
+        let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
         
         if parameters.updateRestoreRect {
-            if windowHistory.restoreRects[windowId] == nil
+            if AppDelegate.windowHistory.restoreRects[windowId] == nil
                 || currentWindowRect != lastRectangleAction?.rect {
-                windowHistory.restoreRects[windowId] = currentWindowRect
+                AppDelegate.windowHistory.restoreRects[windowId] = currentWindowRect
             }
         }
         
