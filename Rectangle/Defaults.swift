@@ -52,6 +52,7 @@ class Defaults {
     static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
     static let snapModifiers = IntDefault(key: "snapModifiers")
     static let retainSizeNextPrevDisplay = OptionalBoolDefault(key: "retainSizeNextPrevDisplay")
+    static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
 
     static var array: [Default] = [
         launchOnLogin,
