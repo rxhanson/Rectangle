@@ -8,19 +8,31 @@
 
 import Foundation
 
-class CenterHalfCalculation: WindowCalculation, OrientationAware {
+class CenterHalfCalculation: WindowCalculation, OrientationAware, RepeatedExecutionsInThirdsCalculation {
     
-    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+    func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
+        
         let visibleFrameOfScreen = params.visibleFrameOfScreen
-        return orientationBasedRect(visibleFrameOfScreen)
+        return isLandscape(visibleFrameOfScreen)
+            ? landscapeRect(visibleFrameOfScreen, fraction: fraction)
+            : portraitRect(visibleFrameOfScreen, fraction: fraction)
     }
     
-    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        
+        if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes || !Defaults.centerHalfCycles.userEnabled {
+            return orientationBasedRect(params.visibleFrameOfScreen)
+        }
+        
+        return calculateRepeatedRect(params)
+    }
+    
+    func landscapeRect(_ visibleFrameOfScreen: CGRect, fraction: Float) -> RectResult {
         var rect = visibleFrameOfScreen
         
         // Resize
         rect.size.height = visibleFrameOfScreen.height
-        rect.size.width = round(visibleFrameOfScreen.width / 2.0)
+        rect.size.width = round(visibleFrameOfScreen.width * CGFloat(fraction))
         
         // Center
         rect.origin.x = round((visibleFrameOfScreen.width - rect.width) / 2.0) + visibleFrameOfScreen.minX
@@ -29,12 +41,12 @@ class CenterHalfCalculation: WindowCalculation, OrientationAware {
         return RectResult(rect, subAction: .centerVerticalHalf)
     }
 
-    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+    func portraitRect(_ visibleFrameOfScreen: CGRect, fraction: Float) -> RectResult {
         var rect = visibleFrameOfScreen
         
         // Resize
         rect.size.width = visibleFrameOfScreen.width
-        rect.size.height = round(visibleFrameOfScreen.height / 2.0)
+        rect.size.height = round(visibleFrameOfScreen.height * CGFloat(fraction))
         
         // Center
         rect.origin.x = round((visibleFrameOfScreen.width - rect.width) / 2.0) + visibleFrameOfScreen.minX
@@ -43,6 +55,13 @@ class CenterHalfCalculation: WindowCalculation, OrientationAware {
         return RectResult(rect, subAction: .centerHorizontalHalf)
     }
 
+    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        return landscapeRect(visibleFrameOfScreen, fraction: 0.5)
+    }
     
+    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        return portraitRect(visibleFrameOfScreen, fraction: 0.5)
+    }
+
 }
 
