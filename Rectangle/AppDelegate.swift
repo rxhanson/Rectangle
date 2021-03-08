@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
-    private let windowHistory = WindowHistory()
+    static let windowHistory = WindowHistory()
     
     private var shortcutManager: ShortcutManager!
     private var windowManager: WindowManager!
@@ -85,10 +85,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
-        self.windowManager = WindowManager(windowHistory: windowHistory)
+        self.windowManager = WindowManager()
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
-        self.snappingManager = SnappingManager(windowHistory: windowHistory)
+        self.snappingManager = SnappingManager()
     }
     
     func checkForConflictingApps() {

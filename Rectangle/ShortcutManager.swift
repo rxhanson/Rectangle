@@ -73,7 +73,24 @@ class ShortcutManager {
     }
     
     @objc func windowActionTriggered(notification: NSNotification) {
-        guard let parameters = notification.object as? ExecutionParameters else { return }
+        guard var parameters = notification.object as? ExecutionParameters else { return }
+        
+        if Defaults.subsequentExecutionMode.value == .cycleMonitor {
+            guard let windowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
+                  let windowId = parameters.windowId ?? windowElement.getIdentifier()
+            else {
+                NSSound.beep()
+                return
+            }
+            if parameters.action == AppDelegate.windowHistory.lastRectangleActions[windowId]?.action {
+                if let screen = ScreenDetection().detectScreens(using: windowElement)?.adjacentScreens?.next{
+                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId)
+                    // Bypass any other subsequent action by removing the last action
+                    AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                }
+            }
+        }
+        
         windowManager.execute(parameters)
     }
     
