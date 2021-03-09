@@ -230,108 +230,236 @@ class SnappingManager {
         let loc = NSEvent.mouseLocation
         
         for screen in NSScreen.screens {
-            let frame = screen.frame
             
-            if loc.x >= frame.minX {
-                if loc.x < frame.minX + marginLeft + 20 {
-                    if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
-                        if let area = snapArea(for: .topLeft, on: screen) {
-                            return area
-                        }
-                    }
-                    if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
-                        if let area = snapArea(for: .bottomLeft, on: screen) {
-                            return area
-                        }
-                    }
+            if screen.frame.isLandscape {
+                if let snapArea = landscapeSnapArea(loc: loc, screen: screen, priorSnapArea: priorSnapArea) {
+                    return snapArea
                 }
-                
-                if loc.x < frame.minX + marginLeft {
-                    if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
-                        if let area = snapArea(for: .bottomLeftShort, on: screen) {
-                            return area
-                        }
-                    }
-                    if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
-                        if let area = snapArea(for: .topLeftShort, on: screen) {
-                            return area
-                        }
-                    }
-                    if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        if let area = snapArea(for: .left, on: screen) {
-                            return area
-                        }
-                    }
+            } else {
+                if let snapArea = portraitSnapArea(loc: loc, screen: screen, priorSnapArea: priorSnapArea) {
+                    return snapArea
                 }
             }
-            
-            if loc.x <= frame.maxX {
-                if loc.x > frame.maxX - marginRight - 20 {
-                    if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
-                        if let area = snapArea(for: .topRight, on: screen) {
-                            return area
-                        }
-                    }
-                    if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
-                        if let area = snapArea(for: .bottomRight, on: screen) {
-                            return area
-                        }
-                    }
-                }
-                
-                if loc.x > frame.maxX - marginRight {
-                    if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
-                        if let area = snapArea(for: .bottomRightShort, on: screen) {
-                            return area
-                        }
-                    }
-                    if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
-                        if let area = snapArea(for: .topRightShort, on: screen) {
-                            return area
-                        }
-                    }
-                    if loc.y >= frame.minY && loc.y <= frame.maxY {
-                        if let area = snapArea(for: .right, on: screen) {
-                            return area
-                        }
+        }
+        
+        return nil
+    }
+    
+    private func landscapeSnapArea(loc: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea? {
+        
+        let frame = screen.frame
+        if loc.x >= frame.minX {
+            if loc.x < frame.minX + marginLeft + 20 {
+                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topLeft, on: screen) {
+                        return area
                     }
                 }
-            }
-            
-            if loc.y <= frame.maxY && loc.y > frame.maxY - marginTop {
-                if loc.x >= frame.minX && loc.x <= frame.maxX {
-                    if let area = snapArea(for: .top, on: screen) {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                    if let area = snapArea(for: .bottomLeft, on: screen) {
                         return area
                     }
                 }
             }
             
-            if loc.y >= frame.minY && loc.y < frame.minY + marginBottom && !ignoredSnapAreas.contains(.bottom) {
-                let thirdWidth = floor(frame.width / 3)
-                if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
-                    return SnapArea(screen: screen, action: .firstThird)
-                }
-                if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
-                    if let priorAction = priorSnapArea?.action {
-                        let action: WindowAction
-                        switch priorAction {
-                        case .firstThird, .firstTwoThirds:
-                            action = .firstTwoThirds
-                        case .lastThird, .lastTwoThirds:
-                            action = .lastTwoThirds
-                        default: action = .centerThird
-                        }
-                        return SnapArea(screen: screen, action: action)
+            if loc.x < frame.minX + marginLeft {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                    if let area = snapArea(for: .bottomLeftShort, on: screen) {
+                        return area
                     }
-                    return SnapArea(screen: screen, action: .centerThird)
                 }
-                if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
-                    return SnapArea(screen: screen, action: .lastThird)
+                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topLeftShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .left, on: screen) {
+                        return area
+                    }
+                }
+            }
+        }
+        
+        if loc.x <= frame.maxX {
+            if loc.x > frame.maxX - marginRight - 20 {
+                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topRight, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                    if let area = snapArea(for: .bottomRight, on: screen) {
+                        return area
+                    }
                 }
             }
             
+            if loc.x > frame.maxX - marginRight {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                    if let area = snapArea(for: .bottomRightShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topRightShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .right, on: screen) {
+                        return area
+                    }
+                }
+            }
         }
         
+        if loc.y <= frame.maxY && loc.y > frame.maxY - marginTop {
+            if loc.x >= frame.minX && loc.x <= frame.maxX {
+                if let area = snapArea(for: .top, on: screen) {
+                    return area
+                }
+            }
+        }
+        
+        if loc.y >= frame.minY && loc.y < frame.minY + marginBottom && !ignoredSnapAreas.contains(.bottom) {
+            let thirdWidth = floor(frame.width / 3)
+            if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
+                return SnapArea(screen: screen, action: .firstThird)
+            }
+            if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
+                if let priorAction = priorSnapArea?.action {
+                    let action: WindowAction
+                    switch priorAction {
+                    case .firstThird, .firstTwoThirds:
+                        action = .firstTwoThirds
+                    case .lastThird, .lastTwoThirds:
+                        action = .lastTwoThirds
+                    default: action = .centerThird
+                    }
+                    return SnapArea(screen: screen, action: action)
+                }
+                return SnapArea(screen: screen, action: .centerThird)
+            }
+            if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
+                return SnapArea(screen: screen, action: .lastThird)
+            }
+        }
+        return nil
+    }
+    
+    private func portraitSnapArea(loc: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea? {
+        
+        let frame = screen.frame
+        if loc.x >= frame.minX {
+            if loc.x < frame.minX + marginLeft + 20 {
+                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topLeft, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                    if let area = snapArea(for: .bottomLeft, on: screen) {
+                        return area
+                    }
+                }
+            }
+            
+            if loc.x < frame.minX + marginLeft {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                    if let area = snapArea(for: .bottomLeftShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topLeftShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.maxY && !ignoredSnapAreas.contains(.left) {
+                    // left
+                    if let area = portraitThirdsSnapArea(loc: loc, screen: screen, priorSnapArea: priorSnapArea) {
+                        return area
+                    }
+                }
+            }
+        }
+        
+        if loc.x <= frame.maxX {
+            if loc.x > frame.maxX - marginRight - 20 {
+                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topRight, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                    if let area = snapArea(for: .bottomRight, on: screen) {
+                        return area
+                    }
+                }
+            }
+            
+            if loc.x > frame.maxX - marginRight {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                    if let area = snapArea(for: .bottomRightShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                    if let area = snapArea(for: .topRightShort, on: screen) {
+                        return area
+                    }
+                }
+                if loc.y >= frame.minY && loc.y <= frame.maxY && !ignoredSnapAreas.contains(.right) {
+                    // right
+                    if let area = portraitThirdsSnapArea(loc: loc, screen: screen, priorSnapArea: priorSnapArea) {
+                        return area
+                    }
+                }
+            }
+        }
+        
+        if loc.y <= frame.maxY && loc.y > frame.maxY - marginTop {
+            if loc.x >= frame.minX && loc.x <= frame.maxX {
+                if let area = snapArea(for: .top, on: screen) {
+                    return area
+                }
+            }
+        }
+        
+        if loc.y >= frame.minY && loc.y < frame.minY + marginBottom && !ignoredSnapAreas.contains(.bottom) {
+            
+            return loc.x < frame.maxX - (frame.width / 2)
+                ? SnapArea(screen: screen, action: .leftHalf)
+                : SnapArea(screen: screen, action: .rightHalf)
+            
+        }
+        return nil
+    }
+    
+    private func portraitThirdsSnapArea(loc: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea? {
+        let frame = screen.frame
+        let thirdHeight = floor(frame.height / 3)
+        if loc.y >= frame.minY && loc.y <= frame.minY + thirdHeight {
+            return SnapArea(screen: screen, action: .lastThird)
+        }
+        if loc.y >= frame.minY + thirdHeight && loc.y <= frame.maxY - thirdHeight {
+            if let priorAction = priorSnapArea?.action {
+                let action: WindowAction
+                switch priorAction {
+                case .firstThird, .firstTwoThirds:
+                    action = .firstTwoThirds
+                case .lastThird, .lastTwoThirds:
+                    action = .lastTwoThirds
+                default: action = .centerThird
+                }
+                return SnapArea(screen: screen, action: action)
+            }
+            return SnapArea(screen: screen, action: .centerThird)
+        }
+        if loc.y >= frame.minY + thirdHeight && loc.y <= frame.maxY {
+            return SnapArea(screen: screen, action: .firstThird)
+        }
         return nil
     }
     

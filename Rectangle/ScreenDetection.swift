@@ -151,3 +151,8 @@ extension NSScreen {
         }
     }
 }
+
+extension NSRect {
+    var isLandscape: Bool { width > height }
+}
+
