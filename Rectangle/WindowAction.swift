@@ -65,6 +65,11 @@ enum WindowAction: Int {
                          firstFourth, secondFourth, thirdFourth, lastFourth,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth
     ]
+    
+    static let positionalActions = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
+                                    topLeft, topRight, bottomLeft, bottomRight,
+                                    maximize
+    ]
 
     func post() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
