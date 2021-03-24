@@ -251,6 +251,11 @@ By default iTerm2 will only resize in increments of character widths. There migh
 defaults write com.googlecode.iterm2 DisableWindowSizeSnap -integer 1
 ```
 
+### Rectangle appears to cause Notification Center to freeze
+
+This appears to affect only a small amount of users. To prevent this from happening, uncheck the box for "Snap windows by dragging".
+See issue [317](https://github.com/rxhanson/Rectangle/issues/317).
+
 ### Troubleshooting
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
 1. Make sure macOS is up to date, if possible.
