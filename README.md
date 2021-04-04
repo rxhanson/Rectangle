@@ -70,6 +70,13 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 2: disabled
 3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
 
+### Cycle thirds on repeated Center Half commands
+Set Center Half to cycle thirds sizes: 1/2 -> 2/3 -> 1/3 with:
+
+```bash
+defaults write com.knollsoft.Rectangle centerHalfCycles -int 1
+```
+
 ### Resize on Directional Move
 By default, the commands to move to certain edges will not resize the window.
 If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
