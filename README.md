@@ -284,7 +284,9 @@ The configuration for Rectangle is stored using NSUserDefaults, meaning it is st
 `~/Library/Preferences/com.knollsoft.Rectangle.plist`
 Note that shortcuts in v0.41+ are stored in a different format and will not load in prior versions.
 
-That file can be backed up or transferred to other machines.
+That file can be backed up or transferred to other machines. 
+
+If you are using Rectangle v0.44+, you can also use the import/export button in the Preferences pane to share to your preferences and keyboard shortcuts across machines using a JSON file.
 
 ---
 
