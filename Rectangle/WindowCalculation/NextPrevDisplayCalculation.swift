@@ -26,7 +26,8 @@ class NextPrevDisplayCalculation: WindowCalculation {
         if let screen = screen {
             let rectParams = params.asRectParams(visibleFrame: screen.adjustedVisibleFrame)
             let rectResult = calculateRect(rectParams)
-            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action, resultingSubAction: rectResult.subAction)
+            let resultingAction: WindowAction = rectResult.subAction == .maximize ? .maximize : params.action
+            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: resultingAction, resultingSubAction: rectResult.subAction)
         }
         
         return nil
