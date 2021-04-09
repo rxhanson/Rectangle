@@ -455,7 +455,9 @@ enum SubWindowAction {
     bottomLeftTwoSixthsLandscape,
     bottomLeftTwoSixthsPortrait,
     bottomRightTwoSixthsLandscape,
-    bottomRightTwoSixthsPortrait
+    bottomRightTwoSixthsPortrait,
+    
+    maximize
 
     var gapSharedEdge: Edge {
         switch self {
@@ -503,6 +505,7 @@ enum SubWindowAction {
         case .bottomLeftTwoSixthsPortrait: return [.right, .top]
         case .bottomRightTwoSixthsLandscape: return [.left, .top]
         case .bottomRightTwoSixthsPortrait: return [.left, .top]
+        case .maximize: return .none
         }
     }
 }
