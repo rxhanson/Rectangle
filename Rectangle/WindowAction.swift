@@ -400,6 +400,13 @@ enum WindowAction: Int {
         default: return nil
         }
     }
+    
+    var classification: WindowActionCategory? {
+        switch self {
+        case .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird: return .thirds
+        default: return nil
+        }
+    }
 }
 
 enum SubWindowAction {
