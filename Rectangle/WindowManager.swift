@@ -26,11 +26,10 @@ class WindowManager {
         ]
     }
 
-    private func recordAction(previous lastRectangleAction: RectangleAction?, windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
+    private func recordAction(windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
         let newCount: Int
-        if lastRectangleAction?.action == action,
-           let currentCount = lastRectangleAction?.count {
-            newCount = currentCount + 1
+        if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId], lastRectangleAction.action == action {
+            newCount = lastRectangleAction.count + 1
         } else {
             newCount = 1
         }
@@ -118,7 +117,7 @@ class WindowManager {
         if currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
             
-            recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+            recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
             
             return
         }
@@ -142,7 +141,7 @@ class WindowManager {
 
         let resultingRect = frontmostWindowElement.rectOfElement()
         
-        recordAction(previous: lastRectangleAction, windowId: windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+        recordAction(windowId: windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
         
         if Logger.logging {
             var srcDestScreens: String = ""

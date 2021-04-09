@@ -51,7 +51,7 @@ class Defaults {
     static let todoApplication = StringDefault(key: "todoApplication")
     static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
     static let snapModifiers = IntDefault(key: "snapModifiers")
-    static let retainSizeNextPrevDisplay = OptionalBoolDefault(key: "retainSizeNextPrevDisplay")
+    static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
     static let centerHalfCycles = OptionalBoolDefault(key: "centerHalfCycles")
 
