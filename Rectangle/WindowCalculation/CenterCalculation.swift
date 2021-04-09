@@ -13,9 +13,9 @@ class CenterCalculation: WindowCalculation {
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         let rectResult = calculateRect(params.asRectParams())
         
-        let resultingAction: WindowAction = rectResult.subAction == .maximize ? .maximize : params.action
+        let resultingAction: WindowAction = rectResult.resultingAction ?? params.action
 
-        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: resultingAction, resultingSubAction: rectResult.subAction)
+        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: resultingAction)
     }
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
@@ -28,7 +28,7 @@ class CenterCalculation: WindowCalculation {
             calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - params.window.rect.height) / 2.0) + visibleFrameOfScreen.minY
             return RectResult(calculatedWindowRect)
         } else {
-            return RectResult(visibleFrameOfScreen, subAction: .maximize)
+            return RectResult(visibleFrameOfScreen, resultingAction: .maximize)
         }
 
     }

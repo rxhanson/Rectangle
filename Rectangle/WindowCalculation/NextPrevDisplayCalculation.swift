@@ -26,8 +26,8 @@ class NextPrevDisplayCalculation: WindowCalculation {
         if let screen = screen {
             let rectParams = params.asRectParams(visibleFrame: screen.adjustedVisibleFrame)
             let rectResult = calculateRect(rectParams)
-            let resultingAction: WindowAction = rectResult.subAction == .maximize ? .maximize : params.action
-            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: resultingAction, resultingSubAction: rectResult.subAction)
+            let resultingAction: WindowAction = rectResult.resultingAction ?? params.action
+            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: resultingAction)
         }
         
         return nil
@@ -35,10 +35,9 @@ class NextPrevDisplayCalculation: WindowCalculation {
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         if !Defaults.retainSizeNextPrevDisplay.userEnabled,
-           (params.lastAction?.action == .maximize
-            || params.lastAction?.subAction == .maximize) {
+           params.lastAction?.action == .maximize {
             let rectResult = WindowCalculationFactory.maximizeCalculation.calculateRect(params)
-            return RectResult(rectResult.rect, subAction: .maximize)
+            return RectResult(rectResult.rect, resultingAction: .maximize)
         }
         
         return WindowCalculationFactory.centerCalculation.calculateRect(params)

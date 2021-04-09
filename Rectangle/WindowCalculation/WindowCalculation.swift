@@ -85,10 +85,12 @@ struct RectCalculationParameters {
 
 struct RectResult {
     let rect: CGRect
+    let resultingAction: WindowAction?
     let subAction: SubWindowAction?
     
-    init(_ rect: CGRect, subAction: SubWindowAction? = nil) {
+    init(_ rect: CGRect, resultingAction: WindowAction? = nil, subAction: SubWindowAction? = nil) {
         self.rect = rect
+        self.resultingAction = resultingAction
         self.subAction = subAction
     }
 }
