@@ -96,7 +96,7 @@ class Defaults {
         todoApplication,
         todoSidebarWidth,
         snapModifiers,
-        retainSizeNextPrevDisplay,
+        attemptMatchOnNextPrevDisplay,
         altThirdCycle,
         centerHalfCycles
     ]
