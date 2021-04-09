@@ -42,6 +42,9 @@ class RectangleStatusItem {
         nsStatusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         nsStatusItem?.menu = self.statusMenu
         nsStatusItem?.button?.image = NSImage(named: "StatusTemplate")
+        if #available(OSX 10.12, *) {
+            nsStatusItem?.behavior = .removalAllowed
+        }
     }
     
     private func remove() {
