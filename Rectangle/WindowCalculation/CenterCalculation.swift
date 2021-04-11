@@ -21,15 +21,30 @@ class CenterCalculation: WindowCalculation {
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
         let visibleFrameOfScreen = params.visibleFrameOfScreen
+        var calculatedWindowRect = params.window.rect
 
-        if rectFitsWithinRect(rect1: params.window.rect, rect2: visibleFrameOfScreen) {
-            var calculatedWindowRect = params.window.rect
-            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - params.window.rect.width) / 2.0) + visibleFrameOfScreen.minX
-            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - params.window.rect.height) / 2.0) + visibleFrameOfScreen.minY
-            return RectResult(calculatedWindowRect)
-        } else {
+        let heightExceeded = params.window.rect.height > visibleFrameOfScreen.height
+        let widthExceeded = params.window.rect.width > visibleFrameOfScreen.width
+        
+        if heightExceeded && widthExceeded {
             return RectResult(visibleFrameOfScreen, resultingAction: .maximize)
         }
+        
+        if heightExceeded {
+            calculatedWindowRect.size.height = visibleFrameOfScreen.height
+            calculatedWindowRect.origin.y = visibleFrameOfScreen.minY
+        } else {
+            calculatedWindowRect.origin.y = round((visibleFrameOfScreen.height - params.window.rect.height) / 2.0) + visibleFrameOfScreen.minY
+        }
+        
+        if widthExceeded {
+            calculatedWindowRect.size.width = visibleFrameOfScreen.width
+            calculatedWindowRect.origin.x = visibleFrameOfScreen.minX
+        } else {
+            calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - params.window.rect.width) / 2.0) + visibleFrameOfScreen.minX
+        }
+
+        return RectResult(calculatedWindowRect)
 
     }
     
