@@ -48,7 +48,7 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 The preferences window is purposefully slim, but there's a lot that can be modified via Terminal. After executing a terminal command, restart the app as these values are loaded on application startup.
 
 ### Keyboard Shortcuts
-If you wish to change the default shortcuts after first launch, use the following command. True is for the recommended shortcuts, false is for Spectacle's.
+If you wish to change the default shortcuts after first launch, use the following command and restart the Rectangle app. True is for the recommended shortcuts, false is for Spectacle's.
 
 ```bash
 defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
