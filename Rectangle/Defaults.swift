@@ -55,6 +55,7 @@ class Defaults {
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
     static let centerHalfCycles = OptionalBoolDefault(key: "centerHalfCycles")
     static let fullIgnoreBundleIds = JSONDefault<[String]>(key: "fullIgnoreBundleIds")
+    static let notifiedOfProblemApps = BoolDefault(key: "notifiedOfProblemApps")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -100,7 +101,8 @@ class Defaults {
         attemptMatchOnNextPrevDisplay,
         altThirdCycle,
         centerHalfCycles,
-        fullIgnoreBundleIds
+        fullIgnoreBundleIds,
+        notifiedOfProblemApps
     ]
 }
 

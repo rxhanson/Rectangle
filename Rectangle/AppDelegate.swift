@@ -89,6 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
+        checkForProblematicApps()
     }
     
     func checkForConflictingApps() {
@@ -108,6 +109,52 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         
+    }
+    
+    /// certain applications have issues with the click listening done by the drag to snap feature
+    func checkForProblematicApps() {
+        guard !Defaults.windowSnapping.userDisabled, !Defaults.notifiedOfProblemApps.enabled else { return }
+        
+        let problemBundleIds: [String] = [
+            "com.mathworks.matlab"
+        ]
+        
+        // these apps are java based with dynamic bundleIds
+        let problemJavaAppNames: [String] = [
+            "thinkorswim",
+            "Trader Workstation"
+        ]
+
+        var problemBundles: [Bundle] = problemBundleIds.compactMap { bundleId in
+            if applicationToggle.isDisabled(bundleId: bundleId) { return nil }
+            
+            // Directly instantiating the Bundle from the bundle id didn't work for matlab for some reason
+            if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleId) {
+                return Bundle(url: url)
+            }
+            return nil
+        }
+        
+        for name in problemJavaAppNames {
+            if let path = NSWorkspace.shared.fullPath(forApplication: name) {
+                if let bundle = Bundle(path: path),
+                   let bundleId = bundle.bundleIdentifier {
+                    
+                    if !applicationToggle.isDisabled(bundleId: bundleId),
+                       bundleId.starts(with: "com.install4j") {
+                        problemBundles.append(bundle)
+                    }
+                }
+            }
+        }
+        
+        let displayNames = problemBundles.compactMap { $0.object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String }
+        let displayNameString = displayNames.joined(separator: "\n")
+        
+        if !problemBundles.isEmpty {
+            AlertUtil.oneButtonAlert(question: "Known issues with installed applications", text: "\(displayNameString)\n\nThese applications have issues with the drag to screen edge to snap functionality in Rectangle.\n\nYou can either ignore the applications using the menu item in Rectangle, or disable drag to screen edge snapping in Rectangle preferences.")
+            Defaults.notifiedOfProblemApps.enabled = true
+        }
     }
     
     private func showWelcomeWindow() {
