@@ -49,13 +49,18 @@ class SnappingManager {
             enableSnapping()
         }
         
-        subscribeToWindowSnappingToggle()
+        Notification.Name.windowSnapping.onPost { notification in
+            guard let enabled = notification.object as? Bool else { return }
+            if enabled {
+                if !Defaults.windowSnapping.userDisabled {
+                    self.enableSnapping()
+                }
+            } else {
+                self.disableSnapping()
+            }
+        }
     }
-    
-    private func subscribeToWindowSnappingToggle() {
-        Notification.Name.windowSnapping.onPost(using: windowSnappingToggled)
-    }
-    
+        
     public func reloadFromDefaults() {
         if Defaults.windowSnapping.userDisabled {
             if eventMonitor?.running == true {
@@ -65,17 +70,6 @@ class SnappingManager {
             if eventMonitor?.running != true {
                 enableSnapping()
             }
-        }
-    }
-        
-    @objc func windowSnappingToggled(notification: Notification) {
-        guard let enabled = notification.object as? Bool else { return }
-        if enabled {
-            if !Defaults.windowSnapping.userDisabled {
-                enableSnapping()
-            }
-        } else {
-            disableSnapping()
         }
     }
     
