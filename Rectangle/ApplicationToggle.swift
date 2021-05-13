@@ -14,7 +14,8 @@ class ApplicationToggle: NSObject {
     public private(set) var frontAppId: String? = "com.knollsoft.Rectangle"
     public private(set) var frontAppName: String? = "Rectangle"
     public private(set) var shortcutsDisabled: Bool = false
-    
+    private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", "com.mathworks.matlab"]
+
     private let shortcutManager: ShortcutManager
     
     init(shortcutManager: ShortcutManager) {
@@ -98,8 +99,16 @@ class ApplicationToggle: NSObject {
             if let frontAppId = application.bundleIdentifier {
                 if isDisabled(bundleId: frontAppId) {
                     disableShortcuts()
+                    DispatchQueue.main.async {
+                        for id in self.fullIgnoreIds {
+                            if frontAppId.starts(with: id) {
+                                Notification.Name.windowSnapping.post(object: false)
+                            }
+                        }
+                    }
                 } else {
                     enableShortcuts()
+                    Notification.Name.windowSnapping.post(object: true)
                 }
             } else {
                 enableShortcuts()

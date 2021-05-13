@@ -24,9 +24,7 @@ class ShortcutManager {
         
         subscribeAll(selector: #selector(windowActionTriggered))
         
-        NotificationCenter.default.addObserver(forName: SettingsViewController.changeDefaultsNotificationName, object: nil, queue: nil) { notification in
-            self.registerDefaults()
-        }
+        Notification.Name.changeDefaults.onPost { _ in self.registerDefaults() }
     }
     
     public func reloadFromDefaults() {

@@ -53,7 +53,7 @@ class SnappingManager {
     }
     
     private func subscribeToWindowSnappingToggle() {
-        NotificationCenter.default.addObserver(self, selector: #selector(windowSnappingToggled), name: SettingsViewController.windowSnappingNotificationName, object: nil)
+        Notification.Name.windowSnapping.onPost(using: windowSnappingToggled)
     }
     
     public func reloadFromDefaults() {
@@ -71,16 +71,22 @@ class SnappingManager {
     @objc func windowSnappingToggled(notification: Notification) {
         guard let enabled = notification.object as? Bool else { return }
         if enabled {
-            enableSnapping()
+            if !Defaults.windowSnapping.userDisabled {
+                enableSnapping()
+            }
         } else {
             disableSnapping()
         }
     }
     
     private func enableSnapping() {
-        box = FootprintWindow()
-        eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged], handler: handle)
-        eventMonitor?.start()
+        if box == nil {
+            box = FootprintWindow()
+        }
+        if eventMonitor == nil {
+            eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged], handler: handle)
+            eventMonitor?.start()
+        }
     }
     
     private func disableSnapping() {

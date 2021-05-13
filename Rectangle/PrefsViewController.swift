@@ -129,14 +129,13 @@ class PrefsViewController: NSViewController {
     }
     
     private func subscribeToAllowAnyShortcutToggle() {
-        NotificationCenter.default.addObserver(self, selector: #selector(allowAnyShortcutToggled), name: SettingsViewController.allowAnyShortcutNotificationName, object: nil)
+        Notification.Name.allowAnyShortcut.onPost { notification in
+            guard let enabled = notification.object as? Bool else { return }
+            let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
+            self.actionsToViews.values.forEach { $0.shortcutValidator = validator }
+        }
     }
     
-    @objc func allowAnyShortcutToggled(notification: Notification) {
-        guard let enabled = notification.object as? Bool else { return }
-        let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
-        actionsToViews.values.forEach { $0.shortcutValidator = validator }
-    }
 }
 
 class PassthroughShortcutValidator: MASShortcutValidator {

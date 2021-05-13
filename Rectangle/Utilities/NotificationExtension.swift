@@ -11,7 +11,10 @@ import Cocoa
 extension Notification.Name {
   
     static let configImported = Notification.Name("configImported")
-  
+    static let windowSnapping = Notification.Name(rawValue: "windowSnapping")
+    static let allowAnyShortcut = Notification.Name("allowAnyShortcutToggle")
+    static let changeDefaults = Notification.Name("changeDefaults")
+
     func post(
         center: NotificationCenter = NotificationCenter.default,
         object: Any? = nil,

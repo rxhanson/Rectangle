@@ -11,11 +11,7 @@ import ServiceManagement
 import Sparkle
 
 class SettingsViewController: NSViewController {
-    
-    static let allowAnyShortcutNotificationName = Notification.Name("allowAnyShortcutToggle")
-    static let windowSnappingNotificationName = Notification.Name("windowSnappingToggle")
-    static let changeDefaultsNotificationName = Notification.Name("changeDefaults")
-    
+        
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var versionLabel: NSTextField!
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
@@ -41,7 +37,7 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleWindowSnapping(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.windowSnapping.enabled = newSetting
-        NotificationCenter.default.post(name: SettingsViewController.windowSnappingNotificationName, object: newSetting)
+        Notification.Name.windowSnapping.post(object: newSetting)
     }
     
     @IBAction func toggleHideMenuBarIcon(_ sender: NSButton) {
@@ -75,7 +71,7 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleAllowAnyShortcut(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.allowAnyShortcut.enabled = newSetting
-        NotificationCenter.default.post(name: SettingsViewController.allowAnyShortcutNotificationName, object: newSetting)
+        Notification.Name.allowAnyShortcut.post(object: newSetting)
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -89,7 +85,7 @@ class SettingsViewController: NSViewController {
         let rectangleDefaults = response == .alertFirstButtonReturn
         if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
             Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
-            NotificationCenter.default.post(name: Self.changeDefaultsNotificationName, object: nil)
+            Notification.Name.changeDefaults.post()
         }
     }
     

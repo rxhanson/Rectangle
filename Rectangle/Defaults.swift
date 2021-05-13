@@ -54,6 +54,7 @@ class Defaults {
     static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
     static let centerHalfCycles = OptionalBoolDefault(key: "centerHalfCycles")
+    static let fullIgnoreBundleIds = JSONDefault<[String]>(key: "fullIgnoreBundleIds")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -98,7 +99,8 @@ class Defaults {
         snapModifiers,
         attemptMatchOnNextPrevDisplay,
         altThirdCycle,
-        centerHalfCycles
+        centerHalfCycles,
+        fullIgnoreBundleIds
     ]
 }
 
