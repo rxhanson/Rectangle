@@ -80,7 +80,8 @@ class ShortcutManager {
                 NSSound.beep()
                 return
             }
-            if parameters.action == AppDelegate.windowHistory.lastRectangleActions[windowId]?.action {
+            
+            if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId) {
                 if let screen = ScreenDetection().detectScreens(using: windowElement)?.adjacentScreens?.next{
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId)
                     // Bypass any other subsequent action by removing the last action
@@ -90,6 +91,19 @@ class ShortcutManager {
         }
         
         windowManager.execute(parameters)
+    }
+    
+    private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: Int) -> Bool {
+        
+        if parameters.action == .maximize {
+            if ScreenDetection().detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.rectOfElement().size {
+                return true
+            }
+        }
+        if parameters.action == AppDelegate.windowHistory.lastRectangleActions[windowId]?.action {
+            return true
+        }
+        return false
     }
     
     private func subscribe(notification: WindowAction, selector: Selector) {
