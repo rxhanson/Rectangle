@@ -54,8 +54,8 @@ If you wish to change the default shortcuts after first launch click "Restore De
 defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
 ```
 
-### Halves to thirds (repeated execution of half and quarter actions)
-Halves to thirds is controlled by the `Move to adjacent display on repeated left or right commands` setting in the preferences. 
+### Adjust Behavior on Repeated Commands
+There's an option in the preferences for `Move to adjacent display on repeated left or right commands`.
 If this setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
 
 The cycling behavior can be disabled entirely with:
