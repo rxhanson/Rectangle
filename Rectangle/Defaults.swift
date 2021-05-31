@@ -56,6 +56,8 @@ class Defaults {
     static let centerHalfCycles = OptionalBoolDefault(key: "centerHalfCycles")
     static let fullIgnoreBundleIds = JSONDefault<[String]>(key: "fullIgnoreBundleIds")
     static let notifiedOfProblemApps = BoolDefault(key: "notifiedOfProblemApps")
+    static let specifiedHeight = FloatDefault(key: "specifiedHeight", defaultValue: 1050)
+    static let specifiedWidth = FloatDefault(key: "specifiedWidth", defaultValue: 1680)
 
     static var array: [Default] = [
         launchOnLogin,
@@ -102,7 +104,9 @@ class Defaults {
         altThirdCycle,
         centerHalfCycles,
         fullIgnoreBundleIds,
-        notifiedOfProblemApps
+        notifiedOfProblemApps,
+        specifiedHeight,
+        specifiedWidth,
     ]
 }
 
