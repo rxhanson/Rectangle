@@ -633,3 +633,9 @@
 "Move to Edge" = "移動到邊緣";
 "Fourths" = "四等分";
 "Sixths" = "六等分";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
+"RgZ-Jw-XQZ.title" = "";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
+"IO3-Hi-7gC.title" = "";

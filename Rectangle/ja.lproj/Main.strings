@@ -634,3 +634,8 @@
 "Fourths" = "4分割";
 "Sixths" = "6分割";
 
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
+"RgZ-Jw-XQZ.title" = "";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
+"IO3-Hi-7gC.title" = "";

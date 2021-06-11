@@ -624,3 +624,9 @@
 "Move to Edge" = "An den Rand bewegen";
 "Fourths" = "Viertel";
 "Sixths" = "Sechstel";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
+"RgZ-Jw-XQZ.title" = "";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
+"IO3-Hi-7gC.title" = "";

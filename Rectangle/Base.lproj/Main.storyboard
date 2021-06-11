@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -3162,11 +3162,11 @@
                                                 </connections>
                                             </button>
                                             <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TgL-lF-gWJ">
-                                                <rect key="frame" x="372" y="1" width="78" height="20"/>
+                                                <rect key="frame" x="279" y="1" width="171" height="20"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1qy-0d-Se1">
-                                                        <rect key="frame" x="-7" y="-7" width="48" height="32"/>
-                                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="square.and.arrow.down" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RgZ-Jw-XQZ">
+                                                        <rect key="frame" x="-7" y="-7" width="95" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Import" bezelStyle="rounded" image="square.and.arrow.down" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RgZ-Jw-XQZ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -3175,8 +3175,8 @@
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJG-z6-2Z1">
-                                                        <rect key="frame" x="37" y="-7" width="48" height="32"/>
-                                                        <buttonCell key="cell" type="push" bezelStyle="rounded" image="square.and.arrow.up" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IO3-Hi-7gC">
+                                                        <rect key="frame" x="84" y="-7" width="94" height="32"/>
+                                                        <buttonCell key="cell" type="push" title="Export" bezelStyle="rounded" image="square.and.arrow.up" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IO3-Hi-7gC">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
