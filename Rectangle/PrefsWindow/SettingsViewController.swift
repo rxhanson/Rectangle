@@ -90,6 +90,7 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func exportConfig(_ sender: NSButton) {
+        Notification.Name.windowSnapping.post(object: false)
         let savePanel = NSSavePanel()
         savePanel.allowedFileTypes = ["json"]
         let response = savePanel.runModal()
@@ -103,15 +104,18 @@ class SettingsViewController: NSViewController {
                 Logger.log(error.localizedDescription)
             }
         }
+        Notification.Name.windowSnapping.post(object: true)
     }
     
     @IBAction func importConfig(_ sender: NSButton) {
+        Notification.Name.windowSnapping.post(object: false)
         let openPanel = NSOpenPanel()
         openPanel.allowedFileTypes = ["json"]
         let response = openPanel.runModal()
         if response == .OK, let url = openPanel.url {
             Defaults.load(fileUrl: url)
         }
+        Notification.Name.windowSnapping.post(object: true)
     }
     
     override func awakeFromNib() {
