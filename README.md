@@ -127,7 +127,7 @@ defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEE
 defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
 ```
 
-### Add an extra centering command with custom size (v0.47+)
+### Add an extra centering command with custom size
 This extra command is not available in the UI. You'll need to know which keycode and modifier flags you want (try the free key codes app: https://apps.apple.com/us/app/key-codes/id414568915)
 
 ```bash
