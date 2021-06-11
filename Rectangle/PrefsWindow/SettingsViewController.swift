@@ -93,6 +93,7 @@ class SettingsViewController: NSViewController {
         Notification.Name.windowSnapping.post(object: false)
         let savePanel = NSSavePanel()
         savePanel.allowedFileTypes = ["json"]
+        savePanel.nameFieldStringValue = "RectangleConfig"
         let response = savePanel.runModal()
         if response == .OK, let url = savePanel.url {
             do {
