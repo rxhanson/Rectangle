@@ -126,6 +126,19 @@ defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEE
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
 ```
+
+### Add an extra centering command with custom size (v0.47+)
+This extra command is not available in the UI. You'll need to know which keycode and modifier flags you want (try the free key codes app: https://apps.apple.com/us/app/key-codes/id414568915)
+
+```bash
+defaults write com.knollsoft.Rectangle specified -dict-add keyCode -float 8 modifierFlags -float 1966080
+```
+
+```bash
+defaults write com.knollsoft.Rectangle specifiedHeight -float 1050
+defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
+```
+
 ### Modify the "footprint" displayed for drag to snap area
 
 Adjust the alpha (transparency). Default is 0.3.
