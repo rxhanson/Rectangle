@@ -16,8 +16,12 @@ final class SpecifiedCalculation: WindowCalculation {
         var calculatedWindowRect = visibleFrameOfScreen
 
         // Resize
-        calculatedWindowRect.size.height = round(specifiedHeight)
-        calculatedWindowRect.size.width = round(specifiedWidth)
+        calculatedWindowRect.size.height = specifiedHeight <= 1
+            ? visibleFrameOfScreen.height * specifiedHeight
+            : round(specifiedHeight)
+        calculatedWindowRect.size.width = specifiedWidth <= 1
+            ? visibleFrameOfScreen.width * specifiedWidth
+            : round(specifiedWidth)
 
         // Center
         calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
