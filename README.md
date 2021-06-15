@@ -228,6 +228,14 @@ defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 10
 defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 10
 ```
 
+### Setting gaps between windows
+
+You can specify gaps between windows that will be left uncovered when resizing windows. If this config is used alongside the screen edge gap, they will be summed together when calculating the gap.
+
+```bash
+defaults write com.knollsoft.Rectangle gapSize -float <NUM_PIXELS>
+```
+
 ### Ignore specific drag to snap areas
 
 Each drag to snap area on the edge of a screen can be ignored with a single Terminal command, but it's a bit field setting so you'll have to determine the bit field for which ones you want to disable.
