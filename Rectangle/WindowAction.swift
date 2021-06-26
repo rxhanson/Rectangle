@@ -46,15 +46,17 @@ enum WindowAction: Int {
     centerHalf = 30,
     firstFourth = 31,
     secondFourth = 32,
-    thirdFourth = 33,
-    lastFourth = 34,
-    topLeftSixth = 35,
-    topCenterSixth = 36,
-    topRightSixth = 37,
-    bottomLeftSixth = 38,
-    bottomCenterSixth = 39,
-    bottomRightSixth = 40,
-    specified = 41
+    firstThreeFourths = 33,
+    lastThreeFourths = 34,
+    thirdFourth = 35,
+    lastFourth = 36,
+    topLeftSixth = 37,
+    topCenterSixth = 38,
+    topRightSixth = 39,
+    bottomLeftSixth = 40,
+    bottomCenterSixth = 41,
+    bottomRightSixth = 42,
+    specified = 43
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -63,7 +65,7 @@ enum WindowAction: Int {
                          maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
-                         firstFourth, secondFourth, thirdFourth, lastFourth,
+                         firstFourth, secondFourth, firstThreeFourths, lastThreeFourths, thirdFourth, lastFourth,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
                          specified,
     ]
@@ -117,6 +119,8 @@ enum WindowAction: Int {
         case .centerHalf: return "centerHalf"
         case .firstFourth: return "firstFourth"
         case .secondFourth: return "secondFourth"
+        case .firstThreeFourths: return "firstThreeFourths"
+        case .lastThreeFourths: return "lastThreeFourths"
         case .thirdFourth: return "thirdFourth"
         case .lastFourth: return "lastFourth"
         case .topLeftSixth: return "topLeftSixth"
@@ -221,6 +225,12 @@ enum WindowAction: Int {
         case .secondFourth:
             key = "Fko-xs-gN5.title"
             value = "Second Fourth"
+        case .firstThreeFourths:
+            key = "kcf-dX-QpK.title"
+            value = "First Three Fourths"
+        case .lastThreeFourths:
+            key = "nwX-h6-fwm.title"
+            value = "Last Three Fourths"
         case .thirdFourth:
             key = "ZTK-rS-b17.title"
             value = "Third Fourth"
@@ -351,6 +361,8 @@ enum WindowAction: Int {
         case .centerHalf: return NSImage(imageLiteralResourceName: "halfWidthCenterTemplate")
         case .firstFourth: return NSImage(imageLiteralResourceName: "leftFourthTemplate")
         case .secondFourth: return NSImage(imageLiteralResourceName: "centerLeftFourthTemplate")
+        case .firstThreeFourths: return NSImage(imageLiteralResourceName: "firstThreeFourthsTemplate")
+        case .lastThreeFourths: return NSImage(imageLiteralResourceName: "lastThreeFourthsTemplate")
         case .thirdFourth: return NSImage(imageLiteralResourceName: "centerRightFourthTemplate")
         case .lastFourth: return NSImage(imageLiteralResourceName: "rightFourthTemplate")
         case .topLeftSixth: return NSImage(imageLiteralResourceName: "topLeftSixthTemplate")
@@ -385,7 +397,7 @@ enum WindowAction: Int {
     var gapsApplicable: Dimension {
         switch self {
         case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
-             .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth:
+             .firstFourth, .secondFourth, .firstThreeFourths, .lastThreeFourths, .thirdFourth, .lastFourth, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
@@ -400,7 +412,7 @@ enum WindowAction: Int {
     
     var category: WindowActionCategory? { // used to specify a submenu
         switch self {
-        case .firstFourth, .secondFourth, .thirdFourth, .lastFourth: return .fourths
+        case .firstFourth, .secondFourth, .firstThreeFourths, .lastThreeFourths, .thirdFourth, .lastFourth: return .fourths
         case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
         case .moveUp, .moveDown, .moveLeft, .moveRight: return .move
         default: return nil
