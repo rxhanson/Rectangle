@@ -226,7 +226,7 @@ enum WindowAction: Int {
             key = "Fko-xs-gN5.title"
             value = "Second Fourth"
         case .firstThreeFourths:
-            key = "kcf-dX-QpK.title"
+            key = "T9Z-QF-gwc.title"
             value = "First Three Fourths"
         case .lastThreeFourths:
             key = "nwX-h6-fwm.title"
