@@ -51,11 +51,11 @@ class PrefsViewController: NSViewController {
     
     @IBOutlet weak var firstFourthShortcutView: MASShortcutView!
     @IBOutlet weak var secondFourthShortcutView: MASShortcutView!
-    @IBOutlet weak var firstThreeFourthsShortcutView: MASShortcutView!
-    @IBOutlet weak var lastThreeFourthsShortcutView: MASShortcutView!
     @IBOutlet weak var thirdFourthShortcutView: MASShortcutView!
     @IBOutlet weak var lastFourthShortcutView: MASShortcutView!
-
+    @IBOutlet weak var firstThreeFourthsShortcutView: MASShortcutView!
+    @IBOutlet weak var lastThreeFourthsShortcutView: MASShortcutView!
+    
     @IBOutlet weak var topLeftSixthShortcutView: MASShortcutView!
     @IBOutlet weak var topCenterSixthShortcutView: MASShortcutView!
     @IBOutlet weak var topRightSixthShortcutView: MASShortcutView!
@@ -100,10 +100,10 @@ class PrefsViewController: NSViewController {
             .moveDown: moveDownShortcutView,
             .firstFourth: firstFourthShortcutView,
             .secondFourth: secondFourthShortcutView,
-            .firstThreeFourths: firstThreeFourthsShortcutView,
-            .lastThreeFourths: lastThreeFourthsShortcutView,
             .thirdFourth: thirdFourthShortcutView,
             .lastFourth: lastFourthShortcutView,
+            .firstThreeFourths: firstThreeFourthsShortcutView,
+            .lastThreeFourths: lastThreeFourthsShortcutView,
             .topLeftSixth: topLeftSixthShortcutView,
             .topCenterSixth: topCenterSixthShortcutView,
             .topRightSixth: topRightSixthShortcutView,

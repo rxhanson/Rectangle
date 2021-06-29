@@ -136,10 +136,10 @@ class WindowCalculationFactory {
     static let almostMaximizeCalculation = AlmostMaximizeCalculation()
     static let firstFourthCalculation = FirstFourthCalculation()
     static let secondFourthCalculation = SecondFourthCalculation()
-    static let firstThreeFourthsCalculation = FirstThreeFourthsCalculation()
-    static let lastThreeFourthsCalculation = LastThreeFourthsCalculation()
     static let thirdFourthCalculation = ThirdFourthCalculation()
     static let lastFourthCalculation = LastFourthCalculation()
+    static let firstThreeFourthsCalculation = FirstThreeFourthsCalculation()
+    static let lastThreeFourthsCalculation = LastThreeFourthsCalculation()
     static let topLeftSixthCalculation = TopLeftSixthCalculation()
     static let topCenterSixthCalculation = TopCenterSixthCalculation()
     static let topRightSixthCalculation = TopRightSixthCalculation()
@@ -177,10 +177,10 @@ class WindowCalculationFactory {
      .centerHalf: centerHalfCalculation,
      .firstFourth: firstFourthCalculation,
      .secondFourth: secondFourthCalculation,
-     .firstThreeFourths: firstThreeFourthsCalculation,
-     .lastThreeFourths: lastThreeFourthsCalculation,
      .thirdFourth: thirdFourthCalculation,
      .lastFourth: lastFourthCalculation,
+     .firstThreeFourths: firstThreeFourthsCalculation,
+     .lastThreeFourths: lastThreeFourthsCalculation,
      .topLeftSixth: topLeftSixthCalculation,
      .topCenterSixth: topCenterSixthCalculation,
      .topRightSixth: topRightSixthCalculation,
