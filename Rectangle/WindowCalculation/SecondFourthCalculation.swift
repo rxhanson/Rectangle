@@ -10,8 +10,6 @@ import Foundation
 
 class SecondFourthCalculation: WindowCalculation, OrientationAware {
     
-    let threeFourthsCalculation = RightOrBottomThreeFourthsCalculation()
-    
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         
         let visibleFrameOfScreen = params.visibleFrameOfScreen
@@ -27,9 +25,9 @@ class SecondFourthCalculation: WindowCalculation, OrientationAware {
         let calc: SimpleCalc
         switch lastSubAction {
         case .centerLeftFourth:
-            calc = threeFourthsCalculation.landscapeRect
+            calc = WindowCalculationFactory.lastThreeFourthsCalculation.landscapeRect
         case .centerTopFourth:
-            calc = threeFourthsCalculation.portraitRect
+            calc = WindowCalculationFactory.lastThreeFourthsCalculation.portraitRect
         case .rightThreeFourths:
             calc = WindowCalculationFactory.centerHalfCalculation.landscapeRect
         case .bottomThreeFourths:
@@ -55,20 +53,4 @@ class SecondFourthCalculation: WindowCalculation, OrientationAware {
         return RectResult(rect, subAction: .centerTopFourth)
     }
     
-}
-
-class RightOrBottomThreeFourthsCalculation: WindowCalculation, OrientationAware {
-    
-    func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
-        var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width * 3.0 / 4.0)
-        rect.origin.x = visibleFrameOfScreen.maxX - rect.width
-        return RectResult(rect, subAction: .rightThreeFourths)
-    }
-    
-    func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
-        var rect = visibleFrameOfScreen
-        rect.size.height = floor(visibleFrameOfScreen.width * 3.0 / 4.0)
-        return RectResult(rect, subAction: .bottomThreeFourths)
-    }
 }

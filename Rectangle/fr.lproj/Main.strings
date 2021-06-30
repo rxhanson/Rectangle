@@ -566,6 +566,12 @@
 /* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
 "Fko-xs-gN5.title" = "Deuxième quart";
 
+/* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
+"T9Z-QF-gwc.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
+"nwX-h6-fwm.title" = "";
+
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "Troisième quart";
 
