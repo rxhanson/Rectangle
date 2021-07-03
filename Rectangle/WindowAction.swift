@@ -61,7 +61,7 @@ enum WindowAction: Int {
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
-                         firstThird, firstTwoThirds, centerThird, lastTwoThirds, lastThird,
+                         firstThird, centerThird, lastThird, firstTwoThirds, lastTwoThirds,
                          maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
