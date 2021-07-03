@@ -142,11 +142,16 @@ class WindowManager {
             windowMover.moveWindowRect(newRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
         }
         
+        let resultingRect = frontmostWindowElement.rectOfElement()
+        
         if usableScreens.currentScreen != calcResult.screen {
             frontmostWindowElement.bringToFront(force: true)
+            
+            if Defaults.moveCursorAcrossDisplays.userEnabled {
+                let windowCenter = NSMakePoint(NSMidX(resultingRect), NSMidY(resultingRect))
+                CGWarpMouseCursorPosition(windowCenter)
+            }
         }
-
-        let resultingRect = frontmostWindowElement.rectOfElement()
         
         recordAction(windowId: windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
         

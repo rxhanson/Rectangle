@@ -58,6 +58,7 @@ class Defaults {
     static let notifiedOfProblemApps = BoolDefault(key: "notifiedOfProblemApps")
     static let specifiedHeight = FloatDefault(key: "specifiedHeight", defaultValue: 1050)
     static let specifiedWidth = FloatDefault(key: "specifiedWidth", defaultValue: 1680)
+    static let moveCursorAcrossDisplays = OptionalBoolDefault(key: "moveCursorAcrossDisplays")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -107,6 +108,7 @@ class Defaults {
         notifiedOfProblemApps,
         specifiedHeight,
         specifiedWidth,
+        moveCursorAcrossDisplays
     ]
 }
 
