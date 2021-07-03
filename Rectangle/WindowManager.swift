@@ -75,11 +75,18 @@ class WindowManager {
         
         let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
         
-        let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
+        var lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
+        
+        let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
+        
+        if windowMovedExternally {
+            lastRectangleAction = nil
+            AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        }
         
         if parameters.updateRestoreRect {
             if AppDelegate.windowHistory.restoreRects[windowId] == nil
-                || currentWindowRect != lastRectangleAction?.rect {
+                || windowMovedExternally {
                 AppDelegate.windowHistory.restoreRects[windowId] = currentWindowRect
             }
         }
