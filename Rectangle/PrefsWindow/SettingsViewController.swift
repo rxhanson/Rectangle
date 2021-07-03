@@ -23,6 +23,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var unsnapRestoreButton: NSButton!
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
+    @IBOutlet weak var cursorAcrossCheckbox: NSButton!
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -66,6 +67,11 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleUnsnapRestore(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.unsnapRestore.enabled = newSetting
+    }
+    
+    @IBAction func toggleCursorMove(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.moveCursorAcrossDisplays.enabled = newSetting
     }
     
     @IBAction func toggleAllowAnyShortcut(_ sender: NSButton) {
@@ -156,6 +162,8 @@ class SettingsViewController: NSViewController {
         gapSlider.isContinuous = true
         
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
+        
+        cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
     }
 
 }
