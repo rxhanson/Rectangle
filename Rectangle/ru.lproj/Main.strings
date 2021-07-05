@@ -576,10 +576,10 @@
 "Fko-xs-gN5.title" = "Вторая четверть";
 
 /* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
-"T9Z-QF-gwc.title" = "";
+"T9Z-QF-gwc.title" = "Первые три четверти";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "";
+"nwX-h6-fwm.title" = "Последние три четверти";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "Третья четверть";
@@ -632,10 +632,10 @@
 "Sixths" = "Угол";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "";
+"RgZ-Jw-XQZ.title" = "Импорт";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "";
+"IO3-Hi-7gC.title" = "Экспорт";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "Перемещать курсор вместе с окном между экранами";
