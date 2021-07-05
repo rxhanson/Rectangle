@@ -647,4 +647,4 @@
 "IO3-Hi-7gC.title" = "";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "ディスプレイ上のウィンドウに沿ってカーソルを移動する";
