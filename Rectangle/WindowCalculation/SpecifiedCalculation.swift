@@ -21,7 +21,7 @@ final class SpecifiedCalculation: WindowCalculation {
             : round(specifiedHeight)
         calculatedWindowRect.size.width = specifiedWidth <= 1
             ? visibleFrameOfScreen.width * specifiedWidth
-            : round(specifiedWidth)
+            : min(visibleFrameOfScreen.width, round(specifiedWidth))
 
         // Center
         calculatedWindowRect.origin.x = round((visibleFrameOfScreen.width - calculatedWindowRect.width) / 2.0) + visibleFrameOfScreen.minX
