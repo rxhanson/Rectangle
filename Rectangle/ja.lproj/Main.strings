@@ -641,10 +641,10 @@
 "Sixths" = "6分割";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "";
+"RgZ-Jw-XQZ.title" = "インポート";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "";
+"IO3-Hi-7gC.title" = "エクスポート";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
 "Pbz-DF-hgG.title" = "ディスプレイ上のウィンドウに沿ってカーソルを移動する";
