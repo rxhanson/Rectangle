@@ -585,10 +585,10 @@
 "Fko-xs-gN5.title" = "左から2番目";
 
 /* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
-"T9Z-QF-gwc.title" = "";
+"T9Z-QF-gwc.title" = "3/4にして左寄せ";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "";
+"nwX-h6-fwm.title" = "3/4にして右寄せ";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "左から3番目";
@@ -641,10 +641,10 @@
 "Sixths" = "6分割";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "";
+"RgZ-Jw-XQZ.title" = "インポート";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "";
+"IO3-Hi-7gC.title" = "エクスポート";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "別ディスプレイへのウィンドウ移動時にカーソルも一緒に移動させる";
