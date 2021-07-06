@@ -588,7 +588,7 @@
 "T9Z-QF-gwc.title" = "3/4にして左寄せ";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "4/3にして右寄せ";
+"nwX-h6-fwm.title" = "3/4にして右寄せ";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "左から3番目";
