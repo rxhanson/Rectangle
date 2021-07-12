@@ -16,7 +16,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var versionLabel: NSTextField!
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
-    @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
+    @IBOutlet weak var subsequentExecutionPopUpButton: NSPopUpButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesAutomaticallyCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesButton: NSButton!
@@ -46,11 +46,15 @@ class SettingsViewController: NSViewController {
         Defaults.hideMenuBarIcon.enabled = newSetting
         RectangleStatusItem.instance.refreshVisibility()
     }
-    
-    @IBAction func toggleSubsequentExecutionBehavior(_ sender: NSButton) {
-        Defaults.subsequentExecutionMode.value = sender.state == .on
-            ? .acrossMonitor
-            : .resize
+
+    @IBAction func setSubsequentExecutionBehavior(_ sender: NSPopUpButton) {
+        let tag = sender.selectedTag()
+        guard let mode = SubsequentExecutionMode(rawValue: tag) else {
+            Logger.log("Expected a pop up button to have a selected item with a valid tag matching a value of SubsequentExecutionMode. Got: \(String(describing: tag))")
+            return
+        }
+
+        Defaults.subsequentExecutionMode.value = mode
     }
     
     @IBAction func gapSliderChanged(_ sender: NSSlider) {
@@ -151,7 +155,7 @@ class SettingsViewController: NSViewController {
         
         hideMenuBarIconCheckbox.state = Defaults.hideMenuBarIcon.enabled ? .on : .off
         
-        subsequentExecutionCheckbox.state = Defaults.subsequentExecutionMode.value == .acrossMonitor ? .on : .off
+        subsequentExecutionPopUpButton.selectItem(withTag: Defaults.subsequentExecutionMode.value.rawValue)
         
         allowAnyShortcutCheckbox.state = Defaults.allowAnyShortcut.enabled ? .on : .off
         
