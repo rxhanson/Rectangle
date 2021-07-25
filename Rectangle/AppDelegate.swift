@@ -66,6 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
+        initializeReverseAll()
         initializeTodo()
 
         checkAutoCheckForUpdates()
@@ -368,6 +369,14 @@ extension AppDelegate: NSMenuDelegate {
         let category: WindowActionCategory
     }
     
+}
+
+// todo mode
+extension AppDelegate {
+    func initializeReverseAll() {
+        guard Defaults.reverseEnabled.enabled else { return }
+        ReverseAllManager.registerReverseAllShortcut()
+    }
 }
 
 // todo mode

@@ -97,6 +97,16 @@ See the [wiki](https://github.com/rxhanson/Rectangle/wiki/Todo-Mode) for more in
 defaults write com.knollsoft.Rectangle todo -int 1
 ```
 
+### Enable Reverse All shortcut
+This will reverse all windows horizontally on the current monitor.
+```bash
+defaults write com.knollsoft.Rectangle reverseAll -bool true
+```
+The default shortcut is ⌃⌥⌘⇥, but this can be changed with the following command:
+```bash
+defaults write com.knollsoft.Rectangle reverseAllShortcut -dict keyCode 48 modifierFlags 1835008
+```
+The keyCode <kbd>tab</kbd> is 48 (see [this StackOverflow post](https://stackoverflow.com/a/16125341/2275559) for the codes, and convert from hex to decimal). For modifiers, simply add up the values in the table below (here 1835008 = 1048576 + 524288 + 262144 = cmd + option + control).
 
 ### Only allow drag-to-snap when modifier keys are pressed
 
