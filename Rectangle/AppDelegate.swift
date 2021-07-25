@@ -374,7 +374,7 @@ extension AppDelegate: NSMenuDelegate {
 // todo mode
 extension AppDelegate {
     func initializeReverseAll() {
-        guard Defaults.reverseEnabled.enabled else { return }
+        guard Defaults.reverseAll.userEnabled else { return }
         ReverseAllManager.registerReverseAllShortcut()
     }
 }

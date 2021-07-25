@@ -59,7 +59,7 @@ class Defaults {
     static let specifiedHeight = FloatDefault(key: "specifiedHeight", defaultValue: 1050)
     static let specifiedWidth = FloatDefault(key: "specifiedWidth", defaultValue: 1680)
     static let moveCursorAcrossDisplays = OptionalBoolDefault(key: "moveCursorAcrossDisplays")
-    static let reverseEnabled = BoolDefault(key: "reverseAll")
+    static let reverseAll = OptionalBoolDefault(key: "reverseAll")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -110,7 +110,7 @@ class Defaults {
         specifiedHeight,
         specifiedWidth,
         moveCursorAcrossDisplays,
-        reverseEnabled
+        reverseAll
     ]
 }
 

@@ -32,6 +32,15 @@ class TodoManager {
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
     
+    static func isTodoWindow(_ w: AccessibilityElement) -> Bool {
+        guard let todoWindow = AccessibilityElement.todoWindow() else { return false }
+        return isTodoWindow(w, todoWindow: todoWindow)
+    }
+    
+    private static func isTodoWindow(_ w: AccessibilityElement, todoWindow: AccessibilityElement) -> Bool {
+        return w.getIdentifier() == todoWindow.getIdentifier()
+    }
+    
     static func moveAll() {
         TodoManager.refreshTodoScreen()
 
@@ -44,8 +53,7 @@ class TodoManager {
                 // Clear all windows from the todo app sidebar
                 for w in windows {
                     let wScreen = sd.detectScreens(using: w)?.currentScreen
-                    if w.getIdentifier() != todoWindow.getIdentifier() &&
-                        wScreen == TodoManager.todoScreen {
+                    if isTodoWindow(w, todoWindow: todoWindow) && wScreen == screen {
                         shiftWindowOffSidebar(w, screenFrame: screenFrame)
                     }
                 }

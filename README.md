@@ -100,7 +100,7 @@ defaults write com.knollsoft.Rectangle todo -int 1
 ### Enable Reverse All shortcut
 This will reverse all windows horizontally on the current monitor.
 ```bash
-defaults write com.knollsoft.Rectangle reverseAll -bool true
+defaults write com.knollsoft.Rectangle reverseAll -int 1
 ```
 The default shortcut is ⌃⌥⌘⇥, but this can be changed with the following command:
 ```bash
