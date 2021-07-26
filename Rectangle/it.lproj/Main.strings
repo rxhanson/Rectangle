@@ -441,7 +441,7 @@
 "lgE-cR-cQ5.title" = "Vai a Preferenze di sistema → Sicurezza e Privacy → Privacy → Accessibilità";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "Quando l'icona della barra dei menu è nascosta, rilancia Rectangle dal Finder per aprire il menu.";
+"ltc-mf-BHr.title" = "Quando l'icona dalla barra dei menu è nascosta, rilancia Rectangle dal Finder per aprire il menu.";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Controlla grammatica insieme all'ortografia";
@@ -471,7 +471,7 @@
 "qIS-W8-SiK.title" = "Impostazioni pagina…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "Nascondi l'icona della barra dei menu";
+"qlg-kC-FMr.title" = "Nascondi l'icona dalla barra dei menu";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
 "rbD-Rh-wIN.title" = "Controlla ortografia mentre scrivo";
@@ -501,7 +501,7 @@
 "tlD-Oa-oAM.title" = "Kern";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "Ripristina le abbreviazioni da tastiera predefinite";
+"uLF-Uf-tBt.title" = "Ripristina le abbreviazioni predefinite";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
@@ -638,4 +638,4 @@
 "IO3-Hi-7gC.title" = "Esporta";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Muovi il cursore con le finestre tra più schermi";
+"Pbz-DF-hgG.title" = "Muovi il cursore con le finestre tra schermi";
