@@ -576,10 +576,10 @@
 "Fko-xs-gN5.title" = "Druga ćwiartka";
 
 /* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
-"T9Z-QF-gwc.title" = "";
+"T9Z-QF-gwc.title" = "Pierwsze trzy czwarte";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "";
+"nwX-h6-fwm.title" = "Ostatnie trzy czwarte";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "Trzecia ćwiartka";
