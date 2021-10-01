@@ -648,3 +648,22 @@
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
 "Pbz-DF-hgG.title" = "別ディスプレイへのウィンドウ移動時にカーソルも一緒に移動させる";
+
+/* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
+"XlM-ch-cLG.title" = "cycle through displays";
+
+/* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
+"Z9d-Rl-RVq.title" = "move to adjacent display on left or right";
+
+/* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
+"jww-Ju-S3d.title" = "do nothing";
+
+/* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
+"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
+
+/* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
+"3GE-la-fAZ.title" = "move to adjacent on left/right, or cycle size on half";
+
+/* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
+"2Zm-fl-PcC.title" = "Repeated commands";
+
