@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "Questo vale solo per le azioni di spostamento o i mezzi spostamenti. I mezzi spostamenti non eseguono il comportamento a 2/3 e 1/3 se abilitato.";
+"01Z-t3-cBm.title" = "Se ripeti lo spostamento o i mezzi spostamenti, la finestra si sposterà sullo schermo successivo invece che ridimensionarsi a 1/2, 2/3 o 1/3.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "Ultimi due terzi";
@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "Più in basso";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "Snap delle finestre trascinando il mouse";
+"1ui-PL-TkR.title" = "Ridimensiona le finestre trascinandole sui bordi dello schermo";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "Ingrandisci";
@@ -33,13 +33,13 @@
 "2oI-Rn-ZJC.title" = "Trasformazioni";
 
 /* Class = "NSMenu"; title = "Spelling"; ObjectID = "3IN-sU-3Bg"; */
-"3IN-sU-3Bg.title" = "L'ortografia";
+"3IN-sU-3Bg.title" = "Ortografia";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "3Om-Ey-2VK"; */
 "3Om-Ey-2VK.title" = "Usa predefinito";
 
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
-"3rS-ZA-NoH.title" = "Discorso";
+"3rS-ZA-NoH.title" = "Voce";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
 "3zd-xE-oWl.title" = "Primi due terzi";
@@ -51,7 +51,7 @@
 "4EN-yA-p0u.title" = "Trova";
 
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
-"4J7-dP-txa.title" = "Entra a schermo intero";
+"4J7-dP-txa.title" = "Attiva modalità a tutto schermo";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
 "4sb-4s-VLi.title" = "Esci da Rectangle";
@@ -90,16 +90,16 @@
 "8oe-J2-oUU.title" = "Massimizza";
 
 /* Class = "NSWindow"; title = "Authorize Rectangle"; ObjectID = "9JD-tZ-7jf"; */
-"9JD-tZ-7jf.title" = "Autorizzare Rectangle";
+"9JD-tZ-7jf.title" = "Autorizza Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
-"9XM-Zb-HEb.title" = "Se la casella di controllo è disattivata, fai clic sul lucchetto ed inserisci la password.";
+"9XM-Zb-HEb.title" = "Se la casella di controllo è disattivata, fai clic sul lucchetto ed inserisci la password";
 
 /* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
 "9ic-FL-obx.title" = "Sostituzioni";
 
 /* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
-"9yt-4B-nSM.title" = "Copia/Incolla intelligente";
+"9yt-4B-nSM.title" = "Copia/incolla smart";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
 "A66-A4-cGD.title" = "Esci da Rectangle";
@@ -186,7 +186,7 @@
 "I0S-gh-46l.title" = "Abbonamento";
 
 /* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
-"IAo-SY-fd9.title" = "Aprire…";
+"IAo-SY-fd9.title" = "Apri…";
 
 /* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
 "J5U-5w-g23.title" = "Giustificato";
@@ -198,7 +198,7 @@
 "J7y-lM-qPV.title" = "Non usare";
 
 /* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
-"Jnd-Lc-nlh.title" = "Display successivo";
+"Jnd-Lc-nlh.title" = "Schermo successivo";
 
 /* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
 "KaW-ft-85H.title" = "Ritorna a com'era salvato";
@@ -240,7 +240,7 @@
 "OwM-mh-QMV.title" = "Trova precedente";
 
 /* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
-"Oyz-dy-DGm.title" = "Ferma la lettura ad alta voce";
+"Oyz-dy-DGm.title" = "Interrompi riproduzione";
 
 /* Class = "NSMenuItem"; title = "Bigger"; ObjectID = "Ptp-SP-VEL"; */
 "Ptp-SP-VEL.title" = "Più grande";
@@ -249,7 +249,7 @@
 "Q5e-8K-NDq.title" = "Mostra caratteri";
 
 /* Class = "NSTextFieldCell"; title = "Previous Display"; ObjectID = "QwF-QN-YH7"; */
-"QwF-QN-YH7.title" = "Display precedente";
+"QwF-QN-YH7.title" = "Schermo precedente";
 
 /* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
 "R4o-n2-Eq4.title" = "Zoom";
@@ -270,7 +270,7 @@
 "STb-JK-oB1.title" = "Preferenze di Rectangle";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "Muoviti tra i display con spostamenti a sinistra o destra";
+"SXx-HZ-GkB.title" = "Muoviti tra gli schermi con comandi ripetuti a sinistra o destra";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "Finestra";
@@ -282,7 +282,7 @@
 "VIY-Ag-zcb.title" = "Centra";
 
 /* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
-"VIf-4h-MJW.title" = "Autorizzare…";
+"VIf-4h-MJW.title" = "Autorizza…";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
 "Vdr-fp-XzO.title" = "Nascondi altri";
@@ -294,13 +294,13 @@
 "W48-6f-4Dl.title" = "Modifica";
 
 /* Class = "NSMenuItem"; title = "Underline"; ObjectID = "WRG-CD-K1S"; */
-"WRG-CD-K1S.title" = "Sottolineare";
+"WRG-CD-K1S.title" = "Sottolinea";
 
 /* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
 "Was-JA-tGl.title" = "Nuovo";
 
 /* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
-"WeT-3V-zwk.title" = "Incollare e abbinare lo stile";
+"WeT-3V-zwk.title" = "Incolla e mantieni lo stile";
 
 /* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
 "Xc8-Sm-pig.title" = "Metà sinistra";
@@ -348,7 +348,7 @@
 "bib-Uj-vzu.title" = "File";
 
 /* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
-"buJ-ug-pKt.title" = "Cerca la selezione";
+"buJ-ug-pKt.title" = "Usa selezione per cercare";
 
 /* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
 "c8a-y6-VQd.title" = "Trasformazioni";
@@ -366,7 +366,7 @@
 "cqv-fj-IhA.title" = "Selezione";
 
 /* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
-"cwL-P1-jid.title" = "Link intelligenti";
+"cwL-P1-jid.title" = "Link smart";
 
 /* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
 "d7y-s8-7GE.title" = "Metà superiore";
@@ -402,10 +402,10 @@
 "gyg-xl-dPn.title" = "Rectangle ha bisogno del tuo permesso per controllare la posizione delle finestre.";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
-"hQb-2v-fYv.title" = "Citazioni intelligenti";
+"hQb-2v-fYv.title" = "Virgolette smart";
 
 /* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
-"hz2-CU-CR7.title" = "Controlla ora il documento";
+"hz2-CU-CR7.title" = "Controlla il documento adesso";
 
 /* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
 "hz9-B4-Xy5.title" = "Servizi";
@@ -438,13 +438,13 @@
 "kIP-vf-haE.title" = "Mostra barra laterale";
 
 /* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
-"lgE-cR-cQ5.title" = "Vai a Preferenze di sistema → Sicurezza e Privacy → Privacy → Privacy → Accessibilità";
+"lgE-cR-cQ5.title" = "Vai a Preferenze di sistema → Sicurezza e Privacy → Privacy → Accessibilità";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "Quando l'icona della barra dei menu è nascosta, rilancia Rectangle dal Finder per aprire il menu.";
+"ltc-mf-BHr.title" = "Quando l'icona dalla barra dei menu è nascosta, rilancia Rectangle dal Finder per aprire il menu.";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
-"mK6-2p-4JG.title" = "Controlla la grammatica con l'ortografia";
+"mK6-2p-4JG.title" = "Controlla grammatica insieme all'ortografia";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
 "n4U-FC-L9s.title" = "Consenti qualsiasi abbreviazione da tastiera";
@@ -471,16 +471,16 @@
 "qIS-W8-SiK.title" = "Impostazioni pagina…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "Nascondi l'icona della barra dei menu";
+"qlg-kC-FMr.title" = "Nascondi l'icona dalla barra dei menu";
 
 /* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
-"rbD-Rh-wIN.title" = "Controllare l'ortografia durante la digitazione";
+"rbD-Rh-wIN.title" = "Controlla ortografia mentre scrivo";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
-"rgM-f4-ycn.title" = "Trattini intelligenti";
+"rgM-f4-ycn.title" = "Trattini smart";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "Controlla automaticamente gli aggiornamenti";
+"rmV-YD-Hzj.title" = "Aggiornamenti automatici";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
 "rzr-Qq-702.title" = "Sposta a destra";
@@ -501,7 +501,7 @@
 "tlD-Oa-oAM.title" = "Kern";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "Ripristina le abbreviazioni da tastiera predefinite";
+"uLF-Uf-tBt.title" = "Ripristina le abbreviazioni predefinite";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
@@ -540,7 +540,7 @@
 "xQD-1f-W4t.title" = "Usa tutti";
 
 /* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
-"xrE-MZ-jX0.title" = "Discorso";
+"xrE-MZ-jX0.title" = "Voce";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
 "yvN-PE-bxn.title" = "Esci da Rectangle";
@@ -567,75 +567,75 @@
 "HtH-yF-lBR.title" = "Ti diamo il benvenuto!";
 
 /* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
-"bRX-dV-iAR.title" = "Center Half";
+"bRX-dV-iAR.title" = "Metà centrale";
 
 /* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
-"Q6Q-6J-okH.title" = "First Fourth";
+"Q6Q-6J-okH.title" = "Primo quarto";
 
 /* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
-"Fko-xs-gN5.title" = "Second Fourth";
+"Fko-xs-gN5.title" = "Secondo quarto";
 
 /* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
-"T9Z-QF-gwc.title" = "";
+"T9Z-QF-gwc.title" = "Primi tre quarti";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "";
+"nwX-h6-fwm.title" = "Ultimi tre quarti";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
-"ZTK-rS-b17.title" = "Third Fourth";
+"ZTK-rS-b17.title" = "Terzo quarto";
 
 /* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
-"6HX-rn-VIp.title" = "Last Fourth";
+"6HX-rn-VIp.title" = "Ultimo quarto";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Top Left Sixth";
+"mFt-Kg-UYG.title" = "Sesto superiore sinistro";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "Top Center Sixth";
+"TTx-7X-Wie.title" = "Sesto superiore centrale";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
-"f3Q-q7-Pcy.title" = "Top Right Sixth";
+"f3Q-q7-Pcy.title" = "Sesto superiore destro";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
-"LqQ-pM-jRN.title" = "Bottom Left Sixth";
+"LqQ-pM-jRN.title" = "Sesto inferiore sinistro";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Bottom Center Sixth";
+"iOQ-1e-esP.title" = "Sesto inferiore centrale";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
-"m2F-eA-g7w.title" = "Bottom Right Sixth";
+"m2F-eA-g7w.title" = "Sesto inferiore destro";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "View Logging…";
+"O8K-y6-bva.title" = "Vedi Logging…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "Settings";
+"gtf-PD-IHm.label" = "Impostazioni";
 
 /* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
-"uw2-9W-2jq.label" = "Keyboard Shortcuts";
+"uw2-9W-2jq.label" = "Abbreviazioni da tastiera";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "Restore window size when unsnapped";
+"UZP-5q-D5Y.title" = "Ripristina le dimensioni della finestra se spostata";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Gaps between windows";
+"bg9-nw-YvU.title" = "Spazio tra le finestre";
 
-"Halves" = "Halves";
-"Corners" = "Corners";
-"Thirds" = "Thirds";
-"Maximize" = "Maximize";
-"Size" = "Size";
-"Display" = "Display";
-"Other" = "Other";
-"Move to Edge" = "Move to Edge";
-"Fourths" = "Fourths";
-"Sixths" = "Sixths";
+"Halves" = "Metà";
+"Corners" = "Angoli";
+"Thirds" = "Terzi";
+"Maximize" = "Massimizza";
+"Size" = "Dimensione";
+"Display" = "Schermo";
+"Other" = "Altro";
+"Move to Edge" = "Muovi verso i bordi";
+"Fourths" = "Quarti";
+"Sixths" = "Terzi";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "";
+"RgZ-Jw-XQZ.title" = "Importa";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "";
+"IO3-Hi-7gC.title" = "Esporta";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "Muovi il cursore con le finestre tra schermi";
