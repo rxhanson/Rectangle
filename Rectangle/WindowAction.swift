@@ -73,6 +73,10 @@ enum WindowAction: Int {
     func post() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
     }
+    
+    func postMenu() {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .menuItem))
+    }
 
     func postSnap(windowElement: AccessibilityElement?, windowId: Int?, screen: NSScreen) {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap))

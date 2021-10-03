@@ -152,7 +152,7 @@ class WindowManager {
         if usableScreens.currentScreen != calcResult.screen {
             frontmostWindowElement.bringToFront(force: true)
             
-            if Defaults.moveCursorAcrossDisplays.userEnabled, !Defaults.moveCursor.userEnabled {
+            if Defaults.moveCursorAcrossDisplays.userEnabled {
                 let windowCenter = NSMakePoint(NSMidX(resultingRect), NSMidY(resultingRect))
                 CGWarpMouseCursorPosition(windowCenter)
             }
@@ -201,5 +201,5 @@ struct ExecutionParameters {
 }
 
 enum ExecutionSource {
-    case keyboardShortcut, dragToSnap
+    case keyboardShortcut, dragToSnap, menuItem
 }
