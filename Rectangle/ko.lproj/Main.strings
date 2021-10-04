@@ -667,3 +667,6 @@
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
 "2Zm-fl-PcC.title" = "Repeated commands";
 
+"Default Shortcuts" = "Default Shortcuts";
+"Currently using: " = "Currently using: ";
+"Cancel" = "Cancel";

@@ -91,7 +91,11 @@ class SettingsViewController: NSViewController {
     @IBAction func restoreDefaults(_ sender: Any) {
         WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
         let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
-        let response = AlertUtil.twoButtonAlert(question: "Default Shortcuts", text: "You are currently using \(currentDefaults) defaults.\n\nSelect your defaults. ", confirmText: "Rectangle", cancelText: "Spectacle")
+        let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
+        let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
+        let cancelText = NSLocalizedString("Cancel", tableName: "Main", value: "", comment: "")
+        let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
+        if response == .alertThirdButtonReturn { return }
         let rectangleDefaults = response == .alertFirstButtonReturn
         if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
             Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
