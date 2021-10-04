@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "이동하기 또는 절반 동작을 반복하면 윈도우가 1/2, 2/3, 혹은 1/3 크기가 되는 대신, 다음 디스플레이로 이동합니다.";
+"01Z-t3-cBm.title" = "이동하기 또는 절반 동작을 반복하면 창이 1/2, 2/3, 혹은 1/3 크기가 되는 대신, 다음 디스플레이로 이동합니다.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "마지막 2/3";
@@ -276,7 +276,7 @@
 "SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령을 반복하여 디스플레이 순환";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
-"Td7-aD-5lo.title" = "윈도우";
+"Td7-aD-5lo.title" = "창";
 
 /* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
 "UEZ-Bs-lqG.title" = "대문자로 만들기";
@@ -333,7 +333,7 @@
 "aTl-1u-JFS.title" = "프린트…";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
-"aUF-d1-5bR.title" = "윈도우";
+"aUF-d1-5bR.title" = "창";
 
 /* Class = "NSMenu"; title = "Font"; ObjectID = "aXa-aM-Jaq"; */
 "aXa-aM-Jaq.title" = "서체";
