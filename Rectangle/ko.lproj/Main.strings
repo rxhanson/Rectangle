@@ -647,23 +647,23 @@
 "IO3-Hi-7gC.title" = "내보내기";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "창이 디스플레이 이동시 커서도 함께 이동";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
-"XlM-ch-cLG.title" = "cycle through displays";
+"XlM-ch-cLG.title" = "디스플레이 순환";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "move to adjacent display on left or right";
+"Z9d-Rl-RVq.title" = "인접한 왼쪽 또는 오른쪽 디스플레이로 이동";
 
 /* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
-"jww-Ju-S3d.title" = "do nothing";
+"jww-Ju-S3d.title" = "아무것도 하지 않음";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
+"gHH-BV-5kP.title" = "절반 동작에 대해 ½, ⅔, ⅓ 동작을 순환";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "move to adjacent on left/right, or cycle size on half";
+"3GE-la-fAZ.title" = "인접한 왼쪽 또는 오른쪽 디스플레이로 이동, 절반 동작시 창 크기 순환";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "Repeated commands";
+"2Zm-fl-PcC.title" = "커맨드 반복 입력시";
 
