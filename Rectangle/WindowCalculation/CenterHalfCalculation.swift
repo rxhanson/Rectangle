@@ -20,11 +20,11 @@ class CenterHalfCalculation: WindowCalculation, OrientationAware, RepeatedExecut
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         
-        if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes || Defaults.centerHalfCycles.userDisabled {
-            return orientationBasedRect(params.visibleFrameOfScreen)
+        if (params.lastAction != nil && Defaults.subsequentExecutionMode.resizes) || Defaults.centerHalfCycles.userEnabled {
+            return calculateRepeatedRect(params)
         }
         
-        return calculateRepeatedRect(params)
+        return orientationBasedRect(params.visibleFrameOfScreen)
     }
     
     func landscapeRect(_ visibleFrameOfScreen: CGRect, fraction: Float) -> RectResult {
