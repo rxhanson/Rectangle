@@ -315,7 +315,7 @@ extension AppDelegate: NSMenuDelegate {
     
     @objc func executeMenuWindowAction(sender: NSMenuItem) {
         guard let windowAction = sender.representedObject as? WindowAction else { return }
-        windowAction.post()
+        windowAction.postMenu()
     }
     
     func addWindowActionMenuItems() {
