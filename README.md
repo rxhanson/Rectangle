@@ -37,7 +37,7 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
    2. Open the Rectangle menu and select "Ignore app"
 
 ## Terminal Commands for Hidden Preferences
-See TerminalCommands.md
+See [TerminalCommands.md](TerminalCommands.md)
 
 ## Differences with Spectacle
 * Rectangle uses [MASShortcut](https://github.com/shpakovski/MASShortcut) for keyboard shortcut recording. Spectacle used its own shortcut recorder.
