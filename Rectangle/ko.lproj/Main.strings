@@ -667,6 +667,6 @@
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
 "2Zm-fl-PcC.title" = "커맨드 반복 입력시";
 
-"Default Shortcuts" = "Default Shortcuts";
-"Currently using: " = "Currently using: ";
-"Cancel" = "Cancel";
+"Default Shortcuts" = "기본 단축키 선택";
+"Currently using: " = "현재 사용중: ";
+"Cancel" = "취소";
