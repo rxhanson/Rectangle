@@ -1,6 +1,7 @@
 # Rectangle
 
 ![](https://github.com/rxhanson/Rectangle/workflows/Build/badge.svg)
+[![Monthly downloads](https://badgen.net/homebrew/cask/dm/rectangle)](https://formulae.brew.sh/cask/rectangle)
 
 Rectangle is a window management app based on Spectacle, written in Swift.
 
