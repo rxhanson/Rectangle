@@ -11,7 +11,7 @@ import MASShortcut
 
 class TodoManager {
     static var todoScreen : NSScreen?
-    private static let defaultsKey = "reflowTodo"
+    static let defaultsKey = "reflowTodo"
     
     static func registerReflowShortcut() {
         

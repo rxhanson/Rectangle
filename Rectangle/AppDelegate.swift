@@ -77,6 +77,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.shortcutManager.reloadFromDefaults()
             self.snappingManager.reloadFromDefaults()
         })
+        
+        Notification.Name.todoMenuToggled.onPost(using: { _ in
+            self.showHideTodoMenuItems()
+            if Defaults.todo.userEnabled {
+                TodoManager.registerReflowShortcut()
+            }
+        })
     }
     
     func checkAutoCheckForUpdates() {
@@ -381,22 +388,22 @@ extension AppDelegate {
     }
 
     enum TodoItem {
-        case mode, app, reflow
+        case mode, app, reflow, separator
 
         var tag: Int {
             switch self {
             case .mode: return 101
             case .app: return 102
             case .reflow: return 103
+            case .separator: return 104
             }
         }
+        
+        static let tags = [101, 102, 103, 104]
     }
 
     private func addTodoModeMenuItems(startingIndex: Int) {
-        guard Defaults.todo.userEnabled else { return }
-
         var menuIndex = startingIndex
-        guard Defaults.todo.userEnabled else { return }
 
         let todoModeMenuItem = NSMenuItem(title: "Todo Mode", action: #selector(toggleTodoMode), keyEquivalent: "")
         todoModeMenuItem.tag = TodoItem.mode.tag
@@ -412,8 +419,20 @@ extension AppDelegate {
         todoReflowItem.tag = TodoItem.reflow.tag
         mainStatusMenu.insertItem(todoReflowItem, at: menuIndex)
         menuIndex += 1
-
-        mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
+        
+        let separator = NSMenuItem.separator()
+        separator.tag = TodoItem.separator.tag
+        mainStatusMenu.insertItem(separator, at: menuIndex)
+        
+        showHideTodoMenuItems()
+    }
+    
+    private func showHideTodoMenuItems() {
+        for item in mainStatusMenu.items {
+            if TodoItem.tags.contains(item.tag) {
+                item.isHidden = !Defaults.todo.userEnabled
+            }
+        }
     }
 
     @objc func toggleTodoMode(_ sender: NSMenuItem) {
@@ -434,7 +453,8 @@ extension AppDelegate {
     }
 
     private func updateTodoModeMenuItems(menu: NSMenu) {
-        guard let todoAppMenuItem = menu.item(withTag: TodoItem.app.tag),
+        guard Defaults.todo.userEnabled,
+              let todoAppMenuItem = menu.item(withTag: TodoItem.app.tag),
               let todoModeMenuItem = menu.item(withTag: TodoItem.mode.tag),
               let todoReflowMenuItem = menu.item(withTag: TodoItem.reflow.tag)
         else {

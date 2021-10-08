@@ -9,6 +9,7 @@
 import Cocoa
 import ServiceManagement
 import Sparkle
+import MASShortcut
 
 class SettingsViewController: NSViewController {
         
@@ -24,6 +25,9 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
+    @IBOutlet weak var todoCheckbox: NSButton!
+    @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
+    @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -88,6 +92,12 @@ class SettingsViewController: NSViewController {
         SUUpdater.shared()?.checkForUpdates(sender)
     }
     
+    @IBAction func toggleTodoMode(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.todo.enabled = newSetting
+        Notification.Name.todoMenuToggled.post()
+    }
+    
     @IBAction func restoreDefaults(_ sender: Any) {
         WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
         let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
@@ -147,9 +157,19 @@ class SettingsViewController: NSViewController {
 
         checkForUpdatesButton.title = NSLocalizedString("HIK-3r-i7E.title", tableName: "Main", value: "Check for Updates…", comment: "")
         
+        initializeTodoModeSettings()
+        
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeToggles()
         })
+    }
+    
+    func initializeTodoModeSettings() {
+        todoCheckbox.state = Defaults.todo.userEnabled ? .on : .off
+        todoAppWidthField.stringValue = String(Defaults.todoSidebarWidth.value)
+        todoAppWidthField.delegate = self
+        todoAppWidthField.defaults = Defaults.todoSidebarWidth
+        reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.defaultsKey, withTransformerName: MASDictionaryTransformerName)
     }
     
     func initializeToggles() {
@@ -185,4 +205,19 @@ extension SettingsViewController {
         }
         return viewController
     }
+}
+
+extension SettingsViewController: NSTextFieldDelegate {
+    func controlTextDidChange(_ obj: Notification) {
+        guard let sender = obj.object as? AutoSaveFloatField,
+              let defaults: FloatDefault = sender.defaults else { return }
+        
+        Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
+            defaults.value = floatValue
+        }
+    }
+}
+
+class AutoSaveFloatField: NSTextField {
+    var defaults: FloatDefault?
 }
