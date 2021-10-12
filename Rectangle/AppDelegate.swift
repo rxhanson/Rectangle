@@ -405,7 +405,7 @@ extension AppDelegate {
     private func addTodoModeMenuItems(startingIndex: Int) {
         var menuIndex = startingIndex
 
-        let todoModeMenuItem = NSMenuItem(title: "Todo Mode", action: #selector(toggleTodoMode), keyEquivalent: "")
+        let todoModeMenuItem = NSMenuItem(title: "Enable Todo Mode", action: #selector(toggleTodoMode), keyEquivalent: "")
         todoModeMenuItem.tag = TodoItem.mode.tag
         mainStatusMenu.insertItem(todoModeMenuItem, at: menuIndex)
         menuIndex += 1

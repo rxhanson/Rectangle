@@ -3251,16 +3251,47 @@
                                             <constraint firstAttribute="height" constant="20" id="bBf-fp-7rI"/>
                                         </constraints>
                                     </box>
-                                    <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="0PP-0x-QWc">
-                                        <rect key="frame" x="-2" y="143" width="452" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Show Todo Mode in menu" bezelStyle="regularSquare" imagePosition="left" inset="2" id="7yS-wj-uWD">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="toggleTodoMode:" target="yhc-gS-h02" id="Wfa-A2-2YS"/>
-                                        </connections>
-                                    </button>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="5" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ipm-Bt-PDm">
+                                        <rect key="frame" x="0.0" y="144" width="450" height="16"/>
+                                        <subviews>
+                                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="249" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="0PP-0x-QWc">
+                                                <rect key="frame" x="-2" y="-1" width="182" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Show Todo Mode in menu" bezelStyle="regularSquare" imagePosition="left" inset="2" id="7yS-wj-uWD">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="toggleTodoMode:" target="yhc-gS-h02" id="Wfa-A2-2YS"/>
+                                                </connections>
+                                            </button>
+                                            <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="m1L-BJ-1Jg">
+                                                <rect key="frame" x="185" y="0.0" width="18" height="16"/>
+                                                <buttonCell key="cell" type="smallSquare" title="ⓘ" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" id="Vfd-fe-hCe">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="showTodoModeHelp:" target="yhc-gS-h02" id="TjK-4M-3ow"/>
+                                                </connections>
+                                            </button>
+                                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="248" verticalCompressionResistancePriority="248" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pf3-3Q-uE8">
+                                                <rect key="frame" x="208" y="0.0" width="242" height="16"/>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="Pf3-3Q-uE8" firstAttribute="top" secondItem="Ipm-Bt-PDm" secondAttribute="top" id="cTW-jC-lQg"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
                                     <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Q4P-mY-521">
                                         <rect key="frame" x="-2" y="120" width="454" height="14"/>
                                         <textFieldCell key="cell" title="Keep a chosen application visible on the right of your primary screen at all times" id="FCh-1Q-Xms">
@@ -3621,6 +3652,148 @@ DQ
                 <customObject id="Pz3-OM-dTg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="656" y="817.5"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="s8a-91-b01">
+            <objects>
+                <viewController id="6vv-bW-t7F" sceneMemberID="viewController">
+                    <view key="view" id="3mg-n6-fQy">
+                        <rect key="frame" x="0.0" y="0.0" width="340" height="414"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W6p-pE-JE0">
+                                <rect key="frame" x="20" y="20" width="300" height="374"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="rpO-9I-Owx">
+                                        <rect key="frame" x="63" y="348" width="174" height="26"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="About Todo Mode" id="ZVi-DR-1zj">
+                                            <font key="font" metaFont="system" size="22"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ylF-B2-MK0">
+                                        <rect key="frame" x="120" y="266" width="60" height="60"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="60" id="Jog-8E-fGF"/>
+                                            <constraint firstAttribute="width" constant="60" id="SAz-Qi-u4X"/>
+                                        </constraints>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Untilted" id="6Pu-jH-EHJ"/>
+                                    </imageView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="F9O-o8-0gu">
+                                        <rect key="frame" x="-2" y="212" width="304" height="32"/>
+                                        <textFieldCell key="cell" alignment="center" title="Keep a chosen application visible on the right side of your primary screen at all times" id="N2U-pY-CLq">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Di0-sy-qj8">
+                                        <rect key="frame" x="7" y="82" width="287" height="108"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="KUM-bh-8es">
+                                                <rect key="frame" x="-2" y="92" width="291" height="16"/>
+                                                <textFieldCell key="cell" alignment="left" title="1. Bring your chosen todo application frontmost" id="qze-7p-m1X">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="SZD-vs-5hS">
+                                                <rect key="frame" x="-2" y="38" width="201" height="32"/>
+                                                <textFieldCell key="cell" alignment="left" id="xNi-9K-fnJ">
+                                                    <font key="font" metaFont="system"/>
+                                                    <string key="title">2. In the Rectangle menu, select
+"Use [Application] as Todo App"</string>
+                                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="WN5-xt-f1V">
+                                                <rect key="frame" x="-2" y="0.0" width="278" height="16"/>
+                                                <textFieldCell key="cell" alignment="left" title="3. In the Rectangle menu, enable Todo Mode." id="8dv-v2-SPu">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="s4a-Yd-3qn">
+                                        <rect key="frame" x="-2" y="0.0" width="304" height="60"/>
+                                        <textFieldCell key="cell" alignment="left" id="q9C-qZ-xw5">
+                                            <font key="font" metaFont="system" size="12"/>
+                                            <string key="title">While in Todo Mode, you can refresh the Todo Mode layout by selecting "Reflow Todo" in the Rectangle menu or activating the associated keyboard shortcut.</string>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" priority="750" constant="300" id="Nxj-e2-I72"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="750" constant="250" id="Qmv-zk-2UP"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="W6p-pE-JE0" secondAttribute="trailing" constant="20" symbolic="YES" id="2g1-LL-ZFM"/>
+                            <constraint firstAttribute="bottom" secondItem="W6p-pE-JE0" secondAttribute="bottom" constant="20" symbolic="YES" id="Un6-Cf-6MY"/>
+                            <constraint firstItem="W6p-pE-JE0" firstAttribute="leading" secondItem="3mg-n6-fQy" secondAttribute="leading" constant="20" symbolic="YES" id="pH9-6n-vh5"/>
+                            <constraint firstItem="W6p-pE-JE0" firstAttribute="top" secondItem="3mg-n6-fQy" secondAttribute="top" constant="20" symbolic="YES" id="pbw-t3-8tK"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="gYM-Vl-Ier" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1504" y="1362"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="vbx-pw-SUZ">
+            <objects>
+                <windowController storyboardIdentifier="AboutTodoWindowController" id="yaK-Dt-a87" sceneMemberID="viewController">
+                    <window key="window" title="About Todo Mode" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="MDd-Sm-sUx">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" fullSizeContentView="YES"/>
+                        <rect key="contentRect" x="425" y="462" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+                        <view key="contentView" id="IQ2-6g-d9Z">
+                            <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </view>
+                        <connections>
+                            <outlet property="delegate" destination="yaK-Dt-a87" id="Bwx-sa-dAG"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="6vv-bW-t7F" kind="relationship" relationship="window.shadowedContentViewController" id="NZk-Jq-tJh"/>
+                    </connections>
+                </windowController>
+                <customObject id="EuJ-07-wZi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="927" y="1355"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="QT5-BH-OxD">

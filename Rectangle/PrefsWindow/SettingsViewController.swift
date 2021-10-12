@@ -29,6 +29,8 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
     @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
     
+    private var aboutTodoWindowController: NSWindowController?
+    
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
@@ -96,6 +98,15 @@ class SettingsViewController: NSViewController {
         let newSetting: Bool = sender.state == .on
         Defaults.todo.enabled = newSetting
         Notification.Name.todoMenuToggled.post()
+    }
+    
+    @IBAction func showTodoModeHelp(_ sender: Any) {
+        if aboutTodoWindowController == nil {
+            aboutTodoWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "AboutTodoWindowController") as? NSWindowController
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        aboutTodoWindowController?.showWindow(self)
+        aboutTodoWindowController?.window?.makeKey()
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
