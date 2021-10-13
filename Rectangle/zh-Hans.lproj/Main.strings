@@ -670,3 +670,40 @@
 "Default Shortcuts" = "Default Shortcuts";
 "Currently using: " = "Currently using: ";
 "Cancel" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
+"7yS-wj-uWD.title" = "Show Todo Mode in menu";
+
+/* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
+"6e0-ji-qXw.title" = "Todo application width";
+
+/* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
+"Fx0-sm-DrT.title" = "Reflow Todo shortcut";
+
+"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
+"Enable Todo Mode" = "Enable Todo Mode";
+"Reflow Todo" = "Reflow Todo";
+
+/* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
+"MDd-Sm-sUx.title" = "About Todo Mode";
+
+/* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
+"ZVi-DR-1zj.title" = "About Todo Mode";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
+"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
+"N2U-pY-CLq.title" = "Keep a chosen application visible on the right side of your primary screen at all times";
+
+/* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
+"qze-7p-m1X.title" = "1. Bring your chosen todo application frontmost";
+
+/* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
+"xNi-9K-fnJ.title" = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\"";
+
+/* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
+"8dv-v2-SPu.title" = "3. In the Rectangle menu, enable Todo Mode.";
+
+/* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or activating the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
+"q9C-qZ-xw5.title" = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or activating the associated keyboard shortcut.";

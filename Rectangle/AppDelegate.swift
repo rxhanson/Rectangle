@@ -405,17 +405,20 @@ extension AppDelegate {
     private func addTodoModeMenuItems(startingIndex: Int) {
         var menuIndex = startingIndex
 
-        let todoModeMenuItem = NSMenuItem(title: "Enable Todo Mode", action: #selector(toggleTodoMode), keyEquivalent: "")
+        let todoModeItemTitle = NSLocalizedString("Enable Todo Mode", tableName: "Main", value: "", comment: "")
+        let todoModeMenuItem = NSMenuItem(title: todoModeItemTitle, action: #selector(toggleTodoMode), keyEquivalent: "")
         todoModeMenuItem.tag = TodoItem.mode.tag
         mainStatusMenu.insertItem(todoModeMenuItem, at: menuIndex)
         menuIndex += 1
 
-        let todoAppMenuItem = NSMenuItem(title: "Use frontmost.app as Todo App", action: #selector(setTodoApp), keyEquivalent: "")
+        let todoAppItemTitle = NSLocalizedString("Use frontmost.app as Todo App", tableName: "Main", value: "", comment: "")
+        let todoAppMenuItem = NSMenuItem(title: todoAppItemTitle, action: #selector(setTodoApp), keyEquivalent: "")
         todoAppMenuItem.tag = TodoItem.app.tag
         mainStatusMenu.insertItem(todoAppMenuItem, at: menuIndex)
         menuIndex += 1
 
-        let todoReflowItem = NSMenuItem(title: "Reflow Todo", action: #selector(todoReflow), keyEquivalent: "")
+        let todoReflowItemTitle = NSLocalizedString("Reflow Todo", tableName: "Main", value: "", comment: "")
+        let todoReflowItem = NSMenuItem(title: todoReflowItemTitle, action: #selector(todoReflow), keyEquivalent: "")
         todoReflowItem.tag = TodoItem.reflow.tag
         mainStatusMenu.insertItem(todoReflowItem, at: menuIndex)
         menuIndex += 1
@@ -462,7 +465,7 @@ extension AppDelegate {
         }
 
         if let frontAppName = applicationToggle.frontAppName {
-            let appString = "Use frontmost.app as Todo App"
+            let appString = NSLocalizedString("Use frontmost.app as Todo App", tableName: "Main", value: "", comment: "")
             todoAppMenuItem.title = appString.replacingOccurrences(
                 of: "frontmost.app", with: frontAppName)
             todoAppMenuItem.isEnabled = !applicationToggle.todoAppIsActive()
