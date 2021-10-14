@@ -32,6 +32,15 @@ class TodoManager {
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
     
+    static func isTodoWindow(_ w: AccessibilityElement) -> Bool {
+        guard let todoWindow = AccessibilityElement.todoWindow() else { return false }
+        return isTodoWindow(w, todoWindow: todoWindow)
+    }
+
+    private static func isTodoWindow(_ w: AccessibilityElement, todoWindow: AccessibilityElement) -> Bool {
+        return w.getIdentifier() == todoWindow.getIdentifier()
+    }
+    
     static func moveAll() {
         TodoManager.refreshTodoScreen()
 

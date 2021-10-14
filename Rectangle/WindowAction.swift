@@ -56,7 +56,8 @@ enum WindowAction: Int {
     bottomLeftSixth = 40,
     bottomCenterSixth = 41,
     bottomRightSixth = 42,
-    specified = 43
+    specified = 43,
+    reverseAll = 44
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -67,7 +68,7 @@ enum WindowAction: Int {
                          moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, lastThreeFourths,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
-                         specified,
+                         specified, reverseAll
     ]
 
     func post() {
@@ -134,6 +135,7 @@ enum WindowAction: Int {
         case .bottomCenterSixth: return "bottomCenterSixth"
         case .bottomRightSixth: return "bottomRightSixth"
         case .specified: return "specified"
+        case .reverseAll: return "reverseAll"
         }
     }
 
@@ -259,7 +261,7 @@ enum WindowAction: Int {
         case .bottomRightSixth:
             key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
-        case .specified:
+        case .specified, .reverseAll:
             return nil
         }
 
@@ -375,7 +377,7 @@ enum WindowAction: Int {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
-        case .specified: return NSImage()
+        case .specified, .reverseAll: return NSImage()
         }
     }
 
@@ -409,7 +411,7 @@ enum WindowAction: Int {
             return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
         case .maximizeHeight:
             return .vertical
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll:
             return .none
         }
     }

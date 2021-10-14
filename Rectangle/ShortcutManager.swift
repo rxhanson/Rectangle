@@ -73,6 +73,11 @@ class ShortcutManager {
     @objc func windowActionTriggered(notification: NSNotification) {
         guard var parameters = notification.object as? ExecutionParameters else { return }
         
+        if parameters.action == .reverseAll {
+            ReverseAllManager.reverseAll()
+            return
+        }
+        
         if Defaults.subsequentExecutionMode.value == .cycleMonitor {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
                   let windowId = parameters.windowId ?? windowElement.getIdentifier()
