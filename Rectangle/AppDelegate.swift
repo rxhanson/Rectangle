@@ -66,8 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
-        initializeTodo()
-
+ 
         checkAutoCheckForUpdates()
         
         Notification.Name.configImported.onPost(using: { _ in
@@ -76,6 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.applicationToggle.reloadFromDefaults()
             self.shortcutManager.reloadFromDefaults()
             self.snappingManager.reloadFromDefaults()
+            self.initializeTodo()
         })
         
         Notification.Name.todoMenuToggled.onPost(using: { _ in
@@ -96,6 +96,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
+        self.initializeTodo()
         checkForProblematicApps()
     }
     
@@ -379,6 +380,7 @@ extension AppDelegate: NSMenuDelegate {
 // todo mode
 extension AppDelegate {
     func initializeTodo() {
+        self.showHideTodoMenuItems()
         guard Defaults.todo.userEnabled else { return }
         TodoManager.registerReflowShortcut()
         if Defaults.todoMode.enabled {
@@ -425,8 +427,6 @@ extension AppDelegate {
         let separator = NSMenuItem.separator()
         separator.tag = TodoItem.separator.tag
         mainStatusMenu.insertItem(separator, at: menuIndex)
-        
-        showHideTodoMenuItems()
     }
     
     private func showHideTodoMenuItems() {

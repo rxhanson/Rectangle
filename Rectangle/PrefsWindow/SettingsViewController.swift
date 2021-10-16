@@ -170,6 +170,7 @@ class SettingsViewController: NSViewController {
         initializeTodoModeSettings()
         
         Notification.Name.configImported.onPost(using: {_ in
+            self.initializeTodoModeSettings()
             self.initializeToggles()
         })
     }
