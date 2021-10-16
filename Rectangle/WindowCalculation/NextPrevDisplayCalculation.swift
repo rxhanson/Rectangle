@@ -52,7 +52,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
     }
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
-        if params.lastAction?.action == .maximize {
+        if params.lastAction?.action == .maximize && !Defaults.autoMaximize.userDisabled {
             let rectResult = WindowCalculationFactory.maximizeCalculation.calculateRect(params)
             return RectResult(rectResult.rect, resultingAction: .maximize)
         }

@@ -60,6 +60,7 @@ class Defaults {
     static let specifiedWidth = FloatDefault(key: "specifiedWidth", defaultValue: 1680)
     static let moveCursorAcrossDisplays = OptionalBoolDefault(key: "moveCursorAcrossDisplays")
     static let moveCursor = OptionalBoolDefault(key: "moveCursor")
+    static let autoMaximize = OptionalBoolDefault(key: "autoMaximize")
 
     static var array: [Default] = [
         launchOnLogin,
