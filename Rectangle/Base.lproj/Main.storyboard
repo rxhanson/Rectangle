@@ -3323,9 +3323,6 @@
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
-                                                <connections>
-                                                    <action selector="setTodoAppWidth:" target="yhc-gS-h02" id="y8C-1y-Tee"/>
-                                                </connections>
                                             </textField>
                                             <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="eTN-Lz-EDf">
                                                 <rect key="frame" x="251" y="3" width="201" height="16"/>
@@ -3732,7 +3729,7 @@ DQ
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="s4a-Yd-3qn">
                                         <rect key="frame" x="-2" y="0.0" width="304" height="60"/>
                                         <textFieldCell key="cell" alignment="left" id="q9C-qZ-xw5">
-                                            <font key="font" metaFont="system" size="12"/>
+                                            <font key="font" metaFont="cellTitle"/>
                                             <string key="title">While in Todo Mode, you can refresh the Todo Mode layout by selecting "Reflow Todo" in the Rectangle menu or activating the associated keyboard shortcut.</string>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
