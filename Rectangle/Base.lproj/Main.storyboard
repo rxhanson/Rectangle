@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19162"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -3730,7 +3729,7 @@ DQ
                                         <rect key="frame" x="-2" y="0.0" width="304" height="60"/>
                                         <textFieldCell key="cell" alignment="left" id="q9C-qZ-xw5">
                                             <font key="font" metaFont="cellTitle"/>
-                                            <string key="title">While in Todo Mode, you can refresh the Todo Mode layout by selecting "Reflow Todo" in the Rectangle menu or activating the associated keyboard shortcut.</string>
+                                            <string key="title">While in Todo Mode, you can refresh the Todo Mode layout by selecting "Reflow Todo" in the Rectangle menu or executing the associated keyboard shortcut.</string>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
