@@ -198,7 +198,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         NSApp.activate(ignoringOtherApps: true)
         prefsWindowController?.showWindow(self)
-        prefsWindowController?.window?.makeKey()
     }
     
     @IBAction func showAbout(_ sender: Any) {

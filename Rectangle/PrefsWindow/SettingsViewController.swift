@@ -106,7 +106,6 @@ class SettingsViewController: NSViewController {
         }
         NSApp.activate(ignoringOtherApps: true)
         aboutTodoWindowController?.showWindow(self)
-        aboutTodoWindowController?.window?.makeKey()
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
