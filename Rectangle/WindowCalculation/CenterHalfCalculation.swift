@@ -32,7 +32,7 @@ class CenterHalfCalculation: WindowCalculation, OrientationAware, RepeatedExecut
         
         // Resize
         rect.size.height = visibleFrameOfScreen.height
-        rect.size.width = round(visibleFrameOfScreen.width * CGFloat(fraction))
+        rect.size.width = round(visibleFrameOfScreen.width * CGFloat(fraction) * 0.9)
         
         // Center
         rect.origin.x = round((visibleFrameOfScreen.width - rect.width) / 2.0) + visibleFrameOfScreen.minX
