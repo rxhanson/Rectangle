@@ -672,38 +672,38 @@
 "Cancel" = "취소";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
-"7yS-wj-uWD.title" = "Show Todo Mode in menu";
+"7yS-wj-uWD.title" = "메뉴에서 Todo 모드 보기";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
-"6e0-ji-qXw.title" = "Todo application width";
+"6e0-ji-qXw.title" = "Todo 어플리케이션 폭";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo shortcut";
+"Fx0-sm-DrT.title" = "Todo 재배치 단축키";
 
-"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
-"Enable Todo Mode" = "Enable Todo Mode";
-"Reflow Todo" = "Reflow Todo";
+"Use frontmost.app as Todo App" = "frontmost.app을 Todo 앱으로 사용";
+"Enable Todo Mode" = "Todo 모드 활성화";
+"Reflow Todo" = "Todo 재배치";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
-"MDd-Sm-sUx.title" = "About Todo Mode";
+"MDd-Sm-sUx.title" = "Todo 모드에 대해";
 
 /* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
-"ZVi-DR-1zj.title" = "About Todo Mode";
+"ZVi-DR-1zj.title" = "Todo 모드에 대해";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
+"FCh-1Q-Xms.title" = "선택한 어플리케이션을 메인 화면의 우측에 항상 표시되도록 합니다";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "Keep a chosen application visible on the right side of your primary screen at all times";
+"N2U-pY-CLq.title" = "선택한 어플리케이션을 메인 화면의 우측에 항상 표시되도록 합니다";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. Bring your chosen todo application frontmost";
+"qze-7p-m1X.title" = "1. Todo 어플리케이션을 맨 앞에 위치시킵니다";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\"";
+"xNi-9K-fnJ.title" = "2. Rectangle 메뉴에서, \n\"[Application]을 Todo 앱으로 사용\" 메뉴를 클릭합니다";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. In the Rectangle menu, enable Todo Mode.";
+"8dv-v2-SPu.title" = "3. Rectangle 메뉴에서, Todo 모드를 활성화 시킵니다";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut.";
+"q9C-qZ-xw5.title" = "Todo 모드를 사용하는 동안, Rectangle 메뉴에서 \"Todo 재배치\"를 클릭하거나 관련 키보드 단축키를 사용해 Todo 모드 레이아웃을 새로 고칠 수 있습니다.";
