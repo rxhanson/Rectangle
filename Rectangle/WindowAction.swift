@@ -412,7 +412,7 @@ enum WindowAction: Int {
         case .maximize:
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
-            return Defaults.applyGapsToMaximize.userDisabled ? .none : .vertical;
+            return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
         case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll:
             return .none
         }

@@ -62,6 +62,7 @@ class Defaults {
     static let moveCursor = OptionalBoolDefault(key: "moveCursor")
     static let autoMaximize = OptionalBoolDefault(key: "autoMaximize")
     static let applyGapsToMaximize = OptionalBoolDefault(key: "applyGapsToMaximize")
+    static let applyGapsToMaximizeHeight = OptionalBoolDefault(key: "applyGapsToMaximizeHeight")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -112,7 +113,8 @@ class Defaults {
         specifiedHeight,
         specifiedWidth,
         moveCursorAcrossDisplays,
-        applyGapsToMaximize
+        applyGapsToMaximize,
+        applyGapsToMaximizeHeight
     ]
 }
 
