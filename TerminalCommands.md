@@ -220,3 +220,19 @@ To disable the Top Half and Bottom Half snap areas, the bit field would be 1111 
 ```bash
 defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 3840
 ```
+
+## Disabling gaps when maximizing
+
+By default, the "Gaps between windows" setting applies to "Maximize" and "Maximize Height".
+
+To disable the gaps for "Maximize", execute:
+
+```bash
+defaults write com.knollsoft.Rectangle applyGapsToMaximize -int 2
+```
+
+To disable the gaps for "Maximize Height", execute:
+
+```bash
+defaults write com.knollsoft.Rectangle applyGapsToMaximizeHeight -int 2
+```
