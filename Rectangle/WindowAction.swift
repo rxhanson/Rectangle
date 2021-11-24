@@ -402,15 +402,17 @@ enum WindowAction: Int {
 
     var gapsApplicable: Dimension {
         switch self {
-        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
+        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
              .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
         case .moveLeft, .moveRight:
             return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
+        case .maximize:
+            return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
-            return .vertical
+            return Defaults.applyGapsToMaximize.userDisabled ? .none : .vertical;
         case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll:
             return .none
         }
