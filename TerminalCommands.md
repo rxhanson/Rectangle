@@ -221,7 +221,7 @@ To disable the Top Half and Bottom Half snap areas, the bit field would be 1111 
 defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 3840
 ```
 
-## Disabling gaps when maximizing
+## Disabling gaps when maximizing (Available in v0.50)
 
 By default, the "Gaps between windows" setting applies to "Maximize" and "Maximize Height".
 
