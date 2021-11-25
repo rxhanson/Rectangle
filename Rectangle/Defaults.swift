@@ -113,6 +113,8 @@ class Defaults {
         specifiedHeight,
         specifiedWidth,
         moveCursorAcrossDisplays,
+        moveCursor,
+        autoMaximize,
         applyGapsToMaximize,
         applyGapsToMaximizeHeight
     ]
