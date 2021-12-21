@@ -641,60 +641,60 @@
 "Pbz-DF-hgG.title" = "Muovi il cursore con le finestre tra schermi";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
-"XlM-ch-cLG.title" = "cycle through displays";
+"XlM-ch-cLG.title" = "cambia schermo selezionato";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "move to adjacent display on left or right";
+"Z9d-Rl-RVq.title" = "sposta nello schermo adiacente a sinistra o destra";
 
 /* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
-"jww-Ju-S3d.title" = "do nothing";
+"jww-Ju-S3d.title" = "nessuna azione";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
+"gHH-BV-5kP.title" = "cambia dimensioni tra ½, ⅔, e ⅓ con l'abbreviazione per ½";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "move to adjacent on left/right, or cycle size on half";
+"3GE-la-fAZ.title" = "sposta nello schermo a sinistra/destra, o cambia dimensioni con l'abbreviazione per ½";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "Repeated commands";
+"2Zm-fl-PcC.title" = "Comandi ripetuti";
 
-"Default Shortcuts" = "Default Shortcuts";
-"Currently using: " = "Currently using: ";
-"Cancel" = "Cancel";
+"Default Shortcuts" = "Abbreviazioni predefinite";
+"Currently using: " = "Attualmente in uso: ";
+"Cancel" = "Annulla";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
-"7yS-wj-uWD.title" = "Show Todo Mode in menu";
+"7yS-wj-uWD.title" = "Mostra modalità In Evidenza nel menu";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
-"6e0-ji-qXw.title" = "Todo application width";
+"6e0-ji-qXw.title" = "Larghezza applicazione In Evidenza";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo shortcut";
+"Fx0-sm-DrT.title" = "Abbreviazione per reimpostare In Evidenza";
 
-"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
-"Enable Todo Mode" = "Enable Todo Mode";
-"Reflow Todo" = "Reflow Todo";
+"Use frontmost.app as Todo App" = "Usa frontmost.app come applicazione In Evidenza";
+"Enable Todo Mode" = "Attiva modalità In Evidenza";
+"Reflow Todo" = "Reimposta In Evidenza";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
-"MDd-Sm-sUx.title" = "About Todo Mode";
+"MDd-Sm-sUx.title" = "Informazioni sulla modalità In Evidenza";
 
 /* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
-"ZVi-DR-1zj.title" = "About Todo Mode";
+"ZVi-DR-1zj.title" = "Informazioni sulla modalità In Evidenza";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
+"FCh-1Q-Xms.title" = "Tieni l'applicazione scelta sempre visibile sulla destra del tuo schermo principale";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "Keep a chosen application visible on the right side of your primary screen at all times";
+"N2U-pY-CLq.title" = "Tieni l'applicazione scelta sempre visibile sulla destra del tuo schermo principale";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. Bring your chosen todo application frontmost";
+"qze-7p-m1X.title" = "1. Seleziona la finestra dell'applicazione scelta";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\"";
+"xNi-9K-fnJ.title" = "2. Nel menu di Rectangle, seleziona \n\"Usa [Applicazione] come applicazione In Evidenza\"";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. In the Rectangle menu, enable Todo Mode.";
+"8dv-v2-SPu.title" = "3. Nel menu di Rectangle, attiva modalità In Evidenza";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut.";
+"q9C-qZ-xw5.title" = "Durante la modalità In Evidenza, puoi reimpostarla selezionando \"Reimposta In Evidenza\" nel menu di Rectangle o con l'abbreviazione da tastiera impostata.";
