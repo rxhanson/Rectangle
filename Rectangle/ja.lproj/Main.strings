@@ -570,7 +570,7 @@
 "kXi-dT-zSF.title" = "Spectacleを使用すると、ショートカットがほかのショートカットと競合する可能性が高まります";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "Spectacleを選択すると、同じショートカットを繰り返した際にウィンドウの幅を順次1/2、2/3、1/3に変更します";
+"xcE-uL-2J0.title" = "Spectacleを選択すると、同じショートカットを繰り返した際にウィンドウの幅を1/2、2/3、1/3に順次変更します";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
 "HtH-yF-lBR.title" = "ようこそ！";
@@ -650,60 +650,60 @@
 "Pbz-DF-hgG.title" = "別ディスプレイへのウィンドウ移動時にカーソルも一緒に移動させる";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
-"XlM-ch-cLG.title" = "cycle through displays";
+"XlM-ch-cLG.title" = "ウィンドウを表示するディスプレイを変更";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "move to adjacent display on left or right";
+"Z9d-Rl-RVq.title" = "ウィンドウを左右のディスプレイに順次移動";
 
 /* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
-"jww-Ju-S3d.title" = "do nothing";
+"jww-Ju-S3d.title" = "何もしない";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
+"gHH-BV-5kP.title" = "ウィンドウの幅を1/2、2/3、1/3に順次変更";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "move to adjacent on left/right, or cycle size on half";
+"3GE-la-fAZ.title" = "ウィンドウを左右いずれかのディスプレイに移動させるか、サイズを半分にするのを繰り返す";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "Repeated commands";
+"2Zm-fl-PcC.title" = "コマンドを繰り返した際の挙動";
 
-"Default Shortcuts" = "Default Shortcuts";
-"Currently using: " = "Currently using: ";
-"Cancel" = "Cancel";
+"Default Shortcuts" = "デフォルトのショートカット";
+"Currently using: " = "現在の設定: ";
+"Cancel" = "キャンセル";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
-"7yS-wj-uWD.title" = "Show Todo Mode in menu";
+"7yS-wj-uWD.title" = "ToDoモードをメニューに表示";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
-"6e0-ji-qXw.title" = "Todo application width";
+"6e0-ji-qXw.title" = "ToDoアプリケーションのウィンドウ幅";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo shortcut";
+"Fx0-sm-DrT.title" = "\"ToDoモードを再設定\"のショートカット";
 
-"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
-"Enable Todo Mode" = "Enable Todo Mode";
-"Reflow Todo" = "Reflow Todo";
+"Use frontmost.app as Todo App" = "frontmost.appをToDoアプリとして使う";
+"Enable Todo Mode" = "ToDoモードを有効にする";
+"Reflow Todo" = "ToDoモードを再設定";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
-"MDd-Sm-sUx.title" = "About Todo Mode";
+"MDd-Sm-sUx.title" = "ToDoモードについて";
 
 /* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
-"ZVi-DR-1zj.title" = "About Todo Mode";
+"ZVi-DR-1zj.title" = "ToDoモードについて";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
+"FCh-1Q-Xms.title" = "メインディスプレイの右部分に、指定されたアプリケーションを常に表示します";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "Keep a chosen application visible on the right side of your primary screen at all times";
+"N2U-pY-CLq.title" = "メインディスプレイの右側に、指定されたアプリケーションを常に表示します";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. Bring your chosen todo application frontmost";
+"qze-7p-m1X.title" = "1. ToDoアプリに指定したいアプリを最前面に表示します";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\"";
+"xNi-9K-fnJ.title" = "2. Rectangleのメニューにある\n\"[アプリケーション名]をToDoアプリとして使う\"を選択します";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. In the Rectangle menu, enable Todo Mode.";
+"8dv-v2-SPu.title" = "3. RectangleのメニューからToDoモードを有効にします。";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut.";
+"q9C-qZ-xw5.title" = "ToDoモードのウィンドウ配置を復元するには、ToDoモードのときに、Rectangleのメニューにある\"ToDoモードを再設定\"を選択するか、指定されたキーボードショートカットを押します。";
