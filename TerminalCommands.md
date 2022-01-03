@@ -100,6 +100,28 @@ defaults write com.knollsoft.Rectangle specifiedHeight -float 1050
 defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
 ```
 
+## Add extra "ninths" sizing commands
+
+Commands for resizing to screen ninths are not available in the UI.  Similar to extra centering you will need to know which keycode and modifier flags you want.
+
+The key codes are:
+
+* topLeftNinth
+* topCenterNinth
+* topRightNinth
+* middleLeftNinth
+* middleCenterNinth
+* middleRightNinth
+* bottomLeftNinth
+* bottomCenterNinth
+* bottomRightNinth
+
+For example, the command for setting the top left ninth shortcut to `ctrl opt shift 1` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 modifierFlags -float 917504
+```
+
 ## Modify the "footprint" displayed for drag to snap area
 
 Adjust the alpha (transparency). Default is 0.3.
