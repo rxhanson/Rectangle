@@ -100,7 +100,7 @@ defaults write com.knollsoft.Rectangle specifiedHeight -float 1050
 defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
 ```
 
-## Add extra "ninths" sizing commands
+## Add extra "ninths" sizing commands (Available in v0.50)
 
 Commands for resizing to screen ninths are not available in the UI.  Similar to extra centering you will need to know which keycode and modifier flags you want.
 
