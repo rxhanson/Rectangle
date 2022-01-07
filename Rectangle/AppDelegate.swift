@@ -427,6 +427,8 @@ extension AppDelegate {
         let separator = NSMenuItem.separator()
         separator.tag = TodoItem.separator.tag
         mainStatusMenu.insertItem(separator, at: menuIndex)
+        
+        showHideTodoMenuItems()
     }
     
     private func showHideTodoMenuItems() {
