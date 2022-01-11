@@ -656,7 +656,7 @@
 "3GE-la-fAZ.title" = "Zu benachbartem Bildschirm auf der linken/rechten Seite bewegen oder auf halben die Größe wechseln";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "Wiederhohlte Befehle";
+"2Zm-fl-PcC.title" = "Wiederholte Befehle";
 
 "Default Shortcuts" = "Standard-Tastenkombinationen";
 "Currently using: " = "Aktuell verwendet: ";
@@ -694,7 +694,7 @@
 "xNi-9K-fnJ.title" = "2. Wählen Sie \n\"Verwende [Application] als To-Do-Anwendung\" im Rectangle-Menü.";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. Aktivieren Sie den To-Do-Modus im Rectangle-Menü..";
+"8dv-v2-SPu.title" = "3. Aktivieren Sie den To-Do-Modus im Rectangle-Menü.";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
 "q9C-qZ-xw5.title" = "Im To-Do-Modus können Sie die To-Do-Anwendung neu ausrichten indem Sie \"To-Do neu ausrichten\" im Rectangle-Menü auswählen oder indem Sie die zugewiesene Tastenkombination ausführen.";
