@@ -11,6 +11,8 @@
 		30166BD024F27D6A00A38608 /* SpecifiedCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */; };
 		6327EAA4FEECF2AE087FCD30 /* Pods_RectangleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D6E6EACB077B1A204F3A62 /* Pods_RectangleTests.framework */; };
 		866661F2257D248A00A9CD2D /* RepeatedExecutionsInThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866661F1257D248A00A9CD2D /* RepeatedExecutionsInThirdsCalculation.swift */; };
+		98192DDA270F606C00015E66 /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98192DD9270F606C00015E66 /* Debounce.swift */; };
+		98192DDE2717201100015E66 /* ReverseAllManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98192DDD2717201000015E66 /* ReverseAllManager.swift */; };
 		981F27D12340E3E1006CD263 /* InternetAccessPolicy.plist in Resources */ = {isa = PBXBuildFile; fileRef = 981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */; };
 		9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */; };
 		9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9821402222B3886100ABFB3F /* CenterCalculation.swift */; };
@@ -95,6 +97,16 @@
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
+		D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */; };
+		D04CE30227817A6100BD47B3 /* TopCenterNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */; };
+		D04CE30427817A6F00BD47B3 /* TopRightNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30327817A6F00BD47B3 /* TopRightNinthCalculation.swift */; };
+		D04CE30627817A8400BD47B3 /* MiddleLeftNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30527817A8400BD47B3 /* MiddleLeftNinthCalculation.swift */; };
+		D04CE30827817A9200BD47B3 /* MiddleCenterNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30727817A9200BD47B3 /* MiddleCenterNinthCalculation.swift */; };
+		D04CE30A27817A9F00BD47B3 /* MiddleRightNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30927817A9F00BD47B3 /* MiddleRightNinthCalculation.swift */; };
+		D04CE30C27817AA900BD47B3 /* BottomLeftNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30B27817AA900BD47B3 /* BottomLeftNinthCalculation.swift */; };
+		D04CE30E27817AB500BD47B3 /* BottomCenterNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30D27817AB500BD47B3 /* BottomCenterNinthCalculation.swift */; };
+		D04CE31027817ABE00BD47B3 /* BottomRightNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30F27817ABE00BD47B3 /* BottomRightNinthCalculation.swift */; };
+		D04CE31227817C9B00BD47B3 /* NinthsRepeated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE31127817C9B00BD47B3 /* NinthsRepeated.swift */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
 /* End PBXBuildFile section */
 
@@ -133,6 +145,8 @@
 		866661F1257D248A00A9CD2D /* RepeatedExecutionsInThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsInThirdsCalculation.swift; sourceTree = "<group>"; };
 		9808018523D05C0B0077774A /* RectangleRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RectangleRelease.entitlements; sourceTree = "<group>"; };
 		9808018623D05C1F0077774A /* RectangleLauncherRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RectangleLauncherRelease.entitlements; sourceTree = "<group>"; };
+		98192DD9270F606C00015E66 /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
+		98192DDD2717201000015E66 /* ReverseAllManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseAllManager.swift; sourceTree = "<group>"; };
 		981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InternetAccessPolicy.plist; sourceTree = "<group>"; };
 		9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomHalfCalculation.swift; sourceTree = "<group>"; };
 		9821402222B3886100ABFB3F /* CenterCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterCalculation.swift; sourceTree = "<group>"; };
@@ -256,6 +270,16 @@
 		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
+		D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopCenterNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30327817A6F00BD47B3 /* TopRightNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRightNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30527817A8400BD47B3 /* MiddleLeftNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleLeftNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30727817A9200BD47B3 /* MiddleCenterNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleCenterNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30927817A9F00BD47B3 /* MiddleRightNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleRightNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30B27817AA900BD47B3 /* BottomLeftNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30D27817AB500BD47B3 /* BottomCenterNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomCenterNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE30F27817ABE00BD47B3 /* BottomRightNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomRightNinthCalculation.swift; sourceTree = "<group>"; };
+		D04CE31127817C9B00BD47B3 /* NinthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinthsRepeated.swift; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
 		F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -305,6 +329,14 @@
 				DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		98192DDF2717201E00015E66 /* MultiWindow */ = {
+			isa = PBXGroup;
+			children = (
+				98192DDD2717201000015E66 /* ReverseAllManager.swift */,
+			);
+			path = MultiWindow;
 			sourceTree = "<group>";
 		};
 		9821403D22B3EBD900ABFB3F /* RectangleLauncher */ = {
@@ -375,6 +407,16 @@
 				98A6EDDC251F3F4A00F74B10 /* SixthsRepeated.swift */,
 				866661F1257D248A00A9CD2D /* RepeatedExecutionsInThirdsCalculation.swift */,
 				30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */,
+				D04CE31127817C9B00BD47B3 /* NinthsRepeated.swift */,
+				D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */,
+				D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */,
+				D04CE30327817A6F00BD47B3 /* TopRightNinthCalculation.swift */,
+				D04CE30527817A8400BD47B3 /* MiddleLeftNinthCalculation.swift */,
+				D04CE30727817A9200BD47B3 /* MiddleCenterNinthCalculation.swift */,
+				D04CE30927817A9F00BD47B3 /* MiddleRightNinthCalculation.swift */,
+				D04CE30B27817AA900BD47B3 /* BottomLeftNinthCalculation.swift */,
+				D04CE30D27817AB500BD47B3 /* BottomCenterNinthCalculation.swift */,
+				D04CE30F27817ABE00BD47B3 /* BottomRightNinthCalculation.swift */,
 			);
 			path = WindowCalculation;
 			sourceTree = "<group>";
@@ -408,6 +450,7 @@
 				98D16A432592AD55005228CB /* MASShortcutMigration.swift */,
 				98D16A482592B460005228CB /* NotificationExtension.swift */,
 				98BEFA472620DEDC00D9D54F /* NSImageExtension.swift */,
+				98192DD9270F606C00015E66 /* Debounce.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -463,6 +506,7 @@
 				985B9BFA22BE218C00A2E8F0 /* Popover */,
 				982140EA22B7DB0400ABFB3F /* WindowMover */,
 				982140E922B7DA3100ABFB3F /* WindowCalculation */,
+				98192DDF2717201E00015E66 /* MultiWindow */,
 				982140EB22B7DB1A00ABFB3F /* AccessibilityAuthorization */,
 				982140EC22B7DB5700ABFB3F /* Utilities */,
 			);
@@ -803,6 +847,7 @@
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
 				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
+				D04CE30A27817A9F00BD47B3 /* MiddleRightNinthCalculation.swift in Sources */,
 				98BEFA482620DEDD00D9D54F /* NSImageExtension.swift in Sources */,
 				98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */,
 				9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */,
@@ -811,29 +856,38 @@
 				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
 				98D16A442592AD55005228CB /* MASShortcutMigration.swift in Sources */,
 				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
+				D04CE30827817A9200BD47B3 /* MiddleCenterNinthCalculation.swift in Sources */,
 				98A009BD251253A000CFBF0C /* BottomCenterSixthCalculation.swift in Sources */,
 				98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */,
 				98A009AF2512517900CFBF0C /* SecondFourthCalculation.swift in Sources */,
+				D04CE30C27817AA900BD47B3 /* BottomLeftNinthCalculation.swift in Sources */,
 				9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */,
+				98192DDA270F606C00015E66 /* Debounce.swift in Sources */,
+				D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
 				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
 				98B3559823CE025700E410E0 /* CenteringFixedSizedWindowMover.swift in Sources */,
 				9824704E22B189250037B409 /* QuantizedWindowMover.swift in Sources */,
+				D04CE30627817A8400BD47B3 /* MiddleLeftNinthCalculation.swift in Sources */,
 				9824703B22B139780037B409 /* CUtil.swift in Sources */,
 				988D067D22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift in Sources */,
 				98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */,
 				985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */,
 				988D066722EB4CC0004EABD7 /* LastTwoThirdsCalculation.swift in Sources */,
+				98192DDE2717201100015E66 /* ReverseAllManager.swift in Sources */,
 				98A009B1251252C900CFBF0C /* ThirdFourthCalculation.swift in Sources */,
+				D04CE31227817C9B00BD47B3 /* NinthsRepeated.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
 				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,
+				D04CE30427817A6F00BD47B3 /* TopRightNinthCalculation.swift in Sources */,
 				98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */,
 				9821402522B3887200ABFB3F /* MaximizeCalculation.swift in Sources */,
 				866661F2257D248A00A9CD2D /* RepeatedExecutionsInThirdsCalculation.swift in Sources */,
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
 				98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
+				D04CE31027817ABE00BD47B3 /* BottomRightNinthCalculation.swift in Sources */,
 				98A009B92512538D00CFBF0C /* TopRightSixthCalculation.swift in Sources */,
 				98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
@@ -857,6 +911,7 @@
 				98D4B6C525B6256C009C7BF6 /* TodoManager.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				98A009BF251253AB00CFBF0C /* BottomRightSixthCalculation.swift in Sources */,
+				D04CE30227817A6100BD47B3 /* TopCenterNinthCalculation.swift in Sources */,
 				98A009B52512537800CFBF0C /* TopLeftSixthCalculation.swift in Sources */,
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				30166BD024F27D6A00A38608 /* SpecifiedCalculation.swift in Sources */,
@@ -870,6 +925,7 @@
 				988D066922EB4CCB004EABD7 /* LastThirdCalculation.swift in Sources */,
 				98A6EDEC2528FFC100F74B10 /* WindowActionCategory.swift in Sources */,
 				988D068322EB4EF3004EABD7 /* MoveUpDownCalculation.swift in Sources */,
+				D04CE30E27817AB500BD47B3 /* BottomCenterNinthCalculation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1121,7 +1177,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 55;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = NO;
 				INFOPLIST_FILE = Rectangle/Info.plist;
@@ -1130,7 +1186,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.48;
+				MARKETING_VERSION = 0.50;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1147,7 +1203,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 53;
+				CURRENT_PROJECT_VERSION = 55;
 				DEVELOPMENT_TEAM = XSYZ3E4B7D;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
@@ -1156,7 +1212,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.48;
+				MARKETING_VERSION = 0.50;
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

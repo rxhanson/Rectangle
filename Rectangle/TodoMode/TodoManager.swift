@@ -11,7 +11,7 @@ import MASShortcut
 
 class TodoManager {
     static var todoScreen : NSScreen?
-    private static let defaultsKey = "reflowTodo"
+    static let defaultsKey = "reflowTodo"
     
     static func registerReflowShortcut() {
         
@@ -30,6 +30,15 @@ class TodoManager {
     static func getReflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
         guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: defaultsKey) as? MASShortcut else { return nil }
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
+    }
+    
+    static func isTodoWindow(_ w: AccessibilityElement) -> Bool {
+        guard let todoWindow = AccessibilityElement.todoWindow() else { return false }
+        return isTodoWindow(w, todoWindow: todoWindow)
+    }
+
+    private static func isTodoWindow(_ w: AccessibilityElement, todoWindow: AccessibilityElement) -> Bool {
+        return w.getIdentifier() == todoWindow.getIdentifier()
     }
     
     static func moveAll() {
@@ -55,6 +64,10 @@ class TodoManager {
                 rect.origin.y = screenFrame.minY
                 rect.size.height = screen.adjustedVisibleFrame.height
                 rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
+                if Defaults.gapSize.value > 0 {
+                    rect = AccessibilityElement.normalizeCoordinatesOf(rect, frameOfScreen: screen.adjustedVisibleFrame)
+                    rect = GapCalculation.applyGaps(rect, sharedEdges: .left, gapSize: Defaults.gapSize.value)
+                }
                 todoWindow.setRectOf(rect)
             }
 

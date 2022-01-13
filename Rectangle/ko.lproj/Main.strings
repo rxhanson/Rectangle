@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "이동하기 또는 절반 동작을 반복하면 윈도우가 1/2, 2/3, 혹은 1/3 크기가 되는 대신, 다음 디스플레이로 이동합니다.";
+"01Z-t3-cBm.title" = "이동하기 또는 절반 동작을 반복하면 창이 1/2, 2/3, 혹은 1/3 크기가 되는 대신, 다음 디스플레이로 이동합니다.";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "마지막 2/3";
@@ -276,7 +276,7 @@
 "SXx-HZ-GkB.title" = "왼쪽 및 오른쪽 명령을 반복하여 디스플레이 순환";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
-"Td7-aD-5lo.title" = "윈도우";
+"Td7-aD-5lo.title" = "창";
 
 /* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
 "UEZ-Bs-lqG.title" = "대문자로 만들기";
@@ -333,7 +333,7 @@
 "aTl-1u-JFS.title" = "프린트…";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
-"aUF-d1-5bR.title" = "윈도우";
+"aUF-d1-5bR.title" = "창";
 
 /* Class = "NSMenu"; title = "Font"; ObjectID = "aXa-aM-Jaq"; */
 "aXa-aM-Jaq.title" = "서체";
@@ -585,10 +585,10 @@
 "Fko-xs-gN5.title" = "두번째 1/4";
 
 /* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
-"T9Z-QF-gwc.title" = "";
+"T9Z-QF-gwc.title" = "처음 3/4";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "";
+"nwX-h6-fwm.title" = "마지막 3/4";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "세번째 1/4";
@@ -634,17 +634,76 @@
 "Thirds" = "3등분";
 "Maximize" = "최대화";
 "Size" = "크기";
-"Display" = "화면";
+"Display" = "디스플레이";
 "Other" = "기타";
 "Move to Edge" = "모서리로 이동";
 "Fourths" = "4등분";
 "Sixths" = "6등분";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "";
+"RgZ-Jw-XQZ.title" = "가져오기";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "";
+"IO3-Hi-7gC.title" = "내보내기";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "창이 디스플레이 이동시 커서도 함께 이동";
+
+/* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
+"XlM-ch-cLG.title" = "디스플레이 순환";
+
+/* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
+"Z9d-Rl-RVq.title" = "인접한 왼쪽 또는 오른쪽 디스플레이로 이동";
+
+/* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
+"jww-Ju-S3d.title" = "아무것도 하지 않음";
+
+/* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
+"gHH-BV-5kP.title" = "절반 동작에 대해 ½, ⅔, ⅓ 동작을 순환";
+
+/* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
+"3GE-la-fAZ.title" = "인접한 왼쪽 또는 오른쪽 디스플레이로 이동, 절반 동작시 창 크기 순환";
+
+/* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
+"2Zm-fl-PcC.title" = "커맨드 반복 입력시";
+
+"Default Shortcuts" = "기본 단축키 선택";
+"Currently using: " = "현재 사용중: ";
+"Cancel" = "취소";
+
+/* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
+"7yS-wj-uWD.title" = "메뉴에서 Todo 모드 보기";
+
+/* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
+"6e0-ji-qXw.title" = "Todo 어플리케이션 폭";
+
+/* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
+"Fx0-sm-DrT.title" = "Todo 재배치 단축키";
+
+"Use frontmost.app as Todo App" = "frontmost.app을 Todo 앱으로 사용";
+"Enable Todo Mode" = "Todo 모드 활성화";
+"Reflow Todo" = "Todo 재배치";
+
+/* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
+"MDd-Sm-sUx.title" = "Todo 모드에 대해";
+
+/* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
+"ZVi-DR-1zj.title" = "Todo 모드에 대해";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
+"FCh-1Q-Xms.title" = "선택한 어플리케이션을 메인 화면의 우측에 항상 표시되도록 합니다";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
+"N2U-pY-CLq.title" = "선택한 어플리케이션을 메인 화면의 우측에 항상 표시되도록 합니다";
+
+/* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
+"qze-7p-m1X.title" = "1. Todo 어플리케이션을 맨 앞에 위치시킵니다";
+
+/* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
+"xNi-9K-fnJ.title" = "2. Rectangle 메뉴에서, \n\"[Application]을 Todo 앱으로 사용\" 메뉴를 클릭합니다";
+
+/* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
+"8dv-v2-SPu.title" = "3. Rectangle 메뉴에서, Todo 모드를 활성화 시킵니다";
+
+/* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
+"q9C-qZ-xw5.title" = "Todo 모드를 사용하는 동안, Rectangle 메뉴에서 \"Todo 재배치\"를 클릭하거나 관련 키보드 단축키를 사용해 Todo 모드 레이아웃을 새로 고칠 수 있습니다.";

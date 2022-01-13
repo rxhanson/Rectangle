@@ -9,6 +9,7 @@
 import Cocoa
 import ServiceManagement
 import Sparkle
+import MASShortcut
 
 class SettingsViewController: NSViewController {
         
@@ -16,7 +17,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var versionLabel: NSTextField!
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
-    @IBOutlet weak var subsequentExecutionCheckbox: NSButton!
+    @IBOutlet weak var subsequentExecutionPopUpButton: NSPopUpButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesAutomaticallyCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesButton: NSButton!
@@ -24,6 +25,11 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
+    @IBOutlet weak var todoCheckbox: NSButton!
+    @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
+    @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
+    
+    private var aboutTodoWindowController: NSWindowController?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -46,11 +52,15 @@ class SettingsViewController: NSViewController {
         Defaults.hideMenuBarIcon.enabled = newSetting
         RectangleStatusItem.instance.refreshVisibility()
     }
-    
-    @IBAction func toggleSubsequentExecutionBehavior(_ sender: NSButton) {
-        Defaults.subsequentExecutionMode.value = sender.state == .on
-            ? .acrossMonitor
-            : .resize
+
+    @IBAction func setSubsequentExecutionBehavior(_ sender: NSPopUpButton) {
+        let tag = sender.selectedTag()
+        guard let mode = SubsequentExecutionMode(rawValue: tag) else {
+            Logger.log("Expected a pop up button to have a selected item with a valid tag matching a value of SubsequentExecutionMode. Got: \(String(describing: tag))")
+            return
+        }
+
+        Defaults.subsequentExecutionMode.value = mode
     }
     
     @IBAction func gapSliderChanged(_ sender: NSSlider) {
@@ -84,10 +94,29 @@ class SettingsViewController: NSViewController {
         SUUpdater.shared()?.checkForUpdates(sender)
     }
     
+    @IBAction func toggleTodoMode(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.todo.enabled = newSetting
+        Notification.Name.todoMenuToggled.post()
+    }
+    
+    @IBAction func showTodoModeHelp(_ sender: Any) {
+        if aboutTodoWindowController == nil {
+            aboutTodoWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "AboutTodoWindowController") as? NSWindowController
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        aboutTodoWindowController?.showWindow(self)
+    }
+    
     @IBAction func restoreDefaults(_ sender: Any) {
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
         let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
-        let response = AlertUtil.twoButtonAlert(question: "Default Shortcuts", text: "You are currently using \(currentDefaults) defaults.\n\nSelect your defaults. ", confirmText: "Rectangle", cancelText: "Spectacle")
+        let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
+        let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
+        let cancelText = NSLocalizedString("Cancel", tableName: "Main", value: "", comment: "")
+        let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
+        if response == .alertThirdButtonReturn { return }
+
+        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
         let rectangleDefaults = response == .alertFirstButtonReturn
         if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
             Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
@@ -139,9 +168,20 @@ class SettingsViewController: NSViewController {
 
         checkForUpdatesButton.title = NSLocalizedString("HIK-3r-i7E.title", tableName: "Main", value: "Check for Updates…", comment: "")
         
+        initializeTodoModeSettings()
+        
         Notification.Name.configImported.onPost(using: {_ in
+            self.initializeTodoModeSettings()
             self.initializeToggles()
         })
+    }
+    
+    func initializeTodoModeSettings() {
+        todoCheckbox.state = Defaults.todo.userEnabled ? .on : .off
+        todoAppWidthField.stringValue = String(Defaults.todoSidebarWidth.value)
+        todoAppWidthField.delegate = self
+        todoAppWidthField.defaults = Defaults.todoSidebarWidth
+        reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.defaultsKey, withTransformerName: MASDictionaryTransformerName)
     }
     
     func initializeToggles() {
@@ -151,7 +191,7 @@ class SettingsViewController: NSViewController {
         
         hideMenuBarIconCheckbox.state = Defaults.hideMenuBarIcon.enabled ? .on : .off
         
-        subsequentExecutionCheckbox.state = Defaults.subsequentExecutionMode.value == .acrossMonitor ? .on : .off
+        subsequentExecutionPopUpButton.selectItem(withTag: Defaults.subsequentExecutionMode.value.rawValue)
         
         allowAnyShortcutCheckbox.state = Defaults.allowAnyShortcut.enabled ? .on : .off
         
@@ -177,4 +217,19 @@ extension SettingsViewController {
         }
         return viewController
     }
+}
+
+extension SettingsViewController: NSTextFieldDelegate {
+    func controlTextDidChange(_ obj: Notification) {
+        guard let sender = obj.object as? AutoSaveFloatField,
+              let defaults: FloatDefault = sender.defaults else { return }
+        
+        Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
+            defaults.value = floatValue
+        }
+    }
+}
+
+class AutoSaveFloatField: NSTextField {
+    var defaults: FloatDefault?
 }

@@ -20,7 +20,6 @@ class AccessibilityAuthorization {
             
             NSApp.activate(ignoringOtherApps: true)
             accessibilityWindowController?.showWindow(self)
-            accessibilityWindowController?.window?.makeKey()
             pollAccessibility(completion: completion)
             return false
         } else {

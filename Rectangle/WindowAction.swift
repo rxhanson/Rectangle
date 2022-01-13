@@ -56,7 +56,17 @@ enum WindowAction: Int {
     bottomLeftSixth = 40,
     bottomCenterSixth = 41,
     bottomRightSixth = 42,
-    specified = 43
+    specified = 43,
+    reverseAll = 44,
+    topLeftNinth = 45,
+    topCenterNinth = 46,
+    topRightNinth = 47,
+    middleLeftNinth = 48,
+    middleCenterNinth = 49,
+    middleRightNinth = 50,
+    bottomLeftNinth = 51,
+    bottomCenterNinth = 52,
+    bottomRightNinth = 53
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -67,15 +77,22 @@ enum WindowAction: Int {
                          moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, lastThreeFourths,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
-                         specified,
+                         specified, reverseAll,
+                         topLeftNinth, topCenterNinth, topRightNinth,
+                         middleLeftNinth, middleCenterNinth, middleRightNinth,
+                         bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
     ]
 
     func post() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self))
     }
+    
+    func postMenu() {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .menuItem))
+    }
 
     func postSnap(windowElement: AccessibilityElement?, windowId: Int?, screen: NSScreen) {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId))
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap))
     }
 
     // Determines where separators should be used in the menu
@@ -130,6 +147,16 @@ enum WindowAction: Int {
         case .bottomCenterSixth: return "bottomCenterSixth"
         case .bottomRightSixth: return "bottomRightSixth"
         case .specified: return "specified"
+        case .reverseAll: return "reverseAll"
+        case .topLeftNinth: return "topLeftNinth"
+        case .topCenterNinth: return "topCenterNinth"
+        case .topRightNinth: return "topRightNinth"
+        case .middleLeftNinth: return "middleLeftNinth"
+        case .middleCenterNinth: return "middleCenterNinth"
+        case .middleRightNinth: return "middleRightNinth"
+        case .bottomLeftNinth: return "bottomLeftNinth"
+        case .bottomCenterNinth: return "bottomCenterNinth"
+        case .bottomRightNinth: return "bottomRightNinth"
         }
     }
 
@@ -255,7 +282,9 @@ enum WindowAction: Int {
         case .bottomRightSixth:
             key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
-        case .specified:
+        case .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth:
+            return nil
+        case .specified, .reverseAll:
             return nil
         }
 
@@ -371,7 +400,16 @@ enum WindowAction: Int {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
-        case .specified: return NSImage()
+        case .topLeftNinth: return NSImage()
+        case .topCenterNinth: return NSImage()
+        case .topRightNinth: return NSImage()
+        case .middleLeftNinth: return NSImage()
+        case .middleCenterNinth: return NSImage()
+        case .middleRightNinth: return NSImage()
+        case .bottomLeftNinth: return NSImage()
+        case .bottomCenterNinth: return NSImage()
+        case .bottomRightNinth: return NSImage()
+        case .specified, .reverseAll: return NSImage()
         }
     }
 
@@ -396,16 +434,19 @@ enum WindowAction: Int {
 
     var gapsApplicable: Dimension {
         switch self {
-        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .maximize, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
-             .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth:
+        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
+             .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
+            .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
         case .moveLeft, .moveRight:
             return Defaults.resizeOnDirectionalMove.enabled ? .horizontal : .none;
+        case .maximize:
+            return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
-            return .vertical
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified:
+            return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll:
             return .none
         }
     }
@@ -482,6 +523,16 @@ enum SubWindowAction {
     bottomRightTwoSixthsLandscape,
     bottomRightTwoSixthsPortrait,
     
+    topLeftNinth,
+    topCenterNinth,
+    topRightNinth,
+    middleLeftNinth,
+    middleCenterNinth,
+    middleRightNinth,
+    bottomLeftNinth,
+    bottomCenterNinth,
+    bottomRightNinth,
+        
     maximize
 
     var gapSharedEdge: Edge {
@@ -530,6 +581,15 @@ enum SubWindowAction {
         case .bottomLeftTwoSixthsPortrait: return [.right, .top]
         case .bottomRightTwoSixthsLandscape: return [.left, .top]
         case .bottomRightTwoSixthsPortrait: return [.left, .top]
+        case .topLeftNinth: return [.right, .bottom]
+        case .topCenterNinth: return [.right, .left, .bottom]
+        case .topRightNinth: return [.left, .bottom]
+        case .middleLeftNinth: return [.top, .right, .bottom]
+        case .middleCenterNinth: return [.top, .right, .bottom, .left]
+        case .middleRightNinth: return [.left, .top, .bottom]
+        case .bottomLeftNinth: return [.top, .right]
+        case .bottomCenterNinth: return [.left, .top, .right]
+        case .bottomRightNinth: return [.left, .top]
         case .maximize: return .none
         }
     }

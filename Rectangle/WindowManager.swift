@@ -144,6 +144,11 @@ class WindowManager {
         
         let resultingRect = frontmostWindowElement.rectOfElement()
         
+        if Defaults.moveCursor.userEnabled, parameters.source == .keyboardShortcut {
+            let windowCenter = NSMakePoint(NSMidX(resultingRect), NSMidY(resultingRect))
+            CGWarpMouseCursorPosition(windowCenter)
+        }
+        
         if usableScreens.currentScreen != calcResult.screen {
             frontmostWindowElement.bringToFront(force: true)
             
@@ -183,12 +188,18 @@ struct ExecutionParameters {
     let screen: NSScreen?
     let windowElement: AccessibilityElement?
     let windowId: Int?
+    let source: ExecutionSource
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: Int? = nil) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: Int? = nil, source: ExecutionSource = .keyboardShortcut) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
         self.windowElement = windowElement
         self.windowId = windowId
+        self.source = source
     }
+}
+
+enum ExecutionSource {
+    case keyboardShortcut, dragToSnap, menuItem
 }
