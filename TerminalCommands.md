@@ -100,7 +100,7 @@ defaults write com.knollsoft.Rectangle specifiedHeight -float 1050
 defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
 ```
 
-## Add extra "ninths" sizing commands (Available in v0.50)
+## Add extra "ninths" sizing commands
 
 Commands for resizing to screen ninths are not available in the UI.  Similar to extra centering you will need to know which keycode and modifier flags you want.
 
@@ -243,7 +243,7 @@ To disable the Top Half and Bottom Half snap areas, the bit field would be 1111 
 defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 3840
 ```
 
-## Disabling gaps when maximizing (Available in v0.50)
+## Disabling gaps when maximizing
 
 By default, the "Gaps between windows" setting applies to "Maximize" and "Maximize Height".
 
