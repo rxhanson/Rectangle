@@ -121,7 +121,7 @@ class AccessibilityElement {
     static func normalizeCoordinatesOf(_ rect: CGRect, frameOfScreen: CGRect) -> CGRect {
         var normalizedRect = rect
         let frameOfScreenWithMenuBar = NSScreen.screens[0].frame as CGRect
-        normalizedRect.origin.y = frameOfScreen.size.height - rect.maxY + (frameOfScreenWithMenuBar.size.height - frameOfScreen.size.height)
+        normalizedRect.origin.y = frameOfScreenWithMenuBar.height - rect.maxY
         return normalizedRect
     }
     
