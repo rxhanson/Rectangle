@@ -96,27 +96,26 @@ class SnappingManager {
         case .leftMouseDown:
             if !Defaults.obtainWindowOnClick.userDisabled {
                 windowElement = AccessibilityElement.windowUnderCursor()
-                windowId = windowElement?.getIdentifier()
+                windowId = windowElement?.windowId ?? windowElement?.getIdentifier()
                 initialWindowRect = windowElement?.rectOfElement()
             }
         case .leftMouseUp:
             if let currentSnapArea = self.currentSnapArea {
                 box?.close()
-                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
+                currentSnapArea.action.postSnap(windowElement: windowElement, screen: currentSnapArea.screen)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
                 // this typically only happens if the user is dragging and dropping windows really quickly
                 // in this scenario, the footprint doesn't display but the snap will still occur, as long as the window position is updated as of mouse up.
                 if let currentRect = windowElement?.rectOfElement(),
-                   let windowId = windowId,
                    currentRect.size == initialWindowRect?.size,
                    currentRect.origin != initialWindowRect?.origin,
                    let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
                     box?.close()
                     if !(Defaults.snapModifiers.value > 0) ||
                        event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue == Defaults.snapModifiers.value {
-                        snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
+                        snapArea.action.postSnap(windowElement: windowElement, screen: snapArea.screen)
                     }
                     self.currentSnapArea = nil
                 }
@@ -137,7 +136,7 @@ class SnappingManager {
                 if windowElement == nil {
                     windowElement = AccessibilityElement.windowUnderCursor()
                 }
-                windowId = windowElement?.getIdentifier()
+                windowId = windowElement?.windowId ?? windowElement?.getIdentifier()
                 initialWindowRect = windowElement?.rectOfElement()
                 windowIdAttempt += 1
                 lastWindowIdAttempt = event.timestamp

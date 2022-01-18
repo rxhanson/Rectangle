@@ -21,7 +21,8 @@ class AccessibilityElement {
     static let systemWideElement = AccessibilityElement(AXUIElementCreateSystemWide())
 
     private let underlyingElement: AXUIElement
-    
+    var windowId: Int?
+
     required init(_ axUIElement: AXUIElement) {
         self.underlyingElement = axUIElement
     }
@@ -44,18 +45,72 @@ class AccessibilityElement {
 
     static func windowUnderCursor() -> AccessibilityElement? {
         guard let location = CGEvent(source: nil)?.location else { return nil }
+        
+        if let windowInfo = getWindowInfo(at: location) {
+            let pidWindows = Self.allWindows(pid: windowInfo.pid)
+            for windowElement in pidWindows {
+                if windowElement.rectOfElement().equalTo(windowInfo.rect) {
+                    windowElement.windowId = windowInfo.id
+                    return windowElement
+                }
+            }
+        }
+
         var element: AXUIElement?
         let result: AXError = AXUIElementCopyElementAtPosition(systemWideElement.underlyingElement, Float(location.x), Float(location.y), &element)
-        if result == .success {
-            if let element = element {
-                return AccessibilityElement(element).window()
-            }
-        } else {
-            print("Unable to obtain the accessibility element with the specified attribute at mouse location")
+        if result == .success, let element = element, let windowElement = AccessibilityElement(element).window() {
+            return windowElement
         }
+                
+        Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
+        return nil
+    }
+
+    private static func getWindowInfo(at location: CGPoint) -> CGWindowInfo? {
+        if let windowInfo = CGWindowListCopyWindowInfo(.optionOnScreenOnly, 0) as? Array<Dictionary<String,Any>> {
+            for infoDict in windowInfo {
+                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
+                    guard let pid = infoDict[kCGWindowOwnerPID as String] as? pid_t,
+                          let id = infoDict[kCGWindowNumber as String] as? Int,
+                          let x = bounds["X"],
+                          let y = bounds["Y"],
+                          let w = bounds["Width"],
+                          let h = bounds["Height"]
+                    else { continue }
+                    let boundsRect = NSMakeRect(x, y, w, h)
+                    if boundsRect.contains(location) {
+                        return CGWindowInfo(id: id, pid: pid, rect: boundsRect)
+                    }
+                }
+            }
+        }
+            
+            
+        Logger.log("Unable to obtain window id from location")
         return nil
     }
     
+    private static func allWindows(pid: pid_t) -> [AccessibilityElement] {
+        var windows = [AccessibilityElement]()
+        
+        let app = AccessibilityElement(AXUIElementCreateApplication(pid))
+        var rawValue: AnyObject? = nil
+        if AXUIElementCopyAttributeValue(app.underlyingElement,
+                                         NSAccessibility.Attribute.windows as CFString,
+                                         &rawValue) == .success {
+            windows.append(contentsOf: (rawValue as! [AXUIElement]).map { AccessibilityElement($0) })
+        }
+
+        return windows
+
+    }
+    
+    struct CGWindowInfo {
+        let id: Int
+        let pid: pid_t
+        let rect: NSRect
+    }
+
     func withAttribute(_ attribute: CFString) -> AccessibilityElement? {
         var copiedUnderlyingElement: AnyObject?
         let result: AXError = AXUIElementCopyAttributeValue(underlyingElement, attribute, &copiedUnderlyingElement)

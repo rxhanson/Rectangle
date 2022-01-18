@@ -80,7 +80,7 @@ class ShortcutManager {
         
         if Defaults.subsequentExecutionMode.value == .cycleMonitor {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
-                  let windowId = parameters.windowId ?? windowElement.getIdentifier()
+                  let windowId = windowElement.windowId ?? windowElement.getIdentifier()
             else {
                 NSSound.beep()
                 return
@@ -88,7 +88,7 @@ class ShortcutManager {
             
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId) {
                 if let screen = ScreenDetection().detectScreens(using: windowElement)?.adjacentScreens?.next{
-                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId)
+                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement)
                     // Bypass any other subsequent action by removing the last action
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }

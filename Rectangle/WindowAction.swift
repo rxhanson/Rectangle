@@ -91,8 +91,8 @@ enum WindowAction: Int {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .menuItem))
     }
 
-    func postSnap(windowElement: AccessibilityElement?, windowId: Int?, screen: NSScreen) {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap))
+    func postSnap(windowElement: AccessibilityElement?, screen: NSScreen) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, source: .dragToSnap))
     }
 
     // Determines where separators should be used in the menu
