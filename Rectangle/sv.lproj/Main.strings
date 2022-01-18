@@ -1,0 +1,699 @@
+/* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
+"01Z-t3-cBm.title" = "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek.";
+
+/* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
+"08q-Ce-1QL.title" = "Sista två tredjedelar";
+
+/* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
+"0Ak-33-SM7.title" = "Övre högra";
+
+/* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
+"1Rc-Od-eP5.title" = "Flytta ner";
+
+/* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
+"1UK-8n-QPP.title" = "Anpassa verktygsfältet…";
+
+/* Class = "NSMenuItem"; title = "Rectangle"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "Rectangle";
+
+/* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
+"1b7-l0-nxx.title" = "Sök";
+
+/* Class = "NSMenuItem"; title = "Lower"; ObjectID = "1tx-W0-xDw"; */
+"1tx-W0-xDw.title" = "Nedre";
+
+/* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
+"1ui-PL-TkR.title" = "Fäst fönster genom att dra";
+
+/* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
+"2h7-ER-AoG.title" = "Höja";
+
+/* Class = "NSMenuItem"; title = "Transformations"; ObjectID = "2oI-Rn-ZJC"; */
+"2oI-Rn-ZJC.title" = "Transformationer";
+
+/* Class = "NSMenu"; title = "Spelling"; ObjectID = "3IN-sU-3Bg"; */
+"3IN-sU-3Bg.title" = "Stavning";
+
+/* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "3Om-Ey-2VK"; */
+"3Om-Ey-2VK.title" = "Använd standard";
+
+/* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
+"3rS-ZA-NoH.title" = "Tal";
+
+/* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
+"3zd-xE-oWl.title" = "Första två tredjedelar";
+
+/* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
+"46P-cB-AYj.title" = "Dra åt";
+
+/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
+"4EN-yA-p0u.title" = "Sök";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
+"4J7-dP-txa.title" = "Öppna helskärm";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Avsluta Rectangle";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Redigera";
+
+/* Class = "NSMenuItem"; title = "Copy Style"; ObjectID = "5Vv-lz-BsD"; */
+"5Vv-lz-BsD.title" = "Kopiera stil";
+
+/* Class = "NSMenuItem"; title = "About Rectangle"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "Om Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "Maximize Height"; ObjectID = "6DV-cd-fda"; */
+"6DV-cd-fda.title" = "Maximera höjden";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "Gör om";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Left"; ObjectID = "6ma-hP-5xX"; */
+"6ma-hP-5xX.title" = "Nedre vänstra";
+
+/* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
+"78Y-hA-62v.title" = "Automatiskt rättstavning";
+
+/* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
+"7YK-9Z-lzw.title" = "Mitten tredje";
+
+/* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
+"8Bg-SZ-hDO.title" = "Mitten";
+
+/* Class = "NSMenu"; title = "Writing Direction"; ObjectID = "8mr-sm-Yjd"; */
+"8mr-sm-Yjd.title" = "Skrivriktning";
+
+/* Class = "NSTextFieldCell"; title = "Maximize"; ObjectID = "8oe-J2-oUU"; */
+"8oe-J2-oUU.title" = "Maximera";
+
+/* Class = "NSWindow"; title = "Authorize Rectangle"; ObjectID = "9JD-tZ-7jf"; */
+"9JD-tZ-7jf.title" = "Auktorisera Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
+"9XM-Zb-HEb.title" = "Om kryssrutan är inaktiverad klickar du på hänglåset och anger ditt lösenord.";
+
+/* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
+"9ic-FL-obx.title" = "Substitutioner";
+
+/* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
+"9yt-4B-nSM.title" = "Smart kopiera/klistra in";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
+"A66-A4-cGD.title" = "Avsluta Rectangle";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Huvudmeny";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "Inställningar…";
+
+/* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "BgM-ve-c93"; */
+"BgM-ve-c93.title" = "\tVänster till höger";
+
+/* Class = "NSMenuItem"; title = "Save As…"; ObjectID = "Bw7-FT-i3A"; */
+"Bw7-FT-i3A.title" = "Spara som…";
+
+/* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
+"C9v-g0-DH8.title" = "Återställ";
+
+/* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
+"D99-0O-MB6.title" = "Ignorera frontmost.app";
+
+/* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "Stäng";
+
+/* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
+"Dv1-io-Yv7.title" = "Stavning och grammatik";
+
+/* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
+"Eah-KL-kbn.title" = "Gör större";
+
+/* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
+"F12-EV-Lfz.title" = "Första tredje";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "Hjälp";
+
+/* Class = "NSTextFieldCell"; title = "Right Half"; ObjectID = "F8S-GI-LiB"; */
+"F8S-GI-LiB.title" = "Högra halvan";
+
+/* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "Rectangle-hjälp";
+
+/* Class = "NSMenuItem"; title = "Text"; ObjectID = "Fal-I4-PZk"; */
+"Fal-I4-PZk.title" = "Text";
+
+/* Class = "NSMenu"; title = "Substitutions"; ObjectID = "FeM-D8-WVr"; */
+"FeM-D8-WVr.title" = "Substitutioner";
+
+/* Class = "NSMenuItem"; title = "Bold"; ObjectID = "GB9-OM-e27"; */
+"GB9-OM-e27.title" = "Fetstil";
+
+/* Class = "NSMenu"; title = "Format"; ObjectID = "GEO-Iw-cKr"; */
+"GEO-Iw-cKr.title" = "Format";
+
+/* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "GUa-eO-cwY"; */
+"GUa-eO-cwY.title" = "Använd standard";
+
+/* Class = "NSMenuItem"; title = "Font"; ObjectID = "Gi5-1S-RQB"; */
+"Gi5-1S-RQB.title" = "Typsnitt";
+
+/* Class = "NSMenuItem"; title = "Writing Direction"; ObjectID = "H1b-Si-o9J"; */
+"H1b-Si-o9J.title" = "Skrivriktning";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
+"H8h-7b-M4v.title" = "Visa";
+
+/* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
+"HFQ-gK-NFA.title" = "Textbyte";
+
+/* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
+"HFo-cy-zxI.title" = "Visa stavning och grammatik";
+
+/* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
+"HIK-3r-i7E.title" = "Sök efter uppdateringar…";
+
+/* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
+"HOm-BV-2jc.title" = "Flytta upp";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
+"HyV-fh-RgO.title" = "Visa";
+
+/* Class = "NSMenuItem"; title = "Subscript"; ObjectID = "I0S-gh-46l"; */
+"I0S-gh-46l.title" = "Index";
+
+/* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
+"IAo-SY-fd9.title" = "Öppna…";
+
+/* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
+"J5U-5w-g23.title" = "Justera";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
+"J6t-sg-Wwz.title" = "Nedre högra";
+
+/* Class = "NSMenuItem"; title = "Use None"; ObjectID = "J7y-lM-qPV"; */
+"J7y-lM-qPV.title" = "Använd ingen";
+
+/* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
+"Jnd-Lc-nlh.title" = "Nästa skärm";
+
+/* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
+"KaW-ft-85H.title" = "Återgå till sparad";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "Visa allt";
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
+"LE2-aR-0XJ.title" = "Ta fram allt";
+
+/* Class = "NSMenuItem"; title = "Paste Ruler"; ObjectID = "LVM-kO-fVI"; */
+"LVM-kO-fVI.title" = "Klistra in linjal";
+
+/* Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "Lbh-J2-qVU"; */
+"Lbh-J2-qVU.title" = "\tVänster till höger";
+
+/* Class = "NSMenuItem"; title = "Copy Ruler"; ObjectID = "MkV-Pr-PK5"; */
+"MkV-Pr-PK5.title" = "Kopiera linjal";
+
+/* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
+"MzN-CJ-ASD.title" = "Gör mindre";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "Tjänster";
+
+/* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "Nop-cj-93Q"; */
+"Nop-cj-93Q.title" = "\tStandard";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "Minimera";
+
+/* Class = "NSMenuItem"; title = "Baseline"; ObjectID = "OaQ-X3-Vso"; */
+"OaQ-X3-Vso.title" = "Baslinje";
+
+/* Class = "NSMenuItem"; title = "Hide Rectangle"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Dölj Rectangle";
+
+/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
+"OwM-mh-QMV.title" = "Sök föregående";
+
+/* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
+"Oyz-dy-DGm.title" = "Sluta prata";
+
+/* Class = "NSMenuItem"; title = "Bigger"; ObjectID = "Ptp-SP-VEL"; */
+"Ptp-SP-VEL.title" = "Större";
+
+/* Class = "NSMenuItem"; title = "Show Fonts"; ObjectID = "Q5e-8K-NDq"; */
+"Q5e-8K-NDq.title" = "Visa typsnitt";
+
+/* Class = "NSTextFieldCell"; title = "Previous Display"; ObjectID = "QwF-QN-YH7"; */
+"QwF-QN-YH7.title" = "Föregående skärm";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
+"R4o-n2-Eq4.title" = "Zoom";
+
+/* Class = "NSMenuItem"; title = "\tRight to Left"; ObjectID = "RB4-Sm-HuC"; */
+"RB4-Sm-HuC.title" = "\tHöger till vänster";
+
+/* Class = "NSMenuItem"; title = "Superscript"; ObjectID = "Rqc-34-cIF"; */
+"Rqc-34-cIF.title" = "Upphöjd";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Markera allt";
+
+/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
+"S0p-oC-mLd.title" = "Hoppa till markerad";
+
+/* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
+"STb-JK-oB1.title" = "Rectangle-inställningar";
+
+/* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
+"SXx-HZ-GkB.title" = "Bläddra mellan skärmarna med upprepade vänster- eller högerkommandon";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "Fönster";
+
+/* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
+"UEZ-Bs-lqG.title" = "Kapitalisera";
+
+/* Class = "NSMenuItem"; title = "Center"; ObjectID = "VIY-Ag-zcb"; */
+"VIY-Ag-zcb.title" = "Mitten";
+
+/* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
+"VIf-4h-MJW.title" = "Auktorisera…";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "Dölj andra";
+
+/* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
+"Vjx-xi-njq.title" = "Kursiv";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "Redigera";
+
+/* Class = "NSMenuItem"; title = "Underline"; ObjectID = "WRG-CD-K1S"; */
+"WRG-CD-K1S.title" = "Understrykning";
+
+/* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "Ny";
+
+/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
+"WeT-3V-zwk.title" = "Klistra in och matcha stil";
+
+/* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
+"Xc8-Sm-pig.title" = "Vänstra halvan";
+
+/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
+"Xz5-n4-O0W.title" = "Sök…";
+
+/* Class = "NSMenuItem"; title = "Find and Replace…"; ObjectID = "YEy-JH-Tfz"; */
+"YEy-JH-Tfz.title" = "Sök och ersätt…";
+
+/* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "YGs-j5-SAR"; */
+"YGs-j5-SAR.title" = "\tStandard";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "YRC-4a-xGg"; */
+"YRC-4a-xGg.title" = "Inställningar…";
+
+/* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
+"Ynk-f8-cLZ.title" = "Börja tala";
+
+/* Class = "NSMenuItem"; title = "Align Left"; ObjectID = "ZM1-6Q-yy1"; */
+"ZM1-6Q-yy1.title" = "Justera vänster";
+
+/* Class = "NSMenuItem"; title = "Paragraph"; ObjectID = "ZvO-Gk-QUH"; */
+"ZvO-Gk-QUH.title" = "Paragraf";
+
+/* Class = "NSMenuItem"; title = "Print…"; ObjectID = "aTl-1u-JFS"; */
+"aTl-1u-JFS.title" = "Skriv ut…";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
+"aUF-d1-5bR.title" = "Fönster";
+
+/* Class = "NSMenu"; title = "Font"; ObjectID = "aXa-aM-Jaq"; */
+"aXa-aM-Jaq.title" = "Typsnitt";
+
+/* Class = "NSTextFieldCell"; title = "Top Left"; ObjectID = "adp-cN-qkh"; */
+"adp-cN-qkh.title" = "Övre vänstra";
+
+/* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "agt-UL-0e3"; */
+"agt-UL-0e3.title" = "Använd standard";
+
+/* Class = "NSMenuItem"; title = "Show Colors"; ObjectID = "bgn-CT-cEk"; */
+"bgn-CT-cEk.title" = "Visa färger";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
+"bib-Uj-vzu.title" = "Arkiv";
+
+/* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
+"buJ-ug-pKt.title" = "Använd markerad för att söka";
+
+/* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
+"c8a-y6-VQd.title" = "Transformationer";
+
+/* Class = "NSMenuItem"; title = "Not Authorized to Control Your Computer"; ObjectID = "cBj-76-2E7"; */
+"cBj-76-2E7.title" = "Inte behörig att styra din dator";
+
+/* Class = "NSMenuItem"; title = "Use None"; ObjectID = "cDB-IK-hbR"; */
+"cDB-IK-hbR.title" = "Använd ingen";
+
+/* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
+"cRm-wn-Yv6.title" = "Sista tredje";
+
+/* Class = "NSMenuItem"; title = "Selection"; ObjectID = "cqv-fj-IhA"; */
+"cqv-fj-IhA.title" = "Markerade";
+
+/* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
+"cwL-P1-jid.title" = "Smarta länkar";
+
+/* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
+"d7y-s8-7GE.title" = "Övre halvan";
+
+/* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
+"d9M-CD-aMd.title" = "Ändra till gemener";
+
+/* Class = "NSMenu"; title = "Text"; ObjectID = "d9c-me-L2H"; */
+"d9c-me-L2H.title" = "Text";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
+"dMs-cI-mzQ.title" = "Arkiv";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
+"dRJ-4n-Yzg.title" = "Ångra";
+
+/* Class = "NSTextFieldCell"; title = "Almost Maximize"; ObjectID = "e57-QJ-6bL"; */
+"e57-QJ-6bL.title" = "Nästan maximerad";
+
+/* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
+"e9j-DR-MEH.title" = "Starta vid inloggning";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
+"ec4-FB-fMa.title" = "Nedre halvan";
+
+/* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
+"gFy-Zj-RGl.title" = "Om";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "Klistra in";
+
+/* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
+"gyg-xl-dPn.title" = "Rectangle behöver ditt tillstånd för att kontrollera dina fönsterpositioner.";
+
+/* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
+"hQb-2v-fYv.title" = "Smarta citat";
+
+/* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
+"hz2-CU-CR7.title" = "Kontrollera dokument nu";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
+"hz9-B4-Xy5.title" = "Tjänster";
+
+/* Class = "NSMenuItem"; title = "Smaller"; ObjectID = "i1d-Er-qST"; */
+"i1d-Er-qST.title" = "Mindre";
+
+/* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
+"iWV-c2-BJD.title" = "Öppna systeminställningar";
+
+/* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
+"iXo-XL-T6q.title" = "Auktorisera Rectangle";
+
+/* Class = "NSMenu"; title = "Baseline"; ObjectID = "ijk-EB-dga"; */
+"ijk-EB-dga.title" = "Baslinje";
+
+/* Class = "NSMenuItem"; title = "Kern"; ObjectID = "jBQ-r6-VK2"; */
+"jBQ-r6-VK2.title" = "Kerning";
+
+/* Class = "NSMenuItem"; title = "\tRight to Left"; ObjectID = "jFq-tB-4Kx"; */
+"jFq-tB-4Kx.title" = "\tHöger till vänster";
+
+/* Class = "NSMenuItem"; title = "Format"; ObjectID = "jxT-CU-nIS"; */
+"jxT-CU-nIS.title" = "Format";
+
+/* Class = "NSMenuItem"; title = "About"; ObjectID = "jxe-nr-LDQ"; */
+"jxe-nr-LDQ.title" = "Om";
+
+/* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
+"kIP-vf-haE.title" = "Visa sidofältet";
+
+/* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
+"lgE-cR-cQ5.title" = "Gå till Systeminställningar → Säkerhet och sekretess → Sekretess → Tillgänglighet";
+
+/* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
+"ltc-mf-BHr.title" = "När menyradens ikon är dold, starta då Rectangle från Finder för att öppna menyn.";
+
+/* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
+"mK6-2p-4JG.title" = "Kontrollera grammatik med stavning";
+
+/* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
+"n4U-FC-L9s.title" = "Tillåt alla tangentbordsgenvägar";
+
+/* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
+"o6e-r0-MWq.title" = "Ligaturer";
+
+/* Class = "NSMenu"; title = "Open Recent"; ObjectID = "oas-Oc-fiZ"; */
+"oas-Oc-fiZ.title" = "Öppna senaste";
+
+/* Class = "NSMenuItem"; title = "Loosen"; ObjectID = "ogc-rX-tC1"; */
+"ogc-rX-tC1.title" = "Lossa";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
+"pa3-QI-u2k.title" = "Ta bort";
+
+/* Class = "NSMenuItem"; title = "Save…"; ObjectID = "pxx-59-PXV"; */
+"pxx-59-PXV.title" = "Save…";
+
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
+"q09-fT-Sye.title" = "Sök nästa";
+
+/* Class = "NSMenuItem"; title = "Page Setup…"; ObjectID = "qIS-W8-SiK"; */
+"qIS-W8-SiK.title" = "Sidinställningar…";
+
+/* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
+"qlg-kC-FMr.title" = "Dölj menyradens ikon";
+
+/* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
+"rbD-Rh-wIN.title" = "Kontrollera stavningen medan du skriver";
+
+/* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
+"rgM-f4-ycn.title" = "Smarta bindestreck";
+
+/* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
+"rmV-YD-Hzj.title" = "Sök efter uppdateringar automatiskt";
+
+/* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
+"rzr-Qq-702.title" = "Flytta höger";
+
+/* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
+"snW-S8-Cw5.title" = "Visa verktygsfältet";
+
+/* Class = "NSTextFieldCell"; title = "Check Rectangle.app"; ObjectID = "t7n-mU-75I"; */
+"t7n-mU-75I.title" = "Kontrollera Rectangle.app";
+
+/* Class = "NSMenuItem"; title = "Data Detectors"; ObjectID = "tRr-pd-1PS"; */
+"tRr-pd-1PS.title" = "Datadetektorer";
+
+/* Class = "NSMenuItem"; title = "Open Recent"; ObjectID = "tXI-mr-wws"; */
+"tXI-mr-wws.title" = "Öppna senaste";
+
+/* Class = "NSMenu"; title = "Kern"; ObjectID = "tlD-Oa-oAM"; */
+"tlD-Oa-oAM.title" = "Kerning";
+
+/* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
+"uLF-Uf-tBt.title" = "Återställ genvägar";
+
+/* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "Rectangle";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
+"uRl-iY-unG.title" = "Klipp ut";
+
+/* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
+"v2f-bX-xiM.title" = "Flytta vänster";
+
+/* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
+"vKC-jM-MkH.title" = "Klistra in stil";
+
+/* Class = "NSMenuItem"; title = "Show Ruler"; ObjectID = "vLm-3I-IUL"; */
+"vLm-3I-IUL.title" = "Visa linjal";
+
+/* Class = "NSMenuItem"; title = "Clear Menu"; ObjectID = "vNY-rz-j42"; */
+"vNY-rz-j42.title" = "Rensa menyn";
+
+/* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
+"vmV-6d-7jI.title" = "Ändra till versaler";
+
+/* Class = "NSMenu"; title = "Ligatures"; ObjectID = "w0m-vy-SC9"; */
+"w0m-vy-SC9.title" = "Ligaturer";
+
+/* Class = "NSMenuItem"; title = "Align Right"; ObjectID = "wb2-vD-lq4"; */
+"wb2-vD-lq4.title" = "Anpassa höger";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
+"wpr-3q-Mcd.title" = "Hjälp";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
+"x3v-GG-iWU.title" = "Kopiera";
+
+/* Class = "NSMenuItem"; title = "Use All"; ObjectID = "xQD-1f-W4t"; */
+"xQD-1f-W4t.title" = "Använd alla";
+
+/* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
+"xrE-MZ-jX0.title" = "Tal";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
+"yvN-PE-bxn.title" = "Avsluta Rectangle";
+
+/* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
+"z6F-FW-3nz.title" = "Visa substitutioner";
+
+/* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
+"kYm-Ye-gOR.title" = "Välkommen till Rectangle!";
+
+/* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
+"gEd-S9-Cfp.title" = "Välj dina standardgenvägar och beteende";
+
+/* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
+"HOp-Kd-vhY.title" = "Rekommenderas";
+
+/* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
+"kXi-dT-zSF.title" = "Spectacle-genvägar är mer benägna att komma i konflikt med andra genvägar";
+
+/* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
+"xcE-uL-2J0.title" = "Att välja Spectacle kommer också att växla mellan 1/2-, 2/3-, och 1/3-fönsterbredder med upprepade kortkommandon";
+
+/* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
+"HtH-yF-lBR.title" = "Välkommen!";
+
+/* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
+"bRX-dV-iAR.title" = "Mitthalvan";
+
+/* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
+"Q6Q-6J-okH.title" = "Första fjärde";
+
+/* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
+"Fko-xs-gN5.title" = "Andra fjärde";
+
+/* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
+"T9Z-QF-gwc.title" = "Första tre fjärdedelar";
+
+/* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
+"nwX-h6-fwm.title" = "Sista tre fjärdedelar";
+
+/* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
+"ZTK-rS-b17.title" = "Tredje fjärde";
+
+/* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
+"6HX-rn-VIp.title" = "Sista fjärde";
+
+/* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
+"mFt-Kg-UYG.title" = "Övre vänstra sjätte";
+
+/* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
+"TTx-7X-Wie.title" = "Övre mitten sjätte";
+
+/* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
+"f3Q-q7-Pcy.title" = "Övre högra sjätte";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
+"LqQ-pM-jRN.title" = "Nedre vänstra sjätte";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
+"iOQ-1e-esP.title" = "Nedre mitten sjätte";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
+"m2F-eA-g7w.title" = "Nedre högra sjätte";
+
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
+"O8K-y6-bva.title" = "Visa loggen…";
+
+/* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
+"gtf-PD-IHm.label" = "Inställningar";
+
+/* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
+"uw2-9W-2jq.label" = "Tangentbordsgenvägar";
+
+/* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
+"UZP-5q-D5Y.title" = "Återställ fönsterstorleken när den lossas";
+
+/* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
+"bg9-nw-YvU.title" = "Mellanrum mellan fönsterna";
+
+"Halves" = "Hälfter";
+"Corners" = "Hörn";
+"Thirds" = "Tredjedelar";
+"Maximize" = "Maximera";
+"Size" = "Storlek";
+"Display" = "Skärm";
+"Other" = "Annat";
+"Move to Edge" = "Flytta till kanten";
+"Fourths" = "Fjärdedelar";
+"Sixths" = "Sjättedelar";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
+"RgZ-Jw-XQZ.title" = "Importera";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
+"IO3-Hi-7gC.title" = "Exportera";
+
+/* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
+"Pbz-DF-hgG.title" = "Flytta markören tillsammans med fönstret över skärmar";
+
+/* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
+"XlM-ch-cLG.title" = "bläddra mellan skärmarna";
+
+/* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
+"Z9d-Rl-RVq.title" = "flytta till intilliggande skärm till vänster eller höger";
+
+/* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
+"jww-Ju-S3d.title" = "gör ingenting";
+
+/* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
+"gHH-BV-5kP.title" = "växla mellan ½, ⅔, och ⅓ på halva åtgärder";
+
+/* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
+"3GE-la-fAZ.title" = "flytta till intilliggande till vänster/höger, eller växla storlek på hälften";
+
+/* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
+"2Zm-fl-PcC.title" = "Upprepade kommandon";
+
+"Default Shortcuts" = "Standardgenvägar";
+"Currently using: " = "Använder för närvarande: ";
+"Cancel" = "Avbryt";
+
+/* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
+"7yS-wj-uWD.title" = "Visa Att göra-läge i menyn";
+
+/* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
+"6e0-ji-qXw.title" = "Att göra-applikationsbredd";
+
+/* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
+"Fx0-sm-DrT.title" = "Genvägar för Ordna om Att göra";
+
+"Use frontmost.app as Todo App" = "Använd frontmost.app som Att göra-app";
+"Enable Todo Mode" = "Aktivera Att göra-läge";
+"Reflow Todo" = "Ordna om Att göra";
+
+/* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
+"MDd-Sm-sUx.title" = "Om Att göra-läge";
+
+/* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
+"ZVi-DR-1zj.title" = "Om Att göra-läge";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
+"FCh-1Q-Xms.title" = "Behåll en vald applikation hela tiden synlig till höger på din primära skärm";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
+"N2U-pY-CLq.title" = "Behåll en vald applikation hela tiden synlig på höger sida på din primära skärm";
+
+/* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
+"qze-7p-m1X.title" = "1. Placera din valda Att göra-applikation längst fram";
+
+/* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
+"xNi-9K-fnJ.title" = "2. I Rectangle-menyn, välj\n\"Använd [Applikation] som Att göra-app\"";
+
+/* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
+"8dv-v2-SPu.title" = "3. I Rectangle-menyn, aktivera Att göra-läge.";
+
+/* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Ordna om Att göra\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
+"q9C-qZ-xw5.title" = "När du är i Att göra-läget kan du uppdatera Att göra-layouten genom att välja \"Ordna om Att göra\" i Rectangle-menyn eller genom att använda tilldelat tangentbordsgenväg.";

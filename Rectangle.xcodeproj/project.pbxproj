@@ -195,6 +195,8 @@
 		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
 		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		985B9BF722BB6F5000A2E8F0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		9861FE862796596E002D7AA7 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Main.strings; sourceTree = "<group>"; };
+		9861FE872796596E002D7AA7 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Main.strings; sourceTree = "<group>"; };
 		988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThirdCalculation.swift; sourceTree = "<group>"; };
 		988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTwoThirdsCalculation.swift; sourceTree = "<group>"; };
 		988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterThirdCalculation.swift; sourceTree = "<group>"; };
@@ -697,6 +699,7 @@
 				ko,
 				"zh-Hant-TW",
 				"zh-Hant-HK",
+				sv,
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -968,6 +971,7 @@
 				98ED1C792393DF0900CD0955 /* ko */,
 				98FE8975246E79A600871535 /* zh-Hant-TW */,
 				98FE8977246E79C400871535 /* zh-Hant-HK */,
+				9861FE872796596E002D7AA7 /* sv */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -992,6 +996,7 @@
 				98ED1C782393DF0900CD0955 /* ko */,
 				98FE8974246E79A600871535 /* zh-Hant-TW */,
 				98FE8976246E79C400871535 /* zh-Hant-HK */,
+				9861FE862796596E002D7AA7 /* sv */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
