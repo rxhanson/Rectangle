@@ -195,8 +195,6 @@
 		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
 		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		985B9BF722BB6F5000A2E8F0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
-		9861FE862796596E002D7AA7 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Main.strings; sourceTree = "<group>"; };
-		9861FE872796596E002D7AA7 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Main.strings; sourceTree = "<group>"; };
 		988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThirdCalculation.swift; sourceTree = "<group>"; };
 		988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTwoThirdsCalculation.swift; sourceTree = "<group>"; };
 		988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterThirdCalculation.swift; sourceTree = "<group>"; };
@@ -251,6 +249,8 @@
 		98C27560231FFA5F009B9292 /* SnappingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingManager.swift; sourceTree = "<group>"; };
 		98C275662322E2DA009B9292 /* WindowHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHistory.swift; sourceTree = "<group>"; };
 		98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GapCalculation.swift; sourceTree = "<group>"; };
+		98C96393279A3DBB000E3ED2 /* sv-SE */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sv-SE"; path = "sv-SE.lproj/Main.strings"; sourceTree = "<group>"; };
+		98C96394279A3DBB000E3ED2 /* sv-SE */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "sv-SE"; path = "sv-SE.lproj/Main.strings"; sourceTree = "<group>"; };
 		98C97FFC25893B040061F01F /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		98D1441224560B1E0090C603 /* AlertUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtil.swift; sourceTree = "<group>"; };
 		98D16A432592AD55005228CB /* MASShortcutMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MASShortcutMigration.swift; sourceTree = "<group>"; };
@@ -699,7 +699,7 @@
 				ko,
 				"zh-Hant-TW",
 				"zh-Hant-HK",
-				sv,
+				"sv-SE",
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -971,7 +971,7 @@
 				98ED1C792393DF0900CD0955 /* ko */,
 				98FE8975246E79A600871535 /* zh-Hant-TW */,
 				98FE8977246E79C400871535 /* zh-Hant-HK */,
-				9861FE872796596E002D7AA7 /* sv */,
+				98C96394279A3DBB000E3ED2 /* sv-SE */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -996,7 +996,7 @@
 				98ED1C782393DF0900CD0955 /* ko */,
 				98FE8974246E79A600871535 /* zh-Hant-TW */,
 				98FE8976246E79C400871535 /* zh-Hant-HK */,
-				9861FE862796596E002D7AA7 /* sv */,
+				98C96393279A3DBB000E3ED2 /* sv-SE */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
