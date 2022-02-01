@@ -122,6 +122,17 @@ For example, the command for setting the top left ninth shortcut to `ctrl opt sh
 defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
+### Add additional "thirds" sizing commands
+
+These commands for resizing to non-standard screen thirds are not available in the UI but can be configured via CLI.
+
+The key codes are:
+
+* topLeftThird
+* topRightThird
+* bottomLeftThird
+* bottomRightThird
+
 ## Modify the "footprint" displayed for drag to snap area
 
 Adjust the alpha (transparency). Default is 0.3.

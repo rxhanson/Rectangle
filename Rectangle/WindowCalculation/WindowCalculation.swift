@@ -155,6 +155,10 @@ class WindowCalculationFactory {
     static let bottomLeftNinthCalculation = BottomLeftNinthCalculation()
     static let bottomCenterNinthCalculation = BottomCenterNinthCalculation()
     static let bottomRightNinthCalculation = BottomRightNinthCalculation()
+    static let topLeftThirdCalculation = TopLeftThirdCalculation()
+    static let topRightThirdCalculation = TopRightThirdCalculation()
+    static let bottomLeftThirdCalculation = BottomLeftThirdCalculation()
+    static let bottomRightThirdCalculation = BottomRightThirdCalculation()
     static let specifiedCalculation = SpecifiedCalculation()
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
@@ -205,6 +209,10 @@ class WindowCalculationFactory {
      .bottomLeftNinth: bottomLeftNinthCalculation,
      .bottomCenterNinth: bottomCenterNinthCalculation,
      .bottomRightNinth: bottomRightNinthCalculation,
+     .topLeftThird: topLeftThirdCalculation,
+     .topRightThird: topRightThirdCalculation,
+     .bottomLeftThird: bottomLeftThirdCalculation,
+     .bottomRightThird: bottomRightThirdCalculation,
      .specified: specifiedCalculation
         //     .restore: nil
     ]

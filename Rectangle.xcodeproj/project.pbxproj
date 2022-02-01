@@ -97,6 +97,7 @@
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
 		CC0B7937429AC28C21ABF5B4 /* Pods_RectangleLauncher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */; };
+		D0423D8327A8D31D008A4894 /* HorizontalThirdsRepeated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0423D8227A8D31D008A4894 /* HorizontalThirdsRepeated.swift */; };
 		D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */; };
 		D04CE30227817A6100BD47B3 /* TopCenterNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */; };
 		D04CE30427817A6F00BD47B3 /* TopRightNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30327817A6F00BD47B3 /* TopRightNinthCalculation.swift */; };
@@ -107,6 +108,10 @@
 		D04CE30E27817AB500BD47B3 /* BottomCenterNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30D27817AB500BD47B3 /* BottomCenterNinthCalculation.swift */; };
 		D04CE31027817ABE00BD47B3 /* BottomRightNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30F27817ABE00BD47B3 /* BottomRightNinthCalculation.swift */; };
 		D04CE31227817C9B00BD47B3 /* NinthsRepeated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE31127817C9B00BD47B3 /* NinthsRepeated.swift */; };
+		D0CFE33127A8CAED004DA47B /* TopLeftThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33027A8CAED004DA47B /* TopLeftThirdCalculation.swift */; };
+		D0CFE33327A8CCB1004DA47B /* TopRightThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33227A8CCB1004DA47B /* TopRightThirdCalculation.swift */; };
+		D0CFE33527A8CD16004DA47B /* BottomLeftThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33427A8CD16004DA47B /* BottomLeftThirdCalculation.swift */; };
+		D0CFE33727A8CD51004DA47B /* BottomRightThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33627A8CD51004DA47B /* BottomRightThirdCalculation.swift */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
 /* End PBXBuildFile section */
 
@@ -272,6 +277,7 @@
 		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rectangle.release.xcconfig"; path = "Target Support Files/Pods-Rectangle/Pods-Rectangle.release.xcconfig"; sourceTree = "<group>"; };
+		D0423D8227A8D31D008A4894 /* HorizontalThirdsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalThirdsRepeated.swift; sourceTree = "<group>"; };
 		D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftNinthCalculation.swift; sourceTree = "<group>"; };
 		D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopCenterNinthCalculation.swift; sourceTree = "<group>"; };
 		D04CE30327817A6F00BD47B3 /* TopRightNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRightNinthCalculation.swift; sourceTree = "<group>"; };
@@ -282,6 +288,10 @@
 		D04CE30D27817AB500BD47B3 /* BottomCenterNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomCenterNinthCalculation.swift; sourceTree = "<group>"; };
 		D04CE30F27817ABE00BD47B3 /* BottomRightNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomRightNinthCalculation.swift; sourceTree = "<group>"; };
 		D04CE31127817C9B00BD47B3 /* NinthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinthsRepeated.swift; sourceTree = "<group>"; };
+		D0CFE33027A8CAED004DA47B /* TopLeftThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftThirdCalculation.swift; sourceTree = "<group>"; };
+		D0CFE33227A8CCB1004DA47B /* TopRightThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRightThirdCalculation.swift; sourceTree = "<group>"; };
+		D0CFE33427A8CD16004DA47B /* BottomLeftThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftThirdCalculation.swift; sourceTree = "<group>"; };
+		D0CFE33627A8CD51004DA47B /* BottomRightThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomRightThirdCalculation.swift; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
 		F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -419,6 +429,11 @@
 				D04CE30B27817AA900BD47B3 /* BottomLeftNinthCalculation.swift */,
 				D04CE30D27817AB500BD47B3 /* BottomCenterNinthCalculation.swift */,
 				D04CE30F27817ABE00BD47B3 /* BottomRightNinthCalculation.swift */,
+				D0CFE33027A8CAED004DA47B /* TopLeftThirdCalculation.swift */,
+				D0CFE33227A8CCB1004DA47B /* TopRightThirdCalculation.swift */,
+				D0CFE33427A8CD16004DA47B /* BottomLeftThirdCalculation.swift */,
+				D0CFE33627A8CD51004DA47B /* BottomRightThirdCalculation.swift */,
+				D0423D8227A8D31D008A4894 /* HorizontalThirdsRepeated.swift */,
 			);
 			path = WindowCalculation;
 			sourceTree = "<group>";
@@ -847,12 +862,14 @@
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
 				98A009AB2512491300CFBF0C /* CenterHalfCalculation.swift in Sources */,
+				D0CFE33327A8CCB1004DA47B /* TopRightThirdCalculation.swift in Sources */,
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
 				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
 				D04CE30A27817A9F00BD47B3 /* MiddleRightNinthCalculation.swift in Sources */,
 				98BEFA482620DEDD00D9D54F /* NSImageExtension.swift in Sources */,
 				98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */,
+				D0CFE33727A8CD51004DA47B /* BottomRightThirdCalculation.swift in Sources */,
 				9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */,
 				9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */,
 				98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */,
@@ -865,6 +882,8 @@
 				98A009AF2512517900CFBF0C /* SecondFourthCalculation.swift in Sources */,
 				D04CE30C27817AA900BD47B3 /* BottomLeftNinthCalculation.swift in Sources */,
 				9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */,
+				D0CFE33527A8CD16004DA47B /* BottomLeftThirdCalculation.swift in Sources */,
+				D0CFE33127A8CAED004DA47B /* TopLeftThirdCalculation.swift in Sources */,
 				98192DDA270F606C00015E66 /* Debounce.swift in Sources */,
 				D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
@@ -895,6 +914,7 @@
 				98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
+				D0423D8327A8D31D008A4894 /* HorizontalThirdsRepeated.swift in Sources */,
 				98C97FFD25893B040061F01F /* Config.swift in Sources */,
 				989DA30E243FC0DF008C7AA4 /* WelcomeViewController.swift in Sources */,
 				98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */,

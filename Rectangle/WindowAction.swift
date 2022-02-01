@@ -66,7 +66,11 @@ enum WindowAction: Int {
     middleRightNinth = 50,
     bottomLeftNinth = 51,
     bottomCenterNinth = 52,
-    bottomRightNinth = 53
+    bottomRightNinth = 53,
+    topLeftThird = 54,
+    topRightThird = 55,
+    bottomLeftThird = 56,
+    bottomRightThird = 57
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -81,6 +85,7 @@ enum WindowAction: Int {
                          topLeftNinth, topCenterNinth, topRightNinth,
                          middleLeftNinth, middleCenterNinth, middleRightNinth,
                          bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
+                         topLeftThird, topRightThird, bottomLeftThird, bottomRightThird,
     ]
 
     func post() {
@@ -157,6 +162,10 @@ enum WindowAction: Int {
         case .bottomLeftNinth: return "bottomLeftNinth"
         case .bottomCenterNinth: return "bottomCenterNinth"
         case .bottomRightNinth: return "bottomRightNinth"
+        case .topLeftThird: return "topLeftThird"
+        case .topRightThird: return "topRightThird"
+        case .bottomLeftThird: return "bottomLeftThird"
+        case .bottomRightThird: return "bottomRightThird"
         }
     }
 
@@ -284,6 +293,8 @@ enum WindowAction: Int {
             value = "Bottom Right Sixth"
         case .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth:
             return nil
+        case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
+            return nil
         case .specified, .reverseAll:
             return nil
         }
@@ -409,6 +420,10 @@ enum WindowAction: Int {
         case .bottomLeftNinth: return NSImage()
         case .bottomCenterNinth: return NSImage()
         case .bottomRightNinth: return NSImage()
+        case .topLeftThird: return NSImage()
+        case .topRightThird: return NSImage()
+        case .bottomLeftThird: return NSImage()
+        case .bottomRightThird: return NSImage()
         case .specified, .reverseAll: return NSImage()
         }
     }
@@ -436,7 +451,8 @@ enum WindowAction: Int {
         switch self {
         case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
              .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
-            .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth:
+            .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
+            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
@@ -532,6 +548,11 @@ enum SubWindowAction {
     bottomLeftNinth,
     bottomCenterNinth,
     bottomRightNinth,
+         
+    topLeftThird,
+    topRightThird,
+    bottomLeftThird,
+    bottomRightThird,
         
     maximize
 
@@ -590,6 +611,10 @@ enum SubWindowAction {
         case .bottomLeftNinth: return [.top, .right]
         case .bottomCenterNinth: return [.left, .top, .right]
         case .bottomRightNinth: return [.left, .top]
+        case .topLeftThird: return [.right, .bottom]
+        case .topRightThird: return [.left, .bottom]
+        case .bottomLeftThird: return [.right, .top]
+        case .bottomRightThird: return [.left, .top]
         case .maximize: return .none
         }
     }
