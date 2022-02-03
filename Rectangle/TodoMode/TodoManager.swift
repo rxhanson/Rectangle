@@ -55,12 +55,12 @@ class TodoManager {
                     let wScreen = sd.detectScreens(using: w)?.currentScreen
                     if w.getIdentifier() != todoWindow.getIdentifier() &&
                         wScreen == TodoManager.todoScreen {
-                        shiftWindowOffSidebar(w, screenFrame: screenFrame)
+                        shiftWindowOffSidebar(w, screenVisibleFrame: screen.adjustedVisibleFrame)
                     }
                 }
 
                 var rect = todoWindow.rectOfElement()
-                rect.origin.x = screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value)
+                rect.origin.x = screen.adjustedVisibleFrame.maxX
                 rect.origin.y = screenFrame.minY
                 rect.size.height = screen.adjustedVisibleFrame.height
                 rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
@@ -81,16 +81,16 @@ class TodoManager {
         TodoManager.todoScreen = screens?.currentScreen
     }
     
-    private static func shiftWindowOffSidebar(_ w: AccessibilityElement, screenFrame: CGRect) {
+    private static func shiftWindowOffSidebar(_ w: AccessibilityElement, screenVisibleFrame: CGRect) {
         var rect = w.rectOfElement()
-
-        if (rect.maxX > (screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value))) {
+        
+        if (rect.maxX > screenVisibleFrame.maxX) {
             // Shift it to the left
-            rect.origin.x = max (0, rect.origin.x - (rect.maxX - (screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value))))
-
+            rect.origin.x = min (rect.origin.x, max (screenVisibleFrame.minX, (rect.origin.x - (rect.maxX - screenVisibleFrame.maxX))))
+            
             // If it's still too wide, scale it down
-            if (rect.origin.x == 0) {
-                rect.size.width = min(rect.size.width, screenFrame.maxX - CGFloat(Defaults.todoSidebarWidth.value))
+            if(rect.maxX > screenVisibleFrame.maxX){
+                rect.size.width = rect.size.width - (rect.maxX - screenVisibleFrame.maxX)
             }
 
             w.setRectOf(rect)
