@@ -122,7 +122,7 @@ For example, the command for setting the top left ninth shortcut to `ctrl opt sh
 defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-### Add additional "thirds" sizing commands
+### Add additional "thirds" sizing commands (Available in 0.51)
 
 These commands for resizing to non-standard screen thirds are not available in the UI but can be configured via CLI.
 
@@ -132,6 +132,12 @@ The key codes are:
 * topRightThird
 * bottomLeftThird
 * bottomRightThird
+
+For example, the command for setting the top left third shortcut to `ctrl opt shift 1` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle topLeftThird -dict-add keyCode -float 18 modifierFlags -float 917504
+```
 
 ## Modify the "footprint" displayed for drag to snap area
 
