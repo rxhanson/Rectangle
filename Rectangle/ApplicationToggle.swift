@@ -14,7 +14,7 @@ class ApplicationToggle: NSObject {
     public private(set) var frontAppId: String? = "com.knollsoft.Rectangle"
     public private(set) var frontAppName: String? = "Rectangle"
     public private(set) var shortcutsDisabled: Bool = false
-    private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", "com.mathworks.matlab"]
+    private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", "com.mathworks.matlab", "com.live2d.cubism.CECubismEditorApp"]
 
     private let shortcutManager: ShortcutManager
     

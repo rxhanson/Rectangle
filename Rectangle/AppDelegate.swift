@@ -124,7 +124,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard !Defaults.windowSnapping.userDisabled, !Defaults.notifiedOfProblemApps.enabled else { return }
         
         let problemBundleIds: [String] = [
-            "com.mathworks.matlab"
+            "com.mathworks.matlab", "com.live2d.cubism.CECubismEditorApp"
         ]
         
         // these apps are java based with dynamic bundleIds
