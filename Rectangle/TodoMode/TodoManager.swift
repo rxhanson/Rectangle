@@ -83,16 +83,17 @@ class TodoManager {
     
     private static func shiftWindowOffSidebar(_ w: AccessibilityElement, screenVisibleFrame: CGRect) {
         var rect = w.rectOfElement()
-        
-        if (rect.maxX > screenVisibleFrame.maxX) {
+        let halfGapWidth = CGFloat(Defaults.gapSize.value) / 2
+
+        if (rect.maxX > screenVisibleFrame.maxX - halfGapWidth) {
             // Shift it to the left
-            rect.origin.x = min (rect.origin.x, max (screenVisibleFrame.minX, (rect.origin.x - (rect.maxX - screenVisibleFrame.maxX))))
+            rect.origin.x = min(rect.origin.x, max(screenVisibleFrame.minX, (rect.origin.x - (rect.maxX - screenVisibleFrame.maxX)))) + halfGapWidth
             
             // If it's still too wide, scale it down
             if(rect.maxX > screenVisibleFrame.maxX){
-                rect.size.width = rect.size.width - (rect.maxX - screenVisibleFrame.maxX)
+                rect.size.width = rect.size.width - (rect.maxX - screenVisibleFrame.maxX) - halfGapWidth
             }
-
+            
             w.setRectOf(rect)
         }
     }
