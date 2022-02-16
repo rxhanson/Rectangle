@@ -253,16 +253,18 @@ class SnappingManager {
     }
     
     private func landscapeSnapArea(loc: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea? {
-        
+        let cornerSize = CGFloat(Defaults.cornerSnapAreaSize.value)
+        let shortEdgeSize = CGFloat(Defaults.shortEdgeSnapAreaSize.value)
         let frame = screen.frame
+        
         if loc.x >= frame.minX {
-            if loc.x < frame.minX + marginLeft + 20 {
-                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+            if loc.x < frame.minX + marginLeft + cornerSize {
+                if loc.y >= frame.maxY - marginTop - cornerSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topLeft, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + cornerSize {
                     if let area = snapArea(for: .bottomLeft, on: screen) {
                         return area
                     }
@@ -270,12 +272,12 @@ class SnappingManager {
             }
             
             if loc.x < frame.minX + marginLeft {
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + shortEdgeSize {
                     if let area = snapArea(for: .bottomLeftShort, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                if loc.y >= frame.maxY - marginTop - shortEdgeSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topLeftShort, on: screen) {
                         return area
                     }
@@ -289,13 +291,13 @@ class SnappingManager {
         }
         
         if loc.x <= frame.maxX {
-            if loc.x > frame.maxX - marginRight - 20 {
-                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+            if loc.x > frame.maxX - marginRight - cornerSize {
+                if loc.y >= frame.maxY - marginTop - cornerSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topRight, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + cornerSize {
                     if let area = snapArea(for: .bottomRight, on: screen) {
                         return area
                     }
@@ -303,12 +305,12 @@ class SnappingManager {
             }
             
             if loc.x > frame.maxX - marginRight {
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + shortEdgeSize {
                     if let area = snapArea(for: .bottomRightShort, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                if loc.y >= frame.maxY - marginTop - shortEdgeSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topRightShort, on: screen) {
                         return area
                     }
@@ -356,16 +358,18 @@ class SnappingManager {
     }
     
     private func portraitSnapArea(loc: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea? {
-        
+        let cornerSize = CGFloat(Defaults.cornerSnapAreaSize.value)
+        let shortEdgeSize = CGFloat(Defaults.shortEdgeSnapAreaSize.value)
+
         let frame = screen.frame
         if loc.x >= frame.minX {
-            if loc.x < frame.minX + marginLeft + 20 {
-                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+            if loc.x < frame.minX + marginLeft + cornerSize {
+                if loc.y >= frame.maxY - marginTop - cornerSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topLeft, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + cornerSize {
                     if let area = snapArea(for: .bottomLeft, on: screen) {
                         return area
                     }
@@ -373,12 +377,12 @@ class SnappingManager {
             }
             
             if loc.x < frame.minX + marginLeft {
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + shortEdgeSize {
                     if let area = snapArea(for: .bottomLeftShort, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                if loc.y >= frame.maxY - marginTop - shortEdgeSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topLeftShort, on: screen) {
                         return area
                     }
@@ -393,13 +397,13 @@ class SnappingManager {
         }
         
         if loc.x <= frame.maxX {
-            if loc.x > frame.maxX - marginRight - 20 {
-                if loc.y >= frame.maxY - marginTop - 20 && loc.y <= frame.maxY {
+            if loc.x > frame.maxX - marginRight - cornerSize {
+                if loc.y >= frame.maxY - marginTop - cornerSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topRight, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 20 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + cornerSize {
                     if let area = snapArea(for: .bottomRight, on: screen) {
                         return area
                     }
@@ -407,12 +411,12 @@ class SnappingManager {
             }
             
             if loc.x > frame.maxX - marginRight {
-                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + 145 {
+                if loc.y >= frame.minY && loc.y <= frame.minY + marginBottom + shortEdgeSize {
                     if let area = snapArea(for: .bottomRightShort, on: screen) {
                         return area
                     }
                 }
-                if loc.y >= frame.maxY - marginTop - 145 && loc.y <= frame.maxY {
+                if loc.y >= frame.maxY - marginTop - shortEdgeSize && loc.y <= frame.maxY {
                     if let area = snapArea(for: .topRightShort, on: screen) {
                         return area
                     }

@@ -63,6 +63,8 @@ class Defaults {
     static let autoMaximize = OptionalBoolDefault(key: "autoMaximize")
     static let applyGapsToMaximize = OptionalBoolDefault(key: "applyGapsToMaximize")
     static let applyGapsToMaximizeHeight = OptionalBoolDefault(key: "applyGapsToMaximizeHeight")
+    static let cornerSnapAreaSize = FloatDefault(key: "cornerSnapAreaSize", defaultValue: 20)
+    static let shortEdgeSnapAreaSize = FloatDefault(key: "shortEdgeSnapAreaSize", defaultValue: 145)
 
     static var array: [Default] = [
         launchOnLogin,
@@ -116,7 +118,9 @@ class Defaults {
         moveCursor,
         autoMaximize,
         applyGapsToMaximize,
-        applyGapsToMaximizeHeight
+        applyGapsToMaximizeHeight,
+        cornerSnapAreaSize,
+        shortEdgeSnapAreaSize
     ]
 }
 
