@@ -111,14 +111,18 @@ class SnappingManager {
                 if let currentRect = windowElement?.rectOfElement(),
                    let windowId = windowId,
                    currentRect.size == initialWindowRect?.size,
-                   currentRect.origin != initialWindowRect?.origin,
-                   let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
-                    box?.close()
-                    if !(Defaults.snapModifiers.value > 0) ||
-                       event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue == Defaults.snapModifiers.value {
-                        snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
+                   currentRect.origin != initialWindowRect?.origin {
+  
+                    unsnapRestore(windowId: windowId)
+                    
+                    if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
+                        box?.close()
+                        if !(Defaults.snapModifiers.value > 0) ||
+                            event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue == Defaults.snapModifiers.value {
+                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
+                        }
+                        self.currentSnapArea = nil
                     }
-                    self.currentSnapArea = nil
                 }
             }
             windowElement = nil
@@ -150,19 +154,7 @@ class SnappingManager {
                 if currentRect.size == initialWindowRect?.size {
                     if currentRect.origin != initialWindowRect?.origin {
                         windowMoving = true
-
-                        if Defaults.unsnapRestore.enabled != false {
-                            // if window was put there by rectangle, restore size
-                            if let lastRect = AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect,
-                                lastRect == initialWindowRect,
-                                let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
-                                
-                                windowElement?.set(size: restoreRect.size)
-                                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                            } else {
-                                AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
-                            }
-                        }
+                        unsnapRestore(windowId: windowId)
                     }
                 }
                 else {
@@ -204,6 +196,21 @@ class SnappingManager {
             }
         default:
             return
+        }
+    }
+    
+    func unsnapRestore(windowId: Int) {
+        if Defaults.unsnapRestore.enabled != false {
+            // if window was put there by rectangle, restore size
+            if let lastRect = AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect,
+                lastRect == initialWindowRect,
+                let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+                
+                windowElement?.set(size: restoreRect.size)
+                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            } else {
+                AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
+            }
         }
     }
     
