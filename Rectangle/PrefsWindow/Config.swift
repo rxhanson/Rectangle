@@ -32,6 +32,9 @@ extension Defaults {
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
+        if #available(macOS 10.13, *) {
+            encoder.outputFormatting.update(with: .sortedKeys)
+        }
         if let encodedJson = try? encoder.encode(config) {
             if let jsonString = String(data: encodedJson, encoding: .utf8) {
                 print(jsonString)
