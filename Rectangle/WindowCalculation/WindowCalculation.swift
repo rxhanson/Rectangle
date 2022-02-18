@@ -159,6 +159,14 @@ class WindowCalculationFactory {
     static let topRightThirdCalculation = TopRightThirdCalculation()
     static let bottomLeftThirdCalculation = BottomLeftThirdCalculation()
     static let bottomRightThirdCalculation = BottomRightThirdCalculation()
+    static let topLeftEighthCalculation = TopLeftEighthCalculation()
+    static let topCenterLeftEighthCalculation = TopCenterLeftEighthCalculation()
+    static let topCenterRightEighthCalculation = TopCenterRightEighthCalculation()
+    static let topRightEighthCalculation = TopRightEighthCalculation()
+    static let bottomLeftEighthCalculation = BottomLeftEighthCalculation()
+    static let bottomCenterLeftEighthCalculation = BottomCenterLeftEighthCalculation()
+    static let bottomCenterRightEighthCalculation = BottomCenterRightEighthCalculation()
+    static let bottomRightEighthCalculation = BottomRightEighthCalculation()
     static let specifiedCalculation = SpecifiedCalculation()
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
@@ -213,6 +221,14 @@ class WindowCalculationFactory {
      .topRightThird: topRightThirdCalculation,
      .bottomLeftThird: bottomLeftThirdCalculation,
      .bottomRightThird: bottomRightThirdCalculation,
+     .topLeftEighth: topLeftEighthCalculation,
+     .topCenterLeftEighth: topCenterLeftEighthCalculation,
+     .topCenterRightEighth: topCenterRightEighthCalculation,
+     .topRightEighth: topRightEighthCalculation,
+     .bottomLeftEighth: bottomLeftEighthCalculation,
+     .bottomCenterLeftEighth: bottomCenterLeftEighthCalculation,
+     .bottomCenterRightEighth: bottomCenterRightEighthCalculation,
+     .bottomRightEighth: bottomRightEighthCalculation,
      .specified: specifiedCalculation
         //     .restore: nil
     ]
