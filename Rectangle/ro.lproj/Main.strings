@@ -1,0 +1,438 @@
+
+/* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
+"08q-Ce-1QL.title" = "Ultimele Două Treimi";
+
+/* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
+"0Ak-33-SM7.title" = "Dreapta Sus";
+
+/* Class = "NSTextFieldCell"; title = "0 px"; ObjectID = "0eh-6G-rMp"; */
+"0eh-6G-rMp.title" = "0 px";
+
+/* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
+"1Rc-Od-eP5.title" = "Mută Jos";
+
+/* Class = "NSMenuItem"; title = "Rectangle"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "Rectangle";
+
+/* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
+"1b7-l0-nxx.title" = "Căutare";
+
+/* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
+"1ui-PL-TkR.title" = "Deschide fereastra prin glisare";
+
+/* Class = "NSTextFieldCell"; title = "Version"; ObjectID = "1zK-sf-CSX"; */
+"1zK-sf-CSX.title" = "Versiune";
+
+/* Class = "NSButtonCell"; title = "Spectacle"; ObjectID = "2XJ-Ca-9di"; */
+"2XJ-Ca-9di.title" = "Spectacle";
+
+/* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
+"2Zm-fl-PcC.title" = "Comenzi repetitive";
+
+/* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
+"3GE-la-fAZ.title" = "mută pe partea stângă/dreaptă adiacentă, sau permută între jumătăți";
+
+/* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
+"3zd-xE-oWl.title" = "Primele Două Treimi";
+
+/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
+"4EN-yA-p0u.title" = "Căutare";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
+"4J7-dP-txa.title" = "Intră în Ecran Complet";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Închide Rectangle";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Editare";
+
+/* Class = "NSMenuItem"; title = "About Rectangle"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "Despre Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "Maximize Height"; ObjectID = "6DV-cd-fda"; */
+"6DV-cd-fda.title" = "Maximizează Înalțimea";
+
+/* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
+"6HX-rn-VIp.title" = "Ultimul Sfert";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "Reaplicare";
+
+/* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
+"6e0-ji-qXw.title" = "Lățimea aplicației Todo";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Left"; ObjectID = "6ma-hP-5xX"; */
+"6ma-hP-5xX.title" = "Stânga Jos";
+
+/* Class = "NSButtonCell"; title = "Check for Updates…"; ObjectID = "74m-kw-w1f"; */
+"74m-kw-w1f.title" = "Verificare Actualizări…";
+
+/* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
+"7YK-9Z-lzw.title" = "Treimea din Mijloc";
+
+/* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
+"7yS-wj-uWD.title" = "Arată Modul Todo în meniu";
+
+/* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
+"8Bg-SZ-hDO.title" = "Centru";
+
+/* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
+"8dv-v2-SPu.title" = "3. Activează modul Todo în meniul Rectangle.";
+
+/* Class = "NSTextFieldCell"; title = "Maximize"; ObjectID = "8oe-J2-oUU"; */
+"8oe-J2-oUU.title" = "Maximizează";
+
+/* Class = "NSWindow"; title = "Authorize Rectangle"; ObjectID = "9JD-tZ-7jf"; */
+"9JD-tZ-7jf.title" = "Autorizează Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
+"9XM-Zb-HEb.title" = "Dacă checkbox-ul este dezactivat, apăsați pe lacăt și introduceți parola";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
+"A66-A4-cGD.title" = "Închide Rectangle";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Meniu Principal";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "Preferințe…";
+
+/* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
+"C9v-g0-DH8.title" = "Restabilire";
+
+/* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
+"D99-0O-MB6.title" = "Ignoră frontmost.app";
+
+/* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "Închide";
+
+/* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
+"Eah-KL-kbn.title" = "Mărește";
+
+/* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
+"F12-EV-Lfz.title" = "Prima Treime";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "Ajutor";
+
+/* Class = "NSTextFieldCell"; title = "Right Half"; ObjectID = "F8S-GI-LiB"; */
+"F8S-GI-LiB.title" = "Jumătatea din Dreapta";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
+"FCh-1Q-Xms.title" = "Păstrează tot timpul o aplicație la alegere vizibilă în dreapta ecranului principal";
+
+/* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "Ajutor Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
+"Fko-xs-gN5.title" = "Al Doilea Sfert";
+
+/* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
+"Fx0-sm-DrT.title" = "Scurtătură Reflow Todo";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
+"H8h-7b-M4v.title" = "Vizualizează";
+
+/* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
+"HIK-3r-i7E.title" = "Verifică Actualizări…";
+
+/* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
+"HOm-BV-2jc.title" = "Mută Sus";
+
+/* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
+"HOp-Kd-vhY.title" = "Recomandat";
+
+/* Class = "NSTextFieldCell"; title = "px"; ObjectID = "HVG-6v-eJH"; */
+"HVG-6v-eJH.title" = "px";
+
+/* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
+"HtH-yF-lBR.title" = "Bine ai venit!";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
+"HyV-fh-RgO.title" = "Vizualizează";
+
+/* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
+"IAo-SY-fd9.title" = "Deschide…";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
+"IO3-Hi-7gC.title" = "Exportă";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
+"J6t-sg-Wwz.title" = "Dreapta Jos";
+
+/* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
+"Jnd-Lc-nlh.title" = "Ecranul Următor";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "Arată Toate";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
+"LqQ-pM-jRN.title" = "Șesimea din Stânga Jos";
+
+/* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
+"MDd-Sm-sUx.title" = "Despre Modul Todo";
+
+/* Class = "NSButtonCell"; title = "▶︎ ⋯"; ObjectID = "MKW-qf-Q2C"; */
+"MKW-qf-Q2C.title" = "▶︎ ⋯";
+
+/* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
+"MzN-CJ-ASD.title" = "Micșorează";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
+"N2U-pY-CLq.title" = "Păstrază tot timpul o aplicație la alegere în dreapta ecranului principal";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "Servicii";
+
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
+"O8K-y6-bva.title" = "Vizualizează Log-uri…";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "Minimizează";
+
+/* Class = "NSMenuItem"; title = "Hide Rectangle"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Ascunde Rectangle";
+
+/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
+"OwM-mh-QMV.title" = "Caută în Spate";
+
+/* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
+"Pbz-DF-hgG.title" = "Mută cursorul deodată cu fereastra între ecrane";
+
+/* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
+"Q6Q-6J-okH.title" = "Primul Sfert";
+
+/* Class = "NSTextFieldCell"; title = "Previous Display"; ObjectID = "QwF-QN-YH7"; */
+"QwF-QN-YH7.title" = "Ecran Anterior";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
+"RgZ-Jw-XQZ.title" = "Importă";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Selectează Tot";
+
+/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
+"S0p-oC-mLd.title" = "Sari la Selecție";
+
+/* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
+"STb-JK-oB1.title" = "Preferințe Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
+"T9Z-QF-gwc.title" = "Primele Trei Sferturi";
+
+/* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
+"TTx-7X-Wie.title" = "Șesimea din Centru Sus";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "Fereastră";
+
+/* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
+"UZP-5q-D5Y.title" = "Restabilește dimensiunea ferestrei când este închisă";
+
+/* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
+"VIf-4h-MJW.title" = "Autorizare…";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "Ascunde restul";
+
+/* Class = "NSButtonCell"; title = "ⓘ"; ObjectID = "Vfd-fe-hCe"; */
+"Vfd-fe-hCe.title" = "ⓘ";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "Editare";
+
+/* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "Nou";
+
+/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
+"WeT-3V-zwk.title" = "Lipește și Aplică Stilizarea";
+
+/* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
+"Xc8-Sm-pig.title" = "Prima Jumătate";
+
+/* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
+"XlM-ch-cLG.title" = "navigare ciclică între ecrane";
+
+/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
+"Xz5-n4-O0W.title" = "Căutare…";
+
+/* Class = "NSMenuItem"; title = "Find and Replace…"; ObjectID = "YEy-JH-Tfz"; */
+"YEy-JH-Tfz.title" = "Căutare și Înlocuire…";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "YRC-4a-xGg"; */
+"YRC-4a-xGg.title" = "Preferințe…";
+
+/* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
+"Z9d-Rl-RVq.title" = "mută în ecranul adiacent din stânga sau din dreapta";
+
+/* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
+"ZTK-rS-b17.title" = "Al Treilea Sfert";
+
+/* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
+"ZVi-DR-1zj.title" = "Despre Modul Todo";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
+"aUF-d1-5bR.title" = "Fereastră";
+
+/* Class = "NSTextFieldCell"; title = "Top Left"; ObjectID = "adp-cN-qkh"; */
+"adp-cN-qkh.title" = "Stânga Sus";
+
+/* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
+"bRX-dV-iAR.title" = "Jumătatea Centrală";
+
+/* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
+"bg9-nw-YvU.title" = "Goluri între ferestre";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
+"bib-Uj-vzu.title" = "Fișier";
+
+/* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
+"buJ-ug-pKt.title" = "Folosește Selecția pentru Căutare";
+
+/* Class = "NSMenuItem"; title = "Not Authorized to Control Your Computer"; ObjectID = "cBj-76-2E7"; */
+"cBj-76-2E7.title" = "Neautorizat pentru a Controla Dispozitivul Tău";
+
+/* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
+"cRm-wn-Yv6.title" = "Ultima Treime";
+
+/* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
+"d7y-s8-7GE.title" = "Jumătatea de Sus";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
+"dMs-cI-mzQ.title" = "Fișier";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
+"dRJ-4n-Yzg.title" = "Anulează Ultima Modificare";
+
+/* Class = "NSTextFieldCell"; title = "Almost Maximize"; ObjectID = "e57-QJ-6bL"; */
+"e57-QJ-6bL.title" = "Maximizează parțial";
+
+/* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
+"e9j-DR-MEH.title" = "Pornește la login";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
+"ec4-FB-fMa.title" = "Jumătatea de Jos";
+
+/* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
+"f3Q-q7-Pcy.title" = "Șesimea din Dreapta Sus";
+
+/* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
+"gEd-S9-Cfp.title" = "Selectează scurtăturile și modurile de funcționare predefinite";
+
+/* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
+"gFy-Zj-RGl.title" = "Despre";
+
+/* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
+"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "Lipește";
+
+/* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
+"gtf-PD-IHm.label" = "Setări";
+
+/* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
+"gyg-xl-dPn.title" = "Rectangle are nevoie de permisiunea ta pentru a controla poziția ferestrelor tale.";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
+"hz9-B4-Xy5.title" = "Servicii";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
+"iOQ-1e-esP.title" = "Șesimea din Centru Jos";
+
+/* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
+"iWV-c2-BJD.title" = "Deschide Preferințele de Sistem";
+
+/* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
+"iXo-XL-T6q.title" = "Autorizare Rectangle";
+
+/* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
+"jww-Ju-S3d.title" = "nu face nimic";
+
+/* Class = "NSMenuItem"; title = "About"; ObjectID = "jxe-nr-LDQ"; */
+"jxe-nr-LDQ.title" = "Despre";
+
+/* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
+"kXi-dT-zSF.title" = "Scurtăturile Spectacle sunt mai predispuse să se suprapună cu alte scurtături";
+
+/* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
+"kYm-Ye-gOR.title" = "Bine ai venit în Rectangle!";
+
+/* Class = "NSTextFieldCell"; title = "400"; ObjectID = "lUu-Hs-vuk"; */
+"lUu-Hs-vuk.title" = "400";
+
+/* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
+"lgE-cR-cQ5.title" = "Deschide System Preferences → Security & Privacy → Privacy → Accesibilitate";
+
+/* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open"; ObjectID = "ltc-mf-BHr"; */
+"ltc-mf-BHr.title" = "Dacă iconița din bara de meniu este ascunsă, repornește Rectangle din Finder";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
+"m2F-eA-g7w.title" = "Șesimea din Dreapta Jos";
+
+/* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
+"mFt-Kg-UYG.title" = "Șesimea din Stânga Sus";
+
+/* Class = "NSButtonCell"; title = "Remove keyboard shortcut restrictions"; ObjectID = "n4U-FC-L9s"; */
+"n4U-FC-L9s.title" = "Șterge restricțiile scurtăturilor";
+
+/* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
+"nwX-h6-fwm.title" = "Ultimele Trei Sferturi";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
+"pa3-QI-u2k.title" = "Șterge";
+
+/* Class = "NSMenuItem"; title = "Save…"; ObjectID = "pxx-59-PXV"; */
+"pxx-59-PXV.title" = "Salvează…";
+
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
+"q09-fT-Sye.title" = "Caută în Față";
+
+/* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
+"q9C-qZ-xw5.title" = "Din Modul Todo, poți reactualiza aspectul Modului Todo selectând \"Reflow Todo\" în meniul Rectangle sau folosind scurtătura asociată acestuia.";
+
+/* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
+"qlg-kC-FMr.title" = "Ascunde iconița din bara de meniu";
+
+/* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
+"qze-7p-m1X.title" = "1. Aduceți aplicația aleasă cel mai în față";
+
+/* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
+"rmV-YD-Hzj.title" = "Verifică actualizările automat";
+
+/* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
+"rzr-Qq-702.title" = "Mută în Dreapta";
+
+/* Class = "NSTextFieldCell"; title = "Check Rectangle.app"; ObjectID = "t7n-mU-75I"; */
+"t7n-mU-75I.title" = "Verifică Rectangle.app";
+
+/* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
+"uLF-Uf-tBt.title" = "Restabilește Scurtăturile Predefinite";
+
+/* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "Rectangle";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
+"uRl-iY-unG.title" = "Tăiere";
+
+/* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
+"uw2-9W-2jq.label" = "Scurtături";
+
+/* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
+"v2f-bX-xiM.title" = "Mută în Stânga";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
+"wpr-3q-Mcd.title" = "Ajutor";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
+"x3v-GG-iWU.title" = "Copiere";
+
+/* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
+"xNi-9K-fnJ.title" = "2. În meniul Rectangle, selectează\n\"Folosește [Application] ca și Todo App\"";
+
+/* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
+"xcE-uL-2J0.title" = "Dacă alegeți Spectacle se vor parcurge 1/2, 2/3, și 1/3 din lățimile ferestrei la repetarea scurtăturilor";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
+"yvN-PE-bxn.title" = "Închide Rectangle";

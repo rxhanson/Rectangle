@@ -294,6 +294,8 @@
 		D0CFE33627A8CD51004DA47B /* BottomRightThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomRightThirdCalculation.swift; sourceTree = "<group>"; };
 		DE4AE568B8BDB98BF602D588 /* Pods-RectangleMAS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.release.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.release.xcconfig"; sourceTree = "<group>"; };
 		E2625F45B180F733E8508494 /* Pods-RectangleMAS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleMAS.debug.xcconfig"; path = "Target Support Files/Pods-RectangleMAS/Pods-RectangleMAS.debug.xcconfig"; sourceTree = "<group>"; };
+		E8C299E927B5238100BC90C3 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Main.strings; sourceTree = "<group>"; };
+		E8C299EA27B5238100BC90C3 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Main.strings; sourceTree = "<group>"; };
 		F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4F1FB66CBFB958E8BB16DCD /* Pods_RectangleMAS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleMAS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -715,6 +717,7 @@
 				"zh-Hant-TW",
 				"zh-Hant-HK",
 				"sv-SE",
+				ro,
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -992,6 +995,7 @@
 				98FE8975246E79A600871535 /* zh-Hant-TW */,
 				98FE8977246E79C400871535 /* zh-Hant-HK */,
 				98C96394279A3DBB000E3ED2 /* sv-SE */,
+				E8C299EA27B5238100BC90C3 /* ro */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1017,6 +1021,7 @@
 				98FE8974246E79A600871535 /* zh-Hant-TW */,
 				98FE8976246E79C400871535 /* zh-Hant-HK */,
 				98C96393279A3DBB000E3ED2 /* sv-SE */,
+				E8C299E927B5238100BC90C3 /* ro */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
