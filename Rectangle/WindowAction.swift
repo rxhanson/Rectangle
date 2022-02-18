@@ -71,14 +71,14 @@ enum WindowAction: Int {
     topRightThird = 55,
     bottomLeftThird = 56,
     bottomRightThird = 57,
-    topLeftEight = 58,
-    topCenterLeftEight = 59,
-    topCenterRightEight = 60,
-    topRightEight = 61,
-    bottomLeftEight = 62,
-    bottomCenterLeftEight = 63,
-    bottomCenterRightEight = 64,
-    bottomRightEight = 65
+    topLeftEighth = 58,
+    topCenterLeftEighth = 59,
+    topCenterRightEighth = 60,
+    topRightEighth = 61,
+    bottomLeftEighth = 62,
+    bottomCenterLeftEighth = 63,
+    bottomCenterRightEighth = 64,
+    bottomRightEighth = 65
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -94,8 +94,8 @@ enum WindowAction: Int {
                          middleLeftNinth, middleCenterNinth, middleRightNinth,
                          bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
                          topLeftThird, topRightThird, bottomLeftThird, bottomRightThird,
-                         topLeftEight, topCenterLeftEight, topCenterRightEight, topRightEight,
-                         bottomLeftEight, bottomCenterLeftEight, bottomCenterRightEight, bottomRightEight
+                         topLeftEighth, topCenterLeftEighth, topCenterRightEighth, topRightEighth,
+                         bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth
     ]
 
     func post() {
@@ -176,14 +176,14 @@ enum WindowAction: Int {
         case .topRightThird: return "topRightThird"
         case .bottomLeftThird: return "bottomLeftThird"
         case .bottomRightThird: return "bottomRightThird"
-        case .topLeftEight: return "topLeftEight"
-        case .topCenterLeftEight: return "topCenterLeftEight"
-        case .topCenterRightEight: return "topCenterRightEight"
-        case .topRightEight: return "topRightEight"
-        case .bottomLeftEight: return "bottomLeftEight"
-        case .bottomCenterLeftEight: return "bottomCenterLeftEight"
-        case .bottomCenterRightEight: return "bottomCenterRightEight"
-        case .bottomRightEight: return "bottomRightEight"
+        case .topLeftEighth: return "topLeftEighth"
+        case .topCenterLeftEighth: return "topCenterLeftEighth"
+        case .topCenterRightEighth: return "topCenterRightEighth"
+        case .topRightEighth: return "topRightEighth"
+        case .bottomLeftEighth: return "bottomLeftEighth"
+        case .bottomCenterLeftEighth: return "bottomCenterLeftEighth"
+        case .bottomCenterRightEighth: return "bottomCenterRightEighth"
+        case .bottomRightEighth: return "bottomRightEighth"
         }
     }
 
@@ -313,8 +313,8 @@ enum WindowAction: Int {
             return nil
         case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
             return nil
-        case .topLeftEight, .topCenterLeftEight, .topCenterRightEight, .topRightEight,
-                .bottomLeftEight, .bottomCenterLeftEight, .bottomCenterRightEight, .bottomRightEight:
+        case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
+                .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
             return nil
         case .specified, .reverseAll:
             return nil
@@ -445,14 +445,14 @@ enum WindowAction: Int {
         case .topRightThird: return NSImage()
         case .bottomLeftThird: return NSImage()
         case .bottomRightThird: return NSImage()
-        case .topLeftEight: return  NSImage()
-        case .topCenterLeftEight: return  NSImage()
-        case .topCenterRightEight: return  NSImage()
-        case .topRightEight: return  NSImage()
-        case .bottomLeftEight: return  NSImage()
-        case .bottomCenterLeftEight: return  NSImage()
-        case .bottomCenterRightEight: return  NSImage()
-        case .bottomRightEight: return  NSImage()
+        case .topLeftEighth: return  NSImage()
+        case .topCenterLeftEighth: return  NSImage()
+        case .topCenterRightEighth: return  NSImage()
+        case .topRightEighth: return  NSImage()
+        case .bottomLeftEighth: return  NSImage()
+        case .bottomCenterLeftEighth: return  NSImage()
+        case .bottomCenterRightEighth: return  NSImage()
+        case .bottomRightEighth: return  NSImage()
         case .specified, .reverseAll: return NSImage()
         }
     }
@@ -482,8 +482,8 @@ enum WindowAction: Int {
              .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
-            .topLeftEight, .topCenterLeftEight, .topCenterRightEight, .topRightEight,
-            .bottomLeftEight, .bottomCenterLeftEight, .bottomCenterRightEight, .bottomRightEight:
+            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
+            .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
@@ -585,14 +585,14 @@ enum SubWindowAction {
     bottomLeftThird,
     bottomRightThird,
          
-    topLeftEight,
-    topCenterLeftEight,
-    topCenterRightEight,
-    topRightEight,
-    bottomLeftEight,
-    bottomCenterLeftEight,
-    bottomCenterRightEight,
-    bottomRightEight,
+    topLeftEighth,
+    topCenterLeftEighth,
+    topCenterRightEighth,
+    topRightEighth,
+    bottomLeftEighth,
+    bottomCenterLeftEighth,
+    bottomCenterRightEighth,
+    bottomRightEighth,
         
     maximize
 
@@ -655,14 +655,14 @@ enum SubWindowAction {
         case .topRightThird: return [.left, .bottom]
         case .bottomLeftThird: return [.right, .top]
         case .bottomRightThird: return [.left, .top]
-        case .topLeftEight: return  [.right, .bottom]
-        case .topCenterLeftEight: return  [.right, .left, .bottom]
-        case .topCenterRightEight: return  [.right, .left, .bottom]
-        case .topRightEight: return  [.left, .bottom]
-        case .bottomLeftEight: return  [.right, .top]
-        case .bottomCenterLeftEight: return  [.right, .left, .top]
-        case .bottomCenterRightEight: return  [.right, .left, .top]
-        case .bottomRightEight: return  [.left, .top]
+        case .topLeftEighth: return  [.right, .bottom]
+        case .topCenterLeftEighth: return  [.right, .left, .bottom]
+        case .topCenterRightEighth: return  [.right, .left, .bottom]
+        case .topRightEighth: return  [.left, .bottom]
+        case .bottomLeftEighth: return  [.right, .top]
+        case .bottomCenterLeftEighth: return  [.right, .left, .top]
+        case .bottomCenterRightEighth: return  [.right, .left, .top]
+        case .bottomRightEighth: return  [.left, .top]
         case .maximize: return .none
         }
     }

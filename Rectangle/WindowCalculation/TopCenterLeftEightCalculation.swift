@@ -1,5 +1,5 @@
 //
-//  TopCenterLeftEightCalculation.swift
+//  TopCenterLeftEighthCalculation.swift
 //  Rectangle
 //
 //  Created by Johannes Trussell Rasch on 2022-02-18.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TopCenterLeftEightCalculation: WindowCalculation, OrientationAware, EightsRepeated {
+class TopCenterLeftEighthCalculation: WindowCalculation, OrientationAware, EighthsRepeated {
         
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
@@ -20,7 +20,7 @@ class TopCenterLeftEightCalculation: WindowCalculation, OrientationAware, Eights
             return orientationBasedRect(visibleFrameOfScreen)
         }
         
-        if last.action != .topCenterLeftEight {
+        if last.action != .topCenterLeftEighth {
             return orientationBasedRect(visibleFrameOfScreen)
         }
         
@@ -37,7 +37,7 @@ class TopCenterLeftEightCalculation: WindowCalculation, OrientationAware, Eights
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         rect.origin.y = visibleFrameOfScreen.minY + rect.height
         rect.origin.x = visibleFrameOfScreen.minX + rect.width
-        return RectResult(rect, subAction: .topCenterLeftEight)
+        return RectResult(rect, subAction: .topCenterLeftEighth)
     }
     
     func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
@@ -46,6 +46,6 @@ class TopCenterLeftEightCalculation: WindowCalculation, OrientationAware, Eights
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         rect.origin.y = visibleFrameOfScreen.minY + rect.height
         rect.origin.x = visibleFrameOfScreen.minX + rect.width
-        return RectResult(rect, subAction: .topCenterLeftEight)
+        return RectResult(rect, subAction: .topCenterLeftEighth)
     }
 }

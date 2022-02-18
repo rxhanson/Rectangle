@@ -1,5 +1,5 @@
 //
-//  EightsRepeated.swift
+//  EighthsRepeated.swift
 //  Rectangle
 //
 //  Created by Johannes Trussell Rasch on 2022-02-18.
@@ -8,53 +8,53 @@
 
 import Foundation
 
-protocol EightsRepeated {
+protocol EighthsRepeated {
     func nextCalculation(subAction: SubWindowAction, direction: Direction) -> SimpleCalc?
 }
 
-extension EightsRepeated {
+extension EighthsRepeated {
     func nextCalculation(subAction: SubWindowAction, direction: Direction) -> SimpleCalc? {
         
         if direction == .left {
             switch subAction {
-            case .topLeftEight:
-                return WindowCalculationFactory.bottomRightEightCalculation.orientationBasedRect
-            case .topCenterLeftEight:
-                return WindowCalculationFactory.topLeftEightCalculation.orientationBasedRect
-            case .topCenterRightEight:
-                return WindowCalculationFactory.topCenterLeftEightCalculation.orientationBasedRect
-            case .topRightEight:
-                return WindowCalculationFactory.topCenterRightEightCalculation.orientationBasedRect
-            case .bottomLeftEight:
-                return WindowCalculationFactory.topRightEightCalculation.orientationBasedRect
-            case .bottomCenterLeftEight:
-                return WindowCalculationFactory.bottomLeftEightCalculation.orientationBasedRect
-            case .bottomCenterRightEight:
-                return WindowCalculationFactory.bottomCenterLeftEightCalculation.orientationBasedRect
-            case .bottomRightEight:
-                return WindowCalculationFactory.bottomCenterRightEightCalculation.orientationBasedRect
+            case .topLeftEighth:
+                return WindowCalculationFactory.bottomRightEighthCalculation.orientationBasedRect
+            case .topCenterLeftEighth:
+                return WindowCalculationFactory.topLeftEighthCalculation.orientationBasedRect
+            case .topCenterRightEighth:
+                return WindowCalculationFactory.topCenterLeftEighthCalculation.orientationBasedRect
+            case .topRightEighth:
+                return WindowCalculationFactory.topCenterRightEighthCalculation.orientationBasedRect
+            case .bottomLeftEighth:
+                return WindowCalculationFactory.topRightEighthCalculation.orientationBasedRect
+            case .bottomCenterLeftEighth:
+                return WindowCalculationFactory.bottomLeftEighthCalculation.orientationBasedRect
+            case .bottomCenterRightEighth:
+                return WindowCalculationFactory.bottomCenterLeftEighthCalculation.orientationBasedRect
+            case .bottomRightEighth:
+                return WindowCalculationFactory.bottomCenterRightEighthCalculation.orientationBasedRect
             default: break
             }
         }
         
         else if direction == .right {
             switch subAction {
-            case .topLeftEight:
-                return WindowCalculationFactory.topCenterLeftEightCalculation.orientationBasedRect
-            case .topCenterLeftEight:
-                return WindowCalculationFactory.topCenterRightEightCalculation.orientationBasedRect
-            case .topCenterRightEight:
-                return WindowCalculationFactory.topRightEightCalculation.orientationBasedRect
-            case .topRightEight:
-                return WindowCalculationFactory.bottomLeftEightCalculation.orientationBasedRect
-            case .bottomLeftEight:
-                return WindowCalculationFactory.bottomCenterLeftEightCalculation.orientationBasedRect
-            case .bottomCenterLeftEight:
-                return WindowCalculationFactory.bottomCenterRightEightCalculation.orientationBasedRect
-            case .bottomCenterRightEight:
-                return WindowCalculationFactory.bottomRightEightCalculation.orientationBasedRect
-            case .bottomRightEight:
-                return WindowCalculationFactory.topLeftEightCalculation.orientationBasedRect
+            case .topLeftEighth:
+                return WindowCalculationFactory.topCenterLeftEighthCalculation.orientationBasedRect
+            case .topCenterLeftEighth:
+                return WindowCalculationFactory.topCenterRightEighthCalculation.orientationBasedRect
+            case .topCenterRightEighth:
+                return WindowCalculationFactory.topRightEighthCalculation.orientationBasedRect
+            case .topRightEighth:
+                return WindowCalculationFactory.bottomLeftEighthCalculation.orientationBasedRect
+            case .bottomLeftEighth:
+                return WindowCalculationFactory.bottomCenterLeftEighthCalculation.orientationBasedRect
+            case .bottomCenterLeftEighth:
+                return WindowCalculationFactory.bottomCenterRightEighthCalculation.orientationBasedRect
+            case .bottomCenterRightEighth:
+                return WindowCalculationFactory.bottomRightEighthCalculation.orientationBasedRect
+            case .bottomRightEighth:
+                return WindowCalculationFactory.topLeftEighthCalculation.orientationBasedRect
             default: break
             }
         }
