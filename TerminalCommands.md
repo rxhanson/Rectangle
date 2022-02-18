@@ -122,7 +122,7 @@ For example, the command for setting the top left ninth shortcut to `ctrl opt sh
 defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-## Add extra "eights" sizing commands
+## Add extra "eights" sizing commands (Available in 0.52)
 
 Commands for resizing to screen eights are not available in the UI. This devides the screen up in to a 4x2 grid.
 
@@ -143,7 +143,7 @@ For example, the command for setting the top left eight shortcut to `ctrl opt sh
 defaults write com.knollsoft.Rectangle topLeftEight -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-### Add additional "thirds" sizing commands (Available in 0.51)
+### Add additional "thirds" sizing commands 
 
 These commands for resizing to non-standard screen thirds are not available in the UI but can be configured via CLI.
 
