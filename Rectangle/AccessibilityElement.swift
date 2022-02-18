@@ -10,11 +10,6 @@ import Foundation
 import Carbon
 import Cocoa
 
-// The AXEnhancedUserInterface attribute is undocumented. However, it does appear in the
-// Accessibility Inspector [1] under the name "Enhanced User Interface" and in the list of
-// attribute names returned by AXUIElementCopyAttributeNames for an AXUIElement with a
-// role of kAXApplicationRole.
-// [1]: https://developer.apple.com/library/archive/documentation/Accessibility/Conceptual/AccessibilityMacOSX/OSXAXTestingApps.html
 let kAXEnhancedUserInterface: String = "AXEnhancedUserInterface"
 
 class AccessibilityElement {
@@ -46,14 +41,64 @@ class AccessibilityElement {
         guard let location = CGEvent(source: nil)?.location else { return nil }
         var element: AXUIElement?
         let result: AXError = AXUIElementCopyElementAtPosition(systemWideElement.underlyingElement, Float(location.x), Float(location.y), &element)
-        if result == .success {
-            if let element = element {
-                return AccessibilityElement(element).window()
-            }
-        } else {
-            print("Unable to obtain the accessibility element with the specified attribute at mouse location")
+        if result == .success, let element = element, let windowElement = AccessibilityElement(element).window() {
+            return windowElement
         }
+        
+        if let windowInfo = getWindowInfo(at: location) {
+            let pidWindows = Self.allWindows(pid: windowInfo.pid)
+            for windowElement in pidWindows {
+                if windowElement.rectOfElement().equalTo(windowInfo.rect) {
+                    if Logger.logging {
+                        let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
+                        Logger.log("Window under cursor fallback matched: \(app) \(windowInfo)")
+                    }
+                    return windowElement
+                }
+            }
+        }
+        
+        Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
         return nil
+    }
+    
+    static func getWindowInfo(at location: CGPoint) -> CGWindowInfo? {
+        let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
+        if let windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>> {
+            for infoDict in windowInfo {
+                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
+                    guard let pid = infoDict[kCGWindowOwnerPID as String] as? pid_t,
+                          let id = infoDict[kCGWindowNumber as String] as? Int,
+                          let x = bounds["X"],
+                          let y = bounds["Y"],
+                          let w = bounds["Width"],
+                          let h = bounds["Height"]
+                    else { continue }
+                    let boundsRect = NSMakeRect(x, y, w, h)
+                    if boundsRect.contains(location) {
+                        return CGWindowInfo(id: id, pid: pid, rect: boundsRect)
+                    }
+                }
+            }
+        }
+            
+        Logger.log("Unable to obtain window id from location")
+        return nil
+    }
+    
+    static func allWindows(pid: pid_t) -> [AccessibilityElement] {
+        var windows = [AccessibilityElement]()
+        
+        let app = AccessibilityElement(AXUIElementCreateApplication(pid))
+        var rawValue: AnyObject? = nil
+        if AXUIElementCopyAttributeValue(app.underlyingElement,
+                                         NSAccessibility.Attribute.windows as CFString,
+                                         &rawValue) == .success {
+            windows.append(contentsOf: (rawValue as! [AXUIElement]).map { AccessibilityElement($0) })
+        }
+
+        return windows
+
     }
     
     func withAttribute(_ attribute: CFString) -> AccessibilityElement? {
@@ -78,15 +123,6 @@ class AccessibilityElement {
     }
     
     func setRectOf(_ rect: CGRect) {
-        // "Enhanced User Interface" is an undocumented attribute that has been
-        // reported by others to cause issue with window resizing (e.g.
-        // https://github.com/electron/electron/issues/7206). If this setting is
-        // enabled for the application of the window being resized, disable this
-        // attribute before performing the resizes. See:
-        // * https://github.com/rxhanson/Rectangle/issues/15
-        // * https://github.com/rxhanson/Rectangle/issues/29
-        // * https://github.com/rxhanson/Rectangle/issues/94
-        // * https://github.com/rxhanson/Rectangle/issues/165
         let app = application()
         var enhancedUserInterfaceEnabled: Bool? = nil
 
@@ -145,6 +181,12 @@ class AccessibilityElement {
     }
 
     func getIdentifier() -> Int? {
+        var identifier: CGWindowID = 0
+        _AXUIElementGetWindow(underlyingElement, &identifier)
+        if identifier != 0 {
+            return Int(identifier)
+        }
+        
         if let windowInfo = CGWindowListCopyWindowInfo(.optionOnScreenOnly, 0) as? Array<Dictionary<String,Any>> {
             let pid = getPid()
             let rect = rectOfElement()
@@ -233,17 +275,9 @@ class AccessibilityElement {
         return self.value(for: .window)
     }
     
-    private func application() -> Self? {
-        var element = self
-        while element.role() != kAXApplicationRole {
-            if let nextElement = element.parent() {
-                element = nextElement
-            } else {
-                return nil
-            }
-        }
-
-        return element
+    private func application() -> AccessibilityElement? {
+        if role() == kAXApplicationRole { return self }
+        return AccessibilityElement(AXUIElementCreateApplication(getPid()))
     }
 
     private func parent() -> Self? {
@@ -335,4 +369,10 @@ extension AXValue {
         pointer.pointee = value
         return AXValueCreate(type, pointer)
     }
+}
+
+struct CGWindowInfo {
+    let id: Int
+    let pid: pid_t
+    let rect: NSRect
 }

@@ -189,6 +189,7 @@
 		9821404822B3EBDA00ABFB3F /* RectangleLauncher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RectangleLauncher.entitlements; sourceTree = "<group>"; };
 		9821405D22B3ED3600ABFB3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		9821405F22B3EFB200ABFB3F /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		9821552627BFFB13002523EC /* Rectangle-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Rectangle-Bridging-Header.h"; sourceTree = "<group>"; };
 		9824700922AF9B7D0037B409 /* Rectangle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rectangle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9824700C22AF9B7D0037B409 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9824701022AF9B7E0037B409 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -531,6 +532,7 @@
 				9824701222AF9B7E0037B409 /* Main.storyboard */,
 				9824701522AF9B7E0037B409 /* Info.plist */,
 				981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */,
+				9821552627BFFB13002523EC /* Rectangle-Bridging-Header.h */,
 				9808018523D05C0B0077774A /* RectangleRelease.entitlements */,
 				9824701622AF9B7E0037B409 /* Rectangle.entitlements */,
 				9821405F22B3EFB200ABFB3F /* Defaults.swift */,
@@ -705,6 +707,7 @@
 					};
 					9824700822AF9B7D0037B409 = {
 						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1320;
 						SystemCapabilities = {
 							com.apple.HardenedRuntime = {
 								enabled = 0;
@@ -1239,6 +1242,7 @@
 			baseConfigurationReference = 53A6B6ACF05CD88EB34E0D00 /* Pods-Rectangle.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/Rectangle.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
@@ -1256,6 +1260,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Rectangle/Rectangle-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -1265,6 +1271,7 @@
 			baseConfigurationReference = BFFF93EBEA6E2FF7245A7CF5 /* Pods-Rectangle.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/RectangleRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -1282,6 +1289,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.knollsoft.Rectangle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Rectangle/Rectangle-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
