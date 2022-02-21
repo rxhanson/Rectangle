@@ -121,6 +121,7 @@
 		D0CFE33327A8CCB1004DA47B /* TopRightThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33227A8CCB1004DA47B /* TopRightThirdCalculation.swift */; };
 		D0CFE33527A8CD16004DA47B /* BottomLeftThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33427A8CD16004DA47B /* BottomLeftThirdCalculation.swift */; };
 		D0CFE33727A8CD51004DA47B /* BottomRightThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CFE33627A8CD51004DA47B /* BottomRightThirdCalculation.swift */; };
+		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
 		F0A0DFB36FCC3FCE6E184500 /* Pods_Rectangle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */; };
 /* End PBXBuildFile section */
 
@@ -317,6 +318,7 @@
 		E8C299EA27B5238100BC90C3 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Main.strings; sourceTree = "<group>"; };
 		F2D8480CC730811C953FC1B6 /* Pods_RectangleLauncher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleLauncher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4F1FB66CBFB958E8BB16DCD /* Pods_RectangleMAS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RectangleMAS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -368,6 +370,7 @@
 			isa = PBXGroup;
 			children = (
 				98192DDD2717201000015E66 /* ReverseAllManager.swift */,
+				FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */,
 			);
 			path = MultiWindow;
 			sourceTree = "<group>";
@@ -920,6 +923,7 @@
 				9821406022B3EFB200ABFB3F /* Defaults.swift in Sources */,
 				D0CFE33527A8CD16004DA47B /* BottomLeftThirdCalculation.swift in Sources */,
 				D0CFE33127A8CAED004DA47B /* TopLeftThirdCalculation.swift in Sources */,
+				FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */,
 				98192DDA270F606C00015E66 /* Debounce.swift in Sources */,
 				D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,

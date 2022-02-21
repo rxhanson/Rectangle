@@ -73,8 +73,7 @@ class ShortcutManager {
     @objc func windowActionTriggered(notification: NSNotification) {
         guard var parameters = notification.object as? ExecutionParameters else { return }
         
-        if parameters.action == .reverseAll {
-            ReverseAllManager.reverseAll()
+        if MultiWindowManager.execute(parameters: parameters) {
             return
         }
         

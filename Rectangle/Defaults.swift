@@ -65,6 +65,7 @@ class Defaults {
     static let applyGapsToMaximizeHeight = OptionalBoolDefault(key: "applyGapsToMaximizeHeight")
     static let cornerSnapAreaSize = FloatDefault(key: "cornerSnapAreaSize", defaultValue: 20)
     static let shortEdgeSnapAreaSize = FloatDefault(key: "shortEdgeSnapAreaSize", defaultValue: 145)
+    static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
 
     static var array: [Default] = [
         launchOnLogin,
@@ -120,7 +121,8 @@ class Defaults {
         applyGapsToMaximize,
         applyGapsToMaximizeHeight,
         cornerSnapAreaSize,
-        shortEdgeSnapAreaSize
+        shortEdgeSnapAreaSize,
+        cascadeAllDeltaSize
     ]
 }
 

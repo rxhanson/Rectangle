@@ -10,10 +10,10 @@ import MASShortcut
 
 class ReverseAllManager {
 
-    static func reverseAll() {
+    static func reverseAll(windowElement: AccessibilityElement? = nil) {
         let sd = ScreenDetection()
 
-        let currentWindow = AccessibilityElement.frontmostWindow()
+        let currentWindow = windowElement ?? AccessibilityElement.frontmostWindow()
         guard let currentScreen = sd.detectScreens(using: currentWindow)?.currentScreen else { return }
 
         let windows = AccessibilityElement.allWindows()

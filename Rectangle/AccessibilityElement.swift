@@ -156,8 +156,7 @@ class AccessibilityElement {
     
     static func normalizeCoordinatesOf(_ rect: CGRect, frameOfScreen: CGRect) -> CGRect {
         var normalizedRect = rect
-        let frameOfScreenWithMenuBar = NSScreen.screens[0].frame as CGRect
-        normalizedRect.origin.y = frameOfScreenWithMenuBar.height - rect.maxY
+        normalizedRect.origin.y = frameOfScreen.height - rect.maxY
         return normalizedRect
     }
     
@@ -220,6 +219,22 @@ class AccessibilityElement {
         var pid: pid_t = 0;
         AXUIElementGetPid(self.underlyingElement, &pid);
         return pid
+    }
+    
+    func isMinimized() -> Bool? {
+        return self.rawValue(for: .minimized) as? Bool
+    }
+    
+    func isHidden() -> Bool? {
+        return self.rawValue(for: .hidden) as? Bool
+    }
+    
+    func isWindow() -> Bool {
+        return role() == kAXWindowRole
+    }
+    
+    func isMainWindow() -> Bool? {
+        return self.rawValue(for: .main) as? Bool
     }
     
     private func getPosition() -> CGPoint? {
