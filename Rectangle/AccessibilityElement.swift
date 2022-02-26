@@ -29,12 +29,19 @@ class AccessibilityElement {
     }
 
     static func frontmostWindow() -> AccessibilityElement? {
-        guard let frontmostApplicationElement = AccessibilityElement.frontmostApplication() else {
+        guard let appElement = AccessibilityElement.frontmostApplication() else {
             Logger.log("Failed to find the application that currently has focus.")
             return nil
         }
         let focusedAttr = NSAccessibility.Attribute.focusedWindow as CFString
-        return frontmostApplicationElement.withAttribute(focusedAttr)
+        if let frontElement = appElement.withAttribute(focusedAttr) {
+            return frontElement
+        }
+        if let firstWindow = appElement.allWindows().first {
+            return firstWindow
+        }
+        Logger.log("Failed to find frontmost window.")
+        return nil
     }
 
     static func windowUnderCursor() -> AccessibilityElement? {
@@ -99,6 +106,20 @@ class AccessibilityElement {
 
         return windows
 
+    }
+    
+    func allWindows() -> [AccessibilityElement] {
+        var windows = [AccessibilityElement]()
+ 
+        guard let app = application() else { return windows }
+        var rawValue: AnyObject? = nil
+        if AXUIElementCopyAttributeValue(app.underlyingElement,
+                                         NSAccessibility.Attribute.windows as CFString,
+                                         &rawValue) == .success {
+            windows.append(contentsOf: (rawValue as! [AXUIElement]).map { AccessibilityElement($0) })
+        }
+
+        return windows
     }
     
     func withAttribute(_ attribute: CFString) -> AccessibilityElement? {
