@@ -78,7 +78,9 @@ enum WindowAction: Int {
     bottomLeftEighth = 62,
     bottomCenterLeftEighth = 63,
     bottomCenterRightEighth = 64,
-    bottomRightEighth = 65
+    bottomRightEighth = 65,
+    tileAll = 66,
+    cascadeAll = 67
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -95,7 +97,8 @@ enum WindowAction: Int {
                          bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
                          topLeftThird, topRightThird, bottomLeftThird, bottomRightThird,
                          topLeftEighth, topCenterLeftEighth, topCenterRightEighth, topRightEighth,
-                         bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth
+                         bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
+                         tileAll, cascadeAll
     ]
 
     func post() {
@@ -184,6 +187,8 @@ enum WindowAction: Int {
         case .bottomCenterLeftEighth: return "bottomCenterLeftEighth"
         case .bottomCenterRightEighth: return "bottomCenterRightEighth"
         case .bottomRightEighth: return "bottomRightEighth"
+        case .tileAll: return "tileAll"
+        case .cascadeAll: return "cascadeAll"
         }
     }
 
@@ -316,7 +321,7 @@ enum WindowAction: Int {
         case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
                 .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
             return nil
-        case .specified, .reverseAll:
+        case .specified, .reverseAll, .tileAll, .cascadeAll:
             return nil
         }
 
@@ -454,6 +459,8 @@ enum WindowAction: Int {
         case .bottomCenterRightEighth: return  NSImage()
         case .bottomRightEighth: return  NSImage()
         case .specified, .reverseAll: return NSImage()
+        case .tileAll: return NSImage()
+        case .cascadeAll: return NSImage()
         }
     }
 
@@ -493,7 +500,7 @@ enum WindowAction: Int {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll, .tileAll, .cascadeAll:
             return .none
         }
     }
