@@ -280,6 +280,8 @@
 		98D16A432592AD55005228CB /* MASShortcutMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MASShortcutMigration.swift; sourceTree = "<group>"; };
 		98D16A482592B460005228CB /* NotificationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtension.swift; sourceTree = "<group>"; };
 		98D4B6C425B6256C009C7BF6 /* TodoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoManager.swift; sourceTree = "<group>"; };
+		98DCAC1F27CA702900800FD4 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Main.strings; sourceTree = "<group>"; };
+		98DCAC2027CA702A00800FD4 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C722393DEE600CD0955 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C732393DEE600CD0955 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
 		98ED1C742393DEF200CD0955 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
@@ -748,6 +750,7 @@
 				"zh-Hant-HK",
 				"sv-SE",
 				ro,
+				id,
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -1035,6 +1038,7 @@
 				98FE8977246E79C400871535 /* zh-Hant-HK */,
 				98C96394279A3DBB000E3ED2 /* sv-SE */,
 				E8C299EA27B5238100BC90C3 /* ro */,
+				98DCAC2027CA702A00800FD4 /* id */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1061,6 +1065,7 @@
 				98FE8976246E79C400871535 /* zh-Hant-HK */,
 				98C96393279A3DBB000E3ED2 /* sv-SE */,
 				E8C299E927B5238100BC90C3 /* ro */,
+				98DCAC1F27CA702900800FD4 /* id */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
