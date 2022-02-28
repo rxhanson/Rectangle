@@ -27,7 +27,7 @@ class BestEffortWindowMover: WindowMover {
             adjustedWindowRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - (adjustedWindowRect.width) - CGFloat(Defaults.gapSize.value)
         }
         
-        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect , frameOfScreen: frameOfScreen)
+        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect)
         if adjustedWindowRect.minY < visibleFrameOfScreen.minY {
             
             adjustedWindowRect.origin.y = visibleFrameOfScreen.minY
@@ -37,7 +37,7 @@ class BestEffortWindowMover: WindowMover {
             adjustedWindowRect.origin.y = visibleFrameOfScreen.minY + visibleFrameOfScreen.height - (adjustedWindowRect.height) - CGFloat(Defaults.gapSize.value)
         }
         
-        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect, frameOfScreen: frameOfScreen)
+        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect)
         if !currentWindowRect.equalTo(adjustedWindowRect) {
             frontmostWindowElement?.setRectOf(adjustedWindowRect)
         }

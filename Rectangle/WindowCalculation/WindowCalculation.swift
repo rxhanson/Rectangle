@@ -48,7 +48,7 @@ class WindowCalculation: Calculation {
     
     func isRepeatedCommand(_ params: WindowCalculationParameters) -> Bool {
         if let lastAction = params.lastAction, lastAction.action == params.action {
-            let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect, frameOfScreen: params.usableScreens.frameOfCurrentScreen)
+            let normalizedLastRect = AccessibilityElement.normalizeCoordinatesOf(lastAction.rect)
             return normalizedLastRect == params.window.rect
         }
         return false

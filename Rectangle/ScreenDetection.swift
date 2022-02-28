@@ -38,7 +38,7 @@ class ScreenDetection {
         var largestPercentageOfRectWithinFrameOfScreen: CGFloat = 0.0
         for currentScreen in screens {
             let currentFrameOfScreen = NSRectToCGRect(currentScreen.frame)
-            let normalizedRect: CGRect = AccessibilityElement.normalizeCoordinatesOf(rect, frameOfScreen: currentFrameOfScreen)
+            let normalizedRect: CGRect = AccessibilityElement.normalizeCoordinatesOf(rect)
             if currentFrameOfScreen.contains(normalizedRect) {
                 result = currentScreen
                 break

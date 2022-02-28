@@ -175,9 +175,10 @@ class AccessibilityElement {
         return resizable.boolValue
     }
     
-    static func normalizeCoordinatesOf(_ rect: CGRect, frameOfScreen: CGRect) -> CGRect {
+    static func normalizeCoordinatesOf(_ rect: CGRect) -> CGRect {
         var normalizedRect = rect
-        normalizedRect.origin.y = frameOfScreen.height - rect.maxY
+        let frameOfScreenWithMenuBar = NSScreen.screens[0].frame as CGRect
+        normalizedRect.origin.y = frameOfScreenWithMenuBar.height - rect.maxY
         return normalizedRect
     }
     

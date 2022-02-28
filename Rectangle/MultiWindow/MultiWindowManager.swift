@@ -69,7 +69,7 @@ class MultiWindowManager {
             return
         }
         
-        let screenFrame = AccessibilityElement.normalizeCoordinatesOf(screens.visibleFrameOfCurrentScreen, frameOfScreen: screens.frameOfCurrentScreen)
+        let screenFrame = AccessibilityElement.normalizeCoordinatesOf(screens.visibleFrameOfCurrentScreen)
         let count = windows.count
         
         let colums = Int(ceil(sqrt(CGFloat(count))))
@@ -100,7 +100,7 @@ class MultiWindowManager {
             return
         }
         
-        let screenFrame = AccessibilityElement.normalizeCoordinatesOf(screens.visibleFrameOfCurrentScreen, frameOfScreen: screens.frameOfCurrentScreen)
+        let screenFrame = AccessibilityElement.normalizeCoordinatesOf(screens.visibleFrameOfCurrentScreen)
         
         let delta = CGFloat(Defaults.cascadeAllDeltaSize.value)
         

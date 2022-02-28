@@ -65,7 +65,7 @@ class TodoManager {
                 rect.size.height = screen.adjustedVisibleFrame.height
                 rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
                 if Defaults.gapSize.value > 0 {
-                    rect = AccessibilityElement.normalizeCoordinatesOf(rect, frameOfScreen: screen.adjustedVisibleFrame)
+                    rect = AccessibilityElement.normalizeCoordinatesOf(rect)
                     rect = GapCalculation.applyGaps(rect, sharedEdges: .left, gapSize: Defaults.gapSize.value)
                 }
                 todoWindow.setRectOf(rect)
