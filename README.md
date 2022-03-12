@@ -58,7 +58,7 @@ See [TerminalCommands.md](TerminalCommands.md)
 
 ### Rectangle doesn't have the ability to move to other desktops/spaces
 
-Apple never released a public API for Spaces. Other apps that move windows between spaces use unsupported or undesirable ways to acheive this. If Apple decides to release a public API for it, I'll add it in.
+Apple never released a public API for Spaces. Other apps that move windows between spaces use unsupported or undesirable ways to achieve this. If Apple decides to release a public API for it, I'll add it in.
 
 ### Window resizing is off slightly for iTerm2
 
