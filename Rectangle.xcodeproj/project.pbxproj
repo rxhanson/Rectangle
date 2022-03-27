@@ -151,6 +151,8 @@
 /* Begin PBXFileReference section */
 		0796D218CC3C7CD563827A8D /* Pods-RectangleLauncher.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RectangleLauncher.release.xcconfig"; path = "Target Support Files/Pods-RectangleLauncher/Pods-RectangleLauncher.release.xcconfig"; sourceTree = "<group>"; };
 		20A533B9F2D3215AC7B85D1F /* Pods_Rectangle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rectangle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		270BE80127F0B89A00278311 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Main.strings; sourceTree = "<group>"; };
+		270BE80227F0B89A00278311 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Main.strings; sourceTree = "<group>"; };
 		27CF044927EFDB55001B223C /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Main.strings; sourceTree = "<group>"; };
 		27CF044A27EFDB55001B223C /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Main.strings; sourceTree = "<group>"; };
 		30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecifiedCalculation.swift; sourceTree = "<group>"; };
@@ -757,6 +759,7 @@
 				ro,
 				id,
 				cs,
+				sk,
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -1047,6 +1050,7 @@
 				E8C299EA27B5238100BC90C3 /* ro */,
 				98DCAC2027CA702A00800FD4 /* id */,
 				27CF044A27EFDB55001B223C /* cs */,
+				270BE80227F0B89A00278311 /* sk */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1075,6 +1079,7 @@
 				E8C299E927B5238100BC90C3 /* ro */,
 				98DCAC1F27CA702900800FD4 /* id */,
 				27CF044927EFDB55001B223C /* cs */,
+				270BE80127F0B89A00278311 /* sk */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
