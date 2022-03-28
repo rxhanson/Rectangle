@@ -1,0 +1,438 @@
+
+/* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
+"08q-Ce-1QL.title" = "Posledné dve tretiny";
+
+/* Class = "NSTextFieldCell"; title = "Top Right"; ObjectID = "0Ak-33-SM7"; */
+"0Ak-33-SM7.title" = "Vpravo hore";
+
+/* Class = "NSTextFieldCell"; title = "0 px"; ObjectID = "0eh-6G-rMp"; */
+"0eh-6G-rMp.title" = "0 px";
+
+/* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
+"1Rc-Od-eP5.title" = "Posunúť dole";
+
+/* Class = "NSMenuItem"; title = "Rectangle"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "Rectangle";
+
+/* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
+"1b7-l0-nxx.title" = "Hľadať";
+
+/* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
+"1ui-PL-TkR.title" = "Prichytávať okná ťahaním";
+
+/* Class = "NSTextFieldCell"; title = "Version"; ObjectID = "1zK-sf-CSX"; */
+"1zK-sf-CSX.title" = "Verzia";
+
+/* Class = "NSButtonCell"; title = "Spectacle"; ObjectID = "2XJ-Ca-9di"; */
+"2XJ-Ca-9di.title" = "Spectacle";
+
+/* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
+"2Zm-fl-PcC.title" = "Opakované príkazy";
+
+/* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
+"3GE-la-fAZ.title" = "presunie na nasledujúcu ľavú/pravú pozíciu";
+
+/* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
+"3zd-xE-oWl.title" = "Prvé dve tretiny";
+
+/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
+"4EN-yA-p0u.title" = "Hľadať";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
+"4J7-dP-txa.title" = "Spustiť režim celej obrazovky";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "Ukončiť Rectangle";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "Upraviť";
+
+/* Class = "NSMenuItem"; title = "About Rectangle"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "O aplikácii Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "Maximize Height"; ObjectID = "6DV-cd-fda"; */
+"6DV-cd-fda.title" = "Maximalizovať výšku";
+
+/* Class = "NSTextFieldCell"; title = "Last Fourth"; ObjectID = "6HX-rn-VIp"; */
+"6HX-rn-VIp.title" = "Posledná štvrtina";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "Znovu";
+
+/* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
+"6e0-ji-qXw.title" = "Šírka Todo aplikácie";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Left"; ObjectID = "6ma-hP-5xX"; */
+"6ma-hP-5xX.title" = "Vľavo dole";
+
+/* Class = "NSButtonCell"; title = "Check for Updates…"; ObjectID = "74m-kw-w1f"; */
+"74m-kw-w1f.title" = "Skontrolovať aktualizácie…";
+
+/* Class = "NSTextFieldCell"; title = "Center Third"; ObjectID = "7YK-9Z-lzw"; */
+"7YK-9Z-lzw.title" = "Prostredná tretina";
+
+/* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
+"7yS-wj-uWD.title" = "Zobraziť Todo mód v menu";
+
+/* Class = "NSTextFieldCell"; title = "Center"; ObjectID = "8Bg-SZ-hDO"; */
+"8Bg-SZ-hDO.title" = "Vycentrovať";
+
+/* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
+"8dv-v2-SPu.title" = "3. Zapnite Todo mód v Rectangle menu.";
+
+/* Class = "NSTextFieldCell"; title = "Maximize"; ObjectID = "8oe-J2-oUU"; */
+"8oe-J2-oUU.title" = "Maximalizovať";
+
+/* Class = "NSWindow"; title = "Authorize Rectangle"; ObjectID = "9JD-tZ-7jf"; */
+"9JD-tZ-7jf.title" = "Autorizovať Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
+"9XM-Zb-HEb.title" = "Ak je zaškrtávacie políčko vypnuté, tak kliknite na zámok a zadajte vaše heslo";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
+"A66-A4-cGD.title" = "Ukončiť Rectangle";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "Hlavné menu";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "Predvoľby…";
+
+/* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
+"C9v-g0-DH8.title" = "Obnoviť";
+
+/* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
+"D99-0O-MB6.title" = "Ignorovať frontmost.app";
+
+/* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "Zavrieť";
+
+/* Class = "NSTextFieldCell"; title = "Make Larger"; ObjectID = "Eah-KL-kbn"; */
+"Eah-KL-kbn.title" = "Zväčšiť";
+
+/* Class = "NSTextFieldCell"; title = "First Third"; ObjectID = "F12-EV-Lfz"; */
+"F12-EV-Lfz.title" = "Prvá tretina";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "Nápoveda";
+
+/* Class = "NSTextFieldCell"; title = "Right Half"; ObjectID = "F8S-GI-LiB"; */
+"F8S-GI-LiB.title" = "Pravá polovica";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
+"FCh-1Q-Xms.title" = "Zobrazí vybranú aplikáciu vždy na pravej strane vašej hlavnej obrazovky";
+
+/* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "Rectangle nápoveda";
+
+/* Class = "NSTextFieldCell"; title = "Second Fourth"; ObjectID = "Fko-xs-gN5"; */
+"Fko-xs-gN5.title" = "Druhá štvrtina";
+
+/* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
+"Fx0-sm-DrT.title" = "Zobraziť Todo skratka";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
+"H8h-7b-M4v.title" = "Zobraziť";
+
+/* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
+"HIK-3r-i7E.title" = "Skontrolovať aktualizácie…";
+
+/* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
+"HOm-BV-2jc.title" = "Posunúť hore";
+
+/* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
+"HOp-Kd-vhY.title" = "Odporúčané";
+
+/* Class = "NSTextFieldCell"; title = "px"; ObjectID = "HVG-6v-eJH"; */
+"HVG-6v-eJH.title" = "px";
+
+/* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
+"HtH-yF-lBR.title" = "Vitajte!";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
+"HyV-fh-RgO.title" = "Zobraziť";
+
+/* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
+"IAo-SY-fd9.title" = "Otvoriť…";
+
+/* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
+"IO3-Hi-7gC.title" = "Exportovať";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
+"J6t-sg-Wwz.title" = "Vpravo dole";
+
+/* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
+"Jnd-Lc-nlh.title" = "Nasledujúci displej";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "Zobraziť všetko";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
+"LqQ-pM-jRN.title" = "Spodná ľavá šestina";
+
+/* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
+"MDd-Sm-sUx.title" = "O Todo móde";
+
+/* Class = "NSButtonCell"; title = "▶︎ ⋯"; ObjectID = "MKW-qf-Q2C"; */
+"MKW-qf-Q2C.title" = "▶︎ ⋯";
+
+/* Class = "NSTextFieldCell"; title = "Make Smaller"; ObjectID = "MzN-CJ-ASD"; */
+"MzN-CJ-ASD.title" = "Zmenšiť";
+
+/* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
+"N2U-pY-CLq.title" = "Zobrazí vybranú aplikáciu vždy na pravej strane vašej hlavnej obrazovky";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "Služby";
+
+/* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
+"O8K-y6-bva.title" = "Zobraziť logovanie…";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "Minimalizovať";
+
+/* Class = "NSMenuItem"; title = "Hide Rectangle"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "Skryť Rectangle";
+
+/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
+"OwM-mh-QMV.title" = "Hľadať predchádzajúce";
+
+/* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
+"Pbz-DF-hgG.title" = "Pohybujte oknom pomocou kurzora po displejoch";
+
+/* Class = "NSTextFieldCell"; title = "First Fourth"; ObjectID = "Q6Q-6J-okH"; */
+"Q6Q-6J-okH.title" = "Prvá štvrtina";
+
+/* Class = "NSTextFieldCell"; title = "Previous Display"; ObjectID = "QwF-QN-YH7"; */
+"QwF-QN-YH7.title" = "Predchádzajúci displej";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
+"RgZ-Jw-XQZ.title" = "Importovať";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "Vybrať všetko";
+
+/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
+"S0p-oC-mLd.title" = "Zobraziť výber";
+
+/* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
+"STb-JK-oB1.title" = "Rectangle predvoľby";
+
+/* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
+"T9Z-QF-gwc.title" = "Prvé tri štvrtiny";
+
+/* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
+"TTx-7X-Wie.title" = "Horná prostredná šestina";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "Okno";
+
+/* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
+"UZP-5q-D5Y.title" = "Obnoviť veľkosť okna pri uvoľnení";
+
+/* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
+"VIf-4h-MJW.title" = "Autorizovať…";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "Skryť ostatných";
+
+/* Class = "NSButtonCell"; title = "ⓘ"; ObjectID = "Vfd-fe-hCe"; */
+"Vfd-fe-hCe.title" = "ⓘ";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "Upraviť";
+
+/* Class = "NSMenuItem"; title = "New"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "Nový";
+
+/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
+"WeT-3V-zwk.title" = "Vložiť a zladiť štýl";
+
+/* Class = "NSTextFieldCell"; title = "Left Half"; ObjectID = "Xc8-Sm-pig"; */
+"Xc8-Sm-pig.title" = "Ľavá polovica";
+
+/* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
+"XlM-ch-cLG.title" = "presúvať po displejoch";
+
+/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
+"Xz5-n4-O0W.title" = "Hľadať…";
+
+/* Class = "NSMenuItem"; title = "Find and Replace…"; ObjectID = "YEy-JH-Tfz"; */
+"YEy-JH-Tfz.title" = "Hľadať a nahradiť…";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "YRC-4a-xGg"; */
+"YRC-4a-xGg.title" = "Predvoľby…";
+
+/* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
+"Z9d-Rl-RVq.title" = "presunúť na susediaci displej na ľavo alebo na pravo";
+
+/* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
+"ZTK-rS-b17.title" = "Tretia štvrtina";
+
+/* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
+"ZVi-DR-1zj.title" = "O Todo móde";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
+"aUF-d1-5bR.title" = "Okno";
+
+/* Class = "NSTextFieldCell"; title = "Top Left"; ObjectID = "adp-cN-qkh"; */
+"adp-cN-qkh.title" = "Vpravo hore";
+
+/* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
+"bRX-dV-iAR.title" = "Vycentrovať polovicu";
+
+/* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
+"bg9-nw-YvU.title" = "Medzery medzi oknami";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
+"bib-Uj-vzu.title" = "Súbor";
+
+/* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
+"buJ-ug-pKt.title" = "Hľadať výber";
+
+/* Class = "NSMenuItem"; title = "Not Authorized to Control Your Computer"; ObjectID = "cBj-76-2E7"; */
+"cBj-76-2E7.title" = "Ovládanie počítača neautorizované";
+
+/* Class = "NSTextFieldCell"; title = "Last Third"; ObjectID = "cRm-wn-Yv6"; */
+"cRm-wn-Yv6.title" = "Posledná tretina";
+
+/* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
+"d7y-s8-7GE.title" = "Horná polovica";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
+"dMs-cI-mzQ.title" = "Súbor";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
+"dRJ-4n-Yzg.title" = "Späť";
+
+/* Class = "NSTextFieldCell"; title = "Almost Maximize"; ObjectID = "e57-QJ-6bL"; */
+"e57-QJ-6bL.title" = "Skoro maximalizovať";
+
+/* Class = "NSButtonCell"; title = "Launch on login"; ObjectID = "e9j-DR-MEH"; */
+"e9j-DR-MEH.title" = "Spustiť pri prihlásení";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
+"ec4-FB-fMa.title" = "Spodná polovica";
+
+/* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
+"f3Q-q7-Pcy.title" = "Horná pravá šestina";
+
+/* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
+"gEd-S9-Cfp.title" = "Prosím vyberte vaše predvolené skratky a správanie";
+
+/* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
+"gFy-Zj-RGl.title" = "O aplikácii";
+
+/* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
+"gHH-BV-5kP.title" = "zmeniť šírku okien na ½, ⅔, a ⅓ pri polovičných akciách";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "Vložiť";
+
+/* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
+"gtf-PD-IHm.label" = "Nastavenie";
+
+/* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
+"gyg-xl-dPn.title" = "Rectangle potrebuje vaše povolenie, aby mohol ovládať pozície okien.";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
+"hz9-B4-Xy5.title" = "Služby";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
+"iOQ-1e-esP.title" = "Spodná prostredná šestina";
+
+/* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
+"iWV-c2-BJD.title" = "Otvoriť systémové predvoľby";
+
+/* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
+"iXo-XL-T6q.title" = "Autorizovať Rectangle";
+
+/* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
+"jww-Ju-S3d.title" = "nič nerobiť";
+
+/* Class = "NSMenuItem"; title = "About"; ObjectID = "jxe-nr-LDQ"; */
+"jxe-nr-LDQ.title" = "O aplikácii";
+
+/* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
+"kXi-dT-zSF.title" = "U Spectacle skratiek je väčšia pravdepodobnosť konfliktu s inými skratkami";
+
+/* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
+"kYm-Ye-gOR.title" = "Vitajte do Rectangle!";
+
+/* Class = "NSTextFieldCell"; title = "400"; ObjectID = "lUu-Hs-vuk"; */
+"lUu-Hs-vuk.title" = "400";
+
+/* Class = "NSTextFieldCell"; title = "Go to System Preferences → Security & Privacy → Privacy → Accessibility"; ObjectID = "lgE-cR-cQ5"; */
+"lgE-cR-cQ5.title" = "Choďte do Predvoľby systému -> Zabezpečenie a súkromie -> Súkromie -> Sprístupnenie";
+
+/* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open"; ObjectID = "ltc-mf-BHr"; */
+"ltc-mf-BHr.title" = "Ak je ikona skrytá v riadku ponúk, znova spustite Rectangle cez Finder";
+
+/* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
+"m2F-eA-g7w.title" = "Spodná pravá šestina";
+
+/* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
+"mFt-Kg-UYG.title" = "Spodná ľavá šestina";
+
+/* Class = "NSButtonCell"; title = "Remove keyboard shortcut restrictions"; ObjectID = "n4U-FC-L9s"; */
+"n4U-FC-L9s.title" = "Odstrániť obmedzenia klávesových skratiek";
+
+/* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
+"nwX-h6-fwm.title" = "Posledné tri štvrtiny";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
+"pa3-QI-u2k.title" = "Zmazať";
+
+/* Class = "NSMenuItem"; title = "Save…"; ObjectID = "pxx-59-PXV"; */
+"pxx-59-PXV.title" = "Uložiť…";
+
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
+"q09-fT-Sye.title" = "Hľadať ďalšie";
+
+/* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
+"q9C-qZ-xw5.title" = "Rozloženie Todo módu môžete obnoviť vybraním \"Zobraziť Todo\" v Rectangle menu alebo exekúciou nastavenej skratky.";
+
+/* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
+"qlg-kC-FMr.title" = "Skryť ikonu z riadku ponúk";
+
+/* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
+"qze-7p-m1X.title" = "1. Priveďte vašu vybranú todo aplikáciu do popredia";
+
+/* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
+"rmV-YD-Hzj.title" = "Automaticky kontrolovať aktualizácie";
+
+/* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
+"rzr-Qq-702.title" = "Posunúť vpravo";
+
+/* Class = "NSTextFieldCell"; title = "Check Rectangle.app"; ObjectID = "t7n-mU-75I"; */
+"t7n-mU-75I.title" = "Skontrolovať Rectangle.app";
+
+/* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
+"uLF-Uf-tBt.title" = "Obnoviť predvolené skratky";
+
+/* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "Rectangle";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
+"uRl-iY-unG.title" = "Vyňať";
+
+/* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
+"uw2-9W-2jq.label" = "Klávesové skratky";
+
+/* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
+"v2f-bX-xiM.title" = "Posunúť vľavo";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
+"wpr-3q-Mcd.title" = "Nápoveda";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
+"x3v-GG-iWU.title" = "Kopírovať";
+
+/* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
+"xNi-9K-fnJ.title" = "2. V Rectangle menu, zvoľte\n\"Vybrať [Application] ako Todo aplikáciu\"";
+
+/* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
+"xcE-uL-2J0.title" = "Vybraním Spectacle sa tiež bude meniť šírka okien na 1/2, 2/3, a 1/3 pri opakovaných príkazoch";
+
+/* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
+"yvN-PE-bxn.title" = "Ukončiť Rectangle";
