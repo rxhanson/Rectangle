@@ -122,25 +122,25 @@ For example, the command for setting the top left ninth shortcut to `ctrl opt sh
 defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-## Add extra "eights" sizing commands (Available in 0.52)
+## Add extra "eighths" sizing commands
 
-Commands for resizing to screen eights are not available in the UI. This divides the screen up into a 4x2 grid.
+Commands for resizing to screen eighths are not available in the UI. This divides the screen up into a 4x2 grid.
 
 The key codes are:
 
-* topLeftEight
-* topCenterLeftEight
-* topCenterRightEight
-* topRightEight
-* bottomLeftEight
-* bottomCenterLeftEight
-* bottomCenterRightEight
-* bottomRightEight
+* topLeftEighth
+* topCenterLeftEighth
+* topCenterRightEighth
+* topRightEighth
+* bottomLeftEighth
+* bottomCenterLeftEighth
+* bottomCenterRightEighth
+* bottomRightEighth
 
-For example, the command for setting the top left eight shortcut to `ctrl opt shift 1` would be:
+For example, the command for setting the top left eighth shortcut to `ctrl opt shift 1` would be:
 
 ```bash
-defaults write com.knollsoft.Rectangle topLeftEight -dict-add keyCode -float 18 modifierFlags -float 917504
+defaults write com.knollsoft.Rectangle topLeftEighth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
 ### Add additional "thirds" sizing commands 
