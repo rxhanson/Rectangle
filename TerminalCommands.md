@@ -124,7 +124,7 @@ defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 
 
 ## Add extra "eights" sizing commands (Available in 0.52)
 
-Commands for resizing to screen eights are not available in the UI. This devides the screen up in to a 4x2 grid.
+Commands for resizing to screen eights are not available in the UI. This divides the screen up into a 4x2 grid.
 
 The key codes are:
 
