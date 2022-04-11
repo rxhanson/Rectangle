@@ -143,7 +143,7 @@ For example, the command for setting the top left eighth shortcut to `ctrl opt s
 defaults write com.knollsoft.Rectangle topLeftEighth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-### Add additional "thirds" sizing commands 
+## Add additional "thirds" sizing commands 
 
 These commands for resizing to non-standard screen thirds are not available in the UI but can be configured via CLI.
 
