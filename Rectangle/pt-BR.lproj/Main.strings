@@ -632,69 +632,69 @@
 "Sixths" = "Sextos";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "";
+"RgZ-Jw-XQZ.title" = "Importar";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "";
+"IO3-Hi-7gC.title" = "Exportar";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
+"Pbz-DF-hgG.title" = "Mover o cursor junto à janela através das telas";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
-"XlM-ch-cLG.title" = "cycle through displays";
+"XlM-ch-cLG.title" = "percorrer pelas telas";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "move to adjacent display on left or right";
+"Z9d-Rl-RVq.title" = "mover para a tela adjacente à esquerda ou à direita";
 
 /* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
-"jww-Ju-S3d.title" = "do nothing";
+"jww-Ju-S3d.title" = "não fazer nada";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
+"gHH-BV-5kP.title" = "percorrer ½, ⅔, e ⅓ em ações pela metade";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "move to adjacent on left/right, or cycle size on half";
+"3GE-la-fAZ.title" = "mover para adjacente à esquerda/direita, ou tamanho do ciclo na metade";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "Repeated commands";
+"2Zm-fl-PcC.title" = "Comandos repetidos";
 
-"Default Shortcuts" = "Default Shortcuts";
-"Currently using: " = "Currently using: ";
-"Cancel" = "Cancel";
+"Default Shortcuts" = "Atalhos Padrão";
+"Currently using: " = "Atualmente usando: ";
+"Cancel" = "Cancelar";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
-"7yS-wj-uWD.title" = "Show Todo Mode in menu";
+"7yS-wj-uWD.title" = "Mostrar Modo To-do no menu";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
-"6e0-ji-qXw.title" = "Todo application width";
+"6e0-ji-qXw.title" = "Largura da aplicação To-do";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo shortcut";
+"Fx0-sm-DrT.title" = "Refluir atalho do To-do";
 
-"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
-"Enable Todo Mode" = "Enable Todo Mode";
-"Reflow Todo" = "Reflow Todo";
+"Use frontmost.app as Todo App" = "Usar frontmost.app como aplicação To-do";
+"Enable Todo Mode" = "Ativar Modo To-do";
+"Reflow Todo" = "Refluir To-do";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
-"MDd-Sm-sUx.title" = "About Todo Mode";
+"MDd-Sm-sUx.title" = "Sobre o Modo To-do";
 
 /* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
-"ZVi-DR-1zj.title" = "About Todo Mode";
+"ZVi-DR-1zj.title" = "Sobre o Modo To-do";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
+"FCh-1Q-Xms.title" = "Mantenha uma aplicação escolhida visível à direita da tela principal o tempo todo";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "Keep a chosen application visible on the right side of your primary screen at all times";
+"N2U-pY-CLq.title" = "Mantenha uma aplicação escolhida visível à direita da tela principal o tempo todo";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. Bring your chosen todo application frontmost";
+"qze-7p-m1X.title" = "1. Traga sua aplicação To-do escolhida pra frente";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\"";
+"xNi-9K-fnJ.title" = "2. No menu Rectangle, selecione\n\"Usar [Application] como aplicação To-do\"";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. In the Rectangle menu, enable Todo Mode.";
+"8dv-v2-SPu.title" = "3. No menu Rectangle, ative o Modo To-do.";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut.";
+"q9C-qZ-xw5.title" = "Enquanto em Modo To-do, você pode atualizar o Modo To-do ao selecionar \"Refluir To-do\" no menu Rectangle ou executando o atalho no teclado.";
