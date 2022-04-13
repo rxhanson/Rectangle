@@ -36,7 +36,7 @@
 "3IN-sU-3Bg.title" = "Ortografia";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "3Om-Ey-2VK"; */
-"3Om-Ey-2VK.title" = "Usar padrão";
+"3Om-Ey-2VK.title" = "Usar Padrão";
 
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
 "3rS-ZA-NoH.title" = "Voz";
@@ -99,13 +99,13 @@
 "9ic-FL-obx.title" = "Substituições";
 
 /* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
-"9yt-4B-nSM.title" = "Copiar/colar inteligente";
+"9yt-4B-nSM.title" = "Copiar/Colar Inteligente";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
 "A66-A4-cGD.title" = "Fechar Rectangle";
 
 /* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
-"AYu-sK-qS6.title" = "Menu principal";
+"AYu-sK-qS6.title" = "Menu Principal";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
 "BOF-NM-1cW.title" = "Preferências…";
@@ -156,19 +156,19 @@
 "GEO-Iw-cKr.title" = "Formato";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "GUa-eO-cwY"; */
-"GUa-eO-cwY.title" = "Usar padrão";
+"GUa-eO-cwY.title" = "Usar Padrão";
 
 /* Class = "NSMenuItem"; title = "Font"; ObjectID = "Gi5-1S-RQB"; */
 "Gi5-1S-RQB.title" = "Fonte";
 
 /* Class = "NSMenuItem"; title = "Writing Direction"; ObjectID = "H1b-Si-o9J"; */
-"H1b-Si-o9J.title" = "Direção de escrita";
+"H1b-Si-o9J.title" = "Direção de Escrita";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
 "H8h-7b-M4v.title" = "Visualizar";
 
 /* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
-"HFQ-gK-NFA.title" = "Substituição de texto";
+"HFQ-gK-NFA.title" = "Substituição de Texto";
 
 /* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
 "HFo-cy-zxI.title" = "Mostrar ortografia e gramática";
@@ -279,13 +279,13 @@
 "UEZ-Bs-lqG.title" = "Capitalizar";
 
 /* Class = "NSMenuItem"; title = "Center"; ObjectID = "VIY-Ag-zcb"; */
-"VIY-Ag-zcb.title" = "Centro";
+"VIY-Ag-zcb.title" = "Centralizar";
 
 /* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
 "VIf-4h-MJW.title" = "Autorizar…";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
-"Vdr-fp-XzO.title" = "Esconder outros";
+"Vdr-fp-XzO.title" = "Esconder Outros";
 
 /* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
 "Vjx-xi-njq.title" = "Itálico";
@@ -339,10 +339,10 @@
 "adp-cN-qkh.title" = "Topo esquerdo";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "agt-UL-0e3"; */
-"agt-UL-0e3.title" = "Usar padrão";
+"agt-UL-0e3.title" = "Usar Padrão";
 
 /* Class = "NSMenuItem"; title = "Show Colors"; ObjectID = "bgn-CT-cEk"; */
-"bgn-CT-cEk.title" = "Mostrar cores";
+"bgn-CT-cEk.title" = "Mostrar Cores";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
 "bib-Uj-vzu.title" = "Arquivo";
@@ -366,13 +366,13 @@
 "cqv-fj-IhA.title" = "Seleção";
 
 /* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
-"cwL-P1-jid.title" = "Links inteligentes";
+"cwL-P1-jid.title" = "Links Inteligentes";
 
 /* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
 "d7y-s8-7GE.title" = "Metade superior";
 
 /* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
-"d9M-CD-aMd.title" = "Converter em minúsculas";
+"d9M-CD-aMd.title" = "Converter em Minúsculas";
 
 /* Class = "NSMenu"; title = "Text"; ObjectID = "d9c-me-L2H"; */
 "d9c-me-L2H.title" = "Texto";
@@ -402,7 +402,7 @@
 "gyg-xl-dPn.title" = "O Rectangle precisa de sua permissão para controlar a posição das janelas.";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
-"hQb-2v-fYv.title" = "Citações inteligentes";
+"hQb-2v-fYv.title" = "Citações Inteligentes";
 
 /* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
 "hz2-CU-CR7.title" = "Verificar documento agora";
@@ -468,7 +468,7 @@
 "q09-fT-Sye.title" = "Buscar próximo";
 
 /* Class = "NSMenuItem"; title = "Page Setup…"; ObjectID = "qIS-W8-SiK"; */
-"qIS-W8-SiK.title" = "Configuração da página…";
+"qIS-W8-SiK.title" = "Configuração da Página…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
 "qlg-kC-FMr.title" = "Ocultar ícone da barra de menu";
@@ -477,7 +477,7 @@
 "rbD-Rh-wIN.title" = "Verificar ortografia durante a digitação";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
-"rgM-f4-ycn.title" = "Traços inteligentes";
+"rgM-f4-ycn.title" = "Traços Inteligentes";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
 "rmV-YD-Hzj.title" = "Procurar atualizações automaticamente";
@@ -513,22 +513,22 @@
 "v2f-bX-xiM.title" = "Mover para a esquerda";
 
 /* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
-"vKC-jM-MkH.title" = "Colar estilo";
+"vKC-jM-MkH.title" = "Colar Estilo";
 
 /* Class = "NSMenuItem"; title = "Show Ruler"; ObjectID = "vLm-3I-IUL"; */
-"vLm-3I-IUL.title" = "Mostrar régua";
+"vLm-3I-IUL.title" = "Mostrar Régua";
 
 /* Class = "NSMenuItem"; title = "Clear Menu"; ObjectID = "vNY-rz-j42"; */
-"vNY-rz-j42.title" = "Limpar menu";
+"vNY-rz-j42.title" = "Limpar Menu";
 
 /* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
-"vmV-6d-7jI.title" = "Converter em maiúsculas";
+"vmV-6d-7jI.title" = "Converter em Maiúsculas";
 
 /* Class = "NSMenu"; title = "Ligatures"; ObjectID = "w0m-vy-SC9"; */
 "w0m-vy-SC9.title" = "Ligaduras";
 
 /* Class = "NSMenuItem"; title = "Align Right"; ObjectID = "wb2-vD-lq4"; */
-"wb2-vD-lq4.title" = "Alinhar à direita";
+"wb2-vD-lq4.title" = "Alinhar à Direita";
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
 "wpr-3q-Mcd.title" = "Ajuda";
@@ -546,7 +546,7 @@
 "yvN-PE-bxn.title" = "Fechar Rectangle";
 
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
-"z6F-FW-3nz.title" = "Mostrar substituições";
+"z6F-FW-3nz.title" = "Mostrar Substituições";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
 "kYm-Ye-gOR.title" = "Bem vindo ao Rectangle!";
@@ -632,69 +632,69 @@
 "Sixths" = "Sextos";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "Importar";
+"RgZ-Jw-XQZ.title" = "";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "Exportar";
+"IO3-Hi-7gC.title" = "";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "Mover o cursor junto à janela através das telas";
+"Pbz-DF-hgG.title" = "Move cursor along with window across displays";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
-"XlM-ch-cLG.title" = "percorrer pelas telas";
+"XlM-ch-cLG.title" = "cycle through displays";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "mover para a tela adjacente à esquerda ou à direita";
+"Z9d-Rl-RVq.title" = "move to adjacent display on left or right";
 
 /* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
-"jww-Ju-S3d.title" = "não fazer nada";
+"jww-Ju-S3d.title" = "do nothing";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "percorrer ½, ⅔, e ⅓ em ações pela metade";
+"gHH-BV-5kP.title" = "cycle ½, ⅔, and ⅓ on half actions";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "mover para adjacente à esquerda/direita, ou tamanho do ciclo na metade";
+"3GE-la-fAZ.title" = "move to adjacent on left/right, or cycle size on half";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "Comandos repetidos";
+"2Zm-fl-PcC.title" = "Repeated commands";
 
-"Default Shortcuts" = "Atalhos Padrão";
-"Currently using: " = "Atualmente usando: ";
-"Cancel" = "Cancelar";
+"Default Shortcuts" = "Default Shortcuts";
+"Currently using: " = "Currently using: ";
+"Cancel" = "Cancel";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
-"7yS-wj-uWD.title" = "Mostrar Modo To-do no menu";
+"7yS-wj-uWD.title" = "Show Todo Mode in menu";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
-"6e0-ji-qXw.title" = "Largura da aplicação To-do";
+"6e0-ji-qXw.title" = "Todo application width";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Refluir atalho do To-do";
+"Fx0-sm-DrT.title" = "Reflow Todo shortcut";
 
-"Use frontmost.app as Todo App" = "Usar frontmost.app como aplicação To-do";
-"Enable Todo Mode" = "Ativar Modo To-do";
-"Reflow Todo" = "Refluir To-do";
+"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
+"Enable Todo Mode" = "Enable Todo Mode";
+"Reflow Todo" = "Reflow Todo";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
-"MDd-Sm-sUx.title" = "Sobre o Modo To-do";
+"MDd-Sm-sUx.title" = "About Todo Mode";
 
 /* Class = "NSTextFieldCell"; title = "About Todo Mode"; ObjectID = "ZVi-DR-1zj"; */
-"ZVi-DR-1zj.title" = "Sobre o Modo To-do";
+"ZVi-DR-1zj.title" = "About Todo Mode";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Mantenha uma aplicação escolhida visível à direita da tela principal o tempo todo";
+"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "Mantenha uma aplicação escolhida visível à direita da tela principal o tempo todo";
+"N2U-pY-CLq.title" = "Keep a chosen application visible on the right side of your primary screen at all times";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. Traga sua aplicação To-do escolhida pra frente";
+"qze-7p-m1X.title" = "1. Bring your chosen todo application frontmost";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "2. No menu Rectangle, selecione\n\"Usar [Application] como aplicação To-do\"";
+"xNi-9K-fnJ.title" = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\"";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. No menu Rectangle, ative o Modo To-do.";
+"8dv-v2-SPu.title" = "3. In the Rectangle menu, enable Todo Mode.";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "Enquanto em Modo To-do, você pode atualizar o Modo To-do ao selecionar \"Refluir To-do\" no menu Rectangle ou executando o atalho no teclado.";
+"q9C-qZ-xw5.title" = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut.";
