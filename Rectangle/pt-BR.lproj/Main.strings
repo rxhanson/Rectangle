@@ -36,7 +36,7 @@
 "3IN-sU-3Bg.title" = "Ortografia";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "3Om-Ey-2VK"; */
-"3Om-Ey-2VK.title" = "Usar padrão";
+"3Om-Ey-2VK.title" = "Usar Padrão";
 
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
 "3rS-ZA-NoH.title" = "Voz";
@@ -99,13 +99,13 @@
 "9ic-FL-obx.title" = "Substituições";
 
 /* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
-"9yt-4B-nSM.title" = "Copiar/colar inteligente";
+"9yt-4B-nSM.title" = "Copiar/Colar Inteligente";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
 "A66-A4-cGD.title" = "Fechar Rectangle";
 
 /* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
-"AYu-sK-qS6.title" = "Menu principal";
+"AYu-sK-qS6.title" = "Menu Principal";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
 "BOF-NM-1cW.title" = "Preferências…";
@@ -156,19 +156,19 @@
 "GEO-Iw-cKr.title" = "Formato";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "GUa-eO-cwY"; */
-"GUa-eO-cwY.title" = "Usar padrão";
+"GUa-eO-cwY.title" = "Usar Padrão";
 
 /* Class = "NSMenuItem"; title = "Font"; ObjectID = "Gi5-1S-RQB"; */
 "Gi5-1S-RQB.title" = "Fonte";
 
 /* Class = "NSMenuItem"; title = "Writing Direction"; ObjectID = "H1b-Si-o9J"; */
-"H1b-Si-o9J.title" = "Direção de escrita";
+"H1b-Si-o9J.title" = "Direção de Escrita";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
 "H8h-7b-M4v.title" = "Visualizar";
 
 /* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
-"HFQ-gK-NFA.title" = "Substituição de texto";
+"HFQ-gK-NFA.title" = "Substituição de Texto";
 
 /* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
 "HFo-cy-zxI.title" = "Mostrar ortografia e gramática";
@@ -279,13 +279,13 @@
 "UEZ-Bs-lqG.title" = "Capitalizar";
 
 /* Class = "NSMenuItem"; title = "Center"; ObjectID = "VIY-Ag-zcb"; */
-"VIY-Ag-zcb.title" = "Centro";
+"VIY-Ag-zcb.title" = "Centralizar";
 
 /* Class = "NSMenuItem"; title = "Authorize…"; ObjectID = "VIf-4h-MJW"; */
 "VIf-4h-MJW.title" = "Autorizar…";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
-"Vdr-fp-XzO.title" = "Esconder outros";
+"Vdr-fp-XzO.title" = "Esconder Outros";
 
 /* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
 "Vjx-xi-njq.title" = "Itálico";
@@ -339,10 +339,10 @@
 "adp-cN-qkh.title" = "Topo esquerdo";
 
 /* Class = "NSMenuItem"; title = "Use Default"; ObjectID = "agt-UL-0e3"; */
-"agt-UL-0e3.title" = "Usar padrão";
+"agt-UL-0e3.title" = "Usar Padrão";
 
 /* Class = "NSMenuItem"; title = "Show Colors"; ObjectID = "bgn-CT-cEk"; */
-"bgn-CT-cEk.title" = "Mostrar cores";
+"bgn-CT-cEk.title" = "Mostrar Cores";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
 "bib-Uj-vzu.title" = "Arquivo";
@@ -366,13 +366,13 @@
 "cqv-fj-IhA.title" = "Seleção";
 
 /* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
-"cwL-P1-jid.title" = "Links inteligentes";
+"cwL-P1-jid.title" = "Links Inteligentes";
 
 /* Class = "NSTextFieldCell"; title = "Top Half"; ObjectID = "d7y-s8-7GE"; */
 "d7y-s8-7GE.title" = "Metade superior";
 
 /* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
-"d9M-CD-aMd.title" = "Converter em minúsculas";
+"d9M-CD-aMd.title" = "Converter em Minúsculas";
 
 /* Class = "NSMenu"; title = "Text"; ObjectID = "d9c-me-L2H"; */
 "d9c-me-L2H.title" = "Texto";
@@ -402,7 +402,7 @@
 "gyg-xl-dPn.title" = "O Rectangle precisa de sua permissão para controlar a posição das janelas.";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
-"hQb-2v-fYv.title" = "Citações inteligentes";
+"hQb-2v-fYv.title" = "Citações Inteligentes";
 
 /* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
 "hz2-CU-CR7.title" = "Verificar documento agora";
@@ -468,7 +468,7 @@
 "q09-fT-Sye.title" = "Buscar próximo";
 
 /* Class = "NSMenuItem"; title = "Page Setup…"; ObjectID = "qIS-W8-SiK"; */
-"qIS-W8-SiK.title" = "Configuração da página…";
+"qIS-W8-SiK.title" = "Configuração da Página…";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
 "qlg-kC-FMr.title" = "Ocultar ícone da barra de menu";
@@ -477,7 +477,7 @@
 "rbD-Rh-wIN.title" = "Verificar ortografia durante a digitação";
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
-"rgM-f4-ycn.title" = "Traços inteligentes";
+"rgM-f4-ycn.title" = "Traços Inteligentes";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
 "rmV-YD-Hzj.title" = "Procurar atualizações automaticamente";
@@ -513,22 +513,22 @@
 "v2f-bX-xiM.title" = "Mover para a esquerda";
 
 /* Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "vKC-jM-MkH"; */
-"vKC-jM-MkH.title" = "Colar estilo";
+"vKC-jM-MkH.title" = "Colar Estilo";
 
 /* Class = "NSMenuItem"; title = "Show Ruler"; ObjectID = "vLm-3I-IUL"; */
-"vLm-3I-IUL.title" = "Mostrar régua";
+"vLm-3I-IUL.title" = "Mostrar Régua";
 
 /* Class = "NSMenuItem"; title = "Clear Menu"; ObjectID = "vNY-rz-j42"; */
-"vNY-rz-j42.title" = "Limpar menu";
+"vNY-rz-j42.title" = "Limpar Menu";
 
 /* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
-"vmV-6d-7jI.title" = "Converter em maiúsculas";
+"vmV-6d-7jI.title" = "Converter em Maiúsculas";
 
 /* Class = "NSMenu"; title = "Ligatures"; ObjectID = "w0m-vy-SC9"; */
 "w0m-vy-SC9.title" = "Ligaduras";
 
 /* Class = "NSMenuItem"; title = "Align Right"; ObjectID = "wb2-vD-lq4"; */
-"wb2-vD-lq4.title" = "Alinhar à direita";
+"wb2-vD-lq4.title" = "Alinhar à Direita";
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
 "wpr-3q-Mcd.title" = "Ajuda";
@@ -546,7 +546,7 @@
 "yvN-PE-bxn.title" = "Fechar Rectangle";
 
 /* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
-"z6F-FW-3nz.title" = "Mostrar substituições";
+"z6F-FW-3nz.title" = "Mostrar Substituições";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
 "kYm-Ye-gOR.title" = "Bem vindo ao Rectangle!";
