@@ -250,6 +250,12 @@ defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 10
 defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 10
 ```
 
+If you want these gaps to be applied on your main screen only you can set screenEdgeGapsOnMainScreenOnly. Useful for multi display setups where only one screen has some dock replacement.
+
+```bash
+defaults write com.knollsoft.Rectangle screenEdgeGapsOnMainScreenOnly -bool true
+```
+
 ## Ignore specific drag to snap areas
 
 Each drag to snap area on the edge of a screen can be ignored with a single Terminal command, but it's a bit field setting so you'll have to determine the bit field for which ones you want to disable.
