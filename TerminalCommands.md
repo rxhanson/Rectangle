@@ -296,3 +296,13 @@ To disable the gaps for "Maximize Height", execute:
 ```bash
 defaults write com.knollsoft.Rectangle applyGapsToMaximizeHeight -int 2
 ```
+
+## Enabling snap areas for sixths
+
+To enable snap areas for sixths corners, execute: 
+
+```bash
+defaults write com.knollsoft.Rectangle sixthsSnapArea -bool true
+```
+
+Once enabled, you can drag a window to the corner, then move it along the edge towards the thirds area to snap to a sixth.

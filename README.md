@@ -35,7 +35,6 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Left or right edge, just above or below a corner       | Top or bottom half                     |
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
-| Corners, then drag to respective third                 | Respective sixth                       |
 
 ### Ignore an app
 

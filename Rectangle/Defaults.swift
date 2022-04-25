@@ -66,6 +66,7 @@ class Defaults {
     static let cornerSnapAreaSize = FloatDefault(key: "cornerSnapAreaSize", defaultValue: 20)
     static let shortEdgeSnapAreaSize = FloatDefault(key: "shortEdgeSnapAreaSize", defaultValue: 145)
     static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
+    static let sixthsSnapArea = OptionalBoolDefault(key: "sixthsSnapArea")
 
     static var array: [Default] = [
         launchOnLogin,
