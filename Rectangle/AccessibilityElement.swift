@@ -190,6 +190,19 @@ class AccessibilityElement {
         return value(for: .subrole) == kAXSystemDialogSubrole
     }
     
+    func isFullScreen() -> Bool {
+        if let window = window() {
+            if let fullScreenButton: AccessibilityElement = window.value(for: .fullScreenButton) {
+                if let subrole: String = fullScreenButton.value(for: .subrole) {
+                    if subrole == kAXZoomButtonSubrole {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+    
     func isEnhancedUserInterfaceEnabled() -> Bool? {
         var rawValue: AnyObject?
         let error = AXUIElementCopyAttributeValue(self.underlyingElement, kAXEnhancedUserInterface as CFString, &rawValue)

@@ -16,11 +16,13 @@ class SnappingManager {
     var windowIdAttempt: Int = 0
     var lastWindowIdAttempt: TimeInterval?
     var windowMoving: Bool = false
+    var isFullScreen: Bool = false
+    var allowListening: Bool = true
     var initialWindowRect: CGRect?
     var currentSnapArea: SnapArea?
     
     var box: FootprintWindow?
-    
+
     let screenDetection = ScreenDetection()
     
     private let marginTop = CGFloat(Defaults.snapEdgeMarginTop.value)
@@ -49,16 +51,39 @@ class SnappingManager {
             enableSnapping()
         }
         
+        registerWorkspaceChangeNote()
+        
         Notification.Name.windowSnapping.onPost { notification in
-            guard let enabled = notification.object as? Bool else { return }
-            if enabled {
-                if !Defaults.windowSnapping.userDisabled {
-                    self.enableSnapping()
-                }
-            } else {
-                self.disableSnapping()
+            if let enabled = notification.object as? Bool {
+                self.allowListening = enabled
             }
+            self.toggleListening()
         }
+    }
+    
+    func toggleListening() {
+        if allowListening, !isFullScreen, !Defaults.windowSnapping.userDisabled {
+            enableSnapping()
+        } else {
+            disableSnapping()
+        }
+    }
+    
+    private func registerWorkspaceChangeNote() {
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(receiveWorkspaceNote(_:)), name: NSWorkspace.activeSpaceDidChangeNotification, object: nil)
+        checkFullScreen()
+    }
+    
+    func checkFullScreen() {
+        let currentFullScreen = AccessibilityElement.frontmostWindow()?.isFullScreen() == true
+        if isFullScreen != currentFullScreen {
+            isFullScreen = currentFullScreen
+            toggleListening()
+        }
+    }
+    
+    @objc func receiveWorkspaceNote(_ notification: Notification) {
+        checkFullScreen()
     }
         
     public func reloadFromDefaults() {
@@ -74,6 +99,7 @@ class SnappingManager {
     }
     
     private func enableSnapping() {
+        print("enable")
         if box == nil {
             box = FootprintWindow()
         }
@@ -84,6 +110,7 @@ class SnappingManager {
     }
     
     private func disableSnapping() {
+        print("disable")
         box = nil
         eventMonitor?.stop()
         eventMonitor = nil
