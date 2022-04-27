@@ -257,6 +257,26 @@ class SnappingManager {
         let shortEdgeSize = CGFloat(Defaults.shortEdgeSnapAreaSize.value)
         let frame = screen.frame
         
+        if Defaults.sixthsSnapArea.userEnabled {
+            if loc.y >= frame.maxY - marginTop - cornerSize && loc.y <= frame.maxY && !ignoredSnapAreas.contains(.top) {
+                let thirdWidth = floor(frame.width / 3)
+                if loc.x >= frame.minX + cornerSize && loc.x <= frame.minX + thirdWidth {
+                    if let priorAction = priorSnapArea?.action {
+                        if priorAction == .topLeft || priorAction == .topLeftSixth {
+                            return SnapArea(screen: screen, action: .topLeftSixth)
+                        }
+                    }
+                }
+                if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - cornerSize {
+                    if let priorAction = priorSnapArea?.action {
+                        if priorAction == .topRight || priorAction == .topRightSixth {
+                            return SnapArea(screen: screen, action: .topRightSixth)
+                        }
+                    }
+                }
+            }
+        }
+        
         if loc.x >= frame.minX {
             if loc.x < frame.minX + marginLeft + cornerSize {
                 if loc.y >= frame.maxY - marginTop - cornerSize && loc.y <= frame.maxY {
@@ -334,6 +354,17 @@ class SnappingManager {
         if loc.y >= frame.minY && loc.y < frame.minY + marginBottom && !ignoredSnapAreas.contains(.bottom) {
             let thirdWidth = floor(frame.width / 3)
             if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
+                if Defaults.sixthsSnapArea.userEnabled {
+                    if let priorAction = priorSnapArea?.action {
+                        let action: WindowAction
+                        switch priorAction {
+                        case .bottomLeft, .bottomLeftSixth:
+                            action = .bottomLeftSixth
+                        default: action = .firstThird
+                        }
+                        return SnapArea(screen: screen, action: action)
+                    }
+                }
                 return SnapArea(screen: screen, action: .firstThird)
             }
             if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
@@ -351,6 +382,17 @@ class SnappingManager {
                 return SnapArea(screen: screen, action: .centerThird)
             }
             if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
+                if Defaults.sixthsSnapArea.userEnabled {
+                    if let priorAction = priorSnapArea?.action {
+                        let action: WindowAction
+                        switch priorAction {
+                        case .bottomRight, .bottomRightSixth:
+                            action = .bottomRightSixth
+                        default: action = .lastThird
+                        }
+                        return SnapArea(screen: screen, action: action)
+                    }
+                }
                 return SnapArea(screen: screen, action: .lastThird)
             }
         }
