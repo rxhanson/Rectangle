@@ -266,6 +266,8 @@ class FloatDefault: Default {
         }
     }
     
+    var cgFloat: CGFloat { CGFloat(value) }
+
     init(key: String, defaultValue: Float = 0) {
         self.key = key
         value = UserDefaults.standard.float(forKey: key)

@@ -129,32 +129,23 @@ struct AdjacentScreens {
 extension NSScreen {
     var adjustedVisibleFrame: CGRect {
         get {
-            let topGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapTop.value : 0)
-            let bottomGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapBottom.value : 0)
-            let leftGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapLeft.value : 0)
-            var rightGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapRight.value : 0)
+            var newFrame = visibleFrame
 
             if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
-                rightGap += CGFloat(Defaults.todoSidebarWidth.value)
+                newFrame.size.width -= CGFloat(Defaults.todoSidebarWidth.value)
             }
             
-            let origin = CGPoint(
-                x: visibleFrame.origin.x + leftGap,
-                y: visibleFrame.origin.y + bottomGap
-            )
-            let size = CGSize(
-                width: visibleFrame.width - leftGap - rightGap,
-                height: visibleFrame.height - topGap - bottomGap
-            )
+            if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self == NSScreen.screens.first {
+                return newFrame
+            }
             
-            return CGRect(origin: origin, size: size)
+            newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
+            newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
+            newFrame.size.width -= Defaults.screenEdgeGapLeft.cgFloat - Defaults.screenEdgeGapRight.cgFloat
+            newFrame.size.height -= Defaults.screenEdgeGapTop.cgFloat - Defaults.screenEdgeGapBottom.cgFloat
+                        
+            return newFrame
         }
-    }
-    var displayID: CGDirectDisplayID {
-      return deviceDescription[NSDeviceDescriptionKey(rawValue: "NSScreenNumber")] as? CGDirectDisplayID ?? 0
-    }
-    var isMainDisplay: Bool {
-        return displayID == CGMainDisplayID()
     }
 }
 
