@@ -92,7 +92,6 @@ class WindowManager {
         }
         
         if frontmostWindowElement.isSheet()
-            || frontmostWindowElement.isSystemDialog()
             || currentWindowRect.isNull
             || usableScreens.frameOfCurrentScreen.isNull
             || usableScreens.visibleFrameOfCurrentScreen.isNull {
@@ -133,7 +132,7 @@ class WindowManager {
 
         let visibleFrameOfDestinationScreen = calcResult.screen.adjustedVisibleFrame
 
-        let useFixedSizeMover = !frontmostWindowElement.isResizable() && action.resizes
+        let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog()
         let windowMoverChain = useFixedSizeMover
             ? fixedSizeWindowMoverChain
             : standardWindowMoverChain
