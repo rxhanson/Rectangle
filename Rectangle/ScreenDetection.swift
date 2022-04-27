@@ -132,7 +132,7 @@ extension NSScreen {
             var newFrame = visibleFrame
 
             if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
-                newFrame.size.width -= CGFloat(Defaults.todoSidebarWidth.value)
+                newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
             }
             
             if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self == NSScreen.screens.first {
