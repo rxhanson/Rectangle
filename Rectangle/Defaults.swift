@@ -125,7 +125,8 @@ class Defaults {
         applyGapsToMaximizeHeight,
         cornerSnapAreaSize,
         shortEdgeSnapAreaSize,
-        cascadeAllDeltaSize
+        cascadeAllDeltaSize,
+        sixthsSnapArea
     ]
 }
 
