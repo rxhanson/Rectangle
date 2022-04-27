@@ -129,10 +129,10 @@ struct AdjacentScreens {
 extension NSScreen {
     var adjustedVisibleFrame: CGRect {
         get {
-            let topGap = CGFloat(Defaults.screenEdgeGapTop.value)
-            let bottomGap = CGFloat(Defaults.screenEdgeGapBottom.value)
-            let leftGap = CGFloat(Defaults.screenEdgeGapLeft.value)
-            var rightGap = CGFloat(Defaults.screenEdgeGapRight.value)
+            let topGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapTop.value : 0)
+            let bottomGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapBottom.value : 0)
+            let leftGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapLeft.value : 0)
+            var rightGap = CGFloat(Defaults.screenEdgeGapsOnMainScreenOnly.enabled && isMainDisplay ? Defaults.screenEdgeGapRight.value : 0)
 
             if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
                 rightGap += CGFloat(Defaults.todoSidebarWidth.value)
@@ -149,6 +149,12 @@ extension NSScreen {
             
             return CGRect(origin: origin, size: size)
         }
+    }
+    var displayID: CGDirectDisplayID {
+      return deviceDescription[NSDeviceDescriptionKey(rawValue: "NSScreenNumber")] as? CGDirectDisplayID ?? 0
+    }
+    var isMainDisplay: Bool {
+        return displayID == CGMainDisplayID()
     }
 }
 
