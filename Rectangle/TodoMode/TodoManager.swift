@@ -60,12 +60,15 @@ class TodoManager {
                 }
 
                 var rect = todoWindow.rectOfElement()
-                rect.origin.x = screen.adjustedVisibleFrame.maxX
+                rect.origin.x = Defaults.todoMode.enabled && Defaults.todo.userEnabled
+                    ? screen.adjustedVisibleFrame.maxX
+                    : screen.adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
                 rect.origin.y = screenFrame.minY
                 rect.size.height = screen.adjustedVisibleFrame.height
-                rect.size.width = CGFloat(Defaults.todoSidebarWidth.value)
+                rect.size.width = Defaults.todoSidebarWidth.cgFloat
+                rect = AccessibilityElement.normalizeCoordinatesOf(rect)
+                
                 if Defaults.gapSize.value > 0 {
-                    rect = AccessibilityElement.normalizeCoordinatesOf(rect)
                     rect = GapCalculation.applyGaps(rect, sharedEdges: .left, gapSize: Defaults.gapSize.value)
                 }
                 todoWindow.setRectOf(rect)
