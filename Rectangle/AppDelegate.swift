@@ -95,7 +95,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.windowManager = WindowManager()
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
-        self.snappingManager = SnappingManager()
+        self.snappingManager = SnappingManager(applicationToggle: applicationToggle)
         self.initializeTodo()
         checkForProblematicApps()
     }

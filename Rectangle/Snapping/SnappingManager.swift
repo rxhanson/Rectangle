@@ -10,6 +10,8 @@ import Cocoa
 
 class SnappingManager {
     
+    private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", "com.mathworks.matlab", "com.live2d.cubism.CECubismEditorApp"]
+    
     var eventMonitor: EventMonitor?
     var windowElement: AccessibilityElement?
     var windowId: Int?
@@ -24,6 +26,7 @@ class SnappingManager {
     var box: FootprintWindow?
 
     let screenDetection = ScreenDetection()
+    let applicationToggle: ApplicationToggle
     
     private let marginTop = CGFloat(Defaults.snapEdgeMarginTop.value)
     private let marginBottom = CGFloat(Defaults.snapEdgeMarginBottom.value)
@@ -45,7 +48,8 @@ class SnappingManager {
         .bottomRightShort: .bottomHalf
     ]
     
-    init() {
+    init(applicationToggle: ApplicationToggle) {
+        self.applicationToggle = applicationToggle
         
         if Defaults.windowSnapping.enabled != false {
             enableSnapping()
@@ -58,6 +62,24 @@ class SnappingManager {
                 self.allowListening = enabled
             }
             self.toggleListening()
+        }
+        Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
+    }
+    
+    func frontAppChanged(notification: Notification) {
+        if applicationToggle.shortcutsDisabled {
+            DispatchQueue.main.async {
+                for id in self.fullIgnoreIds {
+                    if self.applicationToggle.frontAppId?.starts(with: id) == true {
+                        self.allowListening = false
+                        self.toggleListening()
+                        break
+                    }
+                }
+            }
+        } else {
+            allowListening = true
+            checkFullScreen()
         }
     }
     
@@ -75,11 +97,8 @@ class SnappingManager {
     }
     
     func checkFullScreen() {
-        let currentFullScreen = AccessibilityElement.frontmostWindow()?.isFullScreen() == true
-        if isFullScreen != currentFullScreen {
-            isFullScreen = currentFullScreen
-            toggleListening()
-        }
+        isFullScreen = AccessibilityElement.frontmostWindow()?.isFullScreen() == true
+        toggleListening()
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
