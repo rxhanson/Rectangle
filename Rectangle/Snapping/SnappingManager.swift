@@ -99,7 +99,6 @@ class SnappingManager {
     }
     
     private func enableSnapping() {
-        print("enable")
         if box == nil {
             box = FootprintWindow()
         }
@@ -110,7 +109,6 @@ class SnappingManager {
     }
     
     private func disableSnapping() {
-        print("disable")
         box = nil
         eventMonitor?.stop()
         eventMonitor = nil
