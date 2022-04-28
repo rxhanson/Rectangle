@@ -682,7 +682,7 @@
 "ZVi-DR-1zj.title" = "О Todo режиме";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Keep a chosen application visible on the right of your primary screen at all times";
+"FCh-1Q-Xms.title" = "Держать выбранное приложение постоянно видимым в правой части основного экрана";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
 "N2U-pY-CLq.title" = "Держать выбранное приложение постоянно видимым в правой части основного экрана";
