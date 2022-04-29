@@ -141,8 +141,8 @@ extension NSScreen {
             
             newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
             newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
-            newFrame.size.width -= Defaults.screenEdgeGapLeft.cgFloat - Defaults.screenEdgeGapRight.cgFloat
-            newFrame.size.height -= Defaults.screenEdgeGapTop.cgFloat - Defaults.screenEdgeGapBottom.cgFloat
+            newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
+            newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
                         
             return newFrame
         }
