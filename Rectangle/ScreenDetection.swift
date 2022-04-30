@@ -135,7 +135,7 @@ extension NSScreen {
                 newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
             }
             
-            if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self == NSScreen.screens.first {
+            if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self != NSScreen.screens.first {
                 return newFrame
             }
             
