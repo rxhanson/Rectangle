@@ -312,3 +312,11 @@ defaults write com.knollsoft.Rectangle sixthsSnapArea -bool true
 ```
 
 Once enabled, you can drag a window to the corner, then move it along the edge towards the thirds area to snap to a sixth.
+
+## Move cursor with window
+
+There's an option in the UI for moving the cursor with the window when going across displays, but here's an option for moving it with any shortcut:
+
+```bash
+defaults write com.knollsoft.Rectangle moveCursor -int 1
+```
