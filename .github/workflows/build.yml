@@ -45,4 +45,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Build
-        path: $DMG_FILE_NAME
+        path: ${{ env.DMG_FILE_NAME }}
