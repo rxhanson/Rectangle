@@ -1,18 +1,48 @@
 name: Build
 
-on: [pull_request]
+on: [push, pull_request]
+
+permissions: read-all
+
+env:
+  XCODE_WORKSPACE: "Rectangle.xcworkspace"
+  XCODE_SCHEME: "Rectangle"
+  CODE_SIGN_IDENTITY: "-"
+  BUILD_DIR: "build"
+  XCODE_ARCHIVE: "Rectangle.xcarchive"
+  APP_NAME: "Rectangle.app"
+  EXPORT_OPTIONS_PLIST: "exportOptions.plist"
+  DMG_NAME: "Rectangle"
+  DMG_FILE_NAME: "Rectangle.dmg"
 
 jobs:
   build:
-
     runs-on: macos-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Install Dependences
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Dependencies
       run: |
         pod repo update
         pod install
     - name: Build
-      run: xcodebuild -workspace Rectangle.xcworkspace -scheme Rectangle
-      
+      run: xcodebuild -workspace "$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" archive CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" -archivePath "$BUILD_DIR/$XCODE_ARCHIVE"
+    - name: Export
+      run: |
+        plutil -convert xml1 - -o "$EXPORT_OPTIONS_PLIST" << EOF
+          {
+            "destination": "export",
+            "method": "mac-application"
+          }
+        EOF
+        
+        xcodebuild -exportArchive -archivePath "$BUILD_DIR/$XCODE_ARCHIVE" -exportPath "$BUILD_DIR" -exportOptionsPlist "$EXPORT_OPTIONS_PLIST"
+    - name: Resign App
+      run: codesign --force --deep -s "$CODE_SIGN_IDENTITY" "$BUILD_DIR/$APP_NAME"
+    - name: Make DMG
+      run: hdiutil create -srcdir "$BUILD_DIR" -volname "$DMG_NAME" "$DMG_FILE_NAME"
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: Build
+        path: ${{ env.DMG_FILE_NAME }}
