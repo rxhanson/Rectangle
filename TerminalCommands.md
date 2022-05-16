@@ -262,18 +262,18 @@ Each drag to snap area on the edge of a screen can be ignored with a single Term
 
 | Bit | Snap Area                 | Window Action       |
 |-----|---------------------------|---------------------|
-| 1   | Top                       | Maximize            |
-| 2   | Bottom                    | Thirds              |
-| 3   | Left                      | Left Half           |
-| 4   | Right                     | Right Half          |
-| 5   | Top Left                  | Top Left Corner     |
-| 6   | Top Right                 | Top Right Corner    |
-| 7   | Bottom Left               | Bottom Left Corner  |
-| 8   | Bottom Right              | Bottom Right Corner |
-| 9   | Top Left Below Corner     | Top Half            |
-| 10  | Top Right Below Corner    | Top Half            |
-| 11  | Bottom Left Above Corner  | Bottom Half         |
-| 12  | Bottom Right Above Corner | Bottom Half         |
+| 0   | Top                       | Maximize            |
+| 1   | Bottom                    | Thirds              |
+| 2   | Left                      | Left Half           |
+| 3   | Right                     | Right Half          |
+| 4   | Top Left                  | Top Left Corner     |
+| 5   | Top Right                 | Top Right Corner    |
+| 6   | Bottom Left               | Bottom Left Corner  |
+| 7   | Bottom Right              | Bottom Right Corner |
+| 8   | Top Left Below Corner     | Top Half            |
+| 9   | Top Right Below Corner    | Top Half            |
+| 10  | Bottom Left Above Corner  | Bottom Half         |
+| 11  | Bottom Right Above Corner | Bottom Half         |
 
 To disable the top (maximize) snap area, execute:
 
