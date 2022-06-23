@@ -130,6 +130,11 @@ extension NSScreen {
     var adjustedVisibleFrame: CGRect {
         get {
             var newFrame = visibleFrame
+            
+            if StageUtil.stageVisible() {
+                newFrame.origin.x += Defaults.stageSize.cgFloat
+                newFrame.size.width -= Defaults.stageSize.cgFloat
+            }
 
             if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
                 newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat

@@ -28,6 +28,9 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var todoCheckbox: NSButton!
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
     @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
+    @IBOutlet weak var stageView: NSStackView!
+    @IBOutlet weak var stageSlider: NSSlider!
+    @IBOutlet weak var stageLabel: NSTextField!
     
     private var aboutTodoWindowController: NSWindowController?
     
@@ -106,6 +109,17 @@ class SettingsViewController: NSViewController {
         }
         NSApp.activate(ignoringOtherApps: true)
         aboutTodoWindowController?.showWindow(self)
+    }
+    
+    @IBAction func stageSliderChanged(_ sender: NSSlider) {
+        stageLabel.stringValue = "\(sender.intValue) px"
+        if let event = NSApp.currentEvent {
+            if event.type == .leftMouseUp || event.type == .keyDown {
+                if Float(sender.intValue) != Defaults.stageSize.value {
+                    Defaults.stageSize.value = Float(sender.intValue)
+                }
+            }
+        }
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
@@ -204,6 +218,14 @@ class SettingsViewController: NSViewController {
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
+        
+        stageSlider.intValue = Int32(Defaults.stageSize.value)
+        stageLabel.stringValue = "\(stageSlider.intValue) px"
+        stageSlider.isContinuous = true
+        
+        if #unavailable(macOS 13) {
+            stageView.isHidden = true
+        }
     }
 
 }
