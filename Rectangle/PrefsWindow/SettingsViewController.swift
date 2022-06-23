@@ -222,8 +222,9 @@ class SettingsViewController: NSViewController {
         stageSlider.intValue = Int32(Defaults.stageSize.value)
         stageLabel.stringValue = "\(stageSlider.intValue) px"
         stageSlider.isContinuous = true
-        
-        if #unavailable(macOS 13) {
+
+        if #available(macOS 13.0, *) {
+        } else {
             stageView.isHidden = true
         }
     }
