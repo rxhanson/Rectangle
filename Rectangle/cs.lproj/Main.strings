@@ -436,3 +436,9 @@
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
 "yvN-PE-bxn.title" = "Ukončit Rectangle";
+
+/* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
+"ayu-YO-10p.title" = "Stage Manager recent apps area";
+
+/* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
+"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
