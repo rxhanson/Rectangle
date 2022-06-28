@@ -35,6 +35,22 @@ class ChangeSizeCalculation: WindowCalculation {
             ? 30.0
             : CGFloat(defaultSizeOffset)
     }
+    
+    override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+
+        let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: params.window.id)
+        let visibleFrame = isTodo
+            ? params.usableScreens.currentScreen.visibleFrame
+            : params.usableScreens.visibleFrameOfCurrentScreen
+        
+        let rectResult = calculateRect(params.asRectParams(visibleFrame: visibleFrame))
+        
+        if rectResult.rect.isNull {
+            return nil
+        }
+        
+        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: params.action, resultingSubAction: rectResult.subAction)
+    }
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let sizeOffset: CGFloat = params.action == .smaller ? -sizeOffsetAbs : sizeOffsetAbs
@@ -71,7 +87,7 @@ class ChangeSizeCalculation: WindowCalculation {
             resizedWindowRect.origin.y = params.window.rect.origin.y - floor(sizeOffset / 2.0)
         }
         
-        if resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
+        if params.action == .smaller, resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
             resizedWindowRect = window.rect
         }
         return RectResult(resizedWindowRect)
@@ -107,6 +123,7 @@ class ChangeSizeCalculation: WindowCalculation {
     private func againstLeftAndRightScreenEdges(originalWindowRect: CGRect, resizedWindowRect: CGRect, visibleFrameOfScreen: CGRect) -> CGRect {
         var adjustedWindowRect = resizedWindowRect
         if againstRightScreenEdge(originalWindowRect, visibleFrameOfScreen) {
+            print("right")
             adjustedWindowRect.origin.x = visibleFrameOfScreen.maxX - adjustedWindowRect.width - CGFloat(Defaults.gapSize.value)
             if againstLeftScreenEdge(originalWindowRect, visibleFrameOfScreen) {
                 adjustedWindowRect.size.width = visibleFrameOfScreen.width - (CGFloat(Defaults.gapSize.value) * 2)

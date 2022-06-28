@@ -130,7 +130,9 @@ class WindowManager {
         
         let newRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect)
 
-        let visibleFrameOfDestinationScreen = calcResult.screen.adjustedVisibleFrame
+        let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId)
+        
+        let visibleFrameOfDestinationScreen = isTodo ? calcResult.screen.frame : calcResult.screen.adjustedVisibleFrame
 
         let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog()
         let windowMoverChain = useFixedSizeMover

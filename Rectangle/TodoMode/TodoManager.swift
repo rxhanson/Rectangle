@@ -36,6 +36,10 @@ class TodoManager {
         guard let todoWindow = AccessibilityElement.todoWindow() else { return false }
         return isTodoWindow(w, todoWindow: todoWindow)
     }
+    
+    static func isTodoWindow(id: WindowId) -> Bool {
+        AccessibilityElement.todoWindow()?.getIdentifier() == id
+    }
 
     private static func isTodoWindow(_ w: AccessibilityElement, todoWindow: AccessibilityElement) -> Bool {
         return w.getIdentifier() == todoWindow.getIdentifier()
