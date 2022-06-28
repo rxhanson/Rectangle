@@ -37,7 +37,6 @@ extension Defaults {
         }
         if let encodedJson = try? encoder.encode(config) {
             if let jsonString = String(data: encodedJson, encoding: .utf8) {
-                print(jsonString)
                 return jsonString
             }
         }

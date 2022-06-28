@@ -123,7 +123,6 @@ class ChangeSizeCalculation: WindowCalculation {
     private func againstLeftAndRightScreenEdges(originalWindowRect: CGRect, resizedWindowRect: CGRect, visibleFrameOfScreen: CGRect) -> CGRect {
         var adjustedWindowRect = resizedWindowRect
         if againstRightScreenEdge(originalWindowRect, visibleFrameOfScreen) {
-            print("right")
             adjustedWindowRect.origin.x = visibleFrameOfScreen.maxX - adjustedWindowRect.width - CGFloat(Defaults.gapSize.value)
             if againstLeftScreenEdge(originalWindowRect, visibleFrameOfScreen) {
                 adjustedWindowRect.size.width = visibleFrameOfScreen.width - (CGFloat(Defaults.gapSize.value) * 2)
