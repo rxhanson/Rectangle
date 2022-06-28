@@ -48,7 +48,6 @@ class TodoManager {
 
         if let todoWindow = AccessibilityElement.todoWindow() {
             if let screen = TodoManager.todoScreen {
-                let screenFrame = screen.frame as CGRect
                 let sd = ScreenDetection()
                 // Clear all windows from the todo app sidebar
                 for w in windows {
@@ -63,7 +62,7 @@ class TodoManager {
                 rect.origin.x = Defaults.todoMode.enabled && Defaults.todo.userEnabled
                     ? screen.adjustedVisibleFrame.maxX
                     : screen.adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
-                rect.origin.y = screenFrame.minY
+                rect.origin.y = screen.adjustedVisibleFrame.minY
                 rect.size.height = screen.adjustedVisibleFrame.height
                 rect.size.width = Defaults.todoSidebarWidth.cgFloat
                 rect = AccessibilityElement.normalizeCoordinatesOf(rect)
