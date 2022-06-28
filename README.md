@@ -1,6 +1,6 @@
 # Rectangle
 
-![Build status](https://github.com/rxhanson/Rectangle/workflows/Build/badge.svg)
+[![Build](https://github.com/rxhanson/Rectangle/actions/workflows/build.yml/badge.svg)](https://github.com/rxhanson/Rectangle/actions/workflows/build.yml)
 [![Monthly downloads](https://badgen.net/homebrew/cask/dm/rectangle)](https://formulae.brew.sh/cask/rectangle)
 
 Rectangle is a window management app based on Spectacle, written in Swift.
@@ -38,8 +38,8 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 
 ### Ignore an app
 
-   1. Focus the app that you want to ignore (make a window from that app frontmost).
-   2. Open the Rectangle menu and select "Ignore app"
+1. Focus the app that you want to ignore (make a window from that app frontmost).
+1. Open the Rectangle menu and select "Ignore app"
 
 ## Terminal Commands for Hidden Preferences
 
