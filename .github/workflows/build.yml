@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install Dependencies
       run: |
         pod repo update
@@ -35,14 +35,14 @@ jobs:
             "method": "mac-application"
           }
         EOF
-        
+
         xcodebuild -exportArchive -archivePath "$BUILD_DIR/$XCODE_ARCHIVE" -exportPath "$BUILD_DIR" -exportOptionsPlist "$EXPORT_OPTIONS_PLIST"
     - name: Resign App
       run: codesign --force --deep -s "$CODE_SIGN_IDENTITY" "$BUILD_DIR/$APP_NAME"
     - name: Make DMG
       run: hdiutil create -srcdir "$BUILD_DIR" -volname "$DMG_NAME" "$DMG_FILE_NAME"
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Build
         path: ${{ env.DMG_FILE_NAME }}
