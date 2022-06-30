@@ -441,13 +441,13 @@
 "lgE-cR-cQ5.title" = "Gehen Sie zu Systemeinstellungen → Sicherheit & Datenschutz → Datenschutz → Bedienungshilfen";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "Wenn das Menüleistensymbol ausgeblendet ist, starte  Rectangle im Finder neu, um das Menü zu öffnen..";
+"ltc-mf-BHr.title" = "Wenn das Menüleistensymbol ausgeblendet ist, starte Rectangle im Finder neu, um das Menü zu öffnen.";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Rechtschreib- und Grammatikprüfung";
 
 /* Class = "NSButtonCell"; title = "Allow any keyboard shortcut"; ObjectID = "n4U-FC-L9s"; */
-"n4U-FC-L9s.title" = "Jede Tastenkombination erlauben";
+"n4U-FC-L9s.title" = "Jeden Kurzbefehl erlauben";
 
 /* Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "o6e-r0-MWq"; */
 "o6e-r0-MWq.title" = "Ligaturen";
@@ -552,7 +552,7 @@
 "kYm-Ye-gOR.title" = "Willkommen bei Rectangle!";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
-"gEd-S9-Cfp.title" = "Bitte wähle die Standardeinstellungen für Tastaturkurzbefehe und deren Verhaltensweisen";
+"gEd-S9-Cfp.title" = "Bitte wähle die Standardeinstellungen für Kurzbefehe und deren Verhaltensweisen";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
 "HOp-Kd-vhY.title" = "Empfohlen";
@@ -653,12 +653,12 @@
 "gHH-BV-5kP.title" = "Wechsle zwischen ½, ⅔, und ⅓ bei Aktionen für halbe Bildschirme";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "Zum benachbarten Bildschirm auf der linken/rechten Seite bewegen oder Größe auf die Hälfe einstellen";
+"3GE-la-fAZ.title" = "Zum benachbarten Bildschirm auf der linken/rechten Seite bewegen oder Größe auf die Hälfte einstellen";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
 "2Zm-fl-PcC.title" = "Wiederholte Befehle";
 
-"Default Shortcuts" = "Standard-Tastenkombinationen";
+"Default Shortcuts" = "Standard-Tastaturkurzbefehle";
 "Currently using: " = "Aktuell verwendet: ";
 "Cancel" = "Abbrechen";
 
@@ -682,10 +682,10 @@
 "ZVi-DR-1zj.title" = "Über den To-Do-Modus";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "Halte eine ausgewählte Anwendung auf der rechten Seite des Hauptbildschirms im Vordergrund";
+"FCh-1Q-Xms.title" = "Halte eine ausgewählte Anwendung auf der rechten Seite des Hauptbildschirms im Vordergrund.";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "Halte eine ausgewählte Anwendung auf der rechten Seite des Hauptbildschirms im Vordergrund";
+"N2U-pY-CLq.title" = "Halte eine ausgewählte Anwendung auf der rechten Seite des Hauptbildschirms im Vordergrund.";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
 "qze-7p-m1X.title" = "1. Bringe die gewünschte To-Do-Anwendung in den Vordergrund.";
@@ -700,7 +700,7 @@
 "q9C-qZ-xw5.title" = "Du kannst im To-Do-Modus die To-Do-Anwendung neu ausrichten indem du \"To-Do neu ausrichten\" im Rectangle-Menü auswählst oder die zugewiesene Tastenkombination ausführst.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "Stage Manager Bereich zuletzt verwendeter Programme";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "Wenn der Bereich zu klein ist, werden die zuletzt verwendeten Programme ausgeblendet.";
