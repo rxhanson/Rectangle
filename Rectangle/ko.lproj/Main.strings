@@ -709,7 +709,7 @@
 "q9C-qZ-xw5.title" = "Todo 모드를 사용하는 동안, Rectangle 메뉴에서 \"Todo 재배치\"를 클릭하거나 관련 키보드 단축키를 사용해 Todo 모드 레이아웃을 새로 고칠 수 있습니다.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "스테이지 매니저 최근 앱 영역";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "영역이 너무 작으면, 최근 앱들을 숨깁니다.";
