@@ -57,7 +57,7 @@
 "4sb-4s-VLi.title" = "Sortir de Rectangle";
 
 /* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
-"5QF-Oa-p0T.title" = "Editar";
+"5QF-Oa-p0T.title" = "Edita";
 
 /* Class = "NSMenuItem"; title = "Copy Style"; ObjectID = "5Vv-lz-BsD"; */
 "5Vv-lz-BsD.title" = "Estil de còpia";
@@ -171,34 +171,34 @@
 "HFQ-gK-NFA.title" = "Substitució de text";
 
 /* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
-"HFo-cy-zxI.title" = "Mostrar ortografía y gramática";
+"HFo-cy-zxI.title" = "Mostrar ortografia i gramàtica";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
-"HIK-3r-i7E.title" = "Buscar actualizaciones…";
+"HIK-3r-i7E.title" = "Cerca actualitzacions…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
-"HOm-BV-2jc.title" = "Mover hasta arriba";
+"HOm-BV-2jc.title" = "Mou amunt";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
-"HyV-fh-RgO.title" = "Ver";
+"HyV-fh-RgO.title" = "Visualitza";
 
 /* Class = "NSMenuItem"; title = "Subscript"; ObjectID = "I0S-gh-46l"; */
-"I0S-gh-46l.title" = "Subíndice";
+"I0S-gh-46l.title" = "Subíndex";
 
 /* Class = "NSMenuItem"; title = "Open…"; ObjectID = "IAo-SY-fd9"; */
-"IAo-SY-fd9.title" = "Abrir…";
+"IAo-SY-fd9.title" = "Obre…";
 
 /* Class = "NSMenuItem"; title = "Justify"; ObjectID = "J5U-5w-g23"; */
 "J5U-5w-g23.title" = "Justificar";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right"; ObjectID = "J6t-sg-Wwz"; */
-"J6t-sg-Wwz.title" = "Abajo a la derecha";
+"J6t-sg-Wwz.title" = "Inferior dreta";
 
 /* Class = "NSMenuItem"; title = "Use None"; ObjectID = "J7y-lM-qPV"; */
-"J7y-lM-qPV.title" = "Usar ninguno";
+"J7y-lM-qPV.title" = "Utilitzar cap";;
 
 /* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
-"Jnd-Lc-nlh.title" = "Siguiente Pantalla";
+"Jnd-Lc-nlh.title" = "Següent pantalla";
 
 /* Class = "NSMenuItem"; title = "Revert to Saved"; ObjectID = "KaW-ft-85H"; */
 "KaW-ft-85H.title" = "Volver a Guardado";
@@ -618,18 +618,18 @@
 "UZP-5q-D5Y.title" = "Resetear el tamaño de la ventana al despegarla";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "Espacio entre ventanas";
+"bg9-nw-YvU.title" = "Espai entre finestres";
 
-"Halves" = "Mitades";
-"Corners" = "Esquinas";
-"Thirds" = "Tercios";
-"Maximize" = "Maximizar";
-"Size" = "Tamaño";
+"Halves" = "Meitats";
+"Corners" = "Racons";
+"Thirds" = "Terços";
+"Maximize" = "Maximitzar";
+"Size" = "Mida";
 "Display" = "Pantalla";
-"Other" = "Otros";
-"Move to Edge" = "Desplazar al borde";
-"Fourths" = "Cuartos";
-"Sixths" = "Sextos";
+"Other" = "Altres";
+"Move to Edge" = "Mou a la vora";
+"Fourths" = "Quartes";
+"Sixths" = "Sisenes";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
 "RgZ-Jw-XQZ.title" = "";
