@@ -9,7 +9,7 @@
 "0eh-6G-rMp.title" = "0 px";
 
 /* Class = "NSTextFieldCell"; title = "Move Down"; ObjectID = "1Rc-Od-eP5"; */
-"1Rc-Od-eP5.title" = "Posunout dolů";
+"1Rc-Od-eP5.title" = "Přesunout dolů";
 
 /* Class = "NSMenuItem"; title = "Rectangle"; ObjectID = "1Xt-HY-uBw"; */
 "1Xt-HY-uBw.title" = "Rectangle";
@@ -138,7 +138,7 @@
 "HIK-3r-i7E.title" = "Zkontrolovat aktualizace…";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
-"HOm-BV-2jc.title" = "Posunout nahoru";
+"HOm-BV-2jc.title" = "Přesunout nahoru";
 
 /* Class = "NSButtonCell"; title = "Recommended"; ObjectID = "HOp-Kd-vhY"; */
 "HOp-Kd-vhY.title" = "Doporučené";
@@ -264,7 +264,7 @@
 "YRC-4a-xGg.title" = "Předvolby…";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "přesunout na sousedící displej na levo nebo na pravo";
+"Z9d-Rl-RVq.title" = "přesunout na sousedící displej vlevo nebo vpravo";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "Třetí čtvrtina";
@@ -276,13 +276,24 @@
 "aUF-d1-5bR.title" = "Okno";
 
 /* Class = "NSTextFieldCell"; title = "Top Left"; ObjectID = "adp-cN-qkh"; */
-"adp-cN-qkh.title" = "Vpravo nahoře";
+"adp-cN-qkh.title" = "Vlevo nahoře";
 
 /* Class = "NSTextFieldCell"; title = "Center Half"; ObjectID = "bRX-dV-iAR"; */
 "bRX-dV-iAR.title" = "Vycentrovat polovinu";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "Mezery mezi okny";
+
+"Halves" = "Poloviny";
+"Corners" = "Rohy";
+"Thirds" = "Třetiny";
+"Maximize" = "Maximalizovat";
+"Size" = "Velikost";
+"Display" = "Displej";
+"Other" = "Ostatní";
+"Move to Edge" = "Přesunout ke kraji";
+"Fourths" = "Čtvrtiny";
+"Sixths" = "Šestiny";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
 "bib-Uj-vzu.title" = "Soubor";
@@ -372,7 +383,7 @@
 "m2F-eA-g7w.title" = "Spodní pravá šestina";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Spodní levá šestina";
+"mFt-Kg-UYG.title" = "Horní levá šestina";
 
 /* Class = "NSButtonCell"; title = "Remove keyboard shortcut restrictions"; ObjectID = "n4U-FC-L9s"; */
 "n4U-FC-L9s.title" = "Odstranit omezení klávesových zkratek";
@@ -402,7 +413,7 @@
 "rmV-YD-Hzj.title" = "Automaticky kontrolovat aktualizace";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
-"rzr-Qq-702.title" = "Posunout vpravo";
+"rzr-Qq-702.title" = "Přesunout vpravo";
 
 /* Class = "NSTextFieldCell"; title = "Check Rectangle.app"; ObjectID = "t7n-mU-75I"; */
 "t7n-mU-75I.title" = "Zkontrolovat Rectangle.app";
@@ -420,7 +431,7 @@
 "uw2-9W-2jq.label" = "Klávesové zkratky";
 
 /* Class = "NSTextFieldCell"; title = "Move Left"; ObjectID = "v2f-bX-xiM"; */
-"v2f-bX-xiM.title" = "Posunout vlevo";
+"v2f-bX-xiM.title" = "Přesunout vlevo";
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
 "wpr-3q-Mcd.title" = "Nápověda";
@@ -438,7 +449,7 @@
 "yvN-PE-bxn.title" = "Ukončit Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "Stage Manager oblast posledních aplikací";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "Pokud je oblast příliš malá, nedávné aplikace budou skryté";
