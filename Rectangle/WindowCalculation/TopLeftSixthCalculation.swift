@@ -35,9 +35,9 @@ class TopLeftSixthCalculation: WindowCalculation, OrientationAware, SixthsRepeat
     
     func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
         var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         rect.origin.y = visibleFrameOfScreen.minY + rect.height
+        rect.size.width = floor((visibleFrameOfScreen.width / 3.0) * 0.8)
         return RectResult(rect, subAction: .topLeftSixthLandscape)
     }
     

@@ -35,9 +35,12 @@ class BottomLeftSixthCalculation: WindowCalculation, OrientationAware, SixthsRep
     
     func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
         var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
+        // TODO: Find a cleaner solution instead of the +10px workaround for gaps between windows
+        rect.origin.y = visibleFrameOfScreen.minY + visibleFrameOfScreen.origin.y + 10
+        rect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.origin.x
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        return RectResult(rect, subAction: .bottomLeftSixthLandscape)
+        rect.size.width = floor((visibleFrameOfScreen.width / 3.0) * 0.8)
+        return RectResult(rect, subAction: .topLeftSixthLandscape)
     }
     
     func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
