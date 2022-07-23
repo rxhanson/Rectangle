@@ -68,6 +68,7 @@ class Defaults {
     static let shortEdgeSnapAreaSize = FloatDefault(key: "shortEdgeSnapAreaSize", defaultValue: 145)
     static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
     static let sixthsSnapArea = OptionalBoolDefault(key: "sixthsSnapArea")
+    static let quarterColumnsSnapAera = OptionalBoolDefault(key: "quarterColumnsSnapAera")
     static let eightsSnapArea = OptionalBoolDefault(key: "eightsSnapArea")
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
 

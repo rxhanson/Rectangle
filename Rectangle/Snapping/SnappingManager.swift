@@ -408,19 +408,21 @@ class SnappingManager {
             let quarterWidth = floor(frame.width / 4)
             
             // check first quarter column
-            if loc.x >= frame.minX && loc.x <= frame.minX + quarterWidth {
-                if Defaults.eightsSnapArea.userEnabled {
-                    if let priorAction = priorSnapArea?.action {
-                        let action: WindowAction
-                        switch priorAction {
-                        case .bottomLeft, .bottomLeftSixth, .bottomLeftEighth:
-                            action = .bottomLeftEighth
-                        default: action = .firstFourth
+            if Defaults.quarterColumnsSnapAera.userEnabled {
+                if loc.x >= frame.minX && loc.x <= frame.minX + quarterWidth {
+                    if Defaults.eightsSnapArea.userEnabled {
+                        if let priorAction = priorSnapArea?.action {
+                            let action: WindowAction
+                            switch priorAction {
+                            case .bottomLeft, .bottomLeftSixth, .bottomLeftEighth:
+                                action = .bottomLeftEighth
+                            default: action = .firstFourth
+                            }
+                            return SnapArea(screen: screen, action: action)
                         }
-                        return SnapArea(screen: screen, action: action)
                     }
+                    return SnapArea(screen: screen, action: .firstFourth)
                 }
-                return SnapArea(screen: screen, action: .firstFourth)
             }
             
             // check first third column
@@ -440,25 +442,27 @@ class SnappingManager {
             }
             
             // check second quarter column
-            if loc.x >= frame.minX + quarterWidth && loc.x <= frame.maxX - quarterWidth*2{
-                if let priorAction = priorSnapArea?.action {
-                    let action: WindowAction
-                    switch priorAction {
-                    case .firstFourth, .leftHalf:
-                        action = .firstThreeFourths
-                    case .lastFourth, .rightHalf:
-                        action = .lastThreeFourths
-                    case .bottomLeftEighth, .bottomRightEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth:
-                        if Defaults.eightsSnapArea.userEnabled {
-                            action = .bottomCenterLeftEighth
-                        } else {
-                            action = .secondFourth
+            if Defaults.quarterColumnsSnapAera.userEnabled {
+                if loc.x >= frame.minX + quarterWidth && loc.x <= frame.maxX - quarterWidth*2{
+                    if let priorAction = priorSnapArea?.action {
+                        let action: WindowAction
+                        switch priorAction {
+                        case .firstFourth, .leftHalf:
+                            action = .firstThreeFourths
+                        case .lastFourth, .rightHalf:
+                            action = .lastThreeFourths
+                        case .bottomLeftEighth, .bottomRightEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth:
+                            if Defaults.eightsSnapArea.userEnabled {
+                                action = .bottomCenterLeftEighth
+                            } else {
+                                action = .secondFourth
+                            }
+                        default: action = .secondFourth
                         }
-                    default: action = .secondFourth
+                        return SnapArea(screen: screen, action: action)
                     }
-                    return SnapArea(screen: screen, action: action)
+                    return SnapArea(screen: screen, action: .secondFourth)
                 }
-                return SnapArea(screen: screen, action: .secondFourth)
             }
             
             // check second third column
@@ -484,25 +488,27 @@ class SnappingManager {
             }
             
             // check third quarter column
-            if loc.x >= frame.minX + quarterWidth*2  && loc.x <= frame.maxX - quarterWidth {
-                if let priorAction = priorSnapArea?.action {
-                    let action: WindowAction
-                    switch priorAction {
-                    case .firstFourth, .leftHalf:
-                        action = .firstThreeFourths
-                    case .lastFourth, .rightHalf:
-                        action = .lastThreeFourths
-                    case .bottomLeftEighth, .bottomRightEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth:
-                        if Defaults.eightsSnapArea.userEnabled {
-                            action = .bottomCenterRightEighth
-                        } else {
-                            action = .thirdFourth
+            if Defaults.quarterColumnsSnapAera.userEnabled {
+                if loc.x >= frame.minX + quarterWidth*2  && loc.x <= frame.maxX - quarterWidth {
+                    if let priorAction = priorSnapArea?.action {
+                        let action: WindowAction
+                        switch priorAction {
+                        case .firstFourth, .leftHalf:
+                            action = .firstThreeFourths
+                        case .lastFourth, .rightHalf:
+                            action = .lastThreeFourths
+                        case .bottomLeftEighth, .bottomRightEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth:
+                            if Defaults.eightsSnapArea.userEnabled {
+                                action = .bottomCenterRightEighth
+                            } else {
+                                action = .thirdFourth
+                            }
+                        default: action = .thirdFourth
                         }
-                    default: action = .thirdFourth
+                        return SnapArea(screen: screen, action: action)
                     }
-                    return SnapArea(screen: screen, action: action)
+                    return SnapArea(screen: screen, action: .thirdFourth)
                 }
-                return SnapArea(screen: screen, action: .thirdFourth)
             }
             
             // check third third column
@@ -522,19 +528,21 @@ class SnappingManager {
             }
             
             // check fourth quarther column
-            if loc.x >= frame.minX + quarterWidth*2 && loc.x <= frame.maxX {
-                if Defaults.eightsSnapArea.userEnabled {
-                    if let priorAction = priorSnapArea?.action {
-                        let action: WindowAction
-                        switch priorAction {
-                        case .bottomRight, .bottomRightSixth, .bottomCenterSixth, .bottomCenterRightEighth, .bottomRightEighth:
-                            action = .bottomRightEighth
-                        default: action = .lastFourth
+            if Defaults.quarterColumnsSnapAera.userEnabled {
+                if loc.x >= frame.minX + quarterWidth*2 && loc.x <= frame.maxX {
+                    if Defaults.eightsSnapArea.userEnabled {
+                        if let priorAction = priorSnapArea?.action {
+                            let action: WindowAction
+                            switch priorAction {
+                            case .bottomRight, .bottomRightSixth, .bottomCenterSixth, .bottomCenterRightEighth, .bottomRightEighth:
+                                action = .bottomRightEighth
+                            default: action = .lastFourth
+                            }
+                            return SnapArea(screen: screen, action: action)
                         }
-                        return SnapArea(screen: screen, action: action)
                     }
+                    return SnapArea(screen: screen, action: .lastFourth)
                 }
-                return SnapArea(screen: screen, action: .lastFourth)
             }
         }
         return nil
