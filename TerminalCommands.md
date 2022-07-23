@@ -313,6 +313,28 @@ defaults write com.knollsoft.Rectangle sixthsSnapArea -bool true
 
 Once enabled, you can drag a window to the corner, then move it along the edge towards the thirds area to snap to a sixth.
 
+## Enabling snap areas for quarter columns
+
+To enable snap areas for quarter columns and not just thirds, execute: 
+
+```bash
+defaults write com.knollsoft.Rectangle quarterColumnsSnapAera -bool true
+```
+
+Once enabled, you can drag a window to the bottom, like you would do for thirds anyway, but now you have the option to snap to quarters OR thirds.
+
+
+## Enabling snap areas for eights
+
+To enable snap areas for eight corners, execute: 
+
+```bash
+defaults write com.knollsoft.Rectangle eightsSnapArea -bool true
+```
+
+Once enabled, you can drag a window to the corner, then move it along the edge towards the thirds area to snap to a eight.
+
+
 ## Move cursor with window
 
 There's an option in the UI for moving the cursor with the window when going across displays, but here's an option for moving it with any shortcut:
