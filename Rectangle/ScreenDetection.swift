@@ -132,7 +132,7 @@ extension NSScreen {
             var newFrame = visibleFrame
             
             if StageUtil.stageVisible() {
-                newFrame.origin.x += Defaults.stageSize.cgFloat
+                if newFrame.origin.x == 0 { newFrame.origin.x += Defaults.stageSize.cgFloat }
                 newFrame.size.width -= Defaults.stageSize.cgFloat
             }
 
