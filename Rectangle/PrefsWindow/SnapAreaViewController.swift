@@ -33,7 +33,7 @@ class SnapAreaViewController: NSViewController {
     var horizontalSelects: [NSPopUpButton: SnapAreaConfig?]!
     var verticalSelects: [NSPopUpButton: SnapAreaConfig?]!
 
-    @IBAction func setHorizontalSnapArea(_ sender: NSPopUpButton) {
+    @IBAction func setSnapArea(_ sender: NSPopUpButton) {
         setSnapArea(sender: sender, type: .horizontal)
     }
 
