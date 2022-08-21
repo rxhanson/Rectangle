@@ -16,7 +16,7 @@ fileprivate let ctrl = NSEvent.ModifierFlags.control.rawValue
 fileprivate let shift = NSEvent.ModifierFlags.shift.rawValue
 fileprivate let cmd = NSEvent.ModifierFlags.command.rawValue
 
-enum WindowAction: Int {
+enum WindowAction: Int, Codable {
     case leftHalf = 0,
     rightHalf = 1,
     maximize = 2,
@@ -344,6 +344,21 @@ enum WindowAction: Int {
         case .center, .nextDisplay, .previousDisplay: return false
         case .moveUp, .moveDown, .moveLeft, .moveRight: return Defaults.resizeOnDirectionalMove.enabled
         default: return true
+        }
+    }
+    
+    var isDragSnappable: Bool {
+        switch self {
+        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll,
+            // Ninths
+            .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
+            // Corner thirds
+            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
+            // Eighths
+            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
+            return false
+        default:
+            return true
         }
     }
 
