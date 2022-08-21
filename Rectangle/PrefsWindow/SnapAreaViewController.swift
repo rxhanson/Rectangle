@@ -60,7 +60,9 @@ class SnapAreaViewController: NSViewController {
     func load() {
         let model = SnapAreaModel.instance
         let horizontalModel = model.horizontal
+        let verticalModel = model.vertical
         horizontalSelects = [
+
             topLeftSelect: horizontalModel[.tl],
             topSelect: horizontalModel[.t],
             topRightSelect: horizontalModel[.tr],
@@ -68,10 +70,8 @@ class SnapAreaViewController: NSViewController {
             rightSelect: horizontalModel[.r],
             bottomLeftSelect: horizontalModel[.bl],
             bottomSelect: horizontalModel[.b],
-            bottomRightSelect: horizontalModel[.br]
-        ]
-        let verticalModel = model.vertical
-        verticalSelects = [
+            bottomRightSelect: horizontalModel[.br],
+
             topLeftVerticalSelect: verticalModel[.tl],
             topVerticalSelect: verticalModel[.t],
             topRightVerticalSelect: verticalModel[.tr],
@@ -80,19 +80,34 @@ class SnapAreaViewController: NSViewController {
             bottomLeftVerticalSelect: verticalModel[.bl],
             bottomVerticalSelect: verticalModel[.b],
             bottomRightVerticalSelect: verticalModel[.br]
+
         ]
         
-        for (select, snapAreaConfig) in horizontalSelects {
-            for windowAction in WindowAction.active {
-                if windowAction.isDragSnappable,
-                    let name = windowAction.displayName {
-                    let item = NSMenuItem(title: name, action: nil, keyEquivalent: "")
-                    item.tag = windowAction.rawValue
-                    select.menu?.addItem(item)
-                    if let action = snapAreaConfig?.action,
-                        action == windowAction {
-                        select.selectItem(withTag: windowAction.rawValue)
-                    }
+        horizontalSelects.forEach { self.configure(select: $0, usingConfig: $1)}
+    }
+    
+    private func configure(select: NSPopUpButton, usingConfig snapAreaConfig: SnapAreaConfig?) {
+        for complexSnapArea in ComplexSnapArea.all {
+            let item = NSMenuItem(title: complexSnapArea.displayName, action: nil, keyEquivalent: "")
+            item.tag = complexSnapArea.rawValue
+            select.menu?.addItem(item)
+            if let complex = snapAreaConfig?.complex, complex == complexSnapArea {
+                select.selectItem(withTag: complexSnapArea.rawValue)
+            }
+        }
+        select.menu?.addItem(NSMenuItem.separator())
+        for windowAction in WindowAction.active {
+            if windowAction.isDragSnappable,
+                let name = windowAction.displayName {
+                let item = NSMenuItem(title: name, action: nil, keyEquivalent: "")
+                item.tag = windowAction.rawValue
+                item.image = windowAction.image.copy() as? NSImage
+                item.image?.size.height = 12
+                item.image?.size.width = 18
+                select.menu?.addItem(item)
+                if let action = snapAreaConfig?.action,
+                    action == windowAction {
+                    select.selectItem(withTag: windowAction.rawValue)
                 }
             }
         }
@@ -101,6 +116,19 @@ class SnapAreaViewController: NSViewController {
 
 enum ComplexSnapArea: Int, Codable {
     case leftTopBottomHalf = -1, rightTopBottomHalf = -2, thirds = -3
+    
+    var displayName: String {
+        switch self {
+        case .leftTopBottomHalf:
+            return "Left half, top/bottom half near corners"
+        case .rightTopBottomHalf:
+            return "Right half, top/bottom half near corners"
+        case .thirds:
+            return "Thirds, drag toward center for two thirds"
+        }
+    }
+    
+    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds]
 }
 
 struct SnapAreaConfig: Codable {
