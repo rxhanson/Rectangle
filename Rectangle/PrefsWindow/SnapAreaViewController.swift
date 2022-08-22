@@ -10,6 +10,9 @@ import Cocoa
 
 class SnapAreaViewController: NSViewController {
     
+    @IBOutlet weak var windowSnappingCheckbox: NSButton!
+    @IBOutlet weak var unsnapRestoreButton: NSButton!
+
     @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
     @IBOutlet weak var topLandscapeSelect: NSPopUpButton!
     @IBOutlet weak var topRightLandscapeSelect: NSPopUpButton!
@@ -32,6 +35,17 @@ class SnapAreaViewController: NSViewController {
     
     var selects: [NSPopUpButton: SnapAreaConfig?]!
 
+    @IBAction func toggleWindowSnapping(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.windowSnapping.enabled = newSetting
+        Notification.Name.windowSnapping.post(object: newSetting)
+    }
+    
+    @IBAction func toggleUnsnapRestore(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.unsnapRestore.enabled = newSetting
+    }
+    
     @IBAction func setLandscapeSnapArea(_ sender: NSPopUpButton) {
         setSnapArea(sender: sender, type: .landscape)
     }
@@ -53,10 +67,12 @@ class SnapAreaViewController: NSViewController {
     }
     
     override func viewDidLoad() {
-        load()
+        windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
+        unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
+        loadSnapAreas()
     }
     
-    func load() {
+    func loadSnapAreas() {
         let model = SnapAreaModel.instance
         selects = [
 

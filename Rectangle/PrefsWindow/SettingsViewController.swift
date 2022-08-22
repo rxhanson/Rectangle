@@ -15,13 +15,11 @@ class SettingsViewController: NSViewController {
         
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
     @IBOutlet weak var versionLabel: NSTextField!
-    @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var hideMenuBarIconCheckbox: NSButton!
     @IBOutlet weak var subsequentExecutionPopUpButton: NSPopUpButton!
     @IBOutlet weak var allowAnyShortcutCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesAutomaticallyCheckbox: NSButton!
     @IBOutlet weak var checkForUpdatesButton: NSButton!
-    @IBOutlet weak var unsnapRestoreButton: NSButton!
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
@@ -42,12 +40,6 @@ class SettingsViewController: NSViewController {
             SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
         }
         Defaults.launchOnLogin.enabled = newSetting
-    }
-    
-    @IBAction func toggleWindowSnapping(_ sender: NSButton) {
-        let newSetting: Bool = sender.state == .on
-        Defaults.windowSnapping.enabled = newSetting
-        Notification.Name.windowSnapping.post(object: newSetting)
     }
     
     @IBAction func toggleHideMenuBarIcon(_ sender: NSButton) {
@@ -75,11 +67,6 @@ class SettingsViewController: NSViewController {
                 }
             }
         }
-    }
-    
-    @IBAction func toggleUnsnapRestore(_ sender: NSButton) {
-        let newSetting: Bool = sender.state == .on
-        Defaults.unsnapRestore.enabled = newSetting
     }
     
     @IBAction func toggleCursorMove(_ sender: NSButton) {
@@ -208,14 +195,10 @@ class SettingsViewController: NSViewController {
         subsequentExecutionPopUpButton.selectItem(withTag: Defaults.subsequentExecutionMode.value.rawValue)
         
         allowAnyShortcutCheckbox.state = Defaults.allowAnyShortcut.enabled ? .on : .off
-        
-        windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
-        
+                
         gapSlider.intValue = Int32(Defaults.gapSize.value)
         gapLabel.stringValue = "\(gapSlider.intValue) px"
         gapSlider.isContinuous = true
-        
-        unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
         
