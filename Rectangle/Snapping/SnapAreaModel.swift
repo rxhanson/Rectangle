@@ -13,7 +13,7 @@ class SnapAreaModel {
     
     private init() {}
     
-    static let defaultHorizontal: [Directional:SnapAreaConfig] = [
+    static let defaultLandscape: [Directional:SnapAreaConfig] = [
         .tl: SnapAreaConfig(action: .topLeft),
         .t: SnapAreaConfig(action: .maximize),
         .tr: SnapAreaConfig(action: .topRight),
@@ -24,7 +24,7 @@ class SnapAreaModel {
         .br: SnapAreaConfig(action: .bottomRight)
     ]
     
-    static let defaultVertical: [Directional:SnapAreaConfig] = [
+    static let defaultPortrait: [Directional:SnapAreaConfig] = [
         .tl: SnapAreaConfig(action: .topLeft),
         .t: SnapAreaConfig(action: .maximize),
         .tr: SnapAreaConfig(action: .topRight),
@@ -35,27 +35,27 @@ class SnapAreaModel {
         .br: SnapAreaConfig(action: .topLeft)
     ]
     
-    public private(set) var horizontal: [Directional:SnapAreaConfig] = Defaults.horizontalSnapAreas.typedValue ?? SnapAreaModel.defaultHorizontal
-    public private(set) var vertical: [Directional:SnapAreaConfig] = Defaults.verticalSnapAreas.typedValue ?? SnapAreaModel.defaultVertical
+    public private(set) var landscape: [Directional:SnapAreaConfig] = Defaults.landscapeSnapAreas.typedValue ?? SnapAreaModel.defaultLandscape
+    public private(set) var portrait: [Directional:SnapAreaConfig] = Defaults.portraitSnapAreas.typedValue ?? SnapAreaModel.defaultPortrait
     
     func setConfig(type: SnapAreaModelType, directional: Directional, snapAreaConfig: SnapAreaConfig?) {
         switch type {
-        case .horizontal: setHorizontal(directional: directional, snapAreaConfig: snapAreaConfig)
-        case .vertical: setVertical(directional: directional, snapAreaConfig: snapAreaConfig)
+        case .landscape: setLandscape(directional: directional, snapAreaConfig: snapAreaConfig)
+        case .portrait: setPortrait(directional: directional, snapAreaConfig: snapAreaConfig)
         }
     }
     
-    func setHorizontal(directional: Directional, snapAreaConfig: SnapAreaConfig?) {
-        horizontal[directional] = snapAreaConfig
-        Defaults.horizontalSnapAreas.typedValue = horizontal
+    func setLandscape(directional: Directional, snapAreaConfig: SnapAreaConfig?) {
+        landscape[directional] = snapAreaConfig
+        Defaults.landscapeSnapAreas.typedValue = landscape
     }
     
-    func setVertical(directional: Directional, snapAreaConfig: SnapAreaConfig?) {
-        vertical[directional] = snapAreaConfig
-        Defaults.verticalSnapAreas.typedValue = vertical
+    func setPortrait(directional: Directional, snapAreaConfig: SnapAreaConfig?) {
+        portrait[directional] = snapAreaConfig
+        Defaults.portraitSnapAreas.typedValue = portrait
     }
 }
 
 enum SnapAreaModelType {
-    case vertical, horizontal
+    case landscape, portrait
 }

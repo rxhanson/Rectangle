@@ -69,8 +69,8 @@ class Defaults {
     static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
     static let sixthsSnapArea = OptionalBoolDefault(key: "sixthsSnapArea")
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
-    static let horizontalSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "horizontalSnapAreas")
-    static let verticalSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "verticalSnapAreas")
+    static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
+    static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -130,7 +130,9 @@ class Defaults {
         shortEdgeSnapAreaSize,
         cascadeAllDeltaSize,
         sixthsSnapArea,
-        stageSize
+        stageSize,
+        landscapeSnapAreas,
+        portraitSnapAreas
     ]
 }
 

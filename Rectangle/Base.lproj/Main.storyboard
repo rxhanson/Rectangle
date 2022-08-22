@@ -3574,7 +3574,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="PHq-Gs-ONZ"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="PHq-Gs-ONZ"/>
                                                         </connections>
                                                     </popUpButton>
                                                     <popUpButton verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="jqR-m9-Kh7">
@@ -3592,7 +3592,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="al4-TZ-b2U"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="al4-TZ-b2U"/>
                                                         </connections>
                                                     </popUpButton>
                                                     <popUpButton verticalHuggingPriority="750" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="bVZ-3z-DYF">
@@ -3610,7 +3610,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="2yz-dG-Dod"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="2yz-dG-Dod"/>
                                                         </connections>
                                                     </popUpButton>
                                                 </subviews>
@@ -3643,7 +3643,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="cXd-By-Jle"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="cXd-By-Jle"/>
                                                         </connections>
                                                     </popUpButton>
                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="EyR-o0-dgo">
@@ -3669,7 +3669,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="Wao-XB-BCD"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="Wao-XB-BCD"/>
                                                         </connections>
                                                     </popUpButton>
                                                 </subviews>
@@ -3702,7 +3702,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="869-tM-t4p"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="869-tM-t4p"/>
                                                         </connections>
                                                     </popUpButton>
                                                     <popUpButton verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="HM2-rd-Wka">
@@ -3720,7 +3720,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="Q8o-7b-RSd"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="Q8o-7b-RSd"/>
                                                         </connections>
                                                     </popUpButton>
                                                     <popUpButton verticalHuggingPriority="750" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="jVF-3c-sL0">
@@ -3738,7 +3738,7 @@ DQ
                                                             </menu>
                                                         </popUpButtonCell>
                                                         <connections>
-                                                            <action selector="setSnapArea:" target="t2d-Q7-RLy" id="mtt-GM-BzO"/>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="mtt-GM-BzO"/>
                                                         </connections>
                                                     </popUpButton>
                                                 </subviews>
@@ -3796,7 +3796,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="ctL-Ka-Z7V"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="ctL-Ka-Z7V"/>
                                                                 </connections>
                                                             </popUpButton>
                                                             <popUpButton verticalHuggingPriority="750" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="NlH-2s-Bb2">
@@ -3814,7 +3814,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="Xnn-6W-ToT"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="Xnn-6W-ToT"/>
                                                                 </connections>
                                                             </popUpButton>
                                                             <popUpButton verticalHuggingPriority="750" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="DPC-eZ-HIy">
@@ -3832,7 +3832,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="sZU-iY-Tjs"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="sZU-iY-Tjs"/>
                                                                 </connections>
                                                             </popUpButton>
                                                         </subviews>
@@ -3865,7 +3865,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="QvF-QG-HdI"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="QvF-QG-HdI"/>
                                                                 </connections>
                                                             </popUpButton>
                                                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZBk-gP-LPR">
@@ -3891,7 +3891,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="ArK-3M-bC2"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="ArK-3M-bC2"/>
                                                                 </connections>
                                                             </popUpButton>
                                                         </subviews>
@@ -3924,7 +3924,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="U8d-ad-SCC"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="U8d-ad-SCC"/>
                                                                 </connections>
                                                             </popUpButton>
                                                             <popUpButton verticalHuggingPriority="750" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="efR-xi-okh">
@@ -3942,7 +3942,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="Yza-RI-8mz"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="Yza-RI-8mz"/>
                                                                 </connections>
                                                             </popUpButton>
                                                             <popUpButton verticalHuggingPriority="750" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="lje-Rc-9Hj">
@@ -3960,7 +3960,7 @@ DQ
                                                                     </menu>
                                                                 </popUpButtonCell>
                                                                 <connections>
-                                                                    <action selector="setVerticalSnapArea:" target="t2d-Q7-RLy" id="OH3-Ry-3Ss"/>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="OH3-Ry-3Ss"/>
                                                                 </connections>
                                                             </popUpButton>
                                                         </subviews>
@@ -4031,23 +4031,23 @@ DQ
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="bottomLeftSelect" destination="bVZ-3z-DYF" id="1Ql-jU-1fz"/>
-                        <outlet property="bottomLeftVerticalSelect" destination="DPC-eZ-HIy" id="jdO-8U-dyU"/>
-                        <outlet property="bottomRightSelect" destination="jVF-3c-sL0" id="eYi-gy-RF3"/>
-                        <outlet property="bottomRightVerticalSelect" destination="lje-Rc-9Hj" id="bxP-nE-cgS"/>
-                        <outlet property="bottomSelect" destination="3c6-3h-J52" id="1a0-LW-wrh"/>
-                        <outlet property="bottomVerticalSelect" destination="ZYO-D7-C2a" id="pZd-mp-0yk"/>
-                        <outlet property="leftSelect" destination="jqR-m9-Kh7" id="wBI-Th-vtz"/>
-                        <outlet property="leftVerticalSelect" destination="NlH-2s-Bb2" id="r9T-BM-YbN"/>
-                        <outlet property="rightSelect" destination="HM2-rd-Wka" id="Oud-Xf-anx"/>
-                        <outlet property="rightVerticalSelect" destination="efR-xi-okh" id="K5g-I0-0e4"/>
-                        <outlet property="topLeftSelect" destination="Dvs-uM-6VU" id="Z3D-Pn-896"/>
-                        <outlet property="topLeftVerticalSelect" destination="Ytt-rI-KMq" id="e9V-3B-ws1"/>
-                        <outlet property="topRightSelect" destination="f8h-NV-mPC" id="bC7-di-TTY"/>
-                        <outlet property="topRightVerticalSelect" destination="pYw-mV-KH2" id="m2S-dc-ncv"/>
-                        <outlet property="topSelect" destination="qa7-5C-PSI" id="vmH-jq-zMx"/>
-                        <outlet property="topVerticalSelect" destination="rs4-Tg-Omn" id="GT1-5g-pK7"/>
-                        <outlet property="verticalStackView" destination="3fZ-2P-Yw8" id="b8R-Wb-nlY"/>
+                        <outlet property="bottomLeftLandscapeSelect" destination="bVZ-3z-DYF" id="1Ql-jU-1fz"/>
+                        <outlet property="bottomLeftPortraitSelect" destination="DPC-eZ-HIy" id="jdO-8U-dyU"/>
+                        <outlet property="bottomRightLandscapeSelect" destination="jVF-3c-sL0" id="eYi-gy-RF3"/>
+                        <outlet property="bottomRightPortraitSelect" destination="lje-Rc-9Hj" id="bxP-nE-cgS"/>
+                        <outlet property="bottomLandscapeSelect" destination="3c6-3h-J52" id="1a0-LW-wrh"/>
+                        <outlet property="bottomPortraitSelect" destination="ZYO-D7-C2a" id="pZd-mp-0yk"/>
+                        <outlet property="leftLandscapeSelect" destination="jqR-m9-Kh7" id="wBI-Th-vtz"/>
+                        <outlet property="leftPortraitSelect" destination="NlH-2s-Bb2" id="r9T-BM-YbN"/>
+                        <outlet property="rightLandscapeSelect" destination="HM2-rd-Wka" id="Oud-Xf-anx"/>
+                        <outlet property="rightPortraitSelect" destination="efR-xi-okh" id="K5g-I0-0e4"/>
+                        <outlet property="topLeftLandscapeSelect" destination="Dvs-uM-6VU" id="Z3D-Pn-896"/>
+                        <outlet property="topLeftPortraitSelect" destination="Ytt-rI-KMq" id="e9V-3B-ws1"/>
+                        <outlet property="topRightLandscapeSelect" destination="f8h-NV-mPC" id="bC7-di-TTY"/>
+                        <outlet property="topRightPortraitSelect" destination="pYw-mV-KH2" id="m2S-dc-ncv"/>
+                        <outlet property="topLandscapeSelect" destination="qa7-5C-PSI" id="vmH-jq-zMx"/>
+                        <outlet property="topPortraitSelect" destination="rs4-Tg-Omn" id="GT1-5g-pK7"/>
+                        <outlet property="portraitStackView" destination="3fZ-2P-Yw8" id="b8R-Wb-nlY"/>
                     </connections>
                 </viewController>
                 <customObject id="bNa-zL-IZp" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

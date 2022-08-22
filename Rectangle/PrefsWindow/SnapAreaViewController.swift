@@ -10,35 +10,34 @@ import Cocoa
 
 class SnapAreaViewController: NSViewController {
     
-    @IBOutlet weak var topLeftSelect: NSPopUpButton!
-    @IBOutlet weak var topSelect: NSPopUpButton!
-    @IBOutlet weak var topRightSelect: NSPopUpButton!
-    @IBOutlet weak var leftSelect: NSPopUpButton!
-    @IBOutlet weak var rightSelect: NSPopUpButton!
-    @IBOutlet weak var bottomLeftSelect: NSPopUpButton!
-    @IBOutlet weak var bottomSelect: NSPopUpButton!
-    @IBOutlet weak var bottomRightSelect: NSPopUpButton!
+    @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var topLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var topRightLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var leftLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var rightLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var bottomLeftLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var bottomLandscapeSelect: NSPopUpButton!
+    @IBOutlet weak var bottomRightLandscapeSelect: NSPopUpButton!
     
-    @IBOutlet weak var verticalStackView: NSStackView!
+    @IBOutlet weak var portraitStackView: NSStackView!
     
-    @IBOutlet weak var topLeftVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var topVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var topRightVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var leftVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var rightVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var bottomLeftVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var bottomVerticalSelect: NSPopUpButton!
-    @IBOutlet weak var bottomRightVerticalSelect: NSPopUpButton!
+    @IBOutlet weak var topLeftPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var topPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var topRightPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var leftPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var rightPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var bottomLeftPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var bottomPortraitSelect: NSPopUpButton!
+    @IBOutlet weak var bottomRightPortraitSelect: NSPopUpButton!
     
-    var horizontalSelects: [NSPopUpButton: SnapAreaConfig?]!
-    var verticalSelects: [NSPopUpButton: SnapAreaConfig?]!
+    var selects: [NSPopUpButton: SnapAreaConfig?]!
 
-    @IBAction func setSnapArea(_ sender: NSPopUpButton) {
-        setSnapArea(sender: sender, type: .horizontal)
+    @IBAction func setLandscapeSnapArea(_ sender: NSPopUpButton) {
+        setSnapArea(sender: sender, type: .landscape)
     }
 
-    @IBAction func setVerticalSnapArea(_ sender: NSPopUpButton) {
-        setSnapArea(sender: sender, type: .vertical)
+    @IBAction func setPortraitSnapArea(_ sender: NSPopUpButton) {
+        setSnapArea(sender: sender, type: .portrait)
     }
     
     private func setSnapArea(sender: NSPopUpButton, type: SnapAreaModelType) {
@@ -59,31 +58,29 @@ class SnapAreaViewController: NSViewController {
     
     func load() {
         let model = SnapAreaModel.instance
-        let horizontalModel = model.horizontal
-        let verticalModel = model.vertical
-        horizontalSelects = [
+        selects = [
 
-            topLeftSelect: horizontalModel[.tl],
-            topSelect: horizontalModel[.t],
-            topRightSelect: horizontalModel[.tr],
-            leftSelect: horizontalModel[.l],
-            rightSelect: horizontalModel[.r],
-            bottomLeftSelect: horizontalModel[.bl],
-            bottomSelect: horizontalModel[.b],
-            bottomRightSelect: horizontalModel[.br],
+            topLeftLandscapeSelect: model.landscape[.tl],
+            topLandscapeSelect: model.landscape[.t],
+            topRightLandscapeSelect: model.landscape[.tr],
+            leftLandscapeSelect: model.landscape[.l],
+            rightLandscapeSelect: model.landscape[.r],
+            bottomLeftLandscapeSelect: model.landscape[.bl],
+            bottomLandscapeSelect: model.landscape[.b],
+            bottomRightLandscapeSelect: model.landscape[.br],
 
-            topLeftVerticalSelect: verticalModel[.tl],
-            topVerticalSelect: verticalModel[.t],
-            topRightVerticalSelect: verticalModel[.tr],
-            leftVerticalSelect: verticalModel[.l],
-            rightVerticalSelect: verticalModel[.r],
-            bottomLeftVerticalSelect: verticalModel[.bl],
-            bottomVerticalSelect: verticalModel[.b],
-            bottomRightVerticalSelect: verticalModel[.br]
+            topLeftPortraitSelect: model.portrait[.tl],
+            topPortraitSelect: model.portrait[.t],
+            topRightPortraitSelect: model.portrait[.tr],
+            leftPortraitSelect: model.portrait[.l],
+            rightPortraitSelect: model.portrait[.r],
+            bottomLeftPortraitSelect: model.portrait[.bl],
+            bottomPortraitSelect: model.portrait[.b],
+            bottomRightPortraitSelect: model.portrait[.br]
 
         ]
         
-        horizontalSelects.forEach { self.configure(select: $0, usingConfig: $1)}
+        selects.forEach { self.configure(select: $0, usingConfig: $1)}
     }
     
     private func configure(select: NSPopUpButton, usingConfig snapAreaConfig: SnapAreaConfig?) {
