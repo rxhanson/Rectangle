@@ -2540,9 +2540,9 @@
             <objects>
                 <tabViewController selectedTabViewItemIndex="0" tabStyle="toolbar" canPropagateSelectedChildViewControllerTitle="NO" id="5pc-CV-2b9" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem label="Keyboard Shortcuts" image="command.square" catalog="system" id="uw2-9W-2jq"/>
-                        <tabViewItem label="Snap Areas" image="cursorarrow.and.square.on.square.dashed" catalog="system" id="Fap-R2-Aj6"/>
-                        <tabViewItem label="Settings" image="gear" catalog="system" id="gtf-PD-IHm"/>
+                        <tabViewItem label="Keyboard Shortcuts" image="keyboardToolbarTemplate" id="uw2-9W-2jq"/>
+                        <tabViewItem label="Snap Areas" image="snapAreaTemplate" id="Fap-R2-Aj6"/>
+                        <tabViewItem label="Settings" image="toolbarSettingsTemplate" id="gtf-PD-IHm"/>
                     </tabViewItems>
                     <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
                     <tabView key="tabView" type="noTabsNoBorder" id="Tya-24-HNL">
@@ -4068,13 +4068,11 @@ DQ
         <image name="centerRightFourthTemplate" width="30" height="20"/>
         <image name="centerTemplate" width="30" height="20"/>
         <image name="centerThirdTemplate" width="30" height="20"/>
-        <image name="command.square" catalog="system" width="15" height="14"/>
-        <image name="cursorarrow.and.square.on.square.dashed" catalog="system" width="17" height="17"/>
         <image name="firstThirdTemplate" width="30" height="20"/>
         <image name="firstThreeFourthsTemplate" width="30" height="20"/>
         <image name="firstTwoThirdsTemplate" width="30" height="20"/>
-        <image name="gear" catalog="system" width="17" height="17"/>
         <image name="halfWidthCenterTemplate" width="30" height="20"/>
+        <image name="keyboardToolbarTemplate" width="72" height="72"/>
         <image name="lastThirdTemplate" width="30" height="20"/>
         <image name="lastThreeFourthsTemplate" width="30" height="20"/>
         <image name="lastTwoThirdsTemplate" width="30" height="20"/>
@@ -4093,8 +4091,10 @@ DQ
         <image name="restoreTemplate" width="30" height="20"/>
         <image name="rightFourthTemplate" width="30" height="20"/>
         <image name="rightHalfTemplate" width="30" height="20"/>
+        <image name="snapAreaTemplate" width="72" height="72"/>
         <image name="square.and.arrow.down" width="55" height="56"/>
         <image name="square.and.arrow.up" width="55" height="56"/>
+        <image name="toolbarSettingsTemplate" width="50" height="50"/>
         <image name="topCenterSixthTemplate" width="30" height="20"/>
         <image name="topHalfTemplate" width="30" height="20"/>
         <image name="topLeftSixthTemplate" width="30" height="20"/>

@@ -1,12 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "keyboardToolbarTemplateSmall.png",
+      "filename" : "snapAreaTemplateSmall.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "keyboardToolbarTemplate.png",
+      "filename" : "snapAreaTemplate.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
