@@ -54,12 +54,12 @@ class SnapAreaViewController: NSViewController {
         setSnapArea(sender: sender, type: .portrait)
     }
     
-    private func setSnapArea(sender: NSPopUpButton, type: SnapAreaModelType) {
+    private func setSnapArea(sender: NSPopUpButton, type: DisplayOrientation) {
         guard let directional = Directional(rawValue: sender.tag) else { return }
         let selectedTag = sender.selectedTag()
         var snapAreaConfig: SnapAreaConfig?
-        if selectedTag < 0, let complex = ComplexSnapArea(rawValue: selectedTag) {
-           snapAreaConfig = SnapAreaConfig(complex: complex)
+        if selectedTag < 0, let compound = CompoundSnapArea(rawValue: selectedTag) {
+           snapAreaConfig = SnapAreaConfig(compound: compound)
         } else if selectedTag > 0, let action = WindowAction(rawValue: selectedTag) {
             snapAreaConfig = SnapAreaConfig(action: action)
         }
@@ -100,12 +100,12 @@ class SnapAreaViewController: NSViewController {
     }
     
     private func configure(select: NSPopUpButton, usingConfig snapAreaConfig: SnapAreaConfig?) {
-        for complexSnapArea in ComplexSnapArea.all {
-            let item = NSMenuItem(title: complexSnapArea.displayName, action: nil, keyEquivalent: "")
-            item.tag = complexSnapArea.rawValue
+        for compoundSnapArea in CompoundSnapArea.all {
+            let item = NSMenuItem(title: compoundSnapArea.displayName, action: nil, keyEquivalent: "")
+            item.tag = compoundSnapArea.rawValue
             select.menu?.addItem(item)
-            if let complex = snapAreaConfig?.complex, complex == complexSnapArea {
-                select.selectItem(withTag: complexSnapArea.rawValue)
+            if let compound = snapAreaConfig?.compound, compound == compoundSnapArea {
+                select.selectItem(withTag: compoundSnapArea.rawValue)
             }
         }
         select.menu?.addItem(NSMenuItem.separator())
@@ -125,45 +125,4 @@ class SnapAreaViewController: NSViewController {
             }
         }
     }
-}
-
-enum ComplexSnapArea: Int, Codable {
-    case leftTopBottomHalf = -1, rightTopBottomHalf = -2, thirds = -3
-    
-    var displayName: String {
-        switch self {
-        case .leftTopBottomHalf:
-            return "Left half, top/bottom half near corners"
-        case .rightTopBottomHalf:
-            return "Right half, top/bottom half near corners"
-        case .thirds:
-            return "Thirds, drag toward center for two thirds"
-        }
-    }
-    
-    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds]
-}
-
-struct SnapAreaConfig: Codable {
-    let complex: ComplexSnapArea?   
-    let action: WindowAction?
-    
-    init(complex: ComplexSnapArea? = nil, action: WindowAction? = nil) {
-        self.complex = complex
-        self.action = action
-    }
-}
-
-enum Directional: Int, Codable {
-    case tl = 1,
-         t = 2,
-         tr = 3,
-         l = 4,
-         r = 5,
-         bl = 6,
-         b = 7,
-         br = 8,
-         c = 9
-    
-    static var cases = [tl, t, tr, l, r, bl, b, br]
 }
