@@ -86,6 +86,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
     }
     
+    func applicationWillBecomeActive(_ notification: Notification) {
+        Notification.Name.appWillBecomeActive.post()
+    }
+    
     func checkAutoCheckForUpdates() {
         SUUpdater.shared()?.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }

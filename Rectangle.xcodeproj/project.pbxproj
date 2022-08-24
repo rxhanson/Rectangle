@@ -621,8 +621,8 @@
 			children = (
 				98910B41231476B30066EC23 /* PrefsViewController.swift */,
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
-				98C97FFC25893B040061F01F /* Config.swift */,
 				983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */,
+				98C97FFC25893B040061F01F /* Config.swift */,
 			);
 			path = PrefsWindow;
 			sourceTree = "<group>";

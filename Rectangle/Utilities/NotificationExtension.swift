@@ -16,6 +16,7 @@ extension Notification.Name {
     static let allowAnyShortcut = Notification.Name("allowAnyShortcutToggle")
     static let changeDefaults = Notification.Name("changeDefaults")
     static let todoMenuToggled = Notification.Name("todoMenuToggled")
+    static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
 
     func post(
         center: NotificationCenter = NotificationCenter.default,

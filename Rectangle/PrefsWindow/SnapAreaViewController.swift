@@ -68,6 +68,15 @@ class SnapAreaViewController: NSViewController {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         loadSnapAreas()
+        showHidePortrait()
+        Notification.Name.appWillBecomeActive.onPost() { _ in
+            self.showHidePortrait()
+        }
+    }
+    
+    func showHidePortrait() {
+        let hasPortraitDisplay = NSScreen.screens.contains(where: {!$0.frame.isLandscape})
+        portraitStackView.isHidden = !hasPortraitDisplay
     }
     
     func loadSnapAreas() {
