@@ -33,8 +33,6 @@ class SnapAreaViewController: NSViewController {
     @IBOutlet weak var bottomPortraitSelect: NSPopUpButton!
     @IBOutlet weak var bottomRightPortraitSelect: NSPopUpButton!
     
-    var selects: [NSPopUpButton: SnapAreaConfig?]!
-
     @IBAction func toggleWindowSnapping(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.windowSnapping.enabled = newSetting
@@ -73,34 +71,42 @@ class SnapAreaViewController: NSViewController {
     }
     
     func loadSnapAreas() {
-        let model = SnapAreaModel.instance
-        selects = [
 
-            topLeftLandscapeSelect: model.landscape[.tl],
-            topLandscapeSelect: model.landscape[.t],
-            topRightLandscapeSelect: model.landscape[.tr],
-            leftLandscapeSelect: model.landscape[.l],
-            rightLandscapeSelect: model.landscape[.r],
-            bottomLeftLandscapeSelect: model.landscape[.bl],
-            bottomLandscapeSelect: model.landscape[.b],
-            bottomRightLandscapeSelect: model.landscape[.br],
+        let landscapeSelects: [NSPopUpButton] = [
+            topLeftLandscapeSelect,
+            topLandscapeSelect,
+            topRightLandscapeSelect,
+            leftLandscapeSelect,
+            rightLandscapeSelect,
+            bottomLeftLandscapeSelect,
+            bottomLandscapeSelect,
+            bottomRightLandscapeSelect
+        ]
 
-            topLeftPortraitSelect: model.portrait[.tl],
-            topPortraitSelect: model.portrait[.t],
-            topRightPortraitSelect: model.portrait[.tr],
-            leftPortraitSelect: model.portrait[.l],
-            rightPortraitSelect: model.portrait[.r],
-            bottomLeftPortraitSelect: model.portrait[.bl],
-            bottomPortraitSelect: model.portrait[.b],
-            bottomRightPortraitSelect: model.portrait[.br]
-
+        let portraitSelects: [NSPopUpButton] = [
+            topLeftPortraitSelect,
+            topPortraitSelect,
+            topRightPortraitSelect,
+            leftPortraitSelect,
+            rightPortraitSelect,
+            bottomLeftPortraitSelect,
+            bottomPortraitSelect,
+            bottomRightPortraitSelect
         ]
         
-        selects.forEach { self.configure(select: $0, usingConfig: $1)}
+        landscapeSelects.forEach { self.configure(select: $0, orientation: .landscape)}
+        portraitSelects.forEach { self.configure(select: $0, orientation: .portrait)}
     }
     
-    private func configure(select: NSPopUpButton, usingConfig snapAreaConfig: SnapAreaConfig?) {
+    private func configure(select: NSPopUpButton, orientation: DisplayOrientation) {
+        guard let directional = Directional(rawValue: select.tag) else { return }
+        let snapAreaConfig = orientation == .landscape
+            ? SnapAreaModel.instance.landscape[directional]
+            : SnapAreaModel.instance.portrait[directional]
+
         for compoundSnapArea in CompoundSnapArea.all {
+            guard compoundSnapArea.compatibleOrientation.contains(orientation), compoundSnapArea.compatibleDirectionals.contains(directional) else { continue }
+            
             let item = NSMenuItem(title: compoundSnapArea.displayName, action: nil, keyEquivalent: "")
             item.tag = compoundSnapArea.rawValue
             select.menu?.addItem(item)

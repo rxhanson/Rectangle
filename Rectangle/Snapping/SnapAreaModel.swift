@@ -60,45 +60,6 @@ enum DisplayOrientation {
     case landscape, portrait
 }
 
-enum CompoundSnapArea: Int, Codable {
-    case leftTopBottomHalf = -1, rightTopBottomHalf = -2, thirds = -3, portraitThirdsSide = -4, halves = -5
-    
-    var displayName: String {
-        switch self {
-        case .leftTopBottomHalf:
-            return "Left half, top/bottom half near corners"
-        case .rightTopBottomHalf:
-            return "Right half, top/bottom half near corners"
-        case .thirds:
-            return "Thirds, drag toward center for two thirds"
-        case .portraitThirdsSide:
-            return "Thirds, top/bottom half near corners"
-        case .halves:
-            return "Left or right half"
-        }
-    }
-    
-    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds, portraitThirdsSide, halves]
-    
-    var compatibleDirectionals: [Directional] {
-        switch self {
-        case .leftTopBottomHalf: return [.l]
-        case .rightTopBottomHalf: return [.r]
-        case .thirds: return [.t, .b]
-        case .portraitThirdsSide: return [.l, .r]
-        case .halves: return [.t, .b]
-        }
-    }
-    
-    var compatibleOrientation: [DisplayOrientation] {
-        switch self {
-        case .leftTopBottomHalf, .rightTopBottomHalf, .halves: return [.portrait, .landscape]
-        case .portraitThirdsSide: return [.portrait]
-        case .thirds: return [.landscape]
-        }
-    }
-}
-
 struct SnapAreaConfig: Codable {
     let compound: CompoundSnapArea?
     let action: WindowAction?
@@ -121,4 +82,24 @@ enum Directional: Int, Codable {
          c = 9
     
     static var cases = [tl, t, tr, l, r, bl, b, br]
+}
+
+struct SnapAreaOption: OptionSet, Hashable {
+    let rawValue: Int
+    
+    static let top = SnapAreaOption(rawValue: 1 << 0)
+    static let bottom = SnapAreaOption(rawValue: 1 << 1)
+    static let left = SnapAreaOption(rawValue: 1 << 2)
+    static let right = SnapAreaOption(rawValue: 1 << 3)
+    static let topLeft = SnapAreaOption(rawValue: 1 << 4)
+    static let topRight = SnapAreaOption(rawValue: 1 << 5)
+    static let bottomLeft = SnapAreaOption(rawValue: 1 << 6)
+    static let bottomRight = SnapAreaOption(rawValue: 1 << 7)
+    static let topLeftShort = SnapAreaOption(rawValue: 1 << 8)
+    static let topRightShort = SnapAreaOption(rawValue: 1 << 9)
+    static let bottomLeftShort = SnapAreaOption(rawValue: 1 << 10)
+    static let bottomRightShort = SnapAreaOption(rawValue: 1 << 11)
+    
+    static let all: SnapAreaOption = [.top, .bottom, .left, .right, .topLeft, .topRight, .bottomLeft, .bottomRight, .topLeftShort, .topRightShort, .bottomLeftShort, .bottomRightShort]
+    static let none: SnapAreaOption = []
 }
