@@ -72,6 +72,9 @@ class SnapAreaViewController: NSViewController {
         Notification.Name.appWillBecomeActive.onPost() { _ in
             self.showHidePortrait()
         }
+        NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: nil) { _ in
+            self.showHidePortrait()
+        }
     }
     
     func showHidePortrait() {
