@@ -24,6 +24,7 @@
 		9818E01028B59396004AA524 /* HalvesCompoundCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818E00F28B59396004AA524 /* HalvesCompoundCalculation.swift */; };
 		9818E01228B59B64004AA524 /* ThirdsCompoundCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818E01128B59B64004AA524 /* ThirdsCompoundCalculation.swift */; };
 		9818E01428B5A4FD004AA524 /* SixthsCompoundCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818E01328B5A4FD004AA524 /* SixthsCompoundCalculation.swift */; };
+		9818E01828B63C48004AA524 /* FourthsCompoundCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9818E01728B63C48004AA524 /* FourthsCompoundCalculation.swift */; };
 		98192DDA270F606C00015E66 /* Debounce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98192DD9270F606C00015E66 /* Debounce.swift */; };
 		98192DDE2717201100015E66 /* ReverseAllManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98192DDD2717201000015E66 /* ReverseAllManager.swift */; };
 		981F27D12340E3E1006CD263 /* InternetAccessPolicy.plist in Resources */ = {isa = PBXBuildFile; fileRef = 981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */; };
@@ -184,6 +185,7 @@
 		9818E00F28B59396004AA524 /* HalvesCompoundCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalvesCompoundCalculation.swift; sourceTree = "<group>"; };
 		9818E01128B59B64004AA524 /* ThirdsCompoundCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdsCompoundCalculation.swift; sourceTree = "<group>"; };
 		9818E01328B5A4FD004AA524 /* SixthsCompoundCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SixthsCompoundCalculation.swift; sourceTree = "<group>"; };
+		9818E01728B63C48004AA524 /* FourthsCompoundCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourthsCompoundCalculation.swift; sourceTree = "<group>"; };
 		98192DD9270F606C00015E66 /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
 		98192DDD2717201000015E66 /* ReverseAllManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseAllManager.swift; sourceTree = "<group>"; };
 		981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InternetAccessPolicy.plist; sourceTree = "<group>"; };
@@ -394,6 +396,7 @@
 				9818E00C28B59205004AA524 /* CompoundSnapArea.swift */,
 				9818E00F28B59396004AA524 /* HalvesCompoundCalculation.swift */,
 				9818E01128B59B64004AA524 /* ThirdsCompoundCalculation.swift */,
+				9818E01728B63C48004AA524 /* FourthsCompoundCalculation.swift */,
 				9818E01328B5A4FD004AA524 /* SixthsCompoundCalculation.swift */,
 			);
 			path = CompoundSnapArea;
@@ -939,6 +942,7 @@
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
 				98A009AB2512491300CFBF0C /* CenterHalfCalculation.swift in Sources */,
+				9818E01828B63C48004AA524 /* FourthsCompoundCalculation.swift in Sources */,
 				D0CFE33327A8CCB1004DA47B /* TopRightThirdCalculation.swift in Sources */,
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,

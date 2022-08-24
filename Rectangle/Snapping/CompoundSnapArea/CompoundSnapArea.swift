@@ -10,9 +10,9 @@ import Foundation
 
 enum CompoundSnapArea: Int, Codable {
     
-    case leftTopBottomHalf = -1, rightTopBottomHalf = -2, thirds = -3, portraitThirdsSide = -4, halves = -5, topSixths = -6, bottomSixths = -7
+    case leftTopBottomHalf = -1, rightTopBottomHalf = -2, thirds = -3, portraitThirdsSide = -4, halves = -5, topSixths = -6, bottomSixths = -7, fourths = -8
     
-    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds, portraitThirdsSide, halves, topSixths, bottomSixths]
+    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds, portraitThirdsSide, halves, topSixths, bottomSixths, fourths]
     
     static let leftCompoundCalculation = LeftTopBottomHalfCalculation()
     static let rightCompoundCalculation = RightTopBottomHalfCalculation()
@@ -21,7 +21,8 @@ enum CompoundSnapArea: Int, Codable {
     static let leftRightHalvesCalculation = LeftRightHalvesCompoundCalculation()
     static let topSixthsCalculation = TopSixthsCompoundCalculation()
     static let bottomSixthsCalculation = BottomSixthsCompoundCalculation()
-    
+    static let fourthsColumnCalculation = FourthsColumnCompoundCalculation()
+
     var displayName: String {
         switch self {
         case .leftTopBottomHalf:
@@ -38,6 +39,8 @@ enum CompoundSnapArea: Int, Codable {
             return "Top sixths from corners or maximize"
         case .bottomSixths:
             return "Bottom sixths from corners or thirds"
+        case .fourths:
+            return "Fourths columns"
         }
     }
     
@@ -57,6 +60,8 @@ enum CompoundSnapArea: Int, Codable {
             return Self.topSixthsCalculation
         case .bottomSixths:
             return Self.bottomSixthsCalculation
+        case .fourths:
+            return Self.fourthsColumnCalculation
         }
     }
     
@@ -76,14 +81,19 @@ enum CompoundSnapArea: Int, Codable {
             return [.t]
         case .bottomSixths:
             return [.b]
+        case .fourths:
+            return [.t, .b]
         }
     }
     
     var compatibleOrientation: [DisplayOrientation] {
         switch self {
-        case .leftTopBottomHalf, .rightTopBottomHalf, .halves: return [.portrait, .landscape]
-        case .portraitThirdsSide: return [.portrait]
-        case .thirds, .topSixths, .bottomSixths: return [.landscape]
+        case .leftTopBottomHalf, .rightTopBottomHalf, .halves:
+            return [.portrait, .landscape]
+        case .portraitThirdsSide:
+            return [.portrait]
+        case .thirds, .topSixths, .bottomSixths, .fourths:
+            return [.landscape]
         }
     }
 }

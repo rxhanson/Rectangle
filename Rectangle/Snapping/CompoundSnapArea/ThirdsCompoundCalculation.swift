@@ -13,7 +13,7 @@ struct ThirdsCompoundCalculation: CompoundSnapAreaCalculation {
     func snapArea(cursorLocation loc: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea? {
         let frame = screen.frame
         let thirdWidth = floor(frame.width / 3)
-        if loc.x >= frame.minX && loc.x <= frame.minX + thirdWidth {
+        if loc.x <= frame.minX + thirdWidth {
             return SnapArea(screen: screen, action: .firstThird)
         }
         if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX - thirdWidth{
@@ -30,7 +30,7 @@ struct ThirdsCompoundCalculation: CompoundSnapAreaCalculation {
             }
             return SnapArea(screen: screen, action: .centerThird)
         }
-        if loc.x >= frame.minX + thirdWidth && loc.x <= frame.maxX {
+        if loc.x >= frame.minX + thirdWidth {
             return SnapArea(screen: screen, action: .lastThird)
         }
         return nil
