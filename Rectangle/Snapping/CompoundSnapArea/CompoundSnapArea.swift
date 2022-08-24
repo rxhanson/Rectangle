@@ -26,21 +26,21 @@ enum CompoundSnapArea: Int, Codable {
     var displayName: String {
         switch self {
         case .leftTopBottomHalf:
-            return "Left half, top/bottom half near corners"
+            return NSLocalizedString("Left half, top/bottom half near corners", tableName: "Main", value: "", comment: "")
         case .rightTopBottomHalf:
-            return "Right half, top/bottom half near corners"
+            return NSLocalizedString("Right half, top/bottom half near corners", tableName: "Main", value: "", comment: "")
         case .thirds:
-            return "Thirds, drag toward center for two thirds"
+            return NSLocalizedString("Thirds, drag toward center for two thirds", tableName: "Main", value: "", comment: "")
         case .portraitThirdsSide:
-            return "Thirds, top/bottom half near corners"
+            return NSLocalizedString("Thirds, top/bottom half near corners", tableName: "Main", value: "", comment: "")
         case .halves:
-            return "Left or right half"
+            return NSLocalizedString("Left or right half", tableName: "Main", value: "", comment: "")
         case .topSixths:
-            return "Top sixths from corners or maximize"
+            return NSLocalizedString("Top sixths from corners; maximize", tableName: "Main", value: "", comment: "")
         case .bottomSixths:
-            return "Bottom sixths from corners or thirds"
+            return NSLocalizedString("Bottom sixths from corners; thirds", tableName: "Main", value: "", comment: "")
         case .fourths:
-            return "Fourths columns"
+            return NSLocalizedString("Fourths columns", tableName: "Main", value: "", comment: "")
         }
     }
     

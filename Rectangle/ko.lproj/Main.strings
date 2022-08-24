@@ -713,3 +713,12 @@
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
 "xE6-jw-EPt.title" = "영역이 너무 작으면, 최근 앱들을 숨깁니다.";
+
+"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
+"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
+"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
+"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
+"Left or right half" = "Left or right half";
+"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
+"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
+"Fourths columns" = "Fourths columns";
