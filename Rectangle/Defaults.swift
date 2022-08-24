@@ -343,6 +343,15 @@ class JSONDefault<T: Codable>: StringDefault {
         typeInitialized = true
     }
     
+    override func load(from codable: CodableDefault) {
+        if value != codable.string {
+            value = codable.string
+            typeInitialized = false
+            loadFromJSON()
+            typeInitialized = true
+        }
+    }
+    
     private func loadFromJSON() {
         guard let jsonString = value else { return }
         let decoder = JSONDecoder()

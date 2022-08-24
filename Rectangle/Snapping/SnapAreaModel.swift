@@ -35,9 +35,13 @@ class SnapAreaModel {
         .br: SnapAreaConfig(action: .bottomRight)
     ]
     
-    public private(set) var landscape: [Directional:SnapAreaConfig] = Defaults.landscapeSnapAreas.typedValue ?? SnapAreaModel.defaultLandscape
-    public private(set) var portrait: [Directional:SnapAreaConfig] = Defaults.portraitSnapAreas.typedValue ?? SnapAreaModel.defaultPortrait
-    
+    var landscape: [Directional:SnapAreaConfig] {
+        Defaults.landscapeSnapAreas.typedValue ?? SnapAreaModel.defaultLandscape
+    }
+    var portrait: [Directional:SnapAreaConfig] {
+        Defaults.portraitSnapAreas.typedValue ?? SnapAreaModel.defaultPortrait
+    }
+        
     func setConfig(type: DisplayOrientation, directional: Directional, snapAreaConfig: SnapAreaConfig?) {
         switch type {
         case .landscape: setLandscape(directional: directional, snapAreaConfig: snapAreaConfig)
@@ -46,13 +50,15 @@ class SnapAreaModel {
     }
     
     func setLandscape(directional: Directional, snapAreaConfig: SnapAreaConfig?) {
-        landscape[directional] = snapAreaConfig
-        Defaults.landscapeSnapAreas.typedValue = landscape
+        var newConfig = landscape
+        newConfig[directional] = snapAreaConfig
+        Defaults.landscapeSnapAreas.typedValue = newConfig
     }
     
     func setPortrait(directional: Directional, snapAreaConfig: SnapAreaConfig?) {
-        portrait[directional] = snapAreaConfig
-        Defaults.portraitSnapAreas.typedValue = portrait
+        var newConfig = portrait
+        newConfig[directional] = snapAreaConfig
+        Defaults.portraitSnapAreas.typedValue = newConfig
     }
 }
 

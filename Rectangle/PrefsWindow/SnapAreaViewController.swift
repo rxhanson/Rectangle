@@ -69,6 +69,10 @@ class SnapAreaViewController: NSViewController {
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         loadSnapAreas()
         showHidePortrait()
+        
+        Notification.Name.configImported.onPost(using: {_ in
+            self.loadSnapAreas()
+        })
         Notification.Name.appWillBecomeActive.onPost() { _ in
             self.showHidePortrait()
         }
@@ -115,16 +119,16 @@ class SnapAreaViewController: NSViewController {
         let snapAreaConfig = orientation == .landscape
             ? SnapAreaModel.instance.landscape[directional]
             : SnapAreaModel.instance.portrait[directional]
-
+        
+        select.removeAllItems()
+        select.addItem(withTitle: "-")
+        
         for compoundSnapArea in CompoundSnapArea.all {
             guard compoundSnapArea.compatibleOrientation.contains(orientation), compoundSnapArea.compatibleDirectionals.contains(directional) else { continue }
             
             let item = NSMenuItem(title: compoundSnapArea.displayName, action: nil, keyEquivalent: "")
             item.tag = compoundSnapArea.rawValue
             select.menu?.addItem(item)
-            if let compound = snapAreaConfig?.compound, compound == compoundSnapArea {
-                select.selectItem(withTag: compoundSnapArea.rawValue)
-            }
         }
         select.menu?.addItem(NSMenuItem.separator())
         for windowAction in WindowAction.active {
@@ -136,11 +140,9 @@ class SnapAreaViewController: NSViewController {
                 item.image?.size.height = 12
                 item.image?.size.width = 18
                 select.menu?.addItem(item)
-                if let action = snapAreaConfig?.action,
-                    action == windowAction {
-                    select.selectItem(withTag: windowAction.rawValue)
-                }
             }
         }
+        select.selectItem(withTag: snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? 0)
+        
     }
 }
