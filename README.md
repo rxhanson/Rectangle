@@ -92,6 +92,12 @@ If windows aren't resizing or moving as you expect, here's some initial steps to
 1. Select the "View Logging..." menu item, which is in place of the "About" menu item.
 1. Logging will appear in the window as you perform Rectangle commands.
 
+## Import & export JSON config
+
+There are buttons for importing and exporting the config as a JSON file in the settings tab of the preferences window. 
+
+Upon launch, Rectangle will load a config file at ~/Library/Application Support/Rectangle/RectangleConfig.json if it is present and will rename that file with a time/date stamp so that it isn't read on subsequent launches.
+
 ## Preferences Storage
 
 The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:
