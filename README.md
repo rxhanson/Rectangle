@@ -96,7 +96,7 @@ If windows aren't resizing or moving as you expect, here's some initial steps to
 
 There are buttons for importing and exporting the config as a JSON file in the settings tab of the preferences window. 
 
-Upon launch, Rectangle will load a config file at ~/Library/Application Support/Rectangle/RectangleConfig.json if it is present and will rename that file with a time/date stamp so that it isn't read on subsequent launches.
+Upon launch, Rectangle will load a config file at `~/Library/Application Support/Rectangle/RectangleConfig.json` if it is present and will rename that file with a time/date stamp so that it isn't read on subsequent launches.
 
 ## Preferences Storage
 
