@@ -60,6 +60,44 @@ class SnapAreaModel {
         newConfig[directional] = snapAreaConfig
         Defaults.portraitSnapAreas.typedValue = newConfig
     }
+    
+    func migrate() {
+        if Defaults.sixthsSnapArea.userEnabled {
+            setLandscape(directional: .t, snapAreaConfig: SnapAreaConfig(compound: .topSixths))
+            setLandscape(directional: .b, snapAreaConfig: SnapAreaConfig(compound: .bottomSixths))
+        }
+        
+        let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
+        guard ignoredSnapAreas.rawValue > 0 else { return }
+        
+        let directionalToSnapAreaOption: [Directional: SnapAreaOption] = [
+            .tl: .topLeft,
+            .t: .top,
+            .tr: .topRight,
+            .l: .left,
+            .r: .right,
+            .bl: .bottomLeft,
+            .b: .bottom,
+            .br: .bottomRight
+        ]
+        
+        for directional in Directional.cases {
+            if let option = directionalToSnapAreaOption[directional] {
+                if ignoredSnapAreas.contains(option) {
+                    setLandscape(directional: directional, snapAreaConfig: nil)
+                    setPortrait(directional: directional, snapAreaConfig: nil)
+                }
+            }
+        }
+        
+        if ignoredSnapAreas.contains(.bottomLeftShort) && ignoredSnapAreas.contains(.topLeftShort) {
+            setLandscape(directional: .l, snapAreaConfig: SnapAreaConfig(action: .leftHalf))
+        }
+        
+        if ignoredSnapAreas.contains(.bottomRightShort) && ignoredSnapAreas.contains(.topRightShort) {
+            setLandscape(directional: .r, snapAreaConfig: SnapAreaConfig(action: .rightHalf))
+        }
+    }
 }
 
 enum DisplayOrientation {

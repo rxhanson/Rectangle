@@ -40,6 +40,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if intLastVersion < 46 {
                 MASShortcutMigration.migrate()
             }
+            if intLastVersion < 64 {
+                SnapAreaModel.instance.migrate()
+            }
         }
         
         Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String

@@ -37,7 +37,6 @@ class SnappingManager {
     private let marginBottom = Defaults.snapEdgeMarginBottom.cgFloat
     private let marginLeft = Defaults.snapEdgeMarginLeft.cgFloat
     private let marginRight = Defaults.snapEdgeMarginRight.cgFloat
-    private let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
     
     init(applicationToggle: ApplicationToggle) {
         self.applicationToggle = applicationToggle

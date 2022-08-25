@@ -56,9 +56,9 @@ class SnapAreaViewController: NSViewController {
         guard let directional = Directional(rawValue: sender.tag) else { return }
         let selectedTag = sender.selectedTag()
         var snapAreaConfig: SnapAreaConfig?
-        if selectedTag < 0, let compound = CompoundSnapArea(rawValue: selectedTag) {
+        if selectedTag < -1, let compound = CompoundSnapArea(rawValue: selectedTag) {
            snapAreaConfig = SnapAreaConfig(compound: compound)
-        } else if selectedTag > 0, let action = WindowAction(rawValue: selectedTag) {
+        } else if selectedTag > -1, let action = WindowAction(rawValue: selectedTag) {
             snapAreaConfig = SnapAreaConfig(action: action)
         }
         SnapAreaModel.instance.setConfig(type: type, directional: directional, snapAreaConfig: snapAreaConfig)
@@ -122,6 +122,7 @@ class SnapAreaViewController: NSViewController {
         
         select.removeAllItems()
         select.addItem(withTitle: "-")
+        select.menu?.items.first?.tag = -1
         
         for compoundSnapArea in CompoundSnapArea.all {
             guard compoundSnapArea.compatibleOrientation.contains(orientation), compoundSnapArea.compatibleDirectionals.contains(directional) else { continue }

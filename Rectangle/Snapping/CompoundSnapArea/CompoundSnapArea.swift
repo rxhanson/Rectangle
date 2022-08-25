@@ -10,7 +10,7 @@ import Foundation
 
 enum CompoundSnapArea: Int, Codable {
     
-    case leftTopBottomHalf = -1, rightTopBottomHalf = -2, thirds = -3, portraitThirdsSide = -4, halves = -5, topSixths = -6, bottomSixths = -7, fourths = -8
+    case leftTopBottomHalf = -2, rightTopBottomHalf = -3, thirds = -4, portraitThirdsSide = -5, halves = -6, topSixths = -7, bottomSixths = -8, fourths = -9
     
     static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds, portraitThirdsSide, halves, topSixths, bottomSixths, fourths]
     
