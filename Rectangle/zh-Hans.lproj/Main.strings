@@ -709,16 +709,16 @@
 "q9C-qZ-xw5.title" = "当你在Todo模式时，你可以在Rectangle菜单或者使用快捷键使用\"重新排列Todo应用\"功能，重新刷新Todo应用在屏幕显示的布局。";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "台前调度最近应用区域";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "若该区域过小，最近应用会被隐藏";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "1/4左上或左下屏";
+"Right half, top/bottom half near corners" = "1/4右上或右下屏";
+"Thirds, drag toward center for two thirds" = "1/3屏，向中拖拽为2/3屏";
+"Thirds, top/bottom half near corners" = "1/6左上或左下屏";
+"Left or right half" = "左半屏或右半屏";
+"Top sixths from corners; maximize" = "1/6上半屏; 最大化";
+"Bottom sixths from corners; thirds" = "1/6下半屏; 三分之一";
+"Fourths columns" = "1/4纵屏";
