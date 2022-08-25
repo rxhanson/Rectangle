@@ -3532,7 +3532,7 @@ DQ
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="40" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Le-Om-VLZ">
                                         <rect key="frame" x="66" y="578" width="482" height="16"/>
                                         <subviews>
-                                            <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
+                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
                                                 <rect key="frame" x="-2" y="-1" width="189" height="18"/>
                                                 <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -3542,7 +3542,7 @@ DQ
                                                     <action selector="toggleWindowSnapping:" target="t2d-Q7-RLy" id="hiC-vy-gm4"/>
                                                 </connections>
                                             </button>
-                                            <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
+                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
                                                 <rect key="frame" x="225" y="-1" width="257" height="18"/>
                                                 <buttonCell key="cell" type="check" title="Restore window size when unsnapped" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UZP-5q-D5Y">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
