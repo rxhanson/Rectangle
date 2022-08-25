@@ -216,8 +216,9 @@ class SnappingManager {
                         if box == nil {
                             box = FootprintWindow()
                         }
-                        box?.setFrame(newBoxRect, display: true)
+                        box?.setFrame(.zero, display: false)
                         box?.makeKeyAndOrderFront(nil)
+                        box?.setFrame(newBoxRect, display: true)
                     }
                     
                     currentSnapArea = snapArea
