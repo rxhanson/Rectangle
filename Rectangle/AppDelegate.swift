@@ -35,6 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var quitMenuItem: NSMenuItem!
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        Defaults.loadFromSupportDir()
         if let lastVersion = Defaults.lastVersion.value,
            let intLastVersion = Int(lastVersion) {
             if intLastVersion < 46 {
