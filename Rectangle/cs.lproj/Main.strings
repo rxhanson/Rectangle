@@ -350,7 +350,7 @@
 "hz9-B4-Xy5.title" = "Služby";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Spodní prostředí šestina";
+"iOQ-1e-esP.title" = "Spodní prostřední šestina";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
 "iWV-c2-BJD.title" = "Otevřít systémové předvolby";
@@ -454,11 +454,11 @@
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
 "xE6-jw-EPt.title" = "Pokud je oblast příliš malá, nedávné aplikace budou skryté";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "Levá polovina, horní/spodní polovina blízko rohů";
+"Right half, top/bottom half near corners" = "Pravá polovina, horní/spodní polovina blízko rohů";
+"Thirds, drag toward center for two thirds" = "Třetiny, táhnout směrem ke středu pro dvě třetiny";
+"Thirds, top/bottom half near corners" = "Třetiny, horní/spodní polovina blízko rohů";
+"Left or right half" = "Levá nebo pravá polovina";
+"Top sixths from corners; maximize" = "Horní šestiny z rohů; maximalizovat";
+"Bottom sixths from corners; thirds" = "Spodní šestiny z rohů; třetiny";
+"Fourths columns" = "Čtvrtiny - sloupce";
