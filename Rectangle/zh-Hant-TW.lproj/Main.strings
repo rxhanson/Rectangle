@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "調低";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "通過拖動貼齊視窗";
+"1ui-PL-TkR.title" = "使用拖移貼齊視窗";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "提高";
@@ -114,7 +114,7 @@
 "BgM-ve-c93.title" = "\t由左至右";
 
 /* Class = "NSMenuItem"; title = "Save As…"; ObjectID = "Bw7-FT-i3A"; */
-"Bw7-FT-i3A.title" = "儲存為…";
+"Bw7-FT-i3A.title" = "儲存為⋯";
 
 /* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
 "C9v-g0-DH8.title" = "回復";
@@ -228,7 +228,7 @@
 "Nop-cj-93Q.title" = "\t預設";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "檢視日誌⋯";
+"O8K-y6-bva.title" = "檢視記錄檔⋯";
 
 /* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
 "OY7-WF-poV.title" = "縮到最小";
@@ -585,10 +585,10 @@
 "Fko-xs-gN5.title" = "左二1/4";
 
 /* Class = "NSTextFieldCell"; title = "First Three Fourths"; ObjectID = "T9Z-QF-gwc"; */
-"T9Z-QF-gwc.title" = "";
+"T9Z-QF-gwc.title" = "左3/4";
 
 /* Class = "NSTextFieldCell"; title = "Last Three Fourths"; ObjectID = "nwX-h6-fwm"; */
-"nwX-h6-fwm.title" = "";
+"nwX-h6-fwm.title" = "右3/4";
 
 /* Class = "NSTextFieldCell"; title = "Third Fourth"; ObjectID = "ZTK-rS-b17"; */
 "ZTK-rS-b17.title" = "右二1/4";
@@ -615,7 +615,7 @@
 "m2F-eA-g7w.title" = "右下1/6";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
-"O8K-y6-bva.title" = "檢視日誌⋯";
+"O8K-y6-bva.title" = "檢視記錄檔⋯";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
 "gtf-PD-IHm.label" = "設定";
@@ -627,7 +627,7 @@
 "UZP-5q-D5Y.title" = "取消貼齊時還原視窗尺寸";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "視窗間空隙";
+"bg9-nw-YvU.title" = "視窗間距";
 
 "Halves" = "半分";
 "Corners" = "角落";
@@ -641,13 +641,13 @@
 "Sixths" = "六等分";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
-"RgZ-Jw-XQZ.title" = "導入";
+"RgZ-Jw-XQZ.title" = "匯入";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "導出";
+"IO3-Hi-7gC.title" = "匯出";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "將光標與窗口一起移動到顯示器";
+"Pbz-DF-hgG.title" = "將游標與視窗一起移動到顯示器";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
 "XlM-ch-cLG.title" = "在顯示器之間循環";
@@ -659,29 +659,29 @@
 "jww-Ju-S3d.title" = "忽略";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "對於半屏指令，在½、⅔和⅓之間循環";
+"gHH-BV-5kP.title" = "對於半螢幕指令，在½、⅔和⅓之間循環";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "對於左/右指令，移動到相鄰顯示器；或對於半屏指令，在半屏與全屏之間循環";
+"3GE-la-fAZ.title" = "對於左/右指令，移動到相鄰顯示器；對於半螢幕指令，在½、⅔和⅓之間循環";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
-"2Zm-fl-PcC.title" = "重復的指令";
+"2Zm-fl-PcC.title" = "重複指令";
 
-"Default Shortcuts" = "預設快捷鍵";
-"Currently using: " = "當前正在使用：";
+"Default Shortcuts" = "預設快速鍵";
+"Currently using: " = "目前正在使用：";
 "Cancel" = "取消";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
-"7yS-wj-uWD.title" = "在菜單中顯示Todo模式";
+"7yS-wj-uWD.title" = "在選單中顯示Todo模式";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
 "6e0-ji-qXw.title" = "Todo應用程式寬度";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "重新排列Todo快捷鍵";
+"Fx0-sm-DrT.title" = "重新排列Todo快速鍵";
 
-"Use frontmost.app as Todo App" = "Use frontmost.app as Todo App";
-"Enable Todo Mode" = "啓用Todo模式";
+"Use frontmost.app as Todo App" = "使用frontmost.app作為Todo App";
+"Enable Todo Mode" = "啟用Todo模式";
 "Reflow Todo" = "重新排列Todo";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
@@ -691,34 +691,34 @@
 "ZVi-DR-1zj.title" = "關於Todo模式";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "將選中的應用程式在主顯示器右側保持始終可見";
+"FCh-1Q-Xms.title" = "始終在主螢幕右側顯示所選擇的應用程式";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "將選中的應用程式在主顯示器右側保持始終可見";
+"N2U-pY-CLq.title" = "始終在主螢幕右側顯示所選擇的應用程式";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. 將你所選的todo應用程式放置在最前";
+"qze-7p-m1X.title" = "1. 將您所選的Todo應用程式放置在最前";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "2. 在Rectangle菜單中，選擇「使用【應用程式】作為Todo應用程式」";
+"xNi-9K-fnJ.title" = "2. 在Rectangle選單中，選擇「使用【應用程式】作為Todo應用程式」";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "3. 在Rectangle菜單中，啓用Todo模式。";
+"8dv-v2-SPu.title" = "3. 在Rectangle選單中，啟用Todo模式。";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "在Todo模式下，你可以通過在Rectangle菜單中選擇「重新排列Todo」或使用對應快捷鍵來刷新Todo模式。";
+"q9C-qZ-xw5.title" = "在Todo模式下，您可以在Rectangle選單中選擇「重新排列Todo」或使用對應快速鍵來重新整理Todo模式。";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "「幕前調度」最近使用過的應用程式區域";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "如果該區域過小，將隱藏最近使用過的應用程式";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "左半；靠近角落則上下半";
+"Right half, top/bottom half near corners" = "右半；靠近角落則上下半";
+"Thirds, drag toward center for two thirds" = "三等分，向中間拖移則2/3";
+"Thirds, top/bottom half near corners" = "三等分；靠近角落則上下半";
+"Left or right half" = "左半或右半";
+"Top sixths from corners; maximize" = "最大化；靠近角落則1/6";
+"Bottom sixths from corners; thirds" = "三等分；靠近角落則1/6";
+"Fourths columns" = "四等分";
