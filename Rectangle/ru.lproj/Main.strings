@@ -588,22 +588,22 @@
 "6HX-rn-VIp.title" = "Последняя четверть";
 
 /* Class = "NSTextFieldCell"; title = "Top Left Sixth"; ObjectID = "mFt-Kg-UYG"; */
-"mFt-Kg-UYG.title" = "Верхний левый угол";
+"mFt-Kg-UYG.title" = "Верхняя шестая слева";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "Правый центральный угол";
+"TTx-7X-Wie.title" = "Верхняя шестая по центру";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
-"f3Q-q7-Pcy.title" = "Верхний правый угол";
+"f3Q-q7-Pcy.title" = "Верхняя шестая справа";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Left Sixth"; ObjectID = "LqQ-pM-jRN"; */
-"LqQ-pM-jRN.title" = "Нижний левый угол";
+"LqQ-pM-jRN.title" = "Нижняя шестая слева";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "Нижний центральный угол";
+"iOQ-1e-esP.title" = "Нижняя шестая по центру";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
-"m2F-eA-g7w.title" = "Нижний правый угол";
+"m2F-eA-g7w.title" = "Нижняя шестая справа";
 
 /* Class = "NSMenuItem"; title = "View Logging…"; ObjectID = "O8K-y6-bva"; */
 "O8K-y6-bva.title" = "Просмотр журнала…";
@@ -628,8 +628,8 @@
 "Display" = "Дисплей";
 "Other" = "Другое";
 "Move to Edge" = "Переместить к краю";
-"Fourths" = "Четверть";
-"Sixths" = "Угол";
+"Fourths" = "Четверти";
+"Sixths" = "Шестые";
 
 /* Class = "NSButtonCell"; title = "Import"; ObjectID = "RgZ-Jw-XQZ"; */
 "RgZ-Jw-XQZ.title" = "Импорт";
@@ -700,16 +700,16 @@
 "q9C-qZ-xw5.title" = "При включенном Todo режиме вы можете обновить положение окна Todo приложения выбрав \"Обновить положение Todo окна\" в меню Rectangle или при помощи соответствующей горячей клавиши.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "Stage Manager область последних приложений";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "Если область слишком мала, последние приложения будут скрыты";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "Левая половина, верхняя/нижняя половина возле углов";
+"Right half, top/bottom half near corners" = "Правая половина, верхняя/нижняя половина возле углов";
+"Thirds, drag toward center for two thirds" = "Трети, перетащите к центру на две трети";
+"Thirds, top/bottom half near corners" = "Трети, верхняя/нижняя половина возле углов";
+"Left or right half" = "Левая или правая половина";
+"Top sixths from corners; maximize" = "Верхние шестые от углов; максимизировать";
+"Bottom sixths from corners; thirds" = "Нижние шестые от углов; трети";
+"Fourths columns" = "Четверти-колонны";
