@@ -67,8 +67,11 @@ class AccessibilityElement {
                         let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
                         Logger.log("Window under cursor fallback matched: \(app) \(windowInfo)")
                     }
-                    // In case the window is in Stage Manager recent apps
-                    return FallbackAccessibilityElement(windowElement.underlyingElement)
+                    if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent() {
+                        // In case the window is in Stage Manager recent apps
+                        return FallbackAccessibilityElement(windowElement.underlyingElement)
+                    }
+                    return windowElement
                 }
             }
         }
@@ -98,11 +101,13 @@ class AccessibilityElement {
                 }
             }
             if var resultWindowInfo = windowInfos.first(where: { $0.rect.contains(location) }) {
-                // In case the window is in Stage Manager recent apps
-                var prevWindowInfo: CGWindowInfo?
-                while prevWindowInfo?.id != resultWindowInfo.id {
-                    prevWindowInfo = resultWindowInfo
-                    resultWindowInfo = windowInfos.first { $0.rect.intersects(resultWindowInfo.rect) }!
+                if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent(windowInfo) {
+                    // In case the window is in Stage Manager recent apps
+                    var prevWindowInfo: CGWindowInfo?
+                    while prevWindowInfo?.id != resultWindowInfo.id {
+                        prevWindowInfo = resultWindowInfo
+                        resultWindowInfo = windowInfos.first { $0.rect.intersects(resultWindowInfo.rect) }!
+                    }
                 }
                 return resultWindowInfo
             }

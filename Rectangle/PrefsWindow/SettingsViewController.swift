@@ -201,12 +201,11 @@ class SettingsViewController: NSViewController {
         gapSlider.isContinuous = true
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
-        
-        stageSlider.intValue = Int32(Defaults.stageSize.value)
-        stageLabel.stringValue = "\(stageSlider.intValue) px"
-        stageSlider.isContinuous = true
 
-        if #available(macOS 13.0, *) {
+        if StageUtil.stageCapable() {
+            stageSlider.intValue = Int32(Defaults.stageSize.value)
+            stageSlider.isContinuous = true
+            stageLabel.stringValue = "\(stageSlider.intValue) px"
         } else {
             stageView.isHidden = true
         }

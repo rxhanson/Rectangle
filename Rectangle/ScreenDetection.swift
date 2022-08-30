@@ -131,11 +131,9 @@ extension NSScreen {
         get {
             var newFrame = visibleFrame
             
-            if #available(macOS 13.0, *) {
-                if StageUtil.stageVisible() && StageUtil.stageWindowPresent() {
-                    if newFrame.origin.x == 0 { newFrame.origin.x += Defaults.stageSize.cgFloat }
-                    newFrame.size.width -= Defaults.stageSize.cgFloat
-                }
+            if StageUtil.stageCapable() && StageUtil.stageEnabled() && !StageUtil.stageHide() && StageUtil.stagePresent() {
+                if StageUtil.stagePosition() == .left { newFrame.origin.x += Defaults.stageSize.cgFloat }
+                newFrame.size.width -= Defaults.stageSize.cgFloat
             }
 
             if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
