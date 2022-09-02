@@ -12,6 +12,7 @@ class SnapAreaViewController: NSViewController {
     
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var unsnapRestoreButton: NSButton!
+    @IBOutlet weak var missionControlDraggingCheckbox: NSButton!
 
     @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
     @IBOutlet weak var topLandscapeSelect: NSPopUpButton!
@@ -44,6 +45,12 @@ class SnapAreaViewController: NSViewController {
         Defaults.unsnapRestore.enabled = newSetting
     }
     
+    @IBAction func toggleMissionControlDragging(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .off
+        Defaults.missionControlDragging.enabled = newSetting
+        Notification.Name.missionControlDragging.post(object: newSetting)
+    }
+    
     @IBAction func setLandscapeSnapArea(_ sender: NSPopUpButton) {
         setSnapArea(sender: sender, type: .landscape)
     }
@@ -67,6 +74,7 @@ class SnapAreaViewController: NSViewController {
     override func viewDidLoad() {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
+        missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         loadSnapAreas()
         showHidePortrait()
         

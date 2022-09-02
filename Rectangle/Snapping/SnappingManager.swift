@@ -27,6 +27,7 @@ class SnappingManager {
     var allowListening: Bool = true
     var initialWindowRect: CGRect?
     var currentSnapArea: SnapArea?
+    var dragPrevY: Double?
     
     var box: FootprintWindow?
 
@@ -52,6 +53,10 @@ class SnappingManager {
                 self.allowListening = enabled
             }
             self.toggleListening()
+        }
+        Notification.Name.missionControlDragging.onPost { notification in
+            self.stopEventMonitor()
+            self.startEventMonitor()
         }
         Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
     }
@@ -101,7 +106,12 @@ class SnappingManager {
                 disableSnapping()
             }
         } else {
-            if eventMonitor?.running != true {
+            if eventMonitor?.running == true {
+                if Defaults.missionControlDragging.userDisabled != (eventMonitor is ActiveEventMonitor) {
+                    stopEventMonitor()
+                    startEventMonitor()
+                }
+            } else {
                 enableSnapping()
             }
         }
@@ -112,20 +122,42 @@ class SnappingManager {
             box = FootprintWindow()
         }
         if eventMonitor == nil {
-            eventMonitor = EventMonitor(mask: [.leftMouseDown, .leftMouseUp, .leftMouseDragged], handler: handle)
-            eventMonitor?.start()
+            startEventMonitor()
         }
     }
     
     private func disableSnapping() {
         box = nil
+        stopEventMonitor()
+    }
+    
+    private func startEventMonitor() {
+        let mask: NSEvent.EventTypeMask = [.leftMouseDown, .leftMouseUp, .leftMouseDragged]
+        eventMonitor = Defaults.missionControlDragging.userDisabled ? ActiveEventMonitor(mask: mask, filterer: filter, handler: handle) : PassiveEventMonitor(mask: mask, handler: handle)
+        eventMonitor?.start()
+    }
+    
+    private func stopEventMonitor() {
         eventMonitor?.stop()
         eventMonitor = nil
     }
     
-    func handle(event: NSEvent?) {
-        
-        guard let event = event else { return }
+    func filter(event: NSEvent) -> Bool {
+        switch event.type {
+        case .leftMouseUp:
+            dragPrevY = nil
+        case .leftMouseDragged:
+            if let cgEvent = event.cgEvent {
+                if cgEvent.location.y == 0 && dragPrevY == 0 && event.deltaY < -25 { cgEvent.location.y = 1 }
+                dragPrevY = cgEvent.location.y
+            }
+        default:
+            break
+        }
+        return false
+    }
+    
+    func handle(event: NSEvent) {
         switch event.type {
         case .leftMouseDown:
             if !Defaults.obtainWindowOnClick.userDisabled {

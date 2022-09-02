@@ -17,6 +17,7 @@ extension Notification.Name {
     static let changeDefaults = Notification.Name("changeDefaults")
     static let todoMenuToggled = Notification.Name("todoMenuToggled")
     static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
+    static let missionControlDragging = Notification.Name("missionControlDragging")
 
     func post(
         center: NotificationCenter = NotificationCenter.default,
