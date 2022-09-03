@@ -700,16 +700,16 @@
 "q9C-qZ-xw5.title" = "Du kannst im To-Do-Modus die To-Do-Anwendung neu ausrichten indem du \"To-Do neu ausrichten\" im Rectangle-Menü auswählst oder die zugewiesene Tastenkombination ausführst.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager Bereich zuletzt verwendeter Programme";
+"ayu-YO-10p.title" = "Stage Manager Bereich für zuletzt verwendeter Programme";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
 "xE6-jw-EPt.title" = "Wenn der Bereich zu klein ist, werden die zuletzt verwendeten Programme ausgeblendet.";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "Linke Hälfte, Obere/Untere Hälfte in der Nähe der Ecken";
+"Right half, top/bottom half near corners" = "Rechte Hälfte, Obere/Untere Hälfte in der Nähe der Ecken";
+"Thirds, drag toward center for two thirds" = "Drittel, zur Mitte ziehen für zwei Drittel";
+"Thirds, top/bottom half near corners" = "Drittel, Obere/Untere Hälfte in der Nähe der Ecken";
+"Left or right half" = "Linke oder Rechte Hälfte";
+"Top sixths from corners; maximize" = "Obere Sechstel beim Ziehen aus den Ecken; maximieren";
+"Bottom sixths from corners; thirds" = "Untere Sechstel beim Ziehen aus den Ecken; Drittel";
+"Fourths columns" = "Viertel Spalten";
