@@ -713,3 +713,6 @@
 "Top sixths from corners; maximize" = "Верхние шестые от углов; максимизировать";
 "Bottom sixths from corners; thirds" = "Нижние шестые от углов; трети";
 "Fourths columns" = "Четверти-колонны";
+
+/* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
+"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";

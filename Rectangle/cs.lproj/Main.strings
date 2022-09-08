@@ -462,3 +462,6 @@
 "Top sixths from corners; maximize" = "Horní šestiny z rohů; maximalizovat";
 "Bottom sixths from corners; thirds" = "Spodní šestiny z rohů; třetiny";
 "Fourths columns" = "Čtvrtiny - sloupce";
+
+/* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
+"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
