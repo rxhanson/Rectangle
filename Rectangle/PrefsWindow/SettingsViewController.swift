@@ -102,8 +102,9 @@ class SettingsViewController: NSViewController {
         stageLabel.stringValue = "\(sender.intValue) px"
         if let event = NSApp.currentEvent {
             if event.type == .leftMouseUp || event.type == .keyDown {
-                if Float(sender.intValue) != Defaults.stageSize.value {
-                    Defaults.stageSize.value = Float(sender.intValue)
+                let value: Float = sender.floatValue == 0 ? -1 : sender.floatValue
+                if value != Defaults.stageSize.value {
+                    Defaults.stageSize.value = value
                 }
             }
         }
