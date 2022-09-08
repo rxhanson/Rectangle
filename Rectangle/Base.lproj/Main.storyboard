@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21223" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21223"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -3523,33 +3523,56 @@ DQ
             <objects>
                 <viewController storyboardIdentifier="HookshotConfigViewController" id="t2d-Q7-RLy" customClass="SnapAreaViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yfQ-gV-dm5">
-                        <rect key="frame" x="0.0" y="0.0" width="654" height="654"/>
+                        <rect key="frame" x="0.0" y="0.0" width="654" height="683"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="40" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9T6-Lr-8m1">
-                                <rect key="frame" x="20" y="30" width="614" height="594"/>
+                                <rect key="frame" x="20" y="30" width="614" height="623"/>
                                 <subviews>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="40" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Le-Om-VLZ">
-                                        <rect key="frame" x="66" y="578" width="482" height="16"/>
+                                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="14" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eiz-Ie-Pff">
+                                        <rect key="frame" x="66" y="577" width="482" height="46"/>
                                         <subviews>
-                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
-                                                <rect key="frame" x="-2" y="-1" width="189" height="18"/>
-                                                <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
+                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="40" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Le-Om-VLZ">
+                                                <rect key="frame" x="0.0" y="30" width="482" height="16"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
+                                                        <rect key="frame" x="-2" y="-1" width="189" height="18"/>
+                                                        <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleWindowSnapping:" target="t2d-Q7-RLy" id="hiC-vy-gm4"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
+                                                        <rect key="frame" x="225" y="-1" width="257" height="18"/>
+                                                        <buttonCell key="cell" type="check" title="Restore window size when unsnapped" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UZP-5q-D5Y">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleUnsnapRestore:" target="t2d-Q7-RLy" id="3vt-Lw-NJs"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="vrs-iM-XVL" userLabel="Mission Control Dragging Checkbox">
+                                                <rect key="frame" x="106" y="-1" width="269" height="18"/>
+                                                <buttonCell key="cell" type="check" title="Disable fast dragging to Mission Control" bezelStyle="regularSquare" imagePosition="left" inset="2" id="3hZ-Cs-EZ6">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="toggleWindowSnapping:" target="t2d-Q7-RLy" id="hiC-vy-gm4"/>
-                                                </connections>
-                                            </button>
-                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
-                                                <rect key="frame" x="225" y="-1" width="257" height="18"/>
-                                                <buttonCell key="cell" type="check" title="Restore window size when unsnapped" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UZP-5q-D5Y">
-                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="toggleUnsnapRestore:" target="t2d-Q7-RLy" id="3vt-Lw-NJs"/>
+                                                    <action selector="toggleMissionControlDragging:" target="t2d-Q7-RLy" id="iGt-Mk-K1Y"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -3563,7 +3586,7 @@ DQ
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="14" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vcp-1H-jc9">
-                                        <rect key="frame" x="23" y="347" width="568" height="191"/>
+                                        <rect key="frame" x="23" y="346" width="568" height="191"/>
                                         <subviews>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oWJ-Ie-4bk">
                                                 <rect key="frame" x="0.0" y="1" width="170" height="190"/>
@@ -3779,10 +3802,10 @@ DQ
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="40" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3fZ-2P-Yw8">
-                                        <rect key="frame" x="40" y="0.0" width="534" height="307"/>
+                                        <rect key="frame" x="40" y="0.0" width="534" height="306"/>
                                         <subviews>
                                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="PH1-h4-ZhC">
-                                                <rect key="frame" x="65" y="304" width="404" height="5"/>
+                                                <rect key="frame" x="65" y="304" width="404" height="4"/>
                                             </box>
                                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MnW-gb-EXP">
                                                 <rect key="frame" x="0.0" y="0.0" width="534" height="266"/>
@@ -4050,6 +4073,7 @@ DQ
                         <outlet property="bottomRightPortraitSelect" destination="lje-Rc-9Hj" id="bxP-nE-cgS"/>
                         <outlet property="leftLandscapeSelect" destination="jqR-m9-Kh7" id="wBI-Th-vtz"/>
                         <outlet property="leftPortraitSelect" destination="NlH-2s-Bb2" id="r9T-BM-YbN"/>
+                        <outlet property="missionControlDraggingCheckbox" destination="vrs-iM-XVL" id="xgC-0R-SeA"/>
                         <outlet property="portraitStackView" destination="3fZ-2P-Yw8" id="b8R-Wb-nlY"/>
                         <outlet property="rightLandscapeSelect" destination="HM2-rd-Wka" id="Oud-Xf-anx"/>
                         <outlet property="rightPortraitSelect" destination="efR-xi-okh" id="K5g-I0-0e4"/>
