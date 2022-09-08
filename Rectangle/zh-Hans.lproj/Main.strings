@@ -714,14 +714,14 @@
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
 "xE6-jw-EPt.title" = "若该区域过小，最近应用会被隐藏";
 
-"Left half, top/bottom half near corners" = "1/4左上或左下屏";
-"Right half, top/bottom half near corners" = "1/4右上或右下屏";
-"Thirds, drag toward center for two thirds" = "1/3屏，向中拖拽为2/3屏";
-"Thirds, top/bottom half near corners" = "1/6左上或左下屏";
-"Left or right half" = "左半屏或右半屏";
-"Top sixths from corners; maximize" = "1/6上半屏; 最大化";
-"Bottom sixths from corners; thirds" = "1/6下半屏; 三分之一";
-"Fourths columns" = "1/4纵屏";
+"Left half, top/bottom half near corners" = "左半顶/底角";
+"Right half, top/bottom half near corners" = "右半顶/底角";
+"Thirds, drag toward center for two thirds" = "1/3，向中拖拽为2/3";
+"Thirds, top/bottom half near corners" = "三分顶/底角";
+"Left or right half" = "左/右半屏";
+"Top sixths from corners; maximize" = "六分顶角; 最大化";
+"Bottom sixths from corners; thirds" = "六分底角; 1/3";
+"Fourths columns" = "1/4纵向";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "禁用快速拖拽至调度中心";
