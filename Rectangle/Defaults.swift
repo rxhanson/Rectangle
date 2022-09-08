@@ -72,6 +72,7 @@ class Defaults {
     static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
     static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
+    static let enhancedUI = OptionalBoolDefault(key: "enhancedUI")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -134,7 +135,8 @@ class Defaults {
         stageSize,
         landscapeSnapAreas,
         portraitSnapAreas,
-        missionControlDragging
+        missionControlDragging,
+        enhancedUI
     ]
 }
 

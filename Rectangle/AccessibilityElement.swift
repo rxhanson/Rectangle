@@ -208,7 +208,7 @@ class AccessibilityElement {
         set(size: rect.size)
 
         // If "enhanced user interface" was originally enabled for the app, turn it back on
-        if let app = app, enhancedUserInterfaceEnabled == true {
+        if Defaults.enhancedUI.userEnabled, let app = app, enhancedUserInterfaceEnabled == true {
             AXUIElementSetAttributeValue(app.underlyingElement, kAXEnhancedUserInterface as CFString, kCFBooleanTrue)
         }
     }
