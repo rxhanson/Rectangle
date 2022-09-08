@@ -62,6 +62,17 @@ class AccessibilityElement {
                     }
                     return windowElement
                 }
+                if windowElement.getIdentifier() == windowInfo.id {
+                    if Logger.logging {
+                        let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
+                        Logger.log("Window under cursor fallback matched: \(app) \(windowInfo)")
+                    }
+                    if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent() {
+                        // In case the window is in Stage Manager recent apps
+                        return FallbackAccessibilityElement(windowElement.underlyingElement)
+                    }
+                    return windowElement
+                }
             }
         }
         
@@ -70,6 +81,43 @@ class AccessibilityElement {
     }
     
     static func getWindowInfo(at location: CGPoint) -> CGWindowInfo? {
+        let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
+        if let windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>> {
+            var windowInfos = [CGWindowInfo]()
+            for infoDict in windowInfo {
+                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
+                    guard let pid = infoDict[kCGWindowOwnerPID as String] as? pid_t,
+                          let id = infoDict[kCGWindowNumber as String] as? Int,
+                          let x = bounds["X"],
+                          let y = bounds["Y"],
+                          let w = bounds["Width"],
+                          let h = bounds["Height"]
+                    else { continue }
+                    let name = infoDict[kCGWindowOwnerName as String] as? String
+                    if name != "Dock" && name != "WindowManager" {
+                        let boundsRect = NSMakeRect(x, y, w, h)
+                        windowInfos.append(CGWindowInfo(id: id, pid: pid, rect: boundsRect))
+                    }
+                }
+            }
+            if var resultWindowInfo = windowInfos.first(where: { $0.rect.contains(location) }) {
+                if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent(windowInfo) {
+                    // In case the window is in Stage Manager recent apps
+                    var prevWindowInfo: CGWindowInfo?
+                    while prevWindowInfo?.id != resultWindowInfo.id {
+                        prevWindowInfo = resultWindowInfo
+                        resultWindowInfo = windowInfos.first { $0.rect.intersects(resultWindowInfo.rect) }!
+                    }
+                }
+                return resultWindowInfo
+            }
+        }
+        
+        Logger.log("Unable to obtain window info from location")
+        return nil
+    }
+    
+    static func getWindowInfo(with identifier: Int) -> CGWindowInfo? {
         let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
         if let windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>> {
             for infoDict in windowInfo {
@@ -81,15 +129,15 @@ class AccessibilityElement {
                           let w = bounds["Width"],
                           let h = bounds["Height"]
                     else { continue }
-                    let boundsRect = NSMakeRect(x, y, w, h)
-                    if boundsRect.contains(location) {
+                    if id == identifier {
+                        let boundsRect = NSMakeRect(x, y, w, h)
                         return CGWindowInfo(id: id, pid: pid, rect: boundsRect)
                     }
                 }
             }
         }
-            
-        Logger.log("Unable to obtain window id from location")
+        
+        Logger.log("Unable to obtain window info from identifier")
         return nil
     }
     
@@ -404,6 +452,15 @@ extension AccessibilityElement {
         }
 
         return nil
+    }
+}
+
+class FallbackAccessibilityElement: AccessibilityElement {
+    override func rectOfElement() -> CGRect {
+        guard let identifier = getIdentifier(),
+              let windowInfo = AccessibilityElement.getWindowInfo(with: identifier)
+        else { return CGRect.null }
+        return CGRect(origin: windowInfo.rect.origin, size: super.rectOfElement().size)
     }
 }
 

@@ -8,29 +8,49 @@
 import Foundation
 
 class StageUtil {
-    
-    static func stageVisible() -> Bool {
-        guard let stageDefaults = UserDefaults(suiteName: "com.apple.WindowManager") else { return false }
-        
-        return stageDefaults.bool(forKey: "GloballyEnabled") && !stageDefaults.bool(forKey: "AutoHide")
+    static func stageCapable() -> Bool {
+        if #available(macOS 13, *) { return true }
+        return false
     }
-
-    static func stageWindowPresent() -> Bool {
-        let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
-        if let windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>> {
+    
+    static func stageEnabled() -> Bool {
+        guard let defaults = UserDefaults(suiteName: "com.apple.WindowManager") else { return false }
+        return defaults.bool(forKey: "GloballyEnabled")
+    }
+    
+    static func stageHide() -> Bool {
+        guard let defaults = UserDefaults(suiteName: "com.apple.WindowManager") else { return false }
+        return defaults.bool(forKey: "AutoHide")
+    }
+    
+    static func stagePresent(_ windowInfo: Array<Dictionary<String,Any>>? = nil) -> Bool {
+        var windowInfo = windowInfo
+        if windowInfo == nil {
+            let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
+            windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>>
+        }
+        if let windowInfo = windowInfo {
+            var count = 0
             for infoDict in windowInfo {
-                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
-                    guard let name = infoDict[kCGWindowOwnerName as String] as? String,
-                          let w = bounds["Width"],
-                          let h = bounds["Height"]
-                    else { continue }
-                    if name == "WindowManager" && w == 64 && h == 64 {
-                        return true
-                    }
+                let name = infoDict[kCGWindowOwnerName as String] as? String
+                if name == "WindowManager" {
+                    count += 1
+                    // A single window could be for the dragged window
+                    if count == 2 { return true }
                 }
             }
         }
         return false
     }
     
+    static func stagePosition() -> StagePosition {
+        // When the Dock is on the left
+        if NSScreen.main!.visibleFrame.origin.x > 0 { return .right }
+        return .left
+    }
+}
+
+enum StagePosition {
+    case left
+    case right
 }
