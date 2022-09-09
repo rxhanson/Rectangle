@@ -447,7 +447,7 @@
 "lgE-cR-cQ5.title" = "前往 系統偏好設定 → 安全性與隱私權 → 隱私權 → 輔助使用";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open the menu."; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "選單列圖像被隱藏時，從Finder重新啟動Rectangle以開啟選單。";
+"ltc-mf-BHr.title" = "當選單列圖像被隱藏時，從Finder重新啟動Rectangle以開啟選單。";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "檢查拼字文法";
@@ -724,4 +724,4 @@
 "Fourths columns" = "四等分";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "停用快速拖移視窗至「指揮中心」";
