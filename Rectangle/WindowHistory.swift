@@ -8,12 +8,10 @@
 
 import Foundation
 
-typealias WindowId = Int
-
 class WindowHistory {
     
-    var restoreRects = [WindowId: CGRect]() // the last window frame that the user positioned
+    var restoreRects = [CGWindowID: CGRect]() // the last window frame that the user positioned
     
-    var lastRectangleActions = [WindowId: RectangleAction]() // the last window frame that this app positioned
+    var lastRectangleActions = [CGWindowID: RectangleAction]() // the last window frame that this app positioned
     
 }
