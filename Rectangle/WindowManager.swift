@@ -26,7 +26,7 @@ class WindowManager {
         ]
     }
 
-    private func recordAction(windowId: Int, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
+    private func recordAction(windowId: CGWindowID, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
         let newCount: Int
         if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId], lastRectangleAction.action == action {
             newCount = lastRectangleAction.count + 1
@@ -188,10 +188,10 @@ struct ExecutionParameters {
     let updateRestoreRect: Bool
     let screen: NSScreen?
     let windowElement: AccessibilityElement?
-    let windowId: Int?
+    let windowId: CGWindowID?
     let source: ExecutionSource
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: Int? = nil, source: ExecutionSource = .keyboardShortcut) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen

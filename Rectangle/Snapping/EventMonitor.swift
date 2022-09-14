@@ -62,7 +62,7 @@ public class ActiveEventMonitor: EventMonitor {
     }
     
     public func start() {
-        tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap, options: .defaultTap, eventsOfInterest: mask.rawValue, callback: tapCallback, userInfo: Unmanaged.passUnretained(self).toOpaque())
+        tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap, options: .defaultTap, eventsOfInterest: mask.rawValue, callback: tapCallback, userInfo: CUtil.bridge(obj: self))
         if let tap = tap { RunLoop.main.add(tap, forMode: .common) }
     }
     
@@ -78,7 +78,7 @@ public class ActiveEventMonitor: EventMonitor {
 fileprivate func tapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     var filtered = false
     if let ptr = refcon {
-        let eventMonitor = Unmanaged<ActiveEventMonitor>.fromOpaque(ptr).takeUnretainedValue()
+        let eventMonitor = CUtil.bridge(ptr: ptr) as ActiveEventMonitor
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             eventMonitor.stop()
             eventMonitor.start()

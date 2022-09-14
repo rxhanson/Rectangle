@@ -97,7 +97,7 @@ class ShortcutManager {
         windowManager.execute(parameters)
     }
     
-    private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: Int) -> Bool {
+    private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
         
         if parameters.action == .maximize {
             if ScreenDetection().detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.rectOfElement().size {

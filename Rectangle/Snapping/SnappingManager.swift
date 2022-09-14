@@ -19,7 +19,7 @@ class SnappingManager {
     
     var eventMonitor: EventMonitor?
     var windowElement: AccessibilityElement?
-    var windowId: Int?
+    var windowId: CGWindowID?
     var windowIdAttempt: Int = 0
     var lastWindowIdAttempt: TimeInterval?
     var windowMoving: Bool = false
@@ -266,7 +266,7 @@ class SnappingManager {
         }
     }
     
-    func unsnapRestore(windowId: Int) {
+    func unsnapRestore(windowId: CGWindowID) {
         if Defaults.unsnapRestore.enabled != false {
             // if window was put there by rectangle, restore size
             if let lastRect = AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect,

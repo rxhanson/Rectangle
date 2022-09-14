@@ -46,6 +46,7 @@ class AccessibilityElement {
 
     static func windowUnderCursor() -> AccessibilityElement? {
         guard let location = CGEvent(source: nil)?.location else { return nil }
+        
         var element: AXUIElement?
         let result: AXError = AXUIElementCopyElementAtPosition(systemWideElement.underlyingElement, Float(location.x), Float(location.y), &element)
         if result == .success, let element = element, let windowElement = AccessibilityElement(element).window() {
@@ -55,13 +56,15 @@ class AccessibilityElement {
         if let windowInfo = getWindowInfo(at: location) {
             let pidWindows = Self.allWindows(pid: windowInfo.pid)
             for windowElement in pidWindows {
-                if windowElement.rectOfElement().equalTo(windowInfo.rect) {
+                if windowElement.rectOfElement().equalTo(windowInfo.frame) {
                     if Logger.logging {
                         let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
                         Logger.log("Window under cursor fallback matched: \(app) \(windowInfo)")
                     }
                     return windowElement
                 }
+            }
+            for windowElement in pidWindows {
                 if windowElement.getIdentifier() == windowInfo.id {
                     if Logger.logging {
                         let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
@@ -80,61 +83,28 @@ class AccessibilityElement {
         return nil
     }
     
-    static func getWindowInfo(at location: CGPoint) -> CGWindowInfo? {
-        let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
-        if let windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>> {
-            var windowInfos = [CGWindowInfo]()
-            for infoDict in windowInfo {
-                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
-                    guard let pid = infoDict[kCGWindowOwnerPID as String] as? pid_t,
-                          let id = infoDict[kCGWindowNumber as String] as? Int,
-                          let x = bounds["X"],
-                          let y = bounds["Y"],
-                          let w = bounds["Width"],
-                          let h = bounds["Height"]
-                    else { continue }
-                    let name = infoDict[kCGWindowOwnerName as String] as? String
-                    if name != "Dock" && name != "WindowManager" {
-                        let boundsRect = NSMakeRect(x, y, w, h)
-                        windowInfos.append(CGWindowInfo(id: id, pid: pid, rect: boundsRect))
-                    }
+    static func getWindowInfo(at location: CGPoint) -> WindowInfo? {
+        let infos = WindowUtil.windowList().filter { !["com.apple.dock", "com.apple.WindowManager"].contains($0.bundleIdentifier) }
+        if var info = (infos.first { $0.frame.contains(location) }) {
+            if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent() {
+                // In case the window is in Stage Manager recent apps
+                var prevInfo: WindowInfo?
+                while prevInfo?.id != info.id {
+                    prevInfo = info
+                    info = infos.first { $0.frame.intersects(info.frame) }!
                 }
             }
-            if var resultWindowInfo = windowInfos.first(where: { $0.rect.contains(location) }) {
-                if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent(windowInfo) {
-                    // In case the window is in Stage Manager recent apps
-                    var prevWindowInfo: CGWindowInfo?
-                    while prevWindowInfo?.id != resultWindowInfo.id {
-                        prevWindowInfo = resultWindowInfo
-                        resultWindowInfo = windowInfos.first { $0.rect.intersects(resultWindowInfo.rect) }!
-                    }
-                }
-                return resultWindowInfo
-            }
+            return info
         }
         
         Logger.log("Unable to obtain window info from location")
         return nil
     }
     
-    static func getWindowInfo(with identifier: Int) -> CGWindowInfo? {
-        let options = CGWindowListOption(arrayLiteral: .excludeDesktopElements, .optionOnScreenOnly)
-        if let windowInfo = CGWindowListCopyWindowInfo(options, 0) as? Array<Dictionary<String,Any>> {
-            for infoDict in windowInfo {
-                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
-                    guard let pid = infoDict[kCGWindowOwnerPID as String] as? pid_t,
-                          let id = infoDict[kCGWindowNumber as String] as? Int,
-                          let x = bounds["X"],
-                          let y = bounds["Y"],
-                          let w = bounds["Width"],
-                          let h = bounds["Height"]
-                    else { continue }
-                    if id == identifier {
-                        let boundsRect = NSMakeRect(x, y, w, h)
-                        return CGWindowInfo(id: id, pid: pid, rect: boundsRect)
-                    }
-                }
-            }
+    static func getWindowInfo(with identifier: CGWindowID) -> WindowInfo? {
+        let infos = WindowUtil.windowList([identifier])
+        if let info = infos.first {
+            return info
         }
         
         Logger.log("Unable to obtain window info from identifier")
@@ -262,38 +232,21 @@ class AccessibilityElement {
         return nil
     }
 
-    func getIdentifier() -> Int? {
+    func getIdentifier() -> CGWindowID? {
         var identifier: CGWindowID = 0
         _AXUIElementGetWindow(underlyingElement, &identifier)
         if identifier != 0 {
-            return Int(identifier)
+            return identifier
         }
         
-        if let windowInfo = CGWindowListCopyWindowInfo(.optionOnScreenOnly, 0) as? Array<Dictionary<String,Any>> {
-            let pid = getPid()
-            let rect = rectOfElement()
-            
-            let windowsOfSameApp = windowInfo.filter { (infoDict) -> Bool in
-                infoDict[kCGWindowOwnerPID as String] as? pid_t == pid
-            }
-            
-            let matchingWindows = windowsOfSameApp.filter { (infoDict) -> Bool in
-                if let bounds = infoDict[kCGWindowBounds as String] as? [String: CGFloat] {
-                    if bounds["X"] == rect.origin.x
-                        && bounds["Y"] == rect.origin.y
-                        && bounds["Height"] == rect.height
-                        && bounds["Width"] == rect.width {
-                        return true
-                    }
-                }
-                return false
-            }
-            
-            // Take the first match because there's no real way to guarantee which window we're actually getting
-            if let firstMatch = matchingWindows.first {
-                return firstMatch[kCGWindowNumber as String] as? Int
-            }
+        let infos = WindowUtil.windowList()
+        let pid = getPid()
+        let rect = rectOfElement()
+        // Take the first match because there's no real way to guarantee which window we're actually getting
+        if let info = (infos.first { $0.pid == pid && $0.frame == rect }) {
+            return info.id
         }
+        
         Logger.log("Unable to obtain window id")
         return nil
     }
@@ -402,24 +355,16 @@ class AccessibilityElement {
 
 // todo mode
 extension AccessibilityElement {
-    private static func PIDsWithWindows() -> Set<Int> {
-        let options = CGWindowListOption(arrayLiteral: CGWindowListOption.excludeDesktopElements, CGWindowListOption.optionOnScreenOnly)
-        let windowListInfo = CGWindowListCopyWindowInfo(options, kCGNullWindowID)
-        guard let infoList = (windowListInfo as NSArray?) as? [[String: AnyObject]] else { return [] }
-        var PIDs: Set<Int> = []
-
-        for w in infoList {
-            if let ownerPID = w[kCGWindowOwnerPID as String] as? Int {
-                PIDs.insert(ownerPID)
-            }
-        }
-
-        return PIDs
+    private static func PIDsWithWindows() -> [pid_t] {
+        let infos = WindowUtil.windowList()
+        let pids = infos.map { $0.pid }
+        let uniquePids = Array(Set(pids))
+        return uniquePids
     }
 
-    static func allWindowsForPIDs(_ pids: [Int]) -> [AccessibilityElement] {
+    static func allWindowsForPIDs(_ pids: [pid_t]) -> [AccessibilityElement] {
         let apps = pids.map {
-            AccessibilityElement(AXUIElementCreateApplication(pid_t($0)))
+            AccessibilityElement(AXUIElementCreateApplication($0))
         }
         var windows = [AccessibilityElement]()
 
@@ -436,7 +381,7 @@ extension AccessibilityElement {
     }
 
     static func allWindows() -> [AccessibilityElement] {
-        allWindowsForPIDs([Int](PIDsWithWindows()))
+        allWindowsForPIDs(PIDsWithWindows())
     }
 
     static func todoWindow() -> AccessibilityElement? {
@@ -444,7 +389,7 @@ extension AccessibilityElement {
 
         for app in apps {
             if app.bundleIdentifier == Defaults.todoApplication.value {
-                let windows = allWindowsForPIDs([Int(app.processIdentifier)])
+                let windows = allWindowsForPIDs([app.processIdentifier])
                 if(windows.count > 0) {
                     return windows[0]
                 }
@@ -457,10 +402,10 @@ extension AccessibilityElement {
 
 class FallbackAccessibilityElement: AccessibilityElement {
     override func rectOfElement() -> CGRect {
-        guard let identifier = getIdentifier(),
-              let windowInfo = AccessibilityElement.getWindowInfo(with: identifier)
+        guard let id = getIdentifier(),
+              let info = AccessibilityElement.getWindowInfo(with: id)
         else { return CGRect.null }
-        return CGRect(origin: windowInfo.rect.origin, size: super.rectOfElement().size)
+        return CGRect(origin: info.frame.origin, size: super.rectOfElement().size)
     }
 }
 
@@ -476,10 +421,4 @@ extension AXValue {
         pointer.pointee = value
         return AXValueCreate(type, pointer)
     }
-}
-
-struct CGWindowInfo {
-    let id: Int
-    let pid: pid_t
-    let rect: NSRect
 }
