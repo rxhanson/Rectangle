@@ -501,3 +501,19 @@ extension AppDelegate: NSWindowDelegate {
     }
     
 }
+
+extension AppDelegate {
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { continue }
+            if components.host == "execute-action" && components.path.isEmpty {
+                guard let name = (components.queryItems?.first { $0.name == "name" })?.value else { continue }
+                if let action = (WindowAction.active.first { urlName($0.name) == name }) { action.postUrl() }
+            }
+        }
+    }
+    
+    private func urlName(_ name: String) -> String {
+        return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
+    }
+}
