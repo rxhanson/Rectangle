@@ -202,5 +202,5 @@ struct ExecutionParameters {
 }
 
 enum ExecutionSource {
-    case keyboardShortcut, dragToSnap, menuItem
+    case keyboardShortcut, dragToSnap, menuItem, url
 }

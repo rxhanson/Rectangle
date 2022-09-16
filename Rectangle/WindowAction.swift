@@ -112,6 +112,10 @@ enum WindowAction: Int, Codable {
     func postSnap(windowElement: AccessibilityElement?, windowId: CGWindowID?, screen: NSScreen) {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap))
     }
+    
+    func postUrl() {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .url))
+    }
 
     // Determines where separators should be used in the menu
     var firstInGroup: Bool {
