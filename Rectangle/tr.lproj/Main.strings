@@ -326,6 +326,18 @@
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "Pencereler arası boşluk";
 
+//Menu items
+"Halves" = "Yarımlar";
+"Corners" = "Köşeler";
+"Thirds" = "Üçte bir";
+"Maximize" = "Tamamını kapla";
+"Size" = "Boyut";
+"Display" = "Ekran";
+"Other" = "Diğer";
+"Move to Edge" = "Kenarlar";
+"Fourths" = "Çeyrek";
+"Sixths" = "Altıda bir";
+
 /* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
 "bib-Uj-vzu.title" = "File";
 
@@ -499,3 +511,14 @@
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
 "yvN-PE-bxn.title" = "Rectangle'dan Çık";
+
+
+// Snap Areas
+"Left half, top/bottom half near corners" = "Sol yarım (köşelere yaklaşıldığında ise üst/alt yarım)";
+"Right half, top/bottom half near corners" = "Sağ yarım (köşelere yaklaşıldığında ise üst/alt yarım)";
+"Thirds, drag toward center for two thirds" = "Üçte bir (üçte iki için ortaya doğru sürükleyin)";
+"Thirds, top/bottom half near corners" = "Üçte bir (köşelere yaklaşıldığında ise üst/alt)";
+"Left or right half" = "Sol veya sağ yarım";
+"Top sixths from corners; maximize" = "Tamamını kapla (köşelere yaklaşıldığında ise altıda birini kapla)";
+"Bottom sixths from corners; thirds" = "Üçte bir (köşelere yaklaşıldığında ise altıda bir)";
+"Fourths columns" = "Çeyrek";
