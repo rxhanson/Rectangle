@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -3188,8 +3188,8 @@ DQ
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TlJ-Di-kby">
-                                        <rect key="frame" x="58" y="54" width="134" height="16"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Check Rectangle.app" id="t7n-mU-75I">
+                                        <rect key="frame" x="57" y="54" width="136" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Enable Rectangle.app" id="t7n-mU-75I">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -3235,6 +3235,11 @@ DQ
                             <constraint firstItem="4I0-IC-dnS" firstAttribute="top" secondItem="1ZR-Nv-NGc" secondAttribute="top" constant="30" id="jJz-xW-me7"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="openSysPrefsButton" destination="LtJ-oN-QeI" id="8qu-hY-Yqt"/>
+                        <outlet property="padlockField" destination="6GN-iB-M1L" id="sDW-zz-so8"/>
+                        <outlet property="sysPrefsPathField" destination="XRC-ST-jLi" id="dsy-lz-XdE"/>
+                    </connections>
                 </viewController>
                 <customObject id="Pz3-OM-dTg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

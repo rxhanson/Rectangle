@@ -716,3 +716,7 @@
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
 "3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+
+"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+
+"Open System Settings" = "Open System Settings";
