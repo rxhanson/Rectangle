@@ -131,13 +131,18 @@ class SnapAreaViewController: NSViewController {
         select.removeAllItems()
         select.addItem(withTitle: "-")
         select.menu?.items.first?.tag = -1
-        
+
+        let selectedTag = snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? -1
+
         for compoundSnapArea in CompoundSnapArea.all {
             guard compoundSnapArea.compatibleOrientation.contains(orientation), compoundSnapArea.compatibleDirectionals.contains(directional) else { continue }
             
             let item = NSMenuItem(title: compoundSnapArea.displayName, action: nil, keyEquivalent: "")
             item.tag = compoundSnapArea.rawValue
             select.menu?.addItem(item)
+            if selectedTag == item.tag {
+                select.select(item)
+            }
         }
         select.menu?.addItem(NSMenuItem.separator())
         for windowAction in WindowAction.active {
@@ -149,9 +154,10 @@ class SnapAreaViewController: NSViewController {
                 item.image?.size.height = 12
                 item.image?.size.width = 18
                 select.menu?.addItem(item)
+                if selectedTag == item.tag {
+                    select.select(item)
+                }
             }
         }
-        select.selectItem(withTag: snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? 0)
-        
     }
 }
