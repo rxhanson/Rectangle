@@ -1,6 +1,6 @@
 PODS:
   - MASShortcut (2.4.0)
-  - Sparkle (1.26.0)
+  - Sparkle (2.2.2)
 
 DEPENDENCIES:
   - MASShortcut
@@ -13,7 +13,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   MASShortcut: d9e4909e878661cc42877cc9d6efbe638273ab57
-  Sparkle: d56d028f4b0c123577825f5d1004f6140d77f90e
+  Sparkle: cb8c851f6247a9acbe9e236539404c5be529f74d
 
 PODFILE CHECKSUM: 8cc8e127e49dd104a2ef51ae95acef123648eab6
 

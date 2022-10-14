@@ -19,7 +19,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
-    
+    static let updaterController = SPUStandardUpdaterController(updaterDelegate: nil, userDriverDelegate: nil)
+
     private var shortcutManager: ShortcutManager!
     private var windowManager: WindowManager!
     private var applicationToggle: ApplicationToggle!
@@ -95,7 +96,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func checkAutoCheckForUpdates() {
-        SUUpdater.shared()?.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
+        Self.updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
     
     func accessibilityTrusted() {
@@ -227,7 +228,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
-        SUUpdater.shared()?.checkForUpdates(sender)
+        Self.updaterController.checkForUpdates(sender)
     }
     
     @IBAction func authorizeAccessibility(_ sender: Any) {

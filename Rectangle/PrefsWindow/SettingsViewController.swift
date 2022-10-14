@@ -81,7 +81,7 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
-        SUUpdater.shared()?.checkForUpdates(sender)
+        AppDelegate.updaterController.checkForUpdates(sender)
     }
     
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -159,9 +159,7 @@ class SettingsViewController: NSViewController {
     override func awakeFromNib() {
         initializeToggles()
 
-        if let updater = SUUpdater.shared() {
-            checkForUpdatesAutomaticallyCheckbox.bind(.value, to: updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
-        }
+        checkForUpdatesAutomaticallyCheckbox.bind(.value, to: AppDelegate.updaterController.updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
         
         let appVersionString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
         let buildString: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
