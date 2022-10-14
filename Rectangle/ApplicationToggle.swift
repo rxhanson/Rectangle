@@ -105,6 +105,11 @@ class ApplicationToggle: NSObject {
             } else {
                 enableShortcuts()
             }
+            if Defaults.enhancedUI.value == .frontmostDisable {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
+                    AccessibilityElement.disableEnhancedUI()
+                }
+            }
         }
     }
     

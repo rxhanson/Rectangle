@@ -72,7 +72,7 @@ class Defaults {
     static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
     static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
-    static let enhancedUI = OptionalBoolDefault(key: "enhancedUI")
+    static let enhancedUI = IntEnumDefault<EnhancedUI>(key: "enhancedUI", defaultValue: .disableEnable)
 
     static var array: [Default] = [
         launchOnLogin,
@@ -372,6 +372,40 @@ class JSONDefault<T: Codable>: StringDefault {
                 value = jsonString
             }
         }
+    }
+}
+
+class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
+    public private(set) var key: String
+    private let defaultValue: E
+
+    var _value: E
+    var value: E {
+        set {
+            if newValue != _value {
+                _value = newValue
+                UserDefaults.standard.set(_value, forKey: key)
+            }
+        }
+        get { _value }
+    }
+
+    init(key: String, defaultValue: E) {
+        self.key = key
+        self.defaultValue = defaultValue
+        let intValue = UserDefaults.standard.integer(forKey: key)
+        _value = E(rawValue: intValue) ?? defaultValue
+    }
+
+    func load(from codable: CodableDefault) {
+        if let intValue = codable.int, _value.rawValue != intValue {
+            _value = E(rawValue: intValue) ?? defaultValue
+            UserDefaults.standard.set(_value.rawValue, forKey: key)
+        }
+    }
+    
+    func toCodable() -> CodableDefault {
+        CodableDefault(int: value.rawValue)
     }
 }
 

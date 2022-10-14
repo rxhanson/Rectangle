@@ -28,6 +28,12 @@ class AccessibilityElement {
         return frontmostApplicationElement
     }
 
+    static func disableEnhancedUI() {
+        if let app = frontmostApplication() {
+            AXUIElementSetAttributeValue(app.underlyingElement, kAXEnhancedUserInterface as CFString, kCFBooleanFalse)
+        }
+    }
+    
     static func frontmostWindow() -> AccessibilityElement? {
         guard let appElement = AccessibilityElement.frontmostApplication() else {
             Logger.log("Failed to find the application that currently has focus.")
@@ -178,7 +184,7 @@ class AccessibilityElement {
         set(size: rect.size)
 
         // If "enhanced user interface" was originally enabled for the app, turn it back on
-        if Defaults.enhancedUI.userEnabled, let app = app, enhancedUserInterfaceEnabled == true {
+        if Defaults.enhancedUI.value == .disableEnable, let app = app, enhancedUserInterfaceEnabled == true {
             AXUIElementSetAttributeValue(app.underlyingElement, kAXEnhancedUserInterface as CFString, kCFBooleanTrue)
         }
     }
@@ -421,4 +427,10 @@ extension AXValue {
         pointer.pointee = value
         return AXValueCreate(type, pointer)
     }
+}
+
+enum EnhancedUI: Int {
+    case disableEnable = 1 /// The default behavior - disable Enhanced UI on every window move/resize
+    case disableOnly = 2 /// Don't re-enable enhanced UI after it gets disabled
+    case frontmostDisable = 3 /// Disable enhanced UI every time the frontmost app gets changed
 }
