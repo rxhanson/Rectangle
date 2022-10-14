@@ -700,23 +700,23 @@
 "q9C-qZ-xw5.title" = "Durante la modalità In Evidenza, puoi reimpostarla selezionando \"Reimposta In Evidenza\" nel menu di Rectangle o con l'abbreviazione da tastiera impostata.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "Area app recenti in Stage Manager";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "Se l'area è troppo piccola, le app recenti saranno nascoste";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "Metà sinistra, metà superiore/inferiore vicino gli angoli";
+"Right half, top/bottom half near corners" = "Metà destra, metà superiore/inferiore vicino gli angoli";
+"Thirds, drag toward center for two thirds" = "Terzi, trascina verso il centro per i due terzi";
+"Thirds, top/bottom half near corners" = "Terzi, metà superiore/inferiore vicino gli angoli";
+"Left or right half" = "Metà destra o sinistra";
+"Top sixths from corners; maximize" = "Sesti superiori dagli angoli; massimizza";
+"Bottom sixths from corners; thirds" = "Sesti inferiori dagli angoli; terzi";
+"Fourths columns" = "Quarti in colonne";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "Disattiva il trascinamento rapido in Mission Control";
 
-"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+"Go to System Settings → Privacy & Security → Accessibility" = "Vai in Preferenze di Sistema → Sicurezza e Privacy → Accessibilità";
 
-"Open System Settings" = "Open System Settings";
+"Open System Settings" = "Apri Preferenze di Sistema";
