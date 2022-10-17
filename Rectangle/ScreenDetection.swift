@@ -131,8 +131,8 @@ extension NSScreen {
         get {
             var newFrame = visibleFrame
             
-            if StageUtil.stageCapable(), StageUtil.stageEnabled(), !StageUtil.stageHide(), StageUtil.stagePresent(), Defaults.stageSize.value > 0 {
-                if StageUtil.stagePosition() == .left { newFrame.origin.x += Defaults.stageSize.cgFloat }
+            if StageUtil.stageCapable(), StageUtil.stageEnabled(), StageUtil.stageStripShow(), StageUtil.stageStripVisible(), Defaults.stageSize.value > 0 {
+                if StageUtil.stageStripPosition() == .left { newFrame.origin.x += Defaults.stageSize.cgFloat }
                 newFrame.size.width -= Defaults.stageSize.cgFloat
             }
 
