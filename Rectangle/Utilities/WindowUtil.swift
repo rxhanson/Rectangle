@@ -9,10 +9,9 @@ import Foundation
 
 class WindowUtil {
     private static var windowListCache = [[CGWindowID]?: WindowListInfo]()
-    private static var nowTimestamp: UInt64 { DispatchTime.now().uptimeNanoseconds / 1_000_000 }
     
     static func windowList(_ ids: [CGWindowID]? = nil) -> [WindowInfo] {
-        if let listInfo = windowListCache[ids], nowTimestamp - listInfo.timestamp <= 100 { return listInfo.infos }
+        if let listInfo = windowListCache[ids], DispatchTime.now().uptimeMilliseconds - listInfo.timestamp <= 100 { return listInfo.infos }
         var infos = [WindowInfo]()
         var array: CFArray?
         if let ids = ids {
@@ -39,7 +38,7 @@ class WindowUtil {
                 }
             }
         }
-        windowListCache[ids] = WindowListInfo(timestamp: nowTimestamp, infos: infos)
+        windowListCache[ids] = WindowListInfo(timestamp: DispatchTime.now().uptimeMilliseconds, infos: infos)
         return infos
     }
     
