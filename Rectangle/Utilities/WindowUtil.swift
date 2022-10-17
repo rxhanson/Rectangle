@@ -59,4 +59,5 @@ struct WindowInfo {
     let frame: CGRect
     let pid: pid_t
     var bundleIdentifier: String? { NSRunningApplication(processIdentifier: pid)?.bundleIdentifier }
+    var screen: NSScreen? { ScreenDetection().screenContaining(frame, screens: NSScreen.screens) }
 }

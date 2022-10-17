@@ -24,15 +24,14 @@ class StageUtil {
     }
     
     static func stagePresent() -> Bool {
-        let infos = WindowUtil.windowList().filter { $0.bundleIdentifier == "com.apple.WindowManager" }
+        let infos = WindowUtil.windowList().filter { $0.bundleIdentifier == "com.apple.WindowManager" && $0.screen == NSScreen.main }
         // A single window could be for the dragged window
         return infos.count >= 2
     }
     
     static func stagePosition() -> StagePosition {
-        // When the Dock is on the left
-        if NSScreen.main!.visibleFrame.origin.x > 0 { return .right }
-        return .left
+        guard let defaults = UserDefaults(suiteName: "com.apple.dock") else { return .left }
+        return defaults.string(forKey: "orientation") == "left" ? .right : .left
     }
 }
 

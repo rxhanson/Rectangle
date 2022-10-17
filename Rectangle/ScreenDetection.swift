@@ -33,7 +33,7 @@ class ScreenDetection {
         return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
     }
 
-    private func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
+    func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
         var result: NSScreen? = NSScreen.main
         var largestPercentageOfRectWithinFrameOfScreen: CGFloat = 0.0
         for currentScreen in screens {
