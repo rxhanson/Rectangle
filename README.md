@@ -40,7 +40,7 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 1. Focus the app that you want to ignore (make a window from that app frontmost).
 1. Open the Rectangle menu and select "Ignore app"
 
-## Execute an action by URL (Arriving in v0.60)
+## Execute an action by URL
 
 Open the URL `rectangle://execute-action?name=[name]`. Do not activate Rectangle.
 
