@@ -9,34 +9,36 @@ import Foundation
 
 class StageUtil {
     static func stageCapable() -> Bool {
-        if #available(macOS 13, *) { return true }
-        return false
+        guard #available(macOS 13, *) else { return false }
+        return true
     }
     
     static func stageEnabled() -> Bool {
-        guard let defaults = UserDefaults(suiteName: "com.apple.WindowManager") else { return false }
+        guard let defaults = UserDefaults(suiteName: "com.apple.WindowManager"), defaults.object(forKey: "GloballyEnabled") != nil
+        else { return false }
         return defaults.bool(forKey: "GloballyEnabled")
     }
     
-    static func stageHide() -> Bool {
-        guard let defaults = UserDefaults(suiteName: "com.apple.WindowManager") else { return false }
-        return defaults.bool(forKey: "AutoHide")
+    static func stageStripShow() -> Bool {
+        guard let defaults = UserDefaults(suiteName: "com.apple.WindowManager"), defaults.object(forKey: "AutoHide") != nil
+        else { return false }
+        return !defaults.bool(forKey: "AutoHide")
     }
     
-    static func stagePresent() -> Bool {
-        let infos = WindowUtil.windowList().filter { $0.bundleIdentifier == "com.apple.WindowManager" }
+    static func stageStripVisible() -> Bool {
+        let infos = WindowUtil.windowList().filter { $0.bundleIdentifier == "com.apple.WindowManager" && $0.screen == NSScreen.main }
         // A single window could be for the dragged window
         return infos.count >= 2
     }
     
-    static func stagePosition() -> StagePosition {
-        // When the Dock is on the left
-        if NSScreen.main!.visibleFrame.origin.x > 0 { return .right }
-        return .left
+    static func stageStripPosition() -> StageStripPosition {
+        guard let defaults = UserDefaults(suiteName: "com.apple.dock"), defaults.object(forKey: "orientation") != nil
+        else { return .left }
+        return defaults.string(forKey: "orientation") == "left" ? .right : .left
     }
 }
 
-enum StagePosition {
+enum StageStripPosition {
     case left
     case right
 }

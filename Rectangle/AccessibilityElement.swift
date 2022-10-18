@@ -76,7 +76,7 @@ class AccessibilityElement {
                         let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
                         Logger.log("Window under cursor fallback matched: \(app) \(windowInfo)")
                     }
-                    if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent() {
+                    if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stageStripVisible() {
                         // In case the window is in Stage Manager recent apps
                         return FallbackAccessibilityElement(windowElement.underlyingElement)
                     }
@@ -92,7 +92,7 @@ class AccessibilityElement {
     static func getWindowInfo(at location: CGPoint) -> WindowInfo? {
         let infos = WindowUtil.windowList().filter { !["com.apple.dock", "com.apple.WindowManager"].contains($0.bundleIdentifier) }
         if var info = (infos.first { $0.frame.contains(location) }) {
-            if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stagePresent() {
+            if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stageStripVisible() {
                 // In case the window is in Stage Manager recent apps
                 var prevInfo: WindowInfo?
                 while prevInfo?.id != info.id {
