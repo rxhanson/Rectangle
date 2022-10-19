@@ -8,10 +8,10 @@
 import Foundation
 
 class WindowUtil {
-    private static var windowListCache = [[CGWindowID]?: WindowListInfo]()
+    private static var windowListCache = TimeoutCache<[CGWindowID]?, [WindowInfo]>(timeout: 100)
     
     static func windowList(_ ids: [CGWindowID]? = nil) -> [WindowInfo] {
-        if let listInfo = windowListCache[ids], DispatchTime.now().uptimeMilliseconds - listInfo.timestamp <= 100 { return listInfo.infos }
+        if let infos = windowListCache[ids] { return infos }
         var infos = [WindowInfo]()
         var array: CFArray?
         if let ids = ids {
@@ -38,17 +38,12 @@ class WindowUtil {
                 }
             }
         }
-        windowListCache[ids] = WindowListInfo(timestamp: DispatchTime.now().uptimeMilliseconds, infos: infos)
+        windowListCache[ids] = infos
         return infos
     }
     
     private static func dictionaryValue<T>(_ dictionary: CFDictionary, _ key: CFString) -> T {
         return unsafeBitCast(CFDictionaryGetValue(dictionary, unsafeBitCast(key, to: UnsafeRawPointer.self)), to: T.self)
-    }
-    
-    private struct WindowListInfo {
-        let timestamp: UInt64
-        let infos: [WindowInfo]
     }
 }
 
