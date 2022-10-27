@@ -75,6 +75,7 @@ class SnapAreaViewController: NSViewController {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
+        missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userEnabled
         loadSnapAreas()
         showHidePortrait()
         
