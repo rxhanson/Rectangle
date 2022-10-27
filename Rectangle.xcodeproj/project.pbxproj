@@ -112,6 +112,7 @@
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
+		AA040C67290B2640003181D5 /* RunLoopThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA040C66290B2640003181D5 /* RunLoopThread.swift */; };
 		AA0ACC2F2864A86D0025E376 /* StageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0ACC2E2864A86D0025E376 /* StageUtil.swift */; };
 		AA4DA2FB28FDC94A00355CEB /* DispatchTimeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */; };
 		AA536C2729005DD000579AC6 /* TimeoutCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA536C2629005DD000579AC6 /* TimeoutCache.swift */; };
@@ -324,6 +325,7 @@
 		98FE8975246E79A600871535 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
+		AA040C66290B2640003181D5 /* RunLoopThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopThread.swift; sourceTree = "<group>"; };
 		AA0ACC2E2864A86D0025E376 /* StageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageUtil.swift; sourceTree = "<group>"; };
 		AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchTimeExtension.swift; sourceTree = "<group>"; };
 		AA536C2629005DD000579AC6 /* TimeoutCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutCache.swift; sourceTree = "<group>"; };
@@ -551,6 +553,7 @@
 				AAADE1AE28CBAB0000036331 /* WindowUtil.swift */,
 				AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */,
 				AA536C2629005DD000579AC6 /* TimeoutCache.swift */,
+				AA040C66290B2640003181D5 /* RunLoopThread.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1007,6 +1010,7 @@
 				D04CE31227817C9B00BD47B3 /* NinthsRepeated.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
 				983DD04428B0639E00BF1EEE /* SnapAreaModel.swift in Sources */,
+				AA040C67290B2640003181D5 /* RunLoopThread.swift in Sources */,
 				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,
 				D04CE30427817A6F00BD47B3 /* TopRightNinthCalculation.swift in Sources */,
 				98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */,
