@@ -191,6 +191,8 @@
 		9818E01728B63C48004AA524 /* FourthsCompoundCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourthsCompoundCalculation.swift; sourceTree = "<group>"; };
 		98192DD9270F606C00015E66 /* Debounce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debounce.swift; sourceTree = "<group>"; };
 		98192DDD2717201000015E66 /* ReverseAllManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReverseAllManager.swift; sourceTree = "<group>"; };
+		981B8111290A2968004F25BA /* ca-ES */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ca-ES"; path = "ca-ES.lproj/Main.strings"; sourceTree = "<group>"; };
+		981B8112290A2968004F25BA /* ca-ES */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ca-ES"; path = "ca-ES.lproj/Main.strings"; sourceTree = "<group>"; };
 		981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InternetAccessPolicy.plist; sourceTree = "<group>"; };
 		9821402022B3884600ABFB3F /* BottomHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomHalfCalculation.swift; sourceTree = "<group>"; };
 		9821402222B3886100ABFB3F /* CenterCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenterCalculation.swift; sourceTree = "<group>"; };
@@ -807,6 +809,7 @@
 				sk,
 				ca,
 				tr,
+				"ca-ES",
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
@@ -1111,6 +1114,7 @@
 				270BE80227F0B89A00278311 /* sk */,
 				98664A5E2877CE8A00DB6DDE /* ca */,
 				DCEA6A1628DB717C0051C12D /* tr */,
+				981B8112290A2968004F25BA /* ca-ES */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1142,6 +1146,7 @@
 				270BE80127F0B89A00278311 /* sk */,
 				98664A5D2877CE8A00DB6DDE /* ca */,
 				DCEA6A1528DB717C0051C12D /* tr */,
+				981B8111290A2968004F25BA /* ca-ES */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
