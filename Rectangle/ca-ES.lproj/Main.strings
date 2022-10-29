@@ -195,7 +195,7 @@
 "J6t-sg-Wwz.title" = "Inferior dreta";
 
 /* Class = "NSMenuItem"; title = "Use None"; ObjectID = "J7y-lM-qPV"; */
-"J7y-lM-qPV.title" = "Utilitzar cap";;
+"J7y-lM-qPV.title" = "Utilitzar cap";
 
 /* Class = "NSTextFieldCell"; title = "Next Display"; ObjectID = "Jnd-Lc-nlh"; */
 "Jnd-Lc-nlh.title" = "Següent pantalla";
@@ -258,7 +258,7 @@
 "RB4-Sm-HuC.title" = "\tDreta a esquerra";
 
 /* Class = "NSMenuItem"; title = "Superscript"; ObjectID = "Rqc-34-cIF"; */
-"Rqc-34-cIF.title" = "Superíndex;
+"Rqc-34-cIF.title" = "Superíndex";
 
 /* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
 "Ruw-6m-B2m.title" = "Selecciona-ho tot";
