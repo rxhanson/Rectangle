@@ -45,6 +45,7 @@ public class PassiveEventMonitor: EventMonitor {
 
 public class ActiveEventMonitor: EventMonitor {
     private var tap: CFMachPort?
+    private var thread: RunLoopThread?
     private let mask: NSEvent.EventTypeMask
     public let filterer: (NSEvent) -> Bool
     public let handler: (NSEvent) -> Void
@@ -63,12 +64,17 @@ public class ActiveEventMonitor: EventMonitor {
     
     public func start() {
         tap = CGEvent.tapCreate(tap: .cgSessionEventTap, place: .headInsertEventTap, options: .defaultTap, eventsOfInterest: mask.rawValue, callback: tapCallback, userInfo: CUtil.bridge(obj: self))
-        if let tap = tap { RunLoop.main.add(tap, forMode: .common) }
+        if let tap = tap {
+            thread = RunLoopThread(mode: .default, qualityOfService: .userInteractive, start: true)
+            thread!.runLoop!.add(tap, forMode: .default)
+        }
     }
     
     public func stop() {
         if let tap = tap {
-            RunLoop.main.remove(tap, forMode: .common)
+            thread!.runLoop!.remove(tap, forMode: .default)
+            thread!.cancel()
+            thread = nil
             CGEvent.tapEnable(tap: tap, enable: false)
         }
         tap = nil
