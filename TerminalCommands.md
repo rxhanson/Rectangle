@@ -145,7 +145,7 @@ defaults write com.knollsoft.Rectangle topLeftEighth -dict-add keyCode -float 18
 
 ## Add additional "thirds" sizing commands 
 
-These commands for resizing to non-standard screen thirds are not available in the UI but can be configured via CLI.
+These commands for resizing to corner two-thirds are not available in the UI but can be configured via CLI.
 
 The key codes are:
 
@@ -154,7 +154,9 @@ The key codes are:
 * bottomLeftThird
 * bottomRightThird
 
-For example, the command for setting the top left third shortcut to `ctrl opt shift 1` would be:
+(these correspond to two-thirds, and when repeated will cycle through each of the calculations)
+
+For example, the command for setting the top left two-thirds shortcut to `ctrl opt shift 1` would be:
 
 ```bash
 defaults write com.knollsoft.Rectangle topLeftThird -dict-add keyCode -float 18 modifierFlags -float 917504
