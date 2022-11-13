@@ -76,7 +76,7 @@ class AccessibilityElement {
                         let app = NSRunningApplication(processIdentifier: windowInfo.pid)?.localizedName ?? ""
                         Logger.log("Window under cursor fallback matched: \(app) \(windowInfo)")
                     }
-                    if StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stageStripVisible() {
+                    if Defaults.dragFromStage.userEnabled, StageUtil.stageCapable() && StageUtil.stageEnabled() && StageUtil.stageStripVisible() {
                         // In case the window is in Stage Manager recent apps
                         return FallbackAccessibilityElement(windowElement.underlyingElement)
                     }
