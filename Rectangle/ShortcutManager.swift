@@ -78,8 +78,8 @@ class ShortcutManager {
         }
         
         if Defaults.subsequentExecutionMode.value == .cycleMonitor {
-            guard let windowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
-                  let windowId = parameters.windowId ?? windowElement.getIdentifier()
+            guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
+                  let windowId = parameters.windowId ?? windowElement.getWindowId()
             else {
                 NSSound.beep()
                 return
@@ -100,7 +100,7 @@ class ShortcutManager {
     private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
         
         if parameters.action == .maximize {
-            if ScreenDetection().detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.rectOfElement().size {
+            if ScreenDetection().detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.frame.size {
                 return true
             }
         }

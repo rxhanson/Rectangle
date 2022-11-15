@@ -43,8 +43,8 @@ class WindowManager {
     }
 
     func execute(_ parameters: ExecutionParameters) {
-        guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.frontmostWindow(),
-              let windowId = parameters.windowId ?? frontmostWindowElement.getIdentifier()
+        guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
+              let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
         else {
             NSSound.beep()
             return
@@ -54,7 +54,7 @@ class WindowManager {
 
         if action == .restore {
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
-                frontmostWindowElement.setRectOf(restoreRect)
+                frontmostWindowElement.setFrame(restoreRect)
             }
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             return
@@ -73,7 +73,7 @@ class WindowManager {
             return
         }
         
-        let currentWindowRect: CGRect = frontmostWindowElement.rectOfElement()
+        let currentWindowRect: CGRect = frontmostWindowElement.frame
         
         var lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
         
@@ -91,7 +91,7 @@ class WindowManager {
             }
         }
         
-        if frontmostWindowElement.isSheet()
+        if frontmostWindowElement.isSheet == true
             || currentWindowRect.isNull
             || usableScreens.frameOfCurrentScreen.isNull
             || usableScreens.visibleFrameOfCurrentScreen.isNull {
@@ -100,7 +100,7 @@ class WindowManager {
             return
         }
         
-        let currentNormalizedRect = AccessibilityElement.normalizeCoordinatesOf(currentWindowRect)
+        let currentNormalizedRect = currentWindowRect.screenFlipped
         let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
         
         let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
@@ -128,13 +128,13 @@ class WindowManager {
             return
         }
         
-        let newRect = AccessibilityElement.normalizeCoordinatesOf(calcResult.rect)
+        let newRect = calcResult.rect.screenFlipped
 
         let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId)
         
         let visibleFrameOfDestinationScreen = isTodo ? calcResult.screen.frame : calcResult.screen.adjustedVisibleFrame
 
-        let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog()
+        let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let windowMoverChain = useFixedSizeMover
             ? fixedSizeWindowMoverChain
             : standardWindowMoverChain
@@ -143,7 +143,7 @@ class WindowManager {
             windowMover.moveWindowRect(newRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
         }
         
-        let resultingRect = frontmostWindowElement.rectOfElement()
+        let resultingRect = frontmostWindowElement.frame
         
         if Defaults.moveCursor.userEnabled, parameters.source == .keyboardShortcut {
             let windowCenter = NSMakePoint(NSMidX(resultingRect), NSMidY(resultingRect))

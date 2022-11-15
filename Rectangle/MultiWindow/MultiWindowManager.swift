@@ -30,7 +30,7 @@ class MultiWindowManager {
     static private func allWindowsOnScreen(windowElement: AccessibilityElement? = nil, sortByPID: Bool = false) -> (screens: UsableScreens, windows: [AccessibilityElement])? {
         let screenDetection = ScreenDetection()
         
-        guard let windowElement = windowElement ?? AccessibilityElement.frontmostWindow(),
+        guard let windowElement = windowElement ?? AccessibilityElement.getFrontWindowElement(),
               let screens = screenDetection.detectScreens(using: windowElement)
         else {
             NSSound.beep()
@@ -40,10 +40,10 @@ class MultiWindowManager {
 
         let currentScreen = screens.currentScreen
 
-        var windows = AccessibilityElement.allWindows()
+        var windows = AccessibilityElement.getAllWindowElements()
         if sortByPID {
             windows.sort(by: { (w1: AccessibilityElement, w2: AccessibilityElement) -> Bool in
-                return w1.getPid() > w2.getPid()
+                return w1.pid ?? pid_t(0) > w2.pid ?? pid_t(0)
             })
         }
 
@@ -52,11 +52,11 @@ class MultiWindowManager {
             if Defaults.todo.userEnabled && TodoManager.isTodoWindow(w) { continue }
             let screen = screenDetection.detectScreens(using: w)?.currentScreen
             if screen == currentScreen
-                && w.isWindow()
-                && w.isSheet() != true
-                && w.isMinimized() != true
-                && w.isHidden() != true
-                && w.isSystemDialog() != true {
+                && w.isWindow == true
+                && w.isSheet != true
+                && w.isMinimized != true
+                && w.isHidden != true
+                && w.isSystemDialog != true {
                 actualWindows.append(w)
             }
         }
@@ -69,7 +69,7 @@ class MultiWindowManager {
             return
         }
         
-        let screenFrame = AccessibilityElement.normalizeCoordinatesOf(screens.visibleFrameOfCurrentScreen)
+        let screenFrame = screens.visibleFrameOfCurrentScreen.screenFlipped
         let count = windows.count
         
         let colums = Int(ceil(sqrt(CGFloat(count))))
@@ -84,7 +84,7 @@ class MultiWindowManager {
     }
 
     private static func tileWindow(_ w: AccessibilityElement, screenFrame: CGRect, size: CGSize, column: Int, row: Int) {
-        var rect = w.rectOfElement()
+        var rect = w.frame
         
         // TODO: save previous position in history
       
@@ -92,7 +92,7 @@ class MultiWindowManager {
         rect.origin.y = screenFrame.origin.y + size.height * CGFloat(row)
         rect.size = size
         
-        w.setRectOf(rect)
+        w.setFrame(rect)
     }
     
     static func cascadeAllWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
@@ -100,7 +100,7 @@ class MultiWindowManager {
             return
         }
         
-        let screenFrame = AccessibilityElement.normalizeCoordinatesOf(screens.visibleFrameOfCurrentScreen)
+        let screenFrame = screens.visibleFrameOfCurrentScreen.screenFlipped
         
         let delta = CGFloat(Defaults.cascadeAllDeltaSize.value)
         
@@ -110,14 +110,14 @@ class MultiWindowManager {
     }
 
     private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int) {
-        var rect = w.rectOfElement()
+        var rect = w.frame
         
         // TODO: save previous position in history
       
         rect.origin.x = screenFrame.origin.x + delta * CGFloat(index)
         rect.origin.y = screenFrame.origin.y + delta * CGFloat(index)
         
-        w.setRectOf(rect)
+        w.setFrame(rect)
         w.bringToFront()
     }
 }

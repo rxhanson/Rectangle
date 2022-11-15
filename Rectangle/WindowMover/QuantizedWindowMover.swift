@@ -10,7 +10,7 @@ import Foundation
 
 class QuantizedWindowMover: WindowMover {
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard var movedWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
+        guard var movedWindowRect: CGRect = frontmostWindowElement?.frame else { return }
         if !movedWindowRect.equalTo(windowRect) {
             var adjustedWindowRect: CGRect = windowRect
             while movedWindowRect.width > windowRect.width || movedWindowRect.height > windowRect.height {
@@ -24,14 +24,14 @@ class QuantizedWindowMover: WindowMover {
                 if adjustedWindowRect.width < windowRect.width * 0.85 || adjustedWindowRect.height < windowRect.height * 0.85 {
                     break
                 }
-                frontmostWindowElement?.setRectOf(adjustedWindowRect)
-                if let frontMostRect = frontmostWindowElement?.rectOfElement() {
+                frontmostWindowElement?.setFrame(adjustedWindowRect)
+                if let frontMostRect = frontmostWindowElement?.frame {
                     movedWindowRect = frontMostRect
                 }
             }
             adjustedWindowRect.origin.x += floor((windowRect.size.width - (movedWindowRect.size.width)) / 2.0)
             adjustedWindowRect.origin.y += floor((windowRect.size.height - (movedWindowRect.size.height)) / 2.0)
-            frontmostWindowElement?.setRectOf(adjustedWindowRect)
+            frontmostWindowElement?.setFrame(adjustedWindowRect)
         }
     }
 }

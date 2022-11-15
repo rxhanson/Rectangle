@@ -94,7 +94,7 @@ class SnappingManager {
     }
     
     func checkFullScreen() {
-        isFullScreen = AccessibilityElement.frontmostWindow()?.isFullScreen() == true
+        isFullScreen = AccessibilityElement.getFrontWindowElement()?.isFullScreen == true
         toggleListening()
     }
     
@@ -170,9 +170,9 @@ class SnappingManager {
         switch event.type {
         case .leftMouseDown:
             if !Defaults.obtainWindowOnClick.userDisabled {
-                windowElement = AccessibilityElement.windowUnderCursor()
-                windowId = windowElement?.getIdentifier()
-                initialWindowRect = windowElement?.rectOfElement()
+                windowElement = AccessibilityElement.getWindowElementUnderCursor()
+                windowId = windowElement?.getWindowId()
+                initialWindowRect = windowElement?.frame
             }
         case .leftMouseUp:
             if let currentSnapArea = self.currentSnapArea {
@@ -183,7 +183,7 @@ class SnappingManager {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
                 // this typically only happens if the user is dragging and dropping windows really quickly
                 // in this scenario, the footprint doesn't display but the snap will still occur, as long as the window position is updated as of mouse up.
-                if let currentRect = windowElement?.rectOfElement(),
+                if let currentRect = windowElement?.frame,
                    let windowId = windowId,
                    currentRect.size == initialWindowRect?.size,
                    currentRect.origin != initialWindowRect?.origin {
@@ -214,14 +214,14 @@ class SnappingManager {
                     }
                 }
                 if windowElement == nil {
-                    windowElement = AccessibilityElement.windowUnderCursor()
+                    windowElement = AccessibilityElement.getWindowElementUnderCursor()
                 }
-                windowId = windowElement?.getIdentifier()
-                initialWindowRect = windowElement?.rectOfElement()
+                windowId = windowElement?.getWindowId()
+                initialWindowRect = windowElement?.frame
                 windowIdAttempt += 1
                 lastWindowIdAttempt = event.timestamp
             }
-            guard let currentRect = windowElement?.rectOfElement(),
+            guard let currentRect = windowElement?.frame,
                 let windowId = windowId
             else { return }
             
@@ -282,7 +282,7 @@ class SnappingManager {
                 lastRect == initialWindowRect,
                 let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 
-                windowElement?.set(size: restoreRect.size)
+                windowElement?.size = restoreRect.size
                 AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             } else {
                 AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect

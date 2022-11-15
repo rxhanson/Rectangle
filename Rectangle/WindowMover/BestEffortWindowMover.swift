@@ -14,7 +14,7 @@ import Foundation
 
 class BestEffortWindowMover: WindowMover {
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard let currentWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
+        guard let currentWindowRect: CGRect = frontmostWindowElement?.frame else { return }
         
         var adjustedWindowRect: CGRect = currentWindowRect
         
@@ -27,7 +27,7 @@ class BestEffortWindowMover: WindowMover {
             adjustedWindowRect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - (adjustedWindowRect.width) - CGFloat(Defaults.gapSize.value)
         }
         
-        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect)
+        adjustedWindowRect = adjustedWindowRect.screenFlipped
         if adjustedWindowRect.minY < visibleFrameOfScreen.minY {
             
             adjustedWindowRect.origin.y = visibleFrameOfScreen.minY
@@ -37,9 +37,9 @@ class BestEffortWindowMover: WindowMover {
             adjustedWindowRect.origin.y = visibleFrameOfScreen.minY + visibleFrameOfScreen.height - (adjustedWindowRect.height) - CGFloat(Defaults.gapSize.value)
         }
         
-        adjustedWindowRect = AccessibilityElement.normalizeCoordinatesOf(adjustedWindowRect)
+        adjustedWindowRect = adjustedWindowRect.screenFlipped
         if !currentWindowRect.equalTo(adjustedWindowRect) {
-            frontmostWindowElement?.setRectOf(adjustedWindowRect)
+            frontmostWindowElement?.setFrame(adjustedWindowRect)
         }
     }
 }

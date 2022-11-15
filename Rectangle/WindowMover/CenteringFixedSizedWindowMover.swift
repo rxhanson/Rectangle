@@ -15,7 +15,7 @@ import Foundation
 class CenteringFixedSizedWindowMover: WindowMover {
     
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard let currentWindowRect: CGRect = frontmostWindowElement?.rectOfElement() else { return }
+        guard let currentWindowRect: CGRect = frontmostWindowElement?.frame else { return }
 
         var adjustedWindowRect: CGRect = currentWindowRect
 
@@ -28,7 +28,7 @@ class CenteringFixedSizedWindowMover: WindowMover {
         }
         
         if !adjustedWindowRect.equalTo(currentWindowRect) {
-            frontmostWindowElement?.setRectOf(adjustedWindowRect)
+            frontmostWindowElement?.setFrame(adjustedWindowRect)
         }
     }
 }
