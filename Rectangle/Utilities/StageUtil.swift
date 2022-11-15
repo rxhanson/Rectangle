@@ -26,7 +26,7 @@ class StageUtil {
     }
     
     static func isStageStripVisible() -> Bool {
-        let infos = WindowUtil.getWindowList().filter { $0.bundleIdentifier == "com.apple.WindowManager" && $0.screen == NSScreen.main }
+        let infos = WindowUtil.getWindowList().filter { $0.bundleIdentifier == "com.apple.WindowManager" }
         // A single window could be for the dragged window
         return infos.count >= 2
     }
@@ -36,9 +36,28 @@ class StageUtil {
         else { return .left }
         return defaults.string(forKey: "orientation") == "left" ? .right : .left
     }
+    
+    static func getStageStripGroups() -> [StageStripGroup] {
+        var groups = [StageStripGroup]()
+        if let appElement = AccessibilityElement("com.apple.WindowManager"),
+           let groupElements = appElement.getChildElement(.group)?.getChildElement(.list)?.getChildElements(.button) {
+            for groupElement in groupElements {
+                let frame = groupElement.frame
+                guard !frame.isNull, let windowIds = groupElement.windowIds else { continue }
+                let group = StageStripGroup(frame: frame, windowIds: windowIds)
+                groups.append(group)
+            }
+        }
+        return groups
+    }
 }
 
 enum StageStripPosition {
     case left
     case right
+}
+
+struct StageStripGroup {
+    let frame: CGRect
+    let windowIds: [CGWindowID]
 }

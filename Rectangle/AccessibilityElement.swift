@@ -9,7 +9,7 @@
 import Foundation
 
 class AccessibilityElement {
-    private let wrappedElement: AXUIElement
+    fileprivate let wrappedElement: AXUIElement
     
     init(_ element: AXUIElement) {
         wrappedElement = element
@@ -126,6 +126,18 @@ class AccessibilityElement {
         }
     }
     
+    private var childElements: [AccessibilityElement]? {
+        getElementsValue(.children)
+    }
+    
+    func getChildElement(_ role: NSAccessibility.Role) -> AccessibilityElement? {
+        return childElements?.first { $0.role == role }
+    }
+    
+    func getChildElements(_ role: NSAccessibility.Role) -> [AccessibilityElement]? {
+        return childElements?.filter { $0.role == role }
+    }
+    
     var windowId: CGWindowID? {
         wrappedElement.getWindowId()
     }
@@ -199,6 +211,11 @@ class AccessibilityElement {
         }
     }
     
+    // Only for Stage Manager
+    var windowIds: [CGWindowID]? {
+        wrappedElement.getValue(.windowIds) as? [CGWindowID]
+    }
+    
     func bringToFront(force: Bool = false) {
         if isMainWindow != true {
             isMainWindow = true
@@ -232,15 +249,7 @@ extension AccessibilityElement {
     
     private static func getWindowInfo(_ location: CGPoint) -> WindowInfo? {
         let infos = WindowUtil.getWindowList().filter { !["com.apple.dock", "com.apple.WindowManager"].contains($0.bundleIdentifier) }
-        if var info = (infos.first { $0.frame.contains(location) }) {
-            if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
-                // In case the window is in Stage Manager recent apps
-                var prevInfo: WindowInfo?
-                while prevInfo?.id != info.id {
-                    prevInfo = info
-                    info = infos.first { $0.frame.intersects(info.frame) }!
-                }
-            }
+        if let info = (infos.first { $0.frame.contains(location) }) {
             return info
         }
         Logger.log("Unable to obtain window info from location")
@@ -252,15 +261,18 @@ extension AccessibilityElement {
         if let element = AccessibilityElement(position), let windowElement = element.windowElement {
             return windowElement
         }
+        if Defaults.dragFromStage.userEnabled && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
+            if let group = (StageUtil.getStageStripGroups().first { $0.frame.contains(position) }),
+               let windowId = group.windowIds.first,
+               let element = StageWindowAccessibilityElement(windowId) {
+                return element
+            }
+        }
         if let info = getWindowInfo(position), let windowElements = AccessibilityElement(info.pid).windowElements {
             if let windowElement = (windowElements.first { $0.windowId == info.id }) {
                 if Logger.logging {
                     let appName = NSRunningApplication(processIdentifier: info.pid)?.localizedName ?? ""
                     Logger.log("Window under cursor fallback matched: \(appName) \(info)")
-                }
-                if Defaults.dragFromStage.userEnabled && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
-                    // In case the window is in Stage Manager recent apps
-                    return StageWindowAccessibilityElement(windowElement.wrappedElement, info.id)
                 }
                 return windowElement
             }
@@ -289,9 +301,10 @@ extension AccessibilityElement {
 class StageWindowAccessibilityElement: AccessibilityElement {
     private let _windowId: CGWindowID
     
-    init(_ element: AXUIElement, _ windowId: CGWindowID) {
+    init?(_ windowId: CGWindowID) {
+        guard let element = (AccessibilityElement.getAllWindowElements().first { $0.windowId == windowId }) else { return nil }
         _windowId = windowId
-        super.init(element)
+        super.init(element.wrappedElement)
     }
     
     override var frame: CGRect {

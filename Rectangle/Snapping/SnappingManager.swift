@@ -166,6 +166,22 @@ class SnappingManager {
         return false
     }
     
+    func canSnap(_ event: NSEvent) -> Bool {
+        if Defaults.snapModifiers.value > 0 {
+            if event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue != Defaults.snapModifiers.value {
+                return false
+            }
+        }
+        if let windowId = windowId {
+            if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
+                if (StageUtil.getStageStripGroups().contains { $0.windowIds.contains(windowId) }) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    
     func handle(event: NSEvent) {
         switch event.type {
         case .leftMouseDown:
@@ -192,8 +208,7 @@ class SnappingManager {
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
                         box?.close()
-                        if !(Defaults.snapModifiers.value > 0) ||
-                            event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue == Defaults.snapModifiers.value {
+                        if canSnap(event) {
                             snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
                         }
                         self.currentSnapArea = nil
@@ -237,14 +252,12 @@ class SnappingManager {
                 }
             }
             if windowMoving {
-                if Defaults.snapModifiers.value > 0 {
-                    if event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue != Defaults.snapModifiers.value {
-                        if currentSnapArea != nil {
-                            box?.close()
-                            currentSnapArea = nil
-                        }
-                        return
+                if !canSnap(event) {
+                    if currentSnapArea != nil {
+                        box?.close()
+                        currentSnapArea = nil
                     }
+                    return
                 }
                 
                 if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea) {
