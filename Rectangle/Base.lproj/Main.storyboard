@@ -2924,7 +2924,7 @@
                                                     </textField>
                                                     <slider verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="JTT-40-Rtw" userLabel="Stage Slider">
                                                         <rect key="frame" x="204" y="-6" width="199" height="28"/>
-                                                        <sliderCell key="cell" state="on" alignment="left" maxValue="200" doubleValue="190" tickMarkPosition="above" sliderType="linear" id="VER-nt-CGZ"/>
+                                                        <sliderCell key="cell" state="on" alignment="left" maxValue="250" doubleValue="190" tickMarkPosition="above" sliderType="linear" id="VER-nt-CGZ"/>
                                                         <connections>
                                                             <action selector="stageSliderChanged:" target="yhc-gS-h02" id="H5H-Mc-y4r"/>
                                                         </connections>
