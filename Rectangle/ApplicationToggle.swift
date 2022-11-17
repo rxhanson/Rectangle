@@ -107,7 +107,7 @@ class ApplicationToggle: NSObject {
             }
             if Defaults.enhancedUI.value == .frontmostDisable {
                 DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
-                    AccessibilityElement.disableEnhancedUI()
+                    AccessibilityElement.getFrontApplicationElement()?.enhancedUserInterface = false
                 }
             }
         }

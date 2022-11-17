@@ -23,7 +23,7 @@ class ScreenDetection {
         }
         
         let screensOrdered = order(screens: screens)
-        guard let sourceScreen: NSScreen = screenContaining(frontmostWindowElement?.rectOfElement() ?? CGRect.zero, screens: screensOrdered) else {
+        guard let sourceScreen: NSScreen = screenContaining(frontmostWindowElement?.frame ?? CGRect.zero, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
             return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
         }
@@ -38,7 +38,7 @@ class ScreenDetection {
         var largestPercentageOfRectWithinFrameOfScreen: CGFloat = 0.0
         for currentScreen in screens {
             let currentFrameOfScreen = NSRectToCGRect(currentScreen.frame)
-            let normalizedRect: CGRect = AccessibilityElement.normalizeCoordinatesOf(rect)
+            let normalizedRect: CGRect = rect.screenFlipped
             if currentFrameOfScreen.contains(normalizedRect) {
                 result = currentScreen
                 break
@@ -131,8 +131,8 @@ extension NSScreen {
         get {
             var newFrame = visibleFrame
             
-            if StageUtil.stageCapable(), StageUtil.stageEnabled(), StageUtil.stageStripShow(), StageUtil.stageStripVisible(), Defaults.stageSize.value > 0 {
-                if StageUtil.stageStripPosition() == .left { newFrame.origin.x += Defaults.stageSize.cgFloat }
+            if Defaults.stageSize.value > 0 && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.isStageStripVisible() {
+                if StageUtil.stageStripPosition == .left { newFrame.origin.x += Defaults.stageSize.cgFloat }
                 newFrame.size.width -= Defaults.stageSize.cgFloat
             }
 

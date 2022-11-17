@@ -201,7 +201,7 @@ class SettingsViewController: NSViewController {
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
 
-        if StageUtil.stageCapable() {
+        if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)
             stageSlider.isContinuous = true
             stageLabel.stringValue = "\(stageSlider.intValue) px"

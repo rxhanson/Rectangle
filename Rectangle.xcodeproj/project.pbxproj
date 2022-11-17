@@ -113,7 +113,11 @@
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
 		AA040C67290B2640003181D5 /* RunLoopThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA040C66290B2640003181D5 /* RunLoopThread.swift */; };
+		AA0AC000291C1B5E00D125D2 /* CGExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0ABFFF291C1B5E00D125D2 /* CGExtension.swift */; };
+		AA0AC002291C1B9100D125D2 /* AXExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0AC001291C1B9100D125D2 /* AXExtension.swift */; };
+		AA0AC004291C48DE00D125D2 /* SequenceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0AC003291C48DE00D125D2 /* SequenceExtension.swift */; };
 		AA0ACC2F2864A86D0025E376 /* StageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0ACC2E2864A86D0025E376 /* StageUtil.swift */; };
+		AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */; };
 		AA4DA2FB28FDC94A00355CEB /* DispatchTimeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */; };
 		AA536C2729005DD000579AC6 /* TimeoutCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA536C2629005DD000579AC6 /* TimeoutCache.swift */; };
 		AAADE1AF28CBAB0000036331 /* WindowUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAADE1AE28CBAB0000036331 /* WindowUtil.swift */; };
@@ -326,7 +330,11 @@
 		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		AA040C66290B2640003181D5 /* RunLoopThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopThread.swift; sourceTree = "<group>"; };
+		AA0ABFFF291C1B5E00D125D2 /* CGExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGExtension.swift; sourceTree = "<group>"; };
+		AA0AC001291C1B9100D125D2 /* AXExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXExtension.swift; sourceTree = "<group>"; };
+		AA0AC003291C48DE00D125D2 /* SequenceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceExtension.swift; sourceTree = "<group>"; };
 		AA0ACC2E2864A86D0025E376 /* StageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageUtil.swift; sourceTree = "<group>"; };
+		AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFExtension.swift; sourceTree = "<group>"; };
 		AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchTimeExtension.swift; sourceTree = "<group>"; };
 		AA536C2629005DD000579AC6 /* TimeoutCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutCache.swift; sourceTree = "<group>"; };
 		AAADE1AE28CBAB0000036331 /* WindowUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowUtil.swift; sourceTree = "<group>"; };
@@ -554,6 +562,10 @@
 				AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */,
 				AA536C2629005DD000579AC6 /* TimeoutCache.swift */,
 				AA040C66290B2640003181D5 /* RunLoopThread.swift */,
+				AA0AC001291C1B9100D125D2 /* AXExtension.swift */,
+				AA0ABFFF291C1B5E00D125D2 /* CGExtension.swift */,
+				AA0AC003291C48DE00D125D2 /* SequenceExtension.swift */,
+				AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -972,7 +984,9 @@
 				9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */,
 				9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */,
 				98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */,
+				AA0AC004291C48DE00D125D2 /* SequenceExtension.swift in Sources */,
 				985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */,
+				AA0AC002291C1B9100D125D2 /* AXExtension.swift in Sources */,
 				98D16A442592AD55005228CB /* MASShortcutMigration.swift in Sources */,
 				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
 				D04CE30827817A9200BD47B3 /* MiddleCenterNinthCalculation.swift in Sources */,
@@ -1040,6 +1054,7 @@
 				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
 				983BBD6F253B609D000D223E /* FootprintWindow.swift in Sources */,
 				988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */,
+				AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */,
 				98C6DEF023CE191700CC0C1E /* GapCalculation.swift in Sources */,
 				98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */,
 				98A009AD2512498000CFBF0C /* FirstFourthCalculation.swift in Sources */,
@@ -1054,6 +1069,7 @@
 				30166BD024F27D6A00A38608 /* SpecifiedCalculation.swift in Sources */,
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
 				98D16A492592B460005228CB /* NotificationExtension.swift in Sources */,
+				AA0AC000291C1B5E00D125D2 /* CGExtension.swift in Sources */,
 				6490B39D27BF984D0056C220 /* BottomCenterLeftEighthCalculation.swift in Sources */,
 				98A6EDDD251F3F4A00F74B10 /* SixthsRepeated.swift in Sources */,
 				AAADE1AF28CBAB0000036331 /* WindowUtil.swift in Sources */,

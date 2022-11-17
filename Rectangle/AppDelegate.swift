@@ -287,7 +287,7 @@ extension AppDelegate: NSMenuDelegate {
     }
     
     private func updateWindowActionMenuItems(menu: NSMenu) {
-        let frontmostWindow = AccessibilityElement.frontmostWindow()
+        let frontmostWindow = AccessibilityElement.getFrontWindowElement()
         let screenCount = NSScreen.screens.count
         let isPortrait = NSScreen.main?.frame.isLandscape == false
 
