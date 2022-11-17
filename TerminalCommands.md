@@ -359,5 +359,5 @@ Windows that are slowly moved above the menu bar will still go into Mission Cont
 Once this is enabled, the checkbox for it is visible in the Snap Areas tab of the Preferences window.
 
 ```bash
-defaults write com.knollsoft.Rectangle missionControlDragging -int 1
+defaults write com.knollsoft.Rectangle missionControlDragging -int 2
 ```
