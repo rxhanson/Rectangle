@@ -261,7 +261,7 @@ extension AccessibilityElement {
         if let element = AccessibilityElement(position), let windowElement = element.windowElement {
             return windowElement
         }
-        if Defaults.dragFromStage.userEnabled && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
+        if !Defaults.dragFromStage.userDisabled && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
             if let group = (StageUtil.getStageStripGroups().first { $0.frame.contains(position) }),
                let windowId = group.windowIds.first,
                let element = StageWindowAccessibilityElement(windowId) {
