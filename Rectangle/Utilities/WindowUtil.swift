@@ -29,11 +29,10 @@ class WindowUtil {
             for i in 0..<count {
                 let dictionary = array.getValue(i) as CFDictionary
                 let id = dictionary.getValue(kCGWindowNumber) as CFNumber
-                let layer = dictionary.getValue(kCGWindowLayer) as CFNumber
                 let frame = (dictionary.getValue(kCGWindowBounds) as CFDictionary).toRect()
                 let pid = dictionary.getValue(kCGWindowOwnerPID) as CFNumber
                 if let frame = frame {
-                    let info = WindowInfo(id: id as! CGWindowID, layer: layer as! Int, frame: frame, pid: pid as! pid_t)
+                    let info = WindowInfo(id: id as! CGWindowID, frame: frame, pid: pid as! pid_t)
                     infos.append(info)
                 }
             }
@@ -45,7 +44,6 @@ class WindowUtil {
 
 struct WindowInfo {
     let id: CGWindowID
-    let layer: Int
     let frame: CGRect
     let pid: pid_t
     var bundleIdentifier: String? { NSRunningApplication(processIdentifier: pid)?.bundleIdentifier }

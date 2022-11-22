@@ -138,7 +138,7 @@ class AccessibilityElement {
         return childElements?.filter { $0.role == role }
     }
     
-    var windowId: CGWindowID? {
+    fileprivate var windowId: CGWindowID? {
         wrappedElement.getWindowId()
     }
 
@@ -261,27 +261,31 @@ extension AccessibilityElement {
         if let element = AccessibilityElement(position), let windowElement = element.windowElement {
             return windowElement
         }
-        if !Defaults.dragFromStage.userDisabled && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.isStageStripVisible() {
-            if let group = (StageUtil.getStageStripGroups().first { $0.frame.contains(position) }),
-               let windowId = group.windowIds.first,
-               let element = StageWindowAccessibilityElement(windowId) {
-                return element
-            }
-        }
-        if let info = getWindowInfo(position), let windowElements = AccessibilityElement(info.pid).windowElements {
-            if let windowElement = (windowElements.first { $0.windowId == info.id }) {
-                if Logger.logging {
-                    let appName = NSRunningApplication(processIdentifier: info.pid)?.localizedName ?? ""
-                    Logger.log("Window under cursor fallback matched: \(appName) \(info)")
+        if let info = getWindowInfo(position) {
+            if !Defaults.dragFromStage.userDisabled {
+                if StageUtil.stageCapable && StageUtil.stageEnabled,
+                   let group = StageUtil.getStageStripWindowGroup(info.id),
+                   let windowId = group.first,
+                   windowId != info.id,
+                   let element = StageWindowAccessibilityElement(windowId) {
+                    return element
                 }
-                return windowElement
             }
-            if let windowElement = (windowElements.first { $0.frame == info.frame }) {
-                if Logger.logging {
-                    let appName = NSRunningApplication(processIdentifier: info.pid)?.localizedName ?? ""
-                    Logger.log("Window under cursor fallback matched: \(appName) \(info)")
+            if let windowElements = AccessibilityElement(info.pid).windowElements {
+                if let windowElement = (windowElements.first { $0.windowId == info.id }) {
+                    if Logger.logging {
+                        let appName = NSRunningApplication(processIdentifier: info.pid)?.localizedName ?? ""
+                        Logger.log("Window under cursor fallback matched: \(appName) \(info)")
+                    }
+                    return windowElement
                 }
-                return windowElement
+                if let windowElement = (windowElements.first { $0.frame == info.frame }) {
+                    if Logger.logging {
+                        let appName = NSRunningApplication(processIdentifier: info.pid)?.localizedName ?? ""
+                        Logger.log("Window under cursor fallback matched: \(appName) \(info)")
+                    }
+                    return windowElement
+                }
             }
         }
         Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
@@ -293,6 +297,11 @@ extension AccessibilityElement {
         return AccessibilityElement(bundleIdentifier)?.windowElements?.first
     }
     
+    static func getWindowElement(_ windowId: CGWindowID) -> AccessibilityElement? {
+        guard let pid = WindowUtil.getWindowList([windowId]).first?.pid else { return nil }
+        return AccessibilityElement(pid).windowElements?.first { $0.windowId == windowId }
+    }
+    
     static func getAllWindowElements() -> [AccessibilityElement] {
         return WindowUtil.getWindowList().uniqueMap { $0.pid }.compactMap { AccessibilityElement($0).windowElements }.flatMap { $0 }
     }
@@ -302,7 +311,7 @@ class StageWindowAccessibilityElement: AccessibilityElement {
     private let _windowId: CGWindowID
     
     init?(_ windowId: CGWindowID) {
-        guard let element = (AccessibilityElement.getAllWindowElements().first { $0.windowId == windowId }) else { return nil }
+        guard let element = AccessibilityElement.getWindowElement(windowId) else { return nil }
         _windowId = windowId
         super.init(element.wrappedElement)
     }
@@ -313,7 +322,7 @@ class StageWindowAccessibilityElement: AccessibilityElement {
         return .init(origin: info.frame.origin, size: frame.size)
     }
     
-    override var windowId: CGWindowID? {
+    override fileprivate var windowId: CGWindowID? {
         _windowId
     }
 }
