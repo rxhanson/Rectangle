@@ -74,6 +74,7 @@ class Defaults {
     static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
     static let enhancedUI = IntEnumDefault<EnhancedUI>(key: "enhancedUI", defaultValue: .disableEnable)
+    static let footprintAnimationDurationMultiplier = FloatDefault(key: "footprintAnimationDurationMultiplier", defaultValue: 0)
 
     static var array: [Default] = [
         launchOnLogin,
@@ -138,7 +139,8 @@ class Defaults {
         landscapeSnapAreas,
         portraitSnapAreas,
         missionControlDragging,
-        enhancedUI
+        enhancedUI,
+        footprintAnimationDurationMultiplier,
     ]
 }
 

@@ -10,6 +10,7 @@ import Cocoa
 
 struct SnapArea: Equatable {
     let screen: NSScreen
+    let directional: Directional
     let action: WindowAction
 }
 
@@ -270,9 +271,21 @@ class SnappingManager {
                         if box == nil {
                             box = FootprintWindow()
                         }
-                        box?.setFrame(.zero, display: false)
-                        box?.makeKeyAndOrderFront(nil)
-                        box?.setFrame(newBoxRect, display: true)
+                        if Defaults.footprintAnimationDurationMultiplier.value > 0 {
+                            if !box!.isVisible, let origin = getFootprintAnimationOrigin(snapArea, newBoxRect) {
+                                let frame = CGRect(origin: origin, size: .zero)
+                                box!.setFrame(frame, display: false)
+                            }
+                        } else {
+                            box!.setFrame(newBoxRect, display: true)
+                        }
+                        box!.makeKeyAndOrderFront(nil)
+                        if Defaults.footprintAnimationDurationMultiplier.value > 0 {
+                            NSAnimationContext.runAnimationGroup { changes in
+                                changes.duration = getFootprintAnimationDuration(box!, newBoxRect)
+                                box!.animator().setFrame(newBoxRect, display: true)
+                            }
+                        }
                     }
                     
                     currentSnapArea = snapArea
@@ -300,6 +313,33 @@ class SnappingManager {
             } else {
                 AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
             }
+        }
+    }
+    
+    func getFootprintAnimationDuration(_ box: FootprintWindow, _ boxRect: CGRect) -> Double {
+        return box.animationResizeTime(boxRect) * Double(Defaults.footprintAnimationDurationMultiplier.value)
+    }
+    
+    func getFootprintAnimationOrigin(_ snapArea: SnapArea, _ boxRect: CGRect) -> CGPoint? {
+        switch snapArea.directional {
+        case .tl:
+            return CGPoint(x: boxRect.minX, y: boxRect.maxY)
+        case .t:
+            return CGPoint(x: boxRect.midX, y: boxRect.maxY)
+        case .tr:
+            return CGPoint(x: boxRect.maxX, y: boxRect.maxY)
+        case .l:
+            return CGPoint(x: boxRect.minX, y: boxRect.midY)
+        case .r:
+            return CGPoint(x: boxRect.maxX, y: boxRect.midY)
+        case .bl:
+            return CGPoint(x: boxRect.minX, y: boxRect.minY)
+        case .b:
+            return CGPoint(x: boxRect.midX, y: boxRect.minY)
+        case .br:
+            return CGPoint(x: boxRect.maxX, y: boxRect.minY)
+        default:
+            return nil
         }
     }
     
@@ -334,10 +374,10 @@ class SnappingManager {
             : SnapAreaModel.instance.portrait[directional]
             
             if let action = config?.action {
-                return SnapArea(screen: screen, action: action)
+                return SnapArea(screen: screen, directional: directional, action: action)
             }
             if let compound = config?.compound {
-                return compound.calculation.snapArea(cursorLocation: loc, screen: screen, priorSnapArea: priorSnapArea)
+                return compound.calculation.snapArea(cursorLocation: loc, screen: screen, directional: directional, priorSnapArea: priorSnapArea)
             }
         }
         
