@@ -325,8 +325,6 @@
 		98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThreeFourthsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThreeFourthsCalculation.swift; sourceTree = "<group>"; };
-		98FE8974246E79A600871535 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/Main.strings"; sourceTree = "<group>"; };
-		98FE8975246E79A600871535 /* zh-Hant-TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-TW"; path = "zh-Hant-TW.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8976246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		98FE8977246E79C400871535 /* zh-Hant-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant-HK"; path = "zh-Hant-HK.lproj/Main.strings"; sourceTree = "<group>"; };
 		AA040C66290B2640003181D5 /* RunLoopThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunLoopThread.swift; sourceTree = "<group>"; };
@@ -815,7 +813,6 @@
 				"zh-Hans",
 				"zh-Hant",
 				ko,
-				"zh-Hant-TW",
 				"zh-Hant-HK",
 				"sv-SE",
 				ro,
@@ -1125,7 +1122,6 @@
 				98ED1C752393DEF200CD0955 /* zh-Hans */,
 				98ED1C772393DEFC00CD0955 /* zh-Hant */,
 				98ED1C792393DF0900CD0955 /* ko */,
-				98FE8975246E79A600871535 /* zh-Hant-TW */,
 				98FE8977246E79C400871535 /* zh-Hant-HK */,
 				98C96394279A3DBB000E3ED2 /* sv-SE */,
 				E8C299EA27B5238100BC90C3 /* ro */,
@@ -1157,7 +1153,6 @@
 				98ED1C742393DEF200CD0955 /* zh-Hans */,
 				98ED1C762393DEFC00CD0955 /* zh-Hant */,
 				98ED1C782393DF0900CD0955 /* ko */,
-				98FE8974246E79A600871535 /* zh-Hant-TW */,
 				98FE8976246E79C400871535 /* zh-Hant-HK */,
 				98C96393279A3DBB000E3ED2 /* sv-SE */,
 				E8C299E927B5238100BC90C3 /* ro */,
