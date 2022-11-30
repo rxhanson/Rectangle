@@ -131,9 +131,13 @@ extension NSScreen {
         get {
             var newFrame = visibleFrame
             
-            if Defaults.stageSize.value > 0 && StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.isStageStripVisible() {
-                if StageUtil.stageStripPosition == .left { newFrame.origin.x += Defaults.stageSize.cgFloat }
-                newFrame.size.width -= Defaults.stageSize.cgFloat
+            if Defaults.stageSize.value > 0 {
+                if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
+                    if StageUtil.stageStripPosition == .left {
+                        newFrame.origin.x += Defaults.stageSize.cgFloat
+                    }
+                    newFrame.size.width -= Defaults.stageSize.cgFloat
+                }
             }
 
             if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
