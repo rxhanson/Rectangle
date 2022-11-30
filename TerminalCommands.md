@@ -215,6 +215,12 @@ Change the color.
 defaults write com.knollsoft.Rectangle footprintColor -string "{\"red\":0,\"blue\":0.5,\"green\":0.5}"
 ```
 
+Change the animation duration. The value is a multiplier. Default is 0 (no animation).
+
+```bash
+defaults write com.knollsoft.Rectangle footprintAnimationDurationMultiplier -float <MULTIPLIER>
+```
+
 ## Move Up/Down/Left/Right: Don't center on edge
 
 By default, the directional move will center the window along the edge that the window is being moved to.

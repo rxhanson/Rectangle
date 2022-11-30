@@ -99,5 +99,5 @@ enum CompoundSnapArea: Int, Codable {
 }
 
 protocol CompoundSnapAreaCalculation {
-    func snapArea(cursorLocation: NSPoint, screen: NSScreen, priorSnapArea: SnapArea?) -> SnapArea?
+    func snapArea(cursorLocation: NSPoint, screen: NSScreen, directional: Directional, priorSnapArea: SnapArea?) -> SnapArea?
 }
