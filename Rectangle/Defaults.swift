@@ -75,6 +75,8 @@ class Defaults {
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
     static let enhancedUI = IntEnumDefault<EnhancedUI>(key: "enhancedUI", defaultValue: .disableEnable)
     static let footprintAnimationDurationMultiplier = FloatDefault(key: "footprintAnimationDurationMultiplier", defaultValue: 0)
+    static let missionControlDraggingAllowedOffscreenDistance = FloatDefault(key: "missionControlDraggingAllowedOffscreenDistance", defaultValue: 25)
+    static let missionControlDraggingDisallowedDuration = IntDefault(key: "missionControlDraggingDisallowedDuration", defaultValue: 250)
 
     static var array: [Default] = [
         launchOnLogin,
@@ -141,6 +143,8 @@ class Defaults {
         missionControlDragging,
         enhancedUI,
         footprintAnimationDurationMultiplier,
+        missionControlDraggingAllowedOffscreenDistance,
+        missionControlDraggingDisallowedDuration,
     ]
 }
 
@@ -316,9 +320,12 @@ class IntDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Int = 0) {
         self.key = key
         value = UserDefaults.standard.integer(forKey: key)
+        if(defaultValue != 0 && value == 0) {
+            value = defaultValue
+        }
         initialized = true
     }
     

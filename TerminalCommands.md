@@ -367,3 +367,15 @@ Once this is enabled, the checkbox for it is visible in the Snap Areas tab of th
 ```bash
 defaults write com.knollsoft.Rectangle missionControlDragging -int 2
 ```
+
+Change the allowed off-screen distance. The value is in pixels and is tied to the speed. Default is 25.
+
+```bash
+defaults write com.knollsoft.Rectangle missionControlDraggingAllowedOffscreenDistance -float <DISTANCE>
+```
+
+Change the disallowed duration. The value is in milliseconds. Default is 250.
+
+```bash
+defaults write com.knollsoft.Rectangle missionControlDraggingDisallowedDuration -int <DURATION>
+```
