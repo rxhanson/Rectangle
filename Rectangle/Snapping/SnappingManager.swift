@@ -152,9 +152,9 @@ class SnappingManager {
         case .leftMouseDragged:
             if let cgEvent = event.cgEvent {
                 if cgEvent.location.y == 0 && dragPrevY == 0 {
-                    if event.deltaY < -25 {
+                    if event.deltaY < -Defaults.missionControlDraggingAllowedOffscreenDistance.cgFloat {
                         cgEvent.location.y = 1
-                        dragRestrictionExpirationTimestamp = DispatchTime.now().uptimeMilliseconds + 250
+                        dragRestrictionExpirationTimestamp = DispatchTime.now().uptimeMilliseconds + UInt64(Defaults.missionControlDraggingDisallowedDuration.value)
                     } else if !dragRestrictionExpired {
                         cgEvent.location.y = 1
                     }
