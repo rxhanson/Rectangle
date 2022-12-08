@@ -12,6 +12,7 @@ class SnapAreaViewController: NSViewController {
     
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var unsnapRestoreButton: NSButton!
+    @IBOutlet weak var animateFootprintCheckbox: NSButton!
     @IBOutlet weak var missionControlDraggingCheckbox: NSButton!
 
     @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
@@ -45,6 +46,11 @@ class SnapAreaViewController: NSViewController {
         Defaults.unsnapRestore.enabled = newSetting
     }
     
+    @IBAction func toggleAnimateFootprint(_ sender: NSButton) {
+        let newSetting: Float = sender.state == .on ? 0.75 : 0
+        Defaults.footprintAnimationDurationMultiplier.value = newSetting
+    }
+    
     @IBAction func toggleMissionControlDragging(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .off
         Defaults.missionControlDragging.enabled = newSetting
@@ -74,6 +80,7 @@ class SnapAreaViewController: NSViewController {
     override func viewDidLoad() {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
+        animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userDisabled
         loadSnapAreas()
