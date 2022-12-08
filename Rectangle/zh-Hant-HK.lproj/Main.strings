@@ -371,10 +371,10 @@
 "jww-Ju-S3d.title" = "不執行任何操作";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "半屏動作循環½、⅔和⅓";
+"gHH-BV-5kP.title" = "一半動作循環½、⅔和⅓";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "左／右移到相鄰，或半屏循環大小";
+"3GE-la-fAZ.title" = "左／右移到相鄰，或一半循環大小";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
 "2Zm-fl-PcC.title" = "重複的指令";
@@ -427,7 +427,7 @@
 /* Class = "NSTabViewItem"; label = "Snap Areas"; ObjectID = "Fap-R2-Aj6"; */
 "Fap-R2-Aj6.label" = "貼齊區域";
 
-"Halves" = "一半熒幕";
+"Halves" = "一半螢幕";
 "Corners" = "角落";
 "Thirds" = "三等分";
 "Maximize" = "放到最大";
