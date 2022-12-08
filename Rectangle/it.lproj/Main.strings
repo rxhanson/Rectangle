@@ -720,3 +720,6 @@
 "Go to System Settings → Privacy & Security → Accessibility" = "Vai in Preferenze di Sistema → Sicurezza e Privacy → Accessibilità";
 
 "Open System Settings" = "Apri Preferenze di Sistema";
+
+/* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
+"kx2-tZ-lk8.title" = "Animate footprint";

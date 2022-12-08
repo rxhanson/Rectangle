@@ -453,3 +453,6 @@
 "Fourths columns" = "四等分直欄";
 "Go to System Settings → Privacy & Security → Accessibility" = "前往 系統設定 → 保安與私隱 → 輔助使用";
 "Open System Settings" = "開啟系統設定";
+
+/* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
+"kx2-tZ-lk8.title" = "Animate footprint";
