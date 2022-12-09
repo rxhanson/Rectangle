@@ -720,7 +720,7 @@
 "Thirds, top/bottom half near corners" = "3分割、画面端付近の上半分・下半分";
 "Left or right half" = "左半分または右半分";
 "Top sixths from corners; maximize" = " 最大化（画面端にドラッグで上側6分割）";
-"Bottom sixths from corners; thirds" = " 1/3（画面端にドラッグで下側6分割）";
+"Bottom sixths from corners; thirds" = " 3分割（画面端にドラッグで下側6分割）";
 "Fourths columns" = "横向きに4分割";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
