@@ -69,7 +69,7 @@ class Defaults {
     static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
     static let sixthsSnapArea = OptionalBoolDefault(key: "sixthsSnapArea")
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
-    static let stagePercentageWidth = IntDefault(key: "stagePercentageWidth", defaultValue: 10)
+    static let stagePercentageWidth = IntDefault(key: "stagePercentageWidth", defaultValue: 0)
     static let dragFromStage = OptionalBoolDefault(key: "dragFromStage")
     static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
     static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
