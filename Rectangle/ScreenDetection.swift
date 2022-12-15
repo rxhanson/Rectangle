@@ -134,9 +134,9 @@ extension NSScreen {
             if Defaults.stageSize.value > 0 || Defaults.stagePercentageWidth.value > 0 {
                 if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
                     let percentageInt = Defaults.stagePercentageWidth.value > 100 ? 100 : Defaults.stagePercentageWidth.value
-                    let adjustValue = Defaults.stageSize.value > 0
-                        ? Defaults.stageSize.cgFloat
-                        : CGFloat(newFrame.size.width * CGFloat((percentageInt / 100)))
+                    let adjustValue = percentageInt > 0
+                        ? CGFloat(newFrame.size.width * CGFloat((percentageInt / 100)))
+                        : Defaults.stageSize.cgFloat
                     
                     if StageUtil.stageStripPosition == .left {
                         newFrame.origin.x += adjustValue
