@@ -133,10 +133,14 @@ extension NSScreen {
             
             if Defaults.stageSize.value > 0 {
                 if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
+                    let stageSize = Defaults.stageSize.value < 1
+                        ? newFrame.size.width * Defaults.stageSize.cgFloat
+                        : Defaults.stageSize.cgFloat
+                    
                     if StageUtil.stageStripPosition == .left {
-                        newFrame.origin.x += Defaults.stageSize.cgFloat
+                        newFrame.origin.x += stageSize
                     }
-                    newFrame.size.width -= Defaults.stageSize.cgFloat
+                    newFrame.size.width -= stageSize 
                 }
             }
 

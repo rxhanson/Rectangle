@@ -76,6 +76,20 @@ Note that if subsequent execution mode is set to cycle displays when this is ena
 defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 ```
 
+## Adjust macOS Ventura Stage Manager size
+
+By default, the Stage Manager area will be set to 190, if enabled.
+
+```bash
+defaults write com.knollsoft.Rectangle stageSize -float <VALUE>
+```
+
+To set it to a proportion of your screen's width, set it to a value between 0 and 1.
+
+```bash
+defaults write com.knollsoft.Rectangle stageSize -float <VALUE_BETWEEN_0_AND_1>
+```
+
 ## Enable Todo Mode
 
 See the [wiki](https://github.com/rxhanson/Rectangle/wiki/Todo-Mode) for more info.
