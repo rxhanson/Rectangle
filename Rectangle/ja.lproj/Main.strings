@@ -709,26 +709,26 @@
 "q9C-qZ-xw5.title" = "ToDoモードのウィンドウ配置を復元するには、ToDoモードのときに、Rectangleのメニューにある\"ToDoモードを再設定\"を選択するか、指定されたキーボードショートカットを押します。";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "ステージマネージャの最近使用したアプリエリア";
+"ayu-YO-10p.title" = "ステージマネージャの最近使ったアプリケーションエリア";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "エリアが小さい場合、最近使用したアプリは非表示になります";
+"xE6-jw-EPt.title" = "エリアが小さい場合、最近使ったアプリケーションは非表示になります";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "左半分、画面端付近の上半分・下半分";
+"Right half, top/bottom half near corners" = "右半分、画面端付近の上半分・下半分";
+"Thirds, drag toward center for two thirds" = "3分割、中心にドラッグで2/3";
+"Thirds, top/bottom half near corners" = "3分割、画面端付近の上半分・下半分";
+"Left or right half" = "左半分または右半分";
+"Top sixths from corners; maximize" = " 最大化（画面端にドラッグで上側6分割）";
+"Bottom sixths from corners; thirds" = " 3分割（画面端にドラッグで下側6分割）";
+"Fourths columns" = "横向きに4分割";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "Mission Controlへの高速ドラッグを無効にする";
 
-"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+"Go to System Settings → Privacy & Security → Accessibility" = "システム設定→プライバシーとセキュリティ→アクセシビリティを選択します";
 
-"Open System Settings" = "Open System Settings";
+"Open System Settings" = "システム設定を開く";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "軌跡のアニメーション";
