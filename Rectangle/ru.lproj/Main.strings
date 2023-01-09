@@ -715,11 +715,11 @@
 "Fourths columns" = "Четверти-колонны";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "Отключить быстрое перетаскивание в Mission Control";
 
-"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+"Go to System Settings → Privacy & Security → Accessibility" = "Перейдите в Системные настройки → Конфиденциальность и безопасность → Конфиденциальность → Универсальный доступ";
 
-"Open System Settings" = "Open System Settings";
+"Open System Settings" = "Открыть Системные настройки";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "Анимировать след";
