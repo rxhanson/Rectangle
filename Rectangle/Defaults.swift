@@ -139,6 +139,7 @@ class Defaults {
         sixthsSnapArea,
         stageSize,
         dragFromStage,
+        alwaysAccountForStage,
         landscapeSnapAreas,
         portraitSnapAreas,
         missionControlDragging,
