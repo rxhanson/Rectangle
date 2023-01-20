@@ -13,7 +13,7 @@ class CenterHalfCalculation: WindowCalculation, OrientationAware, RepeatedExecut
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         
         let visibleFrameOfScreen = params.visibleFrameOfScreen
-        return isLandscape(visibleFrameOfScreen)
+        return visibleFrameOfScreen.isLandscape
             ? landscapeRect(visibleFrameOfScreen, fraction: fraction)
             : portraitRect(visibleFrameOfScreen, fraction: fraction)
     }

@@ -14,14 +14,13 @@ protocol OrientationAware {
     
     func landscapeRect(_ visibleFrameOfScreen: CGRect) -> RectResult
     func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult
-    func isLandscape(_ rect: CGRect) -> Bool
     func orientationBasedRect(_ visibleFrameOfScreen: CGRect) -> RectResult
     
 }
 
 extension OrientationAware {
     func orientationBasedRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
-        return isLandscape(visibleFrameOfScreen)
+        return visibleFrameOfScreen.isLandscape
             ? landscapeRect(visibleFrameOfScreen)
             : portraitRect(visibleFrameOfScreen)
     }

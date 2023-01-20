@@ -132,7 +132,9 @@ class WindowManager {
 
         let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId)
         
-        let visibleFrameOfDestinationScreen = isTodo ? calcResult.screen.frame : calcResult.screen.adjustedVisibleFrame
+        let visibleFrameOfDestinationScreen = isTodo
+            ? calcResult.screen.frame
+            : calcResult.resultingScreenFrame
 
         let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let windowMoverChain = useFixedSizeMover

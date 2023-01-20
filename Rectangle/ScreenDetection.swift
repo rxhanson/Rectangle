@@ -127,6 +127,7 @@ struct AdjacentScreens {
 }
 
 extension NSScreen {
+
     var adjustedVisibleFrame: CGRect {
         get {
             var newFrame = visibleFrame
@@ -140,29 +141,36 @@ extension NSScreen {
                     if StageUtil.stageStripPosition == .left {
                         newFrame.origin.x += stageSize
                     }
-                    newFrame.size.width -= stageSize 
+                    newFrame.size.width -= stageSize
                 }
             }
 
-            if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
-                newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
-            }
-            
-            if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self != NSScreen.screens.first {
-                return newFrame
-            }
-            
-            newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
-            newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
-            newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
-            newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
-                        
-            return newFrame
+            return adjust(newFrame)
         }
     }
-}
 
-extension NSRect {
-    var isLandscape: Bool { width > height }
+    var adjustedVisibleFrameNoStage: CGRect {
+        adjust(visibleFrame)
+    }
+
+    private func adjust(_ inputFrame: CGRect) -> CGRect {
+        var newFrame = inputFrame
+
+        if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
+            newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
+        }
+
+        if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self != NSScreen.screens.first {
+            return newFrame
+        }
+
+        newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
+        newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
+        newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
+        newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
+
+        return newFrame
+    }
+
 }
 

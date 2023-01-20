@@ -29,7 +29,7 @@ class WindowCalculation: Calculation {
     }
 
     func calculateRect(_ params: RectCalculationParameters) -> RectResult {
-        return RectResult(CGRect.null)
+        RectResult(.null)
     }
     
     func rectCenteredWithinRect(_ rect1: CGRect, _ rect2: CGRect) -> Bool {
@@ -39,11 +39,7 @@ class WindowCalculation: Calculation {
     }
     
     func rectFitsWithinRect(rect1: CGRect, rect2: CGRect) -> Bool {
-        return (rect1.width <= rect2.width) && (rect1.height <= rect2.height)
-    }
-    
-    func isLandscape(_ rect: CGRect) -> Bool {
-        return rect.width > rect.height
+        (rect1.width <= rect2.width) && (rect1.height <= rect2.height)
     }
     
     func isRepeatedCommand(_ params: WindowCalculationParameters) -> Bool {
@@ -68,11 +64,17 @@ struct WindowCalculationParameters {
     let lastAction: RectangleAction?
     
     func asRectParams(visibleFrame: CGRect? = nil, differentAction: WindowAction? = nil) -> RectCalculationParameters {
-        RectCalculationParameters(window: window, visibleFrameOfScreen: visibleFrame ?? usableScreens.visibleFrameOfCurrentScreen, action: differentAction ?? action, lastAction: lastAction)
+        RectCalculationParameters(window: window,
+                                  visibleFrameOfScreen: visibleFrame ?? usableScreens.visibleFrameOfCurrentScreen,
+                                  action: differentAction ?? action,
+                                  lastAction: lastAction)
     }
     
     func withDifferentAction(_ differentAction: WindowAction) -> WindowCalculationParameters {
-        return WindowCalculationParameters(window: window, usableScreens: usableScreens, action: differentAction, lastAction: lastAction)
+        .init(window: window,
+              usableScreens: usableScreens,
+              action: differentAction,
+              lastAction: lastAction)
     }
 }
 
@@ -100,12 +102,19 @@ struct WindowCalculationResult {
     let screen: NSScreen
     let resultingAction: WindowAction
     let resultingSubAction: SubWindowAction?
-    
-    init(rect: CGRect, screen: NSScreen, resultingAction: WindowAction,  resultingSubAction: SubWindowAction? = nil) {
+    let resultingScreenFrame: CGRect
+
+    init(rect: CGRect,
+         screen: NSScreen,
+         resultingAction: WindowAction,
+         resultingSubAction: SubWindowAction? = nil,
+         resultingScreenFrame: CGRect? = nil) {
+        
         self.rect = rect
         self.screen = screen
         self.resultingAction = resultingAction
         self.resultingSubAction = resultingSubAction
+        self.resultingScreenFrame = resultingScreenFrame ?? screen.adjustedVisibleFrame
     }
 }
 
