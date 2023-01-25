@@ -288,7 +288,7 @@
 "VIf-4h-MJW.title" = "승인…";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
-"Vdr-fp-XzO.title" = "기타 가리기";
+"Vdr-fp-XzO.title" = "나머지 가리기";
 
 /* Class = "NSMenuItem"; title = "Italic"; ObjectID = "Vjx-xi-njq"; */
 "Vjx-xi-njq.title" = "이탤릭체";
@@ -405,7 +405,7 @@
 "gtf-PD-IHm.label" = "설정";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangle은 창 위치를 제어하는 권한이 필요합니다.";
+"gyg-xl-dPn.title" = "Rectangle은 창 위치를 제어하기 위해 권한이 필요합니다.";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
 "hQb-2v-fYv.title" = "스마트 인용";
@@ -417,7 +417,7 @@
 "hz9-B4-Xy5.title" = "서비스";
 
 /* Class = "NSMenuItem"; title = "Smaller"; ObjectID = "i1d-Er-qST"; */
-"i1d-Er-qST.title" = "크게";
+"i1d-Er-qST.title" = "작게";
 
 /* Class = "NSButtonCell"; title = "Open System Preferences"; ObjectID = "iWV-c2-BJD"; */
 "iWV-c2-BJD.title" = "시스템 환경설정 열기";
@@ -486,7 +486,7 @@
 "rgM-f4-ycn.title" = "스마트 대시";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "업데이트 확인";
+"rmV-YD-Hzj.title" = "자동으로 업데이트 확인";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
 "rzr-Qq-702.title" = "오른쪽으로 이동";
@@ -647,7 +647,7 @@
 "IO3-Hi-7gC.title" = "내보내기";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "창이 디스플레이 이동시 커서도 함께 이동";
+"Pbz-DF-hgG.title" = "창이 디스플레이 사이에 이동 시 커서도 함께 이동";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
 "XlM-ch-cLG.title" = "디스플레이 순환";
@@ -659,7 +659,7 @@
 "jww-Ju-S3d.title" = "아무것도 하지 않음";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "절반 동작에 대해 ½, ⅔, ⅓ 동작을 순환";
+"gHH-BV-5kP.title" = "절반 동작에 대해 1/2, 2/3, 1/3 동작을 순환";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
 "3GE-la-fAZ.title" = "인접한 왼쪽 또는 오른쪽 디스플레이로 이동, 절반 동작시 창 크기 순환";
@@ -668,7 +668,7 @@
 "2Zm-fl-PcC.title" = "커맨드 반복 입력시";
 
 "Default Shortcuts" = "기본 단축키 선택";
-"Currently using: " = "현재 사용중: ";
+"Currently using: " = "현재 사용 중인 단축키: ";
 "Cancel" = "취소";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
@@ -691,10 +691,10 @@
 "ZVi-DR-1zj.title" = "Todo 모드에 대해";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right of your primary screen at all times"; ObjectID = "FCh-1Q-Xms"; */
-"FCh-1Q-Xms.title" = "선택한 어플리케이션을 메인 화면의 우측에 항상 표시되도록 합니다";
+"FCh-1Q-Xms.title" = "선택한 어플리케이션을 메인 화면 오른쪽에 항상 표시되도록 합니다";
 
 /* Class = "NSTextFieldCell"; title = "Keep a chosen application visible on the right side of your primary screen at all times"; ObjectID = "N2U-pY-CLq"; */
-"N2U-pY-CLq.title" = "선택한 어플리케이션을 메인 화면의 우측에 항상 표시되도록 합니다";
+"N2U-pY-CLq.title" = "선택한 어플리케이션을 메인 화면 오른쪽에 항상 표시되도록 합니다";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
 "qze-7p-m1X.title" = "1. Todo 어플리케이션을 맨 앞에 위치시킵니다";
@@ -706,29 +706,29 @@
 "8dv-v2-SPu.title" = "3. Rectangle 메뉴에서, Todo 모드를 활성화 시킵니다";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "Todo 모드를 사용하는 동안, Rectangle 메뉴에서 \"Todo 재배치\"를 클릭하거나 관련 키보드 단축키를 사용해 Todo 모드 레이아웃을 새로 고칠 수 있습니다.";
+"q9C-qZ-xw5.title" = "Todo 모드를 사용하는 동안, Rectangle 메뉴에서 \"Todo 재배치\"를 클릭하거나 키보드 단축키를 사용해 Todo 모드 레이아웃을 새로고칠 수 있습니다.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
 "ayu-YO-10p.title" = "스테이지 매니저 최근 앱 영역";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "영역이 너무 작으면, 최근 앱들을 숨깁니다.";
+"xE6-jw-EPt.title" = "영역이 너무 작으면 최근 앱들이 숨겨집니다";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "왼쪽 반, 위/아래 반에 근접한 모서리";
+"Right half, top/bottom half near corners" = "반, 위/아래 반에 근접한 모서리";
+"Thirds, drag toward center for two thirds" = "1/3, 가운데로 드래그하면 2/3";
+"Thirds, top/bottom half near corners" = "1/3, 위/아래 반에 근접한 모서리";
+"Left or right half" = "왼쪽 또는 오른쪽 반";
+"Top sixths from corners; maximize" = "위쪽 1/6, 모서리에서 최대화";
+"Bottom sixths from corners; thirds" = "아래쪽 1/6, 모서리에서 3등분";
+"Fourths columns" = "1/4 열";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "미션 컨트롤에 빠른 드래그 비활성화";
 
-"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+"Go to System Settings → Privacy & Security → Accessibility" = "시스템 설정 → 개인정보 보호 및 보안 → 손쉬운 사용";
 
-"Open System Settings" = "Open System Settings";
+"Open System Settings" = "시스템 설정 열기";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "부드러운 스냅 예시 애니메이션";
