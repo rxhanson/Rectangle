@@ -668,7 +668,7 @@
 "2Zm-fl-PcC.title" = "커맨드 반복 입력시";
 
 "Default Shortcuts" = "기본 단축키 선택";
-"Currently using: " = "현재 사용 중인 단축키: "
+"Currently using: " = "현재 사용 중인 단축키: ";
 "Cancel" = "취소";
 
 /* Class = "NSButtonCell"; title = "Show Todo Mode in menu"; ObjectID = "7yS-wj-uWD"; */
@@ -714,7 +714,7 @@
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
 "xE6-jw-EPt.title" = "영역이 너무 작으면 최근 앱들이 숨겨집니다";
 
-"Left half, top/bottom half near corners" = "왼쪽 반, 위/아래 반에 근접한 모서리"
+"Left half, top/bottom half near corners" = "왼쪽 반, 위/아래 반에 근접한 모서리";
 "Right half, top/bottom half near corners" = "반, 위/아래 반에 근접한 모서리";
 "Thirds, drag toward center for two thirds" = "1/3, 가운데로 드래그하면 2/3";
 "Thirds, top/bottom half near corners" = "1/3, 위/아래 반에 근접한 모서리";
@@ -728,7 +728,7 @@
 
 "Go to System Settings → Privacy & Security → Accessibility" = "시스템 설정 → 개인정보 보호 및 보안 → 손쉬운 사용";
 
-"Open System Settings" = "시스템 설정 열기"
+"Open System Settings" = "시스템 설정 열기";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
 "kx2-tZ-lk8.title" = "부드러운 스냅 예시 애니메이션";
