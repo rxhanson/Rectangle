@@ -174,6 +174,10 @@ class SettingsViewController: NSViewController {
             self.initializeTodoModeSettings()
             self.initializeToggles()
         })
+        
+        Notification.Name.menuBarIconHidden.onPost(using: {_ in
+            self.hideMenuBarIconCheckbox.state = .on
+        })
     }
     
     func initializeTodoModeSettings() {
