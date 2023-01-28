@@ -18,6 +18,7 @@ class RectangleStatusItem {
             nsStatusItem?.menu = statusMenu
         }
     }
+    private var isVisibleObserver: NSKeyValueObservation?
     
     private init() {}
     
@@ -42,9 +43,14 @@ class RectangleStatusItem {
         nsStatusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         nsStatusItem?.menu = self.statusMenu
         nsStatusItem?.button?.image = NSImage(named: "StatusTemplate")
-        if #available(OSX 10.12, *) {
-            nsStatusItem?.behavior = .removalAllowed
+        nsStatusItem?.behavior = .removalAllowed
+        isVisibleObserver = nsStatusItem?.observe(\.isVisible, options: [.old, .new]) { nsStatusItem, change in
+            if change.oldValue == true && change.newValue == false {
+                Notification.Name.menuBarIconHidden.post()
+                Defaults.hideMenuBarIcon.enabled = true
+            }
         }
+        nsStatusItem?.isVisible = true
     }
     
     private func remove() {
