@@ -38,7 +38,7 @@ class ChangeSizeCalculation: WindowCalculation {
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
 
-        let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: params.window.id)
+        let isTodo = Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: params.window.id)
         let visibleFrame = isTodo
             ? params.usableScreens.currentScreen.visibleFrame
             : params.usableScreens.visibleFrameOfCurrentScreen

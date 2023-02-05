@@ -130,7 +130,7 @@ class WindowManager {
         
         let newRect = calcResult.rect.screenFlipped
 
-        let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId)
+        let isTodo = Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId)
         
         let visibleFrameOfDestinationScreen = isTodo
             ? calcResult.screen.frame

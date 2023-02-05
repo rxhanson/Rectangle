@@ -24,7 +24,10 @@ class TodoManager {
             UserDefaults.standard.set(reflowShortcutDict, forKey: defaultsKey)
         }
 
-        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: defaultsKey, toAction: TodoManager.moveAll)
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: defaultsKey, toAction: {
+            guard Defaults.todo.userEnabled else { return }
+            TodoManager.moveAll()
+        })
     }
     
     static func getReflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
