@@ -368,6 +368,12 @@ class SnappingManager {
             guard let directional = directionalLocationOfCursor(loc: loc, screen: screen)
             else { continue }
             
+            if let windowId = windowId, Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId) {
+                if directional == .r {
+                    return SnapArea(screen: screen, directional: directional, action: .rightTodo)
+                }
+            }
+            
             let config = screen.frame.isLandscape
             ? SnapAreaModel.instance.landscape[directional]
             : SnapAreaModel.instance.portrait[directional]

@@ -51,7 +51,9 @@ class TodoManager {
     static func moveAll(_ bringToFront: Bool = true) {
         TodoManager.refreshTodoScreen()
 
-        let windows = AccessibilityElement.getAllWindowElements()
+        let pid = ProcessInfo.processInfo.processIdentifier
+        // Avoid footprint window
+        let windows = AccessibilityElement.getAllWindowElements().filter { $0.pid != pid }
 
         if let todoWindow = AccessibilityElement.getTodoWindowElement() {
             if let screen = TodoManager.todoScreen {
@@ -105,5 +107,13 @@ class TodoManager {
             
             w.setFrame(rect)
         }
+    }
+    
+    static func execute(parameters: ExecutionParameters) -> Bool {
+        if parameters.action == .rightTodo {
+            moveAll()
+            return true
+        }
+        return false
     }
 }

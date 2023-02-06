@@ -179,6 +179,7 @@ class WindowCalculationFactory {
     static let bottomCenterRightEighthCalculation = BottomCenterRightEighthCalculation()
     static let bottomRightEighthCalculation = BottomRightEighthCalculation()
     static let specifiedCalculation = SpecifiedCalculation()
+    static let rightTodoCalculation = RightTodoCalculation()
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
@@ -240,7 +241,8 @@ class WindowCalculationFactory {
      .bottomCenterLeftEighth: bottomCenterLeftEighthCalculation,
      .bottomCenterRightEighth: bottomCenterRightEighthCalculation,
      .bottomRightEighth: bottomRightEighthCalculation,
-     .specified: specifiedCalculation
+     .specified: specifiedCalculation,
+     .rightTodo: rightTodoCalculation
         //     .restore: nil
     ]
 }
