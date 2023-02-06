@@ -80,14 +80,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.applicationToggle.reloadFromDefaults()
             self.shortcutManager.reloadFromDefaults()
             self.snappingManager.reloadFromDefaults()
-            self.initializeTodo()
+            self.initializeTodo(false)
         })
         
         Notification.Name.todoMenuToggled.onPost(using: { _ in
-            self.showHideTodoMenuItems()
-            if Defaults.todo.userEnabled {
-                TodoManager.registerReflowShortcut()
-            }
+            self.initializeTodo(false)
         })
     }
     
@@ -388,12 +385,12 @@ extension AppDelegate: NSMenuDelegate {
 
 // todo mode
 extension AppDelegate {
-    func initializeTodo() {
+    func initializeTodo(_ bringToFront: Bool = true) {
         self.showHideTodoMenuItems()
         guard Defaults.todo.userEnabled else { return }
         TodoManager.registerReflowShortcut()
         if Defaults.todoMode.enabled {
-            TodoManager.moveAll()
+            TodoManager.moveAll(bringToFront)
         }
     }
 
@@ -460,6 +457,9 @@ extension AppDelegate {
 
     @objc func setTodoApp(_ sender: NSMenuItem) {
         applicationToggle.setTodoApp()
+        if Defaults.todoMode.enabled {
+            TodoManager.moveAll()
+        }
     }
 
     @objc func todoReflow(_ sender: NSMenuItem) {

@@ -48,7 +48,7 @@ class TodoManager {
         return w.getWindowId() == todoWindow.getWindowId()
     }
     
-    static func moveAll() {
+    static func moveAll(_ bringToFront: Bool = true) {
         TodoManager.refreshTodoScreen()
 
         let windows = AccessibilityElement.getAllWindowElements()
@@ -78,7 +78,9 @@ class TodoManager {
                 todoWindow.setFrame(rect)
             }
 
-            todoWindow.bringToFront()
+            if bringToFront {
+                todoWindow.bringToFront()
+            }
         }
     }
     

@@ -185,6 +185,10 @@ class SettingsViewController: NSViewController {
         todoAppWidthField.stringValue = String(Defaults.todoSidebarWidth.value)
         todoAppWidthField.delegate = self
         todoAppWidthField.defaults = Defaults.todoSidebarWidth
+        todoAppWidthField.defaultsSetAction = {
+            guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
+            TodoManager.moveAll(false)
+        }
         reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.defaultsKey, withTransformerName: MASDictionaryTransformerName)
     }
     
@@ -234,10 +238,12 @@ extension SettingsViewController: NSTextFieldDelegate {
         
         Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
             defaults.value = floatValue
+            sender.defaultsSetAction?()
         }
     }
 }
 
 class AutoSaveFloatField: NSTextField {
     var defaults: FloatDefault?
+    var defaultsSetAction: (() -> Void)?
 }
