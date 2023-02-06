@@ -18,7 +18,7 @@ class ReverseAllManager {
 
         let windows = AccessibilityElement.getAllWindowElements()
 
-        let screenFrame = currentScreen.adjustedVisibleFrame
+        let screenFrame = currentScreen.adjustedVisibleFrame()
 
         for w in windows {
             let wScreen = sd.detectScreens(using: w)?.currentScreen

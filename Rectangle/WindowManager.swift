@@ -91,10 +91,12 @@ class WindowManager {
             }
         }
         
+        let ignoreTodo = TodoManager.isTodoWindow(id: windowId)
+        
         if frontmostWindowElement.isSheet == true
             || currentWindowRect.isNull
             || usableScreens.frameOfCurrentScreen.isNull
-            || usableScreens.visibleFrameOfCurrentScreen.isNull {
+            || usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo).isNull {
             NSSound.beep()
             Logger.log("Window is not snappable or usable screen is not valid")
             return
@@ -105,7 +107,7 @@ class WindowManager {
         
         let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
         
-        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction)
+        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo)
         guard var calcResult = windowCalculation?.calculate(calculationParams) else {
             NSSound.beep()
             Logger.log("Nil calculation result")
@@ -129,12 +131,8 @@ class WindowManager {
         }
         
         let newRect = calcResult.rect.screenFlipped
-
-        let isTodo = Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId)
         
-        let visibleFrameOfDestinationScreen = isTodo
-            ? calcResult.screen.frame
-            : calcResult.resultingScreenFrame
+        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
 
         let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let windowMoverChain = useFixedSizeMover

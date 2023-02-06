@@ -69,7 +69,7 @@ class MultiWindowManager {
             return
         }
         
-        let screenFrame = screens.visibleFrameOfCurrentScreen.screenFlipped
+        let screenFrame = screens.currentScreen.adjustedVisibleFrame().screenFlipped
         let count = windows.count
         
         let colums = Int(ceil(sqrt(CGFloat(count))))
@@ -100,7 +100,7 @@ class MultiWindowManager {
             return
         }
         
-        let screenFrame = screens.visibleFrameOfCurrentScreen.screenFlipped
+        let screenFrame = screens.currentScreen.adjustedVisibleFrame().screenFlipped
         
         let delta = CGFloat(Defaults.cascadeAllDeltaSize.value)
         

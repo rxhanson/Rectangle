@@ -36,7 +36,7 @@ class MoveLeftRightCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
                 action = .moveLeft
             }
             
-            rectResult = calculateRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame, differentAction: action))
+            rectResult = calculateRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo), differentAction: action))
         } else {
             rectResult = calculateRect(params.asRectParams())
         }

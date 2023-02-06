@@ -56,19 +56,19 @@ class TodoManager {
         if let todoWindow = AccessibilityElement.getTodoWindowElement() {
             if let screen = TodoManager.todoScreen {
                 let sd = ScreenDetection()
+                var adjustedVisibleFrame = screen.adjustedVisibleFrame()
                 // Clear all windows from the todo app sidebar
                 for w in windows {
                     let wScreen = sd.detectScreens(using: w)?.currentScreen
                     if w.getWindowId() != todoWindow.getWindowId() &&
                         wScreen == TodoManager.todoScreen {
-                        shiftWindowOffSidebar(w, screenVisibleFrame: screen.adjustedVisibleFrame)
+                        shiftWindowOffSidebar(w, screenVisibleFrame: adjustedVisibleFrame)
                     }
                 }
 
-                var rect = todoWindow.frame
-                rect.origin.x = screen.adjustedVisibleFrame.maxX
-                rect.origin.y = screen.adjustedVisibleFrame.minY
-                rect.size.height = screen.adjustedVisibleFrame.height
+                adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
+                var rect = adjustedVisibleFrame
+                rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
                 rect.size.width = Defaults.todoSidebarWidth.cgFloat
                 rect = rect.screenFlipped
                 

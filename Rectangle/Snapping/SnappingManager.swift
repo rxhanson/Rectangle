@@ -344,7 +344,8 @@ class SnappingManager {
     func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
-            let rectCalcParams = RectCalculationParameters(window: currentWindow, visibleFrameOfScreen: hotSpot.screen.adjustedVisibleFrame, action: hotSpot.action, lastAction: nil)
+            let ignoreTodo = TodoManager.isTodoWindow(id: currentWindow.id)
+            let rectCalcParams = RectCalculationParameters(window: currentWindow, visibleFrameOfScreen: hotSpot.screen.adjustedVisibleFrame(ignoreTodo), action: hotSpot.action, lastAction: nil)
             let rectResult = calculation.calculateRect(rectCalcParams)
             
             let gapsApplicable = hotSpot.action.gapsApplicable
