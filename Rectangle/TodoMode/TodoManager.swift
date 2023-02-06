@@ -25,7 +25,7 @@ class TodoManager {
         }
 
         MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: defaultsKey, toAction: {
-            guard Defaults.todo.userEnabled else { return }
+            guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
             TodoManager.moveAll()
         })
     }
@@ -66,9 +66,7 @@ class TodoManager {
                 }
 
                 var rect = todoWindow.frame
-                rect.origin.x = Defaults.todoMode.enabled && Defaults.todo.userEnabled
-                    ? screen.adjustedVisibleFrame.maxX
-                    : screen.adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                rect.origin.x = screen.adjustedVisibleFrame.maxX
                 rect.origin.y = screen.adjustedVisibleFrame.minY
                 rect.size.height = screen.adjustedVisibleFrame.height
                 rect.size.width = Defaults.todoSidebarWidth.cgFloat

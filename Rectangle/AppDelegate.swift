@@ -493,6 +493,8 @@ extension AppDelegate {
             todoReflowMenuItem.keyEquivalent = keyEquivalent
             todoReflowMenuItem.keyEquivalentModifierMask = fullKeyEquivalent.1
         }
+        
+        todoReflowMenuItem.isEnabled = Defaults.todoMode.enabled
     }
 }
 
