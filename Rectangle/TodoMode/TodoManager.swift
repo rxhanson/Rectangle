@@ -11,27 +11,53 @@ import MASShortcut
 
 class TodoManager {
     static var todoScreen : NSScreen?
-    static let defaultsKey = "reflowTodo"
+    static let toggleDefaultsKey = "toggleTodo"
+    static let reflowDefaultsKey = "reflowTodo"
+    
+    static func registerToggleShortcut() {
+        
+        if UserDefaults.standard.dictionary(forKey: toggleDefaultsKey) == nil {
+            guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
+            
+            let toggleShortcut = MASShortcut(keyCode: kVK_ANSI_B,
+                                             modifierFlags: [NSEvent.ModifierFlags.control, NSEvent.ModifierFlags.option])
+            let toggleShortcutDict = dictTransformer.reverseTransformedValue(toggleShortcut)
+            UserDefaults.standard.set(toggleShortcutDict, forKey: toggleDefaultsKey)
+        }
+
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: toggleDefaultsKey, toAction: {
+            guard Defaults.todo.userEnabled else { return }
+            Defaults.todoMode.enabled.toggle()
+            if Defaults.todoMode.enabled {
+                TodoManager.moveAll()
+            }
+        })
+    }
     
     static func registerReflowShortcut() {
         
-        if UserDefaults.standard.dictionary(forKey: defaultsKey) == nil {
+        if UserDefaults.standard.dictionary(forKey: reflowDefaultsKey) == nil {
             guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
             
             let reflowShortcut = MASShortcut(keyCode: kVK_ANSI_N,
                                              modifierFlags: [NSEvent.ModifierFlags.control, NSEvent.ModifierFlags.option])
             let reflowShortcutDict = dictTransformer.reverseTransformedValue(reflowShortcut)
-            UserDefaults.standard.set(reflowShortcutDict, forKey: defaultsKey)
+            UserDefaults.standard.set(reflowShortcutDict, forKey: reflowDefaultsKey)
         }
 
-        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: defaultsKey, toAction: {
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: reflowDefaultsKey, toAction: {
             guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
             TodoManager.moveAll()
         })
     }
     
+    static func getToggleKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
+        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: toggleDefaultsKey) as? MASShortcut else { return nil }
+        return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
+    }
+    
     static func getReflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: defaultsKey) as? MASShortcut else { return nil }
+        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: reflowDefaultsKey) as? MASShortcut else { return nil }
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
     

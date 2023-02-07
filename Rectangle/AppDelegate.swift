@@ -388,6 +388,7 @@ extension AppDelegate {
     func initializeTodo(_ bringToFront: Bool = true) {
         self.showHideTodoMenuItems()
         guard Defaults.todo.userEnabled else { return }
+        TodoManager.registerToggleShortcut()
         TodoManager.registerReflowShortcut()
         if Defaults.todoMode.enabled {
             TodoManager.moveAll(bringToFront)
@@ -487,6 +488,12 @@ extension AppDelegate {
         }
 
         todoModeMenuItem.state = Defaults.todoMode.enabled ? .on : .off
+        
+        if let fullKeyEquivalent = TodoManager.getToggleKeyDisplay(),
+            let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
+            todoModeMenuItem.keyEquivalent = keyEquivalent
+            todoModeMenuItem.keyEquivalentModifierMask = fullKeyEquivalent.1
+        }
 
         if let fullKeyEquivalent = TodoManager.getReflowKeyDisplay(),
             let keyEquivalent = fullKeyEquivalent.0?.lowercased() {

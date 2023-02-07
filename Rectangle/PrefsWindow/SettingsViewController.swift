@@ -25,6 +25,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
     @IBOutlet weak var todoCheckbox: NSButton!
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
+    @IBOutlet weak var toggleTodoShortcutView: MASShortcutView!
     @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
     @IBOutlet weak var stageView: NSStackView!
     @IBOutlet weak var stageSlider: NSSlider!
@@ -189,7 +190,8 @@ class SettingsViewController: NSViewController {
             guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
             TodoManager.moveAll(false)
         }
-        reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.defaultsKey, withTransformerName: MASDictionaryTransformerName)
+        toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
+        reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
     }
     
     func initializeToggles() {
