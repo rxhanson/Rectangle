@@ -369,7 +369,10 @@ class SnappingManager {
             else { continue }
             
             if let windowId = windowId, Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: windowId) {
-                if directional == .r {
+                if Defaults.todoSidebarSide.value == .left && directional == .l {
+                    return SnapArea(screen: screen, directional: directional, action: .leftTodo)
+                }
+                if Defaults.todoSidebarSide.value == .right && directional == .r {
                     return SnapArea(screen: screen, directional: directional, action: .rightTodo)
                 }
             }

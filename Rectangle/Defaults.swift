@@ -51,6 +51,7 @@ class Defaults {
     static let todoMode = BoolDefault(key: "todoMode")
     static let todoApplication = StringDefault(key: "todoApplication")
     static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
+    static let todoSidebarSide = IntEnumDefault<TodoSidebarSide>(key: "todoSidebarSide", defaultValue: .right)
     static let snapModifiers = IntDefault(key: "snapModifiers")
     static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
@@ -120,6 +121,7 @@ class Defaults {
         todoMode,
         todoApplication,
         todoSidebarWidth,
+        todoSidebarSide,
         snapModifiers,
         attemptMatchOnNextPrevDisplay,
         altThirdCycle,
@@ -397,7 +399,7 @@ class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
         set {
             if newValue != _value {
                 _value = newValue
-                UserDefaults.standard.set(_value, forKey: key)
+                UserDefaults.standard.set(_value.rawValue, forKey: key)
             }
         }
         get { _value }

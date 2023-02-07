@@ -25,6 +25,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
     @IBOutlet weak var todoCheckbox: NSButton!
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
+    @IBOutlet weak var todoAppSidePopUpButton: NSPopUpButton!
     @IBOutlet weak var toggleTodoShortcutView: MASShortcutView!
     @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
     @IBOutlet weak var stageView: NSStackView!
@@ -97,6 +98,19 @@ class SettingsViewController: NSViewController {
         }
         NSApp.activate(ignoringOtherApps: true)
         aboutTodoWindowController?.showWindow(self)
+    }
+    
+    @IBAction func setTodoAppSide(_ sender: NSPopUpButton) {
+        let tag = sender.selectedTag()
+        guard let side = TodoSidebarSide(rawValue: tag) else {
+            Logger.log("Expected a pop up button to have a selected item with a valid tag matching a value of TodoSidebarSide. Got: \(String(describing: tag))")
+            return
+        }
+
+        Defaults.todoSidebarSide.value = side
+        
+        guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
+        TodoManager.moveAll(false)
     }
     
     @IBAction func stageSliderChanged(_ sender: NSSlider) {
@@ -190,6 +204,7 @@ class SettingsViewController: NSViewController {
             guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
             TodoManager.moveAll(false)
         }
+        todoAppSidePopUpButton.selectItem(withTag: Defaults.todoSidebarSide.value.rawValue)
         toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
         reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
     }

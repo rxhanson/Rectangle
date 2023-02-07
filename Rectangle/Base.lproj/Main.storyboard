@@ -2847,20 +2847,48 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="eTN-Lz-EDf">
-                                                <rect key="frame" x="251" y="3" width="201" height="16"/>
+                                                <rect key="frame" x="251" y="3" width="98" height="16"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="px" id="HVG-6v-eJH">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZQD-06-YVI">
+                                                <rect key="frame" x="353" y="3" width="30" height="16"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="side" id="O9a-3Q-HB1">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rB8-CF-Yrt">
+                                                <rect key="frame" x="386" y="-3" width="68" height="25"/>
+                                                <popUpButtonCell key="cell" type="push" title="right" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="DG2-BN-GPE" id="wsh-YF-QuF">
+                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="menu"/>
+                                                    <menu key="menu" id="8Vk-9N-Pkg">
+                                                        <items>
+                                                            <menuItem title="left" id="mpl-sd-2Wc"/>
+                                                            <menuItem title="right" state="on" tag="1" id="DG2-BN-GPE"/>
+                                                        </items>
+                                                    </menu>
+                                                </popUpButtonCell>
+                                                <connections>
+                                                    <action selector="setTodoAppSide:" target="yhc-gS-h02" id="N1M-tN-4eI"/>
+                                                </connections>
+                                            </popUpButton>
                                         </subviews>
                                         <visibilityPriorities>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
@@ -3137,6 +3165,7 @@
                         <outlet property="stageSlider" destination="JTT-40-Rtw" id="9UK-b3-ph7"/>
                         <outlet property="stageView" destination="sGP-9h-TJl" id="B72-cy-f3F"/>
                         <outlet property="subsequentExecutionPopUpButton" destination="pVH-s3-FHn" id="tdS-iJ-EXc"/>
+                        <outlet property="todoAppSidePopUpButton" destination="rB8-CF-Yrt" id="oNn-QO-3IC"/>
                         <outlet property="todoAppWidthField" destination="9VW-Hc-lh2" id="o0g-BR-XOK"/>
                         <outlet property="todoCheckbox" destination="0PP-0x-QWc" id="F1A-VF-cT5"/>
                         <outlet property="toggleTodoShortcutView" destination="uca-0m-naE" id="tnB-hD-SfB"/>

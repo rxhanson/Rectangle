@@ -96,13 +96,20 @@ class TodoManager {
                 }
 
                 adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
+                var sharedEdge: Edge
                 var rect = adjustedVisibleFrame
-                rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                switch Defaults.todoSidebarSide.value {
+                case .left:
+                    sharedEdge = .right
+                case .right:
+                    sharedEdge = .left
+                    rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                }
                 rect.size.width = Defaults.todoSidebarWidth.cgFloat
                 rect = rect.screenFlipped
                 
                 if Defaults.gapSize.value > 0 {
-                    rect = GapCalculation.applyGaps(rect, sharedEdges: .left, gapSize: Defaults.gapSize.value)
+                    rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
                 }
                 todoWindow.setFrame(rect)
             }
@@ -122,14 +129,28 @@ class TodoManager {
     private static func shiftWindowOffSidebar(_ w: AccessibilityElement, screenVisibleFrame: CGRect) {
         var rect = w.frame
         let halfGapWidth = CGFloat(Defaults.gapSize.value) / 2
+        let screenVisibleFrameMinX = screenVisibleFrame.minX + halfGapWidth
+        let screenVisibleFrameMaxX = screenVisibleFrame.maxX - halfGapWidth
 
-        if (rect.maxX > screenVisibleFrame.maxX - halfGapWidth) {
-            // Shift it to the left
-            rect.origin.x = min(rect.origin.x, max(screenVisibleFrame.minX, (rect.origin.x - (rect.maxX - screenVisibleFrame.maxX)))) + halfGapWidth
+        if Defaults.todoSidebarSide.value == .left && rect.minX < screenVisibleFrameMinX {
+            // Shift it to the right
+            rect.origin.x = min(screenVisibleFrame.maxX - rect.width, rect.origin.x + (screenVisibleFrameMinX - rect.minX))
             
             // If it's still too wide, scale it down
-            if(rect.maxX > screenVisibleFrame.maxX){
-                rect.size.width = rect.size.width - (rect.maxX - screenVisibleFrame.maxX) - halfGapWidth
+            if rect.minX < screenVisibleFrameMinX {
+                let widthDiff = screenVisibleFrameMinX - rect.minX
+                rect.origin.x += widthDiff
+                rect.size.width -= widthDiff
+            }
+            
+            w.setFrame(rect)
+        } else if Defaults.todoSidebarSide.value == .right && rect.maxX > screenVisibleFrameMaxX {
+            // Shift it to the left
+            rect.origin.x = min(rect.origin.x, max(screenVisibleFrame.minX, rect.origin.x - (rect.maxX - screenVisibleFrameMaxX)))
+            
+            // If it's still too wide, scale it down
+            if rect.maxX > screenVisibleFrameMaxX {
+                rect.size.width -= rect.maxX - screenVisibleFrameMaxX
             }
             
             w.setFrame(rect)
@@ -137,10 +158,15 @@ class TodoManager {
     }
     
     static func execute(parameters: ExecutionParameters) -> Bool {
-        if parameters.action == .rightTodo {
+        if [.leftTodo, .rightTodo].contains(parameters.action) {
             moveAll()
             return true
         }
         return false
     }
+}
+
+enum TodoSidebarSide: Int {
+    case left = 0
+    case right = 1
 }
