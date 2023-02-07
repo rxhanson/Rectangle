@@ -13,6 +13,7 @@ class TodoManager {
     static var todoScreen : NSScreen?
     static let toggleDefaultsKey = "toggleTodo"
     static let reflowDefaultsKey = "reflowTodo"
+    static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
     
     static func registerToggleShortcut() {
         
