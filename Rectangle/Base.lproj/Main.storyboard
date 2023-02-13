@@ -2826,15 +2826,15 @@
                                         <rect key="frame" x="0.0" y="198" width="450" height="21"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="90f-Y4-sgi">
-                                                <rect key="frame" x="-2" y="3" width="141" height="16"/>
-                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Todo application width" id="6e0-ji-qXw">
+                                                <rect key="frame" x="-2" y="3" width="98" height="16"/>
+                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Todo app width" id="6e0-ji-qXw">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
                                             <textField verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9VW-Hc-lh2" customClass="AutoSaveFloatField" customModule="Rectangle" customModuleProvider="target">
-                                                <rect key="frame" x="145" y="0.0" width="100" height="21"/>
+                                                <rect key="frame" x="102" y="0.0" width="100" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="A6q-mA-Xaq"/>
                                                     <constraint firstAttribute="width" priority="250" constant="100" id="Ebz-nb-cys"/>
@@ -2847,7 +2847,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="eTN-Lz-EDf">
-                                                <rect key="frame" x="251" y="3" width="62" height="16"/>
+                                                <rect key="frame" x="208" y="3" width="105" height="16"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="px" id="HVG-6v-eJH">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
