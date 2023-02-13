@@ -62,10 +62,11 @@ struct WindowCalculationParameters {
     let usableScreens: UsableScreens
     let action: WindowAction
     let lastAction: RectangleAction?
+    let ignoreTodo: Bool
     
     func asRectParams(visibleFrame: CGRect? = nil, differentAction: WindowAction? = nil) -> RectCalculationParameters {
         RectCalculationParameters(window: window,
-                                  visibleFrameOfScreen: visibleFrame ?? usableScreens.visibleFrameOfCurrentScreen,
+                                  visibleFrameOfScreen: visibleFrame ?? usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                   action: differentAction ?? action,
                                   lastAction: lastAction)
     }
@@ -74,7 +75,8 @@ struct WindowCalculationParameters {
         .init(window: window,
               usableScreens: usableScreens,
               action: differentAction,
-              lastAction: lastAction)
+              lastAction: lastAction,
+              ignoreTodo: ignoreTodo)
     }
 }
 
@@ -102,7 +104,7 @@ struct WindowCalculationResult {
     let screen: NSScreen
     let resultingAction: WindowAction
     let resultingSubAction: SubWindowAction?
-    let resultingScreenFrame: CGRect
+    let resultingScreenFrame: CGRect?
 
     init(rect: CGRect,
          screen: NSScreen,
@@ -114,7 +116,7 @@ struct WindowCalculationResult {
         self.screen = screen
         self.resultingAction = resultingAction
         self.resultingSubAction = resultingSubAction
-        self.resultingScreenFrame = resultingScreenFrame ?? screen.adjustedVisibleFrame
+        self.resultingScreenFrame = resultingScreenFrame
     }
 }
 
@@ -177,6 +179,8 @@ class WindowCalculationFactory {
     static let bottomCenterRightEighthCalculation = BottomCenterRightEighthCalculation()
     static let bottomRightEighthCalculation = BottomRightEighthCalculation()
     static let specifiedCalculation = SpecifiedCalculation()
+    static let leftTodoCalculation = LeftTodoCalculation()
+    static let rightTodoCalculation = RightTodoCalculation()
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
@@ -238,7 +242,9 @@ class WindowCalculationFactory {
      .bottomCenterLeftEighth: bottomCenterLeftEighthCalculation,
      .bottomCenterRightEighth: bottomCenterRightEighthCalculation,
      .bottomRightEighth: bottomRightEighthCalculation,
-     .specified: specifiedCalculation
+     .specified: specifiedCalculation,
+     .leftTodo: leftTodoCalculation,
+     .rightTodo: rightTodoCalculation
         //     .restore: nil
     ]
 }

@@ -80,14 +80,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.applicationToggle.reloadFromDefaults()
             self.shortcutManager.reloadFromDefaults()
             self.snappingManager.reloadFromDefaults()
-            self.initializeTodo()
+            self.initializeTodo(false)
         })
         
         Notification.Name.todoMenuToggled.onPost(using: { _ in
-            self.showHideTodoMenuItems()
-            if Defaults.todo.userEnabled {
-                TodoManager.registerReflowShortcut()
-            }
+            self.initializeTodo(false)
         })
     }
     
@@ -388,12 +385,13 @@ extension AppDelegate: NSMenuDelegate {
 
 // todo mode
 extension AppDelegate {
-    func initializeTodo() {
+    func initializeTodo(_ bringToFront: Bool = true) {
         self.showHideTodoMenuItems()
         guard Defaults.todo.userEnabled else { return }
+        TodoManager.registerToggleShortcut()
         TodoManager.registerReflowShortcut()
         if Defaults.todoMode.enabled {
-            TodoManager.moveAll()
+            TodoManager.moveAll(bringToFront)
         }
     }
 
@@ -418,6 +416,7 @@ extension AppDelegate {
         let todoModeItemTitle = NSLocalizedString("Enable Todo Mode", tableName: "Main", value: "", comment: "")
         let todoModeMenuItem = NSMenuItem(title: todoModeItemTitle, action: #selector(toggleTodoMode), keyEquivalent: "")
         todoModeMenuItem.tag = TodoItem.mode.tag
+        todoModeMenuItem.target = self
         mainStatusMenu.insertItem(todoModeMenuItem, at: menuIndex)
         menuIndex += 1
 
@@ -459,6 +458,9 @@ extension AppDelegate {
 
     @objc func setTodoApp(_ sender: NSMenuItem) {
         applicationToggle.setTodoApp()
+        if Defaults.todoMode.enabled {
+            TodoManager.moveAll()
+        }
     }
 
     @objc func todoReflow(_ sender: NSMenuItem) {
@@ -486,12 +488,20 @@ extension AppDelegate {
         }
 
         todoModeMenuItem.state = Defaults.todoMode.enabled ? .on : .off
+        
+        if let fullKeyEquivalent = TodoManager.getToggleKeyDisplay(),
+            let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
+            todoModeMenuItem.keyEquivalent = keyEquivalent
+            todoModeMenuItem.keyEquivalentModifierMask = fullKeyEquivalent.1
+        }
 
         if let fullKeyEquivalent = TodoManager.getReflowKeyDisplay(),
             let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
             todoReflowMenuItem.keyEquivalent = keyEquivalent
             todoReflowMenuItem.keyEquivalentModifierMask = fullKeyEquivalent.1
         }
+        
+        todoReflowMenuItem.isEnabled = Defaults.todoMode.enabled
     }
 }
 

@@ -77,6 +77,10 @@ class ShortcutManager {
             return
         }
         
+        if TodoManager.execute(parameters: parameters) {
+            return
+        }
+        
         if Defaults.subsequentExecutionMode.value == .cycleMonitor {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
                   let windowId = parameters.windowId ?? windowElement.getWindowId()

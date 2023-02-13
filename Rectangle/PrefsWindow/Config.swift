@@ -19,6 +19,11 @@ extension Defaults {
                 shortcuts[action.name] = Shortcut(masShortcut: masShortcut)
             }
         }
+        for defaultKey in TodoManager.defaultsKeys {
+            if let masShortcut =  MASShortcutBinder.shared()?.value(forKey: defaultKey) as? MASShortcut {
+                shortcuts[defaultKey] = Shortcut(masShortcut: masShortcut)
+            }
+        }
         
         var codableDefaults = [String: CodableDefault]()
         for exportableDefault in Defaults.array {
@@ -65,6 +70,12 @@ extension Defaults {
             if let shortcut = config.shortcuts[action.name]?.toMASSHortcut() {
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
                 UserDefaults.standard.setValue(dictValue, forKey: action.name)
+            }
+        }
+        for defaultKey in TodoManager.defaultsKeys {
+            if let shortcut = config.shortcuts[defaultKey]?.toMASSHortcut() {
+                let dictValue = dictTransformer.reverseTransformedValue(shortcut)
+                UserDefaults.standard.setValue(dictValue, forKey: defaultKey)
             }
         }
         

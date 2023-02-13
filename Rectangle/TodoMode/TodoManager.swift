@@ -11,24 +11,54 @@ import MASShortcut
 
 class TodoManager {
     static var todoScreen : NSScreen?
-    static let defaultsKey = "reflowTodo"
+    static let toggleDefaultsKey = "toggleTodo"
+    static let reflowDefaultsKey = "reflowTodo"
+    static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
+    
+    static func registerToggleShortcut() {
+        
+        if UserDefaults.standard.dictionary(forKey: toggleDefaultsKey) == nil {
+            guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
+            
+            let toggleShortcut = MASShortcut(keyCode: kVK_ANSI_B,
+                                             modifierFlags: [NSEvent.ModifierFlags.control, NSEvent.ModifierFlags.option])
+            let toggleShortcutDict = dictTransformer.reverseTransformedValue(toggleShortcut)
+            UserDefaults.standard.set(toggleShortcutDict, forKey: toggleDefaultsKey)
+        }
+
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: toggleDefaultsKey, toAction: {
+            guard Defaults.todo.userEnabled else { return }
+            Defaults.todoMode.enabled.toggle()
+            if Defaults.todoMode.enabled {
+                TodoManager.moveAll()
+            }
+        })
+    }
     
     static func registerReflowShortcut() {
         
-        if UserDefaults.standard.dictionary(forKey: defaultsKey) == nil {
+        if UserDefaults.standard.dictionary(forKey: reflowDefaultsKey) == nil {
             guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
             
             let reflowShortcut = MASShortcut(keyCode: kVK_ANSI_N,
                                              modifierFlags: [NSEvent.ModifierFlags.control, NSEvent.ModifierFlags.option])
             let reflowShortcutDict = dictTransformer.reverseTransformedValue(reflowShortcut)
-            UserDefaults.standard.set(reflowShortcutDict, forKey: defaultsKey)
+            UserDefaults.standard.set(reflowShortcutDict, forKey: reflowDefaultsKey)
         }
 
-        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: defaultsKey, toAction: TodoManager.moveAll)
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: reflowDefaultsKey, toAction: {
+            guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
+            TodoManager.moveAll()
+        })
+    }
+    
+    static func getToggleKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
+        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: toggleDefaultsKey) as? MASShortcut else { return nil }
+        return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
     
     static func getReflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: defaultsKey) as? MASShortcut else { return nil }
+        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: reflowDefaultsKey) as? MASShortcut else { return nil }
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
     
@@ -45,39 +75,48 @@ class TodoManager {
         return w.getWindowId() == todoWindow.getWindowId()
     }
     
-    static func moveAll() {
+    static func moveAll(_ bringToFront: Bool = true) {
         TodoManager.refreshTodoScreen()
 
-        let windows = AccessibilityElement.getAllWindowElements()
+        let pid = ProcessInfo.processInfo.processIdentifier
+        // Avoid footprint window
+        let windows = AccessibilityElement.getAllWindowElements().filter { $0.pid != pid }
 
         if let todoWindow = AccessibilityElement.getTodoWindowElement() {
             if let screen = TodoManager.todoScreen {
                 let sd = ScreenDetection()
+                var adjustedVisibleFrame = screen.adjustedVisibleFrame()
                 // Clear all windows from the todo app sidebar
                 for w in windows {
                     let wScreen = sd.detectScreens(using: w)?.currentScreen
                     if w.getWindowId() != todoWindow.getWindowId() &&
                         wScreen == TodoManager.todoScreen {
-                        shiftWindowOffSidebar(w, screenVisibleFrame: screen.adjustedVisibleFrame)
+                        shiftWindowOffSidebar(w, screenVisibleFrame: adjustedVisibleFrame)
                     }
                 }
 
-                var rect = todoWindow.frame
-                rect.origin.x = Defaults.todoMode.enabled && Defaults.todo.userEnabled
-                    ? screen.adjustedVisibleFrame.maxX
-                    : screen.adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
-                rect.origin.y = screen.adjustedVisibleFrame.minY
-                rect.size.height = screen.adjustedVisibleFrame.height
+                adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
+                var sharedEdge: Edge
+                var rect = adjustedVisibleFrame
+                switch Defaults.todoSidebarSide.value {
+                case .left:
+                    sharedEdge = .right
+                case .right:
+                    sharedEdge = .left
+                    rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                }
                 rect.size.width = Defaults.todoSidebarWidth.cgFloat
                 rect = rect.screenFlipped
                 
                 if Defaults.gapSize.value > 0 {
-                    rect = GapCalculation.applyGaps(rect, sharedEdges: .left, gapSize: Defaults.gapSize.value)
+                    rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
                 }
                 todoWindow.setFrame(rect)
             }
 
-            todoWindow.bringToFront()
+            if bringToFront {
+                todoWindow.bringToFront()
+            }
         }
     }
     
@@ -90,17 +129,44 @@ class TodoManager {
     private static func shiftWindowOffSidebar(_ w: AccessibilityElement, screenVisibleFrame: CGRect) {
         var rect = w.frame
         let halfGapWidth = CGFloat(Defaults.gapSize.value) / 2
+        let screenVisibleFrameMinX = screenVisibleFrame.minX + halfGapWidth
+        let screenVisibleFrameMaxX = screenVisibleFrame.maxX - halfGapWidth
 
-        if (rect.maxX > screenVisibleFrame.maxX - halfGapWidth) {
-            // Shift it to the left
-            rect.origin.x = min(rect.origin.x, max(screenVisibleFrame.minX, (rect.origin.x - (rect.maxX - screenVisibleFrame.maxX)))) + halfGapWidth
+        if Defaults.todoSidebarSide.value == .left && rect.minX < screenVisibleFrameMinX {
+            // Shift it to the right
+            rect.origin.x = min(screenVisibleFrame.maxX - rect.width, rect.origin.x + (screenVisibleFrameMinX - rect.minX))
             
             // If it's still too wide, scale it down
-            if(rect.maxX > screenVisibleFrame.maxX){
-                rect.size.width = rect.size.width - (rect.maxX - screenVisibleFrame.maxX) - halfGapWidth
+            if rect.minX < screenVisibleFrameMinX {
+                let widthDiff = screenVisibleFrameMinX - rect.minX
+                rect.origin.x += widthDiff
+                rect.size.width -= widthDiff
+            }
+            
+            w.setFrame(rect)
+        } else if Defaults.todoSidebarSide.value == .right && rect.maxX > screenVisibleFrameMaxX {
+            // Shift it to the left
+            rect.origin.x = min(rect.origin.x, max(screenVisibleFrame.minX, rect.origin.x - (rect.maxX - screenVisibleFrameMaxX)))
+            
+            // If it's still too wide, scale it down
+            if rect.maxX > screenVisibleFrameMaxX {
+                rect.size.width -= rect.maxX - screenVisibleFrameMaxX
             }
             
             w.setFrame(rect)
         }
     }
+    
+    static func execute(parameters: ExecutionParameters) -> Bool {
+        if [.leftTodo, .rightTodo].contains(parameters.action) {
+            moveAll()
+            return true
+        }
+        return false
+    }
+}
+
+enum TodoSidebarSide: Int {
+    case left = 0
+    case right = 1
 }

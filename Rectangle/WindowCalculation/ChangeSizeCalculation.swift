@@ -35,22 +35,6 @@ class ChangeSizeCalculation: WindowCalculation {
             ? 30.0
             : CGFloat(defaultSizeOffset)
     }
-    
-    override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
-
-        let isTodo = Defaults.todoMode.enabled && TodoManager.isTodoWindow(id: params.window.id)
-        let visibleFrame = isTodo
-            ? params.usableScreens.currentScreen.visibleFrame
-            : params.usableScreens.visibleFrameOfCurrentScreen
-        
-        let rectResult = calculateRect(params.asRectParams(visibleFrame: visibleFrame))
-        
-        if rectResult.rect.isNull {
-            return nil
-        }
-        
-        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: params.action, resultingSubAction: rectResult.subAction)
-    }
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let sizeOffset: CGFloat = params.action == .smaller ? -sizeOffsetAbs : sizeOffsetAbs

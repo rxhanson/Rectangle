@@ -109,14 +109,12 @@ struct UsableScreens {
     let currentScreen: NSScreen
     let adjacentScreens: AdjacentScreens?
     let frameOfCurrentScreen: CGRect
-    var visibleFrameOfCurrentScreen: CGRect
     let numScreens: Int
     
     init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens
         self.frameOfCurrentScreen = currentScreen.frame
-        self.visibleFrameOfCurrentScreen = currentScreen.adjustedVisibleFrame
         self.numScreens = numScreens
     }
 }
@@ -128,35 +126,26 @@ struct AdjacentScreens {
 
 extension NSScreen {
 
-    var adjustedVisibleFrame: CGRect {
-        get {
-            var newFrame = visibleFrame
-            
-            if Defaults.stageSize.value > 0 {
-                if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
-                    let stageSize = Defaults.stageSize.value < 1
-                        ? newFrame.size.width * Defaults.stageSize.cgFloat
-                        : Defaults.stageSize.cgFloat
-                    
-                    if StageUtil.stageStripPosition == .left {
-                        newFrame.origin.x += stageSize
-                    }
-                    newFrame.size.width -= stageSize
+    func adjustedVisibleFrame(_ ignoreTodo: Bool = false, _ ignoreStage: Bool = false) -> CGRect {
+        var newFrame = visibleFrame
+        
+        if !ignoreStage && Defaults.stageSize.value > 0 {
+            if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
+                let stageSize = Defaults.stageSize.value < 1
+                    ? newFrame.size.width * Defaults.stageSize.cgFloat
+                    : Defaults.stageSize.cgFloat
+                
+                if StageUtil.stageStripPosition == .left {
+                    newFrame.origin.x += stageSize
                 }
+                newFrame.size.width -= stageSize
             }
-
-            return adjust(newFrame)
         }
-    }
-
-    var adjustedVisibleFrameNoStage: CGRect {
-        adjust(visibleFrame)
-    }
-
-    private func adjust(_ inputFrame: CGRect) -> CGRect {
-        var newFrame = inputFrame
-
-        if Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
+        
+        if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
+            if Defaults.todoSidebarSide.value == .left {
+                newFrame.origin.x += Defaults.todoSidebarWidth.cgFloat
+            }
             newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
         }
 
