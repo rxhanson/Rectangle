@@ -66,6 +66,7 @@
 		983BBD6F253B609D000D223E /* FootprintWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983BBD6E253B609D000D223E /* FootprintWindow.swift */; };
 		983DD04028A844BE00BF1EEE /* SnapAreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */; };
 		983DD04428B0639E00BF1EEE /* SnapAreaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */; };
+		984EDB0F29A42ED200D119D2 /* LaunchOnLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */; };
 		9851A5C3251BEBA300ECF78C /* OrientationAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9851A5C2251BEBA300ECF78C /* OrientationAware.swift */; };
 		985B9BF522B93EEC00A2E8F0 /* ApplicationToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */; };
 		985B9BF822BB6F5100A2E8F0 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 985B9BF622BB6F5000A2E8F0 /* MessageView.xib */; };
@@ -247,6 +248,7 @@
 		983BBD6E253B609D000D223E /* FootprintWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootprintWindow.swift; sourceTree = "<group>"; };
 		983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaViewController.swift; sourceTree = "<group>"; };
 		983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaModel.swift; sourceTree = "<group>"; };
+		984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOnLogin.swift; sourceTree = "<group>"; };
 		9851A5C2251BEBA300ECF78C /* OrientationAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationAware.swift; sourceTree = "<group>"; };
 		985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationToggle.swift; sourceTree = "<group>"; };
 		985B9BF622BB6F5000A2E8F0 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
@@ -602,6 +604,7 @@
 				9808018523D05C0B0077774A /* RectangleRelease.entitlements */,
 				9824701622AF9B7E0037B409 /* Rectangle.entitlements */,
 				9821405F22B3EFB200ABFB3F /* Defaults.swift */,
+				984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */,
 				98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */,
 				985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */,
 				9824703022AFA8470037B409 /* RectangleStatusItem.swift */,
@@ -972,6 +975,7 @@
 				9818E01828B63C48004AA524 /* FourthsCompoundCalculation.swift in Sources */,
 				D0CFE33327A8CCB1004DA47B /* TopRightThirdCalculation.swift in Sources */,
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
+				984EDB0F29A42ED200D119D2 /* LaunchOnLogin.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
 				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
 				D04CE30A27817A9F00BD47B3 /* MiddleRightNinthCalculation.swift in Sources */,

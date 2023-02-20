@@ -12,6 +12,10 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        if #available(macOS 13, *) {
+            terminate()
+            return
+        }
         let mainAppIdentifier = "com.knollsoft.Rectangle"
         let running = NSWorkspace.shared.runningApplications
         let isRunning = !running.filter({$0.bundleIdentifier == mainAppIdentifier}).isEmpty

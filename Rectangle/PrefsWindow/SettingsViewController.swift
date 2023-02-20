@@ -36,10 +36,14 @@ class SettingsViewController: NSViewController {
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
-        let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
-        if !smLoginSuccess {
-            Logger.log("Unable to set launch at login preference. Attempting one more time.")
-            SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
+        if #available(macOS 13, *) {
+            LaunchOnLogin.isEnabled = newSetting
+        } else {
+            let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
+            if !smLoginSuccess {
+                Logger.log("Unable to set launch at login preference. Attempting one more time.")
+                SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
+            }            
         }
         Defaults.launchOnLogin.enabled = newSetting
     }

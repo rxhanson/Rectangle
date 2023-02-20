@@ -45,6 +45,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if intLastVersion < 64 {
                 SnapAreaModel.instance.migrate()
             }
+            if intLastVersion < 72 {
+                if #available(macOS 13, *) {
+                    SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, false)
+                }
+            }
         }
         
         Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
@@ -233,24 +238,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func checkLaunchOnLogin() {
-        let running = NSWorkspace.shared.runningApplications
-        let isRunning = !running.filter({$0.bundleIdentifier == AppDelegate.launcherAppId}).isEmpty
-        if isRunning {
-            let killNotification = Notification.Name("killLauncher")
-            DistributedNotificationCenter.default().post(name: killNotification, object: Bundle.main.bundleIdentifier!)
-        }
-        if !Defaults.SUHasLaunchedBefore {
-            Defaults.launchOnLogin.enabled = true
-        }
-        
-        // Even if we are already set up to launch on login, setting it again since macOS can be buggy with this type of launch on login.
-        if Defaults.launchOnLogin.enabled {
-            let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
-            if !smLoginSuccess {
-                if #available(OSX 10.12, *) {
-                    os_log("Unable to enable launch at login. Attempting one more time.", type: .info)
+        if #available(macOS 13.0, *) {
+            if Defaults.launchOnLogin.enabled, !LaunchOnLogin.isEnabled {
+                LaunchOnLogin.isEnabled = true
+            }
+        } else {
+            let running = NSWorkspace.shared.runningApplications
+            let isRunning = !running.filter({$0.bundleIdentifier == AppDelegate.launcherAppId}).isEmpty
+            if isRunning {
+                let killNotification = Notification.Name("killLauncher")
+                DistributedNotificationCenter.default().post(name: killNotification, object: Bundle.main.bundleIdentifier!)
+            }
+            if !Defaults.SUHasLaunchedBefore {
+                Defaults.launchOnLogin.enabled = true
+            }
+            
+            // Even if we are already set up to launch on login, setting it again since macOS can be buggy with this type of launch on login.
+            if Defaults.launchOnLogin.enabled {
+                let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
+                if !smLoginSuccess {
+                    if #available(OSX 10.12, *) {
+                        os_log("Unable to enable launch at login. Attempting one more time.", type: .info)
+                    }
+                    SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
                 }
-                SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, true)
             }
         }
     }
