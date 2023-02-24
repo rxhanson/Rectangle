@@ -2872,7 +2872,7 @@
                                                             <font key="font" metaFont="menu"/>
                                                             <menu key="menu" id="8Vk-9N-Pkg">
                                                                 <items>
-                                                                    <menuItem title="Left" id="mpl-sd-2Wc"/>
+                                                                    <menuItem title="Left" tag="2" id="mpl-sd-2Wc"/>
                                                                     <menuItem title="Right" state="on" tag="1" id="DG2-BN-GPE"/>
                                                                 </items>
                                                             </menu>

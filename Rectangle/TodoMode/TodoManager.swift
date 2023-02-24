@@ -167,6 +167,6 @@ class TodoManager {
 }
 
 enum TodoSidebarSide: Int {
-    case left = 0
     case right = 1
+    case left = 2
 }
