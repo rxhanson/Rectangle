@@ -24,6 +24,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var gapLabel: NSTextField!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
     @IBOutlet weak var todoCheckbox: NSButton!
+    @IBOutlet weak var todoView: NSStackView!
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
     @IBOutlet weak var todoAppSidePopUpButton: NSPopUpButton!
     @IBOutlet weak var toggleTodoShortcutView: MASShortcutView!
@@ -93,6 +94,7 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleTodoMode(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.todo.enabled = newSetting
+        showHideTodoModeSettings()
         Notification.Name.todoMenuToggled.post()
     }
     
@@ -113,8 +115,7 @@ class SettingsViewController: NSViewController {
 
         Defaults.todoSidebarSide.value = side
         
-        guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
-        TodoManager.moveAll(false)
+        TodoManager.moveAllIfNeeded(false)
     }
     
     @IBAction func stageSliderChanged(_ sender: NSSlider) {
@@ -205,12 +206,18 @@ class SettingsViewController: NSViewController {
         todoAppWidthField.delegate = self
         todoAppWidthField.defaults = Defaults.todoSidebarWidth
         todoAppWidthField.defaultsSetAction = {
-            guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
-            TodoManager.moveAll(false)
+            TodoManager.moveAllIfNeeded(false)
         }
         todoAppSidePopUpButton.selectItem(withTag: Defaults.todoSidebarSide.value.rawValue)
+        TodoManager.initToggleShortcut()
+        TodoManager.initReflowShortcut()
         toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
         reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
+        showHideTodoModeSettings()
+    }
+    
+    private func showHideTodoModeSettings() {
+        todoView.isHidden = !Defaults.todo.userEnabled
     }
     
     func initializeToggles() {

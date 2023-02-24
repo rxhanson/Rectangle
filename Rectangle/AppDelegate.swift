@@ -398,12 +398,9 @@ extension AppDelegate: NSMenuDelegate {
 extension AppDelegate {
     func initializeTodo(_ bringToFront: Bool = true) {
         self.showHideTodoMenuItems()
-        guard Defaults.todo.userEnabled else { return }
-        TodoManager.registerToggleShortcut()
-        TodoManager.registerReflowShortcut()
-        if Defaults.todoMode.enabled {
-            TodoManager.moveAll(bringToFront)
-        }
+        TodoManager.registerUnregisterToggleShortcut()
+        TodoManager.registerUnregisterReflowShortcut()
+        TodoManager.moveAllIfNeeded(bringToFront)
     }
 
     enum TodoItem {
@@ -459,19 +456,13 @@ extension AppDelegate {
     }
 
     @objc func toggleTodoMode(_ sender: NSMenuItem) {
-        if sender.state == .off {
-            Defaults.todoMode.enabled = true
-            TodoManager.moveAll()
-        } else {
-            Defaults.todoMode.enabled = false
-        }
+        let enabled = sender.state == .off
+        TodoManager.setTodoMode(enabled)
     }
 
     @objc func setTodoApp(_ sender: NSMenuItem) {
         applicationToggle.setTodoApp()
-        if Defaults.todoMode.enabled {
-            TodoManager.moveAll()
-        }
+        TodoManager.moveAllIfNeeded()
     }
 
     @objc func todoReflow(_ sender: NSMenuItem) {
