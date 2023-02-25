@@ -91,7 +91,7 @@ class WindowManager {
             }
         }
         
-        let ignoreTodo = TodoManager.isTodoWindow(id: windowId)
+        let ignoreTodo = TodoManager.isTodoWindow(windowId)
         
         if frontmostWindowElement.isSheet == true
             || currentWindowRect.isNull

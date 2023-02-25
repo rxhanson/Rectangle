@@ -10,6 +10,8 @@ import Cocoa
 import MASShortcut
 
 class TodoManager {
+    private static var todoWindowId: CGWindowID?
+    
     static var todoScreen : NSScreen?
     static let toggleDefaultsKey = "toggleTodo"
     static let reflowDefaultsKey = "reflowTodo"
@@ -102,17 +104,31 @@ class TodoManager {
         return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
     
-    static func isTodoWindow(_ w: AccessibilityElement) -> Bool {
-        guard let todoWindow = AccessibilityElement.getTodoWindowElement() else { return false }
-        return isTodoWindow(w, todoWindow: todoWindow)
+    private static func getTodoWindowElement() -> AccessibilityElement? {
+        guard let bundleId = Defaults.todoApplication.value, let windowElements = AccessibilityElement(bundleId)?.windowElements else {
+            todoWindowId = nil
+            return nil
+        }
+        if let windowId = todoWindowId, !(windowElements.contains { $0.windowId == windowId }) {
+            todoWindowId = nil
+        }
+        if todoWindowId == nil {
+            todoWindowId = windowElements.first?.windowId
+        }
+        if let windowId = todoWindowId, let windowElement = (windowElements.first { $0.windowId == windowId }) {
+            return windowElement
+        }
+        todoWindowId = nil
+        return nil
     }
     
-    static func isTodoWindow(id: CGWindowID) -> Bool {
-        AccessibilityElement.getTodoWindowElement()?.getWindowId() == id
+    static func isTodoWindow(_ windowElement: AccessibilityElement) -> Bool {
+        guard let windowId = windowElement.windowId else { return false }
+        return isTodoWindow(windowId)
     }
-
-    private static func isTodoWindow(_ w: AccessibilityElement, todoWindow: AccessibilityElement) -> Bool {
-        return w.getWindowId() == todoWindow.getWindowId()
+    
+    static func isTodoWindow(_ windowId: CGWindowID) -> Bool {
+        return getTodoWindowElement()?.windowId == windowId
     }
     
     static func moveAll(_ bringToFront: Bool = true) {
@@ -122,7 +138,7 @@ class TodoManager {
         // Avoid footprint window
         let windows = AccessibilityElement.getAllWindowElements().filter { $0.pid != pid }
 
-        if let todoWindow = AccessibilityElement.getTodoWindowElement() {
+        if let todoWindow = getTodoWindowElement() {
             if let screen = TodoManager.todoScreen {
                 let sd = ScreenDetection()
                 var adjustedVisibleFrame = screen.adjustedVisibleFrame()
@@ -166,7 +182,7 @@ class TodoManager {
     }
     
     private static func refreshTodoScreen() {
-        let todoWindow = AccessibilityElement.getTodoWindowElement()
+        let todoWindow = getTodoWindowElement()
         let screens = ScreenDetection().detectScreens(using: todoWindow)
         TodoManager.todoScreen = screens?.currentScreen
     }

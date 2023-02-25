@@ -138,7 +138,7 @@ class AccessibilityElement {
         return childElements?.filter { $0.role == role }
     }
     
-    fileprivate var windowId: CGWindowID? {
+    var windowId: CGWindowID? {
         wrappedElement.getWindowId()
     }
 
@@ -193,7 +193,7 @@ class AccessibilityElement {
         applicationElement?.getElementValue(.focusedWindow)
     }
     
-    private var windowElements: [AccessibilityElement]? {
+    var windowElements: [AccessibilityElement]? {
         applicationElement?.getElementsValue(.windows)
     }
     
@@ -292,11 +292,6 @@ extension AccessibilityElement {
         return nil
     }
     
-    static func getTodoWindowElement() -> AccessibilityElement? {
-        guard let bundleIdentifier = Defaults.todoApplication.value else { return nil }
-        return AccessibilityElement(bundleIdentifier)?.windowElements?.first
-    }
-    
     static func getWindowElement(_ windowId: CGWindowID) -> AccessibilityElement? {
         guard let pid = WindowUtil.getWindowList([windowId]).first?.pid else { return nil }
         return AccessibilityElement(pid).windowElements?.first { $0.windowId == windowId }
@@ -322,7 +317,7 @@ class StageWindowAccessibilityElement: AccessibilityElement {
         return .init(origin: info.frame.origin, size: frame.size)
     }
     
-    override fileprivate var windowId: CGWindowID? {
+    override var windowId: CGWindowID? {
         _windowId
     }
 }
