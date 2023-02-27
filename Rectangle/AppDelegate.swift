@@ -435,16 +435,16 @@ extension AppDelegate {
         mainStatusMenu.insertItem(todoAppMenuItem, at: menuIndex)
         menuIndex += 1
 
-        let todoReflowItemTitle = NSLocalizedString("Reflow Todo", tableName: "Main", value: "", comment: "")
-        let todoReflowItem = NSMenuItem(title: todoReflowItemTitle, action: #selector(todoReflow), keyEquivalent: "")
-        todoReflowItem.tag = TodoItem.reflow.tag
-        mainStatusMenu.insertItem(todoReflowItem, at: menuIndex)
-        menuIndex += 1
-        
         let todoWindowItemTitle = NSLocalizedString("Use as Todo Window", tableName: "Main", value: "", comment: "")
         let todoWindowMenuItem = NSMenuItem(title: todoWindowItemTitle, action: #selector(setTodoWindow), keyEquivalent: "")
         todoWindowMenuItem.tag = TodoItem.window.tag
         mainStatusMenu.insertItem(todoWindowMenuItem, at: menuIndex)
+        menuIndex += 1
+        
+        let todoReflowItemTitle = NSLocalizedString("Reflow Todo", tableName: "Main", value: "", comment: "")
+        let todoReflowItem = NSMenuItem(title: todoReflowItemTitle, action: #selector(todoReflow), keyEquivalent: "")
+        todoReflowItem.tag = TodoItem.reflow.tag
+        mainStatusMenu.insertItem(todoReflowItem, at: menuIndex)
         menuIndex += 1
         
         let separator = NSMenuItem.separator()
