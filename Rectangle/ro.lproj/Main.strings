@@ -461,3 +461,18 @@
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
 "kx2-tZ-lk8.title" = "Animate footprint";
+
+/* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
+"DHt-cE-Bl0.title" = "Toggle Todo";
+
+/* Class = "NSTextFieldCell"; title = "Reflow Todo"; ObjectID = "Fx0-sm-DrT"; */
+"Fx0-sm-DrT.title" = "Reflow Todo";
+
+/* Class = "NSTextFieldCell"; title = "Todo side"; ObjectID = "O9a-3Q-HB1"; */
+"O9a-3Q-HB1.title" = "Todo side";
+
+/* Class = "NSMenuItem"; title = "Right"; ObjectID = "DG2-BN-GPE"; */
+"DG2-BN-GPE.title" = "Right";
+
+/* Class = "NSMenuItem"; title = "Left"; ObjectID = "mpl-sd-2Wc"; */
+"mpl-sd-2Wc.title" = "Left";
