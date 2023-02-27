@@ -122,6 +122,10 @@ class TodoManager {
         return nil
     }
     
+    static func hasTodoWindow() -> Bool {
+        return getTodoWindowElement() != nil
+    }
+    
     static func isTodoWindowFront() -> Bool {
         guard let windowElement = AccessibilityElement.getFrontWindowElement() else { return false }
         return isTodoWindow(windowElement)
