@@ -142,7 +142,7 @@ extension NSScreen {
             }
         }
         
-        if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self {
+        if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self, TodoManager.hasTodoWindow() {
             if Defaults.todoSidebarSide.value == .left {
                 newFrame.origin.x += Defaults.todoSidebarWidth.cgFloat
             }
