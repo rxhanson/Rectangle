@@ -122,6 +122,11 @@ class TodoManager {
         return nil
     }
     
+    static func isTodoWindowFront() -> Bool {
+        guard let windowElement = AccessibilityElement.getFrontWindowElement() else { return false }
+        return isTodoWindow(windowElement)
+    }
+    
     static func isTodoWindow(_ windowElement: AccessibilityElement) -> Bool {
         guard let windowId = windowElement.windowId else { return false }
         return isTodoWindow(windowId)
@@ -129,6 +134,11 @@ class TodoManager {
     
     static func isTodoWindow(_ windowId: CGWindowID) -> Bool {
         return getTodoWindowElement()?.windowId == windowId
+    }
+    
+    static func resetTodoWindow() {
+        todoWindowId = nil
+        _ = getTodoWindowElement()
     }
     
     static func moveAll(_ bringToFront: Bool = true) {
