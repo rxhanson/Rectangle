@@ -10,13 +10,20 @@ import Cocoa
 import MASShortcut
 
 class TodoManager {
+    private static var todoWindowId: CGWindowID?
+    
     static var todoScreen : NSScreen?
     static let toggleDefaultsKey = "toggleTodo"
     static let reflowDefaultsKey = "reflowTodo"
     static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
     
-    static func registerToggleShortcut() {
-        
+    static func setTodoMode(_ enabled: Bool, _ bringToFront: Bool = true) {
+        Defaults.todoMode.enabled = enabled
+        registerUnregisterReflowShortcut()
+        moveAllIfNeeded(bringToFront)
+    }
+    
+    static func initToggleShortcut() {
         if UserDefaults.standard.dictionary(forKey: toggleDefaultsKey) == nil {
             guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
             
@@ -25,18 +32,9 @@ class TodoManager {
             let toggleShortcutDict = dictTransformer.reverseTransformedValue(toggleShortcut)
             UserDefaults.standard.set(toggleShortcutDict, forKey: toggleDefaultsKey)
         }
-
-        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: toggleDefaultsKey, toAction: {
-            guard Defaults.todo.userEnabled else { return }
-            Defaults.todoMode.enabled.toggle()
-            if Defaults.todoMode.enabled {
-                TodoManager.moveAll()
-            }
-        })
     }
     
-    static func registerReflowShortcut() {
-        
+    static func initReflowShortcut() {
         if UserDefaults.standard.dictionary(forKey: reflowDefaultsKey) == nil {
             guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
             
@@ -45,34 +43,92 @@ class TodoManager {
             let reflowShortcutDict = dictTransformer.reverseTransformedValue(reflowShortcut)
             UserDefaults.standard.set(reflowShortcutDict, forKey: reflowDefaultsKey)
         }
-
-        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: reflowDefaultsKey, toAction: {
-            guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
-            TodoManager.moveAll()
+    }
+    
+    private static func registerToggleShortcut() {
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: toggleDefaultsKey, toAction: {
+            let enabled = !Defaults.todoMode.enabled
+            setTodoMode(enabled)
         })
     }
     
+    private static func registerReflowShortcut() {
+        MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: reflowDefaultsKey, toAction: {
+            moveAll()
+        })
+    }
+    
+    private static func unregisterToggleShortcut() {
+        MASShortcutBinder.shared()?.breakBinding(withDefaultsKey: toggleDefaultsKey)
+    }
+    
+    private static func unregisterReflowShortcut() {
+        MASShortcutBinder.shared()?.breakBinding(withDefaultsKey: reflowDefaultsKey)
+    }
+    
+    static func registerUnregisterToggleShortcut() {
+        if Defaults.todo.userEnabled {
+            registerToggleShortcut()
+        } else {
+            unregisterToggleShortcut()
+        }
+    }
+    
+    static func registerUnregisterReflowShortcut() {
+        if Defaults.todo.userEnabled && Defaults.todoMode.enabled {
+            registerReflowShortcut()
+        } else {
+            unregisterReflowShortcut()
+        }
+    }
+    
     static func getToggleKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: toggleDefaultsKey) as? MASShortcut else { return nil }
-        return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
+        guard
+            let shortcutDict = UserDefaults.standard.dictionary(forKey: toggleDefaultsKey),
+            let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
+            let shortcut = dictTransformer.transformedValue(shortcutDict) as? MASShortcut
+        else {
+            return nil
+        }
+        return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
     
     static func getReflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard let masShortcut = MASShortcutBinder.shared()?.value(forKey: reflowDefaultsKey) as? MASShortcut else { return nil }
-        return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
+        guard
+            let shortcutDict = UserDefaults.standard.dictionary(forKey: reflowDefaultsKey),
+            let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
+            let shortcut = dictTransformer.transformedValue(shortcutDict) as? MASShortcut
+        else {
+            return nil
+        }
+        return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
     
-    static func isTodoWindow(_ w: AccessibilityElement) -> Bool {
-        guard let todoWindow = AccessibilityElement.getTodoWindowElement() else { return false }
-        return isTodoWindow(w, todoWindow: todoWindow)
+    private static func getTodoWindowElement() -> AccessibilityElement? {
+        guard let bundleId = Defaults.todoApplication.value, let windowElements = AccessibilityElement(bundleId)?.windowElements else {
+            todoWindowId = nil
+            return nil
+        }
+        if let windowId = todoWindowId, !(windowElements.contains { $0.windowId == windowId }) {
+            todoWindowId = nil
+        }
+        if todoWindowId == nil {
+            todoWindowId = windowElements.first?.windowId
+        }
+        if let windowId = todoWindowId, let windowElement = (windowElements.first { $0.windowId == windowId }) {
+            return windowElement
+        }
+        todoWindowId = nil
+        return nil
     }
     
-    static func isTodoWindow(id: CGWindowID) -> Bool {
-        AccessibilityElement.getTodoWindowElement()?.getWindowId() == id
+    static func isTodoWindow(_ windowElement: AccessibilityElement) -> Bool {
+        guard let windowId = windowElement.windowId else { return false }
+        return isTodoWindow(windowId)
     }
-
-    private static func isTodoWindow(_ w: AccessibilityElement, todoWindow: AccessibilityElement) -> Bool {
-        return w.getWindowId() == todoWindow.getWindowId()
+    
+    static func isTodoWindow(_ windowId: CGWindowID) -> Bool {
+        return getTodoWindowElement()?.windowId == windowId
     }
     
     static func moveAll(_ bringToFront: Bool = true) {
@@ -82,7 +138,7 @@ class TodoManager {
         // Avoid footprint window
         let windows = AccessibilityElement.getAllWindowElements().filter { $0.pid != pid }
 
-        if let todoWindow = AccessibilityElement.getTodoWindowElement() {
+        if let todoWindow = getTodoWindowElement() {
             if let screen = TodoManager.todoScreen {
                 let sd = ScreenDetection()
                 var adjustedVisibleFrame = screen.adjustedVisibleFrame()
@@ -120,8 +176,13 @@ class TodoManager {
         }
     }
     
+    static func moveAllIfNeeded(_ bringToFront: Bool = true) {
+        guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
+        moveAll(bringToFront)
+    }
+    
     private static func refreshTodoScreen() {
-        let todoWindow = AccessibilityElement.getTodoWindowElement()
+        let todoWindow = getTodoWindowElement()
         let screens = ScreenDetection().detectScreens(using: todoWindow)
         TodoManager.todoScreen = screens?.currentScreen
     }
