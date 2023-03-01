@@ -150,13 +150,14 @@ class SnappingManager {
         case .leftMouseUp:
             dragPrevY = nil
         case .leftMouseDragged:
-            if let cgEvent = event.cgEvent {
-                if cgEvent.location.y == 0 && dragPrevY == 0 {
+            if let cgEvent = event.cgEvent, let screen = NSScreen.main {
+                let minY = screen.frame.screenFlipped.minY
+                if cgEvent.location.y == minY && dragPrevY == minY {
                     if event.deltaY < -Defaults.missionControlDraggingAllowedOffscreenDistance.cgFloat {
-                        cgEvent.location.y = 1
+                        cgEvent.location.y = minY + 1
                         dragRestrictionExpirationTimestamp = DispatchTime.now().uptimeMilliseconds + UInt64(Defaults.missionControlDraggingDisallowedDuration.value)
                     } else if !dragRestrictionExpired {
-                        cgEvent.location.y = 1
+                        cgEvent.location.y = minY + 1
                     }
                 }
                 dragPrevY = cgEvent.location.y
