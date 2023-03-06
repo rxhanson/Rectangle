@@ -660,11 +660,11 @@
 "6e0-ji-qXw.title" = "Largeur de l’application Todo";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Modifier le raccourci Todo";
+"Fx0-sm-DrT.title" = "Repositionner Todo";
 
 "Use frontmost.app as Todo App" = "Utiliser frontmost.app comme application Todo";
 "Enable Todo Mode" = "Activer le mode Todo";
-"Reflow Todo" = "Rafraîchir Todo";
+"Reflow Todo" = "Repositionner Todo";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
 "MDd-Sm-sUx.title" = "À propos du mode Todo";
@@ -691,43 +691,43 @@
 "q9C-qZ-xw5.title" = "Lorsque vous êtes en mode Todo, vous pouvez rafraîchir la vue en sélectionnant \« Rafraîchir Todo\ » dans le menu de Rectangle ou en utilisant le raccourci clavier associé.";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
-"ayu-YO-10p.title" = "Stage Manager recent apps area";
+"ayu-YO-10p.title" = "Zone des applications récentes de Stage Manager";
 
 /* Class = "NSTextFieldCell"; title = "If the area is too small, recent apps will be hidden"; ObjectID = "xE6-jw-EPt"; */
-"xE6-jw-EPt.title" = "If the area is too small, recent apps will be hidden";
+"xE6-jw-EPt.title" = "Si la zone est trop petite, les applications récentes seront masquées";
 
-"Left half, top/bottom half near corners" = "Left half, top/bottom half near corners";
-"Right half, top/bottom half near corners" = "Right half, top/bottom half near corners";
-"Thirds, drag toward center for two thirds" = "Thirds, drag toward center for two thirds";
-"Thirds, top/bottom half near corners" = "Thirds, top/bottom half near corners";
-"Left or right half" = "Left or right half";
-"Top sixths from corners; maximize" = "Top sixths from corners; maximize";
-"Bottom sixths from corners; thirds" = "Bottom sixths from corners; thirds";
-"Fourths columns" = "Fourths columns";
+"Left half, top/bottom half near corners" = "Moitié gauche, moitié du haut/bas près des coins";
+"Right half, top/bottom half near corners" = "Moitié droite, moitié du haut/bas près des coins";
+"Thirds, drag toward center for two thirds" = "Tiers, glisser vers le centre pour deux tiers";
+"Thirds, top/bottom half near corners" = "Tiers, moitié du haut/bas près des coins";
+"Left or right half" = "Moitié gauche ou droite";
+"Top sixths from corners; maximize" = "Sixièmes haut à partir les coins ; maximiser";
+"Bottom sixths from corners; thirds" = "Sixièmes bas à partir des coins ; tiers";
+"Fourths columns" = "Colonnes de quarts";
 
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
-"3hZ-Cs-EZ6.title" = "Disable fast dragging to Mission Control";
+"3hZ-Cs-EZ6.title" = "Désactiver le glissement rapide vers Mission Control";
 
-"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+"Go to System Settings → Privacy & Security → Accessibility" = "Aller dans Réglages Système → Confidentialité et sécurité → Accessibilité";
 
-"Open System Settings" = "Open System Settings";
+"Open System Settings" = "Ouvrir les Réglages Système";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "Animer l'empreinte";
 
 /* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
-"DHt-cE-Bl0.title" = "Toggle Todo";
+"DHt-cE-Bl0.title" = "Activer/Désactiver Todo";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo";
+"Fx0-sm-DrT.title" = "Repositionner Todo";
 
 /* Class = "NSTextFieldCell"; title = "Todo side"; ObjectID = "O9a-3Q-HB1"; */
-"O9a-3Q-HB1.title" = "Todo side";
+"O9a-3Q-HB1.title" = "Côté de Todo";
 
 /* Class = "NSMenuItem"; title = "Right"; ObjectID = "DG2-BN-GPE"; */
-"DG2-BN-GPE.title" = "Right";
+"DG2-BN-GPE.title" = "Droit";
 
 /* Class = "NSMenuItem"; title = "Left"; ObjectID = "mpl-sd-2Wc"; */
-"mpl-sd-2Wc.title" = "Left";
+"mpl-sd-2Wc.title" = "Gauche";
 
-"Use as Todo Window" = "Use as Todo Window";
+"Use as Todo Window" = "Utiliser comme fenêtre Todo";
