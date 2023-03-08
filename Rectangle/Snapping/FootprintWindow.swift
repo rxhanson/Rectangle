@@ -9,7 +9,7 @@
 import Cocoa
 
 class FootprintWindow: NSWindow {
-    private var closeCanceled = false
+    private var orderOutCanceled = false
     
     init() {
         let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
@@ -51,6 +51,14 @@ class FootprintWindow: NSWindow {
     }
     
     override var isVisible: Bool {
+        // Workaround
+        if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
+            return true
+        }
+        return realIsVisible
+    }
+    
+    var realIsVisible: Bool {
         if Defaults.footprintFade.userDisabled {
             return super.isVisible
         } else {
@@ -58,26 +66,26 @@ class FootprintWindow: NSWindow {
         }
     }
     
-    override func makeKeyAndOrderFront(_ sender: Any?) {
+    override func orderFront(_ sender: Any?) {
         if Defaults.footprintFade.userDisabled {
-            super.makeKeyAndOrderFront(sender)
+            super.orderFront(sender)
         } else {
-            closeCanceled = true
-            super.makeKeyAndOrderFront(sender)
+            orderOutCanceled = true
+            super.orderFront(sender)
             animator().alphaValue = Defaults.footprintAlpha.cgFloat
         }
     }
     
-    override func close() {
+    override func orderOut(_ sender: Any?) {
         if Defaults.footprintFade.userDisabled {
-            super.close()
+            super.orderOut(nil)
         } else {
-            closeCanceled = false
+            orderOutCanceled = false
             NSAnimationContext.runAnimationGroup { changes in
                 animator().alphaValue = 0.0
             } completionHandler: {
-                if !self.closeCanceled {
-                    super.close()
+                if !self.orderOutCanceled {
+                    super.orderOut(nil)
                 }
             }
         }
