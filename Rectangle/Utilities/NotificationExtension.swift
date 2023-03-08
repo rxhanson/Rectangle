@@ -19,6 +19,7 @@ extension Notification.Name {
     static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
     static let missionControlDragging = Notification.Name("missionControlDragging")
     static let menuBarIconHidden = Notification.Name("menuBarIconHidden")
+    static let windowTitleBar = Notification.Name("windowTitleBar")
 
     func post(
         center: NotificationCenter = NotificationCenter.default,

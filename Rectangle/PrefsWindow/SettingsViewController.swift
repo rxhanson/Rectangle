@@ -23,6 +23,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
+    @IBOutlet weak var doubleClickTitleBarCheckbox: NSButton!
     @IBOutlet weak var todoCheckbox: NSButton!
     @IBOutlet weak var todoView: NSStackView!
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
@@ -89,6 +90,15 @@ class SettingsViewController: NSViewController {
     
     @IBAction func checkForUpdates(_ sender: Any) {
         AppDelegate.updaterController.checkForUpdates(sender)
+    }
+    
+    @IBAction func toggleDoubleClickTitleBar(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        if newSetting && !TitleBarManager.systemSettingDisabled {
+            AlertUtil.oneButtonAlert(question: "Conflict with system setting", text: "The respective system setting must be disabled.")
+        }
+        Defaults.doubleClickTitleBar.value = (newSetting ? WindowAction.maximize.rawValue : -1) + 1
+        Notification.Name.windowTitleBar.post()
     }
     
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -236,6 +246,8 @@ class SettingsViewController: NSViewController {
         gapSlider.isContinuous = true
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
+        
+        doubleClickTitleBarCheckbox.state = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil ? .on : .off
 
         if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)

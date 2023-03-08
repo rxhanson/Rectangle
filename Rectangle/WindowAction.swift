@@ -119,6 +119,10 @@ enum WindowAction: Int, Codable {
     func postUrl() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .url))
     }
+    
+    func postTitleBar(windowElement: AccessibilityElement?) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, windowElement: windowElement, source: .titleBar))
+    }
 
     // Determines where separators should be used in the menu
     var firstInGroup: Bool {

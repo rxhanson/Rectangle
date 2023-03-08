@@ -59,6 +59,21 @@ class AccessibilityElement {
         return role == .sheet
     }
     
+    var isToolbar: Bool? {
+        guard let role = role else { return nil }
+        return role == .toolbar
+    }
+    
+    var isGroup: Bool? {
+        guard let role = role else { return nil }
+        return role == .group
+    }
+    
+    var isStaticText: Bool? {
+        guard let role = role else { return nil }
+        return role == .staticText
+    }
+    
     private var subrole: NSAccessibility.Subrole? {
         guard let value = wrappedElement.getValue(.subrole) as? String else { return nil }
         return NSAccessibility.Subrole(rawValue: value)
@@ -159,7 +174,7 @@ class AccessibilityElement {
         wrappedElement.getPid()
     }
     
-    private var windowElement: AccessibilityElement? {
+    var windowElement: AccessibilityElement? {
         if isWindow == true { return self }
         return getElementValue(.window)
     }
@@ -181,6 +196,21 @@ class AccessibilityElement {
     var isFullScreen: Bool? {
         guard let subrole = windowElement?.getElementValue(.fullScreenButton)?.subrole else { return nil }
         return subrole == .zoomButton
+    }
+    
+    var titleBarFrame: CGRect? {
+        guard
+            let windowElement,
+            case let windowFrame = windowElement.frame,
+            windowFrame != .null,
+            let closeButtonFrame = windowElement.getElementValue(.closeButton)?.frame,
+            closeButtonFrame != .null
+        else {
+            return nil
+        }
+        let gap = closeButtonFrame.minY - windowFrame.minY
+        let height = 2 * gap + closeButtonFrame.height
+        return CGRect(origin: windowFrame.origin, size: CGSize(width: windowFrame.width, height: height))
     }
     
     private var applicationElement: AccessibilityElement? {

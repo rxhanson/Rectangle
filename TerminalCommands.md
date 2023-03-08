@@ -8,6 +8,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Adjust Behavior on Repeated Commands](#adjust-behavior-on-repeated-commands)
 - [Cycle thirds on repeated Center Half commands](#cycle-thirds-on-repeated-center-half-commands)
 - [Resize on Directional Move](#resize-on-directional-move)
+- [Adjust macOS Ventura Stage Manager size](#adjust-macos-ventura-stage-manager-size)
 - [Enable Todo Mode](#enable-todo-mode)
 - [Only allow drag-to-snap when modifier keys are pressed](#only-allow-drag-to-snap-when-modifier-keys-are-pressed)
 - [Almost Maximize](#almost-maximize)
@@ -28,6 +29,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Enabling snap areas for sixths](#enabling-snap-areas-for-sixths)
 - [Move cursor with window](#move-cursor-with-window)
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
+- [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 
 ## Keyboard Shortcuts
 
@@ -392,4 +394,18 @@ Change the disallowed duration. The value is in milliseconds. Default is 250.
 
 ```bash
 defaults write com.knollsoft.Rectangle missionControlDraggingDisallowedDuration -int <DURATION>
+```
+
+## Change the behavior of double-click window title bar
+
+To change the action ([list](https://github.com/rxhanson/Rectangle/blob/master/Rectangle/WindowAction.swift)):
+
+```bash
+defaults write com.knollsoft.Rectangle doubleClickTitleBar -int <ACTION_ID + 1>
+```
+
+To disable restore when double-clicked again:
+
+```bash
+defaults write com.knollsoft.Rectangle doubleClickTitleBarRestore -bool false
 ```
