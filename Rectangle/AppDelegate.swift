@@ -26,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var applicationToggle: ApplicationToggle!
     private var windowCalculationFactory: WindowCalculationFactory!
     private var snappingManager: SnappingManager!
+    private var titleBarManager: TitleBarManager!
     
     private var prefsWindowController: NSWindowController?
     
@@ -107,6 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager(applicationToggle: applicationToggle)
+        self.titleBarManager = TitleBarManager()
         self.initializeTodo()
         checkForProblematicApps()
     }

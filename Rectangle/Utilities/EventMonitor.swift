@@ -16,11 +16,12 @@ protocol EventMonitor {
 }
 
 public class PassiveEventMonitor: EventMonitor {
-    private var monitor: Any?
+    private var localMonitor: Any?
+    private var globalMonitor: Any?
     private let mask: NSEvent.EventTypeMask
     private let handler: (NSEvent) -> Void
 
-    var running: Bool { monitor != nil }
+    var running: Bool { localMonitor != nil && globalMonitor != nil }
     
     public init(mask: NSEvent.EventTypeMask, handler: @escaping (NSEvent) -> Void) {
         self.mask = mask
@@ -32,13 +33,21 @@ public class PassiveEventMonitor: EventMonitor {
     }
     
     public func start() {
-        monitor = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: handler)
+        localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { event in
+            self.handler(event)
+            return event
+        }
+        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask, handler: handler)
     }
     
     public func stop() {
-        if monitor != nil {
-            NSEvent.removeMonitor(monitor!)
-            monitor = nil
+        if localMonitor != nil {
+            NSEvent.removeMonitor(localMonitor!)
+            localMonitor = nil
+        }
+        if globalMonitor != nil {
+            NSEvent.removeMonitor(globalMonitor!)
+            globalMonitor = nil
         }
     }
 }
