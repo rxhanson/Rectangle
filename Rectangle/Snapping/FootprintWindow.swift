@@ -51,7 +51,7 @@ class FootprintWindow: NSWindow {
     }
     
     override var isVisible: Bool {
-        // Workaround
+        // Workaround for footprint getting pushed off of Stage Manager
         if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
             return true
         }
