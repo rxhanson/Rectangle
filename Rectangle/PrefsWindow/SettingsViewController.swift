@@ -95,7 +95,26 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleDoubleClickTitleBar(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         if newSetting && !TitleBarManager.systemSettingDisabled {
-            AlertUtil.oneButtonAlert(question: "Conflict with system setting", text: "The respective system setting must be disabled.")
+            
+            var openSystemSettingsButtonName = NSLocalizedString("iWV-c2-BJD.title", tableName: "Main", value: "Open System Preferences", comment: "")
+            
+            if #available(macOS 13, *) {
+                openSystemSettingsButtonName = NSLocalizedString(
+                    "Open System Settings", tableName: "Main", value: "", comment: "")
+            }
+
+            let conflictTitleText = NSLocalizedString(
+                "Conflict with system setting", tableName: "Main", value: "", comment: "")
+            let conflictDescriptionText = NSLocalizedString(
+                "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.", tableName: "Main", value: "", comment: "")
+
+            
+            let closeText = NSLocalizedString("DVo-aG-piG.title", tableName: "Main", value: "Close", comment: "")
+            
+            let response = AlertUtil.twoButtonAlert(question: conflictTitleText, text: conflictDescriptionText, confirmText: openSystemSettingsButtonName, cancelText: closeText)
+            if response == .alertFirstButtonReturn {
+                NSWorkspace.shared.open(URL(string:"x-apple.systempreferences:com.apple.preference.dock")!)
+            }
         }
         Defaults.doubleClickTitleBar.value = (newSetting ? WindowAction.maximize.rawValue : -1) + 1
         Notification.Name.windowTitleBar.post()
