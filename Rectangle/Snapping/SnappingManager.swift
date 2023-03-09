@@ -192,7 +192,7 @@ class SnappingManager {
             }
         case .leftMouseUp:
             if let currentSnapArea = self.currentSnapArea {
-                box?.close()
+                box?.orderOut(nil)
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
                 self.currentSnapArea = nil
             } else {
@@ -207,7 +207,7 @@ class SnappingManager {
                     unsnapRestore(windowId: windowId)
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
-                        box?.close()
+                        box?.orderOut(nil)
                         if canSnap(event) {
                             snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
                         }
@@ -254,7 +254,7 @@ class SnappingManager {
             if windowMoving {
                 if !canSnap(event) {
                     if currentSnapArea != nil {
-                        box?.close()
+                        box?.orderOut(nil)
                         currentSnapArea = nil
                     }
                     return
@@ -271,14 +271,14 @@ class SnappingManager {
                             box = FootprintWindow()
                         }
                         if Defaults.footprintAnimationDurationMultiplier.value > 0 {
-                            if !box!.isVisible, let origin = getFootprintAnimationOrigin(snapArea, newBoxRect) {
+                            if !box!.realIsVisible, let origin = getFootprintAnimationOrigin(snapArea, newBoxRect) {
                                 let frame = CGRect(origin: origin, size: .zero)
                                 box!.setFrame(frame, display: false)
                             }
                         } else {
                             box!.setFrame(newBoxRect, display: true)
                         }
-                        box!.makeKeyAndOrderFront(nil)
+                        box!.orderFront(nil)
                         if Defaults.footprintAnimationDurationMultiplier.value > 0 {
                             NSAnimationContext.runAnimationGroup { changes in
                                 changes.duration = getFootprintAnimationDuration(box!, newBoxRect)
@@ -290,7 +290,7 @@ class SnappingManager {
                     currentSnapArea = snapArea
                 } else {
                     if currentSnapArea != nil {
-                        box?.close()
+                        box?.orderOut(nil)
                         currentSnapArea = nil
                     }
                 }
