@@ -725,25 +725,25 @@
 "kx2-tZ-lk8.title" = "Animar la huella de ventana";
 
 /* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
-"DHt-cE-Bl0.title" = "Toggle Todo";
+"DHt-cE-Bl0.title" = "Alternar modo 'Todo'";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo";
+"Fx0-sm-DrT.title" = "Reajustar 'Todo'";
 
 /* Class = "NSTextFieldCell"; title = "Todo side"; ObjectID = "O9a-3Q-HB1"; */
-"O9a-3Q-HB1.title" = "Todo side";
+"O9a-3Q-HB1.title" = "Lado del 'todo'";
 
 /* Class = "NSMenuItem"; title = "Right"; ObjectID = "DG2-BN-GPE"; */
-"DG2-BN-GPE.title" = "Right";
+"DG2-BN-GPE.title" = "Derecha";
 
 /* Class = "NSMenuItem"; title = "Left"; ObjectID = "mpl-sd-2Wc"; */
-"mpl-sd-2Wc.title" = "Left";
+"mpl-sd-2Wc.title" = "Izquierda";
 
-"Use as Todo Window" = "Use as Todo Window";
+"Use as Todo Window" = "Usar como ventana 'Todo'";
 
 /* Class = "NSButtonCell"; title = "Double-click window title bar to maximize/restore"; ObjectID = "heT-W6-Fyf"; */
-"heT-W6-Fyf.title" = "Double-click window title bar to maximize/restore";
+"heT-W6-Fyf.title" = "Haz click dos veces en la barra de título de la ventana para maximizar/restaurar";
 
-"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.";
+"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "Para permitir que Rectangle administre la funcionalidad de doble click en la barra de título, debes deshabilitar los ajustes correspondientes de macOS."
 
-"Conflict with system setting" = "Conflict with system setting";
+"Conflict with system setting" = "Conflicto con los ajustes del sistema";
