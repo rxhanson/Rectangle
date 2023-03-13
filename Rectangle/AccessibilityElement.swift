@@ -153,6 +153,14 @@ class AccessibilityElement {
         return childElements?.filter { $0.role == role }
     }
     
+    func getChildElement(_ subrole: NSAccessibility.Subrole) -> AccessibilityElement? {
+        return childElements?.first { $0.subrole == subrole }
+    }
+    
+    func getChildElements(_ subrole: NSAccessibility.Subrole) -> [AccessibilityElement]? {
+        return childElements?.filter { $0.subrole == subrole }
+    }
+    
     var windowId: CGWindowID? {
         wrappedElement.getWindowId()
     }
@@ -203,7 +211,7 @@ class AccessibilityElement {
             let windowElement,
             case let windowFrame = windowElement.frame,
             windowFrame != .null,
-            let closeButtonFrame = windowElement.getElementValue(.closeButton)?.frame,
+            let closeButtonFrame = windowElement.getChildElement(.closeButton)?.frame,
             closeButtonFrame != .null
         else {
             return nil
