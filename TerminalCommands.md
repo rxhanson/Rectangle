@@ -407,5 +407,5 @@ defaults write com.knollsoft.Rectangle doubleClickTitleBar -int <ACTION_ID + 1>
 To disable restore when double-clicked again:
 
 ```bash
-defaults write com.knollsoft.Rectangle doubleClickTitleBarRestore -bool false
+defaults write com.knollsoft.Rectangle doubleClickTitleBarRestore -int 2
 ```
