@@ -1,6 +1,6 @@
 
 /* Class = "NSTextFieldCell"; title = "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."; ObjectID = "01Z-t3-cBm"; */
-"01Z-t3-cBm.title" = "ウィンドウを移動する動作や半分のサイズに変更する動作を繰り返すと、ウィンドウをサイズ変更するのではなく、次のディスプレイに移動します。";
+"01Z-t3-cBm.title" = "ウインドウを移動する動作や半分のサイズに変更する動作を繰り返すと、ウインドウをサイズ変更するのではなく、次のディスプレイに移動します。";
 
 /* Class = "NSTextFieldCell"; title = "Last Two Thirds"; ObjectID = "08q-Ce-1QL"; */
 "08q-Ce-1QL.title" = "2/3にして右寄せ";
@@ -24,7 +24,7 @@
 "1tx-W0-xDw.title" = "下付き";
 
 /* Class = "NSButtonCell"; title = "Snap windows by dragging"; ObjectID = "1ui-PL-TkR"; */
-"1ui-PL-TkR.title" = "ドラッグでウィンドウをスナップ";
+"1ui-PL-TkR.title" = "ドラッグでウインドウをスナップ";
 
 /* Class = "NSMenuItem"; title = "Raise"; ObjectID = "2h7-ER-AoG"; */
 "2h7-ER-AoG.title" = "上げる";
@@ -273,10 +273,10 @@
 "STb-JK-oB1.title" = "Rectangle環境設定";
 
 /* Class = "NSButtonCell"; title = "Cycle across displays on repeated left or right commands"; ObjectID = "SXx-HZ-GkB"; */
-"SXx-HZ-GkB.title" = "左半分／左半分にサイズ変更するコマンドを繰り返したら、ウィンドウを表示するディスプレイを変更";
+"SXx-HZ-GkB.title" = "左半分／左半分にサイズ変更するコマンドを繰り返したら、ウインドウを表示するディスプレイを変更";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
-"Td7-aD-5lo.title" = "ウィンドウ";
+"Td7-aD-5lo.title" = "ウインドウ";
 
 /* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
 "UEZ-Bs-lqG.title" = "語頭を大文字にする";
@@ -333,7 +333,7 @@
 "aTl-1u-JFS.title" = "プリント…";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
-"aUF-d1-5bR.title" = "ウィンドウ";
+"aUF-d1-5bR.title" = "ウインドウ";
 
 /* Class = "NSMenu"; title = "Font"; ObjectID = "aXa-aM-Jaq"; */
 "aXa-aM-Jaq.title" = "フォント";
@@ -402,10 +402,10 @@
 "gVA-U4-sdL.title" = "ペースト";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "環境設定";
+"gtf-PD-IHm.label" = "設定";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangleがウィンドウの位置を制御するには許可が必要です。";
+"gyg-xl-dPn.title" = "Rectangleがウインドウの位置を制御するには許可が必要です。";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
 "hQb-2v-fYv.title" = "スマート引用符";
@@ -570,7 +570,7 @@
 "kXi-dT-zSF.title" = "Spectacleを使用すると、ショートカットがほかのショートカットと競合する可能性が高まります";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "Spectacleを選択すると、同じショートカットを繰り返した際にウィンドウの幅を1/2、2/3、1/3に順次変更します";
+"xcE-uL-2J0.title" = "Spectacleを選択すると、同じショートカットを繰り返した際にウインドウの幅を1/2、2/3、1/3に順次変更します";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
 "HtH-yF-lBR.title" = "ようこそ！";
@@ -600,7 +600,7 @@
 "mFt-Kg-UYG.title" = "左上";
 
 /* Class = "NSTextFieldCell"; title = "Top Center Sixth"; ObjectID = "TTx-7X-Wie"; */
-"TTx-7X-Wie.title" = "左中央";
+"TTx-7X-Wie.title" = "中央上";
 
 /* Class = "NSTextFieldCell"; title = "Top Right Sixth"; ObjectID = "f3Q-q7-Pcy"; */
 "f3Q-q7-Pcy.title" = "右上";
@@ -609,7 +609,7 @@
 "LqQ-pM-jRN.title" = "左下";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Center Sixth"; ObjectID = "iOQ-1e-esP"; */
-"iOQ-1e-esP.title" = "左中央";
+"iOQ-1e-esP.title" = "中央下";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Right Sixth"; ObjectID = "m2F-eA-g7w"; */
 "m2F-eA-g7w.title" = "右下";
@@ -618,16 +618,16 @@
 "O8K-y6-bva.title" = "ログを表示…";
 
 /* Class = "NSTabViewItem"; label = "Settings"; ObjectID = "gtf-PD-IHm"; */
-"gtf-PD-IHm.label" = "環境設定";
+"gtf-PD-IHm.label" = "設定";
 
 /* Class = "NSTabViewItem"; label = "Keyboard Shortcuts"; ObjectID = "uw2-9W-2jq"; */
 "uw2-9W-2jq.label" = "キーボードショートカット";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "スナップが解除されたらウィンドウサイズを元に戻す";
+"UZP-5q-D5Y.title" = "スナップが解除されたらウインドウサイズを元に戻す";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
-"bg9-nw-YvU.title" = "ウィンドウの間隔";
+"bg9-nw-YvU.title" = "ウインドウの間隔";
 
 "Halves" = "半分";
 "Corners" = "画面端";
@@ -647,22 +647,22 @@
 "IO3-Hi-7gC.title" = "エクスポート";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
-"Pbz-DF-hgG.title" = "別ディスプレイへのウィンドウ移動時にカーソルも一緒に移動させる";
+"Pbz-DF-hgG.title" = "別ディスプレイへのウインドウ移動時にカーソルも一緒に移動させる";
 
 /* Class = "NSMenuItem"; title = "cycle through displays"; ObjectID = "XlM-ch-cLG"; */
-"XlM-ch-cLG.title" = "ウィンドウを表示するディスプレイを変更";
+"XlM-ch-cLG.title" = "ウインドウを表示するディスプレイを変更";
 
 /* Class = "NSMenuItem"; title = "move to adjacent display on left or right"; ObjectID = "Z9d-Rl-RVq"; */
-"Z9d-Rl-RVq.title" = "ウィンドウを左右のディスプレイに順次移動";
+"Z9d-Rl-RVq.title" = "ウインドウを左右のディスプレイに順次移動";
 
 /* Class = "NSMenuItem"; title = "do nothing"; ObjectID = "jww-Ju-S3d"; */
 "jww-Ju-S3d.title" = "何もしない";
 
 /* Class = "NSMenuItem"; title = "cycle ½, ⅔, and ⅓ on half actions"; ObjectID = "gHH-BV-5kP"; */
-"gHH-BV-5kP.title" = "ウィンドウの幅を1/2、2/3、1/3に順次変更";
+"gHH-BV-5kP.title" = "ウインドウの幅を1/2、2/3、1/3に順次変更";
 
 /* Class = "NSMenuItem"; title = "move to adjacent on left/right, or cycle size on half"; ObjectID = "3GE-la-fAZ"; */
-"3GE-la-fAZ.title" = "ウィンドウを左右いずれかのディスプレイに移動させるか、サイズを半分にするのを繰り返す";
+"3GE-la-fAZ.title" = "ウインドウを左右いずれかのディスプレイに移動させるか、サイズを半分にするのを繰り返す";
 
 /* Class = "NSTextFieldCell"; title = "Repeated commands"; ObjectID = "2Zm-fl-PcC"; */
 "2Zm-fl-PcC.title" = "コマンドを繰り返した際の挙動";
@@ -675,7 +675,7 @@
 "7yS-wj-uWD.title" = "ToDoモードをメニューに表示";
 
 /* Class = "NSTextFieldCell"; title = "Todo application width"; ObjectID = "6e0-ji-qXw"; */
-"6e0-ji-qXw.title" = "ToDoアプリケーションのウィンドウ幅";
+"6e0-ji-qXw.title" = "ToDoアプリケーションのウインドウ幅";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo shortcut"; ObjectID = "Fx0-sm-DrT"; */
 "Fx0-sm-DrT.title" = "\"ToDoモードを再設定\"のショートカット";
@@ -706,7 +706,7 @@
 "8dv-v2-SPu.title" = "3. RectangleのメニューからToDoモードを有効にします。";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "ToDoモードのウィンドウ配置を復元するには、ToDoモードのときに、Rectangleのメニューにある\"ToDoモードを再設定\"を選択するか、指定されたキーボードショートカットを押します。";
+"q9C-qZ-xw5.title" = "ToDoモードのウインドウ配置を復元するには、ToDoモードのときに、Rectangleのメニューにある\"ToDoモードを再設定\"を選択するか、指定されたキーボードショートカットを押します。";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
 "ayu-YO-10p.title" = "ステージマネージャの最近使ったアプリケーションエリア";
@@ -734,25 +734,25 @@
 "kx2-tZ-lk8.title" = "軌跡のアニメーション";
 
 /* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
-"DHt-cE-Bl0.title" = "Toggle Todo";
+"DHt-cE-Bl0.title" = "Todoモードの切り替え";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo";
+"Fx0-sm-DrT.title" = "Todoモードを再設定";
 
 /* Class = "NSTextFieldCell"; title = "Todo side"; ObjectID = "O9a-3Q-HB1"; */
-"O9a-3Q-HB1.title" = "Todo side";
+"O9a-3Q-HB1.title" = "Todoアプリケーションの位置";
 
 /* Class = "NSMenuItem"; title = "Right"; ObjectID = "DG2-BN-GPE"; */
-"DG2-BN-GPE.title" = "Right";
+"DG2-BN-GPE.title" = "右";
 
 /* Class = "NSMenuItem"; title = "Left"; ObjectID = "mpl-sd-2Wc"; */
-"mpl-sd-2Wc.title" = "Left";
+"mpl-sd-2Wc.title" = "左";
 
-"Use as Todo Window" = "Use as Todo Window";
+"Use as Todo Window" = "Todoウインドウとして使用";
 
 /* Class = "NSButtonCell"; title = "Double-click window title bar to maximize/restore"; ObjectID = "heT-W6-Fyf"; */
-"heT-W6-Fyf.title" = "Double-click window title bar to maximize/restore";
+"heT-W6-Fyf.title" = "ウインドウのタイトルバーをダブルクリックすることで、最大化／最大化解除を行う";
 
-"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.";
+"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "Rectangleがタイトルバーのダブルクリック機能を管理するには、該当するmacOSの設定を無効にする必要があります。";
 
-"Conflict with system setting" = "Conflict with system setting";
+"Conflict with system setting" = "システム設定との競合";
