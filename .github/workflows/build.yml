@@ -21,10 +21,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Install Dependencies
-      run: |
-        pod repo update
-        pod install
     - name: Build
       run: xcodebuild -workspace "$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME" archive CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" -archivePath "$BUILD_DIR/$XCODE_ARCHIVE"
     - name: Export
