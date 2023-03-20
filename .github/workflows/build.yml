@@ -5,7 +5,7 @@ on: [push, pull_request]
 permissions: read-all
 
 env:
-  XCODE_WORKSPACE: "Rectangle.xcworkspace"
+  XCODE_PROJECT: "Rectangle.xcodeproj"
   XCODE_SCHEME: "Rectangle"
   CODE_SIGN_IDENTITY: "-"
   BUILD_DIR: "build"
