@@ -731,6 +731,6 @@ struct Shortcut: Codable {
     
     func displayString() -> String {
         let masShortcut = toMASSHortcut()
-        return masShortcut.modifierFlagsString + masShortcut.keyCodeString
+        return masShortcut.modifierFlagsString + (masShortcut.keyCodeString ?? "")
     }
 }
