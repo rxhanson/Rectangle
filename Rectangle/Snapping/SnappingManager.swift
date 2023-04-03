@@ -204,7 +204,7 @@ class SnappingManager {
                    currentRect.size == initialWindowRect?.size,
                    currentRect.origin != initialWindowRect?.origin {
   
-                    unsnapRestore(windowId: windowId)
+                    unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
                         box?.orderOut(nil)
@@ -244,7 +244,7 @@ class SnappingManager {
                 if currentRect.size == initialWindowRect?.size {
                     if currentRect.origin != initialWindowRect?.origin {
                         windowMoving = true
-                        unsnapRestore(windowId: windowId)
+                        unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
                     }
                 }
                 else {
@@ -300,14 +300,32 @@ class SnappingManager {
         }
     }
     
-    func unsnapRestore(windowId: CGWindowID) {
+    func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
         if Defaults.unsnapRestore.enabled != false {
             // if window was put there by rectangle, restore size
             if let lastRect = AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect,
                 lastRect == initialWindowRect,
                 let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 
-                windowElement?.size = restoreRect.size
+                if let windowElement = windowElement {
+                    if #available(macOS 12, *) {
+                        var newRect = currentRect
+                        newRect.size = restoreRect.size
+                        if let cursorLoc = cursorLoc {
+                            if !newRect.contains(cursorLoc) { // keep the same maxX if possible
+                                newRect.origin = CGPoint(x: currentRect.maxX - newRect.width, y: newRect.minY)
+                                
+                                if !newRect.contains(cursorLoc) { // still doesn't contain cursor
+                                    newRect.origin = CGPoint(x: cursorLoc.x - (newRect.width / 2), y: newRect.minY)
+                                }
+                            }
+                        }
+                        windowElement.setFrame(newRect)
+                    } else {
+                        windowElement.size = restoreRect.size
+                    }
+                }
+                
                 AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             } else {
                 AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
