@@ -308,7 +308,7 @@ class SnappingManager {
                 let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 
                 if let windowElement = windowElement {
-                    if #available(macOS 12, *) {
+                    if #available(macOS 12, *) { // earlier versions of macOS would stutter the reposition when dragging the window
                         var newRect = currentRect
                         newRect.size = restoreRect.size
                         if let cursorLoc = cursorLoc {
@@ -320,7 +320,7 @@ class SnappingManager {
                                 }
                             }
                         }
-                        windowElement.setFrame(newRect)
+                        windowElement.setFrame(newRect, adjustSizeFirst: false)
                     } else {
                         windowElement.size = restoreRect.size
                     }
