@@ -733,8 +733,8 @@
 "Use as Todo Window" = "Utiliser comme fenêtre Todo";
 
 /* Class = "NSButtonCell"; title = "Double-click window title bar to maximize/restore"; ObjectID = "heT-W6-Fyf"; */
-"heT-W6-Fyf.title" = "Double-click window title bar to maximize/restore";
+"heT-W6-Fyf.title" = "Double-cliquer sur la barre de titre d'une fenêtre pour maximiser/restaurer";
 
-"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.";
+"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "Pour permettre à Rectangle de gérer la fonctionnalité de double-clic sur la barre de titre d'une fenêtre, vous devez désactiver le paramètre macOS correspondant.";
 
-"Conflict with system setting" = "Conflict with system setting";
+"Conflict with system setting" = "Conflit avec le paramètre système";
