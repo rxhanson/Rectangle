@@ -173,6 +173,8 @@
 		27CF044927EFDB55001B223C /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Main.strings; sourceTree = "<group>"; };
 		27CF044A27EFDB55001B223C /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Main.strings; sourceTree = "<group>"; };
 		30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecifiedCalculation.swift; sourceTree = "<group>"; };
+		58A4658A29F0718700E6E8A5 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Main.strings; sourceTree = "<group>"; };
+		58A4658B29F0718700E6E8A5 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Main.strings; sourceTree = "<group>"; };
 		6490B39027BF907A0056C220 /* BottomLeftEighthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftEighthCalculation.swift; sourceTree = "<group>"; };
 		6490B39227BF90F90056C220 /* EighthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EighthsRepeated.swift; sourceTree = "<group>"; };
 		6490B39427BF96880056C220 /* TopLeftEighthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftEighthCalculation.swift; sourceTree = "<group>"; };
@@ -803,6 +805,7 @@
 				tr,
 				"ca-ES",
 				uk,
+				vi,
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			packageReferences = (
@@ -1035,6 +1038,7 @@
 				DCEA6A1628DB717C0051C12D /* tr */,
 				981B8112290A2968004F25BA /* ca-ES */,
 				986B6BEC29B97BF900F41F32 /* uk */,
+				58A4658B29F0718700E6E8A5 /* vi */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1067,6 +1071,7 @@
 				DCEA6A1528DB717C0051C12D /* tr */,
 				981B8111290A2968004F25BA /* ca-ES */,
 				986B6BEB29B97BF900F41F32 /* uk */,
+				58A4658A29F0718700E6E8A5 /* vi */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
