@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -4243,7 +4243,7 @@ DQ
         <image name="firstThreeFourthsTemplate" width="30" height="20"/>
         <image name="firstTwoThirdsTemplate" width="30" height="20"/>
         <image name="halfWidthCenterTemplate" width="30" height="20"/>
-        <image name="keyboardToolbarTemplate" width="72" height="72"/>
+        <image name="keyboardToolbarTemplate" width="50" height="50"/>
         <image name="lastThirdTemplate" width="30" height="20"/>
         <image name="lastThreeFourthsTemplate" width="30" height="20"/>
         <image name="lastTwoThirdsTemplate" width="30" height="20"/>
@@ -4262,7 +4262,7 @@ DQ
         <image name="restoreTemplate" width="30" height="20"/>
         <image name="rightFourthTemplate" width="30" height="20"/>
         <image name="rightHalfTemplate" width="30" height="20"/>
-        <image name="snapAreaTemplate" width="72" height="72"/>
+        <image name="snapAreaTemplate" width="48" height="44"/>
         <image name="square.and.arrow.down" width="55" height="56"/>
         <image name="square.and.arrow.up" width="55" height="56"/>
         <image name="toolbarSettingsTemplate" width="50" height="50"/>
