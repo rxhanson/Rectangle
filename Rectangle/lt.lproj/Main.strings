@@ -312,7 +312,7 @@
 "YEy-JH-Tfz.title" = "Rasti ir pakeisti…";
 
 /* Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "YGs-j5-SAR"; */
-"YGs-j5-SAR.title" = "\tПо умолчанию";
+"YGs-j5-SAR.title" = "\tPagal nutylėjimą";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "YRC-4a-xGg"; */
 "YRC-4a-xGg.title" = "Nustatymai…";
@@ -688,7 +688,7 @@
 "N2U-pY-CLq.title" = "Laikyti pasirinktą programą nuolat matomą dešinėje pagrindinio ekrano pusėje";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "1. Разместите выбранное в качестве Todo приложение на переднем плане";
+"qze-7p-m1X.title" = "1. Pirmame plane padėkite pasirinktą Todo programą";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
 "xNi-9K-fnJ.title" = "„Rectangle“ meniu pasirinkite „Naudoti [Programą] kaip Todo programą“";
