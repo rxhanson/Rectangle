@@ -673,7 +673,7 @@
 
 "Use frontmost.app as Todo App" = "Naudoti pirmame plane esantį langą kaip Todo programą";
 "Enable Todo Mode" = "Įjungti Todo programos režimą";
-"Perdėlioti Todo" = "Atnaujinti Todo lango padėtį";
+"Reflow Todo" = "Atnaujinti Todo lango padėtį";
 
 /* Class = "NSWindow"; title = "About Todo Mode"; ObjectID = "MDd-Sm-sUx"; */
 "MDd-Sm-sUx.title" = "Apie Todo režimą";
@@ -739,11 +739,11 @@
 /* Class = "NSMenuItem"; title = "Kairė"; ObjectID = "mpl-sd-2Wc"; */
 "mpl-sd-2Wc.title" = "Kairė";
 
-"Naudoti kaip Todo langą" = "Naudoti kaip Todo langą";
+"Use as Todo Window" = "Naudoti kaip Todo langą";
 
 /* Class = "NSButtonCell"; title = "Spustelėkite du kartus lango antraštės juostą, kad padidintumėte/atstatytumėte"; ObjectID = "heT-W6-Fyf"; */
 "heT-W6-Fyf.title" = "Spustelėkite du kartus lango antraštės juostą, kad padidintumėte/atstatytumėte";
 
-"Norėdami leisti „Rectangle“ valdyti antraštės juostos dvigubą spustelėjimą, turite išjungti atitinkamą „macOS“ nustatymą." = "Norėdami leisti „Rectangle“ valdyti antraštės juostos dvigubą spustelėjimą, turite išjungti atitinkamą „macOS“ nustatymą.";
+"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "Norėdami leisti „Rectangle“ valdyti antraštės juostos dvigubą spustelėjimą, turite išjungti atitinkamą „macOS“ nustatymą.";
 
-"Konfliktas su sistemos nustatymu" = "Konfliktas su sistemos nustatymu";
+"Conflict with system setting" = "Konfliktas su sistemos nustatymu";
