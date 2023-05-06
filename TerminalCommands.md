@@ -16,6 +16,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
 - [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
+- [Add additional tiling and cascading commands](#add-additional-tiling-and-cascading-commands)
 - [Modify the "footprint" displayed for drag to snap area](#modify-the-footprint-displayed-for-drag-to-snap-area)
 - [Move Up/Down/Left/Right: Don't center on edge](#move-updownleftright-dont-center-on-edge)
 - [Make Smaller limits](#make-smaller-limits)
@@ -203,6 +204,26 @@ For example, the command for setting the top left two-thirds shortcut to `ctrl o
 
 ```bash
 defaults write com.knollsoft.Rectangle topLeftThird -dict-add keyCode -float 18 modifierFlags -float 917504
+```
+
+## Add additional tiling and cascading commands
+
+Commands for tiling and cascading the visible windows are not available in the UI but can be configured via CLI.
+
+The key codes are:
+
+* tileAll
+* cascadeAll
+* cascadeActiveApp
+
+_tileAll_ and _cascadeAll_ act on all visible windows.
+
+_cascadeActiveApp_ cascades and brings to the front only windows belonging too the currently active (foremost) app, leaving all other windows alonne.
+
+For example, the command for setting the cascadeActiveApp shortcut to `ctrl shift 2` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle cascadeActiveApp -dict-add keyCode -float 2 modifierFlags -float 393475
 ```
 
 ## Modify the "footprint" displayed for drag to snap area
