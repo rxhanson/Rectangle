@@ -124,12 +124,23 @@ class MultiWindowManager {
 
         let delta = CGFloat(Defaults.cascadeAllDeltaSize.value)
 
-        for (ind, w) in windows.enumerated() {
-            if let pid = w.pid {
-                if pid == frontWindowElement.pid {
-                    cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind)
-                }
-            }
+        // keep windows with a pid equal to the front window's pid
+        var filtered = windows.filter(hasFrontWindowPid(_:))
+
+        // move the first to become the last
+        if let first = filtered.first, hasFrontWindowPid(first) {
+            filtered.removeFirst()
+            filtered.append(first)
+        }
+
+        // cascade the filtered windows
+        for (ind, w) in filtered.enumerated() {
+            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind)
+        }
+
+        // func returning true for a pid equal to the front window's pid
+        func hasFrontWindowPid(_ w: AccessibilityElement) -> Bool {
+            return w.pid == frontWindowElement.pid
         }
     }
 
