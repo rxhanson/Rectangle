@@ -82,7 +82,8 @@ enum WindowAction: Int, Codable {
     tileAll = 66,
     cascadeAll = 67,
     leftTodo = 68,
-    rightTodo = 69
+    rightTodo = 69,
+    cascadeActiveApp = 70
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -101,7 +102,8 @@ enum WindowAction: Int, Codable {
                          topLeftEighth, topCenterLeftEighth, topCenterRightEighth, topRightEighth,
                          bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
                          tileAll, cascadeAll,
-                         leftTodo, rightTodo
+                         leftTodo, rightTodo,
+                         cascadeActiveApp
     ]
 
     func post() {
@@ -202,6 +204,7 @@ enum WindowAction: Int, Codable {
         case .cascadeAll: return "cascadeAll"
         case .leftTodo: return "leftTodo"
         case .rightTodo: return "rightTodo"
+        case .cascadeActiveApp: return "cascadeActiveApp"
         }
     }
 
@@ -334,7 +337,7 @@ enum WindowAction: Int, Codable {
         case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
                 .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
             return nil
-        case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo:
+        case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
             return nil
         }
 
@@ -362,7 +365,7 @@ enum WindowAction: Int, Codable {
     
     var isDragSnappable: Bool {
         switch self {
-        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .smaller, .larger,
+        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .smaller, .larger, .cascadeActiveApp,
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
@@ -491,6 +494,7 @@ enum WindowAction: Int, Codable {
         case .cascadeAll: return NSImage()
         case .leftTodo: return NSImage()
         case .rightTodo: return NSImage()
+        case .cascadeActiveApp: return NSImage()
         }
     }
 
@@ -531,7 +535,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll, .tileAll, .cascadeAll:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
             return .none
         }
     }
