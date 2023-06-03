@@ -127,15 +127,18 @@ class MultiWindowManager {
         // keep windows with a pid equal to the front window's pid
         var filtered = windows.filter(hasFrontWindowPid(_:))
 
+        var firstSize: CGSize?
+
         // move the first to become the last
         if let first = filtered.first, hasFrontWindowPid(first) {
             filtered.removeFirst()
             filtered.append(first)
+            firstSize = first.size
         }
 
         // cascade the filtered windows
         for (ind, w) in filtered.enumerated() {
-            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind)
+            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind, size: firstSize)
         }
 
         // func returning true for a pid equal to the front window's pid
@@ -144,13 +147,17 @@ class MultiWindowManager {
         }
     }
 
-    private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int) {
+    private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int, size: CGSize? = nil) {
         var rect = w.frame
 
         // TODO: save previous position in history
 
         rect.origin.x = screenFrame.origin.x + delta * CGFloat(index)
         rect.origin.y = screenFrame.origin.y + delta * CGFloat(index)
+        if let size {
+            rect.size.width = size.width
+            rect.size.height = size.height
+        }
 
         w.setFrame(rect)
         w.bringToFront()
