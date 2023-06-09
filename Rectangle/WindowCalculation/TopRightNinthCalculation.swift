@@ -35,7 +35,7 @@ class TopRightNinthCalculation: WindowCalculation, OrientationAware, NinthsRepea
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-        rect.origin.y = visibleFrameOfScreen.maxY - (2.0 * rect.height)
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         rect.origin.x = visibleFrameOfScreen.minX + (2.0 * rect.width)
         return RectResult(rect, subAction: .topRightNinth)
     }
@@ -44,7 +44,7 @@ class TopRightNinthCalculation: WindowCalculation, OrientationAware, NinthsRepea
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-        rect.origin.y = visibleFrameOfScreen.maxY - (2.0 * rect.height)
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         rect.origin.x = visibleFrameOfScreen.minX + (2.0 * rect.width)
         return RectResult(rect, subAction: .topRightNinth)
     }
