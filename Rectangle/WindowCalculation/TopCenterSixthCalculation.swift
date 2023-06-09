@@ -44,7 +44,7 @@ class TopCenterSixthCalculation: WindowCalculation, OrientationAware {
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         rect.origin.x = visibleFrameOfScreen.minX + rect.width
-        rect.origin.y = visibleFrameOfScreen.minY + rect.height
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topCenterSixthLandscape)
     }
     
@@ -52,7 +52,7 @@ class TopCenterSixthCalculation: WindowCalculation, OrientationAware {
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-        rect.origin.y = visibleFrameOfScreen.minY + rect.height
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .leftCenterSixthPortrait)
     }
 }
@@ -64,7 +64,7 @@ class TopRightTwoSixthsCalculation: WindowCalculation, OrientationAware {
         rect.size.width = floor(visibleFrameOfScreen.width * 2.0 / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
         rect.origin.x = visibleFrameOfScreen.maxX - rect.width
-        rect.origin.y = visibleFrameOfScreen.minY + rect.height
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topRightTwoSixthsLandscape)
     }
     
@@ -84,7 +84,7 @@ class TopLeftTwoSixthsCalculation: WindowCalculation, OrientationAware {
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width * 2.0 / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        rect.origin.y = visibleFrameOfScreen.minY + rect.height
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topLeftTwoSixthsLandscape)
     }
     

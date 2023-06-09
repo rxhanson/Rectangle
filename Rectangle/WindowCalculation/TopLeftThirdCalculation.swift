@@ -35,7 +35,7 @@ class TopLeftThirdCalculation: WindowCalculation, OrientationAware, HorizontalTh
         var rect = visibleFrameOfScreen
         rect.size.width = floor(2.0 * visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        rect.origin.y = visibleFrameOfScreen.minY + visibleFrameOfScreen.height / 2.0
+        rect.origin.y = visibleFrameOfScreen.maxY - visibleFrameOfScreen.height / 2.0
         rect.origin.x = visibleFrameOfScreen.minX
         return RectResult(rect, subAction: .topLeftThird)
     }
@@ -44,7 +44,7 @@ class TopLeftThirdCalculation: WindowCalculation, OrientationAware, HorizontalTh
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(2.0 * visibleFrameOfScreen.height / 3.0)
-        rect.origin.y = visibleFrameOfScreen.minY + visibleFrameOfScreen.height / 3.0
+        rect.origin.y = visibleFrameOfScreen.maxY - visibleFrameOfScreen.height / 3.0
         rect.origin.x = visibleFrameOfScreen.minX
         return RectResult(rect, subAction: .topLeftThird)
     }
