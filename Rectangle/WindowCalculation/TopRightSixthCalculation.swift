@@ -46,7 +46,7 @@ class TopRightSixthCalculation: WindowCalculation, OrientationAware, SixthsRepea
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
         rect.origin.x = visibleFrameOfScreen.minX + rect.width
-        rect.origin.y = visibleFrameOfScreen.maxY - (rect.height * 2.0)
+        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topRightSixthPortrait)
     }
 }
