@@ -3085,8 +3085,8 @@
                                         <rect key="frame" x="0.0" y="0.0" width="450" height="20"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
-                                                <rect key="frame" x="-7" y="-7" width="191" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Restore Default Shortcuts" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uLF-Uf-tBt">
+                                                <rect key="frame" x="-7" y="-7" width="276" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Restore Default Shortcuts &amp; Snap Areas" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uLF-Uf-tBt">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
@@ -3218,7 +3218,7 @@
                 </viewController>
                 <customObject id="c9e-yT-Dp7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="415" y="1316"/>
+            <point key="canvasLocation" x="415" y="1330"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="lEt-lj-rQC">
@@ -4243,7 +4243,7 @@ DQ
         <image name="firstThreeFourthsTemplate" width="30" height="20"/>
         <image name="firstTwoThirdsTemplate" width="30" height="20"/>
         <image name="halfWidthCenterTemplate" width="30" height="20"/>
-        <image name="keyboardToolbarTemplate" width="50" height="50"/>
+        <image name="keyboardToolbarTemplate" width="72" height="72"/>
         <image name="lastThirdTemplate" width="30" height="20"/>
         <image name="lastThreeFourthsTemplate" width="30" height="20"/>
         <image name="lastTwoThirdsTemplate" width="30" height="20"/>
@@ -4262,7 +4262,7 @@ DQ
         <image name="restoreTemplate" width="30" height="20"/>
         <image name="rightFourthTemplate" width="30" height="20"/>
         <image name="rightHalfTemplate" width="30" height="20"/>
-        <image name="snapAreaTemplate" width="48" height="44"/>
+        <image name="snapAreaTemplate" width="72" height="72"/>
         <image name="square.and.arrow.down" width="55" height="56"/>
         <image name="square.and.arrow.up" width="55" height="56"/>
         <image name="toolbarSettingsTemplate" width="50" height="50"/>

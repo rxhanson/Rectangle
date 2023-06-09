@@ -86,14 +86,17 @@ class SnapAreaViewController: NSViewController {
         loadSnapAreas()
         showHidePortrait()
         
-        Notification.Name.configImported.onPost(using: {_ in
-            self.loadSnapAreas()
+        Notification.Name.configImported.onPost(using: { [weak self] _ in
+            self?.loadSnapAreas()
         })
-        Notification.Name.appWillBecomeActive.onPost() { _ in
-            self.showHidePortrait()
+        Notification.Name.defaultSnapAreas.onPost(using: { [weak self] _ in
+            self?.loadSnapAreas()
+        })
+        Notification.Name.appWillBecomeActive.onPost() { [weak self] _ in
+            self?.showHidePortrait()
         }
-        NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: nil) { _ in
-            self.showHidePortrait()
+        NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: nil) { [weak self] _ in
+            self?.showHidePortrait()
         }
     }
     
@@ -126,8 +129,8 @@ class SnapAreaViewController: NSViewController {
             bottomRightPortraitSelect
         ]
         
-        landscapeSelects.forEach { self.configure(select: $0, orientation: .landscape)}
-        portraitSelects.forEach { self.configure(select: $0, orientation: .portrait)}
+        landscapeSelects.forEach { configure(select: $0, orientation: .landscape)}
+        portraitSelects.forEach { configure(select: $0, orientation: .portrait)}
     }
     
     private func configure(select: NSPopUpButton, orientation: DisplayOrientation) {

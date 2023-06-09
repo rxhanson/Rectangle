@@ -473,7 +473,7 @@
 /* Class = "NSTextFieldCell"; title = "Check Rectangle.app"; ObjectID = "t7n-mU-75I"; */
 "t7n-mU-75I.title" = "Rectangle.app'ı işaretleyerek izin verin";
 
-/* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
+/* Class = "NSButtonCell"; title = "Restore Default Shortcuts & Snap Areas"; ObjectID = "uLF-Uf-tBt"; */
 "uLF-Uf-tBt.title" = "Varsayılan kısayolları geri yükle";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */

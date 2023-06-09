@@ -506,7 +506,7 @@
 /* Class = "NSMenu"; title = "Kern"; ObjectID = "tlD-Oa-oAM"; */
 "tlD-Oa-oAM.title" = "カーニング";
 
-/* Class = "NSButtonCell"; title = "Restore Default Shortcuts"; ObjectID = "uLF-Uf-tBt"; */
+/* Class = "NSButtonCell"; title = "Restore Default Shortcuts & Snap Areas"; ObjectID = "uLF-Uf-tBt"; */
 "uLF-Uf-tBt.title" = "ショートカットを初期化";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */

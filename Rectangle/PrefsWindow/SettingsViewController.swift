@@ -160,6 +160,7 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
+        // Ask user if they want to restore to Rectangle or Spectacle defaults
         let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
         let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
         let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
@@ -167,12 +168,18 @@ class SettingsViewController: NSViewController {
         let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
         if response == .alertThirdButtonReturn { return }
 
+        //  Restore default shortcuts
         WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
         let rectangleDefaults = response == .alertFirstButtonReturn
         if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
             Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
             Notification.Name.changeDefaults.post()
         }
+        
+        // Restore snap areas
+        Defaults.portraitSnapAreas.typedValue = nil
+        Defaults.landscapeSnapAreas.typedValue = nil
+        Notification.Name.defaultSnapAreas.post()
     }
     
     @IBAction func exportConfig(_ sender: NSButton) {
