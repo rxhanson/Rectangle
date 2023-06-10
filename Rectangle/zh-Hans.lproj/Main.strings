@@ -266,7 +266,7 @@
 "t7n-mU-75I.title" = "启用 Rectangle.app";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts & Snap Areas"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "恢复默认快捷键";
+"uLF-Uf-tBt.title" = "恢复默认快捷键和吸附区域";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
