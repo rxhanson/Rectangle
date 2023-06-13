@@ -218,7 +218,7 @@ The key codes are:
 
 _tileAll_ and _cascadeAll_ act on all visible windows.
 
-_cascadeActiveApp_ cascades and brings to the front only windows belonging too the currently active (foremost) app, leaving all other windows alonne.
+_cascadeActiveApp_ cascades and brings to the front only windows belonging too the currently active (foremost) app, leaving all other windows alone.
 
 For example, the command for setting the cascadeActiveApp shortcut to `ctrl shift 2` would be:
 
