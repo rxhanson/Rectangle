@@ -26,13 +26,13 @@
 "4J7-dP-txa.title" = "進入全螢幕";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "4sb-4s-VLi"; */
-"4sb-4s-VLi.title" = "結束Rectangle";
+"4sb-4s-VLi.title" = "結束 Rectangle";
 
 /* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
 "5QF-Oa-p0T.title" = "編輯";
 
 /* Class = "NSMenuItem"; title = "About Rectangle"; ObjectID = "5kV-Vb-QxS"; */
-"5kV-Vb-QxS.title" = "關於Rectangle";
+"5kV-Vb-QxS.title" = "關於 Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "Maximize Height"; ObjectID = "6DV-cd-fda"; */
 "6DV-cd-fda.title" = "將高度放到最大";
@@ -53,13 +53,13 @@
 "8oe-J2-oUU.title" = "放到最大";
 
 /* Class = "NSWindow"; title = "Authorize Rectangle"; ObjectID = "9JD-tZ-7jf"; */
-"9JD-tZ-7jf.title" = "授權Rectangle";
+"9JD-tZ-7jf.title" = "授權 Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "If the checkbox is disabled, click the padlock and enter your password"; ObjectID = "9XM-Zb-HEb"; */
-"9XM-Zb-HEb.title" = "如果註記框已停用，按一下鎖頭圖像，然後輸入您的密碼";
+"9XM-Zb-HEb.title" = "如果註記框已停用，按一下鎖頭圖示，然後輸入您的密碼";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "A66-A4-cGD"; */
-"A66-A4-cGD.title" = "結束Rectangle";
+"A66-A4-cGD.title" = "結束 Rectangle";
 
 /* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
 "AYu-sK-qS6.title" = "主選單";
@@ -68,10 +68,10 @@
 "BOF-NM-1cW.title" = "偏好設定⋯";
 
 /* Class = "NSTextFieldCell"; title = "Restore"; ObjectID = "C9v-g0-DH8"; */
-"C9v-g0-DH8.title" = "回復";
+"C9v-g0-DH8.title" = "復原";
 
 /* Class = "NSMenuItem"; title = "Ignore frontmost.app"; ObjectID = "D99-0O-MB6"; */
-"D99-0O-MB6.title" = "忽略frontmost.app";
+"D99-0O-MB6.title" = "忽略 frontmost.app";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "DVo-aG-piG"; */
 "DVo-aG-piG.title" = "關閉";
@@ -89,13 +89,13 @@
 "F8S-GI-LiB.title" = "右半";
 
 /* Class = "NSMenuItem"; title = "Rectangle Help"; ObjectID = "FKE-Sm-Kum"; */
-"FKE-Sm-Kum.title" = "Rectangle輔助說明";
+"FKE-Sm-Kum.title" = "Rectangle 輔助說明";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
 "H8h-7b-M4v.title" = "顯示方式";
 
 /* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "HIK-3r-i7E"; */
-"HIK-3r-i7E.title" = "檢查更新項目⋯";
+"HIK-3r-i7E.title" = "檢查更新⋯";
 
 /* Class = "NSTextFieldCell"; title = "Move Up"; ObjectID = "HOm-BV-2jc"; */
 "HOm-BV-2jc.title" = "上移";
@@ -128,7 +128,7 @@
 "OY7-WF-poV.title" = "縮到最小";
 
 /* Class = "NSMenuItem"; title = "Hide Rectangle"; ObjectID = "Olw-nP-bQN"; */
-"Olw-nP-bQN.title" = "隱藏Rectangle";
+"Olw-nP-bQN.title" = "隱藏 Rectangle";
 
 /* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
 "OwM-mh-QMV.title" = "尋找上一個";
@@ -143,7 +143,7 @@
 "S0p-oC-mLd.title" = "跳至所選範圍";
 
 /* Class = "NSWindow"; title = "Rectangle Preferences"; ObjectID = "STb-JK-oB1"; */
-"STb-JK-oB1.title" = "Rectangle偏好設定";
+"STb-JK-oB1.title" = "Rectangle 偏好設定";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
 "Td7-aD-5lo.title" = "視窗";
@@ -221,7 +221,7 @@
 "gtf-PD-IHm.label" = "設定";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangle需要您的許可來控制視窗位置。";
+"gyg-xl-dPn.title" = "Rectangle 需要您的許可來控制視窗位置。";
 
 /* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
 "hz9-B4-Xy5.title" = "服務";
@@ -230,7 +230,7 @@
 "iWV-c2-BJD.title" = "打開系統偏好設定";
 
 /* Class = "NSTextFieldCell"; title = "Authorize Rectangle"; ObjectID = "iXo-XL-T6q"; */
-"iXo-XL-T6q.title" = "授權Rectangle";
+"iXo-XL-T6q.title" = "授權 Rectangle";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "jxe-nr-LDQ"; */
 "jxe-nr-LDQ.title" = "關於";
@@ -239,7 +239,7 @@
 "lgE-cR-cQ5.title" = "前往 系統偏好設定 → 安全性與隱私權 → 隱私權 → 輔助使用";
 
 /* Class = "NSTextFieldCell"; title = "When the menu bar icon is hidden, relaunch Rectangle from Finder to open"; ObjectID = "ltc-mf-BHr"; */
-"ltc-mf-BHr.title" = "選單列圖像被隱藏時，從Finder重新啟動Rectangle來打開。";
+"ltc-mf-BHr.title" = "選單列圖示被隱藏時，從 Finder 重新啟動 Rectangle 來打開。";
 
 /* Class = "NSButtonCell"; title = "Remove keyboard shortcut restrictions"; ObjectID = "n4U-FC-L9s"; */
 "n4U-FC-L9s.title" = "移除鍵盤快速鍵限制";
@@ -254,7 +254,7 @@
 "q09-fT-Sye.title" = "尋找下一個";
 
 /* Class = "NSButtonCell"; title = "Hide menu bar icon"; ObjectID = "qlg-kC-FMr"; */
-"qlg-kC-FMr.title" = "隱藏選單列圖像";
+"qlg-kC-FMr.title" = "隱藏選單列圖示";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
 "rmV-YD-Hzj.title" = "自動檢查更新項目";
@@ -263,10 +263,10 @@
 "rzr-Qq-702.title" = "右移";
 
 /* Class = "NSTextFieldCell"; title = "Enable Rectangle.app"; ObjectID = "t7n-mU-75I"; */
-"t7n-mU-75I.title" = "啟用Rectangle.app";
+"t7n-mU-75I.title" = "啟用 Rectangle.app";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts & Snap Areas"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "回復預設快速鍵";
+"uLF-Uf-tBt.title" = "復原預設快速鍵";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
@@ -287,10 +287,10 @@
 "x3v-GG-iWU.title" = "拷貝";
 
 /* Class = "NSMenuItem"; title = "Quit Rectangle"; ObjectID = "yvN-PE-bxn"; */
-"yvN-PE-bxn.title" = "結束Rectangle";
+"yvN-PE-bxn.title" = "結束 Rectangle";
 
 /* Class = "NSTextFieldCell"; title = "Welcome to Rectangle!"; ObjectID = "kYm-Ye-gOR"; */
-"kYm-Ye-gOR.title" = "歡迎使用Rectangle！";
+"kYm-Ye-gOR.title" = "歡迎使用 Rectangle！";
 
 /* Class = "NSTextFieldCell"; title = "Please select your default shortcuts and behavior"; ObjectID = "gEd-S9-Cfp"; */
 "gEd-S9-Cfp.title" = "請選擇您的預設快速鍵與行為";
@@ -299,10 +299,10 @@
 "HOp-Kd-vhY.title" = "建議";
 
 /* Class = "NSTextFieldCell"; title = "Spectacle shortcuts are more likely to conflict with other shortcuts"; ObjectID = "kXi-dT-zSF"; */
-"kXi-dT-zSF.title" = "Spectacle快速鍵更可能與其他快速鍵相衝突";
+"kXi-dT-zSF.title" = "Spectacle 快速鍵更可能與其他快速鍵相衝突";
 
 /* Class = "NSTextFieldCell"; title = "Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts"; ObjectID = "xcE-uL-2J0"; */
-"xcE-uL-2J0.title" = "如果選擇Spectacle，重複快速鍵也會循環½、⅔、⅓視窗寬度";
+"xcE-uL-2J0.title" = "如果選擇 Spectacle，重複快速鍵也會循環½、⅔、⅓視窗寬度";
 
 /* Class = "NSWindow"; title = "Welcome!"; ObjectID = "HtH-yF-lBR"; */
 "HtH-yF-lBR.title" = "歡迎！";
@@ -347,7 +347,7 @@
 "m2F-eA-g7w.title" = "右下１／６";
 
 /* Class = "NSButtonCell"; title = "Restore window size when unsnapped"; ObjectID = "UZP-5q-D5Y"; */
-"UZP-5q-D5Y.title" = "結束貼齊時回復視窗大小";
+"UZP-5q-D5Y.title" = "結束貼齊時復原視窗大小";
 
 /* Class = "NSTextFieldCell"; title = "Gaps between windows"; ObjectID = "bg9-nw-YvU"; */
 "bg9-nw-YvU.title" = "視窗間空隙";
@@ -401,16 +401,16 @@
 "N2U-pY-CLq.title" = "在主螢幕右側始終顯示所選擇的應用程式";
 
 /* Class = "NSTextFieldCell"; title = "1. Bring your chosen todo application frontmost"; ObjectID = "qze-7p-m1X"; */
-"qze-7p-m1X.title" = "⒈將您選擇的待辦應用移至最前";
+"qze-7p-m1X.title" = "⒈ 將您選擇的待辦應用程式移至最前";
 
 /* Class = "NSTextFieldCell"; title = "2. In the Rectangle menu, select\n\"Use [Application] as Todo App\""; ObjectID = "xNi-9K-fnJ"; */
-"xNi-9K-fnJ.title" = "⒉在Rectangle選單中，選擇\n「使用［應用程式］作為待辦應用」";
+"xNi-9K-fnJ.title" = "⒉ 在 Rectangle 選單中，選擇\n「使用［應用程式］作為待辦應用程式」";
 
 /* Class = "NSTextFieldCell"; title = "3. In the Rectangle menu, enable Todo Mode."; ObjectID = "8dv-v2-SPu"; */
-"8dv-v2-SPu.title" = "⒊在Rectangle選單中，啟用待辦模式。";
+"8dv-v2-SPu.title" = "⒊ 在 Rectangle 選單中，啟用待辦模式。";
 
 /* Class = "NSTextFieldCell"; title = "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."; ObjectID = "q9C-qZ-xw5"; */
-"q9C-qZ-xw5.title" = "在待辦模式下，若要重新整理待辦模式佈局，您可以從Rectangle選單中選擇「重新排列待辦」，或使用相應的鍵盤快速鍵";
+"q9C-qZ-xw5.title" = "在待辦模式下，若要重新整理待辦模式佈局，您可以從 Rectangle 選單中選擇「重新排列待辦」，或使用相應的鍵盤快速鍵";
 
 /* Class = "NSTextFieldCell"; title = "Stage Manager recent apps area"; ObjectID = "ayu-YO-10p"; */
 "ayu-YO-10p.title" = "「幕前調度」最近使用過的應用程式區域";
@@ -440,7 +440,7 @@
 "Default Shortcuts" = "預設快速鍵";
 "Currently using: " = "目前正在使用：";
 "Cancel" = "取消";
-"Use frontmost.app as Todo App" = "使用frontmost.app作為待辦應用";
+"Use frontmost.app as Todo App" = "使用 frontmost.app 作為待辦應用程式";
 "Enable Todo Mode" = "啟用待辦模式";
 "Reflow Todo" = "重新排列待辦";
 "Left half, top/bottom half near corners" = "左半，靠近角落則上半／下半";
@@ -455,28 +455,28 @@
 "Open System Settings" = "開啟系統設定";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "動畫";
 
 /* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
-"DHt-cE-Bl0.title" = "Toggle Todo";
+"DHt-cE-Bl0.title" = "切換待辦模式";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo"; ObjectID = "Fx0-sm-DrT"; */
-"Fx0-sm-DrT.title" = "Reflow Todo";
+"Fx0-sm-DrT.title" = "重新排列待辦";
 
 /* Class = "NSTextFieldCell"; title = "Todo side"; ObjectID = "O9a-3Q-HB1"; */
-"O9a-3Q-HB1.title" = "Todo side";
+"O9a-3Q-HB1.title" = "待辦方向";
 
 /* Class = "NSMenuItem"; title = "Right"; ObjectID = "DG2-BN-GPE"; */
-"DG2-BN-GPE.title" = "Right";
+"DG2-BN-GPE.title" = "右側";
 
 /* Class = "NSMenuItem"; title = "Left"; ObjectID = "mpl-sd-2Wc"; */
-"mpl-sd-2Wc.title" = "Left";
+"mpl-sd-2Wc.title" = "左側";
 
-"Use as Todo Window" = "Use as Todo Window";
+"Use as Todo Window" = "做為待辦視窗";
 
 /* Class = "NSButtonCell"; title = "Double-click window title bar to maximize/restore"; ObjectID = "heT-W6-Fyf"; */
-"heT-W6-Fyf.title" = "Double-click window title bar to maximize/restore";
+"heT-W6-Fyf.title" = "連按兩下視窗標題列來最大化/復原";
 
-"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.";
+"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "若要讓 Rectangle 管理標題列連點功能，您需要停用對應的 macOS 設定。";
 
-"Conflict with system setting" = "Conflict with system setting";
+"Conflict with system setting" = "與系統設定衝突";
