@@ -10,7 +10,7 @@ import Foundation
 class WindowUtil {
     private static var windowListCache = TimeoutCache<[CGWindowID]?, [WindowInfo]>(timeout: 100)
     
-    static func getWindowList(_ ids: [CGWindowID]? = nil) -> [WindowInfo] {
+    static func getWindowList(ids: [CGWindowID]? = nil, all: Bool = false) -> [WindowInfo] {
         if let infos = windowListCache[ids] { return infos }
         var infos = [WindowInfo]()
         var array: CFArray?
@@ -22,7 +22,7 @@ class WindowUtil {
             let ids = CFArrayCreate(kCFAllocatorDefault, ptr, ids.count, nil)
             array = CGWindowListCreateDescriptionFromArray(ids)
         } else {
-            array = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
+            array = CGWindowListCopyWindowInfo([all ? .optionAll : .optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
         }
         if let array = array {
             let count = array.getCount()
@@ -31,8 +31,9 @@ class WindowUtil {
                 let id = dictionary.getValue(kCGWindowNumber) as CFNumber
                 let frame = (dictionary.getValue(kCGWindowBounds) as CFDictionary).toRect()
                 let pid = dictionary.getValue(kCGWindowOwnerPID) as CFNumber
+                let processName = dictionary.getValue(kCGWindowOwnerName) as CFString
                 if let frame = frame {
-                    let info = WindowInfo(id: id as! CGWindowID, frame: frame, pid: pid as! pid_t)
+                    let info = WindowInfo(id: CGWindowID(truncating: id), frame: frame, pid: pid_t(truncating: pid), processName: String(processName))
                     infos.append(info)
                 }
             }
@@ -46,5 +47,5 @@ struct WindowInfo {
     let id: CGWindowID
     let frame: CGRect
     let pid: pid_t
-    var bundleIdentifier: String? { NSRunningApplication(processIdentifier: pid)?.bundleIdentifier }
+    let processName: String
 }

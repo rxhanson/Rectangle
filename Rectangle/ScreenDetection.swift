@@ -130,7 +130,7 @@ extension NSScreen {
         var newFrame = visibleFrame
         
         if !ignoreStage && Defaults.stageSize.value > 0 {
-            if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.getStageStripWindowGroups().count > 0 {
+            if StageUtil.stageCapable && StageUtil.stageEnabled && StageUtil.stageStripShow && StageUtil.isStageStripVisible(self) {
                 let stageSize = Defaults.stageSize.value < 1
                     ? newFrame.size.width * Defaults.stageSize.cgFloat
                     : Defaults.stageSize.cgFloat
