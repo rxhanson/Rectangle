@@ -155,7 +155,10 @@ class AccessibilityElement {
     }
     
     func getChildElements(_ role: NSAccessibility.Role) -> [AccessibilityElement]? {
-        return childElements?.filter { $0.role == role }
+        guard let elements = (childElements?.filter { $0.role == role }), elements.count > 0 else {
+            return nil
+        }
+        return elements
     }
     
     func getChildElement(_ subrole: NSAccessibility.Subrole) -> AccessibilityElement? {
@@ -163,7 +166,10 @@ class AccessibilityElement {
     }
     
     func getChildElements(_ subrole: NSAccessibility.Subrole) -> [AccessibilityElement]? {
-        return childElements?.filter { $0.subrole == subrole }
+        guard let elements = (childElements?.filter { $0.subrole == subrole }), elements.count > 0 else {
+            return nil
+        }
+        return elements
     }
     
     var windowId: CGWindowID? {
@@ -291,7 +297,7 @@ extension AccessibilityElement {
     }
     
     private static func getWindowInfo(_ location: CGPoint) -> WindowInfo? {
-        let infos = WindowUtil.getWindowList().filter { !["com.apple.dock", "com.apple.WindowManager"].contains($0.bundleIdentifier) }
+        let infos = WindowUtil.getWindowList().filter { !["Dock", "WindowManager"].contains($0.processName) }
         if let info = (infos.first { $0.frame.contains(location) }) {
             return info
         }
@@ -336,7 +342,7 @@ extension AccessibilityElement {
     }
     
     static func getWindowElement(_ windowId: CGWindowID) -> AccessibilityElement? {
-        guard let pid = WindowUtil.getWindowList([windowId]).first?.pid else { return nil }
+        guard let pid = WindowUtil.getWindowList(ids: [windowId]).first?.pid else { return nil }
         return AccessibilityElement(pid).windowElements?.first { $0.windowId == windowId }
     }
     
@@ -356,7 +362,7 @@ class StageWindowAccessibilityElement: AccessibilityElement {
     
     override var frame: CGRect {
         let frame = super.frame
-        guard !frame.isNull, let windowId = windowId, let info = WindowUtil.getWindowList([windowId]).first else { return frame }
+        guard !frame.isNull, let windowId = windowId, let info = WindowUtil.getWindowList(ids: [windowId]).first else { return frame }
         return .init(origin: info.frame.origin, size: frame.size)
     }
     

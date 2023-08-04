@@ -15,7 +15,10 @@ extension CGPoint {
 
 extension CGRect {
     var screenFlipped: CGRect {
-        .init(origin: .init(x: origin.x, y: NSScreen.screens[0].frame.maxY - maxY), size: size)
+        guard !isNull else {
+            return self
+        }
+        return .init(origin: .init(x: origin.x, y: NSScreen.screens[0].frame.maxY - maxY), size: size)
     }
 
     var isLandscape: Bool { width > height }
