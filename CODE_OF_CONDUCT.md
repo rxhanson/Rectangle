@@ -1,76 +1,51 @@
-# Contributor Covenant Code of Conduct
+# شروط المساهمين في السلوك
 
-## Our Pledge
+## عهدنا
 
-In the interest of fostering an open and welcoming environment, we as
-contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, sex characteristics, gender identity and expression,
-level of experience, education, socio-economic status, nationality, personal
-appearance, race, religion, or sexual identity and orientation.
+نتعهد بتوفير بيئة مفتوحة ومرحبة، حيث نعمل على جعل مشاركتك في مشروعنا ومجتمعنا تجربة خالية من التحرش للجميع، بغض النظر عن العمر، وحجم الجسم، والإعاقة، والعرق، وسمات الجنس، والهوية والتعبير الجنسي، ومستوى الخبرة، والتعليم، والحالة الاقتصادية، والجنسية، والمظهر الشخصي، والعرق، والدين، أو الهوية والتوجه الجنسي.
 
-## Our Standards
+## معاييرنا
 
-Examples of behavior that contributes to creating a positive environment
-include:
+أمثلة على السلوك الذي يساهم في خلق بيئة إيجابية تشمل:
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+* استخدام لغة ترحيبية وشاملة
+* احترام وجهات النظر والتجارب المختلفة
+* قبول النقد البناء بأناقة
+* التركيز على ما هو أفضل للمجتمع
+* إظهار التعاطف تجاه أعضاء المجتمع الآخرين
 
-Examples of unacceptable behavior by participants include:
+أمثلة على السلوك غير المقبول من المشاركين تشمل:
 
-* The use of sexualized language or imagery and unwelcome sexual attention or
- advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
- address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
- professional setting
+* استخدام لغة جنسية أو صور جنسية وتوجيه انتباه جنسي غير مرحب به أو متطور
+* الاستهزاء، والتعليقات المهينة/الاستخفافية، والهجمات الشخصية أو السياسية
+* التحرش العام أو الخاص
+* نشر معلومات خاصة للآخرين، مثل العنوان البدني أو الإلكتروني، بدون إذن واضح
+* سلوك آخر يمكن اعتباره غير مناسب في بيئة مهنية
 
-## Our Responsibilities
+## مسؤولياتنا
 
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
+تتحمل أطراف الصيانة المسؤولية عن توضيح معايير السلوك المقبول ومن المتوقع أن يتخذوا إجراءات تصحيحية مناسبة وعادلة رداً على أي حالات من سوء السلوك.
 
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
+لدى أطراف الصيانة الحق والمسؤولية لإزالة أو تعديل أو رفض التعليقات أو التعهدات أو الكود أو تعديلات الويكي أو المسائل الأخرى التي لا تتماشى مع هذا الميثاق، أو حظر أي مساهم مؤقتًا أو دائمًا بسبب سلوك آخر يرونه غير مناسبًا، مهددًا، مسيئًا أو ضار.
 
-## Scope
+## نطاق التطبيق
 
-This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.
+ينطبق هذا الميثاق على المساحات الداخلية للمشروع وفي الأماكن العامة عندما يمثل الفرد المشروع أو مجتمعه. أمثلة على تمثيل مشروع أو مجتمع تتضمن استخدام عنوان بريد إلكتروني رسمي للمشروع، أو النشر عبر حساب رسمي على وسائل التواصل الاجتماعي، أو التصرف كممثل معين في حدث عبر الإنترنت أو خارجه. قد يتم تحديد وتوضيح تمثيل مشروع بواسطة أطراف الصيانة.
 
-## Enforcement
+## تنفيذ
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at ryan@ryanhanson.dev. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
+يمكن الإبلاغ عن حالات السلوك المسيء، المضايق، أو الغير مقبول بغيرها، عن طريق التواصل مع فريق المشروع عبر البريد الإلكتروني التالي: ryan@ryanhanson.dev. سيتم مراجعة وتحقيق جميع الشكاوى وستؤدي إلى رد يعتبر ضروريًا ومناسبًا حسب الظروف. يتعين على فريق المشروع الالتزام بالحفاظ على سرية مبلغ الحادث.
 
-Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership.
+قد يتم مشاركة تفاصيل أكثر عن سياسات التنفيذ المحددة بشكل منفصل.
 
-## Attribution
+يمكن لأطراف الصيانة الذين لا يتبعون أو يفرضون ميثاق السلوك بحسن نية مواجهة عواقب مؤقتة أو دائمة تحددها أعضاء آخرون من قي
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
+ادة المشروع.
 
-[homepage]: https://www.contributor-covenant.org
+## نسبة
 
-For answers to common questions about this code of conduct, see
-https://www.contributor-covenant.org/faq
+هذا الميثاق معدل من [كوفنانت المساهمين][الصفحة الرئيسية]، الإصدار 1.4، المتاح على https://www.contributor-covenant.org/version/1/4/code-of-conduct.html
+
+[الصفحة الرئيسية]: https://www.contributor-covenant.org
+
+للإجابة عن الأسئلة الشائعة حول ميثاق السلوك هذا، يمكنك زيارة: https://www.contributor-covenant.org/faq
