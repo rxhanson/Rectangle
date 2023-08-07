@@ -81,6 +81,7 @@ class Defaults {
     static let missionControlDraggingDisallowedDuration = IntDefault(key: "missionControlDraggingDisallowedDuration", defaultValue: 250)
     static let doubleClickTitleBar = IntDefault(key: "doubleClickTitleBar")
     static let doubleClickTitleBarRestore = OptionalBoolDefault(key: "doubleClickTitleBarRestore")
+    static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -151,6 +152,9 @@ class Defaults {
         footprintAnimationDurationMultiplier,
         missionControlDraggingAllowedOffscreenDistance,
         missionControlDraggingDisallowedDuration,
+        doubleClickTitleBar,
+        doubleClickTitleBarRestore,
+        ignoreDragSnapToo,
     ]
 }
 

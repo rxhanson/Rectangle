@@ -67,11 +67,16 @@ class SnappingManager {
     func frontAppChanged(notification: Notification) {
         if applicationToggle.shortcutsDisabled {
             DispatchQueue.main.async {
-                for id in self.fullIgnoreIds {
-                    if self.applicationToggle.frontAppId?.starts(with: id) == true {
-                        self.allowListening = false
-                        self.toggleListening()
-                        break
+                if !Defaults.ignoreDragSnapToo.userDisabled {
+                    self.allowListening = false
+                    self.toggleListening()
+                } else {
+                    for id in self.fullIgnoreIds {
+                        if self.applicationToggle.frontAppId?.starts(with: id) == true {
+                            self.allowListening = false
+                            self.toggleListening()
+                            break
+                        }
                     }
                 }
             }

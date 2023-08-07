@@ -57,6 +57,9 @@ class ApplicationToggle: NSObject {
         if !self.shortcutsDisabled {
             self.shortcutsDisabled = true
             self.shortcutManager.unbindShortcuts()
+            if !Defaults.ignoreDragSnapToo.userDisabled {
+                Notification.Name.windowSnapping.post(object: false)
+            }
         }
     }
     
@@ -64,6 +67,9 @@ class ApplicationToggle: NSObject {
         if self.shortcutsDisabled {
             self.shortcutsDisabled = false
             self.shortcutManager.bindShortcuts()
+            if !Defaults.ignoreDragSnapToo.userDisabled {
+                Notification.Name.windowSnapping.post(object: true)
+            }
         }
     }
 
