@@ -1,129 +1,127 @@
-# أوامر Rectangle في Terminal لتفضيلات مخفية
+# Rectangle Terminal Commands for Hidden Preferences
 
-نافذة التفضيلات مُصمّمة بشكل ضيّق عمدًا، لكن هناك الكثير من التعديلات التي يمكن إجراؤها عبر Terminal. بعد تنفيذ أمر Terminal، قم بإعادة تشغيل التطبيق حيث تُحمل هذه القيم عند بدء تشغيل التطبيق. بالنسبة لـ Rectangle Pro، يُرجى استبدال `com.knollsoft.Rectangle` بـ `com.knollsoft.Hookshot` في الأوامر التالية.
+The preferences window is purposefully slim, but there's a lot that can be modified via Terminal. After executing a terminal command, restart the app as these values are loaded on application startup. For Rectangle Pro, please replace `com.knollsoft.Rectangle` with `com.knollsoft.Hookshot` for the following commands.
 
-## المحتويات
+## Contents
 
-- [أوامر Rectangle في Terminal لتفضيلات مخفية](#أوامر-rectangle-في-terminal-لتفضيلات-مخفية)
-  - [المحتويات](#المحتويات)
-  - [اختصارات لوحة المفاتيح](#اختصارات-لوحة-المفاتيح)
-  - [ضبط السلوك على الأوامر المكررة](#ضبط-السلوك-على-الأوامر-المكررة)
-  - [التبديل بين الثُلثين في حالة تكرار أوامر التوسيط النصفي](#التبديل-بين-الثُلثين-في-حالة-تكرار-أوامر-التوسيط-النصفي)
-  - [تغيير الحجم عند التحرك باتجاه](#تغيير-الحجم-عند-التحرك-باتجاه)
-  - [ضبط حجم macOS Ventura Stage Manager](#ضبط-حجم-macos-ventura-stage-manager)
-  - [تمكين وضع المهام (Todo Mode)](#تمكين-وضع-المهام-todo-mode)
-  - [السماح بالسحب للتثبيت عند ضغط مفاتيح الموديفاير](#السماح-بالسحب-للتثبيت-عند-ضغط-مفاتيح-الموديفاير)
-  - [التكبير الشبه كامل (Almost Maximize)](#التكبير-الشبه-كامل-almost-maximize)
-  - [إضافة أمر توسيط إضافي بحجم مخصص](#إضافة-أمر-توسيط-إضافي-بحجم-مخصص)
-  - [إضافة أوامر تحجيم إضافية للتسعثات](#إضافة-أوامر-تحجيم-إضافية-للتسعثات)
-  - [إضافة أوامر تحجيم إضافية للثمانيات](#إضافة-أوامر-تحجيم-إضافية-للثمانيات)
-  - [إضافة أوامر تحجيم إضافية للثُلثيات](#إضافة-أوامر-تحجيم-إضافية-للثُلثيات)
-  - [تعديل "مظهر البصمة" المعروضة للسحب لمنطقة الرصف](#تعديل-مظهر-البصمة-المعروضة-للسحب-لمنطقة-الرصف)
-  - [التحرك لأعلى / لأسفل / لليسار / لليمين: عدم التركيز على الحافة](#التحرك-لأعلى--لأسفل--لليسار--لليمين-عدم-التركيز-على-الحافة)
-  - [تحديد حدود الحجم الأدنى](#تحديد-حدود-الحجم-الأدنى)
-  - [حجم الزيادة / الانقاص للتكبير والتصغير](#حجم-الزيادة--الانقاص-للتكبير-والتصغير)
-  - [تصغير / تكبير النوافذ مع حواش فارغة](#تصغير--تكبير-النوافذ-مع-حواش-فارغة)
-  - [تعطيل استعادة النافذة عند نقلها](#تعطيل-استعادة-النافذة-عند-نقلها)
-  - [تغيير الهوامش لمناطق الرصف](#تغيير-الهوامش-لمناطق-الرصف)
-  - [تعيين حواش عند حواف الشاشة](#تعيين-حواش-عند-حواف-الشاشة)
-  - [تجاهل مناطق السحب المحددة للرصف](#تجاهل-مناطق-السحب-المحددة-للرصف)
-  - [تعطيل الحواش عند التكبير](#تعطيل-الحواش-عند-التكبير)
-  - [تمكين مناطق الرصف للأسدس](#تمكين-مناطق-الرصف-للأسدس)
-  - [نقل المؤشر مع النافذة](#نقل-المؤشر-مع-النافذة)
-  - [منع النافذة التي يتم سحبها بسرعة فوق شريط القوائم من الانتقال إلى مركز التح](#منع-النافذة-التي-يتم-سحبها-بسرعة-فوق-شريط-القوائم-من-الانتقال-إلى-مركز-التح)
-  - [تغيير سلوك النقر المزدوج على شريط عنوان النافذة](#تغيير-سلوك-النقر-المزدوج-على-شريط-عنوان-النافذة)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Adjust Behavior on Repeated Commands](#adjust-behavior-on-repeated-commands)
+- [Cycle thirds on repeated Center Half commands](#cycle-thirds-on-repeated-center-half-commands)
+- [Resize on Directional Move](#resize-on-directional-move)
+- [Adjust macOS Ventura Stage Manager size](#adjust-macos-ventura-stage-manager-size)
+- [Enable Todo Mode](#enable-todo-mode)
+- [Only allow drag-to-snap when modifier keys are pressed](#only-allow-drag-to-snap-when-modifier-keys-are-pressed)
+- [Almost Maximize](#almost-maximize)
+- [Add an extra centering command with custom size](#add-an-extra-centering-command-with-custom-size)
+- [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
+- [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
+- [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
+- [Add additional tiling and cascading commands](#add-additional-tiling-and-cascading-commands)
+- [Modify the "footprint" displayed for drag to snap area](#modify-the-footprint-displayed-for-drag-to-snap-area)
+- [Move Up/Down/Left/Right: Don't center on edge](#move-updownleftright-dont-center-on-edge)
+- [Make Smaller limits](#make-smaller-limits)
+- [Make Smaller/Make Larger size increments](#make-smallermake-larger-size-increments)
+- [Make Smaller/Make Larger "curtain resize" with gaps](#make-smallermake-larger-curtain-resize-with-gaps)
+- [Disabling window restore when moving windows](#disabling-window-restore-when-moving-windows)
+- [Changing the margin for the snap areas](#changing-the-margin-for-the-snap-areas)
+- [Setting gaps at the screen edges](#setting-gaps-at-the-screen-edges)
+- [Ignore specific drag to snap areas](#ignore-specific-drag-to-snap-areas)
+- [Disabling gaps when maximizing](#disabling-gaps-when-maximizing)
+- [Enabling snap areas for sixths](#enabling-snap-areas-for-sixths)
+- [Move cursor with window](#move-cursor-with-window)
+- [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
+- [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 
- بسرعة فوق شريط القائمة من الانتقال إلى Mission Control](#منع-النافذة-التي-تم-سحبها-بسرعة-فوق-شريط-القائمة-من-الانتقال-إلى-mission-control)
-- [تغيير سلوك النقر المزدوج على شريط عنوان النافذة](#تغيير-سلوك-النقر-المزدوج-على-شريط-عنوان-النافذة)
+## Keyboard Shortcuts
 
-## اختصارات لوحة المفاتيح
-
-إذا كنت ترغب في تغيير الاختصارات الافتراضية بعد أول تشغيل، انقر على "استعادة الاختصارات الافتراضية" في علامة التبويب إعدادات نافذة التفضيلات. بدلاً من ذلك، يمكنك ضبطها باستخدام الأمر التالي في Terminal ثم قم بإعادة تشغيل التطبيق. القيمة True تعني استخدام الاختصارات الموصى بها، بينما القيمة False تعني استخدام اختصارات Spectacle.
+If you wish to change the default shortcuts after first launch click "Restore Default Shortcuts" in the settings tab of the preferences window. Alternatively you can set it with the following terminal command followed by app restart. True is for the recommended shortcuts, false is for Spectacle's.
 
 ```bash
 defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
 ```
 
-## ضبط السلوك على الأوامر المكررة
+## Adjust Behavior on Repeated Commands
 
-هذا السلوك متوفر الآن في نافذة التفضيلات، ولكن هناك خيار في التفضيلات يُسمى "التحرك إلى العرض المجاور عند تكرار أوامر اليسار أو اليمين". إذا لم يتم التحقق من هذا الإعداد، فسيتم تكرار عرض النافذة عبر الأحجام التالية عند تنفيذ إجراء النصف أو الربع: 1/2 -> 2/3 -> 1/3.
+This is now in the preferences window, but there's an option in the preferences for "Move to adjacent display on repeated left or right commands".
+If this setting is not checked, then each time you execute a half or quarter action, the width of the window will cycle through the following sizes: 1/2 -> 2/3 -> 1/3.
 
-يمكن تعطيل سلوك التكرار بالكامل باستخدام الأمر التالي:
+The cycling behavior can be disabled entirely with:
 
 ```bash
 defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 ```
 
-`subsequentExecutionMode` يقبل القيم التالية:
-0: الانقسام إلى ثلاثة أجزاء حسب سلوك Spectacle (علامة غير محددة)
-1: التبديل بين العروض (علامة محددة) للإجراءات اليسرى/اليمنى
-2: تم الإلغاء
-3: التبديل بين العروض للإجراءات اليسرى/اليمنى، والانقسام إلى ثلاثة أجزاء للباقي (سلوك Rectangle القديم)
-4: تكرار نفس الإجراء على العرض التالي
+`subsequentExecutionMode` accepts the following values:
+0: halves to thirds Spectacle behavior (box unchecked)
+1: cycle displays (box checked) for left/right actions
+2: disabled
+3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
+4: repeat same action on next display
 
-## التبديل بين الثُلثين في حالة تكرار أوامر التوسيط النصفي
+## Cycle thirds on repeated Center Half commands
 
-تحديد الحجم الذي تبدأ به عند تكرار أوامر التوسيط النصفي وتغييره بمقدار الثُلث. 1/2 -> 2/3 -> 1/3.
+Set Center Half to cycle thirds sizes: 1/2 -> 2/3 -> 1/3 with:
 
 ```bash
 defaults write com.knollsoft.Rectangle centerHalfCycles -int 1
 ```
 
-## تغيير الحجم عند التحرك باتجاه
+## Resize on Directional Move
 
-بشكل افتراضي، لن يتم تغيير حجم النافذة عند استخدام الأوامر للتحرك إلى بعض الحواف. إذا تم تفعيل `resizeOnDirectionalMove`، ستُستخدم بدلاً من ذلك طريقة "النصفين إلى الثُلثين". هذا يعني أنه عند التحرك لليسار أو اليمين، سيتم تغيير العرض، وعند التحرك للأعلى أو الأسفل، سيتم تغيير الارتفاع. سيتم تكرار هذا الحجم بين 1/2 -> 2/3 -> 1/3 من عرض/ارتفاع الشاشة.
+By default, the commands to move to certain edges will not resize the window.
+If `resizeOnDirectionalMove` is enabled, the _halves to thirds_ mode is instead used.
+This means that when moving to the left/right, the width will be changed, and when moving to the top/bottom, the height will be changed.
+This size will cycle between 1/2 -> 2/3 -> 1/3 of the screen’s width/height.
 
-يرجى ملاحظة أنه إذا تم ضبط وضع التنفيذ التالي على التبديل بين العروض عند تفعيل هذا الخيار، فإن تحريك لليسار واليمين سيؤدي دائمًا إلى تغيير الحجم إلى 1/2، والضغط عليه مرة أخرى سينتقل إلى العرض التالي.
+Note that if subsequent execution mode is set to cycle displays when this is enabled, Move Left and Move Right will always resize to 1/2, and pressing it again will move to the next display.
 
 ```bash
 defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 ```
 
-## ضبط حجم macOS Ventura Stage Manager
+## Adjust macOS Ventura Stage Manager size
 
-بشكل افتراضي، سيتم ضبط منطقة Stage Manager على 190 إذا تم تفعيلها.
+By default, the Stage Manager area will be set to 190, if enabled.
 
 ```bash
 defaults write com.knollsoft.Rectangle stageSize -float <VALUE>
 ```
 
-لتحديد نسبة من عرض شاشتك، ضع قيمة بين 0 و 1.
+To set it to a proportion of your screen's width, set it to a value between 0 and 1.
 
 ```bash
-defaults write com.k
-
-nollsoft.Rectangle stageSize -float <VALUE_BETWEEN_0_AND_1>
+defaults write com.knollsoft.Rectangle stageSize -float <VALUE_BETWEEN_0_AND_1>
 ```
 
-## تمكين وضع المهام (Todo Mode)
+## Enable Todo Mode
 
-انظر إلى [الويكي](https://github.com/rxhanson/Rectangle/wiki/Todo-Mode) لمزيد من المعلومات.
+See the [wiki](https://github.com/rxhanson/Rectangle/wiki/Todo-Mode) for more info.
 
 ```bash
 defaults write com.knollsoft.Rectangle todo -int 1
 ```
 
-## السماح بالسحب للتثبيت عند ضغط مفاتيح الموديفاير
+## Only allow drag-to-snap when modifier keys are pressed
 
-يمكن دمج قيم مفاتيح الموديفاير باستخدام العملية الجمعية (OR).
+Modifier key values can be ORed together.
 
-| مفتاح الموديفاير | القيمة الصحيحة |
-|-----------------|---------------|
-| cmd             | 1048576       |
-| option          | 524288        |
-| ctrl            | 262144        |
-| shift           | 131072        |
-| fn              | 8388608       |
+| Modifier Key | Integer Value |
+|--------------|---------------|
+| cmd          | 1048576       |
+| option       | 524288        |
+| ctrl         | 262144        |
+| shift        | 131072        |
+| fn           | 8388608       |
 
-مثال على الأمر لتقييد التثبيت بالمفتاح cmd:
+This command would be for restricting snap to the cmd key:
 
 ```bash
 defaults write com.knollsoft.Rectangle snapModifiers -int 1048576
 ```
 
-## التكبير الشبه كامل (Almost Maximize)
+## Almost Maximize
 
-بشكل افتراضي، ستُعيد "التكبير الشبه كامل" حجم النافذة إلى 90% من الشاشة (العرض والارتفاع).
+By default, "Almost Maximize" will resize the window to 90% of the screen (width & height).
 
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEEN_0_&_1>
@@ -133,9 +131,9 @@ defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEE
 defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
 ```
 
-## إضافة أمر توسيط إضافي بحجم مخصص
+## Add an extra centering command with custom size
 
-هذا الأمر الإضافي غير متوفر في واجهة المستخدم. ستحتاج إلى معرفة رمز المفتاح وعلامات الموديفاير التي ترغب في استخدامها (يمكنك استخدام تطبيق مفاتيح مجاني للحصول على رموز المفاتيح: <https://apps.apple.com/us/app/key-codes/id414568915>)
+This extra command is not available in the UI. You'll need to know which keycode and modifier flags you want (try the free key codes app: <https://apps.apple.com/us/app/key-codes/id414568915>)
 
 ```bash
 defaults write com.knollsoft.Rectangle specified -dict-add keyCode -float 8 modifierFlags -float 1966080
@@ -146,11 +144,11 @@ defaults write com.knollsoft.Rectangle specifiedHeight -float 1050
 defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
 ```
 
-## إضافة أوامر تحجيم إضافية للتسعثات
+## Add extra "ninths" sizing commands
 
-الأوامر الخاصة بتحجيم النافذة إلى التسعثات غير متوفرة في واجهة المستخدم. على غرار التوسيط الإضافي، ستحتاج إلى معرفة رمز المفتاح وعلامات الموديفاير التي ترغب في استخدامها.
+Commands for resizing to screen ninths are not available in the UI.  Similar to extra centering you will need to know which keycode and modifier flags you want.
 
-أكواد المفاتيح هي:
+The key codes are:
 
 * topLeftNinth
 * topCenterNinth
@@ -162,17 +160,17 @@ defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
 * bottomCenterNinth
 * bottomRightNinth
 
-على سبيل المثال، يُمكن تعيين أمر الاختصار للتسعث العلوي الأيسر إلى `ctrl opt shift 1` باستخدام الأمر التالي:
+For example, the command for setting the top left ninth shortcut to `ctrl opt shift 1` would be:
 
 ```bash
 defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-## إضافة أوامر تحجيم إضافية للثمانيات
+## Add extra "eighths" sizing commands
 
-الأوامر الخاصة بتحجيم النافذة إلى الثمانيات غير متوفرة في واجهة المستخدم. هذا يقسم الشاشة إلى شبكة 4x2.
+Commands for resizing to screen eighths are not available in the UI. This divides the screen up into a 4x2 grid.
 
-أكواد المفاتيح هي:
+The key codes are:
 
 * topLeftEighth
 * topCenterLeftEighth
@@ -183,144 +181,139 @@ defaults write com.knollsoft.Rectangle topLeftNinth -dict-add keyCode -float 18 
 * bottomCenterRightEighth
 * bottomRightEighth
 
-على سبيل المثال، يُمكن تعيين أمر الاختصار للثماني العلوي الأيسر إلى `ctrl opt shift 1` باستخدام الأمر التالي:
+For example, the command for setting the top left eighth shortcut to `ctrl opt shift 1` would be:
 
 ```bash
 defaults write com.knollsoft.Rectangle topLeftEighth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-## إضافة أوامر تحجيم إضافية للثُلثيات
+## Add additional "thirds" sizing commands 
 
-هذه الأوامر الخاصة بتحجيم النافذة إلى الركن الثُلث غير متوفرة في واجهة المستخدم ولكن يمكن تكوينها عبر سطر الأوامر.
+These commands for resizing to corner two-thirds are not available in the UI but can be configured via CLI.
 
-أكواد المفاتيح هي:
+The key codes are:
 
 * topLeftThird
 * topRightThird
 * bottomLeftThird
 * bottomRightThird
 
-(تتوافق هذه الأكواد مع الثُلث، وعند تكرارها ستتنقل في كل من الحسابات)
+(these correspond to two-thirds, and when repeated will cycle through each of the calculations)
 
-على سبيل المثال، يُمكن تعيين أمر الاختصار للثُلث العلوي الأيسر إلى `ctrl opt shift 1` باستخدام الأمر التالي:
+For example, the command for setting the top left two-thirds shortcut to `ctrl opt shift 1` would be:
 
 ```bash
 defaults write com.knollsoft.Rectangle topLeftThird -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-تحسن، سأقوم بترجمة المحتوى إلى العربية وترتيب النص العربي من اليمين إلى اليسار. يُرجى التأكد من أن الشفرة العربية ستظهر بشكل صحيح عندما يتم تطبيقها في نص محرر يدعم النص العربي، مثل محرر النصوص في نظام التشغيل macOS.
+## Add additional tiling and cascading commands
 
-```
-## إضافة أوامر للتجانب والتكدس الإضافية
+Commands for tiling and cascading the visible windows are not available in the UI but can be configured via CLI.
 
-الأوامر المستخدمة للتجانب والتكدس للنوافذ المرئية غير متوفرة في واجهة المستخدم ولكن يمكن تكوينها عبر سطر الأوامر.
-
-أكواد المفاتيح هي:
+The key codes are:
 
 * tileAll
 * cascadeAll
 * cascadeActiveApp
 
-_tileAll_ و _cascadeAll_ يتم تطبيقهما على جميع النوافذ المرئية.
+_tileAll_ and _cascadeAll_ act on all visible windows.
 
-تكدس التطبيق النشط فقط وجلب النوافذ الخاصة به إلى الأمام، متركاً جميع النوافذ الأخرى دون تغيير.
+_cascadeActiveApp_ cascades and brings to the front only windows belonging too the currently active (foremost) app, leaving all other windows alone.
 
-على سبيل المثال، الأمر لتعيين اختصار cascadeActiveApp إلى `ctrl shift 2` سيكون:
+For example, the command for setting the cascadeActiveApp shortcut to `ctrl shift 2` would be:
 
 ```bash
 defaults write com.knollsoft.Rectangle cascadeActiveApp -dict-add keyCode -float 2 modifierFlags -float 393475
 ```
 
-## تعديل "مظهر البصمة" المعروضة للسحب لمنطقة الرصف
+## Modify the "footprint" displayed for drag to snap area
 
-ضبط الشفافية (الألفا). القيمة الافتراضية هي 0.3.
-
-```bash
-defaults write com.knollsoft.Rectangle footprintAlpha -float <قيمة_بين_0_و_1>
-```
-
-تغيير عرض الحدود. القيمة الافتراضية هي 2 (كانت 1 في السابق).
+Adjust the alpha (transparency). Default is 0.3.
 
 ```bash
-defaults write com.knollsoft.Rectangle footprintBorderWidth -float <عدد_البكسل>
+defaults write com.knollsoft.Rectangle footprintAlpha -float <VALUE_BETWEEN_0_&_1>
 ```
 
-تعطيل التلاشي.
+Change the border width. Default is 2 (used to be 1).
+
+```bash
+defaults write com.knollsoft.Rectangle footprintBorderWidth -float <NUM_PIXELS>
+```
+
+Disable the fade.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintFade -int 2
 ```
 
-تغيير اللون.
+Change the color.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintColor -string "{\"red\":0,\"blue\":0.5,\"green\":0.5}"
 ```
 
-تغيير مدة الرسوم المتحركة. القيمة هي مضاعف. القيمة الافتراضية هي 0 (لا توجد رسوم متحركة).
+Change the animation duration. The value is a multiplier. Default is 0 (no animation).
 
 ```bash
-defaults write com.knollsoft.Rectangle footprintAnimationDurationMultiplier -float <مضاعف>
+defaults write com.knollsoft.Rectangle footprintAnimationDurationMultiplier -float <MULTIPLIER>
 ```
 
-## التحرك لأعلى / لأسفل / لليسار / لليمين: عدم التركيز على الحافة
+## Move Up/Down/Left/Right: Don't center on edge
 
-بشكل افتراضي، التحرك الاتجاهي سيجعل النافذة في وسط الحافة التي يتم نقلها إليها.
+By default, the directional move will center the window along the edge that the window is being moved to.
 
 ```bash
 defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 ```
 
-## تحديد حدود الحجم الأدنى
+## Make Smaller limits
 
-بشكل افتراضي، سيقلل "Make Smaller" النافذة حتى تصل إلى 25% من الشاشة (العرض والارتفاع).
+By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height).
 
 ```bash
-defaults write com.knollsoft.Rectangle minimumWindowWidth -float <قيمة_بين_0_و_1>
+defaults write com.knollsoft.Rectangle minimumWindowWidth -float <VALUE_BETWEEN_0_&_1>
 ```
 
 ```bash
-defaults write com.knollsoft.Rectangle minimumWindowHeight -float <قيمة_بين_0_و_1>
+defaults write com.knollsoft.Rectangle minimumWindowHeight -float <VALUE_BETWEEN_0_&_1>
 ```
 
-## حجم الزيادة / الانقاص للتكبير والتصغير
+## Make Smaller/Make Larger size increments
 
-بشكل افتراضي، "Make Smaller" و "Make Larger" ستغير حجم ارتفاع / عرض النافذة بمقدار 30 بكسل.
+By default, "Make Smaller" and "Make Larger" change the window height/width by 30 pixels.
 
 ```bash
-defaults write com.knollsoft.Rectangle sizeOffset -float <عدد_البكسل>
+defaults write com.knollsoft.Rectangle sizeOffset -float <NUM_PIXELS>
 ```
 
-## تصغير / تكبير النوافذ مع حواش فارغة
+## Make Smaller/Make Larger "curtain resize" with gaps
 
-بشكل افتراضي، النوافذ الملامسة لحافة الشاشة ستحتفظ بتلك الحواف المشتركة بينما سيتم تغيير حجم الحافة غير المشتركة فقط. مع الحواش الفارغة، هذا يجعل الأمر مبهمًا قليلاً حيث لا تلامس الحواف بالفعل الشاشة، لذا يمكنك تعطيله للتغيير التقليدي والمرن:
+By default, windows touching the edge of the screen will keep those shared edges the same while only resizing the non-shared edge. With window gaps, this is a little ambiguous since the edges don't actually touch the screen, so you can disable it for traditional, floating resizing:
 
 ```bash
 defaults write com.knollsoft.Rectangle curtainChangeSize -int 2
 ```
 
-## تعطيل استعادة النافذة عند نقلها
+## Disabling window restore when moving windows
 
 ```bash
 defaults write com.knollsoft.Rectangle unsnapRestore -int 2
 ```
 
-## تغيير الهوامش لمناطق الرصف
+## Changing the margin for the snap areas
 
-يمكن تكوين كل هامش بشكل منفصل، والقيمة الافتراضية هي 5
+Each margin is configured separately, and has a default value of 5
 
 ```bash
 defaults write com.knollsoft.Rectangle snapEdgeMarginTop -int 10
 defaults write com.knollsoft.Rectangle snapEdgeMarginBottom -int 10
-defaults
-
- write com.knollsoft.Rectangle snapEdgeMarginLeft -int 10
+defaults write com.knollsoft.Rectangle snapEdgeMarginLeft -int 10
 defaults write com.knollsoft.Rectangle snapEdgeMarginRight -int 10
 ```
 
-## تعيين حواش عند حواف الشاشة
+## Setting gaps at the screen edges
 
-يمكنك تحديد الحواش عند حواف الشاشة التي ستبقى غير مغطاة بعمليات تغيير حجم النوافذ. يُفيد هذا إذا كنت تستخدم بديلًا للمهام يجب أن تكون لديه نوافذ لا يجب أن تتداخل معه.
+You can specify gaps at the edges of your screen that will be left uncovered by window resizing operations. This is useful if, for example, you use a dock replacement that should not have windows overlapping it.
 
 ```bash
 defaults write com.knollsoft.Rectangle screenEdgeGapTop -int 10
@@ -329,112 +322,110 @@ defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 10
 defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 10
 ```
 
-إذا كنت ترغب في تطبيق هذه الحواش على الشاشة الرئيسية فقط، يمكنك تعيين screenEdgeGapsOnMainScreenOnly إلى true. مفيد للإعدادات متعددة الشاشات حيث تحتوي شاشة واحدة فقط على بديل للمهام.
+If you want these gaps to be applied on your main screen only you can set screenEdgeGapsOnMainScreenOnly. Useful for multi display setups where only one screen has some dock replacement.
 
 ```bash
 defaults write com.knollsoft.Rectangle screenEdgeGapsOnMainScreenOnly -bool true
 ```
 
-## تجاهل مناطق السحب المحددة للرصف
+## Ignore specific drag to snap areas
 
-يمكن تجاهل كل منطقة سحب للرصف على حافة الشاشة بواسطة أمر واحد في سطر الأوامر، ولكنه يعتبر تعيين حقل بتي لذلك يجب تحديد الحقول المراد تعطيلها.
+Each drag to snap area on the edge of a screen can be ignored with a single Terminal command, but it's a bit field setting so you'll have to determine the bit field for which ones you want to disable.
 
-| بت | منطقة السحب               | إجراء النافذة      |
+| Bit | Snap Area                 | Window Action       |
 |-----|---------------------------|---------------------|
-| 0   | أعلى                      | تكبير              |
-| 1   | أسفل                      | ثلثين              |
-| 2   | اليسار                    | نصف اليسار         |
-| 3   | اليمين                    | نصف اليمين         |
-| 4   | أعلى اليسار               | الزاوية اليسرى العليا  |
-| 5   | أعلى اليمين               | الزاوية اليمنى العليا  |
-| 6   | أسفل اليسار               | الزاوية اليسرى السفلى  |
-| 7   | أسفل اليمين               | الزاوية اليمنى السفلى  |
-| 8   | أعلى اليسار أسفل الزاوية  | النصف العلوي         |
-| 9   | أعلى اليمين أسفل الزاوية | النصف العلوي         |
-| 10  | أسفل اليسار أعلى الزاوية | النصف السفلي         |
-| 11  | أسفل اليمين أعلى الزاوية | النصف السفلي         |
+| 0   | Top                       | Maximize            |
+| 1   | Bottom                    | Thirds              |
+| 2   | Left                      | Left Half           |
+| 3   | Right                     | Right Half          |
+| 4   | Top Left                  | Top Left Corner     |
+| 5   | Top Right                 | Top Right Corner    |
+| 6   | Bottom Left               | Bottom Left Corner  |
+| 7   | Bottom Right              | Bottom Right Corner |
+| 8   | Top Left Below Corner     | Top Half            |
+| 9   | Top Right Below Corner    | Top Half            |
+| 10  | Bottom Left Above Corner  | Bottom Half         |
+| 11  | Bottom Right Above Corner | Bottom Half         |
 
-لتعطيل منطقة السحب العلوية (التكبير)، قم بتنفيذ الأمر التالي:
+To disable the top (maximize) snap area, execute:
 
 ```bash
 defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 1
 ```
 
-لتعطيل منطقة النصف العلوي والنصف السفلي، سيكون الحقل بت هو 1111 0000 0000، أو 3840
+To disable the Top Half and Bottom Half snap areas, the bit field would be 1111 0000 0000, or 3840
 
 ```bash
 defaults write com.knollsoft.Rectangle ignoredSnapAreas -int 3840
 ```
 
-## تعطيل الحواش عند التكبير
+## Disabling gaps when maximizing
 
-بشكل افتراضي، يُطبق إعداد "الحواش بين النوافذ" على "التكبير" و "تكبير الارتفاع".
+By default, the "Gaps between windows" setting applies to "Maximize" and "Maximize Height".
 
-لتعطيل الحواش للتكبير، قم بتنفيذ الأمر التالي:
+To disable the gaps for "Maximize", execute:
 
 ```bash
 defaults write com.knollsoft.Rectangle applyGapsToMaximize -int 2
 ```
 
-لتعطيل الحواش لتكبير الارتفاع، قم بتنفيذ الأمر التالي:
+To disable the gaps for "Maximize Height", execute:
 
 ```bash
 defaults write com.knollsoft.Rectangle applyGapsToMaximizeHeight -int 2
 ```
 
-## تمكين مناطق الرصف للأسدس
+## Enabling snap areas for sixths
 
-لتمكين مناطق الرصف للأسدس، قم بتنفيذ:
+To enable snap areas for sixths corners, execute: 
 
 ```bash
 defaults write com.knollsoft.Rectangle sixthsSnapArea -bool true
 ```
 
-بمجرد التمكين، يمكنك سحب النافذة إلى الزاوية، ثم نقلها على طول الحافة نحو منطقة الثلث للرصف للأسدس.
+Once enabled, you can drag a window to the corner, then move it along the edge towards the thirds area to snap to a sixth.
 
-## نقل المؤشر مع النافذة
+## Move cursor with window
 
-هناك خيار في واجهة المستخدم لنقل المؤشر مع النافذة عند التنقل عبر الشاشات، ولكن هناك خيار لنقله مع أي اختصار:
+There's an option in the UI for moving the cursor with the window when going across displays, but here's an option for moving it with any shortcut:
 
 ```bash
 defaults write com.knollsoft.Rectangle moveCursor -int 1
 ```
 
-## منع النافذة التي يتم سحبها بسرعة فوق شريط القوائم من الانتقال إلى مركز التح
+## Prevent a window that is quickly dragged above the menu bar from going into Mission Control
 
-كم
+Important: This can cause issues with dragging and dropping in certain apps like Adobe Illustrator, and can affect text selection in a select few apps as well. 
 
-مهم: قد يتسبب ذلك في مشاكل في سحب وإسقاط بعض التطبيقات مثل Adobe Illustrator، وقد يؤثر على اختيار النص في عدد قليل من التطبيقات أيضًا.
+Windows that are slowly moved above the menu bar will still go into Mission Control.
 
-ستظل النوافذ التي يتم نقلها ببطء فوق شريط القوائم تذهب إلى مركز التحكم.
-
-بمجرد تمكين هذا، سيكون مربع الاختيار مرئيًا في علامة التبويب Snap Areas في نافذة التفضيلات.
+Once this is enabled, the checkbox for it is visible in the Snap Areas tab of the Preferences window.
 
 ```bash
 defaults write com.knollsoft.Rectangle missionControlDragging -int 2
 ```
 
-تغيير المسافة المسموح بها خارج الشاشة. القيمة بالبكسل وتعتمد على السرعة. القيمة الافتراضية هي 25.
+Change the allowed off-screen distance. The value is in pixels and is tied to the speed. Default is 25.
 
 ```bash
-defaults write com.knollsoft.Rectangle missionControlDraggingAllowedOffscreenDistance -float <المسافة>
+defaults write com.knollsoft.Rectangle missionControlDraggingAllowedOffscreenDistance -float <DISTANCE>
 ```
 
-تغيير مدة الاستبعاد. القيمة بالميلي ثانية. القيمة الافتراضية هي 250.
+Change the disallowed duration. The value is in milliseconds. Default is 250.
 
 ```bash
-defaults write com.knollsoft.Rectangle missionControlDraggingDisallowedDuration -int <المدة>
+defaults write com.knollsoft.Rectangle missionControlDraggingDisallowedDuration -int <DURATION>
 ```
 
-## تغيير سلوك النقر المزدوج على شريط عنوان النافذة
+## Change the behavior of double-click window title bar
 
-لتغيير الإجراء ([القائمة](https://github.com/rxhanson/Rectangle/blob/master/Rectangle/WindowAction.swift)):
+To change the action ([list](https://github.com/rxhanson/Rectangle/blob/master/Rectangle/WindowAction.swift)):
 
 ```bash
-defaults write com.knollsoft.Rectangle doubleClickTitleBar -int <معرف_الإجراء + 1>
+defaults write com.knollsoft.Rectangle doubleClickTitleBar -int <ACTION_ID + 1>
 ```
 
-لتعطيل الاستعادة عند النقر المزدوج مرة أخرى:
+To disable restore when double-clicked again:
 
 ```bash
 defaults write com.knollsoft.Rectangle doubleClickTitleBarRestore -int 2

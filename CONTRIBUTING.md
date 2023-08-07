@@ -1,21 +1,22 @@
-# المساهمة
+# Contributing
 
-## طلبات الميزات
+## Feature Requests
 
-مستطيل لا يقبل أي طلبات ميزات جديدة في هذا الوقت، نأسف. يمكنك تقديم طلب ميزة لميزة تخطط لتنفيذها وتقديم طلب سحب لها، حتى يتمكن فريق المشروع من مراجعة الميزة وستعلم مسبقًا إذا تم رفضها.
+Rectangle is not accepting any new feature requests at this time, sorry. You can file a feature request for a feature that you plan to implement and submit a pull request for, so that the feature can be reviewed and you will know ahead of time if the feature will be rejected.  
 
-## الأخطاء
+## Bugs
 
-يرجى البحث في المشاكل الحالية، المفتوحة والمغلقة، قبل تقديم مشكلة جديدة. أضف إصدار مستطيل وإصدار نظام التشغيل، واللقطات الشاشة أو مقاطع الفيديو إن لزم الأمر.
+Please search through the existing issues, open and closed, before filing a new bug.
+Add the version of Rectangle, the version of the OS, and screenshots or videos as necessary.
 
-## أسلوب البرمجة
+## Coding Style
 
-يرجى مطابقة أسلوب البرمجة الحالي قدر الإمكان.
+Please match the existing coding style as much as possible.
 
-## الترخيص
+## License
 
-من خلال المساهمة في مستطيل، فإنك توافق على ترخيص مساهماتك بترخيص MIT الخاص به.
+By contributing to Rectangle you agree that your contributions will be licensed under its MIT license.
 
-## حوافز
+## Incentives
 
-يتم استخدام منطق مستطيل في تطبيق [Multitouch](https://multitouch.app). تم بناء تطبيق [Rectangle Pro](https://rectangleapp.com/pro) بالكامل فوق مستطيل. إذا قمت بالمساهمة برمز أو تعريبات كبيرة تم دمجها في مستطيل، ستحصل على ترخيص مجاني لتطبيق Multitouch أو Rectangle Pro. يمكن للمساهمين في Sparkle أو MASShortcut أو Spectacle أيضًا الحصول على تراخيص Multitouch أو Rectangle Pro مجانية (فقط أرسل لي رسالة مباشرة على [Gitter](https://gitter.im)).
+Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. The [Rectangle Pro](https://rectangleapp.com/pro) app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, you get a free license of Multitouch or Rectangle Pro. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Rectangle Pro licenses (just send me a direct message on [Gitter](https://gitter.im)).
