@@ -501,7 +501,7 @@
 "tlD-Oa-oAM.title" = "Kern";
 
 /* Class = "NSButtonCell"; title = "Restore Default Shortcuts & Snap Areas"; ObjectID = "uLF-Uf-tBt"; */
-"uLF-Uf-tBt.title" = "Restaurar accesos directos predeterminados";
+"uLF-Uf-tBt.title" = "Restaurar accesos directos predeterminados y ajustes de areas";
 
 /* Class = "NSMenu"; title = "Rectangle"; ObjectID = "uQy-DD-JDr"; */
 "uQy-DD-JDr.title" = "Rectangle";
