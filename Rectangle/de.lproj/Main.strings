@@ -717,33 +717,33 @@
 /* Class = "NSButtonCell"; title = "Disable fast dragging to Mission Control"; ObjectID = "3hZ-Cs-EZ6"; */
 "3hZ-Cs-EZ6.title" = "Schnelles Ziehen zu Mission Control deaktivieren";
 
-"Go to System Settings → Privacy & Security → Accessibility" = "Go to System Settings → Privacy & Security → Accessibility";
+"Go to System Settings → Privacy & Security → Accessibility" = "Gehe zu Systemeinstellungen → Datenschutz & Sicherheit → Bedienungshilfen";
 
-"Open System Settings" = "Open System Settings";
+"Open System Settings" = "Systemeinstellungen öffnen";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "Fußabdruck animieren";
 
 /* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
-"DHt-cE-Bl0.title" = "Toggle Todo";
+"DHt-cE-Bl0.title" = "Umschalten Todo";
 
 /* Class = "NSTextFieldCell"; title = "Reflow Todo"; ObjectID = "Fx0-sm-DrT"; */
 "Fx0-sm-DrT.title" = "Reflow Todo";
 
 /* Class = "NSTextFieldCell"; title = "Todo side"; ObjectID = "O9a-3Q-HB1"; */
-"O9a-3Q-HB1.title" = "Todo side";
+"O9a-3Q-HB1.title" = "Todo-Seite";
 
 /* Class = "NSMenuItem"; title = "Right"; ObjectID = "DG2-BN-GPE"; */
-"DG2-BN-GPE.title" = "Right";
+"DG2-BN-GPE.title" = "Rechts";
 
 /* Class = "NSMenuItem"; title = "Left"; ObjectID = "mpl-sd-2Wc"; */
-"mpl-sd-2Wc.title" = "Left";
+"mpl-sd-2Wc.title" = "Links";
 
-"Use as Todo Window" = "Use as Todo Window";
+"Use as Todo Window" = "Als Todo-Fenster verwenden";
 
 /* Class = "NSButtonCell"; title = "Double-click window title bar to maximize/restore"; ObjectID = "heT-W6-Fyf"; */
-"heT-W6-Fyf.title" = "Double-click window title bar to maximize/restore";
+"heT-W6-Fyf.title" = "Doppelklick auf die Titelleiste des Fensters zum Maximieren/Wiederherstellen";
 
-"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.";
+"To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "Damit Rectangle die Doppelklickfunktion der Titelleiste verwalten kann, muss die entsprechende macOS-Einstellung deaktiviert werden.";
 
-"Conflict with system setting" = "Conflict with system setting";
+"Conflict with system setting" = "Konflikt mit Systemeinstellung";
