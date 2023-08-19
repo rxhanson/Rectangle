@@ -137,8 +137,4 @@ Pull requests for new localizations or improvements on existing localizations ar
 
 ### Running the app in Xcode (for developers)
 
-Rectangle uses [CocoaPods](https://cocoapods.org/) to install Sparkle and MASShortcut.
-
-1. Make sure CocoaPods is installed and up to date on your machine (`sudo gem install cocoapods`).
-1. Execute `pod install` the root directory of the project.
-1. Open the generated xcworkspace file (`open Rectangle.xcworkspace`).
+Rectangle uses [Swift Package Manager](https://www.swift.org/package-manager/) to install Sparkle and MASShortcut.
