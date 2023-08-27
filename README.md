@@ -117,7 +117,7 @@ If you are using Rectangle v0.44+, you can also use the import/export button in 
 
 ## Uninstallation
 
-Rectangle can be uninstalled by moving it to the trash. Prior to moving it to the trash, you might want to uncheck the box for launching on login to unregister the launcher, but this is not necessary. You can remove the Rectangle defaults from your machine with the following terminal command:
+Rectangle can be uninstalled by quitting the app and moving it to the trash. You can remove the Rectangle defaults from your machine with the following terminal command:
 
 ```bash
 defaults delete com.knollsoft.Rectangle
