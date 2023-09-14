@@ -41,10 +41,10 @@
 "3rS-ZA-NoH.title" = "Tale";
 
 /* Class = "NSTextFieldCell"; title = "First Two Thirds"; ObjectID = "3zd-xE-oWl"; */
-"3zd-xE-oWl.title" = "Fyrsta to tredjedelar";
+"3zd-xE-oWl.title" = "Fyrste to tredjedelar";
 
 /* Class = "NSMenuItem"; title = "Tighten"; ObjectID = "46P-cB-AYj"; */
-"46P-cB-AYj.title" = "Stram åt";
+"46P-cB-AYj.title" = "Stram inn";
 
 /* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
 "4EN-yA-p0u.title" = "Finn";
@@ -398,7 +398,7 @@
 "gVA-U4-sdL.title" = "Lim inn";
 
 /* Class = "NSTextFieldCell"; title = "Rectangle needs your permission to control your window positions."; ObjectID = "gyg-xl-dPn"; */
-"gyg-xl-dPn.title" = "Rectangle treng lov av deg for å kontrollera vindaugsposisjonane dine.";
+"gyg-xl-dPn.title" = "Rectangle treng lov av deg for å kontrollera vindaugsposisjonane.";
 
 /* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
 "hQb-2v-fYv.title" = "Smarte hermeteikn";
@@ -419,7 +419,7 @@
 "iXo-XL-T6q.title" = "Autoriser Rectangle";
 
 /* Class = "NSMenu"; title = "Baseline"; ObjectID = "ijk-EB-dga"; */
-"ijk-EB-dga.title" = "Skriftlinje";
+"ijk-EB-dga.title" = "Skriftline";
 
 /* Class = "NSMenuItem"; title = "Kern"; ObjectID = "jBQ-r6-VK2"; */
 "jBQ-r6-VK2.title" = "Kniping";
@@ -479,7 +479,7 @@
 "rgM-f4-ycn.title" = "Smarte bindestrekar";
 
 /* Class = "NSButtonCell"; title = "Check for updates automatically"; ObjectID = "rmV-YD-Hzj"; */
-"rmV-YD-Hzj.title" = "Sjå etter oppdateringar automatiskt";
+"rmV-YD-Hzj.title" = "Sjå etter oppdateringar automatisk";
 
 /* Class = "NSTextFieldCell"; title = "Move Right"; ObjectID = "rzr-Qq-702"; */
 "rzr-Qq-702.title" = "Flytt til høgre";
@@ -634,7 +634,7 @@
 "RgZ-Jw-XQZ.title" = "Importer";
 
 /* Class = "NSButtonCell"; title = "Export"; ObjectID = "IO3-Hi-7gC"; */
-"IO3-Hi-7gC.title" = "Exporter";
+"IO3-Hi-7gC.title" = "Eksporter";
 
 /* Class = "NSButtonCell"; title = "Move cursor along with window across displays"; ObjectID = "Pbz-DF-hgG"; */
 "Pbz-DF-hgG.title" = "Flytt musepila i lag med vindauget over skjermar";
@@ -721,7 +721,7 @@
 "Open System Settings" = "Opne Systeminnstillingane";
 
 /* Class = "NSButtonCell"; title = "Animate footprint"; ObjectID = "kx2-tZ-lk8"; */
-"kx2-tZ-lk8.title" = "Animate footprint";
+"kx2-tZ-lk8.title" = "Animer fotavtrykk";
 
 /* Class = "NSTextFieldCell"; title = "Toggle Todo"; ObjectID = "DHt-cE-Bl0"; */
 "DHt-cE-Bl0.title" = "Slå av/på Gjereliste";
@@ -741,7 +741,7 @@
 "Use as Todo Window" = "Bruk som Gjereliste-vindauge";
 
 /* Class = "NSButtonCell"; title = "Double-click window title bar to maximize/restore"; ObjectID = "heT-W6-Fyf"; */
-"heT-W6-Fyf.title" = "Dobbeltklikk vindaugstittel for å maksimera eller tilbakestill";
+"heT-W6-Fyf.title" = "Dobbeltklikk vindaugstittel for å maksimera eller tilbakestilla";
 
 "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." = "For å la Rectangle styra dobbeltklikking i vindaugstittelen må du slå av den tilsvarande innstillinga i macOS.";
 

@@ -255,7 +255,7 @@
 "bib-Uj-vzu.title" = "Arkiv";
 
 /* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
-"buJ-ug-pKt.title" = "Nytt utval for å finna";
+"buJ-ug-pKt.title" = "Bruk utval for å finna";
 
 /* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
 "c8a-y6-VQd.title" = "Endre bokstavtype";
@@ -309,7 +309,7 @@
 "jxT-CU-nIS.title" = "Format";
 
 /* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
-"kIP-vf-haE.title" = "Vis Sidebar";
+"kIP-vf-haE.title" = "Vis Sidestolpe";
 
 /* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
 "mK6-2p-4JG.title" = "Kontroller grammatikk og stavemåte";
