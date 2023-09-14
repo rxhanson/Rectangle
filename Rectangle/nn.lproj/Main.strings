@@ -389,7 +389,7 @@
 "e9j-DR-MEH.title" = "Start ved pålogging";
 
 /* Class = "NSTextFieldCell"; title = "Bottom Half"; ObjectID = "ec4-FB-fMa"; */
-"ec4-FB-fMa.title" = "Nedre halvdel";
+"ec4-FB-fMa.title" = "Nedste halvdel";
 
 /* Class = "NSMenuItem"; title = "About"; ObjectID = "gFy-Zj-RGl"; */
 "gFy-Zj-RGl.title" = "Om";
@@ -452,7 +452,7 @@
 "o6e-r0-MWq.title" = "Ligaturar";
 
 /* Class = "NSMenu"; title = "Open Recent"; ObjectID = "oas-Oc-fiZ"; */
-"oas-Oc-fiZ.title" = "Opna sist brukte";
+"oas-Oc-fiZ.title" = "Opne sist brukte";
 
 /* Class = "NSMenuItem"; title = "Loosen"; ObjectID = "ogc-rX-tC1"; */
 "ogc-rX-tC1.title" = "Lausare";
