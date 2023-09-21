@@ -21,8 +21,4 @@ extension CFDictionary {
     func getValue<T>(_ key: CFString) -> T {
         return unsafeBitCast(CFDictionaryGetValue(self, unsafeBitCast(key, to: UnsafeRawPointer.self)), to: T.self)
     }
-    
-    func toRect() -> CGRect? {
-        return CGRect(dictionaryRepresentation: self)
-    }
 }
