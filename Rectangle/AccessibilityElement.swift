@@ -297,12 +297,19 @@ extension AccessibilityElement {
     }
     
     private static func getWindowInfo(_ location: CGPoint) -> WindowInfo? {
-        let infos = WindowUtil.getWindowList().filter { $0.level < 1000 && !["Dock", "WindowManager"].contains($0.processName) }
-        if let info = (infos.first { $0.frame.contains(location) }) {
-            return info
+        let infoAtLocation = WindowUtil.getWindowList().first(where: {windowInfo in
+            windowInfo.level < 1000
+            && !["Dock", "WindowManager", "Notification Center"].contains(windowInfo.processName)
+            && windowInfo.frame.contains(location)
+        })
+        
+        if let infoAtLocation {
+            Logger.log("Window found at \(location): \(infoAtLocation)")
+        } else {
+            Logger.log("Unable to obtain window info from location")
         }
-        Logger.log("Unable to obtain window info from location")
-        return nil
+        
+        return infoAtLocation
     }
 
     static func getWindowElementUnderCursor() -> AccessibilityElement? {
