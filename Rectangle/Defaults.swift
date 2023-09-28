@@ -82,6 +82,7 @@ class Defaults {
     static let doubleClickTitleBar = IntDefault(key: "doubleClickTitleBar")
     static let doubleClickTitleBarRestore = OptionalBoolDefault(key: "doubleClickTitleBarRestore")
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
+    static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
 
     static var array: [Default] = [
         launchOnLogin,
@@ -155,6 +156,7 @@ class Defaults {
         doubleClickTitleBar,
         doubleClickTitleBarRestore,
         ignoreDragSnapToo,
+        systemWideMouseDown
     ]
 }
 

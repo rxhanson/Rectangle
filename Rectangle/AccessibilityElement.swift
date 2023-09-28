@@ -298,7 +298,7 @@ extension AccessibilityElement {
     
     private static func getWindowInfo(_ location: CGPoint) -> WindowInfo? {
         let infoAtLocation = WindowUtil.getWindowList().first(where: {windowInfo in
-            windowInfo.level < 23
+            windowInfo.level < 23 // 23 is the level of the Notification Center
             && !["Dock", "WindowManager"].contains(windowInfo.processName)
             && windowInfo.frame.contains(location)
         })
@@ -314,6 +314,15 @@ extension AccessibilityElement {
 
     static func getWindowElementUnderCursor() -> AccessibilityElement? {
         let position = NSEvent.mouseLocation.screenFlipped
+
+        let systemWideFirst = Defaults.systemWideMouseDown.userEnabled
+        
+        if systemWideFirst,
+            let element = AccessibilityElement(position),
+            let windowElement = element.windowElement {
+                return windowElement
+        }
+
         if let info = getWindowInfo(position) {
             if !Defaults.dragFromStage.userDisabled {
                 if StageUtil.stageCapable && StageUtil.stageEnabled,
@@ -333,7 +342,11 @@ extension AccessibilityElement {
                 }
             }
         }
-        if let element = AccessibilityElement(position), let windowElement = element.windowElement {
+        
+        if !systemWideFirst,
+           let element = AccessibilityElement(position),
+           let windowElement = element.windowElement {
+            
             if Logger.logging, let pid = windowElement.pid {
                 let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
                 Logger.log("Window under cursor fallback matched: \(appName)")
