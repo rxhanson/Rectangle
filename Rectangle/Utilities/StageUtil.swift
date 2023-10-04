@@ -43,7 +43,7 @@ class StageUtil {
         guard let screen else {
             return false
         }
-        let infos = WindowUtil.getWindowList(all: true).filter { info in
+        let infos = WindowUtil.getWindowList().filter { info in
             guard info.processName == "WindowManager" else {
                 return false
             }
