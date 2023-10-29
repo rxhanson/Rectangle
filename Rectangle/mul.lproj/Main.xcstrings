@@ -1397,6 +1397,12 @@
             "value" : "Wechsle bei wiederholten Links- oder Rechts-Befehlen zum nächsten Monitor anstatt zwischen den Fenstergrößen 1/2, 2/3, und 1/3."
           }
         },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1485,6 +1491,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "При повторе перемещения или изменения размеров до трети или половины окна оно будет перемещено на следующий экран вместо изменения размеров."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
           }
         },
         "sv-SE" : {
