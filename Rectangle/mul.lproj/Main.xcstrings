@@ -1180,6 +1180,12 @@
             "state" : "translated",
             "value" : "Anpassa verktygsfältet…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义工具栏..."
+          }
         }
       }
     },
@@ -1504,6 +1510,12 @@
             "state" : "translated",
             "value" : "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果你重复移动或进行一半的移动操作，窗口将移动到下一个显示器，而不是 1 / 2、2 / 3 或 1 / 3 大小。"
+          }
         }
       }
     },
@@ -1605,6 +1617,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Phiên bản"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本"
           }
         }
       }
@@ -1857,6 +1875,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformationer"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "转换"
           }
         }
       }
@@ -42996,6 +43020,12 @@
             "state" : "translated",
             "value" : "Ändra till versaler"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "变为大写"
+          }
         }
       }
     },
@@ -43122,6 +43152,12 @@
             "state" : "translated",
             "value" : "Rensa menyn"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除菜单"
+          }
         }
       }
     },
@@ -43247,6 +43283,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligaturer"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连字"
           }
         }
       }
@@ -43746,6 +43788,12 @@
             "state" : "translated",
             "value" : "Anpassa höger"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右对齐"
+          }
         }
       }
     },
@@ -44243,6 +44291,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Understrykning"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下划线"
           }
         }
       }
@@ -45858,6 +45912,12 @@
             "state" : "translated",
             "value" : "Använd alla"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部使用"
+          }
         }
       }
     },
@@ -45977,6 +46037,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tal"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音"
           }
         }
       }
@@ -46476,6 +46542,12 @@
             "state" : "translated",
             "value" : "\tStandard"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : ""
+          }
         }
       }
     },
@@ -46601,6 +46673,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Börja tala"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始朗读"
           }
         }
       }
@@ -47088,6 +47166,12 @@
             "state" : "translated",
             "value" : "Visa substitutioner"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示替换"
+          }
         }
       }
     },
@@ -47399,6 +47483,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Justera vänster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左对齐"
           }
         }
       }
@@ -47897,6 +47987,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paragraf"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "段落"
           }
         }
       }
