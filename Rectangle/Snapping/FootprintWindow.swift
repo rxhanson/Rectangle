@@ -36,7 +36,6 @@ class FootprintWindow: NSWindow {
         let boxView = NSBox()
         boxView.boxType = .custom
         boxView.borderColor = .lightGray
-        boxView.borderType = .lineBorder
         boxView.borderWidth = CGFloat(Defaults.footprintBorderWidth.value)
         
         if #available(macOS 11.0, *) {
