@@ -31,7 +31,7 @@ class CenterProminentlyCalculation: WindowCalculation {
         let rectResult = WindowCalculationFactory.centerCalculation.calculateRect(params)
         var rect = rectResult.rect
         rect.origin.y += -0.25 * rect.height + 0.25 * params.visibleFrameOfScreen.height
-        return RectResult(rect)
+        return RectResult(rect, resultingAction: rectResult.resultingAction)
 
     }
     

@@ -90,7 +90,7 @@ enum WindowAction: Int, Codable {
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
                          firstThird, centerThird, lastThird, firstTwoThirds, lastTwoThirds,
-                         maximize, almostMaximize, maximizeHeight, smaller, larger, center, restore,
+                         maximize, almostMaximize, maximizeHeight, smaller, larger, center, centerProminently, restore,
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
                          firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, lastThreeFourths,
