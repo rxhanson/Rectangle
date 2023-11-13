@@ -144,9 +144,24 @@ defaults write com.knollsoft.Rectangle specifiedHeight -float 1050
 defaults write com.knollsoft.Rectangle specifiedWidth -float 1680
 ```
 
+## Add an extra centering with prominence command
+
+There is an extra command that horizontally centers the window but moves up the window vertically slightly from the center to add visual weight. Similar to extra centering you will need to know which keycode and modifier flags you want.
+
+The key code is:
+
+* centerProminently
+
+For example, the command for setting the shortcut to `ctrl option command C` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle centerProminently -dict-add keyCode -float 8 modifierFlags -float 1835305
+```
+
+
 ## Add extra "ninths" sizing commands
 
-Commands for resizing to screen ninths are not available in the UI.  Similar to extra centering you will need to know which keycode and modifier flags you want.
+Commands for resizing to screen ninths are not available in the UI.
 
 The key codes are:
 
