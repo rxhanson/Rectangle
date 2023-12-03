@@ -81,9 +81,10 @@ class Defaults {
     static let missionControlDraggingDisallowedDuration = IntDefault(key: "missionControlDraggingDisallowedDuration", defaultValue: 250)
     static let doubleClickTitleBar = IntDefault(key: "doubleClickTitleBar")
     static let doubleClickTitleBarRestore = OptionalBoolDefault(key: "doubleClickTitleBarRestore")
+    static let doubleClickTitleBarIgnoredApps = JSONDefault<[String]>(key: "doubleClickTitleBarIgnoredApps")
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
     static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
-
+    
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -155,6 +156,7 @@ class Defaults {
         missionControlDraggingDisallowedDuration,
         doubleClickTitleBar,
         doubleClickTitleBarRestore,
+        doubleClickTitleBarIgnoredApps,
         ignoreDragSnapToo,
         systemWideMouseDown
     ]

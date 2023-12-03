@@ -51,6 +51,13 @@ class TitleBarManager {
         else {
             return
         }
+        if let ignoredApps = Defaults.doubleClickTitleBarIgnoredApps.typedValue,
+            !ignoredApps.isEmpty,
+            let pid = element.pid,
+            let appId = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier,
+            ignoredApps.contains(appId) {
+            return
+        }
         if Defaults.doubleClickTitleBarRestore.enabled != false,
            let windowId = windowElement.windowId,
            case let windowFrame = windowElement.frame,
