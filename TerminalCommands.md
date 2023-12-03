@@ -445,3 +445,9 @@ To disable restore when double-clicked again:
 ```bash
 defaults write com.knollsoft.Rectangle doubleClickTitleBarRestore -int 2
 ```
+
+To disable double-click window title bar only for specific bundle ids (in example, Outlook):
+
+```bash
+defaults write com.knollsoft.Rectangle doubleClickTitleBarIgnoredApps -string "[\"com.microsoft.Outlook\"]"
+```
