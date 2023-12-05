@@ -103,7 +103,7 @@ defaults write com.knollsoft.Rectangle todo -int 1
 
 ## Only allow drag-to-snap when modifier keys are pressed
 
-Modifier key values can be used together.
+Modifier keys can be combined by adding the sum of Integer Values together.
 
 | Modifier Key | Integer Value |
 |--------------|---------------|
