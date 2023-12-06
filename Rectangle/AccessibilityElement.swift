@@ -172,6 +172,22 @@ class AccessibilityElement {
         return elements
     }
     
+    func getSelfOrChildElementRecursively(_ position: CGPoint) -> AccessibilityElement? {
+        func getChildElement() -> AccessibilityElement? {
+            return element.childElements?
+                .map { (element: $0, frame: $0.frame) }
+                .filter { $0.frame.contains(position) }
+                .min { $0.frame.width * $0.frame.height < $1.frame.width * $1.frame.height }?
+                .element
+        }
+        var element = self
+        var elements = Set<AccessibilityElement>()
+        while let childElement = getChildElement(), elements.insert(childElement).inserted {
+            element = childElement
+        }
+        return element
+    }
+    
     var windowId: CGWindowID? {
         wrappedElement.getWindowId()
     }
@@ -356,6 +372,18 @@ extension AccessibilityElement {
     
     static func getAllWindowElements() -> [AccessibilityElement] {
         return WindowUtil.getWindowList().uniqueMap { $0.pid }.compactMap { AccessibilityElement($0).windowElements }.flatMap { $0 }
+    }
+}
+
+extension AccessibilityElement: Equatable {
+    static func == (lhs: AccessibilityElement, rhs: AccessibilityElement) -> Bool {
+        return lhs.wrappedElement == rhs.wrappedElement
+    }
+}
+
+extension AccessibilityElement: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(wrappedElement)
     }
 }
 
