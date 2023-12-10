@@ -36,7 +36,7 @@ class TitleBarManager {
             TitleBarManager.systemSettingDisabled,
             let action = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1),
             case let location = NSEvent.mouseLocation.screenFlipped,
-            let element = AccessibilityElement(location),
+            let element = AccessibilityElement(location)?.getSelfOrChildElementRecursively(location),
             let windowElement = element.windowElement,
             var titleBarFrame = windowElement.titleBarFrame
         else {
