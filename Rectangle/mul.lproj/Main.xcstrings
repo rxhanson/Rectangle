@@ -3284,7 +3284,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Левые две трети"
+            "value" : "Первые две трети"
           }
         },
         "sk" : {
@@ -3656,7 +3656,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Введите полный экран"
+            "value" : "Перейти в полноэкранный режим"
           }
         },
         "sk" : {
@@ -6704,7 +6704,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Правые две трети"
+            "value" : "Последние две трети"
           }
         },
         "sk" : {
@@ -6872,7 +6872,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "замены"
+            "value" : "Замены"
           }
         },
         "sv-SE" : {
@@ -10082,7 +10082,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Настройки"
+            "value" : "Настройки…"
           }
         },
         "sk" : {
@@ -11726,7 +11726,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conflict with system setting"
+            "value" : "Конфликт с системными настройками"
           }
         },
         "sk" : {
@@ -12210,7 +12210,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Правая треть"
+            "value" : "Последняя треть"
           }
         },
         "sk" : {
@@ -16330,7 +16330,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Левая треть"
+            "value" : "Первая треть"
           }
         },
         "sk" : {
@@ -20654,7 +20654,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-click window title bar to maximize/restore"
+            "value" : "Дважды щелкните по заголовку окна, чтобы увеличить/уменьшить его размер"
           }
         },
         "sk" : {
@@ -39856,7 +39856,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting."
+            "value" : "Чтобы позволить Rectangle управлять функцией двойного щелчка в заголовке, необходимо отключить соответствующую настройку macOS."
           }
         },
         "sk" : {
