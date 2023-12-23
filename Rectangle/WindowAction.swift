@@ -84,7 +84,8 @@ enum WindowAction: Int, Codable {
     leftTodo = 68,
     rightTodo = 69,
     cascadeActiveApp = 70,
-    centerProminently = 71
+    centerProminently = 71,
+    centerTwoScreens = 72
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -104,7 +105,8 @@ enum WindowAction: Int, Codable {
                          bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
                          tileAll, cascadeAll,
                          leftTodo, rightTodo,
-                         cascadeActiveApp
+                         cascadeActiveApp,
+                         centerTwoScreens
     ]
 
     func post() {
@@ -207,6 +209,7 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return "rightTodo"
         case .cascadeActiveApp: return "cascadeActiveApp"
         case .centerProminently: return "centerProminently"
+        case .centerTwoScreens: return "centerTwoScreens"
         }
     }
 
@@ -332,6 +335,9 @@ enum WindowAction: Int, Codable {
         case .bottomRightSixth:
             key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
+        case .centerTwoScreens:
+            key = "rcY-NS-HlJ.title"
+            value = "Center Two Screens"
         case .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth:
             return nil
         case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
@@ -472,6 +478,7 @@ enum WindowAction: Int, Codable {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
+        case .centerTwoScreens: return NSImage(imageLiteralResourceName: "centerTwoScreensTemplate")
         case .topLeftNinth: return NSImage()
         case .topCenterNinth: return NSImage()
         case .topRightNinth: return NSImage()
@@ -540,7 +547,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .centerTwoScreens:
             return .none
         }
     }

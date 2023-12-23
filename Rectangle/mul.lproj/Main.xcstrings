@@ -36199,6 +36199,18 @@
         }
       }
     },
+    "rcY-NS-HlJ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Two Screens\"; ObjectID = \"rcY-NS-HlJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Center Two Screens"
+          }
+        }
+      }
+    },
     "Reflow Todo" : {
       "localizations" : {
         "ar" : {
