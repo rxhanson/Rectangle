@@ -13,6 +13,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Only allow drag-to-snap when modifier keys are pressed](#only-allow-drag-to-snap-when-modifier-keys-are-pressed)
 - [Almost Maximize](#almost-maximize)
 - [Add an extra centering command with custom size](#add-an-extra-centering-command-with-custom-size)
+- [Add an extra center between two screens command](#add-an-extra-center-between-two-screens-command)
 - [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
 - [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
@@ -151,6 +152,22 @@ There is an extra command that horizontally centers the window but moves up the 
 The key code is:
 
 * centerProminently
+
+For example, the command for setting the shortcut to `ctrl option command C` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle centerProminently -dict-add keyCode -float 8 modifierFlags -float 1835305
+```
+
+
+## Add an extra center between two screens command
+
+There is an extra command that horizontally centers the window between two horizontally adjacent screens.
+This is especially useful for users who are running ultrawide monitors in picture by picture mode, or for users with two adjacent monitors with no bezels.
+
+The key code is:
+
+- centerTwoScreens
 
 For example, the command for setting the shortcut to `ctrl option command C` would be:
 
