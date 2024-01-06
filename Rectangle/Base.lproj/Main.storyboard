@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22155"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -2421,55 +2421,6 @@
                                                             <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
                                                     </stackView>
-                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="18" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vnj-MK-r0x">
-                                                        <rect key="frame" x="16" y="0.0" width="329" height="19"/>
-                                                        <subviews>
-                                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qhI-mw-4Et">
-                                                                <rect key="frame" x="0.0" y="2" width="151" height="16"/>
-                                                                <subviews>
-                                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1yg-d8-0ZV">
-                                                                        <rect key="frame" x="-2" y="0.0" width="126" height="16"/>
-                                                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Center Two Screens" id="rcY-NS-HlJ">
-                                                                            <font key="font" usesAppearanceFont="YES"/>
-                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                                        </textFieldCell>
-                                                                    </textField>
-                                                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HSV-iG-4nO">
-                                                                        <rect key="frame" x="130" y="1" width="21" height="14"/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="21" id="uF0-Cz-xy6"/>
-                                                                            <constraint firstAttribute="height" constant="14" id="yrU-iP-N6O"/>
-                                                                        </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="centerTwoScreensTemplate" id="Fx6-J0-L4T"/>
-                                                                    </imageView>
-                                                                </subviews>
-                                                                <visibilityPriorities>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                </visibilityPriorities>
-                                                                <customSpacing>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                </customSpacing>
-                                                            </stackView>
-                                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="07l-AJ-Pdl" customClass="MASShortcutView">
-                                                                <rect key="frame" x="169" y="0.0" width="160" height="19"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="160" id="Mob-1Z-p8y"/>
-                                                                    <constraint firstAttribute="height" constant="19" id="mDI-eO-Qbf"/>
-                                                                </constraints>
-                                                            </customView>
-                                                        </subviews>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
                                                 </subviews>
                                                 <visibilityPriorities>
                                                     <integer value="1000"/>
@@ -2483,10 +2434,8 @@
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
-                                                    <integer value="1000"/>
                                                 </visibilityPriorities>
                                                 <customSpacing>
-                                                    <real value="3.4028234663852886e+38"/>
                                                     <real value="3.4028234663852886e+38"/>
                                                     <real value="3.4028234663852886e+38"/>
                                                     <real value="3.4028234663852886e+38"/>
@@ -2550,7 +2499,6 @@
                         <outlet property="centerHalfShortcutView" destination="3Pa-H7-x3u" id="zfM-NU-9h8"/>
                         <outlet property="centerShortcutView" destination="WrB-f6-rnc" id="aM3-dp-LM0"/>
                         <outlet property="centerThirdShortcutView" destination="G13-Q4-CV6" id="2pX-94-yJP"/>
-                        <outlet property="centerTwoScreensShortcutView" destination="07l-AJ-Pdl" id="EE5-nc-K4I"/>
                         <outlet property="firstFourthShortcutView" destination="UH9-8R-0Vx" id="09f-5b-lse"/>
                         <outlet property="firstThirdShortcutView" destination="I3d-KP-y1J" id="2Ef-1P-Qeq"/>
                         <outlet property="firstThreeFourthsShortcutView" destination="bRp-d2-DdY" id="zRK-Gz-eS2"/>
@@ -4291,7 +4239,6 @@ DQ
         <image name="centerRightFourthTemplate" width="30" height="20"/>
         <image name="centerTemplate" width="30" height="20"/>
         <image name="centerThirdTemplate" width="30" height="20"/>
-        <image name="centerTwoScreensTemplate" width="30" height="20"/>
         <image name="firstThirdTemplate" width="30" height="20"/>
         <image name="firstThreeFourthsTemplate" width="30" height="20"/>
         <image name="firstTwoThirdsTemplate" width="30" height="20"/>
