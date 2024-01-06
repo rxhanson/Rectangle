@@ -478,7 +478,6 @@ enum WindowAction: Int, Codable {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
-        case .centerTwoScreens: return NSImage(imageLiteralResourceName: "centerTwoScreensTemplate")
         case .topLeftNinth: return NSImage()
         case .topCenterNinth: return NSImage()
         case .topRightNinth: return NSImage()
@@ -507,6 +506,7 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return NSImage()
         case .cascadeActiveApp: return NSImage()
         case .centerProminently: return NSImage()
+        case .centerTwoScreens: return NSImage()
         }
     }
 
