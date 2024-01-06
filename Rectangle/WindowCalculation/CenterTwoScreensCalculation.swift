@@ -34,10 +34,8 @@ class CenterTwoScreensCalculation: WindowCalculation {
     let secondScreen = params.usableScreens.adjacentScreens?.next.frame
 
     guard let secondScreen else {
-      return WindowCalculationResult(
-        rect: params.window.rect,
-        screen: params.usableScreens.currentScreen,
-        resultingAction: params.action)
+        // If there is no second screen then just maximize the window
+        return MaximizeCalculation().calculate(params)
     }
 
     // Step 3
