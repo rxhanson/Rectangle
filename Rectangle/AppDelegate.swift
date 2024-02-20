@@ -51,6 +51,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, false)
                 }
             }
+        } else {
+            Defaults.allowAnyShortcut.enabled = true
         }
         
         Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
