@@ -235,7 +235,7 @@
                             </connections>
                         </menuItem>
                         <menuItem isSeparatorItem="YES" id="hf9-TP-K3t"/>
-                        <menuItem title="Preferences…" id="YRC-4a-xGg">
+                        <menuItem title="Settings…" id="YRC-4a-xGg">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
                                 <action selector="openPreferences:" target="Voe-Tx-rLC" id="EgB-O8-H7c"/>
