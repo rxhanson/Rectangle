@@ -322,8 +322,11 @@ extension AccessibilityElement {
 
     static func getWindowElementUnderCursor() -> AccessibilityElement? {
         let position = NSEvent.mouseLocation.screenFlipped
-
-        let systemWideFirst = Defaults.systemWideMouseDown.userEnabled
+        
+        var systemWideFirst = Defaults.systemWideMouseDown.userEnabled
+        if Defaults.systemWideMouseDown.notSet, let frontAppId = ApplicationToggle.frontAppId {
+            systemWideFirst = Defaults.systemWideMouseDownApps.typedValue?.contains(frontAppId) == true
+        }
         
         if systemWideFirst,
             let element = AccessibilityElement(position),

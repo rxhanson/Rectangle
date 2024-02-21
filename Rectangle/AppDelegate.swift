@@ -109,7 +109,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.windowManager = WindowManager()
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
-        self.snappingManager = SnappingManager(applicationToggle: applicationToggle)
+        self.snappingManager = SnappingManager()
         self.titleBarManager = TitleBarManager()
         self.initializeTodo()
         checkForProblematicApps()
@@ -281,10 +281,10 @@ extension AppDelegate: NSMenuDelegate {
             return
         }
         
-        if let frontAppName = applicationToggle.frontAppName {
+        if let frontAppName = ApplicationToggle.frontAppName {
             let ignoreString = NSLocalizedString("D99-0O-MB6.title", tableName: "Main", value: "Ignore frontmost.app", comment: "")
             ignoreMenuItem.title = ignoreString.replacingOccurrences(of: "frontmost.app", with: frontAppName)
-            ignoreMenuItem.state = applicationToggle.shortcutsDisabled ? .on : .off
+            ignoreMenuItem.state = ApplicationToggle.shortcutsDisabled ? .on : .off
             ignoreMenuItem.isHidden = false
         } else {
             ignoreMenuItem.isHidden = true
@@ -314,7 +314,7 @@ extension AppDelegate: NSMenuDelegate {
                 menuItem.image?.isTemplate = true
             }
 
-            if !applicationToggle.shortcutsDisabled {
+            if !ApplicationToggle.shortcutsDisabled {
                 if let fullKeyEquivalent = shortcutManager.getKeyEquivalent(action: windowAction),
                     let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
                     menuItem.keyEquivalent = keyEquivalent
@@ -495,7 +495,7 @@ extension AppDelegate {
             return
         }
 
-        if let frontAppName = applicationToggle.frontAppName {
+        if let frontAppName = ApplicationToggle.frontAppName {
             let appString = NSLocalizedString("Use frontmost.app as Todo App", tableName: "Main", value: "", comment: "")
             todoAppMenuItem.title = appString.replacingOccurrences(
                 of: "frontmost.app", with: frontAppName)

@@ -35,16 +35,13 @@ class SnappingManager {
     var box: FootprintWindow?
 
     let screenDetection = ScreenDetection()
-    let applicationToggle: ApplicationToggle
     
     private let marginTop = Defaults.snapEdgeMarginTop.cgFloat
     private let marginBottom = Defaults.snapEdgeMarginBottom.cgFloat
     private let marginLeft = Defaults.snapEdgeMarginLeft.cgFloat
     private let marginRight = Defaults.snapEdgeMarginRight.cgFloat
     
-    init(applicationToggle: ApplicationToggle) {
-        self.applicationToggle = applicationToggle
-        
+    init() {
         if Defaults.windowSnapping.enabled != false {
             enableSnapping()
         }
@@ -65,14 +62,14 @@ class SnappingManager {
     }
     
     func frontAppChanged(notification: Notification) {
-        if applicationToggle.shortcutsDisabled {
+        if ApplicationToggle.shortcutsDisabled {
             DispatchQueue.main.async {
                 if !Defaults.ignoreDragSnapToo.userDisabled {
                     self.allowListening = false
                     self.toggleListening()
                 } else {
                     for id in self.fullIgnoreIds {
-                        if self.applicationToggle.frontAppId?.starts(with: id) == true {
+                        if ApplicationToggle.frontAppId?.starts(with: id) == true {
                             self.allowListening = false
                             self.toggleListening()
                             break

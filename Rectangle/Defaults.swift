@@ -84,6 +84,7 @@ class Defaults {
     static let doubleClickTitleBarIgnoredApps = JSONDefault<[String]>(key: "doubleClickTitleBarIgnoredApps")
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
     static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
+    static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
     
     static var array: [Default] = [
         launchOnLogin,
@@ -158,7 +159,8 @@ class Defaults {
         doubleClickTitleBarRestore,
         doubleClickTitleBarIgnoredApps,
         ignoreDragSnapToo,
-        systemWideMouseDown
+        systemWideMouseDown,
+        systemWideMouseDownApps
     ]
 }
 
@@ -231,6 +233,7 @@ class OptionalBoolDefault: Default {
     
     var userDisabled: Bool { enabled == false }
     var userEnabled: Bool { enabled == true }
+    var notSet: Bool { enabled == nil }
     
     init(key: String) {
         self.key = key
@@ -370,6 +373,13 @@ class JSONDefault<T: Codable>: StringDefault {
         super.init(key: key)
         loadFromJSON()
         typeInitialized = true
+    }
+    
+    init(key: String, defaultValue: T) {
+        if typedValue == nil {
+            typedValue = defaultValue
+        }
+        super.init(key: key)
     }
     
     override func load(from codable: CodableDefault) {
