@@ -30,6 +30,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var prefsWindowController: NSWindowController?
     
+    private var prevActiveAppObservation: NSKeyValueObservation?
+    private var prevActiveApp: NSRunningApplication?
+    
     @IBOutlet weak var mainStatusMenu: NSMenu!
     @IBOutlet weak var unauthorizedMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
@@ -94,6 +97,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Notification.Name.todoMenuToggled.onPost(using: { _ in
             self.initializeTodo(false)
         })
+        
+        prevActiveAppObservation = NSWorkspace.shared.observe(\.frontmostApplication, options: .old) { workspace, change in
+            self.prevActiveApp = change.oldValue ?? nil
+        }
     }
     
     func applicationWillBecomeActive(_ notification: Notification) {
@@ -536,16 +543,25 @@ extension AppDelegate: NSWindowDelegate {
 
 extension AppDelegate {
     func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { continue }
-            if components.host == "execute-action" && components.path.isEmpty {
-                guard let name = (components.queryItems?.first { $0.name == "name" })?.value else { continue }
-                if let action = (WindowAction.active.first { urlName($0.name) == name }) { action.postUrl() }
+        if NSWorkspace.shared.frontmostApplication == NSRunningApplication.current {
+            prevActiveApp?.activate()
+        }
+        DispatchQueue.main.async {
+            func getUrlName(_ name: String) -> String {
+                return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
+            }
+            for url in urls {
+                guard 
+                    let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                    components.host == "execute-action",
+                    components.path.isEmpty,
+                    let name = (components.queryItems?.first { $0.name == "name" })?.value,
+                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                else {
+                    continue
+                }
+                action.postUrl()
             }
         }
-    }
-    
-    private func urlName(_ name: String) -> String {
-        return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
     }
 }
