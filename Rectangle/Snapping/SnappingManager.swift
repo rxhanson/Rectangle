@@ -266,6 +266,11 @@ class SnappingManager {
                     if snapArea == currentSnapArea {
                         return
                     }
+                    
+                    if Defaults.hapticFeedbackOnSnap.userEnabled {
+                        NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+                    }
+                    
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {

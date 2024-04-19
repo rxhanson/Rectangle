@@ -35623,6 +35623,18 @@
         }
       }
     },
+    "r2Y-cY-tgn.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Enable Haptic Feedback on snap\"; ObjectID = \"r2Y-cY-tgn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable Haptic Feedback on snap"
+          }
+        }
+      }
+    },
     "R4o-n2-Eq4.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Zoom\"; ObjectID = \"R4o-n2-Eq4\";",
       "extractionState" : "manual",
