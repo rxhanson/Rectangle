@@ -35627,6 +35627,12 @@
       "comment" : "Class = \"NSButtonCell\"; title = \"Enable Haptic Feedback on snap\"; ObjectID = \"r2Y-cY-tgn\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktiviere haptische Feedback beim Einrasten"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -47181,7 +47187,7 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Einstellungen…"
           }
         },
