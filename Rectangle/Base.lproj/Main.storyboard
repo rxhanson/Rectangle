@@ -3681,8 +3681,8 @@ DQ
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="idz-Fq-8Qx">
-                                                        <rect key="frame" x="-2" y="25" width="225" height="18"/>
-                                                        <buttonCell key="cell" type="check" title="Enable Haptic Feedback on snap" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
+                                                        <rect key="frame" x="-2" y="25" width="126" height="18"/>
+                                                        <buttonCell key="cell" type="check" title="Haptic feedback" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>

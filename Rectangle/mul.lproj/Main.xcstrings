@@ -35624,7 +35624,7 @@
       }
     },
     "r2Y-cY-tgn.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Enable Haptic Feedback on snap\"; ObjectID = \"r2Y-cY-tgn\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Haptic feedback\"; ObjectID = \"r2Y-cY-tgn\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "de" : {
@@ -35636,7 +35636,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Enable Haptic Feedback on snap"
+            "value" : "Haptic feedback"
           }
         }
       }
