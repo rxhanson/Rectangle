@@ -87,7 +87,7 @@ class SnapAreaViewController: NSViewController {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
-        hapticFeedbackCheckbox.state = Defaults.hapticFeedbackOnSnap.userDisabled ? .off : .on
+        hapticFeedbackCheckbox.state = Defaults.hapticFeedbackOnSnap.userEnabled ? .on : .off
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userDisabled
         loadSnapAreas()
