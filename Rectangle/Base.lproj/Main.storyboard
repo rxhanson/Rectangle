@@ -3638,20 +3638,20 @@ DQ
             <objects>
                 <viewController storyboardIdentifier="HookshotConfigViewController" id="t2d-Q7-RLy" customClass="SnapAreaViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="yfQ-gV-dm5">
-                        <rect key="frame" x="0.0" y="0.0" width="654" height="731"/>
+                        <rect key="frame" x="0.0" y="0.0" width="654" height="757"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="30" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9T6-Lr-8m1">
-                                <rect key="frame" x="20" y="30" width="614" height="671"/>
+                                <rect key="frame" x="20" y="30" width="614" height="697"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5k8-dN-bzX">
-                                        <rect key="frame" x="20" y="557" width="574" height="114"/>
+                                        <rect key="frame" x="20" y="557" width="574" height="140"/>
                                         <subviews>
                                             <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Le-Om-VLZ">
-                                                <rect key="frame" x="0.0" y="20" width="267" height="94"/>
+                                                <rect key="frame" x="0.0" y="20" width="267" height="120"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
-                                                        <rect key="frame" x="-2" y="77" width="189" height="18"/>
+                                                        <rect key="frame" x="-2" y="103" width="189" height="18"/>
                                                         <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
@@ -3661,7 +3661,7 @@ DQ
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
-                                                        <rect key="frame" x="-2" y="51" width="257" height="18"/>
+                                                        <rect key="frame" x="-2" y="77" width="257" height="18"/>
                                                         <buttonCell key="cell" type="check" title="Restore window size when unsnapped" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UZP-5q-D5Y">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
@@ -3671,13 +3671,23 @@ DQ
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="cbx-fa-jJh">
-                                                        <rect key="frame" x="-2" y="25" width="132" height="18"/>
+                                                        <rect key="frame" x="-2" y="51" width="132" height="18"/>
                                                         <buttonCell key="cell" type="check" title="Animate footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="kx2-tZ-lk8">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAnimateFootprint:" target="t2d-Q7-RLy" id="qo7-sw-gbY"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="idz-Fq-8Qx">
+                                                        <rect key="frame" x="-2" y="25" width="126" height="18"/>
+                                                        <buttonCell key="cell" type="check" title="Haptic feedback" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleHapticFeedback:" target="t2d-Q7-RLy" id="fYe-DO-EgM"/>
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="vrs-iM-XVL" userLabel="Mission Control Dragging Checkbox">
@@ -3696,8 +3706,10 @@ DQ
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
+                                                    <integer value="1000"/>
                                                 </visibilityPriorities>
                                                 <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
                                                     <real value="3.4028234663852886e+38"/>
                                                     <real value="3.4028234663852886e+38"/>
                                                     <real value="3.4028234663852886e+38"/>
@@ -4205,6 +4217,7 @@ DQ
                         <outlet property="bottomPortraitSelect" destination="ZYO-D7-C2a" id="pZd-mp-0yk"/>
                         <outlet property="bottomRightLandscapeSelect" destination="jVF-3c-sL0" id="eYi-gy-RF3"/>
                         <outlet property="bottomRightPortraitSelect" destination="lje-Rc-9Hj" id="bxP-nE-cgS"/>
+                        <outlet property="hapticFeedbackCheckbox" destination="idz-Fq-8Qx" id="5Wb-6e-kmA"/>
                         <outlet property="leftLandscapeSelect" destination="jqR-m9-Kh7" id="wBI-Th-vtz"/>
                         <outlet property="leftPortraitSelect" destination="NlH-2s-Bb2" id="r9T-BM-YbN"/>
                         <outlet property="missionControlDraggingCheckbox" destination="vrs-iM-XVL" id="xgC-0R-SeA"/>

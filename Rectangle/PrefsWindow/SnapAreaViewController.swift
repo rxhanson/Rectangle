@@ -13,6 +13,7 @@ class SnapAreaViewController: NSViewController {
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var unsnapRestoreButton: NSButton!
     @IBOutlet weak var animateFootprintCheckbox: NSButton!
+    @IBOutlet weak var hapticFeedbackCheckbox: NSButton!
     @IBOutlet weak var missionControlDraggingCheckbox: NSButton!
 
     @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
@@ -51,6 +52,11 @@ class SnapAreaViewController: NSViewController {
         Defaults.footprintAnimationDurationMultiplier.value = newSetting
     }
     
+    @IBAction func toggleHapticFeedback(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.hapticFeedbackOnSnap.enabled = newSetting
+    }
+    
     @IBAction func toggleMissionControlDragging(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .off
         Defaults.missionControlDragging.enabled = newSetting
@@ -81,6 +87,7 @@ class SnapAreaViewController: NSViewController {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
+        hapticFeedbackCheckbox.state = Defaults.hapticFeedbackOnSnap.userEnabled ? .on : .off
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userDisabled
         loadSnapAreas()

@@ -77,6 +77,7 @@ class Defaults {
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
     static let enhancedUI = IntEnumDefault<EnhancedUI>(key: "enhancedUI", defaultValue: .disableEnable)
     static let footprintAnimationDurationMultiplier = FloatDefault(key: "footprintAnimationDurationMultiplier", defaultValue: 0)
+    static let hapticFeedbackOnSnap = OptionalBoolDefault(key: "hapticFeedbackOnSnap")
     static let missionControlDraggingAllowedOffscreenDistance = FloatDefault(key: "missionControlDraggingAllowedOffscreenDistance", defaultValue: 25)
     static let missionControlDraggingDisallowedDuration = IntDefault(key: "missionControlDraggingDisallowedDuration", defaultValue: 250)
     static let doubleClickTitleBar = IntDefault(key: "doubleClickTitleBar")
@@ -153,6 +154,7 @@ class Defaults {
         missionControlDragging,
         enhancedUI,
         footprintAnimationDurationMultiplier,
+        hapticFeedbackOnSnap,
         missionControlDraggingAllowedOffscreenDistance,
         missionControlDraggingDisallowedDuration,
         doubleClickTitleBar,

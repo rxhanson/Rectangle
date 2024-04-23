@@ -35623,6 +35623,24 @@
         }
       }
     },
+    "r2Y-cY-tgn.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Haptic feedback\"; ObjectID = \"r2Y-cY-tgn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptisches Feedback"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Haptic feedback"
+          }
+        }
+      }
+    },
     "R4o-n2-Eq4.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Zoom\"; ObjectID = \"R4o-n2-Eq4\";",
       "extractionState" : "manual",
@@ -47169,7 +47187,7 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Einstellungen…"
           }
         },
