@@ -16,6 +16,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
 - [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
+- [Add doubling/halving window sizing commands](#add-doublinghalving-window-sizing-commands)
 - [Add additional tiling and cascading commands](#add-additional-tiling-and-cascading-commands)
 - [Modify the "footprint" displayed for drag to snap area](#modify-the-footprint-displayed-for-drag-to-snap-area)
 - [Move Up/Down/Left/Right: Don't center on edge](#move-updownleftright-dont-center-on-edge)
@@ -219,6 +220,29 @@ For example, the command for setting the top left two-thirds shortcut to `ctrl o
 
 ```bash
 defaults write com.knollsoft.Rectangle topLeftThird -dict-add keyCode -float 18 modifierFlags -float 917504
+```
+
+## Add doubling/halving window sizing commands
+
+These commands for doubling/halving the window width/height are not available in the UI but can be configured via CLI. 
+
+The key codes are:
+
+* doubleHeightUp
+* doubleHeightDown
+* doubleWidthLeft
+* doubleWidthRight
+* halveHeightUp
+* halveHeightDown
+* halveWidthLeft
+* halveWidthRight
+
+The action direction (e.g., "Right") is the direction that the center of the window will move towards as a result of resizing. 
+
+For example, the command for setting the doubleWidthRight shortcut to `ctrl option shift right` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle doubleWidthRight -dict-add keyCode -float 124 modifierFlags -float 11403555
 ```
 
 ## Add additional tiling and cascading commands
