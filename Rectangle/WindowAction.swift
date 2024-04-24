@@ -89,10 +89,10 @@ enum WindowAction: Int, Codable {
     doubleHeightDown = 73,
     doubleWidthLeft = 74,
     doubleWidthRight = 75,
-    halfHeightUp = 76,
-    halfHeightDown = 77,
-    halfWidthLeft = 78,
-    halfWidthRight = 79
+    halveHeightUp = 76,
+    halveHeightDown = 77,
+    halveWidthLeft = 78,
+    halveWidthRight = 79
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -111,7 +111,7 @@ enum WindowAction: Int, Codable {
                          topLeftEighth, topCenterLeftEighth, topCenterRightEighth, topRightEighth,
                          bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
                          doubleHeightUp, doubleHeightDown, doubleWidthLeft, doubleWidthRight,
-                         halfHeightUp, halfHeightDown, halfWidthLeft, halfWidthRight,
+                         halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
                          tileAll, cascadeAll,
                          leftTodo, rightTodo,
                          cascadeActiveApp
@@ -215,10 +215,10 @@ enum WindowAction: Int, Codable {
         case .doubleHeightDown: return "doubleHeightDown"
         case .doubleWidthLeft: return "doubleWidthLeft"
         case .doubleWidthRight: return "doubleWidthRight"
-        case .halfHeightUp: return "halfHeightUp"
-        case .halfHeightDown: return "halfHeightDown"
-        case .halfWidthLeft: return "halfWidthLeft"
-        case .halfWidthRight: return "halfWidthRight"
+        case .halveHeightUp: return "halveHeightUp"
+        case .halveHeightDown: return "halveHeightDown"
+        case .halveWidthLeft: return "halveWidthLeft"
+        case .halveWidthRight: return "halveWidthRight"
         case .tileAll: return "tileAll"
         case .cascadeAll: return "cascadeAll"
         case .leftTodo: return "leftTodo"
@@ -357,7 +357,7 @@ enum WindowAction: Int, Codable {
         case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
                 .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
             return nil
-        case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight, .halfHeightUp, .halfHeightDown, .halfWidthLeft, .halfWidthRight:
+        case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight, .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight:
             return nil
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
             return nil
@@ -517,10 +517,10 @@ enum WindowAction: Int, Codable {
         case .doubleHeightDown: return  NSImage()
         case .doubleWidthLeft: return  NSImage()
         case .doubleWidthRight: return  NSImage()
-        case .halfHeightUp: return  NSImage()
-        case .halfHeightDown: return  NSImage()
-        case .halfWidthLeft: return  NSImage()
-        case .halfWidthRight: return  NSImage()
+        case .halveHeightUp: return  NSImage()
+        case .halveHeightDown: return  NSImage()
+        case .halveWidthLeft: return  NSImage()
+        case .halveWidthRight: return  NSImage()
         case .specified, .reverseAll: return NSImage()
         case .tileAll: return NSImage()
         case .cascadeAll: return NSImage()
@@ -559,7 +559,7 @@ enum WindowAction: Int, Codable {
             .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
             .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
 		 	.doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
-		 	.halfHeightUp, .halfHeightDown, .halfWidthLeft, .halfWidthRight,
+		 	.halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
             .leftTodo, .rightTodo:
             return .both
         case .moveUp, .moveDown:

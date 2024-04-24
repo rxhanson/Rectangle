@@ -26,7 +26,7 @@ class HalfOrDoubleDimensionCalculation: WindowCalculation, ChangeWindowDimension
     
     private func isSizeReducing(_ action: WindowAction) -> Bool {
         switch (action) {
-        case .halfHeightUp, .halfHeightDown, .halfWidthLeft, .halfWidthRight:
+        case .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight:
             return true
         default:
             return false
@@ -36,9 +36,9 @@ class HalfOrDoubleDimensionCalculation: WindowCalculation, ChangeWindowDimension
     private func resized(_ windowRect: CGRect, with action: WindowAction) -> CGRect {
         var resized = windowRect
         switch (action) {
-        case .halfHeightUp, .halfHeightDown:
+        case .halveHeightUp, .halveHeightDown:
             resized.size.height = resized.height * 0.5
-        case .halfWidthLeft, .halfWidthRight:
+        case .halveWidthLeft, .halveWidthRight:
             resized.size.width = resized.width * 0.5
         case .doubleHeightUp, .doubleHeightDown:
             resized.size.height = resized.height * 2.0
@@ -52,9 +52,9 @@ class HalfOrDoubleDimensionCalculation: WindowCalculation, ChangeWindowDimension
     
     private func repositionedIfRequired(original originalWindowRect: CGRect, resized resizedWindowRect: CGRect, after action: WindowAction) -> CGRect {
         switch (action) {
-        case .halfHeightUp:
+        case .halveHeightUp:
             return resizedWindowRect.offsetBy(dx: 0, dy: resizedWindowRect.height)
-        case .halfWidthRight:
+        case .halveWidthRight:
             return resizedWindowRect.offsetBy(dx: resizedWindowRect.width, dy: 0)
         case .doubleHeightDown:
             return resizedWindowRect.offsetBy(dx: 0, dy: -originalWindowRect.height)
