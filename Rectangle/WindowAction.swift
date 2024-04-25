@@ -387,6 +387,15 @@ enum WindowAction: Int, Codable {
         }
     }
     
+    var allowedToExtendOutsideCurrentScreenArea: Bool {
+        switch self {
+        case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight:
+            return true
+        default:
+            return false
+        }
+    }
+    
     var isDragSnappable: Bool {
         switch self {
         case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .smaller, .larger, .cascadeActiveApp,
