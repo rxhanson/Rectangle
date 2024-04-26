@@ -8,25 +8,13 @@
 
 import Foundation
 
-class ChangeSizeCalculation: WindowCalculation {
+class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation {
 
-    let minimumWindowWidth: CGFloat
-    let minimumWindowHeight: CGFloat
     let screenEdgeGapSize: CGFloat
     let sizeOffsetAbs: CGFloat
     let curtainChangeSize = Defaults.curtainChangeSize.enabled != false
 
     override init() {
-        let defaultHeight = Defaults.minimumWindowHeight.value
-        minimumWindowHeight = (defaultHeight <= 0 || defaultHeight > 1)
-            ? 0.25
-            : CGFloat(defaultHeight)
-
-        let defaultWidth = Defaults.minimumWindowWidth.value
-        minimumWindowWidth = (defaultWidth <= 0 || defaultWidth > 1)
-            ? 0.25
-            : CGFloat(defaultWidth)
-
         let windowGapSize = Defaults.gapSize.value
         screenEdgeGapSize = (windowGapSize <= 0) ? 5.0 : CGFloat(windowGapSize)
 
@@ -130,12 +118,6 @@ class ChangeSizeCalculation: WindowCalculation {
             adjustedWindowRect.origin.y = visibleFrameOfScreen.minY + CGFloat(Defaults.gapSize.value)
         }
         return adjustedWindowRect
-    }
-
-    private func resizedWindowRectIsTooSmall(windowRect: CGRect, visibleFrameOfScreen: CGRect) -> Bool {
-        let minimumWindowRectWidth = floor(visibleFrameOfScreen.width * minimumWindowWidth)
-        let minimumWindowRectHeight = floor(visibleFrameOfScreen.height * minimumWindowHeight)
-        return (windowRect.width <= minimumWindowRectWidth) || (windowRect.height <= minimumWindowRectHeight)
     }
 
 }

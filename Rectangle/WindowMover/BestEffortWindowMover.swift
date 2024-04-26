@@ -15,6 +15,7 @@ import Foundation
 class BestEffortWindowMover: WindowMover {
     func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
         guard let currentWindowRect: CGRect = frontmostWindowElement?.frame else { return }
+        if action?.allowedToExtendOutsideCurrentScreenArea == true && !NSScreen.screensHaveSeparateSpaces { return }
         
         var adjustedWindowRect: CGRect = currentWindowRect
         

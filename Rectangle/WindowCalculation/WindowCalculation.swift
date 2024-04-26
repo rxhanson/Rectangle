@@ -132,6 +132,7 @@ class WindowCalculationFactory {
     static let nextPrevDisplayCalculation = NextPrevDisplayCalculation()
     static let maximizeCalculation = MaximizeCalculation()
     static let changeSizeCalculation = ChangeSizeCalculation()
+    static let halfOrDoubleDimensionCalculation = HalfOrDoubleDimensionCalculation()
     static let lowerLeftCalculation = LowerLeftCalculation()
     static let lowerRightCalculation = LowerRightCalculation()
     static let upperLeftCalculation = UpperLeftCalculation()
@@ -244,6 +245,14 @@ class WindowCalculationFactory {
      .bottomCenterLeftEighth: bottomCenterLeftEighthCalculation,
      .bottomCenterRightEighth: bottomCenterRightEighthCalculation,
      .bottomRightEighth: bottomRightEighthCalculation,
+     .halveHeightUp: halfOrDoubleDimensionCalculation,
+     .halveHeightDown: halfOrDoubleDimensionCalculation,
+     .halveWidthLeft: halfOrDoubleDimensionCalculation,
+     .halveWidthRight: halfOrDoubleDimensionCalculation,
+     .doubleHeightUp: halfOrDoubleDimensionCalculation,
+     .doubleHeightDown: halfOrDoubleDimensionCalculation,
+     .doubleWidthLeft: halfOrDoubleDimensionCalculation,
+     .doubleWidthRight: halfOrDoubleDimensionCalculation,
      .specified: specifiedCalculation,
      .leftTodo: leftTodoCalculation,
      .rightTodo: rightTodoCalculation
