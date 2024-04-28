@@ -16,7 +16,12 @@ struct SnapArea: Equatable {
 
 class SnappingManager {
     
-    private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", "com.mathworks.matlab", "com.live2d.cubism.CECubismEditorApp", "com.aquafold.datastudio.DataStudio"]
+    private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", 
+                                                                                      "com.mathworks.matlab",
+                                                                                      "com.live2d.cubism.CECubismEditorApp",
+                                                                                      "com.aquafold.datastudio.DataStudio",
+                                                                                      "com.adobe.illustrator",
+                                                                                      "com.adobe.AfterEffects"]
     
     var eventMonitor: EventMonitor?
     var windowElement: AccessibilityElement?
