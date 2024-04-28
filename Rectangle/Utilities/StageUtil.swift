@@ -33,10 +33,18 @@ class StageUtil {
     }
     
     static var stageStripPosition: StageStripPosition {
-        guard let value = dockDefaults?.object(forKey: "orientation") as? String else {
+        switch dockDefaults?.string(forKey: "orientation") {
+        case "left":
+            return .right
+        case "right":
             return .left
+        default: // bottom
+            var isRTL = false
+            if #available(macOS 13, *), Locale.current.language.characterDirection == .rightToLeft {
+                isRTL = true
+            }
+            return isRTL ? .right : .left
         }
-        return value == "left" ? .right : .left
     }
     
     static func isStageStripVisible(_ screen: NSScreen? = .main) -> Bool {
