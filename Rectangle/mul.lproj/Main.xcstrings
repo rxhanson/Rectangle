@@ -13460,7 +13460,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right"
+            "value" : "Справа"
           }
         },
         "sk" : {
@@ -13646,7 +13646,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toggle Todo"
+            "value" : "Включить режим Todo приложения"
           }
         },
         "sk" : {
@@ -18162,7 +18162,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reflow Todo"
+            "value" : "Обновить положение Todo окна"
           }
         },
         "sk" : {
@@ -29772,7 +29772,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left"
+            "value" : "Слева"
           }
         },
         "sk" : {
@@ -31524,7 +31524,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo side"
+            "value" : "Расположение Todo приложения"
           }
         },
         "sk" : {
@@ -35638,7 +35638,13 @@
             "state" : "new",
             "value" : "Haptic feedback"
           }
-        }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тактильный отклик"
+          }
+        },
       }
     },
     "R4o-n2-Eq4.title" : {
