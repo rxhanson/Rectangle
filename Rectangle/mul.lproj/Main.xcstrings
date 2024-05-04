@@ -1577,6 +1577,12 @@
             "value" : "Versione"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バージョン"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2133,6 +2139,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spectable"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spectacle"
           }
         },
         "nl" : {
@@ -7322,7 +7334,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スマートコピー／ペースト"
+            "value" : "スマートコピー/ペースト"
           }
         },
         "ko" : {
@@ -14298,7 +14310,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スペルおよび文法"
+            "value" : "スペルと文法"
           }
         },
         "ko" : {
@@ -16559,6 +16571,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aree a scatto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スナップ領域"
           }
         },
         "nl" : {
@@ -20594,7 +20612,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ウインドウのタイトルバーをダブルクリックすることで、最大化／最大化解除を行う"
+            "value" : "ウインドウのタイトルバーをダブルクリックすることで、最大化/最大化解除を行う"
           }
         },
         "ko" : {
@@ -26004,6 +26022,12 @@
           }
         },
         "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "-"
@@ -35639,12 +35663,18 @@
             "value" : "Haptic feedback"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触覚フィードバック"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Тактильный отклик"
           }
-        },
+        }
       }
     },
     "R4o-n2-Eq4.title" : {
@@ -38472,7 +38502,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左半分／左半分にサイズ変更するコマンドを繰り返したら、ウインドウを表示するディスプレイを変更"
+            "value" : "左半分/左半分にサイズ変更するコマンドを繰り返したら、ウインドウを表示するディスプレイを変更"
           }
         },
         "ko" : {
@@ -47235,8 +47265,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "環境設定…"
+            "state" : "translated",
+            "value" : "設定…"
           }
         },
         "ko" : {
