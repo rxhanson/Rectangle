@@ -361,6 +361,12 @@ defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 10
 defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 10
 ```
 
+You can also seperately specify the gap for a screen with a notch. Useful for multi display setups if you are using a menubar replacement.
+
+```bash
+defaults write com.knollsoft.Rectangle screenEdgeGapTopNotch -int 5
+```
+
 If you want these gaps to be applied on your main screen only you can set screenEdgeGapsOnMainScreenOnly. Useful for multi display setups where only one screen has some dock replacement.
 
 ```bash
