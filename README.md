@@ -127,12 +127,27 @@ That file can be backed up or transferred to other machines.
 
 If you are using Rectangle v0.44+, you can also use the import/export button in the Preferences pane to share to your preferences and keyboard shortcuts across machines using a JSON file.
 
+> [!NOTE]  
+> If you are having issues with configuration options persisting after an application restart and you've installed using Homebrew, you will need to uninstall and reinstall with the `--zap` flag.
+
+```
+brew uninstall --zap rectangle
+brew install rectangle
+```
+
 ## Uninstallation
 
 Rectangle can be uninstalled by quitting the app and moving it to the trash. You can remove the Rectangle defaults from your machine with the following terminal command:
 
 ```bash
 defaults delete com.knollsoft.Rectangle
+```
+
+> [!TIP]  
+> If you are uninstalling after installing with Homebrew, you should include the `--zap` flag to ensure it removes the plist entries too. 
+
+```
+brew uninstall --zap rectangle
 ```
 
 ---
