@@ -69,6 +69,11 @@ class AccessibilityElement {
         return role == .group
     }
     
+    var isTabGroup: Bool? {
+        guard let role = role else { return nil }
+        return role == .tabGroup
+    }
+    
     var isStaticText: Bool? {
         guard let role = role else { return nil }
         return role == .staticText
