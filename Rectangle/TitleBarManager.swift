@@ -47,7 +47,7 @@ class TitleBarManager {
         }
         guard
             titleBarFrame.contains(location),
-            element.isWindow == true || element.isToolbar == true || element.isGroup == true || element.isStaticText == true
+            element.isWindow == true || element.isToolbar == true || element.isGroup == true || element.isTabGroup == true || element.isStaticText == true
         else {
             return
         }
