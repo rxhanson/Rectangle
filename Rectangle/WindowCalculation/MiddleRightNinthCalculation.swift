@@ -36,7 +36,7 @@ class MiddleRightNinthCalculation: WindowCalculation, OrientationAware, NinthsRe
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
         rect.origin.y = visibleFrameOfScreen.minY + rect.height
-        rect.origin.x = visibleFrameOfScreen.minX + (2.0 * rect.width)
+        rect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - rect.width
         return RectResult(rect, subAction: .middleRightNinth)
     }
     
@@ -45,7 +45,7 @@ class MiddleRightNinthCalculation: WindowCalculation, OrientationAware, NinthsRe
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
         rect.origin.y = visibleFrameOfScreen.minY + rect.height
-        rect.origin.x = visibleFrameOfScreen.minX + (2.0 * rect.width)
+        rect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - rect.width
         return RectResult(rect, subAction: .middleRightNinth)
     }
 }

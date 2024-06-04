@@ -36,7 +36,7 @@ class TopRightSixthCalculation: WindowCalculation, OrientationAware, SixthsRepea
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        rect.origin.x = visibleFrameOfScreen.minX + (rect.width * 2.0)
+        rect.origin.x = visibleFrameOfScreen.minX + visibleFrameOfScreen.width - rect.width
         rect.origin.y = visibleFrameOfScreen.maxY - rect.height
         return RectResult(rect, subAction: .topRightSixthLandscape)
     }

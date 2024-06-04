@@ -37,7 +37,7 @@ class BottomRightSixthCalculation: WindowCalculation, OrientationAware, SixthsRe
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        rect.origin.x = visibleFrameOfScreen.origin.x + (rect.width * 2)
+        rect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.width - rect.width
         return RectResult(rect, subAction: .bottomRightSixthLandscape)
     }
     
@@ -45,7 +45,7 @@ class BottomRightSixthCalculation: WindowCalculation, OrientationAware, SixthsRe
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 3.0)
-        rect.origin.x = visibleFrameOfScreen.origin.x + (rect.width * 2)
+        rect.origin.x = visibleFrameOfScreen.origin.x + visibleFrameOfScreen.width - rect.width
         return RectResult(rect, subAction: .bottomRightSixthPortrait)
     }
 }
