@@ -4817,6 +4817,12 @@
             "value" : "Maximize Height"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximise Height"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5187,6 +5193,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Last Fourth"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Quarter"
           }
         },
         "es" : {
@@ -6437,6 +6449,12 @@
             "value" : "Maximize"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximise"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6939,6 +6957,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Authorize Rectangle"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authorise Rectangle"
           }
         },
         "es" : {
@@ -11335,6 +11359,12 @@
             "value" : "Not Authorized to Control Your Computer"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Authorised to Control Your Computer"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14793,6 +14823,12 @@
             "value" : "Almost Maximize"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Almost Maximise"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17179,6 +17215,12 @@
             "value" : "Second Fourth"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second Quarter"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17729,6 +17771,12 @@
             "value" : "Viertel"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarters"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17899,6 +17947,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Viertel Spalten"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarter columns"
           }
         },
         "es" : {
@@ -18403,6 +18457,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Please select your default shortcuts and behavior"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please select your default shortcuts and behaviour"
           }
         },
         "es" : {
@@ -20577,6 +20637,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Double-click window title bar to maximize/restore"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-click window title bar to maximise/restore"
           }
         },
         "es" : {
@@ -23901,6 +23967,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Authorize Rectangle"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authorise Rectangle"
           }
         },
         "es" : {
@@ -28529,6 +28601,12 @@
             "value" : "Maximieren"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximise"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30951,6 +31029,12 @@
             "value" : "Last Three Fourths"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Three Quarters"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32939,6 +33023,12 @@
             "value" : "Minimize"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimise"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34257,6 +34347,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "First Fourth"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Quarter"
           }
         },
         "es" : {
@@ -38799,6 +38895,12 @@
             "value" : "First Three Fourths"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Three Quarters"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42731,6 +42833,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Authorize…"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authorise..."
           }
         },
         "es" : {
@@ -48041,6 +48149,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Third Fourth"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Third Quarter"
           }
         },
         "es" : {
