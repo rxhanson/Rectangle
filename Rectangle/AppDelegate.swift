@@ -120,6 +120,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.titleBarManager = TitleBarManager()
         self.initializeTodo()
         checkForProblematicApps()
+        checkForBuiltInTiling()
     }
     
     func checkForConflictingApps() {
@@ -188,6 +189,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if !problemBundles.isEmpty {
             AlertUtil.oneButtonAlert(question: "Known issues with installed applications", text: "\(displayNameString)\n\nThese applications have issues with the drag to screen edge to snap functionality in Rectangle.\n\nYou can either ignore the applications using the menu item in Rectangle, or disable drag to screen edge snapping in Rectangle preferences.")
             Defaults.notifiedOfProblemApps.enabled = true
+        }
+    }
+    
+    func checkForBuiltInTiling() {
+        guard #available(macOS 15, *), !Defaults.internalTilingNotified.enabled
+        else {
+            return
+        }
+        
+        Defaults.internalTilingNotified.enabled = true
+        if MacTilingDefaults.tilingByEdgeDrag.enabled || MacTilingDefaults.tilingOptionAccelerator.enabled {
+            let result = AlertUtil.threeButtonAlert(
+                question: "Conflict with macOS tiling".localized,
+                text: "Drag to screen edge tiling is enabled in both Rectangle and macOS.".localized,
+                buttonOneText: "Disable in macOS".localized,
+                buttonTwoText: "Disable in Rectangle".localized,
+                buttonThreeText: "Dismiss".localized)
+            switch result {
+            case .alertFirstButtonReturn:
+                MacTilingDefaults.tilingByEdgeDrag.disable()
+                MacTilingDefaults.tilingOptionAccelerator.disable()
+                
+                let result = AlertUtil.twoButtonAlert(
+                    question: "Tiling in macOS has been disabled".localized,
+                    text: "To re-enable it, go to System Settings → Desktop & Dock → Windows".localized,
+                    cancelText: "Open System Settings".localized)
+                if result == .alertSecondButtonReturn {
+                    MacTilingDefaults.openSystemSettings()
+                }
+            case .alertSecondButtonReturn:
+                Defaults.windowSnapping.enabled = false
+            default:
+                break
+            }
         }
     }
     

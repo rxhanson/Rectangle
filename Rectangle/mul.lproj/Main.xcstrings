@@ -11643,6 +11643,9 @@
         }
       }
     },
+    "Conflict with macOS tiling" : {
+      "extractionState" : "manual"
+    },
     "Conflict with system setting" : {
       "localizations" : {
         "ar" : {
@@ -13741,6 +13744,15 @@
         }
       }
     },
+    "Disable in macOS" : {
+      "extractionState" : "manual"
+    },
+    "Disable in Rectangle" : {
+      "extractionState" : "manual"
+    },
+    "Dismiss" : {
+      "extractionState" : "manual"
+    },
     "Display" : {
       "localizations" : {
         "ar" : {
@@ -14092,6 +14104,9 @@
           }
         }
       }
+    },
+    "Drag to screen edge tiling is enabled in both Rectangle and macOS." : {
+      "extractionState" : "manual"
     },
     "dRJ-4n-Yzg.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Undo\"; ObjectID = \"dRJ-4n-Yzg\";",
@@ -39755,6 +39770,9 @@
         }
       }
     },
+    "Tiling in macOS has been disabled" : {
+      "extractionState" : "manual"
+    },
     "tlD-Oa-oAM.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Kern\"; ObjectID = \"tlD-Oa-oAM\";",
       "extractionState" : "manual",
@@ -40064,6 +40082,9 @@
           }
         }
       }
+    },
+    "To re-enable it, go to System Settings → Desktop & Dock → Windows" : {
+      "extractionState" : "manual"
     },
     "Top sixths from corners; maximize" : {
       "localizations" : {
