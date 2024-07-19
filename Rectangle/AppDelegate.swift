@@ -193,7 +193,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func checkForBuiltInTiling() {
-        guard #available(macOS 15, *), !Defaults.internalTilingNotified.enabled
+        guard #available(macOS 15, *), 
+                !Defaults.internalTilingNotified.enabled,
+                !Defaults.windowSnapping.userDisabled
         else {
             return
         }
