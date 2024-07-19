@@ -11644,7 +11644,15 @@
       }
     },
     "Conflict with macOS tiling" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与 macOS 窗口平铺功能冲突"
+          }
+        }
+      }
     },
     "Conflict with system setting" : {
       "localizations" : {
@@ -13745,13 +13753,37 @@
       }
     },
     "Disable in macOS" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 macOS 里禁用"
+          }
+        }
+      }
     },
     "Disable in Rectangle" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 里禁用"
+          }
+        }
+      }
     },
     "Dismiss" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忽略"
+          }
+        }
+      }
     },
     "Display" : {
       "localizations" : {
@@ -14106,7 +14138,15 @@
       }
     },
     "Drag to screen edge tiling is enabled in both Rectangle and macOS." : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 和 macOS 中都启用了拖移窗口至屏幕边缘实现平铺"
+          }
+        }
+      }
     },
     "dRJ-4n-Yzg.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Undo\"; ObjectID = \"dRJ-4n-Yzg\";",
@@ -35785,6 +35825,12 @@
             "state" : "translated",
             "value" : "Тактильный отклик"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触感反馈"
+          }
         }
       }
     },
@@ -39771,7 +39817,15 @@
       }
     },
     "Tiling in macOS has been disabled" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 中的窗口平铺功能已被禁用"
+          }
+        }
+      }
     },
     "tlD-Oa-oAM.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Kern\"; ObjectID = \"tlD-Oa-oAM\";",
@@ -40084,7 +40138,15 @@
       }
     },
     "To re-enable it, go to System Settings → Desktop & Dock → Windows" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要重新启用它，请转到系统设置→ 桌面与程序坞 → 窗口"
+          }
+        }
+      }
     },
     "Top sixths from corners; maximize" : {
       "localizations" : {
@@ -47490,7 +47552,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "偏好设置…"
           }
         },
