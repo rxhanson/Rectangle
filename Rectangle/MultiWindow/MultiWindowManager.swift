@@ -113,18 +113,18 @@ class MultiWindowManager {
         }
     }
 
-    private struct CascadeActiveAppWindows {
-        var right = false
-        var bottom = false
-        var n = 0
-        var size = CGSizeZero
+    private struct CascadeActiveAppParameters {
+        let right: Bool
+        let bottom: Bool
+        let numWindows: Int
+        let size: CGSize
 
-        init(windowFrame: CGRect, screenFrame: CGRect, n: Int, size: CGSize, delta: CGFloat) {
+        init(windowFrame: CGRect, screenFrame: CGRect, numWindows: Int, size: CGSize, delta: CGFloat) {
             right = windowFrame.midX > screenFrame.midX
             bottom = windowFrame.midY > screenFrame.midY
-            self.n = n
-            let m = CGSize(width: screenFrame.width - CGFloat(n - 1) * delta, height: screenFrame.height - CGFloat(n - 1) * delta)
-            self.size = CGSize(width: min(size.width, m.width), height: min(size.height, m.height))
+            self.numWindows = numWindows
+            let maxSize = CGSize(width: screenFrame.width - CGFloat(numWindows - 1) * delta, height: screenFrame.height - CGFloat(numWindows - 1) * delta)
+            self.size = CGSize(width: min(size.width, maxSize.width), height: min(size.height, maxSize.height))
         }
     }
 
@@ -143,27 +143,27 @@ class MultiWindowManager {
         var filtered = windows.filter(hasFrontWindowPid(_:))
 
         // parameters for cascading active app windows
-        var caaw: CascadeActiveAppWindows?
+        var cascadeParameters: CascadeActiveAppParameters?
 
         if let first = filtered.first {
             // move the first to become the last (top)
-            filtered.removeFirst()
-            filtered.append(first)
-            caaw = CascadeActiveAppWindows(windowFrame: first.frame, screenFrame: screenFrame, n: filtered.count, size: first.size!, delta: delta)
+            filtered.append(filtered.removeFirst())
+            // set up parameters
+            cascadeParameters = CascadeActiveAppParameters(windowFrame: first.frame, screenFrame: screenFrame, numWindows: filtered.count, size: first.size!, delta: delta)
         }
 
         // cascade the filtered windows
         for (ind, w) in filtered.enumerated() {
-            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind, caaw: caaw)
+            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind, cascadeParameters: cascadeParameters)
         }
 
-        // func returning true for a pid equal to the front window's pid
+        // return true for a w pid equal to the front window's pid
         func hasFrontWindowPid(_ w: AccessibilityElement) -> Bool {
             return w.pid == frontWindowElement.pid
         }
     }
 
-    private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int, caaw: CascadeActiveAppWindows? = nil) {
+    private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int, cascadeParameters: CascadeActiveAppParameters? = nil) {
         var rect = w.frame
 
         // TODO: save previous position in history
@@ -171,15 +171,15 @@ class MultiWindowManager {
         rect.origin.x = screenFrame.origin.x + delta * CGFloat(index)
         rect.origin.y = screenFrame.origin.y + delta * CGFloat(index)
 
-        if let caaw {
-            rect.size.width = caaw.size.width
-            rect.size.height = caaw.size.height
+        if let cascadeParameters {
+            rect.size.width = cascadeParameters.size.width
+            rect.size.height = cascadeParameters.size.height
 
-            if caaw.right {
-                rect.origin.x = screenFrame.origin.x + screenFrame.size.width - caaw.size.width - delta * CGFloat(index)
+            if cascadeParameters.right {
+                rect.origin.x = screenFrame.origin.x + screenFrame.size.width - cascadeParameters.size.width - delta * CGFloat(index)
             }
-            if caaw.bottom {
-                rect.origin.y = screenFrame.origin.y + screenFrame.size.height - caaw.size.height - delta * CGFloat(caaw.n - 1 - index)
+            if cascadeParameters.bottom {
+                rect.origin.y = screenFrame.origin.y + screenFrame.size.height - cascadeParameters.size.height - delta * CGFloat(cascadeParameters.numWindows - 1 - index)
             }
         }
 
