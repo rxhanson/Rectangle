@@ -5573,6 +5573,12 @@
             "value" : "Center Third"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre Third"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5943,6 +5949,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Center"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre"
           }
         },
         "es" : {
@@ -10387,6 +10399,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Center Half"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre Half"
           }
         },
         "es" : {
@@ -23650,6 +23668,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Bottom Center Sixth"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bottom Centre Sixth"
           }
         },
         "es" : {
@@ -40684,6 +40708,12 @@
             "value" : "Top Center Sixth"
           }
         },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top Centre Sixth"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43096,6 +43126,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zentrieren"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value": "Centre"
           }
         },
         "es" : {
