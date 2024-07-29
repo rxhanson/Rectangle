@@ -30,7 +30,7 @@ class MultiWindowManager {
         }
     }
 
-    static private func allWindowsOnScreen(windowElement: AccessibilityElement? = nil, sortByPID: Bool = false) -> (screens: UsableScreens, windows: [AccessibilityElement])? {
+    private static func allWindowsOnScreen(windowElement: AccessibilityElement? = nil, sortByPID: Bool = false) -> (screens: UsableScreens, windows: [AccessibilityElement])? {
         let screenDetection = ScreenDetection()
 
         guard let windowElement = windowElement ?? AccessibilityElement.getFrontWindowElement(),
@@ -46,7 +46,7 @@ class MultiWindowManager {
         var windows = AccessibilityElement.getAllWindowElements()
         if sortByPID {
             windows.sort(by: { (w1: AccessibilityElement, w2: AccessibilityElement) -> Bool in
-                return w1.pid ?? pid_t(0) > w2.pid ?? pid_t(0)
+                w1.pid ?? pid_t(0) > w2.pid ?? pid_t(0)
             })
         }
 
@@ -54,12 +54,12 @@ class MultiWindowManager {
         for w in windows {
             if Defaults.todo.userEnabled, TodoManager.isTodoWindow(w) { continue }
             let screen = screenDetection.detectScreens(using: w)?.currentScreen
-            if screen == currentScreen
-                && w.isWindow == true
-                && w.isSheet != true
-                && w.isMinimized != true
-                && w.isHidden != true
-                && w.isSystemDialog != true
+            if screen == currentScreen,
+               w.isWindow == true,
+               w.isSheet != true,
+               w.isMinimized != true,
+               w.isHidden != true,
+               w.isSystemDialog != true
             {
                 actualWindows.append(w)
             }
@@ -113,6 +113,21 @@ class MultiWindowManager {
         }
     }
 
+    private struct CascadeActiveAppParameters {
+        let right: Bool
+        let bottom: Bool
+        let numWindows: Int
+        let size: CGSize
+
+        init(windowFrame: CGRect, screenFrame: CGRect, numWindows: Int, size: CGSize, delta: CGFloat) {
+            right = windowFrame.midX > screenFrame.midX
+            bottom = windowFrame.midY > screenFrame.midY
+            self.numWindows = numWindows
+            let maxSize = CGSize(width: screenFrame.width - CGFloat(numWindows - 1) * delta, height: screenFrame.height - CGFloat(numWindows - 1) * delta)
+            self.size = CGSize(width: min(size.width, maxSize.width), height: min(size.height, maxSize.height))
+        }
+    }
+
     static func cascadeActiveAppWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
         guard let (screens, windows) = allWindowsOnScreen(windowElement: windowElement, sortByPID: true),
               let frontWindowElement = AccessibilityElement.getFrontWindowElement()
@@ -127,36 +142,45 @@ class MultiWindowManager {
         // keep windows with a pid equal to the front window's pid
         var filtered = windows.filter(hasFrontWindowPid(_:))
 
-        var firstSize: CGSize?
+        // parameters for cascading active app windows
+        var cascadeParameters: CascadeActiveAppParameters?
 
-        // move the first to become the last
-        if let first = filtered.first, hasFrontWindowPid(first) {
-            filtered.removeFirst()
-            filtered.append(first)
-            firstSize = first.size
+        if let first = filtered.first {
+            // move the first to become the last (top)
+            filtered.append(filtered.removeFirst())
+            // set up parameters
+            cascadeParameters = CascadeActiveAppParameters(windowFrame: first.frame, screenFrame: screenFrame, numWindows: filtered.count, size: first.size!, delta: delta)
         }
 
         // cascade the filtered windows
         for (ind, w) in filtered.enumerated() {
-            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind, size: firstSize)
+            cascadeWindow(w, screenFrame: screenFrame, delta: delta, index: ind, cascadeParameters: cascadeParameters)
         }
 
-        // func returning true for a pid equal to the front window's pid
+        // return true for a w pid equal to the front window's pid
         func hasFrontWindowPid(_ w: AccessibilityElement) -> Bool {
             return w.pid == frontWindowElement.pid
         }
     }
 
-    private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int, size: CGSize? = nil) {
+    private static func cascadeWindow(_ w: AccessibilityElement, screenFrame: CGRect, delta: CGFloat, index: Int, cascadeParameters: CascadeActiveAppParameters? = nil) {
         var rect = w.frame
 
         // TODO: save previous position in history
 
         rect.origin.x = screenFrame.origin.x + delta * CGFloat(index)
         rect.origin.y = screenFrame.origin.y + delta * CGFloat(index)
-        if let size {
-            rect.size.width = size.width
-            rect.size.height = size.height
+
+        if let cascadeParameters {
+            rect.size.width = cascadeParameters.size.width
+            rect.size.height = cascadeParameters.size.height
+
+            if cascadeParameters.right {
+                rect.origin.x = screenFrame.origin.x + screenFrame.size.width - cascadeParameters.size.width - delta * CGFloat(index)
+            }
+            if cascadeParameters.bottom {
+                rect.origin.y = screenFrame.origin.y + screenFrame.size.height - cascadeParameters.size.height - delta * CGFloat(cascadeParameters.numWindows - 1 - index)
+            }
         }
 
         w.setFrame(rect)
