@@ -20,7 +20,6 @@ extension RepeatedExecutionsInThirdsCalculation {
         return calculateFractionalRect(params, fraction: 1 / 2.0)
     }
     
-    // FIXME: Check how Defaults.altThirdCycle is used, potentially remove.
     func calculateRect(for cycleDivision: CycleBetweenDivision, params: RectCalculationParameters) -> RectResult {
         let fraction = cycleDivision.fraction
         return calculateFractionalRect(params, fraction: fraction)
