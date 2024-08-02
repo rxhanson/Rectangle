@@ -13,6 +13,7 @@ enum CycleBetweenDivision: Int, CaseIterable {
     case oneHalf = 1
     case oneThird = 2
     case oneQuarter = 3
+    case threeQuarters = 4
     
     static func fromBits(bits: Int) -> Set<CycleBetweenDivision> {
         Set(
@@ -30,7 +31,7 @@ enum CycleBetweenDivision: Int, CaseIterable {
     // around to the larger sizes.
     //
     // For example if all cycles are used, the order should be:
-    // 1/2, 1/3, 1/4, 2/3,
+    // 1/2, 1/3, 1/4, 3/4, 2/3
     static var sortedCycleDivisions: [CycleBetweenDivision] = {
         let sortedDivisions = Self.allCases.sorted(by: { $0.fraction < $1.fraction })
         
@@ -40,8 +41,6 @@ enum CycleBetweenDivision: Int, CaseIterable {
         
         let lessThanFistDivision = sortedDivisions[0..<firstDivisionIndex]
         let greaterThanFistDivision = sortedDivisions[(firstDivisionIndex + 1)..<sortedDivisions.count]
-        
-        print(sortedDivisions, lessThanFistDivision, greaterThanFistDivision)
         
         return [firstDivision] + lessThanFistDivision.reversed() + greaterThanFistDivision.reversed()
     }()
@@ -59,6 +58,8 @@ extension CycleBetweenDivision {
             "⅓"
         case .oneQuarter:
             "¼"
+        case .threeQuarters:
+            "¾"
         }
     }
     
@@ -72,6 +73,8 @@ extension CycleBetweenDivision {
             1 / 3
         case .oneQuarter:
             1 / 4
+        case .threeQuarters:
+            3 / 4
         }
     }
     
