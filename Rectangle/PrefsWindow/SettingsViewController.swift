@@ -34,6 +34,10 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var stageSlider: NSSlider!
     @IBOutlet weak var stageLabel: NSTextField!
     
+    @IBOutlet weak var cycleBetweenOptionsView: NSStackView!
+    
+    @IBOutlet var cycleBetweenOptionsViewHeightConstraint: NSLayoutConstraint!
+    
     private var aboutTodoWindowController: NSWindowController?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {

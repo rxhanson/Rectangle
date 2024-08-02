@@ -38754,6 +38754,18 @@
         }
       }
     },
+    "Sz9-vr-PgO.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Cycle between sizes\"; ObjectID = \"Sz9-vr-PgO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cycle between sizes"
+          }
+        }
+      }
+    },
     "t7n-mU-75I.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Enable Rectangle.app\"; ObjectID = \"t7n-mU-75I\";",
       "extractionState" : "extracted_with_value",
@@ -43131,7 +43143,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value": "Centre"
+            "value" : "Centre"
           }
         },
         "es" : {
