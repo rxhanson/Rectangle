@@ -2709,7 +2709,7 @@
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
-                                    <stackView hidden="YES" distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="er1-EQ-YIF">
+                                    <stackView hidden="YES" distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalClippingResistancePriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="er1-EQ-YIF">
                                         <rect key="frame" x="0.0" y="338" width="124" height="0.0"/>
                                         <subviews>
                                             <textField focusRingType="none" horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Se9-Hr-fYW">
@@ -2854,10 +2854,10 @@
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lRr-k7-YZR">
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalClippingResistancePriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="lRr-k7-YZR">
                                         <rect key="frame" x="0.0" y="140" width="450" height="0.0"/>
                                         <subviews>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ntf-YR-7Gr">
+                                            <stackView identifier="Todo app width" distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ntf-YR-7Gr">
                                                 <rect key="frame" x="0.0" y="-21" width="450" height="21"/>
                                                 <subviews>
                                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="90f-Y4-sgi">
@@ -2889,7 +2889,7 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pon-Fc-IkL">
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="Pon-Fc-IkL">
                                                         <rect key="frame" x="319" y="1" width="131" height="20"/>
                                                         <subviews>
                                                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZQD-06-YVI">
@@ -2940,11 +2940,11 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nsh-GW-hpI">
-                                                <rect key="frame" x="0.0" y="58" width="450" height="50"/>
+                                            <stackView identifier="Toggle todo" distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="nsh-GW-hpI">
+                                                <rect key="frame" x="0.0" y="-48" width="450" height="19"/>
                                                 <subviews>
                                                     <textField focusRingType="none" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="cEi-pr-62P">
-                                                        <rect key="frame" x="-2" y="17" width="79" height="16"/>
+                                                        <rect key="frame" x="-2" y="2" width="79" height="16"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Toggle Todo" id="DHt-cE-Bl0">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -2952,14 +2952,14 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <customView horizontalHuggingPriority="249" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="uca-0m-naE" customClass="MASShortcutView">
-                                                        <rect key="frame" x="85" y="16" width="160" height="19"/>
+                                                        <rect key="frame" x="85" y="0.0" width="160" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="OaK-b4-dxO"/>
                                                             <constraint firstAttribute="width" constant="160" id="tiw-8m-NjR"/>
                                                         </constraints>
                                                     </customView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qC3-Q0-xyP">
-                                                        <rect key="frame" x="255" y="0.0" width="195" height="50"/>
+                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="qC3-Q0-xyP">
+                                                        <rect key="frame" x="255" y="0.0" width="195" height="19"/>
                                                     </stackView>
                                                 </subviews>
                                                 <constraints>
@@ -2976,11 +2976,11 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="83w-h7-hhH">
-                                                <rect key="frame" x="0.0" y="0.0" width="450" height="50"/>
+                                            <stackView identifier="Reflow todo" distribution="fill" orientation="horizontal" alignment="centerY" spacing="10" horizontalStackHuggingPriority="1000" verticalStackHuggingPriority="249.99998474121094" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="83w-h7-hhH">
+                                                <rect key="frame" x="0.0" y="-75" width="450" height="19"/>
                                                 <subviews>
                                                     <textField focusRingType="none" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Cf5-4Q-E4I">
-                                                        <rect key="frame" x="-2" y="17" width="79" height="16"/>
+                                                        <rect key="frame" x="-2" y="2" width="79" height="16"/>
                                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Reflow Todo" id="Fx0-sm-DrT">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -2988,14 +2988,14 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <customView horizontalHuggingPriority="249" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="QTZ-pv-mwo" customClass="MASShortcutView">
-                                                        <rect key="frame" x="85" y="0.0" width="160" height="50"/>
+                                                        <rect key="frame" x="85" y="0.0" width="160" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="19" id="Prr-fE-EFT"/>
                                                             <constraint firstAttribute="width" constant="160" id="cxk-A1-9US"/>
                                                         </constraints>
                                                     </customView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="42U-If-Yqd">
-                                                        <rect key="frame" x="255" y="0.0" width="195" height="50"/>
+                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="42U-If-Yqd">
+                                                        <rect key="frame" x="255" y="0.0" width="195" height="19"/>
                                                     </stackView>
                                                 </subviews>
                                                 <constraints>

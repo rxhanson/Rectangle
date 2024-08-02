@@ -343,6 +343,7 @@ class SettingsViewController: NSViewController {
         CycleBetweenDivision.sortedCycleDivisions.map { division in
             let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleBetweenCheckbox(sender:)))
             button.tag = division.rawValue
+            button.setContentCompressionResistancePriority(.required, for: .vertical)
             return button
         }
     }
