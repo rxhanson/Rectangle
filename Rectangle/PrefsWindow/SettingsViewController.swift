@@ -40,6 +40,8 @@ class SettingsViewController: NSViewController {
     
     private var aboutTodoWindowController: NSWindowController?
     
+    private var cycleBetweenSizeCheckboxes = [NSButton]()
+    
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         if #available(macOS 13, *) {
@@ -68,6 +70,7 @@ class SettingsViewController: NSViewController {
         }
 
         Defaults.subsequentExecutionMode.value = mode
+        initializeCycleBetweenOptionsView(animated: true)
     }
     
     @IBAction func gapSliderChanged(_ sender: NSSlider) {
@@ -230,9 +233,20 @@ class SettingsViewController: NSViewController {
         
         initializeTodoModeSettings()
         
+        self.cycleBetweenSizeCheckboxes.forEach {
+            $0.removeFromSuperview()
+        }
+        
+        let cycleBetweenSizesCheckboxes = makeCycleBetweenSizesCheckboxes()
+        cycleBetweenSizesCheckboxes.forEach { checkbox in
+            cycleBetweenOptionsView.addArrangedSubview(checkbox)
+        }
+        self.cycleBetweenSizeCheckboxes = cycleBetweenSizesCheckboxes
+        
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
+            self.initializeCycleBetweenOptionsView(animated: false)
         })
         
         Notification.Name.menuBarIconHidden.onPost(using: {_ in
@@ -285,6 +299,91 @@ class SettingsViewController: NSViewController {
             stageLabel.stringValue = "\(stageSlider.intValue) px"
         } else {
             stageView.isHidden = true
+        }
+        
+        
+        setToggleStatesForCycleSizeCheckboxes()
+    }
+    
+    private func initializeCycleBetweenOptionsView(animated: Bool = false) {
+        let showOptionsView = Defaults.subsequentExecutionMode.value == .resize
+        
+        if showOptionsView {
+            setToggleStatesForCycleSizeCheckboxes()
+        }
+        
+        animateChanges(animated: animated) {
+            cycleBetweenOptionsView.isHidden = !showOptionsView
+            cycleBetweenOptionsViewHeightConstraint.isActive = !showOptionsView
+        }
+    }
+
+    private func animateChanges(animated: Bool, block: () -> Void) {
+        if animated {
+            NSAnimationContext.runAnimationGroup({context in
+                context.duration = 0.3
+                context.allowsImplicitAnimation = true
+                
+                block()
+                view.layoutSubtreeIfNeeded()
+            }, completionHandler: nil)
+        } else {
+            block()
+        }
+    }
+    
+    private func makeCycleBetweenSizesCheckboxes() -> [NSButton] {
+        CycleBetweenDivision.sortedCycleDivisions.map { division in
+            let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleBetweenCheckbox(sender:)))
+            button.tag = division.rawValue
+            return button
+        }
+    }
+    
+    @objc private func didCheckCycleBetweenCheckbox(sender: Any?) {
+        guard let checkbox = sender as? NSButton else {
+            Logger.log("Expected action to be sent from NSButton. Instead, sender is: \(String(describing: sender))")
+            return
+        }
+        
+        let rawValue = checkbox.tag
+        
+        guard let cycleDivision = CycleBetweenDivision(rawValue: rawValue) else {
+            Logger.log("Expected tag of cycle between checkbox to match a value of CycleBetweenDivision. Got: \(String(describing: rawValue))")
+            return
+        }
+        
+        // If cycle between divisions has not been changed, write the defaults.
+        if !Defaults.cycleBetweenDivisionsIsChanged.enabled {
+            Defaults.cycleBetweenDivisions.value = CycleBetweenDivision.defaultCycleSizes
+        }
+        
+        Defaults.cycleBetweenDivisionsIsChanged.enabled = true
+        
+        if checkbox.state == .on {
+            Defaults.cycleBetweenDivisions.value.insert(cycleDivision)
+        } else {
+            Defaults.cycleBetweenDivisions.value.remove(cycleDivision)
+        }
+    }
+    
+    private func setToggleStatesForCycleSizeCheckboxes() {
+        let useDefaultCycleSizes = !Defaults.cycleBetweenDivisionsIsChanged.enabled
+        let cycleBetweenSizes = useDefaultCycleSizes ? CycleBetweenDivision.defaultCycleSizes : Defaults.cycleBetweenDivisions.value
+        
+        cycleBetweenSizeCheckboxes.forEach { checkbox in
+            guard let cycleBetweenSizeForCheckbox = CycleBetweenDivision(rawValue: checkbox.tag) else {
+                return
+            }
+            
+            let isAlwaysEnabled = cycleBetweenSizeForCheckbox.isAlwaysEnabled
+            let isChecked = isAlwaysEnabled || cycleBetweenSizes.contains(cycleBetweenSizeForCheckbox)
+            checkbox.state = isChecked ? .on : .off
+            
+            // Show that the box cannot be unchecked.
+            if isAlwaysEnabled {
+                checkbox.isEnabled = false
+            }
         }
     }
 
