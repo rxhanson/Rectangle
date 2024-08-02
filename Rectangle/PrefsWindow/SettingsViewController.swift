@@ -38,6 +38,9 @@ class SettingsViewController: NSViewController {
     
     @IBOutlet var cycleBetweenOptionsViewHeightConstraint: NSLayoutConstraint!
     
+    @IBOutlet var todoViewHeightConstraint: NSLayoutConstraint!
+    
+    
     private var aboutTodoWindowController: NSWindowController?
     
     private var cycleBetweenSizeCheckboxes = [NSButton]()
@@ -130,7 +133,7 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleTodoMode(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.todo.enabled = newSetting
-        showHideTodoModeSettings()
+        showHideTodoModeSettings(animated: true)
         Notification.Name.todoMenuToggled.post()
     }
     
@@ -267,11 +270,15 @@ class SettingsViewController: NSViewController {
         TodoManager.initReflowShortcut()
         toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
         reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
-        showHideTodoModeSettings()
+        showHideTodoModeSettings(animated: false)
     }
     
-    private func showHideTodoModeSettings() {
-        todoView.isHidden = !Defaults.todo.userEnabled
+    private func showHideTodoModeSettings(animated: Bool) {
+        animateChanges(animated: animated) {
+            let isEnabled = Defaults.todo.userEnabled
+            todoView.isHidden = !isEnabled
+            todoViewHeightConstraint.isActive = !isEnabled
+        }
     }
     
     func initializeToggles() {
