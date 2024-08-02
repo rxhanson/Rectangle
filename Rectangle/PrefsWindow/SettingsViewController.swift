@@ -246,6 +246,8 @@ class SettingsViewController: NSViewController {
         }
         self.cycleBetweenSizeCheckboxes = cycleBetweenSizesCheckboxes
         
+        initializeCycleBetweenOptionsView(animated: false)
+        
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
