@@ -34,16 +34,16 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var stageSlider: NSSlider!
     @IBOutlet weak var stageLabel: NSTextField!
     
-    @IBOutlet weak var cycleBetweenOptionsView: NSStackView!
+    @IBOutlet weak var cycleSizesView: NSStackView!
     
-    @IBOutlet var cycleBetweenOptionsViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet var cycleSizesViewHeightConstraint: NSLayoutConstraint!
     
     @IBOutlet var todoViewHeightConstraint: NSLayoutConstraint!
     
     
     private var aboutTodoWindowController: NSWindowController?
     
-    private var cycleBetweenSizeCheckboxes = [NSButton]()
+    private var cycleSizeCheckboxes = [NSButton]()
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -236,15 +236,15 @@ class SettingsViewController: NSViewController {
         
         initializeTodoModeSettings()
         
-        self.cycleBetweenSizeCheckboxes.forEach {
+        self.cycleSizeCheckboxes.forEach {
             $0.removeFromSuperview()
         }
         
-        let cycleBetweenSizesCheckboxes = makeCycleBetweenSizesCheckboxes()
-        cycleBetweenSizesCheckboxes.forEach { checkbox in
-            cycleBetweenOptionsView.addArrangedSubview(checkbox)
+        let cycleSizeCheckboxes = makeCycleSizeCheckboxes()
+        cycleSizeCheckboxes.forEach { checkbox in
+            cycleSizesView.addArrangedSubview(checkbox)
         }
-        self.cycleBetweenSizeCheckboxes = cycleBetweenSizesCheckboxes
+        self.cycleSizeCheckboxes = cycleSizeCheckboxes
         
         initializeCycleBetweenOptionsView(animated: false)
         
@@ -322,8 +322,8 @@ class SettingsViewController: NSViewController {
         }
         
         animateChanges(animated: animated) {
-            cycleBetweenOptionsView.isHidden = !showOptionsView
-            cycleBetweenOptionsViewHeightConstraint.isActive = !showOptionsView
+            cycleSizesView.isHidden = !showOptionsView
+            cycleSizesViewHeightConstraint.isActive = !showOptionsView
         }
     }
 
@@ -341,16 +341,16 @@ class SettingsViewController: NSViewController {
         }
     }
     
-    private func makeCycleBetweenSizesCheckboxes() -> [NSButton] {
-        CycleBetweenDivision.sortedCycleDivisions.map { division in
-            let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleBetweenCheckbox(sender:)))
+    private func makeCycleSizeCheckboxes() -> [NSButton] {
+        CycleSize.sortedSizes.map { division in
+            let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleSizeCheckbox(sender:)))
             button.tag = division.rawValue
             button.setContentCompressionResistancePriority(.required, for: .vertical)
             return button
         }
     }
     
-    @objc private func didCheckCycleBetweenCheckbox(sender: Any?) {
+    @objc private func didCheckCycleSizeCheckbox(sender: Any?) {
         guard let checkbox = sender as? NSButton else {
             Logger.log("Expected action to be sent from NSButton. Instead, sender is: \(String(describing: sender))")
             return
@@ -358,36 +358,36 @@ class SettingsViewController: NSViewController {
         
         let rawValue = checkbox.tag
         
-        guard let cycleDivision = CycleBetweenDivision(rawValue: rawValue) else {
+        guard let cycleSize = CycleSize(rawValue: rawValue) else {
             Logger.log("Expected tag of cycle between checkbox to match a value of CycleBetweenDivision. Got: \(String(describing: rawValue))")
             return
         }
         
-        // If cycle between divisions has not been changed, write the defaults.
-        if !Defaults.cycleBetweenDivisionsIsChanged.enabled {
-            Defaults.cycleBetweenDivisions.value = CycleBetweenDivision.defaultCycleSizes
+        // If selected cycle sizes has not been changed, write the defaults.
+        if !Defaults.cycleSizesIsChanged.enabled {
+            Defaults.selectedCycleSizes.value = CycleSize.defaultSizes
         }
         
-        Defaults.cycleBetweenDivisionsIsChanged.enabled = true
+        Defaults.cycleSizesIsChanged.enabled = true
         
         if checkbox.state == .on {
-            Defaults.cycleBetweenDivisions.value.insert(cycleDivision)
+            Defaults.selectedCycleSizes.value.insert(cycleSize)
         } else {
-            Defaults.cycleBetweenDivisions.value.remove(cycleDivision)
+            Defaults.selectedCycleSizes.value.remove(cycleSize)
         }
     }
     
     private func setToggleStatesForCycleSizeCheckboxes() {
-        let useDefaultCycleSizes = !Defaults.cycleBetweenDivisionsIsChanged.enabled
-        let cycleBetweenSizes = useDefaultCycleSizes ? CycleBetweenDivision.defaultCycleSizes : Defaults.cycleBetweenDivisions.value
+        let useDefaultCycleSizes = !Defaults.cycleSizesIsChanged.enabled
+        let cycleSizes = useDefaultCycleSizes ? CycleSize.defaultSizes : Defaults.selectedCycleSizes.value
         
-        cycleBetweenSizeCheckboxes.forEach { checkbox in
-            guard let cycleBetweenSizeForCheckbox = CycleBetweenDivision(rawValue: checkbox.tag) else {
+        cycleSizeCheckboxes.forEach { checkbox in
+            guard let cycleSizeForCheckbox = CycleSize(rawValue: checkbox.tag) else {
                 return
             }
             
-            let isAlwaysEnabled = cycleBetweenSizeForCheckbox.isAlwaysEnabled
-            let isChecked = isAlwaysEnabled || cycleBetweenSizes.contains(cycleBetweenSizeForCheckbox)
+            let isAlwaysEnabled = cycleSizeForCheckbox.isAlwaysEnabled
+            let isChecked = isAlwaysEnabled || cycleSizes.contains(cycleSizeForCheckbox)
             checkbox.state = isChecked ? .on : .off
             
             // Show that the box cannot be unchecked.

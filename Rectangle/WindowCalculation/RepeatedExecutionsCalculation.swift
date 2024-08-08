@@ -12,7 +12,7 @@ protocol RepeatedExecutionsCalculation {
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult
     
-    func calculateRect(for cycleDivision: CycleBetweenDivision, params: RectCalculationParameters) -> RectResult
+    func calculateRect(for cycleDivision: CycleSize, params: RectCalculationParameters) -> RectResult
 
 }
 
@@ -26,10 +26,10 @@ extension RepeatedExecutionsCalculation {
             return calculateFirstRect(params)
         }
         
-        let useDefaultPositions = !Defaults.cycleBetweenDivisionsIsChanged.enabled
-        let positions = useDefaultPositions ? CycleBetweenDivision.defaultCycleSizes : Defaults.cycleBetweenDivisions.value
+        let useDefaultPositions = !Defaults.cycleSizesIsChanged.enabled
+        let positions = useDefaultPositions ? CycleSize.defaultSizes : Defaults.selectedCycleSizes.value
         
-        let sortedPositions = CycleBetweenDivision.sortedCycleDivisions
+        let sortedPositions = CycleSize.sortedSizes
             .filter { positions.contains($0) }
                 
         let position = count % sortedPositions.count

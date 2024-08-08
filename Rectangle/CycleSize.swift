@@ -1,5 +1,5 @@
 //
-//  CycleBetweenDivisions.swift
+//  CycleSize.swift
 //  Rectangle
 //
 //  Created by Eskil Gjerde Sviggum on 01/08/2024.
@@ -8,14 +8,14 @@
 
 import Foundation
 
-enum CycleBetweenDivision: Int, CaseIterable {
+enum CycleSize: Int, CaseIterable {
     case twoThirds = 0
     case oneHalf = 1
     case oneThird = 2
     case oneQuarter = 3
     case threeQuarters = 4
     
-    static func fromBits(bits: Int) -> Set<CycleBetweenDivision> {
+    static func fromBits(bits: Int) -> Set<CycleSize> {
         Set(
             Self.allCases.filter {
                 (bits >> $0.rawValue) & 1 == 1
@@ -23,8 +23,8 @@ enum CycleBetweenDivision: Int, CaseIterable {
         )
     }
     
-    static var firstDivision = CycleBetweenDivision.oneHalf
-    static var defaultCycleSizes: Set<CycleBetweenDivision> = [.oneHalf, .oneThird, .twoThirds]
+    static var firstSize = CycleSize.oneHalf
+    static var defaultSizes: Set<CycleSize> = [.oneHalf, .twoThirds, .oneThird]
     
     // The expected order of the cycle sizes is to start with the
     // first division, then go gradually upwards in size and wrap
@@ -32,21 +32,21 @@ enum CycleBetweenDivision: Int, CaseIterable {
     //
     // For example if all cycles are used, the order should be:
     // 1/2, 2/3, 3/4, 1/4, 1/3
-    static var sortedCycleDivisions: [CycleBetweenDivision] = {
+    static var sortedSizes: [CycleSize] = {
         let sortedDivisions = Self.allCases.sorted(by: { $0.fraction < $1.fraction })
         
-        guard let firstDivisionIndex = sortedDivisions.firstIndex(of: firstDivision) else {
+        guard let firstDivisionIndex = sortedDivisions.firstIndex(of: firstSize) else {
             return sortedDivisions
         }
         
         let lessThanFistDivision = sortedDivisions[0..<firstDivisionIndex]
         let greaterThanFistDivision = sortedDivisions[(firstDivisionIndex + 1)..<sortedDivisions.count]
         
-        return [firstDivision] + greaterThanFistDivision + lessThanFistDivision
+        return [firstSize] + greaterThanFistDivision + lessThanFistDivision
     }()
 }
 
-extension CycleBetweenDivision {
+extension CycleSize {
     
     var title: String {
         switch self {
@@ -79,7 +79,7 @@ extension CycleBetweenDivision {
     }
     
     var isAlwaysEnabled: Bool {
-        if self == .firstDivision {
+        if self == .firstSize {
             return true
         }
         
@@ -88,7 +88,7 @@ extension CycleBetweenDivision {
     
 }
 
-extension Set where Element == CycleBetweenDivision {
+extension Set where Element == CycleSize {
     func toBits() -> Int {
         var bits = 0
         self.forEach {
@@ -98,11 +98,11 @@ extension Set where Element == CycleBetweenDivision {
     }
 }
 
-class CycleBetweenDivisionsDefault: Default {
-    public private(set) var key: String = "cycleBetweenDivisions"
+class CycleSizesDefault: Default {
+    public private(set) var key: String = "selectedCycleSizes"
     private var initialized = false
     
-    var value: Set<CycleBetweenDivision> {
+    var value: Set<CycleSize> {
         didSet {
             if initialized {
                 UserDefaults.standard.set(value.toBits(), forKey: key)
@@ -112,13 +112,13 @@ class CycleBetweenDivisionsDefault: Default {
     
     init() {
         let bits = UserDefaults.standard.integer(forKey: key)
-        value = CycleBetweenDivision.fromBits(bits: bits)
+        value = CycleSize.fromBits(bits: bits)
         initialized = true
     }
 
     func load(from codable: CodableDefault) {
         if let bits = codable.int {
-            let divisions = CycleBetweenDivision.fromBits(bits: bits)
+            let divisions = CycleSize.fromBits(bits: bits)
             value = divisions
         }
     }

@@ -3216,8 +3216,8 @@
                         <outlet property="checkForUpdatesAutomaticallyCheckbox" destination="HcU-0y-wJU" id="ueY-S8-Ec0"/>
                         <outlet property="checkForUpdatesButton" destination="bn6-rz-AHw" id="9jf-az-Lvw"/>
                         <outlet property="cursorAcrossCheckbox" destination="WUS-pH-Rxv" id="xTd-uX-foF"/>
-                        <outlet property="cycleBetweenOptionsView" destination="er1-EQ-YIF" id="4n8-q7-7SJ"/>
-                        <outlet property="cycleBetweenOptionsViewHeightConstraint" destination="IXv-8o-a6i" id="td6-mn-BIs"/>
+                        <outlet property="cycleSizesView" destination="er1-EQ-YIF" id="yHn-9t-gqI"/>
+                        <outlet property="cycleSizesViewHeightConstraint" destination="IXv-8o-a6i" id="zjD-0U-P8y"/>
                         <outlet property="doubleClickTitleBarCheckbox" destination="hB7-uu-XeP" id="eNC-NI-Wmg"/>
                         <outlet property="gapLabel" destination="jd8-SJ-lza" id="pqG-fr-nwW"/>
                         <outlet property="gapSlider" destination="O9H-ZD-bqL" id="H7T-4Y-g8e"/>

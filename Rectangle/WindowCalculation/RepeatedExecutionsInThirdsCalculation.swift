@@ -20,7 +20,7 @@ extension RepeatedExecutionsInThirdsCalculation {
         return calculateFractionalRect(params, fraction: 1 / 2.0)
     }
     
-    func calculateRect(for cycleDivision: CycleBetweenDivision, params: RectCalculationParameters) -> RectResult {
+    func calculateRect(for cycleDivision: CycleSize, params: RectCalculationParameters) -> RectResult {
         let fraction = cycleDivision.fraction
         return calculateFractionalRect(params, fraction: fraction)
     }
