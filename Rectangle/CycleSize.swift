@@ -33,16 +33,16 @@ enum CycleSize: Int, CaseIterable {
     // For example if all cycles are used, the order should be:
     // 1/2, 2/3, 3/4, 1/4, 1/3
     static var sortedSizes: [CycleSize] = {
-        let sortedDivisions = Self.allCases.sorted(by: { $0.fraction < $1.fraction })
+        let sortedSizes = Self.allCases.sorted(by: { $0.fraction < $1.fraction })
         
-        guard let firstDivisionIndex = sortedDivisions.firstIndex(of: firstSize) else {
-            return sortedDivisions
+        guard let firstSizeIndex = sortedSizes.firstIndex(of: firstSize) else {
+            return sortedSizes
         }
         
-        let lessThanFistDivision = sortedDivisions[0..<firstDivisionIndex]
-        let greaterThanFistDivision = sortedDivisions[(firstDivisionIndex + 1)..<sortedDivisions.count]
+        let lessThanFistSizes = sortedSizes[0..<firstSizeIndex]
+        let greaterThanFistSizes = sortedSizes[(firstSizeIndex + 1)..<sortedSizes.count]
         
-        return [firstSize] + greaterThanFistDivision + lessThanFistDivision
+        return [firstSize] + greaterThanFistSizes + lessThanFistSizes
     }()
 }
 

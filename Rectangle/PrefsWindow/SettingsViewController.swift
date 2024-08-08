@@ -73,7 +73,7 @@ class SettingsViewController: NSViewController {
         }
 
         Defaults.subsequentExecutionMode.value = mode
-        initializeCycleBetweenOptionsView(animated: true)
+        initializeCycleSizesView(animated: true)
     }
     
     @IBAction func gapSliderChanged(_ sender: NSSlider) {
@@ -246,12 +246,12 @@ class SettingsViewController: NSViewController {
         }
         self.cycleSizeCheckboxes = cycleSizeCheckboxes
         
-        initializeCycleBetweenOptionsView(animated: false)
+        initializeCycleSizesView(animated: false)
         
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
-            self.initializeCycleBetweenOptionsView(animated: false)
+            self.initializeCycleSizesView(animated: false)
         })
         
         Notification.Name.menuBarIconHidden.onPost(using: {_ in
@@ -314,7 +314,7 @@ class SettingsViewController: NSViewController {
         setToggleStatesForCycleSizeCheckboxes()
     }
     
-    private func initializeCycleBetweenOptionsView(animated: Bool = false) {
+    private func initializeCycleSizesView(animated: Bool = false) {
         let showOptionsView = Defaults.subsequentExecutionMode.value == .resize
         
         if showOptionsView {
@@ -359,7 +359,7 @@ class SettingsViewController: NSViewController {
         let rawValue = checkbox.tag
         
         guard let cycleSize = CycleSize(rawValue: rawValue) else {
-            Logger.log("Expected tag of cycle between checkbox to match a value of CycleBetweenDivision. Got: \(String(describing: rawValue))")
+            Logger.log("Expected tag of cycle size checkbox to match a value of CycleSize. Got: \(String(describing: rawValue))")
             return
         }
         
