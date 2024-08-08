@@ -23,7 +23,9 @@ extension AXValue {
     
     static func from<T>(value: T, type: AXValueType) -> AXValue? {
         var value = value
-        return AXValueCreate(type, &value)
+        return withUnsafePointer(to: &value) { valuePointer in
+            AXValueCreate(type, valuePointer)
+        }
     }
 }
 
