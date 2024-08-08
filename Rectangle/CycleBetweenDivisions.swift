@@ -27,11 +27,11 @@ enum CycleBetweenDivision: Int, CaseIterable {
     static var defaultCycleSizes: Set<CycleBetweenDivision> = [.oneHalf, .oneThird, .twoThirds]
     
     // The expected order of the cycle sizes is to start with the
-    // first division, then go gradually downwards in size and wrap
-    // around to the larger sizes.
+    // first division, then go gradually upwards in size and wrap
+    // around to the smaller sizes.
     //
     // For example if all cycles are used, the order should be:
-    // 1/2, 1/3, 1/4, 3/4, 2/3
+    // 1/2, 2/3, 3/4, 1/4, 1/3
     static var sortedCycleDivisions: [CycleBetweenDivision] = {
         let sortedDivisions = Self.allCases.sorted(by: { $0.fraction < $1.fraction })
         
@@ -42,7 +42,7 @@ enum CycleBetweenDivision: Int, CaseIterable {
         let lessThanFistDivision = sortedDivisions[0..<firstDivisionIndex]
         let greaterThanFistDivision = sortedDivisions[(firstDivisionIndex + 1)..<sortedDivisions.count]
         
-        return [firstDivision] + lessThanFistDivision.reversed() + greaterThanFistDivision.reversed()
+        return [firstDivision] + greaterThanFistDivision + lessThanFistDivision
     }()
 }
 
