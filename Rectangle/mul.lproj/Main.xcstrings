@@ -19003,7 +19003,7 @@
       }
     },
     "gHH-BV-5kP.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"cycle between sizes on half actions\"; ObjectID = \"gHH-BV-5kP\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on half actions\"; ObjectID = \"gHH-BV-5kP\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -19039,7 +19039,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "cycle between sizes on half actions"
+            "value" : "cycle sizes on half actions"
           }
         },
         "es" : {
@@ -38724,36 +38724,6 @@
         }
       }
     },
-    "Sz9-vr-PgO.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Cycle between sizes\"; ObjectID = \"Sz9-vr-PgO\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cycle between sizes"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bytt mellom størrelser"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bytt mellom storleikar"
-          }
-        },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Växla mellan storlekar"
-          }
-        }
-      }
-    },
     "t7n-mU-75I.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Enable Rectangle.app\"; ObjectID = \"t7n-mU-75I\";",
       "extractionState" : "extracted_with_value",
@@ -47510,7 +47480,7 @@
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Innstillinger…"
           }
         },
@@ -47522,7 +47492,7 @@
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Innstillingar…"
           }
         },
@@ -47564,7 +47534,7 @@
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Inställningar…"
           }
         },
