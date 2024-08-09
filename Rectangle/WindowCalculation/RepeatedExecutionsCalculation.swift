@@ -12,9 +12,7 @@ protocol RepeatedExecutionsCalculation {
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult
     
-    func calculateSecondRect(_ params: RectCalculationParameters) -> RectResult
-
-    func calculateThirdRect(_ params: RectCalculationParameters) -> RectResult
+    func calculateRect(for cycleDivision: CycleSize, params: RectCalculationParameters) -> RectResult
 
 }
 
@@ -27,18 +25,16 @@ extension RepeatedExecutionsCalculation {
         else {
             return calculateFirstRect(params)
         }
+        
+        let useDefaultPositions = !Defaults.cycleSizesIsChanged.enabled
+        let positions = useDefaultPositions ? CycleSize.defaultSizes : Defaults.selectedCycleSizes.value
+        
+        let sortedPositions = CycleSize.sortedSizes
+            .filter { positions.contains($0) }
                 
-        let position = count % 3
+        let position = count % sortedPositions.count
         
-        switch (position) {
-        case 1:
-            return calculateSecondRect(params)
-        case 2:
-            return calculateThirdRect(params)
-        default:
-            return calculateFirstRect(params)
-        }
-        
+        return calculateRect(for: sortedPositions[position], params: params)
     }
     
 }

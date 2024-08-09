@@ -19003,186 +19003,156 @@
       }
     },
     "gHH-BV-5kP.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"cycle ½, ⅔, and ⅓ on half actions\"; ObjectID = \"gHH-BV-5kP\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on half actions\"; ObjectID = \"gHH-BV-5kP\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "دورة ½ و ⅔ و على نصف الإجراءات"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "cicle ½, ⅔, i ⅓ a mitges accions"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "cicle ½, ⅔, i ⅓ a mitges accions"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "změnit šířku oken na ½, ⅔, a ⅓ u polovičních akcí"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Wechsle zwischen ½, ⅔, und ⅓ bei Aktionen für halbe Bildschirme"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "cycle ½, ⅔, and ⅓ on half actions"
+            "value" : "cycle sizes on half actions"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "bucle de ½, ⅔, y ⅓ en acciones de mitad"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "bucle de ½, ⅔, y ⅓ en acciones de mitad"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "alterner entre ½, ⅔ et ⅓ lors des actions de moitié d’écran"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "siklus ½, ⅔ dan ⅓ pada setengah tindakan"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "scorri tra ½, ⅔, e ⅓ con le azioni di mezzi"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "ウインドウの幅を1/2、2/3、1/3に順次変更"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "절반 동작에 대해 1/2, 2/3, 1/3 동작을 순환"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "perjungti tarp ½, ⅔ ir ⅓ pusėms"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bytt mellom ½, ⅔, og ⅓ for halv-handlinger"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cycle ½, ⅔, and ⅓ on half actions"
+            "value" : "bytt mellom størrelser for halv-handlinger"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "byt mellom ½, ⅔, og ⅓ for halv-handlingar"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cycle ½, ⅔, and ⅓ on half actions"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cycle ½, ⅔, and ⅓ on half actions"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cycle ½, ⅔, and ⅓ on half actions"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cycle ½, ⅔, and ⅓ on half actions"
+            "value" : "byt mellom storleikar for halv-handlingar"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "переключаться между ½, ⅔ и ⅓ для половин"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "zmeniť šírku okien na ½, ⅔, a ⅓ pri polovičných akciách"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "växla mellan ½, ⅔, och ⅓ på halva åtgärder"
+            "value" : "växla mellan storlek på halva åtgärder"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "yarım seçenekleri yinelenirse ½, ⅔, ve ⅓ oranlarında geçiş yap"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "перемикати ½, ⅔, and ⅓ при діях з половиною"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thay đổi tuần hoàn ½, ⅔, và ⅓ kích thước"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "半屏操作循环½、⅔、⅓"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "一半動作循環½、⅔和⅓"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "一半動作循環½、⅔和⅓"
           }
         }
@@ -43131,7 +43101,7 @@
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value": "Centre"
+            "value" : "Centre"
           }
         },
         "es" : {
@@ -47510,7 +47480,7 @@
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Innstillinger…"
           }
         },
@@ -47522,7 +47492,7 @@
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Innstillingar…"
           }
         },
@@ -47564,7 +47534,7 @@
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Inställningar…"
           }
         },

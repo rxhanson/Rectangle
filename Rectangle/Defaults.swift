@@ -14,6 +14,8 @@ class Defaults {
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
     static let alternateDefaultShortcuts = BoolDefault(key: "alternateDefaultShortcuts") // switch to magnet defaults
     static let subsequentExecutionMode = SubsequentExecutionDefault()
+    static let selectedCycleSizes = CycleSizesDefault()
+    static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
@@ -95,6 +97,8 @@ class Defaults {
         hideMenuBarIcon,
         alternateDefaultShortcuts,
         subsequentExecutionMode,
+        selectedCycleSizes,
+        cycleSizesIsChanged,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,

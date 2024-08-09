@@ -34,7 +34,16 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var stageSlider: NSSlider!
     @IBOutlet weak var stageLabel: NSTextField!
     
+    @IBOutlet weak var cycleSizesView: NSStackView!
+    
+    @IBOutlet var cycleSizesViewHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet var todoViewHeightConstraint: NSLayoutConstraint!
+    
+    
     private var aboutTodoWindowController: NSWindowController?
+    
+    private var cycleSizeCheckboxes = [NSButton]()
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -64,6 +73,7 @@ class SettingsViewController: NSViewController {
         }
 
         Defaults.subsequentExecutionMode.value = mode
+        initializeCycleSizesView(animated: true)
     }
     
     @IBAction func gapSliderChanged(_ sender: NSSlider) {
@@ -123,7 +133,7 @@ class SettingsViewController: NSViewController {
     @IBAction func toggleTodoMode(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.todo.enabled = newSetting
-        showHideTodoModeSettings()
+        showHideTodoModeSettings(animated: true)
         Notification.Name.todoMenuToggled.post()
     }
     
@@ -226,9 +236,22 @@ class SettingsViewController: NSViewController {
         
         initializeTodoModeSettings()
         
+        self.cycleSizeCheckboxes.forEach {
+            $0.removeFromSuperview()
+        }
+        
+        let cycleSizeCheckboxes = makeCycleSizeCheckboxes()
+        cycleSizeCheckboxes.forEach { checkbox in
+            cycleSizesView.addArrangedSubview(checkbox)
+        }
+        self.cycleSizeCheckboxes = cycleSizeCheckboxes
+        
+        initializeCycleSizesView(animated: false)
+        
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
+            self.initializeCycleSizesView(animated: false)
         })
         
         Notification.Name.menuBarIconHidden.onPost(using: {_ in
@@ -249,11 +272,15 @@ class SettingsViewController: NSViewController {
         TodoManager.initReflowShortcut()
         toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
         reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
-        showHideTodoModeSettings()
+        showHideTodoModeSettings(animated: false)
     }
     
-    private func showHideTodoModeSettings() {
-        todoView.isHidden = !Defaults.todo.userEnabled
+    private func showHideTodoModeSettings(animated: Bool) {
+        animateChanges(animated: animated) {
+            let isEnabled = Defaults.todo.userEnabled
+            todoView.isHidden = !isEnabled
+            todoViewHeightConstraint.isActive = !isEnabled
+        }
     }
     
     func initializeToggles() {
@@ -281,6 +308,92 @@ class SettingsViewController: NSViewController {
             stageLabel.stringValue = "\(stageSlider.intValue) px"
         } else {
             stageView.isHidden = true
+        }
+        
+        
+        setToggleStatesForCycleSizeCheckboxes()
+    }
+    
+    private func initializeCycleSizesView(animated: Bool = false) {
+        let showOptionsView = Defaults.subsequentExecutionMode.value == .resize
+        
+        if showOptionsView {
+            setToggleStatesForCycleSizeCheckboxes()
+        }
+        
+        animateChanges(animated: animated) {
+            cycleSizesView.isHidden = !showOptionsView
+            cycleSizesViewHeightConstraint.isActive = !showOptionsView
+        }
+    }
+
+    private func animateChanges(animated: Bool, block: () -> Void) {
+        if animated {
+            NSAnimationContext.runAnimationGroup({context in
+                context.duration = 0.3
+                context.allowsImplicitAnimation = true
+                
+                block()
+                view.layoutSubtreeIfNeeded()
+            }, completionHandler: nil)
+        } else {
+            block()
+        }
+    }
+    
+    private func makeCycleSizeCheckboxes() -> [NSButton] {
+        CycleSize.sortedSizes.map { division in
+            let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleSizeCheckbox(sender:)))
+            button.tag = division.rawValue
+            button.setContentCompressionResistancePriority(.required, for: .vertical)
+            return button
+        }
+    }
+    
+    @objc private func didCheckCycleSizeCheckbox(sender: Any?) {
+        guard let checkbox = sender as? NSButton else {
+            Logger.log("Expected action to be sent from NSButton. Instead, sender is: \(String(describing: sender))")
+            return
+        }
+        
+        let rawValue = checkbox.tag
+        
+        guard let cycleSize = CycleSize(rawValue: rawValue) else {
+            Logger.log("Expected tag of cycle size checkbox to match a value of CycleSize. Got: \(String(describing: rawValue))")
+            return
+        }
+        
+        // If selected cycle sizes has not been changed, write the defaults.
+        if !Defaults.cycleSizesIsChanged.enabled {
+            Defaults.selectedCycleSizes.value = CycleSize.defaultSizes
+        }
+        
+        Defaults.cycleSizesIsChanged.enabled = true
+        
+        if checkbox.state == .on {
+            Defaults.selectedCycleSizes.value.insert(cycleSize)
+        } else {
+            Defaults.selectedCycleSizes.value.remove(cycleSize)
+        }
+    }
+    
+    private func setToggleStatesForCycleSizeCheckboxes() {
+        let useDefaultCycleSizes = !Defaults.cycleSizesIsChanged.enabled
+        let cycleSizes = useDefaultCycleSizes ? CycleSize.defaultSizes : Defaults.selectedCycleSizes.value
+        
+        cycleSizeCheckboxes.forEach { checkbox in
+            guard let cycleSizeForCheckbox = CycleSize(rawValue: checkbox.tag) else {
+                return
+            }
+            
+            let isAlwaysEnabled = cycleSizeForCheckbox.isAlwaysEnabled
+            let isChecked = isAlwaysEnabled || cycleSizes.contains(cycleSizeForCheckbox)
+            checkbox.state = isChecked ? .on : .off
+            
+            // Show that the box cannot be unchecked.
+            if isAlwaysEnabled {
+                checkbox.isEnabled = false
+            }
         }
     }
 
