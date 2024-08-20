@@ -1,6 +1,6 @@
 # Rectangle Terminal Commands for Hidden Preferences
 
-The preferences window is purposefully slim, but there's a lot that can be modified via Terminal. After executing a terminal command, restart the app as these values are loaded on application startup. For Rectangle Pro, please replace `com.knollsoft.Rectangle` with `com.knollsoft.Hookshot` for the following commands.
+The preferences window is purposefully slim, but there's a lot that can be modified via Terminal. After executing a terminal command, restart the app as these values are loaded on application startup. For Rectangle Pro, please replace `com.knollsoft.Rectangle` with `com.knollsoft.Hookshot` for the following commands. A number of the commands below are for configuring keyboard shortcuts, and you'll need to know the key code and modifier flags integer values. You can use the free [key codes app](https://apps.apple.com/us/app/key-codes/id414568915) to help with this.
 
 ## Contents
 
@@ -134,7 +134,7 @@ defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN
 
 ## Add an extra centering command with custom size
 
-This extra command is not available in the UI. You'll need to know which keycode and modifier flags you want (try the free key codes app: <https://apps.apple.com/us/app/key-codes/id414568915>)
+This extra command is not available in the UI. You'll need to know which keycode and modifier flags you want.
 
 ```bash
 defaults write com.knollsoft.Rectangle specified -dict-add keyCode -float 8 modifierFlags -float 1966080
