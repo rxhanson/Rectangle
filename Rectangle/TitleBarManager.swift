@@ -9,9 +9,10 @@ import Foundation
 
 class TitleBarManager {
     private var eventMonitor: EventMonitor!
-    
+    private var lastEventNumber: Int?
+
     init() {
-        eventMonitor = PassiveEventMonitor(mask: NSEvent.EventTypeMask.leftMouseUp, handler: handle)
+        eventMonitor = PassiveEventMonitor(mask: .leftMouseUp, handler: handle)
         toggleListening()
         Notification.Name.windowTitleBar.onPost { notification in
             self.toggleListening()
@@ -33,6 +34,7 @@ class TitleBarManager {
         guard
             event.type == .leftMouseUp,
             event.clickCount == 2,
+            event.eventNumber != lastEventNumber,
             TitleBarManager.systemSettingDisabled,
             let action = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1),
             case let location = NSEvent.mouseLocation.screenFlipped,
@@ -42,6 +44,7 @@ class TitleBarManager {
         else {
             return
         }
+        lastEventNumber = event.eventNumber
         if let toolbarFrame = windowElement.getChildElement(.toolbar)?.frame, toolbarFrame != .null {
             titleBarFrame = titleBarFrame.union(toolbarFrame)
         }
