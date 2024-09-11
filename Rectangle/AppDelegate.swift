@@ -222,6 +222,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             case .alertSecondButtonReturn:
                 Defaults.windowSnapping.enabled = false
+                Notification.Name.windowSnapping.post(object: false)
             default:
                 break
             }
