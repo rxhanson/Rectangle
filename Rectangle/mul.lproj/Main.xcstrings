@@ -512,7 +512,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať"
+            "value" : "Nájsť"
           }
         },
         "sv-SE" : {
@@ -1508,7 +1508,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : ""
+            "value" : "Pri opakovaní presunutia alebo skratiek pre polovice sa okno presunie na ďalší displej namiesto ½, ⅔ a ⅓ veľkosti."
           }
         },
         "sv-SE" : {
@@ -2534,7 +2534,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "presunie na nasledujúcu ľavú/pravú pozíciu"
+            "value" : "presunie na vedľajšiu ľavú/pravú pozíciu alebo strieda polovice"
           }
         },
         "sv-SE" : {
@@ -2720,7 +2720,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disable fast dragging to Mission Control"
+            "value" : "Vypnúť rýchle ťahanie do Mission Control"
           }
         },
         "sv-SE" : {
@@ -3488,7 +3488,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať"
+            "value" : "Nájsť"
           }
         },
         "sv-SE" : {
@@ -3674,7 +3674,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spustiť režim celej obrazovky"
+            "value" : "Zobraziť na celej obrazovky"
           }
         },
         "sv-SE" : {
@@ -5864,7 +5864,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť Todo mód v menu"
+            "value" : "Zobraziť Todo režim v menu"
           }
         },
         "sv-SE" : {
@@ -6242,7 +6242,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Zapnite Todo mód v Rectangle menu."
+            "value" : "3. Zapni Todo režim v Rectangle menu."
           }
         },
         "sv-SE" : {
@@ -7076,7 +7076,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorizovať Rectangle"
+            "value" : "Povoliť Rectangle"
           }
         },
         "sv-SE" : {
@@ -7262,7 +7262,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ak je zaškrtávacie políčko vypnuté, tak kliknite na zámok a zadajte vaše heslo"
+            "value" : "Ak je zaškrtávacie políčko vypnuté, klikni na zámok a zadaj svoje heslo"
           }
         },
         "sv-SE" : {
@@ -10692,7 +10692,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať výber"
+            "value" : "Použiť výber pri hľadaní"
           }
         },
         "sv-SE" : {
@@ -11305,6 +11305,12 @@
             "value" : "Отмена"
           }
         },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrušiť"
+          }
+        },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11482,7 +11488,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ovládanie počítača neautorizované"
+            "value" : "Nemá oprávnenie ovládať tvoj počítač"
           }
         },
         "sv-SE" : {
@@ -11664,6 +11670,12 @@
     "Conflict with macOS tiling" : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konflikt s umiestnením dlaždíc v macOS"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11803,7 +11815,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conflict with system setting"
+            "value" : "Konflikt so systémovým nastavením"
           }
         },
         "sv-SE" : {
@@ -12448,6 +12460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Сейчас используется: "
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Momentálne používané:"
           }
         },
         "sv-SE" : {
@@ -13366,6 +13384,12 @@
             "value" : "Горячие клавиши по-умолчанию"
           }
         },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predvolené skratky"
+          }
+        },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13537,7 +13561,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right"
+            "value" : "Vpravo"
           }
         },
         "sv-SE" : {
@@ -13723,7 +13747,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toggle Todo"
+            "value" : "Prepnúť Todo"
           }
         },
         "sv-SE" : {
@@ -13773,6 +13797,12 @@
     "Disable in macOS" : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vypnúť v macOS"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13784,6 +13814,12 @@
     "Disable in Rectangle" : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vypnúť v Rectangle"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13795,6 +13831,12 @@
     "Dismiss" : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatvoriť"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14158,6 +14200,12 @@
     "Drag to screen edge tiling is enabled in both Rectangle and macOS." : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potiahnutie na okraj obrazovky je zapnuté v Rectangle aj macOS."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15722,6 +15770,12 @@
             "value" : "Включить режим Todo приложения"
           }
         },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapnúť Todo režim"
+          }
+        },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15899,7 +15953,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nápoveda"
+            "value" : "Pomocník"
           }
         },
         "sv-SE" : {
@@ -16706,6 +16760,12 @@
             "value" : "Encaixar areas"
           }
         },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oblasti prichytenia"
+          }
+        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16883,7 +16943,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazí vybranú aplikáciu vždy na pravej strane vašej hlavnej obrazovky"
+            "value" : "Ponechá zvolenú aplikáciu vždy zobrazenú na pravej strane hlavnej obrazovky"
           }
         },
         "sv-SE" : {
@@ -17201,7 +17261,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rectangle nápoveda"
+            "value" : "Pomocník pre Rectangle"
           }
         },
         "sv-SE" : {
@@ -18127,7 +18187,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Štvrtiny - stĺpce"
+            "value" : "Štvrtiny stĺpce"
           }
         },
         "sv-SE" : {
@@ -18313,7 +18373,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reflow Todo"
+            "value" : "Preusporiadať Todo"
           }
         },
         "sv-SE" : {
@@ -18637,7 +18697,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prosím vyberte vaše predvolené skratky a správanie"
+            "value" : "Prosím, vyber svoje predvolené skratky a správanie"
           }
         },
         "sv-SE" : {
@@ -19110,8 +19170,8 @@
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "zmeniť šírku okien na ½, ⅔, a ⅓ pri polovičných akciách"
+            "state" : "translated",
+            "value" : "meniť veľkosť pri použití skratiek polovice na:"
           }
         },
         "sv-SE" : {
@@ -19421,7 +19481,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Go to System Settings → Privacy & Security → Accessibility"
+            "value" : "Prejdi do Systémové nastavenia → Súkromie a bezpečnosť → Prístupnosť"
           }
         },
         "sv-SE" : {
@@ -19607,7 +19667,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nastavenie"
+            "value" : "Nastavenia"
           }
         },
         "sv-SE" : {
@@ -20111,7 +20171,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rectangle potrebuje vaše povolenie, aby mohol ovládať pozície okien."
+            "value" : "Rectangle potrebuje povolenie na ovládanie umiestnenia tvojich okien."
           }
         },
         "sv-SE" : {
@@ -20601,7 +20661,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poloviny"
+            "value" : "Polovice"
           }
         },
         "sv-SE" : {
@@ -20787,7 +20847,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-click window title bar to maximize/restore"
+            "value" : "Dvojitým kliknutím na lištu s názvom maximalizovať/obnoviť"
           }
         },
         "sv-SE" : {
@@ -21927,7 +21987,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vitajte!"
+            "value" : "Vitaj!"
           }
         },
         "sv-SE" : {
@@ -23931,7 +23991,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Otvoriť systémové predvoľby"
+            "value" : "Otvoriť systémové nastavenia"
           }
         },
         "sv-SE" : {
@@ -24123,7 +24183,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorizovať Rectangle"
+            "value" : "Povoliť Rectangle"
           }
         },
         "sv-SE" : {
@@ -26535,7 +26595,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Animate footprint"
+            "value" : "Animovať stopu"
           }
         },
         "sv-SE" : {
@@ -26721,7 +26781,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "U Spectacle skratiek je väčšia pravdepodobnosť konfliktu s inými skratkami"
+            "value" : "Spectacle skratky majú vyššiu pravdepodobnosť konfliktu s inými skratkami"
           }
         },
         "sv-SE" : {
@@ -26907,7 +26967,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vitajte do Rectangle!"
+            "value" : "Víta Ťa Rectangle!"
           }
         },
         "sv-SE" : {
@@ -27713,7 +27773,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choďte do Predvoľby systému -> Zabezpečenie a súkromie -> Súkromie -> Sprístupnenie"
+            "value" : "Prejdi do Systémové nastavenia -> Súkromie a bezpečnosť -> Súkromie -> Prístupnosť"
           }
         },
         "sv-SE" : {
@@ -28085,7 +28145,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ak je ikona skrytá v riadku ponúk, znova spustite Rectangle cez Finder"
+            "value" : "Ak je ikona v lište skrytá, znovu spusti Rectangle z Findera"
           }
         },
         "sv-SE" : {
@@ -28935,7 +28995,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Todo móde"
+            "value" : "O Todo režime"
           }
         },
         "sv-SE" : {
@@ -29743,7 +29803,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Presunúť ku kraju"
+            "value" : "Presunúť na okraj"
           }
         },
         "sv-SE" : {
@@ -29929,7 +29989,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left"
+            "value" : "Vľavo"
           }
         },
         "sv-SE" : {
@@ -30301,7 +30361,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobrazí vybranú aplikáciu vždy na pravej strane vašej hlavnej obrazovky"
+            "value" : "Ponechá zvolenú aplikáciu vždy zobrazenú na pravej strane hlavnej obrazovky"
           }
         },
         "sv-SE" : {
@@ -31501,7 +31561,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť logovanie…"
+            "value" : "Zobraziť záznamy…"
           }
         },
         "sv-SE" : {
@@ -31687,7 +31747,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo side"
+            "value" : "Todo strana"
           }
         },
         "sv-SE" : {
@@ -32633,7 +32693,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open System Settings"
+            "value" : "Otvoriť Systémové nastavenia"
           }
         },
         "sv-SE" : {
@@ -32985,7 +33045,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať predchádzajúce"
+            "value" : "Nájsť predchádzajúce"
           }
         },
         "sv-SE" : {
@@ -33495,7 +33555,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zmazať"
+            "value" : "Odstrániť"
           }
         },
         "sv-SE" : {
@@ -33681,7 +33741,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pohybujte oknom pomocou kurzora po displejoch"
+            "value" : "Presúvať kurzor spolu s oknom medzi displejmi"
           }
         },
         "sv-SE" : {
@@ -34689,7 +34749,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať ďalšie"
+            "value" : "Nájsť ďalšie"
           }
         },
         "sv-SE" : {
@@ -34875,7 +34935,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozloženie Todo módu môžete obnoviť vybraním \"Zobraziť Todo\" v Rectangle menu alebo exekúciou nastavenej skratky."
+            "value" : "V Todo režime môžeš obnoviť rozloženie Todo režimu vyberom \"Preusporiadať Todo\" v Rectangle menu alebo pomocou príslušnej skratky."
           }
         },
         "sv-SE" : {
@@ -35373,7 +35433,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skryť ikonu z riadku ponúk"
+            "value" : "Skryť ikonu v lište"
           }
         },
         "sv-SE" : {
@@ -35745,7 +35805,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Priveďte vašu vybranú todo aplikáciu do popredia"
+            "value" : "1. Pridať zvolenú Todo aplikáciu do popredia"
           }
         },
         "sv-SE" : {
@@ -35818,6 +35878,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Тактильный отклик"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haptická odozva"
           }
         },
         "zh-Hans" : {
@@ -36523,7 +36589,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reflow Todo"
+            "value" : "Preusporiadať Todo"
           }
         },
         "sv-SE" : {
@@ -37889,7 +37955,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobraziť výber"
+            "value" : "Prejsť na výber"
           }
         },
         "sv-SE" : {
@@ -39585,7 +39651,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tretiny, ťahať smerom k stredu pre dve tretiny"
+            "value" : "Tretiny, ťahaj smerom do stredu pre dve tretiny"
           }
         },
         "sv-SE" : {
@@ -39813,6 +39879,12 @@
     "Tiling in macOS has been disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Umiestnenie dlaždíc v macOS bolo vypnuté"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40084,7 +40156,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting."
+            "value" : "Aby Rectangle mohol spravovať funkciu dvojitého kliknutia v lište s názvom, musíš vypnúť príslušné nastavenie v macOS."
           }
         },
         "sv-SE" : {
@@ -40134,6 +40206,12 @@
     "To re-enable it, go to System Settings → Desktop & Dock → Windows" : {
       "extractionState" : "manual",
       "localizations" : {
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pre opätovné povolenie, prejdi do Systémové nastavenia → Plocha a Dock → Okná"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41233,7 +41311,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnoviť predvolené skratky"
+            "value" : "Obnoviť predvolené skratky a oblasti prichytenia"
           }
         },
         "sv-SE" : {
@@ -41605,7 +41683,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vyňať"
+            "value" : "Vystrihnúť"
           }
         },
         "sv-SE" : {
@@ -41783,7 +41861,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use as Todo Window"
+            "value" : "Použiť ako Todo okno"
           }
         },
         "sv-SE" : {
@@ -41938,6 +42016,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Использовать окно на переднем плане в качестве Todo приложения"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Použiť frontmost.app ako Todo aplikáciu"
           }
         },
         "sv-SE" : {
@@ -42303,7 +42387,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnoviť veľkosť okna pri uvoľnení"
+            "value" : "Obnoviť veľkosť okna po uvoľnení"
           }
         },
         "sv-SE" : {
@@ -42675,7 +42759,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Skryť ostatných"
+            "value" : "Skryť ostatné"
           }
         },
         "sv-SE" : {
@@ -43023,7 +43107,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorizovať…"
+            "value" : "Povoliť…"
           }
         },
         "sv-SE" : {
@@ -44643,7 +44727,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vložiť a zladiť štýl"
+            "value" : "Vložiť a prispôsobiť štýl"
           }
         },
         "sv-SE" : {
@@ -44829,7 +44913,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nápoveda"
+            "value" : "Pomocník"
           }
         },
         "sv-SE" : {
@@ -45705,7 +45789,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vybraním Spectacle sa tiež bude meniť šírka okien na 1/2, 2/3, a 1/3 pri opakovaných príkazoch"
+            "value" : "Zvolením Spectacle sa tiež bude meniť šírka okien na 1/2, 2/3 a 1/3 pri opakovaní skratiek"
           }
         },
         "sv-SE" : {
@@ -45891,7 +45975,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ak je oblasť príliš malá, nedávne aplikácie budú skryté"
+            "value" : "Ak je oblasť príliš malá, nedávne aplikácie sa skryjú"
           }
         },
         "sv-SE" : {
@@ -46263,7 +46347,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "presúvať po displejoch"
+            "value" : "prepínať medzi displejmi"
           }
         },
         "sv-SE" : {
@@ -46449,7 +46533,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. V Rectangle menu, zvoľte\n\"Vybrať [Application] ako Todo aplikáciu\""
+            "value" : "2. V Rectangle menu, zvoľ\n\"Použiť [Aplikácia] ako Todo aplikáciu\""
           }
         },
         "sv-SE" : {
@@ -46893,7 +46977,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať…"
+            "value" : "Násjť…"
           }
         },
         "sv-SE" : {
@@ -47079,7 +47163,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hľadať a nahradiť…"
+            "value" : "Nájsť a nahradiť…"
           }
         },
         "sv-SE" : {
@@ -47528,8 +47612,8 @@
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Predvoľby…"
+            "state" : "translated",
+            "value" : "Nastavenia…"
           }
         },
         "sv-SE" : {
@@ -48531,7 +48615,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Todo móde"
+            "value" : "O Todo režime"
           }
         },
         "sv-SE" : {
