@@ -11670,6 +11670,12 @@
     "Conflict with macOS tiling" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS のタイル表示機能との競合"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13797,6 +13803,12 @@
     "Disable in macOS" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 側を無効化"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13814,6 +13826,12 @@
     "Disable in Rectangle" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 側を無効化"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13831,6 +13849,12 @@
     "Dismiss" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無視"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14200,6 +14224,12 @@
     "Drag to screen edge tiling is enabled in both Rectangle and macOS." : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"画面の端にドラッグしてタイル表示\"が、Ractangle と macOS の両方で有効になっています。"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19134,8 +19164,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "ウインドウの幅を1/2、2/3、1/3に順次変更"
+            "state" : "translated",
+            "value" : "サイズを半分にするのを繰り返す"
           }
         },
         "ko" : {
@@ -21921,7 +21951,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ようこそ！"
+            "value" : "ようこそ!"
           }
         },
         "ko" : {
@@ -26901,7 +26931,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rectangleへようこそ！"
+            "value" : "Rectangleへようこそ!"
           }
         },
         "ko" : {
@@ -39879,6 +39909,12 @@
     "Tiling in macOS has been disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS のタイル表示機能が無効になりました"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40206,6 +40242,12 @@
     "To re-enable it, go to System Settings → Desktop & Dock → Windows" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再度有効化するには、システム設定 → デスクトップと Dock → ウインドウに移動します"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
