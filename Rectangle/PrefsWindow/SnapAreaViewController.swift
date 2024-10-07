@@ -40,6 +40,9 @@ class SnapAreaViewController: NSViewController {
         let newSetting: Bool = sender.state == .on
         Defaults.windowSnapping.enabled = newSetting
         Notification.Name.windowSnapping.post(object: newSetting)
+        if newSetting {
+            MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: false)
+        }
     }
     
     @IBAction func toggleUnsnapRestore(_ sender: NSButton) {
@@ -102,14 +105,16 @@ class SnapAreaViewController: NSViewController {
         Notification.Name.appWillBecomeActive.onPost() { [weak self] _ in
             self?.showHidePortrait()
         }
+        Notification.Name.windowSnapping.onPost { [weak self] _ in
+            self?.windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
+        }
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: nil) { [weak self] _ in
             self?.showHidePortrait()
         }
     }
     
     func showHidePortrait() {
-        let hasPortraitDisplay = NSScreen.screens.contains(where: {!$0.frame.isLandscape})
-        portraitStackView.isHidden = !hasPortraitDisplay
+        portraitStackView.isHidden = !NSScreen.portraitDisplayConnected
     }
     
     func loadSnapAreas() {

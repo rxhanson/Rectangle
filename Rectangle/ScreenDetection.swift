@@ -166,5 +166,8 @@ extension NSScreen {
         return newFrame
     }
 
+    static var portraitDisplayConnected: Bool {
+        NSScreen.screens.contains(where: {!$0.frame.isLandscape})
+    }
 }
 

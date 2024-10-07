@@ -39929,6 +39929,9 @@
         }
       }
     },
+    "Tiling in Rectangle has been disabled" : {
+      "extractionState" : "manual"
+    },
     "tlD-Oa-oAM.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Kern\"; ObjectID = \"tlD-Oa-oAM\";",
       "extractionState" : "manual",
@@ -40060,6 +40063,9 @@
           }
         }
       }
+    },
+    "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows" : {
+      "extractionState" : "manual"
     },
     "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." : {
       "localizations" : {
@@ -40261,6 +40267,9 @@
           }
         }
       }
+    },
+    "Top screen edge tiling in macOS is now disabled" : {
+      "extractionState" : "manual"
     },
     "Top sixths from corners; maximize" : {
       "localizations" : {

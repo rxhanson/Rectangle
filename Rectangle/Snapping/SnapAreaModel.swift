@@ -41,6 +41,20 @@ class SnapAreaModel {
     var portrait: [Directional:SnapAreaConfig] {
         Defaults.portraitSnapAreas.typedValue ?? SnapAreaModel.defaultPortrait
     }
+    
+    var isTopConfigured: Bool {
+        if let landscapeTop = landscape[.t] {
+            if landscapeTop.action != nil || landscapeTop.compound != nil {
+                return true
+            }
+        }
+        if NSScreen.portraitDisplayConnected, let portraitTop = portrait[.t] {
+            if portraitTop.action != nil || portraitTop.compound != nil {
+                return true
+            }
+        }
+        return false
+    }
         
     func setConfig(type: DisplayOrientation, directional: Directional, snapAreaConfig: SnapAreaConfig?) {
         switch type {
