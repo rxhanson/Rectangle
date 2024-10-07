@@ -120,7 +120,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.titleBarManager = TitleBarManager()
         self.initializeTodo()
         checkForProblematicApps()
-        checkForBuiltInTiling()
+        MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
     }
     
     func checkForConflictingApps() {
@@ -191,44 +191,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             Defaults.notifiedOfProblemApps.enabled = true
         }
     }
-    
-    func checkForBuiltInTiling() {
-        guard #available(macOS 15, *), 
-                !Defaults.internalTilingNotified.enabled,
-                !Defaults.windowSnapping.userDisabled
-        else {
-            return
-        }
         
-        Defaults.internalTilingNotified.enabled = true
-        if MacTilingDefaults.tilingByEdgeDrag.enabled || MacTilingDefaults.tilingOptionAccelerator.enabled {
-            let result = AlertUtil.threeButtonAlert(
-                question: "Conflict with macOS tiling".localized,
-                text: "Drag to screen edge tiling is enabled in both Rectangle and macOS.".localized,
-                buttonOneText: "Disable in macOS".localized,
-                buttonTwoText: "Disable in Rectangle".localized,
-                buttonThreeText: "Dismiss".localized)
-            switch result {
-            case .alertFirstButtonReturn:
-                MacTilingDefaults.tilingByEdgeDrag.disable()
-                MacTilingDefaults.tilingOptionAccelerator.disable()
-                
-                let result = AlertUtil.twoButtonAlert(
-                    question: "Tiling in macOS has been disabled".localized,
-                    text: "To re-enable it, go to System Settings → Desktop & Dock → Windows".localized,
-                    cancelText: "Open System Settings".localized)
-                if result == .alertSecondButtonReturn {
-                    MacTilingDefaults.openSystemSettings()
-                }
-            case .alertSecondButtonReturn:
-                Defaults.windowSnapping.enabled = false
-                Notification.Name.windowSnapping.post(object: false)
-            default:
-                break
-            }
-        }
-    }
-    
     private func showWelcomeWindow() {
         let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil)
             .instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
