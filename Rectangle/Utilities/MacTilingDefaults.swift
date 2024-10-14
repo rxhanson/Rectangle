@@ -47,8 +47,6 @@ enum MacTilingDefaults: String {
 
         let isStandardTilingConflicting = (tilingByEdgeDrag.enabled || tilingOptionAccelerator.enabled)
         
-        let isTopTilingConflicting = topTilingByEdgeDrag.enabled && SnapAreaModel.instance.isTopConfigured
-        
         let shouldSkipStandardCheck = skipIfAlreadyNotified && Defaults.internalTilingNotified.enabled
         
         if isStandardTilingConflicting && !shouldSkipStandardCheck {
@@ -74,6 +72,11 @@ enum MacTilingDefaults: String {
                 openSystemSettings()
             }
         }
+    }
+    
+    private static var isTopTilingConflicting: Bool {
+        guard #available(macOS 15.1, *) else { return false }
+        return topTilingByEdgeDrag.enabled && SnapAreaModel.instance.isTopConfigured
     }
     
     private static func resolveStandardTilingConflict() {
