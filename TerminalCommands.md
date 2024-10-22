@@ -35,7 +35,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 
 ## Keyboard Shortcuts
 
-If you wish to change the default shortcuts after first launch click "Restore Default Shortcuts" in the settings tab of the preferences window. Alternatively you can set it with the following terminal command followed by app restart. True is for the recommended shortcuts, false is for Spectacle's.
+If you wish to change the default shortcuts after first launch click "Restore Default Shortcuts" in the settings tab of the preferences window. Alternatively, you can set it with the following terminal command followed by app restart. True is for the recommended shortcuts, false is for Spectacle's.
 
 ```bash
 defaults write com.knollsoft.Rectangle alternateDefaultShortcuts -bool true
@@ -361,7 +361,7 @@ defaults write com.knollsoft.Rectangle screenEdgeGapLeft -int 10
 defaults write com.knollsoft.Rectangle screenEdgeGapRight -int 10
 ```
 
-You can also seperately specify the gap for a screen with a notch. Useful for multi display setups if you are using a menubar replacement.
+You can also separately specify the gap for a screen with a notch. Useful for multi display setups if you are using a menubar replacement.
 
 ```bash
 defaults write com.knollsoft.Rectangle screenEdgeGapTopNotch -int 5
