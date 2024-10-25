@@ -2534,7 +2534,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "presunie na vedľajšiu ľavú/pravú pozíciu alebo strieda polovice"
+            "value" : "presunúť na vedľajšiu ľavú/pravú pozíciu alebo striedať polovice"
           }
         },
         "sv-SE" : {
@@ -16793,7 +16793,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oblasti prichytenia"
+            "value" : "Zóny prichytenia"
           }
         },
         "tr" : {
@@ -35835,7 +35835,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Pridať zvolenú Todo aplikáciu do popredia"
+            "value" : "1. Presuň zvolenú Todo aplikáciu do popredia"
           }
         },
         "sv-SE" : {
@@ -41362,7 +41362,7 @@
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obnoviť predvolené skratky a oblasti prichytenia"
+            "value" : "Obnoviť predvolené skratky a zóny prichytenia"
           }
         },
         "sv-SE" : {
