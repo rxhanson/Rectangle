@@ -92,7 +92,11 @@ enum WindowAction: Int, Codable {
     halveHeightUp = 76,
     halveHeightDown = 77,
     halveWidthLeft = 78,
-    halveWidthRight = 79
+    halveWidthRight = 79,
+    largerWidth = 80,
+    smallerWidth = 81,
+    largerHeight = 82,
+    smallerHeight = 83
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -225,6 +229,10 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return "rightTodo"
         case .cascadeActiveApp: return "cascadeActiveApp"
         case .centerProminently: return "centerProminently"
+        case .largerWidth: return "largerWidth"
+        case .smallerWidth: return "smallerWidth"
+        case .largerHeight: return "largerHeight"
+        case .smallerHeight: return "smallerHeight"
         }
     }
 
@@ -363,6 +371,8 @@ enum WindowAction: Int, Codable {
             return nil
         case .centerProminently:
             return nil
+        case .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
+            return nil
         }
 
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
@@ -404,7 +414,9 @@ enum WindowAction: Int, Codable {
             // Corner thirds
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
             // Eighths
-            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
+            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
+            // Smaller or Larger
+            .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
             return false
         default:
             return true
@@ -456,6 +468,8 @@ enum WindowAction: Int, Codable {
         case .centerThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .lastTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
         case .lastThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
+        case .largerWidth: return Shortcut( ctrl|alt|shift, kVK_ANSI_Equal )
+        case .smallerWidth: return Shortcut( ctrl|alt|shift, kVK_ANSI_Minus )
         default: return nil
         }
     }
@@ -537,6 +551,10 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return NSImage()
         case .cascadeActiveApp: return NSImage()
         case .centerProminently: return NSImage()
+        case .largerWidth: return NSImage()
+        case .smallerWidth: return NSImage()
+        case .largerHeight: return NSImage()
+        case .smallerHeight: return NSImage()
         }
     }
 
@@ -580,6 +598,8 @@ enum WindowAction: Int, Codable {
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
         case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
+            return .none
+        case .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
             return .none
         }
     }
