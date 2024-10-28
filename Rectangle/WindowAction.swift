@@ -94,7 +94,7 @@ enum WindowAction: Int, Codable {
     halveWidthLeft = 78,
     halveWidthRight = 79,
     largerWidth = 80,
-    smallerWidth = 81,
+    smallerWidth = 81
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
