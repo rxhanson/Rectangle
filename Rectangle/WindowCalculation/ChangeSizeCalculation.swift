@@ -28,9 +28,9 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
 
         let sizeOffset: CGFloat
         switch params.action {
-        case .larger, .largerWidth, .largerHeight:
+        case .larger, .largerWidth:
             sizeOffset = sizeOffsetAbs
-        case .smaller, .smallerWidth, .smallerHeight:
+        case .smaller, .smallerWidth:
             sizeOffset = -sizeOffsetAbs
         default:
             sizeOffset = 0
@@ -58,7 +58,7 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
 
         // Calculate Height
 
-        if [.larger, .smaller, .largerHeight, .smallerHeight].contains(params.action) {
+        if [.larger, .smaller].contains(params.action) {
             resizedWindowRect.size.height = resizedWindowRect.height + sizeOffset
             resizedWindowRect.origin.y = resizedWindowRect.minY - floor(sizeOffset / 2.0)
 
@@ -80,7 +80,7 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
             resizedWindowRect.origin.y = params.window.rect.origin.y - floor(sizeOffset / 2.0)
         }
         
-        if [.smaller, .smallerHeight, .smallerWidth].contains(params.action), resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
+        if [.smaller, .smallerWidth].contains(params.action), resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
             resizedWindowRect = window.rect
         }
 

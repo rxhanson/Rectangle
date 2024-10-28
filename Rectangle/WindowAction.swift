@@ -95,8 +95,6 @@ enum WindowAction: Int, Codable {
     halveWidthRight = 79,
     largerWidth = 80,
     smallerWidth = 81,
-    largerHeight = 82,
-    smallerHeight = 83
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -231,8 +229,6 @@ enum WindowAction: Int, Codable {
         case .centerProminently: return "centerProminently"
         case .largerWidth: return "largerWidth"
         case .smallerWidth: return "smallerWidth"
-        case .largerHeight: return "largerHeight"
-        case .smallerHeight: return "smallerHeight"
         }
     }
 
@@ -369,9 +365,7 @@ enum WindowAction: Int, Codable {
             return nil
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
             return nil
-        case .centerProminently:
-            return nil
-        case .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
+        case .centerProminently, .largerWidth, .smallerWidth:
             return nil
         }
 
@@ -408,15 +402,13 @@ enum WindowAction: Int, Codable {
     
     var isDragSnappable: Bool {
         switch self {
-        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .smaller, .larger, .cascadeActiveApp,
+        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .larger, .smaller, .largerWidth, .smallerWidth, .cascadeActiveApp,
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
             // Eighths
-            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
-            // Smaller or Larger
-            .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
+            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
             return false
         default:
             return true
@@ -553,8 +545,6 @@ enum WindowAction: Int, Codable {
         case .centerProminently: return NSImage()
         case .largerWidth: return NSImage()
         case .smallerWidth: return NSImage()
-        case .largerHeight: return NSImage()
-        case .smallerHeight: return NSImage()
         }
     }
 
@@ -597,9 +587,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
-            return .none
-        case .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
             return .none
         }
     }
