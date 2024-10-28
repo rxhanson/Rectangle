@@ -92,7 +92,9 @@ enum WindowAction: Int, Codable {
     halveHeightUp = 76,
     halveHeightDown = 77,
     halveWidthLeft = 78,
-    halveWidthRight = 79
+    halveWidthRight = 79,
+    ignoreApp = 80,
+    unignoreApp = 81
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -114,7 +116,8 @@ enum WindowAction: Int, Codable {
                          halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
                          tileAll, cascadeAll,
                          leftTodo, rightTodo,
-                         cascadeActiveApp
+                         cascadeActiveApp,
+                         ignoreApp, unignoreApp
     ]
 
     func post() {
@@ -225,6 +228,8 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return "rightTodo"
         case .cascadeActiveApp: return "cascadeActiveApp"
         case .centerProminently: return "centerProminently"
+        case .ignoreApp: return "ignoreApp"
+        case .unignoreApp: return "unignoreApp"
         }
     }
 
@@ -362,6 +367,8 @@ enum WindowAction: Int, Codable {
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
             return nil
         case .centerProminently:
+            return nil
+        case .ignoreApp, .unignoreApp:
             return nil
         }
 
@@ -537,6 +544,7 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return NSImage()
         case .cascadeActiveApp: return NSImage()
         case .centerProminently: return NSImage()
+        case .ignoreApp, .unignoreApp: return NSImage()
         }
     }
 
@@ -579,7 +587,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .ignoreApp, .unignoreApp:
             return .none
         }
     }
