@@ -239,9 +239,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
         if sender.state == .on {
-            applicationToggle.enableFrontApp()
+            applicationToggle.enableApp()
         } else {
-            applicationToggle.disableFrontApp()
+            applicationToggle.disableApp()
         }
     }
     
@@ -555,6 +555,15 @@ extension AppDelegate {
             func getUrlName(_ name: String) -> String {
                 return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
             }
+            func getAppBundleId(_ components: URLComponents) -> String? {
+                let appBundleIdParam = (components.queryItems?.first { $0.name == "app-bundle-id" })
+                // if param not present the behavior is to use front app
+                return if let appBundleIdParam {
+                    appBundleIdParam.value
+                } else {
+                    ApplicationToggle.frontAppId
+                }
+            }
             for url in urls {
                 guard
                     let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
@@ -564,14 +573,15 @@ extension AppDelegate {
                 }
                     
                 let name = (components.queryItems?.first { $0.name == "name" })?.value
+                let appBundleId = getAppBundleId(components)
                 switch (components.host, name) {
                 case ("execute-action", _):
                     let action = (WindowAction.active.first { getUrlName($0.name) == name })
                     action?.postUrl()
                 case ("execute-task", "ignore-app"):
-                    self.applicationToggle.disableFrontApp()
+                    self.applicationToggle.disableApp(appBundleId: appBundleId)
                 case ("execute-task", "unignore-app"):
-                    self.applicationToggle.enableFrontApp()
+                    self.applicationToggle.enableApp(appBundleId: appBundleId)
                 default:
                     continue
                 }
