@@ -556,16 +556,25 @@ extension AppDelegate {
                 return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
             }
             for url in urls {
-                guard 
+                guard
                     let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-                    components.host == "execute-action",
-                    components.path.isEmpty,
-                    let name = (components.queryItems?.first { $0.name == "name" })?.value,
-                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                    components.path.isEmpty
                 else {
                     continue
                 }
-                action.postUrl()
+                    
+                let name = (components.queryItems?.first { $0.name == "name" })?.value
+                switch (components.host, name) {
+                case ("execute-action", _):
+                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                    action?.postUrl()
+                case ("execute-task", "ignore-app"):
+                    self.applicationToggle.disableFrontApp()
+                case ("execute-task", "unignore-app"):
+                    self.applicationToggle.enableFrontApp()
+                default:
+                    continue
+                }
             }
         }
     }

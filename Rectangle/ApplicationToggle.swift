@@ -21,23 +21,17 @@ class ApplicationToggle: NSObject {
         self.shortcutManager = shortcutManager
         super.init()
         registerFrontAppChangeNote()
-        subscribe()
         if let disabledApps = getDisabledApps() {
             self.disabledApps = disabledApps
         }
     }
     
     public func reloadFromDefaults() {
-        subscribe()
         if let disabledApps = getDisabledApps() {
             self.disabledApps = disabledApps
         } else {
             disabledApps.removeAll()
         }
-    }
-    
-    deinit {
-        unsubscribe()
     }
     
     private func saveDisabledApps() {
@@ -123,31 +117,6 @@ class ApplicationToggle: NSObject {
                 }
             }
         }
-    }
-    
-    @objc func windowActionTriggered(notification: NSNotification) {
-        guard let parameters = notification.object as? ExecutionParameters else { return }
-        
-        let action = parameters.action
-
-        switch action {
-        case .ignoreApp:
-            disableFrontApp()
-            return
-        case .unignoreApp:
-            enableFrontApp()
-            return
-        default: break // NOOP
-        }
-    }
-    
-    private func unsubscribe() {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    private func subscribe() {
-        NotificationCenter.default.addObserver(self, selector: #selector(windowActionTriggered), name: WindowAction.ignoreApp.notificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(windowActionTriggered), name: WindowAction.unignoreApp.notificationName, object: nil)
     }
 }
 
