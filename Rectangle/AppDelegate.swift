@@ -556,10 +556,10 @@ extension AppDelegate {
                 return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
             }
             func getAppBundleId(_ components: URLComponents) -> String? {
-                let appBundleIdParam = (components.queryItems?.first { $0.name == "app-bundle-id" })
-                // if param not present the behavior is to use front app
-                return if let appBundleIdParam {
-                    appBundleIdParam.value
+                let appBundleId = (components.queryItems?.first { $0.name == "app-bundle-id" })?.value
+                Logger.log("The app Bundle id : \(appBundleId ?? "")")
+                return if appBundleId != nil && appBundleId!.isEmpty  {
+                    appBundleId
                 } else {
                     ApplicationToggle.frontAppId
                 }
@@ -573,15 +573,14 @@ extension AppDelegate {
                 }
                     
                 let name = (components.queryItems?.first { $0.name == "name" })?.value
-                let appBundleId = getAppBundleId(components)
                 switch (components.host, name) {
                 case ("execute-action", _):
                     let action = (WindowAction.active.first { getUrlName($0.name) == name })
                     action?.postUrl()
                 case ("execute-task", "ignore-app"):
-                    self.applicationToggle.disableApp(appBundleId: appBundleId)
+                    self.applicationToggle.disableApp(appBundleId: getAppBundleId(components))
                 case ("execute-task", "unignore-app"):
-                    self.applicationToggle.enableApp(appBundleId: appBundleId)
+                    self.applicationToggle.enableApp(appBundleId: getAppBundleId(components))
                 default:
                     continue
                 }
