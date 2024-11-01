@@ -461,8 +461,6 @@ enum WindowAction: Int, Codable {
         case .centerThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .lastTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
         case .lastThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
-        case .largerWidth: return Shortcut( ctrl|alt|shift, kVK_ANSI_Equal )
-        case .smallerWidth: return Shortcut( ctrl|alt|shift, kVK_ANSI_Minus )
         default: return nil
         }
     }

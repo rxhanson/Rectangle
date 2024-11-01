@@ -28,12 +28,12 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
 
         let sizeOffset: CGFloat
         switch params.action {
-        case .larger, .largerWidth:
-            sizeOffset = sizeOffsetAbs
-        case .smaller, .smallerWidth:
-            sizeOffset = -sizeOffsetAbs
-        default:
-            sizeOffset = 0
+            case .larger, .largerWidth:
+                sizeOffset = sizeOffsetAbs
+            case .smaller, .smallerWidth:
+                sizeOffset = -sizeOffsetAbs
+            default:
+                sizeOffset = 0
         }
 
         let visibleFrameOfScreen = params.visibleFrameOfScreen
@@ -48,11 +48,15 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
             resizedWindowRect.origin.x = resizedWindowRect.minX - floor(sizeOffset / 2.0)
 
             if curtainChangeSize {
-            resizedWindowRect = againstLeftAndRightScreenEdges(originalWindowRect: window.rect, resizedWindowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen)
+                resizedWindowRect = againstLeftAndRightScreenEdges(
+                    originalWindowRect: window.rect,
+                    resizedWindowRect: resizedWindowRect,
+                    visibleFrameOfScreen: visibleFrameOfScreen
+                )
             }
 
             if resizedWindowRect.width >= visibleFrameOfScreen.width {
-            resizedWindowRect.size.width = visibleFrameOfScreen.width
+                resizedWindowRect.size.width = visibleFrameOfScreen.width
             }
         }
 
@@ -63,12 +67,16 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
             resizedWindowRect.origin.y = resizedWindowRect.minY - floor(sizeOffset / 2.0)
 
             if curtainChangeSize {
-            resizedWindowRect = againstTopAndBottomScreenEdges(originalWindowRect: window.rect, resizedWindowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen)
+                resizedWindowRect = againstTopAndBottomScreenEdges(
+                    originalWindowRect: window.rect,
+                    resizedWindowRect: resizedWindowRect,
+                    visibleFrameOfScreen: visibleFrameOfScreen
+                )
             }
 
             if resizedWindowRect.height >= visibleFrameOfScreen.height {
-            resizedWindowRect.size.height = visibleFrameOfScreen.height
-            resizedWindowRect.origin.y = params.window.rect.minY
+                resizedWindowRect.size.height = visibleFrameOfScreen.height
+                resizedWindowRect.origin.y = params.window.rect.minY
             }
         }
 
