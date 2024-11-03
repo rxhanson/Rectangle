@@ -193,6 +193,8 @@ class WindowCalculationFactory {
      .nextDisplay: nextPrevDisplayCalculation,
      .larger: changeSizeCalculation,
      .smaller: changeSizeCalculation,
+     .largerWidth: changeSizeCalculation,
+     .smallerWidth: changeSizeCalculation,
      .bottomHalf: bottomHalfCalculation,
      .topHalf: topHalfCalculation,
      .center: centerCalculation,
