@@ -73,17 +73,17 @@ class ApplicationToggle: NSObject {
         }
     }
 
-    public func disableFrontApp() {
-        if let frontAppId = Self.frontAppId {
-            disabledApps.insert(frontAppId)
+    public func disableApp(appBundleId: String? = frontAppId) {
+        if let appBundleId {
+            disabledApps.insert(appBundleId)
             saveDisabledApps()
             disableShortcuts()
         }
     }
     
-    public func enableFrontApp() {
-        if let frontAppId = Self.frontAppId {
-            disabledApps.remove(frontAppId)
+    public func enableApp(appBundleId: String? = frontAppId) {
+        if let appBundleId {
+            disabledApps.remove(appBundleId)
             saveDisabledApps()
             enableShortcuts()
         }
@@ -118,7 +118,6 @@ class ApplicationToggle: NSObject {
             }
         }
     }
-    
 }
 
 // todo mode

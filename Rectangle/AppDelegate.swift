@@ -239,9 +239,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func ignoreFrontMostApp(_ sender: NSMenuItem) {
         if sender.state == .on {
-            applicationToggle.enableFrontApp()
+            applicationToggle.enableApp()
         } else {
-            applicationToggle.disableFrontApp()
+            applicationToggle.disableApp()
         }
     }
     
@@ -552,20 +552,47 @@ extension AppDelegate {
             prevActiveApp?.activate()
         }
         DispatchQueue.main.async {
+            
             func getUrlName(_ name: String) -> String {
                 return name.map { $0.isUppercase ? "-" + $0.lowercased() : String($0) }.joined()
             }
+            
+            func extractBundleIdParameter(fromComponents components: URLComponents) -> String? {
+                (components.queryItems?.first { $0.name == "app-bundle-id" })?.value
+            }
+            
+            func isValidParameter(bundleId: String?) -> Bool {
+                let isValid = bundleId?.isEmpty != true
+                if !isValid {
+                    Logger.log("Received an empty app-bundle-id parameter. Either pass a valid app bundle id or remove the parameter.")
+                }
+                return isValid
+            }
+            
             for url in urls {
-                guard 
+                guard
                     let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-                    components.host == "execute-action",
-                    components.path.isEmpty,
-                    let name = (components.queryItems?.first { $0.name == "name" })?.value,
-                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                    components.path.isEmpty
                 else {
                     continue
                 }
-                action.postUrl()
+                    
+                let name = (components.queryItems?.first { $0.name == "name" })?.value
+                switch (components.host, name) {
+                case ("execute-action", _):
+                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                    action?.postUrl()
+                case ("execute-task", "ignore-app"):
+                    let bundleId = extractBundleIdParameter(fromComponents: components)
+                    guard isValidParameter(bundleId: bundleId) else { continue }
+                    self.applicationToggle.disableApp(appBundleId: bundleId)
+                case ("execute-task", "unignore-app"):
+                    let bundleId = extractBundleIdParameter(fromComponents: components)
+                    guard isValidParameter(bundleId: bundleId) else { continue }
+                    self.applicationToggle.enableApp(appBundleId: bundleId)
+                default:
+                    continue
+                }
             }
         }
     }
