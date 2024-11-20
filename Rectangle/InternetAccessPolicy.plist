@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ApplicationDescription</key>
-	<string>Rectangle is ridiculously great window manager application.</string>
+	<string>Rectangle is the gold standard for window management on macOS. Free and open source.</string>
 	<key>Connections</key>
 	<array>
 		<dict>
