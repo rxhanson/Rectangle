@@ -48,6 +48,17 @@ Available values for `[name]`: `left-half`, `right-half`, `center-half`, `top-ha
 
 Example, from a shell: `open -g "rectangle://execute-action?name=left-half"`
 
+URLs can also be used to ignore/unignore apps. 
+
+```
+rectangle://execute-task?name=ignore-app
+rectangle://execute-task?name=unignore-app
+```
+A bundle identifier can also be specified, for example:
+```
+rectangle://execute-task?name=ignore-app&app-bundle-id=com.apple.Safari
+```
+
 ## Terminal Commands for Hidden Preferences
 
 See [TerminalCommands.md](TerminalCommands.md)
@@ -65,7 +76,7 @@ See [TerminalCommands.md](TerminalCommands.md)
 
 ### Rectangle doesn't have the ability to move to other desktops/spaces
 
-Apple never released a public API for Spaces. Other apps that move windows between spaces use unsupported or undesirable ways to achieve this. If Apple decides to release a public API for it, I'll add it in.
+Apple never released a public API for doing this. Rectangle Pro has next/prev Space actions, but there are no plans to add those into Rectangle at this time.
 
 ### Window resizing is off slightly for iTerm2
 
