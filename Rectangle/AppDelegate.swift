@@ -558,7 +558,7 @@ extension AppDelegate {
             }
             
             func extractBundleIdParameter(fromComponents components: URLComponents) -> String? {
-                (components.queryItems?.first { $0.name == "app-bundle-id" })?.value
+                (components.queryItems?.first { $0.name == "app-bundle-id" })?.value ?? ApplicationToggle.frontAppId
             }
             
             func isValidParameter(bundleId: String?) -> Bool {
