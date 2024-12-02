@@ -1583,6 +1583,12 @@
             "value" : "バージョン"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "버전"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2142,6 +2148,12 @@
           }
         },
         "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spectacle"
+          }
+        },
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spectacle"
@@ -4482,6 +4494,12 @@
           }
         },
         "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-"
+          }
+        },
+        "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "-"
@@ -11676,6 +11694,12 @@
             "value" : "macOS のタイル表示機能との競合"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 타일 정리 기능과 충돌"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13809,6 +13833,12 @@
             "value" : "macOS 側を無効化"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS의 기능 끄기"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13832,6 +13862,12 @@
             "value" : "Rectangle 側を無効化"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle의 기능 끄기"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13853,6 +13889,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "無視"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무시"
           }
         },
         "sk" : {
@@ -14228,6 +14270,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\"画面の端にドラッグしてタイル表示\"が、Ractangle と macOS の両方で有効になっています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "화면 가장자리로 드래그해 타일을 정렬하는 기능이 Rectangle과 macOS 설정에서 모두 켜져 있습니다."
           }
         },
         "sk" : {
@@ -16772,6 +16820,12 @@
             "value" : "スナップ領域"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스냅 영역"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19170,8 +19224,8 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "절반 동작에 대해 1/2, 2/3, 1/3 동작을 순환"
+            "state" : "translated",
+            "value" : "절반 동작시 창 크기 순환"
           }
         },
         "lt" : {
@@ -35904,6 +35958,12 @@
             "value" : "触覚フィードバック"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "햅틱 피드백"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39915,6 +39975,12 @@
             "value" : "macOS のタイル表示機能が無効になりました"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS의 타일 정리 기능이 비활성화됨"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39930,7 +39996,15 @@
       }
     },
     "Tiling in Rectangle has been disabled" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle의 타일 정리 기능이 비활성화됨"
+          }
+        }
+      }
     },
     "tlD-Oa-oAM.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Kern\"; ObjectID = \"tlD-Oa-oAM\";",
@@ -40065,7 +40139,15 @@
       }
     },
     "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 타일 정리 기능을 조정하려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
+          }
+        }
+      }
     },
     "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." : {
       "localizations" : {
@@ -40254,6 +40336,12 @@
             "value" : "再度有効化するには、システム設定 → デスクトップと Dock → ウインドウに移動します"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 켜려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40269,7 +40357,15 @@
       }
     },
     "Top screen edge tiling in macOS is now disabled" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS의 화면 상단 가장자리 타일 정렬이 꺼졌습니다"
+          }
+        }
+      }
     },
     "Top sixths from corners; maximize" : {
       "localizations" : {
@@ -47603,8 +47699,8 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "환경설정…"
+            "state" : "translated",
+            "value" : "설정…"
           }
         },
         "lt" : {
