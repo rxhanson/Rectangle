@@ -908,7 +908,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fenster durch Ziehen zum Bildschirmrand einrasten lassen"
+            "value" : "Fenster zum Anordnen an Bildschirmrand ziehen"
           }
         },
         "en" : {
@@ -11694,6 +11694,12 @@
             "value" : "macOS のタイル表示機能との競合"
           }
         },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konflikt mit macOS Fenstermanagement"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13827,6 +13833,12 @@
     "Disable in macOS" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Systemeinstellungen deaktivieren"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13856,6 +13868,12 @@
     "Disable in Rectangle" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Rectangle deaktivieren"
+          }
+        },        
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13885,6 +13903,12 @@
     "Dismiss" : {
       "extractionState" : "manual",
       "localizations" : {
+       "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        },        
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14276,6 +14300,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "화면 가장자리로 드래그해 타일을 정렬하는 기능이 Rectangle과 macOS 설정에서 모두 켜져 있습니다."
+          }
+        },
+       "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Ziehen zum Bildschirmrand für das Anordnen von Fenstern ist sowohl in Rectangle als auch in den macOS Systemeinstellungen aktiviert."
           }
         },
         "sk" : {
@@ -27749,7 +27779,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gehen Sie zu Systemeinstellungen → Sicherheit & Datenschutz → Datenschutz → Bedienungshilfen"
+            "value" : "Gehe zu Systemeinstellungen → Sicherheit & Datenschutz → Datenschutz → Bedienungshilfen"
           }
         },
         "en" : {
@@ -31723,7 +31753,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo-Seite"
+            "value" : "To-do-Seite"
           }
         },
         "en" : {
@@ -39969,6 +39999,12 @@
     "Tiling in macOS has been disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Ziehen von Fenstern an den Bildschirmrand zum Anordnen wurde in den macOS Systemeinstellungen deaktiviert"
+          }
+        },        
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40178,7 +40214,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Damit Rectangle die Doppelklickfunktion der Titelleiste verwalten kann, muss die entsprechende macOS-Einstellung deaktiviert werden."
+            "value" : "Damit Rectangle die Doppelklickfunktion der Titelleiste verwalten kann, muss die entsprechende macOS Systemeinstellung deaktiviert werden."
           }
         },
         "es" : {
@@ -40330,6 +40366,12 @@
     "To re-enable it, go to System Settings → Desktop & Dock → Windows" : {
       "extractionState" : "manual",
       "localizations" : {
+       "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um dies wieder zu aktivieren, gehe zu Systemeinstellungen → Schreibtisch & Dock → Fenster"
+          }
+        },        
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
