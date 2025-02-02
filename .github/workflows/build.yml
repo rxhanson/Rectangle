@@ -20,7 +20,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Build
       run: xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" archive CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" -archivePath "$BUILD_DIR/$XCODE_ARCHIVE"
     - name: Export
@@ -38,7 +38,7 @@ jobs:
     - name: Make DMG
       run: hdiutil create -srcdir "$BUILD_DIR" -volname "$DMG_NAME" "$DMG_FILE_NAME"
     - name: Upload
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Build
         path: ${{ env.DMG_FILE_NAME }}
