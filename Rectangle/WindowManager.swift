@@ -9,23 +9,23 @@
 import Cocoa
 
 class WindowManager {
-
+    
     private let screenDetection = ScreenDetection()
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
-
+    
     init() {
         standardWindowMoverChain = [
             StandardWindowMover(),
             BestEffortWindowMover()
         ]
-
+        
         fixedSizeWindowMoverChain = [
             CenteringFixedSizedWindowMover(),
             BestEffortWindowMover()
         ]
     }
-
+    
     private func recordAction(windowId: CGWindowID, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
         let newCount: Int
         if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId], lastRectangleAction.action == action {
@@ -33,7 +33,7 @@ class WindowManager {
         } else {
             newCount = 1
         }
-
+        
         AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(
             action: action,
             subAction: subAction,
@@ -41,7 +41,7 @@ class WindowManager {
             count: newCount
         )
     }
-
+    
     func execute(_ parameters: ExecutionParameters) {
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
               let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
@@ -49,9 +49,9 @@ class WindowManager {
             NSSound.beep()
             return
         }
-
+        
         let action = parameters.action
-
+        
         if action == .restore {
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 frontmostWindowElement.setFrame(restoreRect)
@@ -130,49 +130,102 @@ class WindowManager {
             return
         }
         
-        let newRect = calcResult.rect.screenFlipped
-        
         let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
-
-        let useFixedSizeMover = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
-        let windowMoverChain = useFixedSizeMover
-            ? fixedSizeWindowMoverChain
-            : standardWindowMoverChain
-
-        for windowMover in windowMoverChain {
-            windowMover.moveWindowRect(newRect, frameOfScreen: usableScreens.frameOfCurrentScreen, visibleFrameOfScreen: visibleFrameOfDestinationScreen, frontmostWindowElement: frontmostWindowElement, action: action)
-        }
+        let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
+        let resultParameters = ResultParameters(windowId: windowId,
+                                                action: action,
+                                                windowElement: frontmostWindowElement,
+                                                calcResult: calcResult,
+                                                usableScreens: usableScreens,
+                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
+                                                source: parameters.source,
+                                                isFixedSize: isFixedSize)
         
-        let resultingRect = frontmostWindowElement.frame
+        var resultingRect = apply(result: resultParameters)
         
-        if Defaults.moveCursor.userEnabled, parameters.source == .keyboardShortcut {
-            let windowCenter = NSMakePoint(NSMidX(resultingRect), NSMidY(resultingRect))
-            CGWarpMouseCursorPosition(windowCenter)
-        }
-        
-        if usableScreens.currentScreen != calcResult.screen {
-            frontmostWindowElement.bringToFront(force: true)
-            
-            if Defaults.moveCursorAcrossDisplays.userEnabled {
-                let windowCenter = NSMakePoint(NSMidX(resultingRect), NSMidY(resultingRect))
-                CGWarpMouseCursorPosition(windowCenter)
-            }
-        }
-        
-        recordAction(windowId: windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-        
-        if Logger.logging {
-            var srcDestScreens: String = ""
-            if #available(OSX 10.15, *) {
-                srcDestScreens += ", srcScreen: \(usableScreens.currentScreen.localizedName)"
-                srcDestScreens += ", destScreen: \(calcResult.screen.localizedName)"
-                if let resultScreens = screenDetection.detectScreens(using: frontmostWindowElement) {
-                    srcDestScreens += ", resultScreen: \(resultScreens.currentScreen.localizedName)"
+        let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen
+        if isMovedAcrossDisplays {
+            if calcResult.rect.height != resultingRect.height {
+                Logger.log("Window size wasn't applied perfectly across displays. Trying again.")
+                resultingRect = apply(result: resultParameters)
+                
+                if calcResult.rect.height != resultingRect.height {
+                    Logger.log("Final attempt to adjust across displays.")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
+                        guard let self else { return }
+                        let finalRect = self.apply(result: resultParameters)
+                        self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
+                        self.postProcess(result: resultParameters, resultingRect: finalRect)
+                    }
+                    return
                 }
             }
-            
-            Logger.log("\(action.name) | display: \(visibleFrameOfDestinationScreen.debugDescription), calculatedRect: \(newRect.debugDescription), resultRect: \(resultingRect.debugDescription)\(srcDestScreens)")
+            windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect)
         }
+        
+        postProcess(result: resultParameters, resultingRect: resultingRect)
+    }
+    
+    /// Move/resize a window based on the calculation results.
+    /// - Returns: The rect of the window after applying the window action
+    func apply(result: ResultParameters) -> CGRect {
+        let windowMoverChain = result.isFixedSize
+        ? fixedSizeWindowMoverChain
+        : standardWindowMoverChain
+        
+        let newRect = result.calcResult.rect.screenFlipped
+        
+        for windowMover in windowMoverChain {
+            windowMover.moveWindowRect(newRect,
+                                       frameOfScreen: result.usableScreens.frameOfCurrentScreen,
+                                       visibleFrameOfScreen: result.visibleFrameOfScreen,
+                                       frontmostWindowElement: result.windowElement,
+                                       action: result.action)
+        }
+        
+        return result.windowElement.frame
+    }
+    
+    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {
+        windowElement.bringToFront(force: true)
+        
+        if Defaults.moveCursorAcrossDisplays.userEnabled {
+            CGWarpMouseCursorPosition(resultingRect.centerPoint)
+        }
+    }
+    
+    func postProcess(result: ResultParameters, resultingRect: CGRect) {
+        let calcResult = result.calcResult
+        
+        if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
+            CGWarpMouseCursorPosition(resultingRect.centerPoint)
+        }
+        
+        recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+        
+        if Logger.logging {
+            var logItems = ["\(result.action.name)",
+                            "display: \(result.visibleFrameOfScreen.debugDescription)",
+                            "calculatedRect: \(result.calcResult.rect.screenFlipped.debugDescription)",
+                            "resultRect: \(resultingRect.debugDescription)",
+                            "srcScreen: \(result.usableScreens.currentScreen.localizedName)",
+                            "destScreen: \(calcResult.screen.localizedName)"]
+            if let resultScreens = screenDetection.detectScreens(using: result.windowElement) {
+                logItems.append("resultScreen: \(resultScreens.currentScreen.localizedName)")
+            }
+            Logger.log(logItems.joined(separator: ", "))
+        }
+    }
+    
+    struct ResultParameters {
+        let windowId: CGWindowID
+        let action: WindowAction
+        let windowElement: AccessibilityElement
+        let calcResult: WindowCalculationResult
+        let usableScreens: UsableScreens
+        let visibleFrameOfScreen: CGRect
+        let source: ExecutionSource
+        let isFixedSize: Bool
     }
 }
 

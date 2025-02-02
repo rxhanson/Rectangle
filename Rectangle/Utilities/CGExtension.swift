@@ -22,4 +22,8 @@ extension CGRect {
     }
 
     var isLandscape: Bool { width > height }
+    
+    var centerPoint: CGPoint {
+        NSMakePoint(NSMidX(self), NSMidY(self))
+    }
 }
