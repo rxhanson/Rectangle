@@ -44,7 +44,7 @@ class BottomLeftEighthCalculation: WindowCalculation, OrientationAware, EighthsR
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
-        rect.origin.y = visibleFrameOfScreen.minY
+        rect.origin.y = floor(visibleFrameOfScreen.maxY - (visibleFrameOfScreen.height * 0.75))
         rect.origin.x = visibleFrameOfScreen.minX
         return RectResult(rect, subAction: .bottomLeftEighth)
     }

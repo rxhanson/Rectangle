@@ -42,10 +42,10 @@ class TopRightEighthCalculation: WindowCalculation, OrientationAware, EighthsRep
     
     func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
         var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width / 4.0)
-        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
-        rect.origin.x = visibleFrameOfScreen.minX + (3.0 * rect.width)
+        rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
+        rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
+        rect.origin.y = visibleFrameOfScreen.maxY - (visibleFrameOfScreen.height / 2.0)
+        rect.origin.x = visibleFrameOfScreen.minX + rect.width
         return RectResult(rect, subAction: .topRightEighth)
     }
 }

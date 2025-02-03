@@ -42,10 +42,10 @@ class BottomCenterRightEighthCalculation: WindowCalculation, OrientationAware, E
     
     func portraitRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
         var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width / 4.0)
-        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
+        rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
+        rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
         rect.origin.y = visibleFrameOfScreen.minY
-        rect.origin.x = visibleFrameOfScreen.minX + (2.0 * rect.width)
+        rect.origin.x = visibleFrameOfScreen.minX
         return RectResult(rect, subAction: .bottomCenterRightEighth)
     }
 }
