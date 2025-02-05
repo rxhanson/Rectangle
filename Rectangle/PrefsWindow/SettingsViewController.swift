@@ -315,7 +315,7 @@ class SettingsViewController: NSViewController {
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {
-        let showOptionsView = Defaults.subsequentExecutionMode.value == .resize
+        let showOptionsView = Defaults.subsequentExecutionMode.resizes
         
         if showOptionsView {
             setToggleStatesForCycleSizeCheckboxes()

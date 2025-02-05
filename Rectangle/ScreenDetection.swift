@@ -19,18 +19,18 @@ class ScreenDetection {
             ? AdjacentScreens(prev: firstScreen, next: firstScreen)
             : nil
             
-            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: [firstScreen])
         }
         
         let screensOrdered = order(screens: screens)
         guard let sourceScreen: NSScreen = screenContaining(frontmostWindowElement?.frame ?? CGRect.zero, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
-            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
         }
         
         let adjacentScreens = adjacent(toFrameOfScreen: sourceScreen.frame, screens: screensOrdered)
         
-        return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count)
+        return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
     }
 
     func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
@@ -110,12 +110,14 @@ struct UsableScreens {
     let adjacentScreens: AdjacentScreens?
     let frameOfCurrentScreen: CGRect
     let numScreens: Int
-    
-    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int) {
+    let screensOrdered: [NSScreen]
+
+    init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int, screensOrdered: [NSScreen]? = nil) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens
         self.frameOfCurrentScreen = currentScreen.frame
         self.numScreens = numScreens
+        self.screensOrdered = screensOrdered ?? [currentScreen]
     }
 }
 

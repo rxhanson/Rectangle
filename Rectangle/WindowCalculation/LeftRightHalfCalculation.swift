@@ -16,17 +16,15 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         
         switch Defaults.subsequentExecutionMode.value {
             
-        case .acrossMonitor, .acrossAndResize:
-            if params.action == .leftHalf {
-                return calculateLeftAcrossDisplays(params, screen: usableScreens.currentScreen)
-            } else if params.action == .rightHalf {
-                return calculateRightAcrossDisplays(params, screen: usableScreens.currentScreen)
+        case .acrossMonitor:
+            return calculateAcrossDisplays(params)
+        case .acrossAndResize:
+            if usableScreens.numScreens == 1 {
+                return calculateResize(params)
             }
-            return nil
+            return calculateAcrossDisplays(params)
         case .resize:
-            let screen = usableScreens.currentScreen
-            let rectResult: RectResult = calculateRepeatedRect(params.asRectParams())
-            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
+            return calculateResize(params)
         case .none, .cycleMonitor:
             let screen = usableScreens.currentScreen
             let oneHalfRect = calculateFirstRect(params.asRectParams())
@@ -48,10 +46,28 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         return RectResult(rect)
     }
 
+    func calculateResize(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        let screen = params.usableScreens.currentScreen
+        let rectResult: RectResult = calculateRepeatedRect(params.asRectParams())
+        return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
+    }
+    
+    func calculateAcrossDisplays(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        let screen = params.usableScreens.currentScreen
+        return params.action == .rightHalf
+            ? calculateRightAcrossDisplays(params, screen: screen)
+            : calculateLeftAcrossDisplays(params, screen: screen)
+    }
+    
     func calculateLeftAcrossDisplays(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
                 
         if isRepeatedCommand(params) {
             if let prevScreen = params.usableScreens.adjacentScreens?.prev {
+
+                if Defaults.subsequentExecutionMode.value == .acrossAndResize && prevScreen == params.usableScreens.screensOrdered.last {
+                    return calculateResize(params)
+                }
+
                 return calculateRightAcrossDisplays(params.withDifferentAction(.rightHalf), screen: prevScreen)
             }
         }
@@ -65,6 +81,11 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         
         if isRepeatedCommand(params) {
             if let nextScreen = params.usableScreens.adjacentScreens?.next {
+                
+                if Defaults.subsequentExecutionMode.value == .acrossAndResize && nextScreen == params.usableScreens.screensOrdered.first {
+                    return calculateResize(params)
+                }
+
                 return calculateLeftAcrossDisplays(params.withDifferentAction(.leftHalf), screen: nextScreen)
             }
         }
