@@ -869,6 +869,12 @@
             "value" : "Nedre"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1tx-W0-xDw.title"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1185,6 +1191,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anpassa verktygsfältet…"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tùy chỉnh thanh công cụ"
           }
         },
         "zh-Hans" : {
@@ -1517,6 +1529,12 @@
             "value" : "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek."
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nếu bạn lặp lại thao tác di chuyển hoặc một nửa, cửa sổ sẽ chuyển sang màn hình hiển thị tiếp theo thay vì kích thước 1/2, 2/3 và 1/3."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1769,6 +1787,12 @@
             "value" : "Höja"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đưa lên"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1778,7 +1802,7 @@
       }
     },
     "2oI-Rn-ZJC.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Transformations\"; ObjectID = \"2oI-Rn-ZJC\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"c\"; ObjectID = \"2oI-Rn-ZJC\";",
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
@@ -1899,6 +1923,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformationer"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển đổi"
           }
         },
         "zh-Hans" : {
@@ -2210,7 +2240,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spectacle"
+            "value" : "Quanh cảnh"
           }
         },
         "zh-Hans" : {
@@ -2903,6 +2933,12 @@
             "value" : "Stavning"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đọc chính tả"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3035,6 +3071,12 @@
             "value" : "Använd standard"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sử dụng mặc định"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3165,6 +3207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đọc"
           }
         },
         "zh-Hans" : {
@@ -4413,6 +4461,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kopiera stil"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sao chép phong cách"
           }
         },
         "zh-Hans" : {
@@ -6431,6 +6485,12 @@
             "value" : "Skrivriktning"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8mr-sm-Yjd.title"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6939,6 +6999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Substitutioner"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sự thay thế"
           }
         },
         "zh-Hans" : {
@@ -7451,6 +7517,12 @@
             "value" : "Smart kopiera/klistra in"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sao chép/Dán thông minh"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7581,6 +7653,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dra åt"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siết chặt"
           }
         },
         "zh-Hans" : {
@@ -7881,6 +7959,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automatiskt rättstavning"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tự động sửa lỗi chính tả"
           }
         },
         "zh-Hans" : {
@@ -8549,6 +8633,12 @@
             "value" : "Använd standard"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sử dụng mặc định"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8679,6 +8769,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skriv ut…"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In…"
           }
         },
         "zh-Hans" : {
@@ -8997,6 +9093,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Typsnitt"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phông"
           }
         },
         "zh-Hans" : {
@@ -9689,6 +9791,12 @@
             "value" : "\tVänster till höger"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trái sang phải"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9819,6 +9927,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa färger"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiện màu"
           }
         },
         "zh-Hans" : {
@@ -10881,6 +10995,12 @@
             "value" : "Spara som…"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lưu dưới dạng…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11011,6 +11131,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformationer"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển đổi"
           }
         },
         "zh-Hans" : {
@@ -11339,6 +11465,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Скасувати"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Huỷ"
           }
         },
         "zh-Hans" : {
@@ -11677,6 +11809,12 @@
             "value" : "Använd ingen"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Không sử dụng"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11688,16 +11826,16 @@
     "Conflict with macOS tiling" : {
       "extractionState" : "manual",
       "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "macOS のタイル表示機能との競合"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konflikt mit macOS Fenstermanagement"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS のタイル表示機能との競合"
           }
         },
         "ko" : {
@@ -11710,6 +11848,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konflikt s umiestnením dlaždíc v macOS"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Xung đột với ô xếp macOS"
           }
         },
         "zh-Hans" : {
@@ -12044,6 +12188,12 @@
             "value" : "Кути"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Các góc"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12186,6 +12336,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Markerade"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lựa chọn"
           }
         },
         "zh-Hans" : {
@@ -12516,6 +12672,12 @@
             "value" : "Використовується: "
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiện đang sử dụng:"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12658,6 +12820,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Smarta länkar"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liên kết thông minh"
           }
         },
         "zh-Hans" : {
@@ -12978,6 +13146,12 @@
             "value" : "Text"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chữ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13108,6 +13282,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ändra till gemener"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viết chữ thường"
           }
         },
         "zh-Hans" : {
@@ -13281,7 +13461,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bỏ qua frontmost.app"
+            "value" : "Bỏ qua ứng dụng trước nhất"
           }
         },
         "zh-Hans" : {
@@ -13436,6 +13616,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Типові комбінації клавіш"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcut mặc định"
           }
         },
         "zh-Hans" : {
@@ -13857,6 +14043,12 @@
             "value" : "Vypnúť v macOS"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vô hiệu hóa trong macOS"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13873,7 +14065,7 @@
             "state" : "translated",
             "value" : "In Rectangle deaktivieren"
           }
-        },        
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13892,6 +14084,12 @@
             "value" : "Vypnúť v Rectangle"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vô hiệu hóa trong Rectangle"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13903,12 +14101,12 @@
     "Dismiss" : {
       "extractionState" : "manual",
       "localizations" : {
-       "de" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbrechen"
           }
-        },        
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13925,6 +14123,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zatvoriť"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Huỷ"
           }
         },
         "zh-Hans" : {
@@ -14079,6 +14283,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дисплей"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị"
           }
         },
         "zh-Hans" : {
@@ -14290,6 +14500,12 @@
     "Drag to screen edge tiling is enabled in both Rectangle and macOS." : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Ziehen zum Bildschirmrand für das Anordnen von Fenstern ist sowohl in Rectangle als auch in den macOS Systemeinstellungen aktiviert."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14302,16 +14518,16 @@
             "value" : "화면 가장자리로 드래그해 타일을 정렬하는 기능이 Rectangle과 macOS 설정에서 모두 켜져 있습니다."
           }
         },
-       "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Ziehen zum Bildschirmrand für das Anordnen von Fenstern ist sowohl in Rectangle als auch in den macOS Systemeinstellungen aktiviert."
-          }
-        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Potiahnutie na okraj obrazovky je zapnuté v Rectangle aj macOS."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tính năng kéo để ghép cạnh màn hình được bật trong cả Rectangle và macOS."
           }
         },
         "zh-Hans" : {
@@ -14630,6 +14846,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stavning och grammatik"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chính tả và Ngữ pháp"
           }
         },
         "zh-Hans" : {
@@ -16790,6 +17012,12 @@
             "value" : "Text"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chữ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17226,6 +17454,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Substitutioner"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sự thay thế"
           }
         },
         "zh-Hans" : {
@@ -18658,6 +18892,12 @@
             "value" : "Fetstil"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In đậm"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18980,6 +19220,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Format"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Định dạng"
           }
         },
         "zh-Hans" : {
@@ -19308,8 +19554,8 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Thay đổi tuần hoàn ½, ⅔, và ⅓ kích thước"
+            "state" : "translated",
+            "value" : "thay đổi tuần hoàn ½, ⅔, và ⅓ kích thước"
           }
         },
         "zh-Hans" : {
@@ -19454,6 +19700,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Typsnitt"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phông chữ"
           }
         },
         "zh-Hans" : {
@@ -19950,6 +20202,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Använd standard"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sử dụng mặc định"
           }
         },
         "zh-Hans" : {
@@ -20456,6 +20714,12 @@
             "value" : "Skrivriktning"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hướng viết"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20796,6 +21060,12 @@
             "value" : "Половини"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Một nửa"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21132,6 +21402,12 @@
             "value" : "Visa stavning och grammatik"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị Chính tả và Ngữ pháp"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21262,6 +21538,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Textbyte"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thay thế văn bản"
           }
         },
         "zh-Hans" : {
@@ -21954,6 +22236,12 @@
             "value" : "Smarta citat"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trích dẫn thông minh"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22626,6 +22914,12 @@
             "value" : "Kontrollera dokument nu"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kiểm tra tài liệu ngay"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22944,6 +23238,12 @@
             "value" : "Index"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chỉ số dưới"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23074,6 +23374,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mindre"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nhỏ hơn"
           }
         },
         "zh-Hans" : {
@@ -23578,6 +23884,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Baslinje"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đường cơ sở"
           }
         },
         "zh-Hans" : {
@@ -24468,6 +24780,12 @@
             "value" : "Justera"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Căn chỉnh"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24786,6 +25104,12 @@
             "value" : "Använd ingen"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Không sử dụng"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24918,6 +25242,12 @@
             "value" : "Kerning"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Điều chỉnh khoảng cách giữa"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25048,6 +25378,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\tHöger till vänster"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\\tPhải sang trái"
           }
         },
         "zh-Hans" : {
@@ -25926,6 +26262,12 @@
             "value" : "Format"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Định dạng"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26056,6 +26398,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Återgå till sparad"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quay lại mục đã lưu"
           }
         },
         "zh-Hans" : {
@@ -26560,6 +26908,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa sidofältet"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị thanh bên"
           }
         },
         "zh-Hans" : {
@@ -27252,6 +27606,12 @@
             "value" : "\tVänster till höger"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\\tTrái sáng phải"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27382,6 +27742,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ta fram allt"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đưa tất cả ra phía trước"
           }
         },
         "zh-Hans" : {
@@ -28598,6 +28964,12 @@
             "value" : "Klistra in linjal"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dán thước"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28948,6 +29320,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Максимізувати"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tối đa"
           }
         },
         "zh-Hans" : {
@@ -29466,6 +29844,12 @@
             "value" : "Kontrollera grammatik med stavning"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kiểm tra ngữ pháp với chính tả"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29596,6 +29980,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kopiera linjal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sao chép Thước kẻ"
           }
         },
         "zh-Hans" : {
@@ -31204,6 +31594,12 @@
             "value" : "\tStandard"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\\tMặc định"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31526,6 +31922,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligaturer"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chữ ghép"
           }
         },
         "zh-Hans" : {
@@ -32032,6 +32434,12 @@
             "value" : "Baslinje"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đường cơ sở"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32162,6 +32570,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Öppna senaste"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mở gần nhất…"
           }
         },
         "zh-Hans" : {
@@ -32480,6 +32894,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lossa"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nới lỏng"
           }
         },
         "zh-Hans" : {
@@ -32998,6 +33418,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Інше"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Khác"
           }
         },
         "zh-Hans" : {
@@ -33522,6 +33948,12 @@
             "value" : "Sluta prata"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dừng đọ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34026,6 +34458,12 @@
             "value" : "Större"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lớn hơn"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34522,6 +34960,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa typsnitt"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị phông"
           }
         },
         "zh-Hans" : {
@@ -35400,6 +35844,12 @@
             "value" : "Sidinställningar…"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thiết lập trang…"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36006,6 +36456,12 @@
             "value" : "Haptická odozva"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phản hồi xúc giác"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36136,6 +36592,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoom"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phóng"
           }
         },
         "zh-Hans" : {
@@ -36450,6 +36912,12 @@
             "value" : "\tHöger till vänster"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\\tPhải sang trái"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36580,6 +37048,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kontrollera stavningen medan du skriver"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kiểm tra chính tả khi gõ"
           }
         },
         "zh-Hans" : {
@@ -36872,6 +37346,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Smarta bindestreck"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dấu gạch ngang thông minh"
           }
         },
         "zh-Hans" : {
@@ -37554,6 +38034,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upphöjd"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chữ số trên"
           }
         },
         "zh-Hans" : {
@@ -38440,6 +38926,12 @@
             "value" : "Розмір"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kích cỡ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38582,6 +39074,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa verktygsfältet"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị thanh công cụ"
           }
         },
         "zh-Hans" : {
@@ -38900,6 +39398,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bläddra mellan skärmarna med upprepade vänster- eller högerkommandon"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chuyển đổi qua lại giữa các màn hình hiển thị theo lệnh lặp lại bên trái hoặc bên phải"
           }
         },
         "zh-Hans" : {
@@ -39620,6 +40124,12 @@
             "value" : "Третини"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/3"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40004,7 +40514,7 @@
             "state" : "translated",
             "value" : "Das Ziehen von Fenstern an den Bildschirmrand zum Anordnen wurde in den macOS Systemeinstellungen deaktiviert"
           }
-        },        
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40023,6 +40533,12 @@
             "value" : "Umiestnenie dlaždíc v macOS bolo vypnuté"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tính năng xếp gạch trong macOS đã bị vô hiệu hóa"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40038,6 +40554,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle의 타일 정리 기능이 비활성화됨"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Việc xếp gạch trong hình chữ nhật đã bị vô hiệu hóa"
           }
         }
       }
@@ -40166,6 +40688,12 @@
             "value" : "Kerning"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Điều chỉnh khoảng cách giữa"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40181,6 +40709,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 타일 정리 기능을 조정하려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Để điều chỉnh ô xếp macOS, hãy vào Cài đặt hệ thống → Màn hình nền & Dock → Windows"
           }
         }
       }
@@ -40366,12 +40900,12 @@
     "To re-enable it, go to System Settings → Desktop & Dock → Windows" : {
       "extractionState" : "manual",
       "localizations" : {
-       "de" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um dies wieder zu aktivieren, gehe zu Systemeinstellungen → Schreibtisch & Dock → Fenster"
           }
-        },        
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40390,6 +40924,12 @@
             "value" : "Pre opätovné povolenie, prejdi do Systémové nastavenia → Plocha a Dock → Okná"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Để bật lại, hãy vào Cài đặt hệ thống → Màn hình nền & Dock → Windows"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40405,6 +40945,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS의 화면 상단 가장자리 타일 정렬이 꺼졌습니다"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tính năng ghép cạnh màn hình trên cùng trong macOS hiện đã bị vô hiệu hóa"
           }
         }
       }
@@ -40709,6 +41255,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Datadetektorer"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nhận diện dữ liệu"
           }
         },
         "zh-Hans" : {
@@ -41221,6 +41773,12 @@
             "value" : "Öppna senaste"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mở gần nhất"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41351,6 +41909,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kapitalisera"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In hoa"
           }
         },
         "zh-Hans" : {
@@ -42069,6 +42633,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Використовувати як вікно Завдань"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sử dụng như cửa sổ Todo"
           }
         },
         "zh-Hans" : {
@@ -43473,6 +44043,12 @@
             "value" : "Mitten"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Căn giữa"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43603,6 +44179,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kursiv"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In nghiên"
           }
         },
         "zh-Hans" : {
@@ -43737,6 +44319,12 @@
             "value" : "Klistra in stil"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dán kiểu chữ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43867,6 +44455,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa linjal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiện thước"
           }
         },
         "zh-Hans" : {
@@ -44001,6 +44595,12 @@
             "value" : "Ändra till versaler"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viết hoa"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44133,6 +44733,12 @@
             "value" : "Rensa menyn"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Làm sạch menu"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44263,6 +44869,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligaturer"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chữ ghép"
           }
         },
         "zh-Hans" : {
@@ -44769,6 +45381,12 @@
             "value" : "Anpassa höger"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Căn phải"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -45271,6 +45889,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Understrykning"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gạch dưới"
           }
         },
         "zh-Hans" : {
@@ -46893,6 +47517,12 @@
             "value" : "Använd alla"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "xQD-1f-W4t.title"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -47017,6 +47647,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tal"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giọng nói"
           }
         },
         "zh-Hans" : {
@@ -47523,6 +48159,12 @@
             "value" : "\tStandard"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\\Mặc định"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -47653,6 +48295,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Börja tala"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bắt đầu"
           }
         },
         "zh-Hans" : {
@@ -47825,7 +48473,7 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cài đặt…"
           }
         },
@@ -48147,6 +48795,12 @@
             "value" : "Visa substitutioner"
           }
         },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -48463,6 +49117,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Justera vänster"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Căn trái"
           }
         },
         "zh-Hans" : {
@@ -48973,6 +49633,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paragraf"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Đoạn văn"
           }
         },
         "zh-Hans" : {
