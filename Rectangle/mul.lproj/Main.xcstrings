@@ -1802,7 +1802,7 @@
       }
     },
     "2oI-Rn-ZJC.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"c\"; ObjectID = \"2oI-Rn-ZJC\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Transformations\"; ObjectID = \"2oI-Rn-ZJC\";",
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
@@ -2240,7 +2240,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quanh cảnh"
+            "value" : "Spectacle"
           }
         },
         "zh-Hans" : {
@@ -13461,7 +13461,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bỏ qua ứng dụng trước nhất"
+            "value" : "Bỏ qua frontmost.app"
           }
         },
         "zh-Hans" : {
