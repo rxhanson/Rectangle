@@ -94,12 +94,10 @@ class ScreenDetection {
             if screen2.frame.maxY <= screen1.frame.minY {
                 return true
             }
-            else if screen1.frame.maxY <= screen2.frame.minY {
+            if screen1.frame.maxY <= screen2.frame.minY {
                 return false
             }
-            else {
-                return screen1.frame.minX < screen2.frame.minX
-            }
+            return screen1.frame.minX < screen2.frame.minX
         })
         return sortedScreens
     }
