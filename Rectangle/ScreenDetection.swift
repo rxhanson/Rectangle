@@ -90,13 +90,18 @@ class ScreenDetection {
     }
 
     func order(screens: [NSScreen]) -> [NSScreen] {
-        let sortedByY = screens.sorted(by: { screen1, screen2 in
-            return screen1.frame.origin.y < screen2.frame.origin.y
+        let sortedScreens = screens.sorted(by: { screen1, screen2 in
+            if screen2.frame.maxY <= screen1.frame.minY {
+                return true
+            }
+            else if screen1.frame.maxY <= screen2.frame.minY {
+                return false
+            }
+            else {
+                return screen1.frame.minX < screen2.frame.minX
+            }
         })
-        let alsoSortedByX = sortedByY.sorted(by: { screen1, screen2 in
-            return screen1.frame.origin.x < screen2.frame.origin.x
-        })
-        return alsoSortedByX
+        return sortedScreens
     }
     
     private func computeAreaOfRect(rect: CGRect) -> CGFloat {
