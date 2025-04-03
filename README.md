@@ -37,8 +37,12 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 
 ### Ignore an app
 
+Ignoring an app means that when the app is frontmost, keyboard shortcuts are un-registered from macOS. When the app is no longer frontmost, keyboard shortcuts are re-registered with macOS. This is useful for apps that have the same shortcuts like Rectangle and you do not want to change them.
+
 1. Focus the app that you want to ignore (make a window from that app frontmost).
 1. Open the Rectangle menu and select "Ignore app"
+
+To un-ignore an app that you have selected to ignore, simply bring that app frontmost again, open the Rectangle menu, and deselect "Ignore".
 
 ## Execute an action by URL
 
