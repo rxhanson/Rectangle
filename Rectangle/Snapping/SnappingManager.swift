@@ -248,8 +248,8 @@ class SnappingManager {
             else { return }
             
             if !windowMoving {
-                if currentRect.size == initialWindowRect?.size {
-                    if currentRect.origin != initialWindowRect?.origin {
+                if let initialWindowRect, (currentRect.size == initialWindowRect.size || currentRect.numSharedEdges(withRect: initialWindowRect) < 2) {
+                    if currentRect.origin != initialWindowRect.origin {
                         windowMoving = true
                         unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
                     }
