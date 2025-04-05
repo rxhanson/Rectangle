@@ -86,6 +86,7 @@ class Defaults {
     static let doubleClickTitleBar = IntDefault(key: "doubleClickTitleBar")
     static let doubleClickTitleBarRestore = OptionalBoolDefault(key: "doubleClickTitleBarRestore")
     static let doubleClickTitleBarIgnoredApps = JSONDefault<[String]>(key: "doubleClickTitleBarIgnoredApps")
+    static let doubleClickToolBarIgnoredApps = JSONDefault<Set<String>>(key: "doubleClickTitleBarIgnoredApps", defaultValue: ["epp.package.java"])
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
     static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
     static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
