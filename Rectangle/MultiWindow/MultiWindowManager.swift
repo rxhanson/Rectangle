@@ -76,13 +76,13 @@ class MultiWindowManager {
         let screenFrame = screens.currentScreen.adjustedVisibleFrame().screenFlipped
         let count = windows.count
 
-        let colums = Int(ceil(sqrt(CGFloat(count))))
-        let rows = Int(ceil(CGFloat(count) / CGFloat(colums)))
-        let size = CGSize(width: (screenFrame.maxX - screenFrame.minX) / CGFloat(colums), height: (screenFrame.maxY - screenFrame.minY) / CGFloat(rows))
+        let columns = Int(ceil(sqrt(CGFloat(count))))
+        let rows = Int(ceil(CGFloat(count) / CGFloat(columns)))
+        let size = CGSize(width: (screenFrame.maxX - screenFrame.minX) / CGFloat(columns), height: (screenFrame.maxY - screenFrame.minY) / CGFloat(rows))
 
         for (ind, w) in windows.enumerated() {
-            let column = ind % Int(colums)
-            let row = ind / Int(colums)
+            let column = ind % Int(columns)
+            let row = ind / Int(columns)
             tileWindow(w, screenFrame: screenFrame, size: size, column: column, row: row)
         }
     }
