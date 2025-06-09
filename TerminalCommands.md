@@ -24,6 +24,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Make Smaller/Make Larger size increments](#make-smallermake-larger-size-increments)
 - [Make Smaller/Make Larger "curtain resize" with gaps](#make-smallermake-larger-curtain-resize-with-gaps)
 - [Make Smaller/Make Larger width only](#make-smallermake-larger-width-only)
+- [Make Smaller/Make Larger height only](#make-smallermake-larger-height-only)
 - [Disabling window restore when moving windows](#disabling-window-restore-when-moving-windows)
 - [Changing the margin for the snap areas](#changing-the-margin-for-the-snap-areas)
 - [Setting gaps at the screen edges](#setting-gaps-at-the-screen-edges)
@@ -343,6 +344,17 @@ For example, if you want to assign `ctrl option ]` to _largerWidth_ and `ctrl op
 ```bash
 defaults write com.knollsoft.Rectangle largerWidth -dict-add keyCode -float 30 modifierFlags -float 786432
 defaults write com.knollsoft.Rectangle smallerWidth -dict-add keyCode -float 33 modifierFlags -float 786432
+```
+
+## Make Smaller/Make Larger height only
+
+Similarly, if you only want to change the window height without changing window width, configure shortcuts for the _largerHeight_ and _smallerHeight_ commands.
+
+For example, if you want to assign `ctrl option shift ]` to _largerHeight_ and `ctrl option shift [` to _smallerHeight_, the commands would be:
+
+```bash
+defaults write com.knollsoft.Rectangle largerHeight -dict-add keyCode -float 30 modifierFlags -float 917504
+defaults write com.knollsoft.Rectangle smallerHeight -dict-add keyCode -float 33 modifierFlags -float 917504
 ```
 
 ## Disabling window restore when moving windows

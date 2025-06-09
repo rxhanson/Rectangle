@@ -94,13 +94,15 @@ enum WindowAction: Int, Codable {
     halveWidthLeft = 78,
     halveWidthRight = 79,
     largerWidth = 80,
-    smallerWidth = 81
+    smallerWidth = 81,
+    largerHeight = 82,
+    smallerHeight = 83
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
                          firstThird, centerThird, lastThird, firstTwoThirds, lastTwoThirds,
-                         maximize, almostMaximize, maximizeHeight, larger, smaller, largerWidth, smallerWidth,
+                         maximize, almostMaximize, maximizeHeight, larger, smaller, largerWidth, smallerWidth, largerHeight, smallerHeight,
                          center, centerProminently, restore,
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
@@ -230,6 +232,8 @@ enum WindowAction: Int, Codable {
         case .centerProminently: return "centerProminently"
         case .largerWidth: return "largerWidth"
         case .smallerWidth: return "smallerWidth"
+        case .largerHeight: return "largerHeight"
+        case .smallerHeight: return "smallerHeight"
         }
     }
 
@@ -366,7 +370,7 @@ enum WindowAction: Int, Codable {
             return nil
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
             return nil
-        case .centerProminently, .largerWidth, .smallerWidth:
+        case .centerProminently, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
             return nil
         }
 
@@ -544,6 +548,8 @@ enum WindowAction: Int, Codable {
         case .centerProminently: return NSImage()
         case .largerWidth: return NSImage()
         case .smallerWidth: return NSImage()
+        case .largerHeight: return NSImage()
+        case .smallerHeight: return NSImage()
         }
     }
 
@@ -586,7 +592,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
             return .none
         }
     }
