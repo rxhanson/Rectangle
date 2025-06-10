@@ -195,6 +195,8 @@ class WindowCalculationFactory {
      .smaller: changeSizeCalculation,
      .largerWidth: changeSizeCalculation,
      .smallerWidth: changeSizeCalculation,
+     .largerHeight: changeSizeCalculation,
+     .smallerHeight: changeSizeCalculation,
      .bottomHalf: bottomHalfCalculation,
      .topHalf: topHalfCalculation,
      .center: centerCalculation,
