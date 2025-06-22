@@ -90,6 +90,13 @@ class ScreenDetection {
     }
 
     func order(screens: [NSScreen]) -> [NSScreen] {
+        if Defaults.screensOrderedByX.userEnabled {
+            let screensOrderedByX = screens.sorted(by: { screen1, screen2 in
+                return screen1.frame.origin.x < screen2.frame.origin.x
+            })
+            return screensOrderedByX
+        }
+        
         let sortedScreens = screens.sorted(by: { screen1, screen2 in
             if screen2.frame.maxY <= screen1.frame.minY {
                 return true
