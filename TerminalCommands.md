@@ -34,6 +34,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Move cursor with window](#move-cursor-with-window)
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
+- [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
 
 ## Keyboard Shortcuts
 
@@ -504,4 +505,12 @@ To disable double-click window title bar only for specific bundle ids (in exampl
 
 ```bash
 defaults write com.knollsoft.Rectangle doubleClickTitleBarIgnoredApps -string "[\"com.microsoft.Outlook\"]"
+```
+
+## Change the order of displays to order by x coordinate for next and prev displays commands
+
+By default, display order is left-to-right, line-by-line. You can change this to be ordered by x coordinate, left-to-right, regardless of which vertical position of the display. This was the default behavior prior to v0.87.
+
+```bash
+defaults write com.knollsoft.Rectangle screensOrderedByX -int 1"
 ```
