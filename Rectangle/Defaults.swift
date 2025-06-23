@@ -171,7 +171,8 @@ class Defaults {
         doubleClickTitleBarIgnoredApps,
         ignoreDragSnapToo,
         systemWideMouseDown,
-        systemWideMouseDownApps
+        systemWideMouseDownApps,
+        screensOrderedByX
     ]
 }
 
