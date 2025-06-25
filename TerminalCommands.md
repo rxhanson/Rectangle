@@ -512,5 +512,5 @@ defaults write com.knollsoft.Rectangle doubleClickTitleBarIgnoredApps -string "[
 By default, display order is left-to-right, line-by-line. You can change this to be ordered by x coordinate, left-to-right, regardless of which vertical position of the display. This was the default behavior prior to v0.87.
 
 ```bash
-defaults write com.knollsoft.Rectangle screensOrderedByX -int 1"
+defaults write com.knollsoft.Rectangle screensOrderedByX -int 1
 ```
