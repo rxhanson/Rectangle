@@ -2863,11 +2863,10 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <textField focusRingType="none" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9VW-Hc-lh2" customClass="AutoSaveFloatField" customModule="Rectangle" customModuleProvider="target">
-                                                        <rect key="frame" x="102" y="0.0" width="100" height="21"/>
+                                                    <textField focusRingType="none" horizontalHuggingPriority="200" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9VW-Hc-lh2" customClass="AutoSaveFloatField" customModule="Rectangle" customModuleProvider="target">
+                                                        <rect key="frame" x="102" y="0.0" width="87" height="21"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="A6q-mA-Xaq"/>
-                                                            <constraint firstAttribute="width" priority="250" constant="100" id="Ebz-nb-cys"/>
+                                                            <constraint firstAttribute="width" constant="87" id="1tz-tU-hh9"/>
                                                         </constraints>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="400" drawsBackground="YES" id="lUu-Hs-vuk">
                                                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="O5b-ir-jyO"/>
@@ -2876,8 +2875,8 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Kx-vz-WQp">
-                                                        <rect key="frame" x="207" y="-3" width="54" height="25"/>
+                                                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Kx-vz-WQp">
+                                                        <rect key="frame" x="194" y="-4" width="121" height="26"/>
                                                         <popUpButtonCell key="cell" type="push" title="px" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="5LN-YU-Bwy" id="NYb-xH-9ZP">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="message"/>
@@ -2893,21 +2892,21 @@
                                                         </connections>
                                                     </popUpButton>
                                                     <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="62c-ee-hzw" userLabel="Horizontal Spacer">
-                                                        <rect key="frame" x="265" y="0.0" width="50" height="21"/>
+                                                        <rect key="frame" x="265" y="0.0" width="50" height="50"/>
                                                     </customView>
-                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="Pon-Fc-IkL">
-                                                        <rect key="frame" x="323" y="1" width="127" height="20"/>
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pon-Fc-IkL">
+                                                        <rect key="frame" x="319" y="0.0" width="131" height="21"/>
                                                         <subviews>
                                                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZQD-06-YVI">
-                                                                <rect key="frame" x="-2" y="2" width="63" height="16"/>
+                                                                <rect key="frame" x="-2" y="3" width="63" height="16"/>
                                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Todo side" id="O9a-3Q-HB1">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rB8-CF-Yrt">
-                                                                <rect key="frame" x="64" y="-4" width="67" height="25"/>
+                                                            <popUpButton verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rB8-CF-Yrt">
+                                                                <rect key="frame" x="64" y="-3" width="71" height="25"/>
                                                                 <popUpButtonCell key="cell" type="push" title="Right" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="DG2-BN-GPE" id="wsh-YF-QuF">
                                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="message"/>
@@ -2933,6 +2932,13 @@
                                                         </customSpacing>
                                                     </stackView>
                                                 </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="9VW-Hc-lh2" firstAttribute="top" secondItem="Pon-Fc-IkL" secondAttribute="top" id="33P-4K-AiO"/>
+                                                    <constraint firstItem="9VW-Hc-lh2" firstAttribute="baseline" secondItem="90f-Y4-sgi" secondAttribute="baseline" id="OIb-DR-UkV"/>
+                                                    <constraint firstItem="9VW-Hc-lh2" firstAttribute="centerY" secondItem="7Kx-vz-WQp" secondAttribute="centerY" id="UhI-UY-xEm"/>
+                                                    <constraint firstItem="9VW-Hc-lh2" firstAttribute="bottom" secondItem="62c-ee-hzw" secondAttribute="bottom" id="sxH-AK-sOj"/>
+                                                    <constraint firstItem="9VW-Hc-lh2" firstAttribute="top" secondItem="7Kx-vz-WQp" secondAttribute="top" id="tis-la-5GJ"/>
+                                                </constraints>
                                                 <visibilityPriorities>
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
