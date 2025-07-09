@@ -27,6 +27,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var todoCheckbox: NSButton!
     @IBOutlet weak var todoView: NSStackView!
     @IBOutlet weak var todoAppWidthField: AutoSaveFloatField!
+    @IBOutlet weak var todoAppWidthUnitPopUpButton: NSPopUpButton!
     @IBOutlet weak var todoAppSidePopUpButton: NSPopUpButton!
     @IBOutlet weak var toggleTodoShortcutView: MASShortcutView!
     @IBOutlet weak var reflowTodoShortcutView: MASShortcutView!
@@ -143,6 +144,18 @@ class SettingsViewController: NSViewController {
         }
         NSApp.activate(ignoringOtherApps: true)
         aboutTodoWindowController?.showWindow(self)
+    }
+    
+    @IBAction func setTodoWidthUnit(_ sender: NSPopUpButton) {
+        let tag = sender.selectedTag()
+        guard let unit = TodoSidebarWidthUnit(rawValue: tag) else {
+            Logger.log("Expected a pop up button to have a selected item with a valid tag matching a value of TodoSidebarWidthUnit. Got: \(String(describing: tag))")
+            return
+        }
+
+        Defaults.todoSidebarWidthUnit.value = unit
+        
+        TodoManager.moveAllIfNeeded(false)
     }
     
     @IBAction func setTodoAppSide(_ sender: NSPopUpButton) {
@@ -267,6 +280,7 @@ class SettingsViewController: NSViewController {
         todoAppWidthField.defaultsSetAction = {
             TodoManager.moveAllIfNeeded(false)
         }
+        todoAppWidthUnitPopUpButton.selectItem(withTag: Defaults.todoSidebarWidthUnit.value.rawValue)
         todoAppSidePopUpButton.selectItem(withTag: Defaults.todoSidebarSide.value.rawValue)
         TodoManager.initToggleShortcut()
         TodoManager.initReflowShortcut()

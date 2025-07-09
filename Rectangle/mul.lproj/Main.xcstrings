@@ -4153,6 +4153,18 @@
         }
       }
     },
+    "5LN-YU-Bwy.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"px\"; ObjectID = \"5LN-YU-Bwy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "px"
+          }
+        }
+      }
+    },
     "5QF-Oa-p0T.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Edit\"; ObjectID = \"5QF-Oa-p0T\";",
       "extractionState" : "extracted_with_value",
@@ -8643,6 +8655,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用默认"
+          }
+        }
+      }
+    },
+    "AgV-lP-6XB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"%\"; ObjectID = \"AgV-lP-6XB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%"
           }
         }
       }
@@ -22438,7 +22462,7 @@
     },
     "HVG-6v-eJH.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"px\"; ObjectID = \"HVG-6v-eJH\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {

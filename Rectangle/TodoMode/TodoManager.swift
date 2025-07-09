@@ -256,7 +256,16 @@ enum TodoSidebarSide: Int {
     case left = 2
 }
 
-enum TodoSidebarWidthUnit: Int {
+enum TodoSidebarWidthUnit: Int, CustomStringConvertible {
     case pixels = 1
     case pct = 2
+    
+    var description: String {
+        switch self {
+        case .pixels:
+            return "px"
+        case .pct:
+            return "%"
+        }
+    }
 }
