@@ -168,14 +168,24 @@ class TodoManager {
                 adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
                 var sharedEdge: Edge
                 var rect = adjustedVisibleFrame
-                switch Defaults.todoSidebarSide.value {
-                case .left:
-                    sharedEdge = .right
-                case .right:
-                    sharedEdge = .left
-                    rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                let isRightSide = Defaults.todoSidebarSide.value == .right
+
+                sharedEdge = isRightSide ? .left : .right
+
+                switch Defaults.todoSidebarWidthUnit.value {
+                case .pixels:
+                    if isRightSide {
+                        rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                    }
+                    rect.size.width = Defaults.todoSidebarWidth.cgFloat
+                case .pct:
+                    let computedWidth = adjustedVisibleFrame.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
+                    if isRightSide {
+                        rect.origin.x = adjustedVisibleFrame.maxX - computedWidth
+                    }
+                    rect.size.width = computedWidth
                 }
-                rect.size.width = Defaults.todoSidebarWidth.cgFloat
+
                 rect = rect.screenFlipped
                 
                 if Defaults.gapSize.value > 0 {
@@ -244,4 +254,9 @@ class TodoManager {
 enum TodoSidebarSide: Int {
     case right = 1
     case left = 2
+}
+
+enum TodoSidebarWidthUnit: Int {
+    case pixels = 1
+    case pct = 2
 }
