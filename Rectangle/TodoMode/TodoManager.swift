@@ -179,6 +179,10 @@ class TodoManager {
                     }
                     rect.size.width = Defaults.todoSidebarWidth.cgFloat
                 case .pct:
+                    if (Defaults.todoSidebarWidth.cgFloat > 100) {
+                        return;
+                    }
+                    
                     let computedWidth = adjustedVisibleFrame.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
                     if isRightSide {
                         rect.origin.x = adjustedVisibleFrame.maxX - computedWidth

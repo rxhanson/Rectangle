@@ -162,6 +162,10 @@ extension NSScreen {
                 }
                 newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
             case .pct:
+                if (Defaults.todoSidebarWidth.cgFloat > 100) {
+                    return newFrame;
+                }
+                
                 if Defaults.todoSidebarSide.value == .left {
                     newFrame.origin.x += newFrame.size.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
                 }
