@@ -54,6 +54,7 @@ class Defaults {
     static let todoMode = BoolDefault(key: "todoMode")
     static let todoApplication = StringDefault(key: "todoApplication")
     static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
+    static let todoSidebarWidthUnit = IntEnumDefault<TodoSidebarWidthUnit>(key: "todoSidebarWidthUnit", defaultValue: .pixels)
     static let todoSidebarSide = IntEnumDefault<TodoSidebarSide>(key: "todoSidebarSide", defaultValue: .right)
     static let snapModifiers = IntDefault(key: "snapModifiers")
     static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
