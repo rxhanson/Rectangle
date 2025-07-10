@@ -246,6 +246,17 @@ class TodoManager {
         }
     }
     
+    static func convertWidth(_ value: Float, toPixels: Bool) -> Float {
+        TodoManager.refreshTodoScreen()
+        guard let screenWidth = TodoManager.todoScreen?.frame.width else { return value }
+
+        if toPixels {
+            return ((value * 0.01) * Float(screenWidth)).rounded()
+        } else {
+            return ((value / Float(screenWidth)) * 100).rounded()
+        }
+    }
+
     static func execute(parameters: ExecutionParameters) -> Bool {
         if [.leftTodo, .rightTodo].contains(parameters.action) {
             moveAll()

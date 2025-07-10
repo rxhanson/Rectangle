@@ -152,9 +152,13 @@ class SettingsViewController: NSViewController {
             Logger.log("Expected a pop up button to have a selected item with a valid tag matching a value of TodoSidebarWidthUnit. Got: \(String(describing: tag))")
             return
         }
-
         Defaults.todoSidebarWidthUnit.value = unit
         
+        let toPixels = (unit == .pixels)
+        let newValue = TodoManager.convertWidth(Defaults.todoSidebarWidth.value, toPixels: toPixels)
+        Defaults.todoSidebarWidth.value = newValue
+        todoAppWidthField.stringValue = String(newValue)
+
         TodoManager.moveAllIfNeeded(false)
     }
     
