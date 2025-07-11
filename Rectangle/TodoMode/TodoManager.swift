@@ -168,14 +168,28 @@ class TodoManager {
                 adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
                 var sharedEdge: Edge
                 var rect = adjustedVisibleFrame
-                switch Defaults.todoSidebarSide.value {
-                case .left:
-                    sharedEdge = .right
-                case .right:
-                    sharedEdge = .left
-                    rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                let isRightSide = Defaults.todoSidebarSide.value == .right
+
+                sharedEdge = isRightSide ? .left : .right
+
+                switch Defaults.todoSidebarWidthUnit.value {
+                case .pixels:
+                    if isRightSide {
+                        rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
+                    }
+                    rect.size.width = Defaults.todoSidebarWidth.cgFloat
+                case .pct:
+                    if (Defaults.todoSidebarWidth.cgFloat > 100) {
+                        return;
+                    }
+                    
+                    let computedWidth = adjustedVisibleFrame.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
+                    if isRightSide {
+                        rect.origin.x = adjustedVisibleFrame.maxX - computedWidth
+                    }
+                    rect.size.width = computedWidth
                 }
-                rect.size.width = Defaults.todoSidebarWidth.cgFloat
+
                 rect = rect.screenFlipped
                 
                 if Defaults.gapSize.value > 0 {
@@ -232,6 +246,17 @@ class TodoManager {
         }
     }
     
+    static func convertWidth(_ value: Float, toPixels: Bool) -> Float {
+        TodoManager.refreshTodoScreen()
+        guard let screenWidth = TodoManager.todoScreen?.frame.width else { return value }
+
+        if toPixels {
+            return ((value * 0.01) * Float(screenWidth)).rounded()
+        } else {
+            return ((value / Float(screenWidth)) * 100).rounded()
+        }
+    }
+
     static func execute(parameters: ExecutionParameters) -> Bool {
         if [.leftTodo, .rightTodo].contains(parameters.action) {
             moveAll()
@@ -244,4 +269,18 @@ class TodoManager {
 enum TodoSidebarSide: Int {
     case right = 1
     case left = 2
+}
+
+enum TodoSidebarWidthUnit: Int, CustomStringConvertible {
+    case pixels = 1
+    case pct = 2
+    
+    var description: String {
+        switch self {
+        case .pixels:
+            return "px"
+        case .pct:
+            return "%"
+        }
+    }
 }

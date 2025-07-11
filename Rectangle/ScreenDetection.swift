@@ -155,10 +155,22 @@ extension NSScreen {
         }
         
         if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self, TodoManager.hasTodoWindow() {
-            if Defaults.todoSidebarSide.value == .left {
-                newFrame.origin.x += Defaults.todoSidebarWidth.cgFloat
+            switch Defaults.todoSidebarWidthUnit.value {
+            case .pixels:
+                if Defaults.todoSidebarSide.value == .left {
+                    newFrame.origin.x += Defaults.todoSidebarWidth.cgFloat
+                }
+                newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
+            case .pct:
+                if (Defaults.todoSidebarWidth.cgFloat > 100) {
+                    return newFrame;
+                }
+                
+                if Defaults.todoSidebarSide.value == .left {
+                    newFrame.origin.x += newFrame.size.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
+                }
+                newFrame.size.width *= 1 - (Defaults.todoSidebarWidth.cgFloat * 0.01)
             }
-            newFrame.size.width -= Defaults.todoSidebarWidth.cgFloat
         }
 
         if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self != NSScreen.screens.first {
