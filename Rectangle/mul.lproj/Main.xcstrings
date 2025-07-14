@@ -33298,6 +33298,30 @@
         }
       }
     },
+    "oSu-n4-8Yu.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Two Thirds\"; ObjectID = \"oSu-n4-8Yu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Center Two Thirds"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre Two Thirds"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Центральные две трети"
+          }
+        },
+      }
+    },
     "Other" : {
       "localizations" : {
         "ar" : {
