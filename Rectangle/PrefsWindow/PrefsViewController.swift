@@ -41,6 +41,7 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var firstThirdShortcutView: MASShortcutView!
     @IBOutlet weak var firstTwoThirdsShortcutView: MASShortcutView!
     @IBOutlet weak var centerThirdShortcutView: MASShortcutView!
+    @IBOutlet weak var centerTwoThirdsShortcutView: MASShortcutView!
     @IBOutlet weak var lastTwoThirdsShortcutView: MASShortcutView!
     @IBOutlet weak var lastThirdShortcutView: MASShortcutView!
     
@@ -92,6 +93,7 @@ class PrefsViewController: NSViewController {
             .firstThird: firstThirdShortcutView,
             .firstTwoThirds: firstTwoThirdsShortcutView,
             .centerThird: centerThirdShortcutView,
+            .centerTwoThirds: centerTwoThirdsShortcutView,
             .lastTwoThirds: lastTwoThirdsShortcutView,
             .lastThird: lastThirdShortcutView,
             .moveLeft: moveLeftShortcutView,
