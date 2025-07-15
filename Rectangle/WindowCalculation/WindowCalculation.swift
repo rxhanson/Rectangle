@@ -141,6 +141,7 @@ class WindowCalculationFactory {
     static let firstThirdCalculation = FirstThirdCalculation()
     static let firstTwoThirdsCalculation = FirstTwoThirdsCalculation()
     static let centerThirdCalculation = CenterThirdCalculation()
+    static let centerTwoThirdsCalculation = CenterTwoThirdsCalculation()
     static let lastTwoThirdsCalculation = LastTwoThirdsCalculation()
     static let lastThirdCalculation = LastThirdCalculation()
     static let moveLeftRightCalculation = MoveLeftRightCalculation()
@@ -208,6 +209,7 @@ class WindowCalculationFactory {
      .firstThird: firstThirdCalculation,
      .firstTwoThirds: firstTwoThirdsCalculation,
      .centerThird: centerThirdCalculation,
+     .centerTwoThirds: centerTwoThirdsCalculation,
      .lastTwoThirds: lastTwoThirdsCalculation,
      .lastThird: lastThirdCalculation,
      .moveLeft: moveLeftRightCalculation,

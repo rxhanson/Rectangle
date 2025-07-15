@@ -36,72 +36,73 @@ enum WindowAction: Int, Codable {
     firstThird = 20,
     firstTwoThirds = 21,
     centerThird = 22,
-    lastTwoThirds = 23,
-    lastThird = 24,
-    moveLeft = 25,
-    moveRight = 26,
-    moveUp = 27,
-    moveDown = 28,
-    almostMaximize = 29,
-    centerHalf = 30,
-    firstFourth = 31,
-    secondFourth = 32,
-    thirdFourth = 33,
-    lastFourth = 34,
-    firstThreeFourths = 35,
-    lastThreeFourths = 36,
-    topLeftSixth = 37,
-    topCenterSixth = 38,
-    topRightSixth = 39,
-    bottomLeftSixth = 40,
-    bottomCenterSixth = 41,
-    bottomRightSixth = 42,
-    specified = 43,
-    reverseAll = 44,
-    topLeftNinth = 45,
-    topCenterNinth = 46,
-    topRightNinth = 47,
-    middleLeftNinth = 48,
-    middleCenterNinth = 49,
-    middleRightNinth = 50,
-    bottomLeftNinth = 51,
-    bottomCenterNinth = 52,
-    bottomRightNinth = 53,
-    topLeftThird = 54,
-    topRightThird = 55,
-    bottomLeftThird = 56,
-    bottomRightThird = 57,
-    topLeftEighth = 58,
-    topCenterLeftEighth = 59,
-    topCenterRightEighth = 60,
-    topRightEighth = 61,
-    bottomLeftEighth = 62,
-    bottomCenterLeftEighth = 63,
-    bottomCenterRightEighth = 64,
-    bottomRightEighth = 65,
-    tileAll = 66,
-    cascadeAll = 67,
-    leftTodo = 68,
-    rightTodo = 69,
-    cascadeActiveApp = 70,
-    centerProminently = 71,
-    doubleHeightUp = 72,
-    doubleHeightDown = 73,
-    doubleWidthLeft = 74,
-    doubleWidthRight = 75,
-    halveHeightUp = 76,
-    halveHeightDown = 77,
-    halveWidthLeft = 78,
-    halveWidthRight = 79,
-    largerWidth = 80,
-    smallerWidth = 81,
-    largerHeight = 82,
-    smallerHeight = 83
+    centerTwoThirds = 23,
+    lastTwoThirds = 24,
+    lastThird = 25,
+    moveLeft = 26,
+    moveRight = 27,
+    moveUp = 28,
+    moveDown = 29,
+    almostMaximize = 30,
+    centerHalf = 31,
+    firstFourth = 32,
+    secondFourth = 33,
+    thirdFourth = 34,
+    lastFourth = 35,
+    firstThreeFourths = 36,
+    lastThreeFourths = 37,
+    topLeftSixth = 38,
+    topCenterSixth = 39,
+    topRightSixth = 40,
+    bottomLeftSixth = 41,
+    bottomCenterSixth = 42,
+    bottomRightSixth = 43,
+    specified = 44,
+    reverseAll = 45,
+    topLeftNinth = 46,
+    topCenterNinth = 47,
+    topRightNinth = 48,
+    middleLeftNinth = 49,
+    middleCenterNinth = 50,
+    middleRightNinth = 51,
+    bottomLeftNinth = 52,
+    bottomCenterNinth = 53,
+    bottomRightNinth = 54,
+    topLeftThird = 55,
+    topRightThird = 56,
+    bottomLeftThird = 57,
+    bottomRightThird = 58,
+    topLeftEighth = 59,
+    topCenterLeftEighth = 60,
+    topCenterRightEighth = 61,
+    topRightEighth = 62,
+    bottomLeftEighth = 63,
+    bottomCenterLeftEighth = 64,
+    bottomCenterRightEighth = 65,
+    bottomRightEighth = 66,
+    tileAll = 67,
+    cascadeAll = 68,
+    leftTodo = 69,
+    rightTodo = 70,
+    cascadeActiveApp = 71,
+    centerProminently = 72,
+    doubleHeightUp = 73,
+    doubleHeightDown = 74,
+    doubleWidthLeft = 75,
+    doubleWidthRight = 76,
+    halveHeightUp = 77,
+    halveHeightDown = 78,
+    halveWidthLeft = 79,
+    halveWidthRight = 80,
+    largerWidth = 81,
+    smallerWidth = 82,
+    largerHeight = 83,
+    smallerHeight = 84
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
-                         firstThird, centerThird, lastThird, firstTwoThirds, lastTwoThirds,
+                         firstThird, centerThird, lastThird, firstTwoThirds, centerTwoThirds, lastTwoThirds,
                          maximize, almostMaximize, maximizeHeight, larger, smaller, largerWidth, smallerWidth, largerHeight, smallerHeight,
                          center, centerProminently, restore,
                          nextDisplay, previousDisplay,
@@ -173,6 +174,7 @@ enum WindowAction: Int, Codable {
         case .firstThird: return "firstThird"
         case .firstTwoThirds: return "firstTwoThirds"
         case .centerThird: return "centerThird"
+        case .centerTwoThirds: return "centerTwoThirds"
         case .lastTwoThirds: return "lastTwoThirds"
         case .lastThird: return "lastThird"
         case .moveLeft: return "moveLeft"
@@ -299,6 +301,9 @@ enum WindowAction: Int, Codable {
         case .centerThird:
             key = "7YK-9Z-lzw.title"
             value = "Center Third"
+        case .centerTwoThirds:
+            key = "oSu-n4-8Yu.title"
+            value = "Center Two Thirds"
         case .lastTwoThirds:
             key = "08q-Ce-1QL.title"
             value = "Last Two Thirds"
@@ -463,6 +468,7 @@ enum WindowAction: Int, Codable {
         case .firstThird: return Shortcut( ctrl|alt, kVK_ANSI_D )
         case .firstTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_E )
         case .centerThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
+        case .centerTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_R )
         case .lastTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
         case .lastThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
         default: return nil
@@ -490,6 +496,7 @@ enum WindowAction: Int, Codable {
         case .firstThird: return NSImage(imageLiteralResourceName: "firstThirdTemplate")
         case .firstTwoThirds: return NSImage(imageLiteralResourceName: "firstTwoThirdsTemplate")
         case .centerThird: return NSImage(imageLiteralResourceName: "centerThirdTemplate")
+        case .centerTwoThirds: return NSImage(imageLiteralResourceName: "centerTwoThirdsTemplate")
         case .lastTwoThirds: return NSImage(imageLiteralResourceName: "lastTwoThirdsTemplate")
         case .lastThird: return NSImage(imageLiteralResourceName: "lastThirdTemplate")
         case .moveLeft: return NSImage(imageLiteralResourceName: "moveLeftTemplate")
@@ -574,7 +581,7 @@ enum WindowAction: Int, Codable {
 
     var gapsApplicable: Dimension {
         switch self {
-        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird,
+        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird,
              .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
@@ -608,7 +615,7 @@ enum WindowAction: Int, Codable {
     
     var classification: WindowActionCategory? {
         switch self {
-        case .firstThird, .firstTwoThirds, .centerThird, .lastTwoThirds, .lastThird: return .thirds
+        case .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird: return .thirds
         default: return nil
         }
     }
