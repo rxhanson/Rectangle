@@ -81,7 +81,10 @@ class ShortcutManager {
             return
         }
         
-        if Defaults.subsequentExecutionMode.value == .cycleMonitor {
+        // Check if repeat cycles displays
+        if Defaults.subsequentExecutionMode.value == .cycleMonitor,
+           parameters.action.classification != .size,
+           parameters.action.classification != .display {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
                   let windowId = parameters.windowId ?? windowElement.getWindowId()
             else {

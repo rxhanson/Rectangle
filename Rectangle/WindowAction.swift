@@ -386,13 +386,6 @@ enum WindowAction: Int, Codable {
         return Notification.Name(name)
     }
 
-    var isMoveToDisplay: Bool {
-        switch self {
-        case .previousDisplay, .nextDisplay: return true
-        default: return false
-        }
-    }
-
     var resizes: Bool {
         switch self {
         case .center, .centerProminently, .nextDisplay, .previousDisplay: return false
@@ -621,7 +614,12 @@ enum WindowAction: Int, Codable {
     
     var classification: WindowActionCategory? {
         switch self {
-        case .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird: return .thirds
+        case .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird:
+            return .thirds
+        case .smaller, .larger, .smallerWidth, .largerWidth, .smallerHeight, .largerHeight:
+            return .size
+        case .previousDisplay, .nextDisplay:
+            return .display
         default: return nil
         }
     }
