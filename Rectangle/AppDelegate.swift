@@ -41,25 +41,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         Defaults.loadFromSupportDir()
-        if let lastVersion = Defaults.lastVersion.value,
-           let intLastVersion = Int(lastVersion) {
-            if intLastVersion < 46 {
-                MASShortcutMigration.migrate()
-            }
-            if intLastVersion < 64 {
-                SnapAreaModel.instance.migrate()
-            }
-            if intLastVersion < 72 {
-                if #available(macOS 13, *) {
-                    SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, false)
-                }
-            }
-        } else {
-            Defaults.allowAnyShortcut.enabled = true
-        }
-        
-        Defaults.lastVersion.value = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
 
+        checkVersion()
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
@@ -101,6 +84,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         prevActiveAppObservation = NSWorkspace.shared.observe(\.frontmostApplication, options: .old) { workspace, change in
             self.prevActiveApp = change.oldValue ?? nil
         }
+    }
+    
+    func checkVersion() {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        if let lastVersion = Defaults.lastVersion.value,
+           let intLastVersion = Int(lastVersion) {
+            if intLastVersion < 46 {
+                MASShortcutMigration.migrate()
+            }
+            if intLastVersion < 64 {
+                SnapAreaModel.instance.migrate()
+            }
+            if intLastVersion < 72 {
+                if #available(macOS 13, *) {
+                    SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, false)
+                }
+            }
+        } else {
+            Defaults.installVersion.value = currentVersion
+            Defaults.allowAnyShortcut.enabled = true
+        }
+        
+        Defaults.lastVersion.value = currentVersion
     }
     
     func applicationWillBecomeActive(_ notification: Notification) {
