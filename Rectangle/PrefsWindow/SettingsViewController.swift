@@ -154,10 +154,13 @@ class SettingsViewController: NSViewController {
         }
         Defaults.todoSidebarWidthUnit.value = unit
         
-        let toPixels = (unit == .pixels)
-        let newValue = TodoManager.convertWidth(Defaults.todoSidebarWidth.value, toPixels: toPixels)
-        Defaults.todoSidebarWidth.value = newValue
-        todoAppWidthField.stringValue = String(newValue)
+        TodoManager.refreshTodoScreen()
+        
+        if let visibleFrameWidth = TodoManager.todoScreen?.visibleFrame.width {
+            let newValue = TodoManager.convert(width: Defaults.todoSidebarWidth.cgFloat, toUnit: unit, visibleFrameWidth: visibleFrameWidth)
+            Defaults.todoSidebarWidth.value = Float(newValue)
+            todoAppWidthField.stringValue = "\(newValue)"
+        }
 
         TodoManager.moveAllIfNeeded(false)
     }

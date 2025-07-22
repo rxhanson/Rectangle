@@ -11,16 +11,10 @@ final class RightTodoCalculation: WindowCalculation {
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
         var calculatedWindowRect = visibleFrameOfScreen
-        var calculatedTodoSidebarWidth: CGFloat
+        let sidebarWidth = TodoManager.getSidebarWidth(visibleFrameWidth: visibleFrameOfScreen.width)
         
-        if Defaults.todoSidebarWidthUnit.value == .pixels {
-            calculatedTodoSidebarWidth = Defaults.todoSidebarWidth.cgFloat
-        } else {
-            calculatedTodoSidebarWidth = visibleFrameOfScreen.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
-        }
-
-        calculatedWindowRect.origin.x = visibleFrameOfScreen.maxX - calculatedTodoSidebarWidth
-        calculatedWindowRect.size.width = calculatedTodoSidebarWidth
+        calculatedWindowRect.origin.x = visibleFrameOfScreen.maxX - sidebarWidth
+        calculatedWindowRect.size.width = sidebarWidth
 
         return RectResult(calculatedWindowRect, subAction: .rightTodo)
     }

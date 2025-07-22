@@ -166,29 +166,18 @@ class TodoManager {
                 }
 
                 adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
+                let sidebarWidth = getSidebarWidth(visibleFrameWidth: adjustedVisibleFrame.width)
+
                 var sharedEdge: Edge
                 var rect = adjustedVisibleFrame
                 let isRightSide = Defaults.todoSidebarSide.value == .right
 
                 sharedEdge = isRightSide ? .left : .right
 
-                switch Defaults.todoSidebarWidthUnit.value {
-                case .pixels:
-                    if isRightSide {
-                        rect.origin.x = adjustedVisibleFrame.maxX - Defaults.todoSidebarWidth.cgFloat
-                    }
-                    rect.size.width = Defaults.todoSidebarWidth.cgFloat
-                case .pct:
-                    if (Defaults.todoSidebarWidth.cgFloat > 100) {
-                        return;
-                    }
-                    
-                    let computedWidth = adjustedVisibleFrame.width * (Defaults.todoSidebarWidth.cgFloat * 0.01)
-                    if isRightSide {
-                        rect.origin.x = adjustedVisibleFrame.maxX - computedWidth
-                    }
-                    rect.size.width = computedWidth
+                if isRightSide {
+                    rect.origin.x = adjustedVisibleFrame.maxX - sidebarWidth
                 }
+                rect.size.width = sidebarWidth
 
                 rect = rect.screenFlipped
                 
@@ -204,12 +193,30 @@ class TodoManager {
         }
     }
     
+    static func getSidebarWidth(visibleFrameWidth: CGFloat) -> CGFloat {
+        var sidebarWidth = Defaults.todoSidebarWidth.cgFloat
+        
+        if sidebarWidth > 0 && sidebarWidth <= 1 {
+            sidebarWidth = sidebarWidth * visibleFrameWidth
+        } else if Defaults.todoSidebarWidthUnit.value == .pct {
+            sidebarWidth = convert(width: sidebarWidth, toUnit: .pixels, visibleFrameWidth: visibleFrameWidth)
+        }
+        
+        return sidebarWidth
+    }
+    
+    static func convert(width: CGFloat, toUnit unit: TodoSidebarWidthUnit, visibleFrameWidth: CGFloat) -> CGFloat {
+        unit == .pixels
+        ? ((width * 0.01) * visibleFrameWidth).rounded()
+        : ((width / visibleFrameWidth) * 100).rounded()
+    }
+    
     static func moveAllIfNeeded(_ bringToFront: Bool = true) {
         guard Defaults.todo.userEnabled && Defaults.todoMode.enabled else { return }
         moveAll(bringToFront)
     }
     
-    private static func refreshTodoScreen() {
+    static func refreshTodoScreen() {
         let todoWindow = getTodoWindowElement()
         let screens = ScreenDetection().detectScreens(using: todoWindow)
         TodoManager.todoScreen = screens?.currentScreen
@@ -246,17 +253,6 @@ class TodoManager {
         }
     }
     
-    static func convertWidth(_ value: Float, toPixels: Bool) -> Float {
-        TodoManager.refreshTodoScreen()
-        guard let screenWidth = TodoManager.todoScreen?.frame.width else { return value }
-
-        if toPixels {
-            return ((value * 0.01) * Float(screenWidth)).rounded()
-        } else {
-            return ((value / Float(screenWidth)) * 100).rounded()
-        }
-    }
-
     static func execute(parameters: ExecutionParameters) -> Bool {
         if [.leftTodo, .rightTodo].contains(parameters.action) {
             moveAll()
