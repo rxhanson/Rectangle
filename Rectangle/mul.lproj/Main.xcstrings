@@ -45004,6 +45004,24 @@
         }
       }
     },
+    "Vph-Z0-euH.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Three Fourths\"; ObjectID = \"Vph-Z0-euH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Center Three Fourths"
+          }
+        },
+        "en-GB" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre Three Quarters"
+          }
+        }
+      }
+    },
     "w0m-vy-SC9.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Ligatures\"; ObjectID = \"w0m-vy-SC9\";",
       "extractionState" : "manual",
