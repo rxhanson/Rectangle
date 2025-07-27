@@ -97,7 +97,8 @@ enum WindowAction: Int, Codable {
     smallerWidth = 81,
     largerHeight = 82,
     smallerHeight = 83,
-    centerTwoThirds = 84
+    centerTwoThirds = 84,
+    centerThreeFourths = 85
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -107,7 +108,7 @@ enum WindowAction: Int, Codable {
                          center, centerProminently, restore,
                          nextDisplay, previousDisplay,
                          moveLeft, moveRight, moveUp, moveDown,
-                         firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, lastThreeFourths,
+                         firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, centerThreeFourths, lastThreeFourths,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
                          specified, reverseAll,
                          topLeftNinth, topCenterNinth, topRightNinth,
@@ -188,6 +189,7 @@ enum WindowAction: Int, Codable {
         case .thirdFourth: return "thirdFourth"
         case .lastFourth: return "lastFourth"
         case .firstThreeFourths: return "firstThreeFourths"
+        case .centerThreeFourths: return "centerThreeFourths"
         case .lastThreeFourths: return "lastThreeFourths"
         case .topLeftSixth: return "topLeftSixth"
         case .topCenterSixth: return "topCenterSixth"
@@ -343,6 +345,9 @@ enum WindowAction: Int, Codable {
         case .firstThreeFourths:
             key = "T9Z-QF-gwc.title"
             value = "First Three Fourths"
+        case .centerThreeFourths:
+            key = "Vph-Z0-euH.title"
+            value = "Center Three Fourths"
         case .lastThreeFourths:
             key = "nwX-h6-fwm.title"
             value = "Last Three Fourths"
@@ -509,6 +514,7 @@ enum WindowAction: Int, Codable {
         case .thirdFourth: return NSImage(imageLiteralResourceName: "centerRightFourthTemplate")
         case .lastFourth: return NSImage(imageLiteralResourceName: "rightFourthTemplate")
         case .firstThreeFourths: return NSImage(imageLiteralResourceName: "firstThreeFourthsTemplate")
+        case .centerThreeFourths: return NSImage(imageLiteralResourceName: "centerThreeFourthsTemplate")
         case .lastThreeFourths: return NSImage(imageLiteralResourceName: "lastThreeFourthsTemplate")
         case .topLeftSixth: return NSImage(imageLiteralResourceName: "topLeftSixthTemplate")
         case .topCenterSixth: return NSImage(imageLiteralResourceName: "topCenterSixthTemplate")
@@ -581,7 +587,7 @@ enum WindowAction: Int, Codable {
     var gapsApplicable: Dimension {
         switch self {
         case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird,
-             .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
+                .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
             .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
@@ -605,7 +611,7 @@ enum WindowAction: Int, Codable {
     
     var category: WindowActionCategory? { // used to specify a submenu
         switch self {
-        case .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .lastThreeFourths: return .fourths
+        case .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths: return .fourths
         case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
         case .moveUp, .moveDown, .moveLeft, .moveRight: return .move
         default: return nil
@@ -652,6 +658,8 @@ enum SubWindowAction {
     bottomThreeFourths,
     leftThreeFourths,
     topThreeFourths,
+    centerVerticalThreeFourths,
+    centerHorizontalThreeFourths,
     
     centerVerticalHalf,
     centerHorizontalHalf,
@@ -733,6 +741,8 @@ enum SubWindowAction {
         case .bottomThreeFourths: return .top
         case .leftThreeFourths: return .right
         case .topThreeFourths: return .bottom
+        case .centerVerticalThreeFourths: return [.right, .left]
+        case .centerHorizontalThreeFourths: return [.top, .bottom]
         case .centerVerticalHalf: return [.right, .left]
         case .centerHorizontalHalf: return [.top, .bottom]
         case .topLeftSixthLandscape: return [.right, .bottom]
