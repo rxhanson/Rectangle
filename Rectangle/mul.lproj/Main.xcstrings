@@ -33319,22 +33319,10 @@
             "value" : "Prostřední dvě třetiny"
           }
         },
-        "da" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Centrer to tredjedele"
-          }
-        },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zentrierte zwei Drittel"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Κεντρικά δύο τρίτα"
           }
         },
         "en" : {
@@ -33361,46 +33349,10 @@
             "value" : "Dos tercios al centro"
           }
         },
-        "fi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Keskimmäiset kaksi kolmasosaa"
-          }
-        },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Deux tiers centraux"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Deux tiers centraux"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "שני שלישים במרכז"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "केंद्र के दो तिहाई"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Središnje dvije trećine"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Középső kétharmad"
           }
         },
         "id" : {
@@ -33427,12 +33379,6 @@
             "value" : "가운데 3분의 2"
           }
         },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tengah Dua Pertiga"
-          }
-        },
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -33449,12 +33395,6 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Środkowe dwie trzecie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Dois Terços Centrais"
           }
         },
         "pt-BR" : {
@@ -33481,16 +33421,10 @@
             "value" : "Stredné dve tretiny"
           }
         },
-        "sv" : {
+        "sv-SE" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Mellersta två tredjedelar"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "สองส่วนสามตรงกลาง"
           }
         },
         "tr" : {
