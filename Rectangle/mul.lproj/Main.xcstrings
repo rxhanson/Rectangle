@@ -33511,22 +33511,22 @@
             "value" : "Hai phần ba ở giữa"
           }
         },
-        "zh-CN" : {
+        "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "中三分之二"
+            "state" : "translated",
+            "value" : "中间２／３"
           }
         },
-        "zh-HK" : {
+        "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "中間三分之二"
+            "state" : "translated",
+            "value" : "中間２／３"
           }
         },
-        "zh-TW" : {
+        "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "中間三分之二"
+            "state" : "translated",
+            "value" : "中間２／３"
           }
         }
       }
