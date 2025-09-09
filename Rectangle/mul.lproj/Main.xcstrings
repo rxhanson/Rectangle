@@ -4046,7 +4046,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rectangle에 관하여"
+            "value" : "Rectangle 정보"
           }
         },
         "lt" : {
@@ -4160,6 +4160,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "px"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "px"
           }
         }
@@ -5132,7 +5138,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo 어플리케이션 폭"
+            "value" : "Todo 앱 폭"
           }
         },
         "lt" : {
@@ -6266,7 +6272,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Rectangle 메뉴에서, Todo 모드를 활성화 시킵니다"
+            "value" : "3. Rectangle 메뉴에서, Todo 모드를 켭니다"
           }
         },
         "lt" : {
@@ -8666,6 +8672,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "%"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "%"
           }
         }
@@ -11959,7 +11971,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conflict with system setting"
+            "value" : "시스템 설정과 충돌"
           }
         },
         "lt" : {
@@ -13747,7 +13759,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right"
+            "value" : "오른쪽"
           }
         },
         "lt" : {
@@ -13933,7 +13945,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toggle Todo"
+            "value" : "Todo 켜기/끄기"
           }
         },
         "lt" : {
@@ -17249,7 +17261,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "선택한 어플리케이션을 메인 화면 오른쪽에 항상 표시되도록 합니다"
+            "value" : "선택한 응용 프로그램을 메인 화면 오른쪽에 항상 표시합니다"
           }
         },
         "lt" : {
@@ -18685,7 +18697,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reflow Todo"
+            "value" : "Todo 재배치"
           }
         },
         "lt" : {
@@ -21195,7 +21207,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-click window title bar to maximize/restore"
+            "value" : "윈도우 제목 막대를 두 번 클릭해 확대/축소"
           }
         },
         "lt" : {
@@ -29451,7 +29463,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo 모드에 대해"
+            "value" : "Todo 모드 정보"
           }
         },
         "lt" : {
@@ -30457,7 +30469,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left"
+            "value" : "왼쪽"
           }
         },
         "lt" : {
@@ -30829,7 +30841,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "선택한 어플리케이션을 메인 화면 오른쪽에 항상 표시되도록 합니다"
+            "value" : "선택한 응용 프로그램을 메인 화면 오른쪽에 항상 표시합니다"
           }
         },
         "lt" : {
@@ -32227,7 +32239,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo side"
+            "value" : "Todo 위치"
           }
         },
         "lt" : {
@@ -33375,7 +33387,7 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "가운데 2/3"
           }
         },
@@ -36500,7 +36512,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Todo 어플리케이션을 맨 앞에 위치시킵니다"
+            "value" : "1. Todo 응용 프로그램을 맨 앞에 둡니다"
           }
         },
         "lt" : {
@@ -40981,7 +40993,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting."
+            "value" : "Rectangle이 제목 막대 두 번 클릭 기능을 제어하려면, 해당하는 macOS 설정을 꺼야 합니다."
           }
         },
         "lt" : {
@@ -41106,7 +41118,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다시 켜려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
+            "value" : "다시 켜려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동합니다"
           }
         },
         "sk" : {
@@ -42745,7 +42757,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use as Todo Window"
+            "value" : "Todo 윈도우로 사용"
           }
         },
         "lt" : {
@@ -46925,7 +46937,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spectacle을 선택하여도 반복되는 단축키에서 1/2, 2/3, 1/3 창 넓이를 순환할 것입니다"
+            "value" : "Spectacle을 선택하여도 단축키를 반복하면 1/2, 2/3, 1/3 창 넓이를 순환합니다"
           }
         },
         "lt" : {
@@ -49787,7 +49799,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo 모드에 대해"
+            "value" : "Todo 모드 정보"
           }
         },
         "lt" : {
