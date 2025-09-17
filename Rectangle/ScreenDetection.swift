@@ -33,6 +33,33 @@ class ScreenDetection {
         return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
     }
 
+    func detectScreensAtCursor() -> UsableScreens? {
+        let screens = NSScreen.screens
+        guard let firstScreen = screens.first else { return nil }
+
+        if screens.count == 1 {
+            // Delegate to window-based detection for single screen
+            return detectScreens(using: nil)
+        }
+
+        let screensOrdered = order(screens: screens)
+
+        // Get cursor position
+        let mouseLocation = NSEvent.mouseLocation
+
+        // Find screen containing cursor
+        guard let cursorScreen = screens.first(where: { screen in
+            screen.frame.contains(mouseLocation)
+        }) else {
+            // Fallback to window-based detection if cursor screen not found
+            return detectScreens(using: nil)
+        }
+
+        let adjacentScreens = adjacent(toFrameOfScreen: cursorScreen.frame, screens: screensOrdered)
+
+        return UsableScreens(currentScreen: cursorScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
+    }
+
     func screenContaining(_ rect: CGRect, screens: [NSScreen]) -> NSScreen? {
         var result: NSScreen? = NSScreen.main
         var largestPercentageOfRectWithinFrameOfScreen: CGFloat = 0.0

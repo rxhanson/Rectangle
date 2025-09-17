@@ -23,6 +23,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
+    @IBOutlet weak var useCursorScreenDetectionCheckbox: NSButton!
     @IBOutlet weak var doubleClickTitleBarCheckbox: NSButton!
     @IBOutlet weak var todoCheckbox: NSButton!
     @IBOutlet weak var todoView: NSStackView!
@@ -92,7 +93,12 @@ class SettingsViewController: NSViewController {
         let newSetting: Bool = sender.state == .on
         Defaults.moveCursorAcrossDisplays.enabled = newSetting
     }
-    
+
+    @IBAction func toggleUseCursorScreenDetection(_ sender: NSButton) {
+        let newSetting: Bool = sender.state == .on
+        Defaults.useCursorScreenDetection.enabled = newSetting
+    }
+
     @IBAction func toggleAllowAnyShortcut(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.allowAnyShortcut.enabled = newSetting
@@ -320,7 +326,9 @@ class SettingsViewController: NSViewController {
         gapSlider.isContinuous = true
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
-        
+
+        useCursorScreenDetectionCheckbox.state = Defaults.useCursorScreenDetection.enabled ? .on : .off
+
         doubleClickTitleBarCheckbox.state = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil ? .on : .off
 
         if StageUtil.stageCapable {

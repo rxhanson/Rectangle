@@ -12574,6 +12574,18 @@
         }
       }
     },
+    "CUR-SD-CEL.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Use cursor position for screen detection\"; ObjectID = \"CUR-SD-CEL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use cursor position for screen detection"
+          }
+        }
+      }
+    },
     "Currently using: " : {
       "localizations" : {
         "ar" : {

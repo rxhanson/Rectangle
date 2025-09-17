@@ -64,7 +64,12 @@ class WindowManager {
         if let screen = parameters.screen {
             screens = UsableScreens(currentScreen: screen, numScreens: 1)
         } else {
-            screens = screenDetection.detectScreens(using: frontmostWindowElement)
+            // Use cursor position or window position based on user preference
+            if Defaults.useCursorScreenDetection.enabled {
+                screens = screenDetection.detectScreensAtCursor()
+            } else {
+                screens = screenDetection.detectScreens(using: frontmostWindowElement)
+            }
         }
         
         guard let usableScreens = screens else {
