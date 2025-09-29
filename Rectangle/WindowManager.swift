@@ -64,7 +64,9 @@ class WindowManager {
         if let screen = parameters.screen {
             screens = UsableScreens(currentScreen: screen, numScreens: 1)
         } else {
-            screens = screenDetection.detectScreens(using: frontmostWindowElement)
+            screens = Defaults.useCursorScreenDetection.enabled
+            ? screenDetection.detectScreensAtCursor()
+            : screenDetection.detectScreens(using: frontmostWindowElement)
         }
         
         guard let usableScreens = screens else {
