@@ -35,23 +35,14 @@ class ScreenDetection {
 
     func detectScreensAtCursor() -> UsableScreens? {
         let screens = NSScreen.screens
-        guard let firstScreen = screens.first else { return nil }
-
         if screens.count == 1 {
-            // Delegate to window-based detection for single screen
             return detectScreens(using: nil)
         }
 
         let screensOrdered = order(screens: screens)
 
-        // Get cursor position
-        let mouseLocation = NSEvent.mouseLocation
-
-        // Find screen containing cursor
-        guard let cursorScreen = screens.first(where: { screen in
-            screen.frame.contains(mouseLocation)
-        }) else {
-            // Fallback to window-based detection if cursor screen not found
+        guard let cursorScreen = screens.first(where: { $0.frame.contains(NSEvent.mouseLocation)})
+        else {
             return detectScreens(using: nil)
         }
 

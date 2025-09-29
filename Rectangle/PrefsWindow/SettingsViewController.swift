@@ -327,6 +327,7 @@ class SettingsViewController: NSViewController {
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
 
+        useCursorScreenDetectionCheckbox.isHidden = !Defaults.useCursorScreenDetection.enabled
         useCursorScreenDetectionCheckbox.state = Defaults.useCursorScreenDetection.enabled ? .on : .off
 
         doubleClickTitleBarCheckbox.state = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil ? .on : .off
