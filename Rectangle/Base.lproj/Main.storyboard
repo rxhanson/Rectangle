@@ -2912,7 +2912,7 @@
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="toggleUseCursorScreenDetection:" target="yhc-gS-h02" id="CUR-SD-ACT"/>
+                                                    <action selector="toggleUseCursorScreenDetection:" target="yhc-gS-h02" id="cG2-FV-2RY"/>
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="hB7-uu-XeP" userLabel="Double-click Title Bar Checkbox">
@@ -3404,6 +3404,7 @@
                         <outlet property="todoViewHeightConstraint" destination="89R-oK-9JB" id="xTV-rY-WiU"/>
                         <outlet property="toggleTodoShortcutView" destination="uca-0m-naE" id="tnB-hD-SfB"/>
                         <outlet property="unsnapRestoreButton" destination="9Ed-T3-hCA" id="3UI-gj-R73"/>
+                        <outlet property="useCursorScreenDetectionCheckbox" destination="CUR-SD-CHK" id="cXm-7I-x0Q"/>
                         <outlet property="versionLabel" destination="Azi-Y9-9xa" id="P8e-ZA-J6X"/>
                         <outlet property="windowSnappingCheckbox" destination="3wO-pf-nsb" id="00K-AW-LYi"/>
                     </connections>
