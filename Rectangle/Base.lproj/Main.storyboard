@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24127" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24128"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24127"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -3426,7 +3426,7 @@
             <objects>
                 <viewController id="5D9-0a-Mbi" customClass="AccessibilityViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="1ZR-Nv-NGc">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="406"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4I0-IC-dnS">
@@ -3522,7 +3522,7 @@ DQ
                             <constraint firstAttribute="bottom" secondItem="4I0-IC-dnS" secondAttribute="bottom" constant="20" symbolic="YES" id="6VM-hI-r3b"/>
                             <constraint firstItem="4I0-IC-dnS" firstAttribute="leading" secondItem="1ZR-Nv-NGc" secondAttribute="leading" constant="20" symbolic="YES" id="Gcc-RY-bAG"/>
                             <constraint firstAttribute="trailing" secondItem="4I0-IC-dnS" secondAttribute="trailing" constant="20" symbolic="YES" id="avA-k7-RbF"/>
-                            <constraint firstItem="4I0-IC-dnS" firstAttribute="top" secondItem="1ZR-Nv-NGc" secondAttribute="top" constant="30" id="jJz-xW-me7"/>
+                            <constraint firstItem="4I0-IC-dnS" firstAttribute="top" secondItem="1ZR-Nv-NGc" secondAttribute="top" constant="36" id="jJz-xW-me7"/>
                         </constraints>
                     </view>
                     <connections>
@@ -3533,7 +3533,7 @@ DQ
                 </viewController>
                 <customObject id="Pz3-OM-dTg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="656" y="699"/>
+            <point key="canvasLocation" x="656" y="681.5"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="s8a-91-b01">
@@ -3702,7 +3702,7 @@ DQ
             <objects>
                 <viewController storyboardIdentifier="WelcomeViewController" id="suu-55-jFR" customClass="WelcomeViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="BAr-aA-3ku">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="322"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="328"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YO5-zp-VfI">
@@ -3725,11 +3725,11 @@ DQ
                                         </textFieldCell>
                                     </textField>
                                     <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="22" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NR8-n2-Yhs">
-                                        <rect key="frame" x="55" y="100" width="141" height="70"/>
+                                        <rect key="frame" x="56" y="100" width="139" height="70"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mYO-is-OgK">
-                                                <rect key="frame" x="0.0" y="46" width="141" height="24"/>
-                                                <buttonCell key="cell" type="push" title="Recommended" bezelStyle="rounded" image="Untilted" imagePosition="left" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HOp-Kd-vhY">
+                                                <rect key="frame" x="0.0" y="46" width="139" height="24"/>
+                                                <buttonCell key="cell" type="push" title="Recommended" bezelStyle="rounded" image="StatusTemplate" imagePosition="left" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HOp-Kd-vhY">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                     <string key="keyEquivalent" base64-UTF8="YES">
@@ -3741,7 +3741,7 @@ DQ
                                                 </connections>
                                             </button>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Dw-0R-Da9">
-                                                <rect key="frame" x="0.0" y="0.0" width="141" height="24"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="139" height="24"/>
                                                 <buttonCell key="cell" type="push" title="Spectacle" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2XJ-Ca-9di">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -3802,7 +3802,7 @@ DQ
                             </stackView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="YO5-zp-VfI" firstAttribute="top" secondItem="BAr-aA-3ku" secondAttribute="top" constant="30" id="6dg-pJ-fuJ"/>
+                            <constraint firstItem="YO5-zp-VfI" firstAttribute="top" secondItem="BAr-aA-3ku" secondAttribute="top" constant="36" id="6dg-pJ-fuJ"/>
                             <constraint firstAttribute="trailing" secondItem="YO5-zp-VfI" secondAttribute="trailing" constant="20" symbolic="YES" id="Ca7-3S-B6a"/>
                             <constraint firstItem="YO5-zp-VfI" firstAttribute="leading" secondItem="BAr-aA-3ku" secondAttribute="leading" constant="20" symbolic="YES" id="fXv-Pw-H1B"/>
                             <constraint firstAttribute="bottom" secondItem="YO5-zp-VfI" secondAttribute="bottom" constant="20" symbolic="YES" id="iug-er-2mw"/>
@@ -4465,6 +4465,7 @@ DQ
         </scene>
     </scenes>
     <resources>
+        <image name="StatusTemplate" width="22" height="22"/>
         <image name="Untilted" width="256" height="256"/>
         <image name="almostMaximizeTemplate" width="30" height="20"/>
         <image name="bottomCenterSixthTemplate" width="30" height="20"/>
