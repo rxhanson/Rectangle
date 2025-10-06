@@ -255,7 +255,69 @@ class SettingsViewController: NSViewController {
             let popover = NSPopover()
             popover.behavior = .transient
             let viewController = NSViewController()
-            viewController.view = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: 100))
+
+            let mainStackView = NSStackView()
+            mainStackView.orientation = .vertical
+            mainStackView.alignment = .leading
+            mainStackView.spacing = 10
+            mainStackView.translatesAutoresizingMaskIntoConstraints = false
+
+            let headerLabel = NSTextField(labelWithString: "Extra Shortcuts")
+            headerLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+
+            let largerWidthLabel = NSTextField(labelWithString: "Larger Width")
+            let smallerWidthLabel = NSTextField(labelWithString: "Smaller Width")
+
+            largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
+            smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
+            smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
+
+            if Defaults.allowAnyShortcut.enabled {
+                let passThroughValidator = PassthroughShortcutValidator()
+                largerWidthShortcutView.shortcutValidator = passThroughValidator
+                smallerWidthShortcutView.shortcutValidator = passThroughValidator
+            }
+
+            let largerWidthRow = NSStackView()
+            largerWidthRow.orientation = .horizontal
+            largerWidthRow.alignment = .centerY
+            largerWidthRow.spacing = 18
+            largerWidthRow.addArrangedSubview(largerWidthLabel)
+            largerWidthRow.addArrangedSubview(largerWidthShortcutView)
+
+            let smallerWidthRow = NSStackView()
+            smallerWidthRow.orientation = .horizontal
+            smallerWidthRow.alignment = .centerY
+            smallerWidthRow.spacing = 18
+            smallerWidthRow.addArrangedSubview(smallerWidthLabel)
+            smallerWidthRow.addArrangedSubview(smallerWidthShortcutView)
+
+            mainStackView.addArrangedSubview(headerLabel)
+            mainStackView.addArrangedSubview(largerWidthRow)
+            mainStackView.addArrangedSubview(smallerWidthRow)
+
+            NSLayoutConstraint.activate([
+                largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
+                largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160)
+            ])
+
+            let containerView = NSView()
+            containerView.addSubview(mainStackView)
+
+            NSLayoutConstraint.activate([
+                mainStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+                mainStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+                mainStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 15),
+                mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -15)
+            ])
+
+            viewController.view = containerView
             popover.contentViewController = viewController
             extraSettingsPopover = popover
         }
