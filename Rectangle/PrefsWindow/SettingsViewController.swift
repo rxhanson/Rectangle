@@ -35,15 +35,17 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var stageView: NSStackView!
     @IBOutlet weak var stageSlider: NSSlider!
     @IBOutlet weak var stageLabel: NSTextField!
-    
+
     @IBOutlet weak var cycleSizesView: NSStackView!
-    
+
     @IBOutlet var cycleSizesViewHeightConstraint: NSLayoutConstraint!
-    
+
     @IBOutlet var todoViewHeightConstraint: NSLayoutConstraint!
-    
-    
+
+    @IBOutlet weak var extraSettingsButton: NSButton!
+
     private var aboutTodoWindowController: NSWindowController?
+    private var extraSettingsPopover: NSPopover?
     
     private var cycleSizeCheckboxes = [NSButton]()
     
@@ -246,6 +248,18 @@ class SettingsViewController: NSViewController {
             Defaults.load(fileUrl: url)
         }
         Notification.Name.windowSnapping.post(object: true)
+    }
+
+    @IBAction func showExtraSettings(_ sender: NSButton) {
+        if extraSettingsPopover == nil {
+            let popover = NSPopover()
+            popover.behavior = .transient
+            let viewController = NSViewController()
+            viewController.view = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: 100))
+            popover.contentViewController = viewController
+            extraSettingsPopover = popover
+        }
+        extraSettingsPopover?.show(relativeTo: sender.bounds, of: sender, preferredEdge: .maxY)
     }
     
     override func awakeFromNib() {

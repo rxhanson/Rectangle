@@ -16192,6 +16192,18 @@
         }
       }
     },
+    "Ext-Set-Cel.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"⋯\"; ObjectID = \"Ext-Set-Cel\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "⋯"
+          }
+        }
+      }
+    },
     "F2S-fz-NVQ.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Help\"; ObjectID = \"F2S-fz-NVQ\";",
       "extractionState" : "extracted_with_value",

@@ -3254,16 +3254,39 @@
                                             <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="OhI-U9-bZb">
                                                 <rect key="frame" x="0.0" y="0.0" width="500" height="24"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
-                                                        <rect key="frame" x="0.0" y="0.0" width="266" height="24"/>
-                                                        <buttonCell key="cell" type="push" title="Restore Default Shortcuts &amp; Snap Areas" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uLF-Uf-tBt">
-                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="system"/>
-                                                        </buttonCell>
-                                                        <connections>
-                                                            <action selector="restoreDefaults:" target="yhc-gS-h02" id="Xfb-Cc-xFM"/>
-                                                        </connections>
-                                                    </button>
+                                                    <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="5" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rst-Btn-Stk">
+                                                        <rect key="frame" x="0.0" y="0.0" width="293" height="24"/>
+                                                        <subviews>
+                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
+                                                                <rect key="frame" x="0.0" y="0.0" width="266" height="24"/>
+                                                                <buttonCell key="cell" type="push" title="Restore Default Shortcuts &amp; Snap Areas" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uLF-Uf-tBt">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <action selector="restoreDefaults:" target="yhc-gS-h02" id="Xfb-Cc-xFM"/>
+                                                                </connections>
+                                                            </button>
+                                                            <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ext-Set-Btn">
+                                                                <rect key="frame" x="271" y="0.0" width="22" height="24"/>
+                                                                <buttonCell key="cell" type="push" title="⋯" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ext-Set-Cel">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <action selector="showExtraSettings:" target="yhc-gS-h02" id="Ext-Set-Act"/>
+                                                                </connections>
+                                                            </button>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TgL-lF-gWJ">
                                                         <rect key="frame" x="329" y="0.0" width="171" height="24"/>
                                                         <subviews>
@@ -3407,6 +3430,7 @@
                         <outlet property="useCursorScreenDetectionCheckbox" destination="CUR-SD-CHK" id="cXm-7I-x0Q"/>
                         <outlet property="versionLabel" destination="Azi-Y9-9xa" id="P8e-ZA-J6X"/>
                         <outlet property="windowSnappingCheckbox" destination="3wO-pf-nsb" id="00K-AW-LYi"/>
+                        <outlet property="extraSettingsButton" destination="Ext-Set-Btn" id="Ext-Set-Out"/>
                     </connections>
                 </viewController>
                 <customObject id="c9e-yT-Dp7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
