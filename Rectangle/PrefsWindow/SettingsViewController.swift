@@ -259,7 +259,7 @@ class SettingsViewController: NSViewController {
             let mainStackView = NSStackView()
             mainStackView.orientation = .vertical
             mainStackView.alignment = .leading
-            mainStackView.spacing = 10
+            mainStackView.spacing = 5
             mainStackView.translatesAutoresizingMaskIntoConstraints = false
 
             let headerLabel = NSTextField(labelWithString: "Extra Shortcuts")
@@ -297,25 +297,58 @@ class SettingsViewController: NSViewController {
                 smallerWidthShortcutView.shortcutValidator = passThroughValidator
             }
 
+            let largerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            largerWidthIcon.image = WindowAction.largerWidth.image
+            largerWidthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let smallerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            smallerWidthIcon.image = WindowAction.smallerWidth.image
+            smallerWidthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let largerWidthLabelStack = NSStackView()
+            largerWidthLabelStack.orientation = .horizontal
+            largerWidthLabelStack.alignment = .centerY
+            largerWidthLabelStack.spacing = 4
+            largerWidthLabelStack.addArrangedSubview(largerWidthLabel)
+            largerWidthLabelStack.addArrangedSubview(largerWidthIcon)
+
+            let smallerWidthLabelStack = NSStackView()
+            smallerWidthLabelStack.orientation = .horizontal
+            smallerWidthLabelStack.alignment = .centerY
+            smallerWidthLabelStack.spacing = 4
+            smallerWidthLabelStack.addArrangedSubview(smallerWidthLabel)
+            smallerWidthLabelStack.addArrangedSubview(smallerWidthIcon)
+
             let largerWidthRow = NSStackView()
             largerWidthRow.orientation = .horizontal
             largerWidthRow.alignment = .centerY
             largerWidthRow.spacing = 18
-            largerWidthRow.addArrangedSubview(largerWidthLabel)
+            largerWidthRow.addArrangedSubview(largerWidthLabelStack)
             largerWidthRow.addArrangedSubview(largerWidthShortcutView)
 
             let smallerWidthRow = NSStackView()
             smallerWidthRow.orientation = .horizontal
             smallerWidthRow.alignment = .centerY
             smallerWidthRow.spacing = 18
-            smallerWidthRow.addArrangedSubview(smallerWidthLabel)
+            smallerWidthRow.addArrangedSubview(smallerWidthLabelStack)
             smallerWidthRow.addArrangedSubview(smallerWidthShortcutView)
+
+            let widthStepSpacer = NSView()
+            widthStepSpacer.translatesAutoresizingMaskIntoConstraints = false
+            widthStepSpacer.widthAnchor.constraint(equalToConstant: 21).isActive = true
+
+            let widthStepLabelStack = NSStackView()
+            widthStepLabelStack.orientation = .horizontal
+            widthStepLabelStack.alignment = .centerY
+            widthStepLabelStack.spacing = 4
+            widthStepLabelStack.addArrangedSubview(widthStepLabel)
+            widthStepLabelStack.addArrangedSubview(widthStepSpacer)
 
             let widthStepRow = NSStackView()
             widthStepRow.orientation = .horizontal
             widthStepRow.alignment = .centerY
             widthStepRow.spacing = 18
-            widthStepRow.addArrangedSubview(widthStepLabel)
+            widthStepRow.addArrangedSubview(widthStepLabelStack)
             widthStepRow.addArrangedSubview(widthStepField)
 
             mainStackView.addArrangedSubview(headerLabel)
@@ -326,6 +359,8 @@ class SettingsViewController: NSViewController {
             NSLayoutConstraint.activate([
                 largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
                 smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
+                largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
+                smallerWidthLabelStack.widthAnchor.constraint(equalTo: widthStepLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.widthAnchor.constraint(equalToConstant: 160)

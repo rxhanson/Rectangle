@@ -558,8 +558,8 @@ enum WindowAction: Int, Codable {
         case .rightTodo: return NSImage()
         case .cascadeActiveApp: return NSImage()
         case .centerProminently: return NSImage()
-        case .largerWidth: return NSImage()
-        case .smallerWidth: return NSImage()
+        case .largerWidth: return NSImage(imageLiteralResourceName: "largerWidthTemplate")
+        case .smallerWidth: return NSImage(imageLiteralResourceName: "smallerWidthTemplate")
         case .largerHeight: return NSImage()
         case .smallerHeight: return NSImage()
         }
