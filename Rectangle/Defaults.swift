@@ -33,6 +33,7 @@ class Defaults {
     static let minimumWindowWidth = FloatDefault(key: "minimumWindowWidth")
     static let minimumWindowHeight = FloatDefault(key: "minimumWindowHeight")
     static let sizeOffset = FloatDefault(key: "sizeOffset")
+    static let widthStepSize = FloatDefault(key: "widthStepSize")
     static let unsnapRestore = OptionalBoolDefault(key: "unsnapRestore")
     static let curtainChangeSize = OptionalBoolDefault(key: "curtainChangeSize")
     static let relaunchOpensMenu = BoolDefault(key: "relaunchOpensMenu")
@@ -120,6 +121,7 @@ class Defaults {
         minimumWindowWidth,
         minimumWindowHeight,
         sizeOffset,
+        widthStepSize,
         unsnapRestore,
         curtainChangeSize,
         relaunchOpensMenu,
