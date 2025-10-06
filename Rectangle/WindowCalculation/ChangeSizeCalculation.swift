@@ -14,6 +14,11 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
     let sizeOffsetAbs: CGFloat
     let curtainChangeSize = Defaults.curtainChangeSize.enabled != false
 
+    var widthOffsetAbs: CGFloat {
+        let defaultWidthStepSize = Defaults.widthStepSize.value
+        return (defaultWidthStepSize <= 0) ? 30.0 : CGFloat(defaultWidthStepSize)
+    }
+
     override init() {
         let windowGapSize = Defaults.gapSize.value
         screenEdgeGapSize = (windowGapSize <= 0) ? 5.0 : CGFloat(windowGapSize)
@@ -28,10 +33,14 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
 
         let sizeOffset: CGFloat
         switch params.action {
-            case .larger, .largerWidth, .largerHeight:
+            case .larger, .largerHeight:
                 sizeOffset = sizeOffsetAbs
-            case .smaller, .smallerWidth, .smallerHeight:
+            case .smaller, .smallerHeight:
                 sizeOffset = -sizeOffsetAbs
+            case .largerWidth:
+                sizeOffset = widthOffsetAbs
+            case .smallerWidth:
+                sizeOffset = -widthOffsetAbs
             default:
                 sizeOffset = 0
         }

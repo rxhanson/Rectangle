@@ -267,12 +267,26 @@ class SettingsViewController: NSViewController {
 
             let largerWidthLabel = NSTextField(labelWithString: "Larger Width")
             let smallerWidthLabel = NSTextField(labelWithString: "Smaller Width")
+            let widthStepLabel = NSTextField(labelWithString: "Width Step (px)")
 
             largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
+            widthStepLabel.translatesAutoresizingMaskIntoConstraints = false
 
             let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            let widthStepField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            widthStepField.stringValue = String(Int(Defaults.widthStepSize.value == 0 ? 30 : Defaults.widthStepSize.value))
+            widthStepField.delegate = self
+            widthStepField.defaults = Defaults.widthStepSize
+            widthStepField.translatesAutoresizingMaskIntoConstraints = false
+            widthStepField.refusesFirstResponder = true
+
+            let integerFormatter = NumberFormatter()
+            integerFormatter.allowsFloats = false
+            integerFormatter.minimum = 1
+            widthStepField.formatter = integerFormatter
 
             largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
             smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
@@ -297,14 +311,24 @@ class SettingsViewController: NSViewController {
             smallerWidthRow.addArrangedSubview(smallerWidthLabel)
             smallerWidthRow.addArrangedSubview(smallerWidthShortcutView)
 
+            let widthStepRow = NSStackView()
+            widthStepRow.orientation = .horizontal
+            widthStepRow.alignment = .centerY
+            widthStepRow.spacing = 18
+            widthStepRow.addArrangedSubview(widthStepLabel)
+            widthStepRow.addArrangedSubview(widthStepField)
+
             mainStackView.addArrangedSubview(headerLabel)
             mainStackView.addArrangedSubview(largerWidthRow)
             mainStackView.addArrangedSubview(smallerWidthRow)
+            mainStackView.addArrangedSubview(widthStepRow)
 
             NSLayoutConstraint.activate([
                 largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
+                smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160)
+                smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                widthStepField.widthAnchor.constraint(equalToConstant: 160)
             ])
 
             let containerView = NSView()
@@ -520,9 +544,20 @@ extension SettingsViewController: NSTextFieldDelegate {
     func controlTextDidChange(_ obj: Notification) {
         guard let sender = obj.object as? AutoSaveFloatField,
               let defaults: FloatDefault = sender.defaults else { return }
-        
+
         Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
             defaults.value = floatValue
+            sender.defaultsSetAction?()
+        }
+    }
+
+    func controlTextDidEndEditing(_ obj: Notification) {
+        guard let sender = obj.object as? AutoSaveFloatField,
+              let defaults: FloatDefault = sender.defaults else { return }
+
+        if sender.stringValue.isEmpty {
+            sender.stringValue = "30"
+            defaults.value = 30
             sender.defaultsSetAction?()
         }
     }
