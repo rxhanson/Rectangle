@@ -277,7 +277,7 @@ class SettingsViewController: NSViewController {
             let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
             let widthStepField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            widthStepField.stringValue = String(Int(Defaults.widthStepSize.value == 0 ? 30 : Defaults.widthStepSize.value))
+            widthStepField.stringValue = String(Int(Defaults.widthStepSize.value))
             widthStepField.delegate = self
             widthStepField.defaults = Defaults.widthStepSize
             widthStepField.translatesAutoresizingMaskIntoConstraints = false

@@ -15,8 +15,7 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
     let curtainChangeSize = Defaults.curtainChangeSize.enabled != false
 
     var widthOffsetAbs: CGFloat {
-        let defaultWidthStepSize = Defaults.widthStepSize.value
-        return (defaultWidthStepSize <= 0) ? 30.0 : CGFloat(defaultWidthStepSize)
+        CGFloat(Defaults.widthStepSize.value)
     }
 
     override init() {
