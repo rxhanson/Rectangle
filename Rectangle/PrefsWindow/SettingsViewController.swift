@@ -264,10 +264,15 @@ class SettingsViewController: NSViewController {
 
             let headerLabel = NSTextField(labelWithString: "Extra Shortcuts")
             headerLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            headerLabel.alignment = .center
+            headerLabel.translatesAutoresizingMaskIntoConstraints = false
 
             let largerWidthLabel = NSTextField(labelWithString: "Larger Width")
+            largerWidthLabel.alignment = .right
             let smallerWidthLabel = NSTextField(labelWithString: "Smaller Width")
+            smallerWidthLabel.alignment = .right
             let widthStepLabel = NSTextField(labelWithString: "Width Step (px)")
+            widthStepLabel.alignment = .right
 
             largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -282,6 +287,7 @@ class SettingsViewController: NSViewController {
             widthStepField.defaults = Defaults.widthStepSize
             widthStepField.translatesAutoresizingMaskIntoConstraints = false
             widthStepField.refusesFirstResponder = true
+            widthStepField.alignment = .right
 
             let integerFormatter = NumberFormatter()
             integerFormatter.allowsFloats = false
@@ -308,14 +314,14 @@ class SettingsViewController: NSViewController {
             let largerWidthLabelStack = NSStackView()
             largerWidthLabelStack.orientation = .horizontal
             largerWidthLabelStack.alignment = .centerY
-            largerWidthLabelStack.spacing = 4
+            largerWidthLabelStack.spacing = 8
             largerWidthLabelStack.addArrangedSubview(largerWidthLabel)
             largerWidthLabelStack.addArrangedSubview(largerWidthIcon)
 
             let smallerWidthLabelStack = NSStackView()
             smallerWidthLabelStack.orientation = .horizontal
             smallerWidthLabelStack.alignment = .centerY
-            smallerWidthLabelStack.spacing = 4
+            smallerWidthLabelStack.spacing = 8
             smallerWidthLabelStack.addArrangedSubview(smallerWidthLabel)
             smallerWidthLabelStack.addArrangedSubview(smallerWidthIcon)
 
@@ -333,37 +339,28 @@ class SettingsViewController: NSViewController {
             smallerWidthRow.addArrangedSubview(smallerWidthLabelStack)
             smallerWidthRow.addArrangedSubview(smallerWidthShortcutView)
 
-            let widthStepSpacer = NSView()
-            widthStepSpacer.translatesAutoresizingMaskIntoConstraints = false
-            widthStepSpacer.widthAnchor.constraint(equalToConstant: 21).isActive = true
-
-            let widthStepLabelStack = NSStackView()
-            widthStepLabelStack.orientation = .horizontal
-            widthStepLabelStack.alignment = .centerY
-            widthStepLabelStack.spacing = 4
-            widthStepLabelStack.addArrangedSubview(widthStepLabel)
-            widthStepLabelStack.addArrangedSubview(widthStepSpacer)
-
             let widthStepRow = NSStackView()
             widthStepRow.orientation = .horizontal
             widthStepRow.alignment = .centerY
             widthStepRow.spacing = 18
-            widthStepRow.addArrangedSubview(widthStepLabelStack)
+            widthStepRow.addArrangedSubview(widthStepLabel)
             widthStepRow.addArrangedSubview(widthStepField)
 
             mainStackView.addArrangedSubview(headerLabel)
+            mainStackView.setCustomSpacing(10, after: headerLabel)
             mainStackView.addArrangedSubview(largerWidthRow)
             mainStackView.addArrangedSubview(smallerWidthRow)
             mainStackView.addArrangedSubview(widthStepRow)
 
             NSLayoutConstraint.activate([
+                headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
                 smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
-                smallerWidthLabelStack.widthAnchor.constraint(equalTo: widthStepLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                widthStepField.widthAnchor.constraint(equalToConstant: 160)
+                widthStepField.widthAnchor.constraint(equalToConstant: 160),
+                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
             let containerView = NSView()
