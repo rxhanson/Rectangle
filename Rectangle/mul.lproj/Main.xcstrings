@@ -16762,6 +16762,17 @@
         }
       }
     },
+    "Extra Shortcuts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Extra Shortcuts"
+          }
+        }
+      }
+    },
     "F12-EV-Lfz.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"First Third\"; ObjectID = \"F12-EV-Lfz\";",
       "extractionState" : "extracted_with_value",
@@ -27538,6 +27549,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "歡迎使用Rectangle！"
+          }
+        }
+      }
+    },
+    "Larger Width" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Larger Width"
           }
         }
       }
@@ -39179,6 +39201,17 @@
         }
       }
     },
+    "Smaller Width" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Smaller Width"
+          }
+        }
+      }
+    },
     "snW-S8-Cw5.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Toolbar\"; ObjectID = \"snW-S8-Cw5\";",
       "extractionState" : "manual",
@@ -45996,6 +46029,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "貼上並符合樣式"
+          }
+        }
+      }
+    },
+    "Width Step (px)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Width Step (px)"
           }
         }
       }

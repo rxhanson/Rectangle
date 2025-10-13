@@ -262,16 +262,16 @@ class SettingsViewController: NSViewController {
             mainStackView.spacing = 5
             mainStackView.translatesAutoresizingMaskIntoConstraints = false
 
-            let headerLabel = NSTextField(labelWithString: "Extra Shortcuts")
+            let headerLabel = NSTextField(labelWithString: NSLocalizedString("Extra Shortcuts", tableName: "Main", value: "", comment: ""))
             headerLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
             headerLabel.alignment = .center
             headerLabel.translatesAutoresizingMaskIntoConstraints = false
 
-            let largerWidthLabel = NSTextField(labelWithString: "Larger Width")
+            let largerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Larger Width", tableName: "Main", value: "", comment: ""))
             largerWidthLabel.alignment = .right
-            let smallerWidthLabel = NSTextField(labelWithString: "Smaller Width")
+            let smallerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Smaller Width", tableName: "Main", value: "", comment: ""))
             smallerWidthLabel.alignment = .right
-            let widthStepLabel = NSTextField(labelWithString: "Width Step (px)")
+            let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
             widthStepLabel.alignment = .right
 
             largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
