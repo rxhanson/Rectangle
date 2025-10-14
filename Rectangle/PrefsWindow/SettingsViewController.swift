@@ -35,15 +35,17 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var stageView: NSStackView!
     @IBOutlet weak var stageSlider: NSSlider!
     @IBOutlet weak var stageLabel: NSTextField!
-    
+
     @IBOutlet weak var cycleSizesView: NSStackView!
-    
+
     @IBOutlet var cycleSizesViewHeightConstraint: NSLayoutConstraint!
-    
+
     @IBOutlet var todoViewHeightConstraint: NSLayoutConstraint!
-    
-    
+
+    @IBOutlet weak var extraSettingsButton: NSButton!
+
     private var aboutTodoWindowController: NSWindowController?
+    private var extraSettingsPopover: NSPopover?
     
     private var cycleSizeCheckboxes = [NSButton]()
     
@@ -247,6 +249,136 @@ class SettingsViewController: NSViewController {
         }
         Notification.Name.windowSnapping.post(object: true)
     }
+
+    @IBAction func showExtraSettings(_ sender: NSButton) {
+        if extraSettingsPopover == nil {
+            let popover = NSPopover()
+            popover.behavior = .transient
+            let viewController = NSViewController()
+
+            let mainStackView = NSStackView()
+            mainStackView.orientation = .vertical
+            mainStackView.alignment = .leading
+            mainStackView.spacing = 5
+            mainStackView.translatesAutoresizingMaskIntoConstraints = false
+
+            let headerLabel = NSTextField(labelWithString: NSLocalizedString("Extra Shortcuts", tableName: "Main", value: "", comment: ""))
+            headerLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            headerLabel.alignment = .center
+            headerLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let largerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Larger Width", tableName: "Main", value: "", comment: ""))
+            largerWidthLabel.alignment = .right
+            let smallerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Smaller Width", tableName: "Main", value: "", comment: ""))
+            smallerWidthLabel.alignment = .right
+            let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
+            widthStepLabel.alignment = .right
+
+            largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
+            smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
+            widthStepLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            let widthStepField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            widthStepField.stringValue = String(Int(Defaults.widthStepSize.value))
+            widthStepField.delegate = self
+            widthStepField.defaults = Defaults.widthStepSize
+            widthStepField.translatesAutoresizingMaskIntoConstraints = false
+            widthStepField.refusesFirstResponder = true
+            widthStepField.alignment = .right
+
+            let integerFormatter = NumberFormatter()
+            integerFormatter.allowsFloats = false
+            integerFormatter.minimum = 1
+            widthStepField.formatter = integerFormatter
+
+            largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
+            smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
+
+            if Defaults.allowAnyShortcut.enabled {
+                let passThroughValidator = PassthroughShortcutValidator()
+                largerWidthShortcutView.shortcutValidator = passThroughValidator
+                smallerWidthShortcutView.shortcutValidator = passThroughValidator
+            }
+
+            let largerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            largerWidthIcon.image = WindowAction.largerWidth.image
+            largerWidthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let smallerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            smallerWidthIcon.image = WindowAction.smallerWidth.image
+            smallerWidthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let largerWidthLabelStack = NSStackView()
+            largerWidthLabelStack.orientation = .horizontal
+            largerWidthLabelStack.alignment = .centerY
+            largerWidthLabelStack.spacing = 8
+            largerWidthLabelStack.addArrangedSubview(largerWidthLabel)
+            largerWidthLabelStack.addArrangedSubview(largerWidthIcon)
+
+            let smallerWidthLabelStack = NSStackView()
+            smallerWidthLabelStack.orientation = .horizontal
+            smallerWidthLabelStack.alignment = .centerY
+            smallerWidthLabelStack.spacing = 8
+            smallerWidthLabelStack.addArrangedSubview(smallerWidthLabel)
+            smallerWidthLabelStack.addArrangedSubview(smallerWidthIcon)
+
+            let largerWidthRow = NSStackView()
+            largerWidthRow.orientation = .horizontal
+            largerWidthRow.alignment = .centerY
+            largerWidthRow.spacing = 18
+            largerWidthRow.addArrangedSubview(largerWidthLabelStack)
+            largerWidthRow.addArrangedSubview(largerWidthShortcutView)
+
+            let smallerWidthRow = NSStackView()
+            smallerWidthRow.orientation = .horizontal
+            smallerWidthRow.alignment = .centerY
+            smallerWidthRow.spacing = 18
+            smallerWidthRow.addArrangedSubview(smallerWidthLabelStack)
+            smallerWidthRow.addArrangedSubview(smallerWidthShortcutView)
+
+            let widthStepRow = NSStackView()
+            widthStepRow.orientation = .horizontal
+            widthStepRow.alignment = .centerY
+            widthStepRow.spacing = 18
+            widthStepRow.addArrangedSubview(widthStepLabel)
+            widthStepRow.addArrangedSubview(widthStepField)
+
+            mainStackView.addArrangedSubview(headerLabel)
+            mainStackView.setCustomSpacing(10, after: headerLabel)
+            mainStackView.addArrangedSubview(largerWidthRow)
+            mainStackView.addArrangedSubview(smallerWidthRow)
+            mainStackView.addArrangedSubview(widthStepRow)
+
+            NSLayoutConstraint.activate([
+                headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
+                smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
+                largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
+                largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                widthStepField.widthAnchor.constraint(equalToConstant: 160),
+                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
+            ])
+
+            let containerView = NSView()
+            containerView.addSubview(mainStackView)
+
+            NSLayoutConstraint.activate([
+                mainStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+                mainStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+                mainStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 15),
+                mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -15)
+            ])
+
+            viewController.view = containerView
+            popover.contentViewController = viewController
+            extraSettingsPopover = popover
+        }
+        extraSettingsPopover?.show(relativeTo: sender.bounds, of: sender, preferredEdge: .maxY)
+    }
     
     override func awakeFromNib() {
         initializeToggles()
@@ -444,9 +576,20 @@ extension SettingsViewController: NSTextFieldDelegate {
     func controlTextDidChange(_ obj: Notification) {
         guard let sender = obj.object as? AutoSaveFloatField,
               let defaults: FloatDefault = sender.defaults else { return }
-        
+
         Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
             defaults.value = floatValue
+            sender.defaultsSetAction?()
+        }
+    }
+
+    func controlTextDidEndEditing(_ obj: Notification) {
+        guard let sender = obj.object as? AutoSaveFloatField,
+              let defaults: FloatDefault = sender.defaults else { return }
+
+        if sender.stringValue.isEmpty {
+            sender.stringValue = "30"
+            defaults.value = 30
             sender.defaultsSetAction?()
         }
     }
