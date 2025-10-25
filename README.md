@@ -182,3 +182,11 @@ Pull requests for new localizations or improvements on existing localizations ar
 Rectangle uses [Swift Package Manager](https://www.swift.org/package-manager/) to install Sparkle and MASShortcut.
 
 The original repository for MASShortcut was archived, so Rectangle uses my [fork](https://github.com/rxhanson/MASShortcut). If you want to make any changes that involve MASShortcut, please make a pull request on my fork.
+
+## Credits
+
+As mentioned above, Rectangle uses a forked version of [MASShortcut](https://github.com/rxhanson/MASShortcut), which still works great, and it uses [Sparkle](https://sparkle-project.org) for updates. 
+
+The Big Sur variant of the Rectangle app icon was created by Giovanni Maria Cusaro (@gmcusaro).
+
+And of course, there's been a lot of community contributions over the years :)
