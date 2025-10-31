@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		12D896200936C0DE9FF41FB4 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		30166BD024F27D6A00A38608 /* SpecifiedCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */; };
+		482E9E422EB1528D00D7928A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 482E9E412EB1528D00D7928A /* AppIcon.icon */; };
 		6490B39127BF907A0056C220 /* BottomLeftEighthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6490B39027BF907A0056C220 /* BottomLeftEighthCalculation.swift */; };
 		6490B39327BF90F90056C220 /* EighthsRepeated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6490B39227BF90F90056C220 /* EighthsRepeated.swift */; };
 		6490B39527BF96880056C220 /* TopLeftEighthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6490B39427BF96880056C220 /* TopLeftEighthCalculation.swift */; };
@@ -179,6 +180,7 @@
 		30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecifiedCalculation.swift; sourceTree = "<group>"; };
 		423DC1992AE681F900C98564 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Main.xcstrings; sourceTree = "<group>"; };
 		42627A972ADA03D200D047C6 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Main.xcstrings; sourceTree = "<group>"; };
+		482E9E412EB1528D00D7928A /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		6490B39027BF907A0056C220 /* BottomLeftEighthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftEighthCalculation.swift; sourceTree = "<group>"; };
 		6490B39227BF90F90056C220 /* EighthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EighthsRepeated.swift; sourceTree = "<group>"; };
 		6490B39427BF96880056C220 /* TopLeftEighthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftEighthCalculation.swift; sourceTree = "<group>"; };
@@ -551,6 +553,7 @@
 			children = (
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
+				482E9E412EB1528D00D7928A /* AppIcon.icon */,
 				9824701222AF9B7E0037B409 /* Main.storyboard */,
 				9824701522AF9B7E0037B409 /* Info.plist */,
 				981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */,
@@ -824,6 +827,7 @@
 				9824701422AF9B7E0037B409 /* Main.storyboard in Resources */,
 				981F27D12340E3E1006CD263 /* InternetAccessPolicy.plist in Resources */,
 				98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */,
+				482E9E422EB1528D00D7928A /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1208,6 +1212,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_OTHER_FLAGS = "--enable-icon-stack-fallback-generation=disabled";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/Rectangle.entitlements;
 				CODE_SIGN_IDENTITY = "-";
@@ -1238,6 +1243,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_OTHER_FLAGS = "--enable-icon-stack-fallback-generation=disabled";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/RectangleRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";

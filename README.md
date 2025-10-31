@@ -187,6 +187,6 @@ The original repository for MASShortcut was archived, so Rectangle uses my [fork
 
 As mentioned above, Rectangle uses a forked version of [MASShortcut](https://github.com/rxhanson/MASShortcut), which still works great, and it uses [Sparkle](https://sparkle-project.org) for updates. 
 
-The Big Sur variant of the Rectangle app icon was created by Giovanni Maria Cusaro (@gmcusaro).
+The Big Sur variant of the Rectangle app icon was created by Giovanni Maria Cusaro (@gmcusaro). The Liquid Glass variant of the app icon was created by [Alexander Käßner](https://www.alexkaessner.de) (@alexkaessner).
 
 And of course, there's been a lot of community contributions over the years :)

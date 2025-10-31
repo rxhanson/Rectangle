@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Dots</title>
+    <defs>
+        <path d="M0,0 L1024,0 L1024,1024 L0,1024 L0,0 Z" id="path-1"></path>
+        <path d="M0,0 L196,0 L196,52 L0,52 L0,0 Z" id="path-2"></path>
+    </defs>
+    <g id="Dots" stroke="none" fill="none" xlink:href="#path-1" fill-rule="evenodd">
+        <g transform="translate(528, 88)" xlink:href="#path-2" fill="color(display-p3 0.247 0.275 0.333)" id="Oval">
+            <circle cx="170" cy="26" r="26"></circle>
+            <circle cx="98" cy="26" r="26"></circle>
+            <circle cx="26" cy="26" r="26"></circle>
+        </g>
+    </g>
+</svg>
