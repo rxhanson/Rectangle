@@ -3278,7 +3278,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deux tiers gauches"
+            "value" : "Deux tiers du haut"
           }
         },
         "id" : {
@@ -6764,7 +6764,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deux tiers droits"
+            "value" : "Deux tiers du bas"
           }
         },
         "id" : {
@@ -12443,7 +12443,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiers droit"
+            "value" : "Tiers du bas"
           }
         },
         "id" : {
@@ -16828,7 +16828,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tiers gauche"
+            "value" : "Tiers du haut"
           }
         },
         "id" : {
