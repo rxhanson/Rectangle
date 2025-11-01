@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24127" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24127"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24128"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -3255,7 +3255,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="500" height="24"/>
                                                 <subviews>
                                                     <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="5" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rst-Btn-Stk">
-                                                        <rect key="frame" x="0.0" y="0.0" width="293" height="24"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="308" height="24"/>
                                                         <subviews>
                                                             <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="An0-XX-dT6">
                                                                 <rect key="frame" x="0.0" y="0.0" width="266" height="24"/>
@@ -3268,7 +3268,7 @@
                                                                 </connections>
                                                             </button>
                                                             <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ext-Set-Btn">
-                                                                <rect key="frame" x="271" y="0.0" width="22" height="24"/>
+                                                                <rect key="frame" x="271" y="0.0" width="37" height="24"/>
                                                                 <buttonCell key="cell" type="push" title="⋯" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ext-Set-Cel">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
@@ -3410,6 +3410,7 @@
                         <outlet property="cycleSizesView" destination="er1-EQ-YIF" id="yHn-9t-gqI"/>
                         <outlet property="cycleSizesViewHeightConstraint" destination="IXv-8o-a6i" id="zjD-0U-P8y"/>
                         <outlet property="doubleClickTitleBarCheckbox" destination="hB7-uu-XeP" id="eNC-NI-Wmg"/>
+                        <outlet property="extraSettingsButton" destination="Ext-Set-Btn" id="Ext-Set-Out"/>
                         <outlet property="gapLabel" destination="jd8-SJ-lza" id="pqG-fr-nwW"/>
                         <outlet property="gapSlider" destination="O9H-ZD-bqL" id="H7T-4Y-g8e"/>
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
@@ -3430,7 +3431,6 @@
                         <outlet property="useCursorScreenDetectionCheckbox" destination="CUR-SD-CHK" id="cXm-7I-x0Q"/>
                         <outlet property="versionLabel" destination="Azi-Y9-9xa" id="P8e-ZA-J6X"/>
                         <outlet property="windowSnappingCheckbox" destination="3wO-pf-nsb" id="00K-AW-LYi"/>
-                        <outlet property="extraSettingsButton" destination="Ext-Set-Btn" id="Ext-Set-Out"/>
                     </connections>
                 </viewController>
                 <customObject id="c9e-yT-Dp7" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -3483,7 +3483,7 @@
                                             <constraint firstAttribute="width" constant="60" id="KxT-kJ-YPv"/>
                                             <constraint firstAttribute="height" constant="60" id="svN-TS-n5K"/>
                                         </constraints>
-                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Untilted" id="dlp-3B-rHa"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="dlp-3B-rHa"/>
                                     </imageView>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="AdB-Z9-aJk">
                                         <rect key="frame" x="-2" y="188" width="254" height="32"/>
@@ -3597,7 +3597,7 @@ DQ
                                             <constraint firstAttribute="height" constant="60" id="Jog-8E-fGF"/>
                                             <constraint firstAttribute="width" constant="60" id="SAz-Qi-u4X"/>
                                         </constraints>
-                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Untilted" id="6Pu-jH-EHJ"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="6Pu-jH-EHJ"/>
                                     </imageView>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="F9O-o8-0gu">
                                         <rect key="frame" x="-2" y="212" width="304" height="32"/>
@@ -4502,8 +4502,8 @@ DQ
         </scene>
     </scenes>
     <resources>
+        <image name="NSApplicationIcon" width="32" height="32"/>
         <image name="StatusTemplate" width="22" height="22"/>
-        <image name="Untilted" width="256" height="256"/>
         <image name="almostMaximizeTemplate" width="30" height="20"/>
         <image name="bottomCenterSixthTemplate" width="30" height="20"/>
         <image name="bottomHalfTemplate" width="30" height="20"/>
