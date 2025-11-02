@@ -171,9 +171,13 @@ brew uninstall --zap rectangle
 
 Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. The [Rectangle Pro](https://rectangleapp.com/pro) app is entirely built on top of Rectangle. If you contribute significant code or localizations that get merged into Rectangle, send me an email for a free license of Multitouch or Rectangle Pro. Contributors to Sparkle, MASShortcut, or Spectacle can also receive free Multitouch or Rectangle Pro licenses.
 
+### Contributing additional sizes and positions
+
+Rectangle's UI is intentionally simple. If you want to add a size and position that's not in the Shortcuts tab, then you can now add them into the "Extra Shortcuts" section accessed via the ellipsis button at the bottom of the General tab.
+
 ### Localization
 
-If you would like to contribute to localization, all of the translations are held in the Main.strings per language. If you would like to add a localization but one doesn't currently exist and you don't know how to create one, create an issue and a translation file can be initialized.
+If you would like to contribute to localization, all of the translations are held in the Main.strings.
 
 Pull requests for new localizations or improvements on existing localizations are welcome.
 
@@ -181,7 +185,9 @@ Pull requests for new localizations or improvements on existing localizations ar
 
 Rectangle uses [Swift Package Manager](https://www.swift.org/package-manager/) to install Sparkle and MASShortcut.
 
-The original repository for MASShortcut was archived, so Rectangle uses my [fork](https://github.com/rxhanson/MASShortcut). If you want to make any changes that involve MASShortcut, please make a pull request on my fork.
+The original repository for MASShortcut was archived, so Rectangle uses my [fork](https://github.com/rxhanson/MASShortcut). If you want to make any changes that involve MASShortcut, please make a pull request on my fork. 
+
+Due to the addition of the Liquid Glass icon with a fallback for older versions of macOS, there will be a build failure on macOS versions < 26. You can delete the "Asset Catalog Other Flags" to build locally on versions < 26 (but don't check that change in if you create a pull request).
 
 ## Credits
 
