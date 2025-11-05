@@ -81,6 +81,21 @@ class ShortcutManager {
             return
         }
         
+        // Handle double-maximize toggle for Stage Manager space
+        if parameters.action == .maximize {
+            guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
+                  let windowId = parameters.windowId ?? windowElement.getWindowId()
+            else {
+                NSSound.beep()
+                return
+            }
+            
+            if let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
+               lastAction.action == .maximize && lastAction.count >= 1 {
+                Defaults.ignoreStageOnDoubleMaximize.toggle()
+            }
+        }
+        
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
            parameters.action.classification != .size,
