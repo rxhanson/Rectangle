@@ -16201,7 +16201,13 @@
             "state" : "new",
             "value" : "⋯"
           }
-        }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⋯"
+          }
+        },
       }
     },
     "F2S-fz-NVQ.title" : {
@@ -16770,7 +16776,13 @@
             "state" : "new",
             "value" : "Extra Shortcuts"
           }
-        }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дополнительные горячие клавиши"
+          }
+        },
       }
     },
     "F12-EV-Lfz.title" : {
@@ -27561,7 +27573,13 @@
             "state" : "new",
             "value" : "Larger Width"
           }
-        }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Увеличить ширину"
+          }
+        },
       }
     },
     "Lbh-J2-qVU.title" : {
@@ -39209,7 +39227,13 @@
             "state" : "new",
             "value" : "Smaller Width"
           }
-        }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уменьшить ширину"
+          }
+        },
       }
     },
     "snW-S8-Cw5.title" : {
@@ -46041,7 +46065,13 @@
             "state" : "new",
             "value" : "Width Step (px)"
           }
-        }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шаг ширины (px)"
+          }
+        },
       }
     },
     "wpr-3q-Mcd.title" : {
