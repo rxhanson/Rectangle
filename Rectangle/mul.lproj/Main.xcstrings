@@ -47149,181 +47149,181 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إذا كانت المنطقة صغيرة جدًا ، فسيتم إخفاء التطبيقات الحديثة. الضغط المزدوج على اختصار التكبير سيتجاوز هذا الإعداد ويستخدم كامل مساحة الشاشة المتاحة."
+            "value" : "إذا كانت المنطقة صغيرة جدًا ، فسيتم إخفاء التطبيقات الحديثة"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si l'àrea és massa petita, les aplicacions recents s'amagaran. Prémer dues vegades la drecera de maximitzar sobreescriurà aquesta configuració i utilitzarà tot l'espai de pantalla disponible."
+            "value" : "Si l'àrea és massa petita, les aplicacions recents s'amagaran"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si l'àrea és massa petita, les aplicacions recents s'amagaran. Prémer dues vegades la drecera de maximitzar sobreescriurà aquesta configuració i utilitzarà tot l'espai de pantalla disponible."
+            "value" : "Si l'àrea és massa petita, les aplicacions recents s'amagaran"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pokud je oblast příliš malá, nedávné aplikace budou skryté. Dvojitým stisknutím klávesové zkratky pro maximalizaci přepíšete toto nastavení a použijete veškerý dostupný prostor obrazovky."
+            "value" : "Pokud je oblast příliš malá, nedávné aplikace budou skryté"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn der Bereich zu klein ist, werden die zuletzt verwendeten Programme ausgeblendet. Zweimaliges Drücken der Maximieren-Tastenkombination überschreibt diese Einstellung und nutzt den gesamten verfügbaren Bildschirmplatz."
+            "value" : "Wenn der Bereich zu klein ist, werden die zuletzt verwendeten Programme ausgeblendet."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "If the area is too small, recent apps will be hidden. Double-pressing the maximize shortcut will override this setting and use all of the available screen space."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si el área es demasiado pequeña, las aplicaciones recientes serán ocultadas. Presionar dos veces el atajo de maximizar anulará esta configuración y utilizará todo el espacio de pantalla disponible."
+            "value" : "Si el área es demasiado pequeña, las aplicaciones recientes serán ocultadas"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si el área es demasiado pequeña, las aplicaciones recientes serán ocultadas. Presionar dos veces el atajo de maximizar anulará esta configuración y utilizará todo el espacio de pantalla disponible."
+            "value" : "Si el área es demasiado pequeña, las aplicaciones recientes serán ocultadas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si la zone est trop petite, les applications récentes seront masquées. Appuyer deux fois sur le raccourci de maximisation remplacera ce paramètre et utilisera tout l'espace d'écran disponible."
+            "value" : "Si la zone est trop petite, les applications récentes seront masquées"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jika area terlalu kecil, aplikasi terbaru akan disembunyikan. Menekan shortcut maximally dua kali akan mengganti pengaturan ini dan menggunakan semua ruang layar yang tersedia."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se l'area è troppo piccola, le app recenti saranno nascoste. Premendo due volte la scorciatoia di massimizzazione si ignora questa impostazione e si utilizza tutto lo spazio schermo disponibile."
+            "value" : "Se l'area è troppo piccola, le app recenti saranno nascoste"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エリアが小さい場合、最近使ったアプリケーションは非表示になります。最大化ショートカットを2回押すと、この設定を上書きして利用可能な画面スペースをすべて使用します。"
+            "value" : "エリアが小さい場合、最近使ったアプリケーションは非表示になります"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "영역이 너무 작으면 최근 앱들이 숨겨집니다. 최대화 단축키를 두 번 누르면 이 설정을 무시하고 사용 가능한 모든 화면 공간을 사용합니다."
+            "value" : "영역이 너무 작으면 최근 앱들이 숨겨집니다"
           }
         },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jei sritis per maža, paskutinės programos bus paslėptos. Dvigubas maksimizavimo spartos klavišo paspaudimas perrašys šį nustatymą ir naudos visą prieinamą ekrano vietą."
+            "value" : "Jei sritis per maža, paskutinės programos bus paslėptos"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Om området er for lite vil siste brukte apper ikke være synlige. Dobbelttrykk på maksimer-snarveien vil overstyre denne innstillingen og bruke all tilgjengelig skjermplass."
+            "value" : "Om området er for lite vil siste brukte apper ikke være synlige"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Als het gebied te klein is, worden recente apps verborgen. Dubbelklikken op de maximalisatiesneltoets overschrijft deze instelling en gebruikt alle beschikbare schermruimte."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Om området er for lite vil siste brukte appar ikkje vera synlege. Dobbelttrykk på maksimer-snarvegen vil overstyre denne innstillinga og bruke all tilgjengeleg skjermplass."
+            "value" : "Om området er for lite vil siste brukte appar ikkje vera synlege"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeśli obszar jest za mały, ostatnie aplikacje będą ukryte. Dwukrotne naciśnięcie skrótu maksymalizacji zastąpi to ustawienie i wykorzysta całą dostępną przestrzeń ekranu."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se a área é muito pequena, aplicativos recentes serão ocultados. Pressionar duas vezes o atalho de maximizar substituirá esta configuração e usará todo o espaço de tela disponível."
+            "value" : "Se a área é muito pequeno, aplicativos recentes serão ocultados"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se a área é demasiado pequena, as aplicações recentes serão ocultadas. Premir duas vezes o atalho de maximizar substituirá esta definição e utilizará todo o espaço de ecrã disponível."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dacă zona este prea mică, aplicațiile recente vor fi ascunse. Apăsarea dublă a scurtăturii de maximizare va înlocui această setare și va folosi tot spațiul disponibil al ecranului."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Если область слишком мала, последние приложения будут скрыты. Двойное нажатие сочетания клавиш для максимизации переопределит этот параметр и использует все доступное пространство экрана."
+            "value" : "Если область слишком мала, последние приложения будут скрыты"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ak je oblasť príliš malá, nedávne aplikácie sa skryjú. Dvojité stlačenie skratky pre maximalizáciu prepíše toto nastavenie a použije celý dostupný priestor obrazovky."
+            "value" : "Ak je oblasť príliš malá, nedávne aplikácie sa skryjú"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Om området är för litet kommer de senaste apparna att döljas. Dubbelklicka på maximeringsgenvägen kommer att åsidosätta denna inställning och använda allt tillgängligt skärmutrymme."
+            "value" : "If the area is too small, recent apps will be hidden"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eğer alan çok darsa, son uygulamalar gizlenecektir. Büyütme kısayoluna iki kez basmak bu ayarı geçersiz kılacak ve mevcut tüm ekran alanını kullanacaktır."
+            "value" : "Eğer alan çok darsa, son uygulamalar gizlenecektir"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Якщо область занадто мала, останні застосунки будуть приховані. Подвійне натискання комбінації клавіш для максимізації замінить це налаштування і використає весь доступний простір екрану."
+            "value" : "Якщо область занадто мала, останні застосунки будуть приховані"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nếu vùng hiển thị quá nhỏ, các ứng dụng hiện tại sẽ bị ẩn. Nhấn đúp phím tắt tối đa hóa sẽ ghi đè cài đặt này và sử dụng tất cả không gian màn hình có sẵn."
+            "value" : "Nếu vùng hiển thị quá nhỏ, các ứng dụng hiện tại sẽ bị ẩn"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "若该区域过小，最近使用的应用程序将被隐藏。双击最大化快捷键将覆盖此设置并使用所有可用的屏幕空间。"
+            "value" : "若该区域过小，最近使用的应用程序将被隐藏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果該區域過小，將會隱藏最近使用過的應用程式。雙擊最大化快捷鍵將覆蓋此設定並使用所有可用的螢幕空間。"
+            "value" : "如果該區域過小，將會隱藏最近使用過的應用程式"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果該區域過小，最近使用過的應用程式將被隱藏。雙擊最大化快捷鍵將覆蓋此設定並使用所有可用的螢幕空間。"
+            "value" : "如果該區域過小，最近使用過的應用程式將被隱藏"
           }
         }
       }
