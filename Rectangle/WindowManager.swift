@@ -132,7 +132,7 @@ class WindowManager {
             return
         }
         
-        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo, action == .maximize && Defaults.ignoreStageOnDoubleMaximize)
+        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
         let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,

@@ -79,7 +79,6 @@ class Defaults {
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
     static let dragFromStage = OptionalBoolDefault(key: "dragFromStage")
     static let alwaysAccountForStage = OptionalBoolDefault(key: "alwaysAccountForStage")
-    static var ignoreStageOnDoubleMaximize = false
     static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
     static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
