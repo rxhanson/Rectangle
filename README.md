@@ -99,13 +99,14 @@ See issue [317](https://github.com/rxhanson/Rectangle/issues/317).
 
 If windows aren't resizing or moving as you expect, here's some initial steps to get to the bottom of it. Most issues of this type have been caused by other apps.
 
+1. Enable debug logging, as per the instructions in the following section.
+1. The logs are pretty straightforward. If your calculated rect and your resulting rect are identical, chances are that there is another application causing issues. Save your logs if needed to attach to an issue if you create one.
 1. Make sure macOS is up to date.
-1. Restart your machine (this often fixes things right after a macOS update).
+1. Lock and unlock your Mac
+1. Restart your Mac (this often fixes things right after a macOS update).
 1. Make sure there are no other window manager applications running.
 1. Make sure that the app whose windows are not behaving properly does not have any conflicting keyboard shortcuts.
 1. Try using the menu items to execute a window action or changing the keyboard shortcut to something different so we can tell if it's a keyboard shortcut issue or not.
-1. Enable debug logging, as per the instructions in the following section.
-1. The logs are pretty straightforward. If your calculated rect and your resulting rect are identical, chances are that there is another application causing issues. Save your logs if needed to attach to an issue if you create one.
 1. If you suspect there may be another application causing issues, try creating and logging in as a new macOS user.
 
 #### Try resetting the macOS accessibility permissions for Rectangle:
