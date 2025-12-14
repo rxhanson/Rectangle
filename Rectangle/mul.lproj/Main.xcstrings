@@ -16207,7 +16207,24 @@
             "state" : "translated",
             "value" : "⋯"
           }
+        }
+      }
+    },
+    "Extra Shortcuts" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Extra Shortcuts"
+          }
         },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дополнительные горячие клавиши"
+          }
+        }
       }
     },
     "F2S-fz-NVQ.title" : {
@@ -16766,23 +16783,6 @@
             "value" : "右半"
           }
         }
-      }
-    },
-    "Extra Shortcuts" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Extra Shortcuts"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Дополнительные горячие клавиши"
-          }
-        },
       }
     },
     "F12-EV-Lfz.title" : {
@@ -27579,7 +27579,7 @@
             "state" : "translated",
             "value" : "Увеличить ширину"
           }
-        },
+        }
       }
     },
     "Lbh-J2-qVU.title" : {
@@ -39233,7 +39233,7 @@
             "state" : "translated",
             "value" : "Уменьшить ширину"
           }
-        },
+        }
       }
     },
     "snW-S8-Cw5.title" : {
@@ -41413,6 +41413,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自角落則頂部⅙；放到最大"
+          }
+        }
+      }
+    },
+    "Top/bottom halves" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Górna/Dolna połowa"
           }
         }
       }
@@ -46071,7 +46082,7 @@
             "state" : "translated",
             "value" : "Шаг ширины (px)"
           }
-        },
+        }
       }
     },
     "wpr-3q-Mcd.title" : {
