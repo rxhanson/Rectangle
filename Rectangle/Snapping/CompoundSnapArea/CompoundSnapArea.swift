@@ -10,9 +10,9 @@ import Foundation
 
 enum CompoundSnapArea: Int, Codable {
     
-    case leftTopBottomHalf = -2, rightTopBottomHalf = -3, thirds = -4, portraitThirdsSide = -5, halves = -6, topSixths = -7, bottomSixths = -8, fourths = -9
+    case leftTopBottomHalf = -2, rightTopBottomHalf = -3, thirds = -4, portraitThirdsSide = -5, halves = -6, topSixths = -7, bottomSixths = -8, fourths = -9, portraitTopBottomHalves = -10
     
-    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds, portraitThirdsSide, halves, topSixths, bottomSixths, fourths]
+    static let all = [leftTopBottomHalf, rightTopBottomHalf, thirds, portraitThirdsSide, halves, topSixths, bottomSixths, fourths, portraitTopBottomHalves]
     
     static let leftCompoundCalculation = LeftTopBottomHalfCalculation()
     static let rightCompoundCalculation = RightTopBottomHalfCalculation()
@@ -22,6 +22,7 @@ enum CompoundSnapArea: Int, Codable {
     static let topSixthsCalculation = TopSixthsCompoundCalculation()
     static let bottomSixthsCalculation = BottomSixthsCompoundCalculation()
     static let fourthsColumnCalculation = FourthsColumnCompoundCalculation()
+    static let portraitTopBottomCalculation = TopBottomHalvesCalculation()
 
     var displayName: String {
         switch self {
@@ -41,6 +42,8 @@ enum CompoundSnapArea: Int, Codable {
             return NSLocalizedString("Bottom sixths from corners; thirds", tableName: "Main", value: "", comment: "")
         case .fourths:
             return NSLocalizedString("Fourths columns", tableName: "Main", value: "", comment: "")
+        case .portraitTopBottomHalves:
+            return NSLocalizedString("Top/bottom halves", tableName: "Main", value: "", comment: "")
         }
     }
     
@@ -62,6 +65,8 @@ enum CompoundSnapArea: Int, Codable {
             return Self.bottomSixthsCalculation
         case .fourths:
             return Self.fourthsColumnCalculation
+        case .portraitTopBottomHalves:
+            return Self.portraitTopBottomCalculation
         }
     }
     
@@ -83,6 +88,8 @@ enum CompoundSnapArea: Int, Codable {
             return [.b]
         case .fourths:
             return [.t, .b]
+        case .portraitTopBottomHalves:
+            return [.l, .r]
         }
     }
     
@@ -90,7 +97,7 @@ enum CompoundSnapArea: Int, Codable {
         switch self {
         case .leftTopBottomHalf, .rightTopBottomHalf, .halves:
             return [.portrait, .landscape]
-        case .portraitThirdsSide:
+        case .portraitThirdsSide, .portraitTopBottomHalves:
             return [.portrait]
         case .thirds, .topSixths, .bottomSixths, .fourths:
             return [.landscape]
