@@ -524,7 +524,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Find"
+            "value" : "Bul"
           }
         },
         "uk" : {
@@ -1640,7 +1640,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Version"
+            "value" : "Sürüm"
           }
         },
         "uk" : {
@@ -12043,7 +12043,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conflict with system setting"
+            "value" : "Sistem ayarlarıyla çakışma"
           }
         },
         "uk" : {
@@ -13843,7 +13843,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right"
+            "value" : "Sağ"
           }
         },
         "uk" : {
@@ -14029,7 +14029,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toggle Todo"
+            "value" : "Todo'yu etkinleştir"
           }
         },
         "uk" : {
@@ -14510,7 +14510,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "File"
+            "value" : "Dosya"
           }
         },
         "uk" : {
@@ -14737,7 +14737,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Undo"
+            "value" : "Geri Al"
           }
         },
         "uk" : {
@@ -18816,7 +18816,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reflow Todo"
+            "value" : "Todo'yu Yeniden Ayarla"
           }
         },
         "uk" : {
@@ -19942,7 +19942,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Go to System Settings → Privacy & Security → Accessibility"
+            "value" : "Sistem Ayarları → Gizlilik ve Güvenlik → Erişikebilirlik menüsüne gidin"
           }
         },
         "uk" : {
@@ -20128,7 +20128,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Ayarlar"
+            "value" : "Genel Ayarlar"
           }
         },
         "uk" : {
@@ -20452,7 +20452,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Paste"
+            "value" : "Yapıştır"
           }
         },
         "uk" : {
@@ -21326,7 +21326,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-click window title bar to maximize/restore"
+            "value" : "Büyütmek/Yeniden yüklemek için üst pencere çubuğuna çift tıklayın."
           }
         },
         "uk" : {
@@ -23162,7 +23162,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Services"
+            "value" : "Servisler"
           }
         },
         "uk" : {
@@ -30605,7 +30605,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left"
+            "value" : "Sol"
           }
         },
         "uk" : {
@@ -31349,7 +31349,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Services"
+            "value" : "Servisler"
           }
         },
         "uk" : {
@@ -33864,7 +33864,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Find Previous"
+            "value" : "Öncekini Bul"
           }
         },
         "uk" : {
@@ -34380,7 +34380,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete"
+            "value" : "Sil"
           }
         },
         "uk" : {
@@ -34890,7 +34890,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Save…"
+            "value" : "Kaydet…"
           }
         },
         "uk" : {
@@ -35586,7 +35586,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Find Next"
+            "value" : "Sonrakini Bul"
           }
         },
         "uk" : {
@@ -35772,7 +35772,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo Modu aktifken Rectangle menüsündeki  \"Reflow Todo\" seçeneği ile veya tanımladığınız klavye kısayolu ile ekran düzenini tazeleyebilirsiniz."
+            "value" : "Todo Modu aktifken Rectangle menüsündeki  \"Todo'yu Yeniden Ayarla\" seçeneği ile veya tanımladığınız klavye kısayolu ile ekran düzenini tazeleyebilirsiniz."
           }
         },
         "uk" : {
