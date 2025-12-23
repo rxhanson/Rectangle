@@ -58,7 +58,7 @@ class SettingsViewController: NSViewController {
             if !smLoginSuccess {
                 Logger.log("Unable to set launch at login preference. Attempting one more time.")
                 SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
-            }            
+            }
         }
         Defaults.launchOnLogin.enabled = newSetting
     }
@@ -273,13 +273,37 @@ class SettingsViewController: NSViewController {
             smallerWidthLabel.alignment = .right
             let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
             widthStepLabel.alignment = .right
+            
+            // New vertical third labels
+            let topVerticalThirdLabel = NSTextField(labelWithString: NSLocalizedString("Top Third", tableName: "Main", value: "", comment: ""))
+            topVerticalThirdLabel.alignment = .right
+            let middleVerticalThirdLabel = NSTextField(labelWithString: NSLocalizedString("Middle Third", tableName: "Main", value: "", comment: ""))
+            middleVerticalThirdLabel.alignment = .right
+            let bottomVerticalThirdLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Third", tableName: "Main", value: "", comment: ""))
+            bottomVerticalThirdLabel.alignment = .right
+            let topVerticalTwoThirdsLabel = NSTextField(labelWithString: NSLocalizedString("Top Two Thirds", tableName: "Main", value: "", comment: ""))
+            topVerticalTwoThirdsLabel.alignment = .right
+            let bottomVerticalTwoThirdsLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Two Thirds", tableName: "Main", value: "", comment: ""))
+            bottomVerticalTwoThirdsLabel.alignment = .right
 
             largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             widthStepLabel.translatesAutoresizingMaskIntoConstraints = false
+            topVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
+            middleVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
+            topVerticalTwoThirdsLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomVerticalTwoThirdsLabel.translatesAutoresizingMaskIntoConstraints = false
 
             let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            
+            // New vertical third shortcut views
+            let topVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let middleVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topVerticalTwoThirdsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomVerticalTwoThirdsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
             let widthStepField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             widthStepField.stringValue = String(Int(Defaults.widthStepSize.value))
@@ -296,11 +320,23 @@ class SettingsViewController: NSViewController {
 
             largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
             smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
+            
+            // Set associated user defaults keys for new vertical third shortcuts
+            topVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
+            middleVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
+            bottomVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
+            topVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
+            bottomVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
 
             if Defaults.allowAnyShortcut.enabled {
                 let passThroughValidator = PassthroughShortcutValidator()
                 largerWidthShortcutView.shortcutValidator = passThroughValidator
                 smallerWidthShortcutView.shortcutValidator = passThroughValidator
+                topVerticalThirdShortcutView.shortcutValidator = passThroughValidator
+                middleVerticalThirdShortcutView.shortcutValidator = passThroughValidator
+                bottomVerticalThirdShortcutView.shortcutValidator = passThroughValidator
+                topVerticalTwoThirdsShortcutView.shortcutValidator = passThroughValidator
+                bottomVerticalTwoThirdsShortcutView.shortcutValidator = passThroughValidator
             }
 
             let largerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
@@ -310,6 +346,27 @@ class SettingsViewController: NSViewController {
             let smallerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             smallerWidthIcon.image = WindowAction.smallerWidth.image
             smallerWidthIcon.image?.size = NSSize(width: 21, height: 14)
+            
+            // New vertical third icons
+            let topVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topVerticalThirdIcon.image = WindowAction.topVerticalThird.image
+            topVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
+            
+            let middleVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            middleVerticalThirdIcon.image = WindowAction.middleVerticalThird.image
+            middleVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
+            
+            let bottomVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomVerticalThirdIcon.image = WindowAction.bottomVerticalThird.image
+            bottomVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
+            
+            let topVerticalTwoThirdsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topVerticalTwoThirdsIcon.image = WindowAction.topVerticalTwoThirds.image
+            topVerticalTwoThirdsIcon.image?.size = NSSize(width: 21, height: 14)
+            
+            let bottomVerticalTwoThirdsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomVerticalTwoThirdsIcon.image = WindowAction.bottomVerticalTwoThirds.image
+            bottomVerticalTwoThirdsIcon.image?.size = NSSize(width: 21, height: 14)
 
             let largerWidthLabelStack = NSStackView()
             largerWidthLabelStack.orientation = .horizontal
@@ -324,6 +381,42 @@ class SettingsViewController: NSViewController {
             smallerWidthLabelStack.spacing = 8
             smallerWidthLabelStack.addArrangedSubview(smallerWidthLabel)
             smallerWidthLabelStack.addArrangedSubview(smallerWidthIcon)
+            
+            // New vertical third label stacks
+            let topVerticalThirdLabelStack = NSStackView()
+            topVerticalThirdLabelStack.orientation = .horizontal
+            topVerticalThirdLabelStack.alignment = .centerY
+            topVerticalThirdLabelStack.spacing = 8
+            topVerticalThirdLabelStack.addArrangedSubview(topVerticalThirdLabel)
+            topVerticalThirdLabelStack.addArrangedSubview(topVerticalThirdIcon)
+            
+            let middleVerticalThirdLabelStack = NSStackView()
+            middleVerticalThirdLabelStack.orientation = .horizontal
+            middleVerticalThirdLabelStack.alignment = .centerY
+            middleVerticalThirdLabelStack.spacing = 8
+            middleVerticalThirdLabelStack.addArrangedSubview(middleVerticalThirdLabel)
+            middleVerticalThirdLabelStack.addArrangedSubview(middleVerticalThirdIcon)
+            
+            let bottomVerticalThirdLabelStack = NSStackView()
+            bottomVerticalThirdLabelStack.orientation = .horizontal
+            bottomVerticalThirdLabelStack.alignment = .centerY
+            bottomVerticalThirdLabelStack.spacing = 8
+            bottomVerticalThirdLabelStack.addArrangedSubview(bottomVerticalThirdLabel)
+            bottomVerticalThirdLabelStack.addArrangedSubview(bottomVerticalThirdIcon)
+            
+            let topVerticalTwoThirdsLabelStack = NSStackView()
+            topVerticalTwoThirdsLabelStack.orientation = .horizontal
+            topVerticalTwoThirdsLabelStack.alignment = .centerY
+            topVerticalTwoThirdsLabelStack.spacing = 8
+            topVerticalTwoThirdsLabelStack.addArrangedSubview(topVerticalTwoThirdsLabel)
+            topVerticalTwoThirdsLabelStack.addArrangedSubview(topVerticalTwoThirdsIcon)
+            
+            let bottomVerticalTwoThirdsLabelStack = NSStackView()
+            bottomVerticalTwoThirdsLabelStack.orientation = .horizontal
+            bottomVerticalTwoThirdsLabelStack.alignment = .centerY
+            bottomVerticalTwoThirdsLabelStack.spacing = 8
+            bottomVerticalTwoThirdsLabelStack.addArrangedSubview(bottomVerticalTwoThirdsLabel)
+            bottomVerticalTwoThirdsLabelStack.addArrangedSubview(bottomVerticalTwoThirdsIcon)
 
             let largerWidthRow = NSStackView()
             largerWidthRow.orientation = .horizontal
@@ -345,21 +438,72 @@ class SettingsViewController: NSViewController {
             widthStepRow.spacing = 18
             widthStepRow.addArrangedSubview(widthStepLabel)
             widthStepRow.addArrangedSubview(widthStepField)
+            
+            // New vertical third rows
+            let topVerticalThirdRow = NSStackView()
+            topVerticalThirdRow.orientation = .horizontal
+            topVerticalThirdRow.alignment = .centerY
+            topVerticalThirdRow.spacing = 18
+            topVerticalThirdRow.addArrangedSubview(topVerticalThirdLabelStack)
+            topVerticalThirdRow.addArrangedSubview(topVerticalThirdShortcutView)
+            
+            let middleVerticalThirdRow = NSStackView()
+            middleVerticalThirdRow.orientation = .horizontal
+            middleVerticalThirdRow.alignment = .centerY
+            middleVerticalThirdRow.spacing = 18
+            middleVerticalThirdRow.addArrangedSubview(middleVerticalThirdLabelStack)
+            middleVerticalThirdRow.addArrangedSubview(middleVerticalThirdShortcutView)
+            
+            let bottomVerticalThirdRow = NSStackView()
+            bottomVerticalThirdRow.orientation = .horizontal
+            bottomVerticalThirdRow.alignment = .centerY
+            bottomVerticalThirdRow.spacing = 18
+            bottomVerticalThirdRow.addArrangedSubview(bottomVerticalThirdLabelStack)
+            bottomVerticalThirdRow.addArrangedSubview(bottomVerticalThirdShortcutView)
+            
+            let topVerticalTwoThirdsRow = NSStackView()
+            topVerticalTwoThirdsRow.orientation = .horizontal
+            topVerticalTwoThirdsRow.alignment = .centerY
+            topVerticalTwoThirdsRow.spacing = 18
+            topVerticalTwoThirdsRow.addArrangedSubview(topVerticalTwoThirdsLabelStack)
+            topVerticalTwoThirdsRow.addArrangedSubview(topVerticalTwoThirdsShortcutView)
+            
+            let bottomVerticalTwoThirdsRow = NSStackView()
+            bottomVerticalTwoThirdsRow.orientation = .horizontal
+            bottomVerticalTwoThirdsRow.alignment = .centerY
+            bottomVerticalTwoThirdsRow.spacing = 18
+            bottomVerticalTwoThirdsRow.addArrangedSubview(bottomVerticalTwoThirdsLabelStack)
+            bottomVerticalTwoThirdsRow.addArrangedSubview(bottomVerticalTwoThirdsShortcutView)
 
             mainStackView.addArrangedSubview(headerLabel)
             mainStackView.setCustomSpacing(10, after: headerLabel)
             mainStackView.addArrangedSubview(largerWidthRow)
             mainStackView.addArrangedSubview(smallerWidthRow)
             mainStackView.addArrangedSubview(widthStepRow)
+            mainStackView.addArrangedSubview(topVerticalThirdRow)
+            mainStackView.addArrangedSubview(middleVerticalThirdRow)
+            mainStackView.addArrangedSubview(bottomVerticalThirdRow)
+            mainStackView.addArrangedSubview(topVerticalTwoThirdsRow)
+            mainStackView.addArrangedSubview(bottomVerticalTwoThirdsRow)
 
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
                 smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
+                widthStepLabel.widthAnchor.constraint(equalTo: topVerticalThirdLabel.widthAnchor),
+                topVerticalThirdLabel.widthAnchor.constraint(equalTo: middleVerticalThirdLabel.widthAnchor),
+                middleVerticalThirdLabel.widthAnchor.constraint(equalTo: bottomVerticalThirdLabel.widthAnchor),
+                bottomVerticalThirdLabel.widthAnchor.constraint(equalTo: topVerticalTwoThirdsLabel.widthAnchor),
+                topVerticalTwoThirdsLabel.widthAnchor.constraint(equalTo: bottomVerticalTwoThirdsLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.widthAnchor.constraint(equalToConstant: 160),
+                topVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                middleVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 

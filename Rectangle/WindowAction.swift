@@ -98,12 +98,18 @@ enum WindowAction: Int, Codable {
     largerHeight = 82,
     smallerHeight = 83,
     centerTwoThirds = 84,
-    centerThreeFourths = 85
+    centerThreeFourths = 85,
+    topVerticalThird = 86,
+    middleVerticalThird = 87,
+    bottomVerticalThird = 88,
+    topVerticalTwoThirds = 89,
+    bottomVerticalTwoThirds = 90
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
                          firstThird, centerThird, lastThird, firstTwoThirds, centerTwoThirds, lastTwoThirds,
+                         topVerticalThird, middleVerticalThird, bottomVerticalThird, topVerticalTwoThirds, bottomVerticalTwoThirds,
                          maximize, almostMaximize, maximizeHeight, larger, smaller, largerWidth, smallerWidth, largerHeight, smallerHeight,
                          center, centerProminently, restore,
                          nextDisplay, previousDisplay,
@@ -238,6 +244,11 @@ enum WindowAction: Int, Codable {
         case .smallerWidth: return "smallerWidth"
         case .largerHeight: return "largerHeight"
         case .smallerHeight: return "smallerHeight"
+        case .topVerticalThird: return "topVerticalThird"
+        case .middleVerticalThird: return "middleVerticalThird"
+        case .bottomVerticalThird: return "bottomVerticalThird"
+        case .topVerticalTwoThirds: return "topVerticalTwoThirds"
+        case .bottomVerticalTwoThirds: return "bottomVerticalTwoThirds"
         }
     }
 
@@ -381,6 +392,8 @@ enum WindowAction: Int, Codable {
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
             return nil
         case .centerProminently, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
+            return nil
+        case .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds:
             return nil
         }
 
@@ -562,6 +575,11 @@ enum WindowAction: Int, Codable {
         case .smallerWidth: return NSImage(imageLiteralResourceName: "smallerWidthTemplate")
         case .largerHeight: return NSImage()
         case .smallerHeight: return NSImage()
+        case .topVerticalThird: return NSImage(imageLiteralResourceName: "topThird")
+        case .middleVerticalThird: return NSImage(imageLiteralResourceName: "middleThird")
+        case .bottomVerticalThird: return NSImage(imageLiteralResourceName: "bottomThird")
+        case .topVerticalTwoThirds: return NSImage(imageLiteralResourceName: "topTwoThirds")
+        case .bottomVerticalTwoThirds: return NSImage(imageLiteralResourceName: "bottomTwoThirds")
         }
     }
 
@@ -592,9 +610,10 @@ enum WindowAction: Int, Codable {
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
             .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
             .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
-		 	.doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
-		 	.halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
-            .leftTodo, .rightTodo:
+             .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
+             .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
+            .leftTodo, .rightTodo,
+            .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
