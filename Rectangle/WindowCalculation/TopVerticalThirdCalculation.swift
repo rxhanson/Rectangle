@@ -22,10 +22,14 @@ class TopVerticalThirdCalculation: WindowCalculation {
         if last.action == .topVerticalThird {
             if lastSubAction == .topThird {
                 calculation = WindowCalculationFactory.middleVerticalThirdCalculation
+            } else if lastSubAction == .centerVerticalThird {
+                calculation = WindowCalculationFactory.bottomVerticalThirdCalculation
             }
         } else if last.action == .bottomVerticalThird {
             if lastSubAction == .topThird {
                 calculation = WindowCalculationFactory.middleVerticalThirdCalculation
+            } else if lastSubAction == .centerVerticalThird {
+                calculation = WindowCalculationFactory.bottomVerticalThirdCalculation
             }
         }
         
