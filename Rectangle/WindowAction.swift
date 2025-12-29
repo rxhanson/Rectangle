@@ -575,11 +575,11 @@ enum WindowAction: Int, Codable {
         case .smallerWidth: return NSImage(imageLiteralResourceName: "smallerWidthTemplate")
         case .largerHeight: return NSImage()
         case .smallerHeight: return NSImage()
-        case .topVerticalThird: return NSImage(imageLiteralResourceName: "topThird")
-        case .middleVerticalThird: return NSImage(imageLiteralResourceName: "middleThird")
-        case .bottomVerticalThird: return NSImage(imageLiteralResourceName: "bottomThird")
-        case .topVerticalTwoThirds: return NSImage(imageLiteralResourceName: "topTwoThirds")
-        case .bottomVerticalTwoThirds: return NSImage(imageLiteralResourceName: "bottomTwoThirds")
+        case .topVerticalThird: return NSImage(imageLiteralResourceName: "topThirdTemplate")
+        case .middleVerticalThird: return NSImage(imageLiteralResourceName: "centerThirdHorizontalTemplate")
+        case .bottomVerticalThird: return NSImage(imageLiteralResourceName: "bottomThirdTemplate")
+        case .topVerticalTwoThirds: return NSImage(imageLiteralResourceName: "topTwoThirdsTemplate")
+        case .bottomVerticalTwoThirds: return NSImage(imageLiteralResourceName: "bottomTwoThirdsTemplate")
         }
     }
 
