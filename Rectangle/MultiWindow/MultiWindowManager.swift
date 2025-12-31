@@ -25,6 +25,9 @@ class MultiWindowManager {
         case .cascadeActiveApp:
             cascadeActiveAppWindowsOnScreen(windowElement: parameters.windowElement)
             return true
+        case .tileActiveApp:
+            tileActiveAppWindowsOnScreen(windowElement: parameters.windowElement)
+            return true
         default:
             return false
         }
@@ -185,5 +188,30 @@ class MultiWindowManager {
 
         w.setFrame(rect)
         w.bringToFront()
+    }
+
+    static func tileActiveAppWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
+        guard let (screens, windows) = allWindowsOnScreen(windowElement: windowElement, sortByPID: true),
+              let frontWindowElement = AccessibilityElement.getFrontWindowElement()
+        else {
+            return
+        }
+
+        let screenFrame = screens.currentScreen.adjustedVisibleFrame().screenFlipped
+
+        // keep windows with a pid equal to the front window's pid
+        let filtered = windows.filter { $0.pid == frontWindowElement.pid }
+
+        let count = filtered.count
+
+        let columns = Int(ceil(sqrt(CGFloat(count))))
+        let rows = Int(ceil(CGFloat(count) / CGFloat(columns)))
+        let size = CGSize(width: (screenFrame.maxX - screenFrame.minX) / CGFloat(columns), height: (screenFrame.maxY - screenFrame.minY) / CGFloat(rows))
+
+        for (ind, w) in filtered.enumerated() {
+            let column = ind % Int(columns)
+            let row = ind / Int(columns)
+            tileWindow(w, screenFrame: screenFrame, size: size, column: column, row: row)
+        }
     }
 }
