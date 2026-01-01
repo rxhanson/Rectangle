@@ -257,10 +257,13 @@ The key codes are:
 * tileAll
 * cascadeAll
 * cascadeActiveApp
+* tileActiveApp
 
 _tileAll_ and _cascadeAll_ act on all visible windows.
 
 _cascadeActiveApp_ cascades and brings to the front only windows belonging to the currently active (foremost) app, leaving all other windows alone.
+
+_tileActiveApp_ tiles only windows belonging to the currently active (foremost) app into a grid, leaving all other windows alone.
 
 For example, the command for setting the cascadeActiveApp shortcut to `ctrl shift 2` would be:
 

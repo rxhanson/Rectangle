@@ -4168,6 +4168,12 @@
             "state" : "translated",
             "value" : "px"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
         }
       }
     },
@@ -8680,6 +8686,12 @@
             "state" : "translated",
             "value" : "%"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
         }
       }
     },
@@ -12589,6 +12601,12 @@
             "state" : "new",
             "value" : "Use cursor position for screen detection"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sử dụng vị trí con trỏ để nhận diện màn hình"
+          }
         }
       }
     },
@@ -16213,6 +16231,12 @@
             "state" : "translated",
             "value" : "⋯"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⋯"
+          }
         }
       }
     },
@@ -16229,6 +16253,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дополнительные горячие клавиши"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phím tắt bổ sung"
           }
         }
       }
@@ -20145,8 +20175,8 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Cài đặt"
+            "state" : "translated",
+            "value" : "Tổng quan"
           }
         },
         "zh-Hans" : {
@@ -22521,174 +22551,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "歡迎！"
-          }
-        }
-      }
-    },
-    "HVG-6v-eJH.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"px\"; ObjectID = \"HVG-6v-eJH\";",
-      "extractionState" : "stale",
-      "localizations" : {
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "px"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "lt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "пкс"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "像素"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
-          }
-        },
-        "zh-Hant-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "px"
           }
         }
       }
@@ -27584,6 +27446,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Увеличить ширину"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiều rộng lớn hơn"
           }
         }
       }
@@ -33526,7 +33394,7 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Hai phần ba ở giữa"
           }
         },
@@ -39242,6 +39110,12 @@
             "state" : "translated",
             "value" : "Уменьшить ширину"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiều rộng nhỏ hơn"
+          }
         }
       }
     },
@@ -39545,7 +39419,7 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Cài đặt của Rectangle"
           }
         },
@@ -41440,6 +41314,12 @@
             "state" : "translated",
             "value" : "Górna/Dolna połowa"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nửa trên/dưới"
+          }
         }
       }
     },
@@ -43293,7 +43173,7 @@
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Phím tắt"
           }
         },

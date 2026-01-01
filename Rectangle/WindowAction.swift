@@ -105,7 +105,6 @@ enum WindowAction: Int, Codable {
          bottomVerticalThird = 89,
          topVerticalTwoThirds = 90,
          bottomVerticalTwoThirds = 91
-    
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
