@@ -18,92 +18,94 @@ fileprivate let cmd = NSEvent.ModifierFlags.command.rawValue
 
 enum WindowAction: Int, Codable {
     case leftHalf = 0,
-    rightHalf = 1,
-    maximize = 2,
-    maximizeHeight = 3,
-    previousDisplay = 4,
-    nextDisplay = 5,
-    larger = 8,
-    smaller = 9,
-    bottomHalf = 10,
-    topHalf = 11,
-    center = 12,
-    bottomLeft = 13,
-    bottomRight = 14,
-    topLeft = 15,
-    topRight = 16,
-    restore = 19,
-    firstThird = 20,
-    firstTwoThirds = 21,
-    centerThird = 22,
-    lastTwoThirds = 23,
-    lastThird = 24,
-    moveLeft = 25,
-    moveRight = 26,
-    moveUp = 27,
-    moveDown = 28,
-    almostMaximize = 29,
-    centerHalf = 30,
-    firstFourth = 31,
-    secondFourth = 32,
-    thirdFourth = 33,
-    lastFourth = 34,
-    firstThreeFourths = 35,
-    lastThreeFourths = 36,
-    topLeftSixth = 37,
-    topCenterSixth = 38,
-    topRightSixth = 39,
-    bottomLeftSixth = 40,
-    bottomCenterSixth = 41,
-    bottomRightSixth = 42,
-    specified = 43,
-    reverseAll = 44,
-    topLeftNinth = 45,
-    topCenterNinth = 46,
-    topRightNinth = 47,
-    middleLeftNinth = 48,
-    middleCenterNinth = 49,
-    middleRightNinth = 50,
-    bottomLeftNinth = 51,
-    bottomCenterNinth = 52,
-    bottomRightNinth = 53,
-    topLeftThird = 54,
-    topRightThird = 55,
-    bottomLeftThird = 56,
-    bottomRightThird = 57,
-    topLeftEighth = 58,
-    topCenterLeftEighth = 59,
-    topCenterRightEighth = 60,
-    topRightEighth = 61,
-    bottomLeftEighth = 62,
-    bottomCenterLeftEighth = 63,
-    bottomCenterRightEighth = 64,
-    bottomRightEighth = 65,
-    tileAll = 66,
-    cascadeAll = 67,
-    leftTodo = 68,
-    rightTodo = 69,
-    cascadeActiveApp = 70,
-    centerProminently = 71,
-    doubleHeightUp = 72,
-    doubleHeightDown = 73,
-    doubleWidthLeft = 74,
-    doubleWidthRight = 75,
-    halveHeightUp = 76,
-    halveHeightDown = 77,
-    halveWidthLeft = 78,
-    halveWidthRight = 79,
-    largerWidth = 80,
-    smallerWidth = 81,
-    largerHeight = 82,
-    smallerHeight = 83,
-    centerTwoThirds = 84,
-    centerThreeFourths = 85,
-    topVerticalThird = 86,
-    middleVerticalThird = 87,
-    bottomVerticalThird = 88,
-    topVerticalTwoThirds = 89,
-    bottomVerticalTwoThirds = 90
+         rightHalf = 1,
+         maximize = 2,
+         maximizeHeight = 3,
+         previousDisplay = 4,
+         nextDisplay = 5,
+         larger = 8,
+         smaller = 9,
+         bottomHalf = 10,
+         topHalf = 11,
+         center = 12,
+         bottomLeft = 13,
+         bottomRight = 14,
+         topLeft = 15,
+         topRight = 16,
+         restore = 19,
+         firstThird = 20,
+         firstTwoThirds = 21,
+         centerThird = 22,
+         lastTwoThirds = 23,
+         lastThird = 24,
+         moveLeft = 25,
+         moveRight = 26,
+         moveUp = 27,
+         moveDown = 28,
+         almostMaximize = 29,
+         centerHalf = 30,
+         firstFourth = 31,
+         secondFourth = 32,
+         thirdFourth = 33,
+         lastFourth = 34,
+         firstThreeFourths = 35,
+         lastThreeFourths = 36,
+         topLeftSixth = 37,
+         topCenterSixth = 38,
+         topRightSixth = 39,
+         bottomLeftSixth = 40,
+         bottomCenterSixth = 41,
+         bottomRightSixth = 42,
+         specified = 43,
+         reverseAll = 44,
+         topLeftNinth = 45,
+         topCenterNinth = 46,
+         topRightNinth = 47,
+         middleLeftNinth = 48,
+         middleCenterNinth = 49,
+         middleRightNinth = 50,
+         bottomLeftNinth = 51,
+         bottomCenterNinth = 52,
+         bottomRightNinth = 53,
+         topLeftThird = 54,
+         topRightThird = 55,
+         bottomLeftThird = 56,
+         bottomRightThird = 57,
+         topLeftEighth = 58,
+         topCenterLeftEighth = 59,
+         topCenterRightEighth = 60,
+         topRightEighth = 61,
+         bottomLeftEighth = 62,
+         bottomCenterLeftEighth = 63,
+         bottomCenterRightEighth = 64,
+         bottomRightEighth = 65,
+         tileAll = 66,
+         cascadeAll = 67,
+         leftTodo = 68,
+         rightTodo = 69,
+         cascadeActiveApp = 70,
+         centerProminently = 71,
+         doubleHeightUp = 72,
+         doubleHeightDown = 73,
+         doubleWidthLeft = 74,
+         doubleWidthRight = 75,
+         halveHeightUp = 76,
+         halveHeightDown = 77,
+         halveWidthLeft = 78,
+         halveWidthRight = 79,
+         largerWidth = 80,
+         smallerWidth = 81,
+         largerHeight = 82,
+         smallerHeight = 83,
+         centerTwoThirds = 84,
+         centerThreeFourths = 85,
+         tileActiveApp = 86,
+         topVerticalThird = 87,
+         middleVerticalThird = 88,
+         bottomVerticalThird = 89,
+         topVerticalTwoThirds = 90,
+         bottomVerticalTwoThirds = 91
+    
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -127,7 +129,7 @@ enum WindowAction: Int, Codable {
                          halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
                          tileAll, cascadeAll,
                          leftTodo, rightTodo,
-                         cascadeActiveApp
+                         cascadeActiveApp, tileActiveApp
     ]
 
     func post() {
@@ -239,6 +241,7 @@ enum WindowAction: Int, Codable {
         case .leftTodo: return "leftTodo"
         case .rightTodo: return "rightTodo"
         case .cascadeActiveApp: return "cascadeActiveApp"
+        case .tileActiveApp: return "tileActiveApp"
         case .centerProminently: return "centerProminently"
         case .largerWidth: return "largerWidth"
         case .smallerWidth: return "smallerWidth"
@@ -389,7 +392,7 @@ enum WindowAction: Int, Codable {
             return nil
         case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight, .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight:
             return nil
-        case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp:
+        case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp, .tileActiveApp:
             return nil
         case .centerProminently, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
             return nil
@@ -423,7 +426,7 @@ enum WindowAction: Int, Codable {
     
     var isDragSnappable: Bool {
         switch self {
-        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .larger, .smaller, .largerWidth, .smallerWidth, .cascadeActiveApp,
+        case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .cascadeAll, .larger, .smaller, .largerWidth, .smallerWidth, .cascadeActiveApp, .tileActiveApp,
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
@@ -570,6 +573,7 @@ enum WindowAction: Int, Codable {
         case .leftTodo: return NSImage()
         case .rightTodo: return NSImage()
         case .cascadeActiveApp: return NSImage()
+        case .tileActiveApp: return NSImage()
         case .centerProminently: return NSImage()
         case .largerWidth: return NSImage(imageLiteralResourceName: "largerWidthTemplate")
         case .smallerWidth: return NSImage(imageLiteralResourceName: "smallerWidthTemplate")
@@ -623,7 +627,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp:
             return .none
         }
     }

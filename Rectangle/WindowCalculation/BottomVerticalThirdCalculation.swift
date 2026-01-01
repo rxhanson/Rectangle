@@ -19,17 +19,14 @@ class BottomVerticalThirdCalculation: WindowCalculation {
         
         var calculation: WindowCalculation?
         
-        if last.action == .bottomVerticalThird {
-            if lastSubAction == .bottomThird {
+        if last.action == .topVerticalThird || last.action == .bottomVerticalThird {
+            switch lastSubAction {
+            case .topThird:
                 calculation = WindowCalculationFactory.middleVerticalThirdCalculation
-            } else if lastSubAction == .centerVerticalThird {
+            case .bottomThird:
                 calculation = WindowCalculationFactory.topVerticalThirdCalculation
-            }
-        } else if last.action == .topVerticalThird {
-            if lastSubAction == .bottomThird {
-                calculation = WindowCalculationFactory.middleVerticalThirdCalculation
-            } else if lastSubAction == .centerVerticalThird {
-                calculation = WindowCalculationFactory.topVerticalThirdCalculation
+            default:
+                break
             }
         }
         
