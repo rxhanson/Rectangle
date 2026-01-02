@@ -10541,6 +10541,12 @@
         }
       }
     },
+    "Bottom Third" : {
+
+    },
+    "Bottom Two Thirds" : {
+
+    },
     "bRX-dV-iAR.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Half\"; ObjectID = \"bRX-dV-iAR\";",
       "extractionState" : "extracted_with_value",
@@ -29688,6 +29694,9 @@
         }
       }
     },
+    "Middle Third" : {
+
+    },
     "mK6-2p-4JG.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Check Grammar With Spelling\"; ObjectID = \"mK6-2p-4JG\";",
       "extractionState" : "manual",
@@ -41290,6 +41299,12 @@
           }
         }
       }
+    },
+    "Top Third" : {
+
+    },
+    "Top Two Thirds" : {
+
     },
     "Top/bottom halves" : {
       "extractionState" : "manual",

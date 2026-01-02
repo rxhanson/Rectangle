@@ -135,6 +135,11 @@
 		AAADE1AF28CBAB0000036331 /* WindowUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAADE1AE28CBAB0000036331 /* WindowUtil.swift */; };
 		B4521F932BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521F922BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift */; };
 		B4780A322BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4780A312BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift */; };
+		BB0B80492EFB0AF900A9B165 /* TopVerticalTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0B80482EFB0AF900A9B165 /* TopVerticalTwoThirdsCalculation.swift */; };
+		BB0B804A2EFB0AF900A9B165 /* MiddleVerticalThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0B80462EFB0AF900A9B165 /* MiddleVerticalThirdCalculation.swift */; };
+		BB0B804B2EFB0AF900A9B165 /* BottomVerticalTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0B80452EFB0AF900A9B165 /* BottomVerticalTwoThirdsCalculation.swift */; };
+		BB0B804C2EFB0AF900A9B165 /* BottomVerticalThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0B80442EFB0AF900A9B165 /* BottomVerticalThirdCalculation.swift */; };
+		BB0B804D2EFB0AF900A9B165 /* TopVerticalThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0B80472EFB0AF900A9B165 /* TopVerticalThirdCalculation.swift */; };
 		D0423D8327A8D31D008A4894 /* HorizontalThirdsRepeated.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0423D8227A8D31D008A4894 /* HorizontalThirdsRepeated.swift */; };
 		D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */; };
 		D04CE30227817A6100BD47B3 /* TopCenterNinthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */; };
@@ -314,6 +319,11 @@
 		AAADE1AE28CBAB0000036331 /* WindowUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowUtil.swift; sourceTree = "<group>"; };
 		B4521F922BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeWindowDimensionCalculation.swift; sourceTree = "<group>"; };
 		B4780A312BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfOrDoubleDimensionCalculation.swift; sourceTree = "<group>"; };
+		BB0B80442EFB0AF900A9B165 /* BottomVerticalThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomVerticalThirdCalculation.swift; sourceTree = "<group>"; };
+		BB0B80452EFB0AF900A9B165 /* BottomVerticalTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomVerticalTwoThirdsCalculation.swift; sourceTree = "<group>"; };
+		BB0B80462EFB0AF900A9B165 /* MiddleVerticalThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleVerticalThirdCalculation.swift; sourceTree = "<group>"; };
+		BB0B80472EFB0AF900A9B165 /* TopVerticalThirdCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopVerticalThirdCalculation.swift; sourceTree = "<group>"; };
+		BB0B80482EFB0AF900A9B165 /* TopVerticalTwoThirdsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopVerticalTwoThirdsCalculation.swift; sourceTree = "<group>"; };
 		D0423D8227A8D31D008A4894 /* HorizontalThirdsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalThirdsRepeated.swift; sourceTree = "<group>"; };
 		D04CE2FF2781794E00BD47B3 /* TopLeftNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftNinthCalculation.swift; sourceTree = "<group>"; };
 		D04CE30127817A6100BD47B3 /* TopCenterNinthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopCenterNinthCalculation.swift; sourceTree = "<group>"; };
@@ -406,6 +416,11 @@
 		982140E922B7DA3100ABFB3F /* WindowCalculation */ = {
 			isa = PBXGroup;
 			children = (
+				BB0B80442EFB0AF900A9B165 /* BottomVerticalThirdCalculation.swift */,
+				BB0B80452EFB0AF900A9B165 /* BottomVerticalTwoThirdsCalculation.swift */,
+				BB0B80462EFB0AF900A9B165 /* MiddleVerticalThirdCalculation.swift */,
+				BB0B80472EFB0AF900A9B165 /* TopVerticalThirdCalculation.swift */,
+				BB0B80482EFB0AF900A9B165 /* TopVerticalTwoThirdsCalculation.swift */,
 				9FF740222E34DE9000D22955 /* CenterThreeFourthsCalculation.swift */,
 				74804F0A2E25521C009F1F7D /* CenterTwoThirdsCalculation.swift */,
 				98A009AA2512491300CFBF0C /* CenterHalfCalculation.swift */,
@@ -965,6 +980,11 @@
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
 				98D16A492592B460005228CB /* NotificationExtension.swift in Sources */,
 				AA0AC000291C1B5E00D125D2 /* CGExtension.swift in Sources */,
+				BB0B80492EFB0AF900A9B165 /* TopVerticalTwoThirdsCalculation.swift in Sources */,
+				BB0B804A2EFB0AF900A9B165 /* MiddleVerticalThirdCalculation.swift in Sources */,
+				BB0B804B2EFB0AF900A9B165 /* BottomVerticalTwoThirdsCalculation.swift in Sources */,
+				BB0B804C2EFB0AF900A9B165 /* BottomVerticalThirdCalculation.swift in Sources */,
+				BB0B804D2EFB0AF900A9B165 /* TopVerticalThirdCalculation.swift in Sources */,
 				6490B39D27BF984D0056C220 /* BottomCenterLeftEighthCalculation.swift in Sources */,
 				98A6EDDD251F3F4A00F74B10 /* SixthsRepeated.swift in Sources */,
 				AAADE1AF28CBAB0000036331 /* WindowUtil.swift in Sources */,
