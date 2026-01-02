@@ -19,7 +19,7 @@ class TopVerticalThirdCalculation: WindowCalculation {
         
         var calculation: WindowCalculation?
         
-        if last.action == .topVerticalThird || last.action == .bottomVerticalThird {
+        if last.action == .topVerticalThird {
             switch lastSubAction {
             case .topThird:
                 calculation = WindowCalculationFactory.middleVerticalThirdCalculation
@@ -29,6 +29,16 @@ class TopVerticalThirdCalculation: WindowCalculation {
                 break
             }
         }
+        
+        else if last.action == .bottomVerticalThird {
+            switch lastSubAction {
+            case .topThird:
+                calculation = WindowCalculationFactory.middleVerticalThirdCalculation
+            default:
+                break
+            }
+        }
+                
         
         if let calculation = calculation {
             return calculation.calculateRect(params)

@@ -19,12 +19,20 @@ class BottomVerticalThirdCalculation: WindowCalculation {
         
         var calculation: WindowCalculation?
         
-        if last.action == .topVerticalThird || last.action == .bottomVerticalThird {
+        if last.action == .bottomVerticalThird {
             switch lastSubAction {
-            case .topThird:
-                calculation = WindowCalculationFactory.middleVerticalThirdCalculation
-            case .bottomThird:
+            case .centerVerticalThird:
                 calculation = WindowCalculationFactory.topVerticalThirdCalculation
+            case .bottomThird:
+                calculation = WindowCalculationFactory.middleVerticalThirdCalculation
+            default:
+                break
+            }
+        }
+        else if last.action == .topVerticalThird {
+            switch lastSubAction {
+            case .bottomThird:
+                calculation = WindowCalculationFactory.middleVerticalThirdCalculation
             default:
                 break
             }
