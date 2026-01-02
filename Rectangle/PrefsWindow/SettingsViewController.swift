@@ -274,7 +274,6 @@ class SettingsViewController: NSViewController {
             let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
             widthStepLabel.alignment = .right
             
-            // New vertical third labels
             let topVerticalThirdLabel = NSTextField(labelWithString: NSLocalizedString("Top Third", tableName: "Main", value: "", comment: ""))
             topVerticalThirdLabel.alignment = .right
             let middleVerticalThirdLabel = NSTextField(labelWithString: NSLocalizedString("Middle Third", tableName: "Main", value: "", comment: ""))
@@ -298,7 +297,6 @@ class SettingsViewController: NSViewController {
             let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             
-            // New vertical third shortcut views
             let topVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let middleVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let bottomVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
@@ -321,7 +319,6 @@ class SettingsViewController: NSViewController {
             largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
             smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
             
-            // Set associated user defaults keys for new vertical third shortcuts
             topVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
             middleVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
             bottomVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
@@ -347,7 +344,6 @@ class SettingsViewController: NSViewController {
             smallerWidthIcon.image = WindowAction.smallerWidth.image
             smallerWidthIcon.image?.size = NSSize(width: 21, height: 14)
             
-            // New vertical third icons
             let topVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             topVerticalThirdIcon.image = WindowAction.topVerticalThird.image
             topVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
@@ -382,7 +378,6 @@ class SettingsViewController: NSViewController {
             smallerWidthLabelStack.addArrangedSubview(smallerWidthLabel)
             smallerWidthLabelStack.addArrangedSubview(smallerWidthIcon)
             
-            // New vertical third label stacks
             let topVerticalThirdLabelStack = NSStackView()
             topVerticalThirdLabelStack.orientation = .horizontal
             topVerticalThirdLabelStack.alignment = .centerY
@@ -439,7 +434,6 @@ class SettingsViewController: NSViewController {
             widthStepRow.addArrangedSubview(widthStepLabel)
             widthStepRow.addArrangedSubview(widthStepField)
             
-            // New vertical third rows
             let topVerticalThirdRow = NSStackView()
             topVerticalThirdRow.orientation = .horizontal
             topVerticalThirdRow.alignment = .centerY
