@@ -573,23 +573,7 @@ class SettingsViewController: NSViewController {
     }
     
     private func showHideTodoModeSettings(animated: Bool) {
-        let show = Defaults.todo.userEnabled
-        
-        if show {
-            todoView.isHidden = false
-            todoViewHeightConstraint.isActive = false
-            animateChanges(animated: animated) {
-                todoView.animator().alphaValue = 1
-            }
-        } else {
-            animateChanges(animated: animated) {
-                todoView.isHidden = true
-                todoViewHeightConstraint.isActive = true
-            }
-            DispatchQueue.main.async {
-                self.todoView.alphaValue = 0
-            }
-        }
+        setVisibility(shown: Defaults.todo.userEnabled, ofView: todoView, withConstraint: todoViewHeightConstraint, animated: animated)
     }
     
     func initializeToggles() {
@@ -633,12 +617,28 @@ class SettingsViewController: NSViewController {
             setToggleStatesForCycleSizeCheckboxes()
         }
         
-        animateChanges(animated: animated) {
-            cycleSizesView.isHidden = !showOptionsView
-            cycleSizesViewHeightConstraint.isActive = !showOptionsView
-        }
+        setVisibility(shown: showOptionsView, ofView: cycleSizesView, withConstraint: cycleSizesViewHeightConstraint, animated: animated)
     }
 
+    private func setVisibility(shown: Bool, ofView view: NSView, withConstraint constraint: NSLayoutConstraint, animated: Bool) {
+        
+        if shown {
+            view.isHidden = false
+            constraint.isActive = false
+            animateChanges(animated: animated) {
+                view.animator().alphaValue = 1
+            }
+        } else {
+            animateChanges(animated: animated) {
+                view.isHidden = true
+                constraint.isActive = true
+            }
+            DispatchQueue.main.async {
+                view.alphaValue = 0
+            }
+        }
+    }
+    
     private func animateChanges(animated: Bool, block: () -> Void) {
         if animated {
             view.layoutSubtreeIfNeeded()
