@@ -573,10 +573,22 @@ class SettingsViewController: NSViewController {
     }
     
     private func showHideTodoModeSettings(animated: Bool) {
-        animateChanges(animated: animated) {
-            let isEnabled = Defaults.todo.userEnabled
-            todoView.isHidden = !isEnabled
-            todoViewHeightConstraint.isActive = !isEnabled
+        let show = Defaults.todo.userEnabled
+        
+        if show {
+            todoView.isHidden = false
+            todoViewHeightConstraint.isActive = false
+            animateChanges(animated: animated) {
+                todoView.animator().alphaValue = 1
+            }
+        } else {
+            animateChanges(animated: animated) {
+                todoView.isHidden = true
+                todoViewHeightConstraint.isActive = true
+            }
+            DispatchQueue.main.async {
+                self.todoView.alphaValue = 0
+            }
         }
     }
     
@@ -629,7 +641,8 @@ class SettingsViewController: NSViewController {
 
     private func animateChanges(animated: Bool, block: () -> Void) {
         if animated {
-            NSAnimationContext.runAnimationGroup({context in
+            view.layoutSubtreeIfNeeded()
+            NSAnimationContext.runAnimationGroup({ context in
                 context.duration = 0.3
                 context.allowsImplicitAnimation = true
                 
