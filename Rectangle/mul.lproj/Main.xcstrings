@@ -42301,6 +42301,9 @@
         }
       }
     },
+    "Update Available…" : {
+      "extractionState" : "manual"
+    },
     "uQy-DD-JDr.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Rectangle\"; ObjectID = \"uQy-DD-JDr\";",
       "extractionState" : "extracted_with_value",

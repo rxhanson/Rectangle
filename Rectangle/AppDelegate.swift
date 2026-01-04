@@ -19,7 +19,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
-    static let updaterController = SPUStandardUpdaterController(updaterDelegate: nil, userDriverDelegate: nil)
+    var updaterController: SPUStandardUpdaterController!
+    var hasPendingUpdate = false {
+        didSet {
+            Notification.Name.updateAvailability.post()
+        }
+    }
 
     private var shortcutManager: ShortcutManager!
     private var windowManager: WindowManager!
@@ -37,7 +42,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var unauthorizedMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
     @IBOutlet weak var viewLoggingMenuItem: NSMenuItem!
+    @IBOutlet weak var updatesMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
+    
+    static var instance: AppDelegate {
+        NSApp.delegate as! AppDelegate
+    }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         Defaults.loadFromSupportDir()
@@ -66,6 +76,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
  
+        updaterController = SPUStandardUpdaterController(updaterDelegate: nil, userDriverDelegate: self)
+        
         checkAutoCheckForUpdates()
         
         Notification.Name.configImported.onPost(using: { _ in
@@ -114,7 +126,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func checkAutoCheckForUpdates() {
-        Self.updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
+        updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
     
     func accessibilityTrusted() {
@@ -252,7 +264,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
-        Self.updaterController.checkForUpdates(sender)
+        updaterController.checkForUpdates(sender)
     }
     
     @IBAction func authorizeAccessibility(_ sender: Any) {
@@ -601,5 +613,27 @@ extension AppDelegate {
                 }
             }
         }
+    }
+}
+
+extension AppDelegate: SPUStandardUserDriverDelegate {
+    
+    var supportsGentleScheduledUpdateReminders: Bool {
+        true
+    }
+
+    func standardUserDriverShouldHandleShowingScheduledUpdate(_ update: SUAppcastItem, andInImmediateFocus immediateFocus: Bool) -> Bool {
+        if immediateFocus {
+            return true
+        }
+        
+        self.hasPendingUpdate = true
+        updatesMenuItem.title = "Update Available…".localized
+        return false
+    }
+    
+    func standardUserDriverWillFinishUpdateSession() {
+        self.hasPendingUpdate = false
+        updatesMenuItem.title = "Check for Updates…".localized(key: "HIK-3r-i7E.title")
     }
 }
