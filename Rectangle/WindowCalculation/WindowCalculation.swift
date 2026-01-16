@@ -153,6 +153,7 @@ class WindowCalculationFactory {
     static let lastFourthCalculation = LastFourthCalculation()
     static let firstThreeFourthsCalculation = FirstThreeFourthsCalculation()
     static let lastThreeFourthsCalculation = LastThreeFourthsCalculation()
+    static let centerThreeFourthsCalculation = CenterThreeFourthsCalculation()
     static let topLeftSixthCalculation = TopLeftSixthCalculation()
     static let topCenterSixthCalculation = TopCenterSixthCalculation()
     static let topRightSixthCalculation = TopRightSixthCalculation()
@@ -220,6 +221,7 @@ class WindowCalculationFactory {
      .lastFourth: lastFourthCalculation,
      .firstThreeFourths: firstThreeFourthsCalculation,
      .lastThreeFourths: lastThreeFourthsCalculation,
+     .centerThreeFourths: centerThreeFourthsCalculation,
      .topLeftSixth: topLeftSixthCalculation,
      .topCenterSixth: topCenterSixthCalculation,
      .topRightSixth: topRightSixthCalculation,
@@ -260,4 +262,30 @@ class WindowCalculationFactory {
      .rightTodo: rightTodoCalculation
         //     .restore: nil
     ]
+}
+
+
+class CenterThreeFourthsCalculation: WindowCalculation {
+    
+    override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        let visibleFrame = params.visibleFrameOfScreen
+        var rect = visibleFrame
+        
+        if visibleFrame.isLandscape {
+            // Landscape: 75% Width, 100% Height
+            rect.size.width = floor(visibleFrame.width * 0.75)
+            rect.size.height = floor(visibleFrame.height)
+        } else {
+            // Portrait: 100% Width, 75% Height
+            rect.size.width = floor(visibleFrame.width)
+            rect.size.height = floor(visibleFrame.height * 0.75)
+        }
+        
+        // Center the rect
+        rect.origin.x = visibleFrame.minX + floor((visibleFrame.width - rect.width) / 2.0)
+        rect.origin.y = visibleFrame.minY + floor((visibleFrame.height - rect.height) / 2.0)
+        
+        return RectResult(rect)
+    }
+    
 }

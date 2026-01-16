@@ -124,6 +124,34 @@ class PrefsViewController: NSViewController {
         subscribeToAllowAnyShortcutToggle()
         
         additionalShortcutsStackView.isHidden = true
+        
+        addCenterThreeFourthsShortcut()
+    }
+    
+    private func addCenterThreeFourthsShortcut() {
+        let label = NSTextField(labelWithString: "Center Three Fourths")
+        label.alignment = .right
+        
+        let shortcutView = MASShortcutView()
+        
+        let rowStack = NSStackView(views: [label, shortcutView])
+        rowStack.orientation = .horizontal
+        rowStack.distribution = .fill
+        rowStack.spacing = 20 // Matches typical spacing
+        
+        // Ensure consistent width for the label so alignment looks good (optional, but good for polish)
+        // Since I can't easily see existing constraints, I'll rely on stack view.
+        
+        additionalShortcutsStackView.addArrangedSubview(rowStack)
+        
+        // Shortcut view needs width constraint usually, or it might collapse
+        shortcutView.translatesAutoresizingMaskIntoConstraints = false
+        shortcutView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        shortcutView.heightAnchor.constraint(equalToConstant: 19).isActive = true
+
+
+        actionsToViews[.centerThreeFourths] = shortcutView
+        shortcutView.setAssociatedUserDefaultsKey(WindowAction.centerThreeFourths.name, withTransformerName: MASDictionaryTransformerName)
     }
     
     @IBAction func toggleShowMore(_ sender: NSButton) {

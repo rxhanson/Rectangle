@@ -94,7 +94,8 @@ enum WindowAction: Int, Codable {
     halveWidthLeft = 78,
     halveWidthRight = 79,
     largerWidth = 80,
-    smallerWidth = 81
+    smallerWidth = 81,
+    centerThreeFourths = 82
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -116,6 +117,7 @@ enum WindowAction: Int, Codable {
                          doubleHeightUp, doubleHeightDown, doubleWidthLeft, doubleWidthRight,
                          halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
                          tileAll, cascadeAll,
+                         centerThreeFourths,
                          leftTodo, rightTodo,
                          cascadeActiveApp
     ]
@@ -230,6 +232,7 @@ enum WindowAction: Int, Codable {
         case .centerProminently: return "centerProminently"
         case .largerWidth: return "largerWidth"
         case .smallerWidth: return "smallerWidth"
+        case .centerThreeFourths: return "centerThreeFourths"
         }
     }
 
@@ -368,6 +371,8 @@ enum WindowAction: Int, Codable {
             return nil
         case .centerProminently, .largerWidth, .smallerWidth:
             return nil
+        case .centerThreeFourths:
+            return "Center Three Fourths"
         }
 
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
@@ -544,6 +549,7 @@ enum WindowAction: Int, Codable {
         case .centerProminently: return NSImage()
         case .largerWidth: return NSImage()
         case .smallerWidth: return NSImage()
+        case .centerThreeFourths: return NSImage()
         }
     }
 
@@ -577,6 +583,8 @@ enum WindowAction: Int, Codable {
 		 	.doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
 		 	.halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
             .leftTodo, .rightTodo:
+            return .both
+        case .centerThreeFourths:
             return .both
         case .moveUp, .moveDown:
             return Defaults.resizeOnDirectionalMove.enabled ? .vertical : .none;
