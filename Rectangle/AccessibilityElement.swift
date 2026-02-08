@@ -378,8 +378,14 @@ extension AccessibilityElement {
         return AccessibilityElement(pid).windowElements?.first { $0.windowId == windowId }
     }
     
+    private static let excludedProcessNames: Set<String> = ["Dock", "WindowManager", "Notification Center"]
+
     static func getAllWindowElements() -> [AccessibilityElement] {
-        return WindowUtil.getWindowList().uniqueMap { $0.pid }.compactMap { AccessibilityElement($0).windowElements }.flatMap { $0 }
+        return WindowUtil.getWindowList()
+            .filter { !excludedProcessNames.contains($0.processName ?? "") }
+            .uniqueMap { $0.pid }
+            .compactMap { AccessibilityElement($0).windowElements }
+            .flatMap { $0 }
     }
 }
 
