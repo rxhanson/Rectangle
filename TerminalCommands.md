@@ -31,7 +31,6 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Ignore specific drag to snap areas](#ignore-specific-drag-to-snap-areas)
 - [Disabling gaps when maximizing](#disabling-gaps-when-maximizing)
 - [Enabling snap areas for sixths](#enabling-snap-areas-for-sixths)
-- [Enabling snap areas for eighths](#enabling-snap-areas-for-eighths)
 - [Move cursor with window](#move-cursor-with-window)
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
@@ -458,16 +457,6 @@ defaults write com.knollsoft.Rectangle sixthsSnapArea -bool true
 ```
 
 Once enabled, you can drag a window to the corner, then move it along the edge towards the thirds area to snap to a sixth.
-
-## Enabling snap areas for eighths
-
-To enable snap areas for eighths, execute:
-
-```bash
-defaults write com.knollsoft.Rectangle eighthsSnapArea -bool true
-```
-
-Once enabled, you can drag a window to the top or bottom edge, then move it along the edge to snap to an eighth (4x2 grid). This is particularly useful for ultra-wide monitors.
 
 ## Move cursor with window
 
