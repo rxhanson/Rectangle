@@ -80,6 +80,11 @@ class SnapAreaModel {
             setLandscape(directional: .t, snapAreaConfig: SnapAreaConfig(compound: .topSixths))
             setLandscape(directional: .b, snapAreaConfig: SnapAreaConfig(compound: .bottomSixths))
         }
+
+        if Defaults.eighthsSnapArea.userEnabled {
+            setLandscape(directional: .t, snapAreaConfig: SnapAreaConfig(compound: .topEighths))
+            setLandscape(directional: .b, snapAreaConfig: SnapAreaConfig(compound: .bottomEighths))
+        }
         
         let ignoredSnapAreas = SnapAreaOption(rawValue: Defaults.ignoredSnapAreas.value)
         guard ignoredSnapAreas.rawValue > 0 else { return }

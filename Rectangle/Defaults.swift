@@ -76,6 +76,7 @@ class Defaults {
     static let shortEdgeSnapAreaSize = FloatDefault(key: "shortEdgeSnapAreaSize", defaultValue: 145)
     static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
     static let sixthsSnapArea = OptionalBoolDefault(key: "sixthsSnapArea")
+    static let eighthsSnapArea = OptionalBoolDefault(key: "eighthsSnapArea")
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
     static let dragFromStage = OptionalBoolDefault(key: "dragFromStage")
     static let alwaysAccountForStage = OptionalBoolDefault(key: "alwaysAccountForStage")
@@ -160,6 +161,7 @@ class Defaults {
         shortEdgeSnapAreaSize,
         cascadeAllDeltaSize,
         sixthsSnapArea,
+        eighthsSnapArea,
         stageSize,
         dragFromStage,
         alwaysAccountForStage,
