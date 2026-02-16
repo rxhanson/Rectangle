@@ -16,6 +16,8 @@ struct SnapArea: Equatable {
 
 class SnappingManager {
     
+    private let filterLock = NSLock()
+    
     private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", 
                                                                                       "com.mathworks.matlab",
                                                                                       "com.live2d.cubism.CECubismEditorApp",
@@ -54,14 +56,19 @@ class SnappingManager {
         registerWorkspaceChangeNote()
         
         Notification.Name.windowSnapping.onPost { notification in
-            if let enabled = notification.object as? Bool {
-                self.allowListening = enabled
+            let enabled = notification.object as? Bool
+            DispatchQueue.main.async {
+                if let enabled = enabled {
+                    self.allowListening = enabled
+                }
+                self.toggleListening()
             }
-            self.toggleListening()
         }
         Notification.Name.missionControlDragging.onPost { notification in
-            self.stopEventMonitor()
-            self.startEventMonitor()
+            DispatchQueue.main.async {
+                self.stopEventMonitor()
+                self.startEventMonitor()
+            }
         }
         Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
     }
@@ -153,6 +160,8 @@ class SnappingManager {
     }
     
     func filter(event: NSEvent) -> Bool {
+        filterLock.lock()
+        defer { filterLock.unlock() }
         switch event.type {
         case .leftMouseUp:
             dragPrevY = nil
