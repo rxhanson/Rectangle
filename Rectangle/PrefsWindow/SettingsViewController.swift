@@ -285,6 +285,23 @@ class SettingsViewController: NSViewController {
             let bottomVerticalTwoThirdsLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Two Thirds", tableName: "Main", value: "", comment: ""))
             bottomVerticalTwoThirdsLabel.alignment = .right
 
+            let topLeftEighthLabel = NSTextField(labelWithString: NSLocalizedString("Top Left Eighth", tableName: "Main", value: "", comment: ""))
+            topLeftEighthLabel.alignment = .right
+            let topCenterLeftEighthLabel = NSTextField(labelWithString: NSLocalizedString("Top Center Left Eighth", tableName: "Main", value: "", comment: ""))
+            topCenterLeftEighthLabel.alignment = .right
+            let topCenterRightEighthLabel = NSTextField(labelWithString: NSLocalizedString("Top Center Right Eighth", tableName: "Main", value: "", comment: ""))
+            topCenterRightEighthLabel.alignment = .right
+            let topRightEighthLabel = NSTextField(labelWithString: NSLocalizedString("Top Right Eighth", tableName: "Main", value: "", comment: ""))
+            topRightEighthLabel.alignment = .right
+            let bottomLeftEighthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Left Eighth", tableName: "Main", value: "", comment: ""))
+            bottomLeftEighthLabel.alignment = .right
+            let bottomCenterLeftEighthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Center Left Eighth", tableName: "Main", value: "", comment: ""))
+            bottomCenterLeftEighthLabel.alignment = .right
+            let bottomCenterRightEighthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Center Right Eighth", tableName: "Main", value: "", comment: ""))
+            bottomCenterRightEighthLabel.alignment = .right
+            let bottomRightEighthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Right Eighth", tableName: "Main", value: "", comment: ""))
+            bottomRightEighthLabel.alignment = .right
+
             largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             widthStepLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -293,6 +310,14 @@ class SettingsViewController: NSViewController {
             bottomVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
             topVerticalTwoThirdsLabel.translatesAutoresizingMaskIntoConstraints = false
             bottomVerticalTwoThirdsLabel.translatesAutoresizingMaskIntoConstraints = false
+            topLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            topCenterLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            topCenterRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            topRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomCenterLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomCenterRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
+            bottomRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
 
             let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
@@ -302,6 +327,15 @@ class SettingsViewController: NSViewController {
             let bottomVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let topVerticalTwoThirdsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let bottomVerticalTwoThirdsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            let topLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topCenterLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topCenterRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomCenterLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomCenterRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
             let widthStepField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             widthStepField.stringValue = String(Int(Defaults.widthStepSize.value))
@@ -325,6 +359,15 @@ class SettingsViewController: NSViewController {
             topVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
             bottomVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
 
+            topLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
+            topCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
+            topCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
+            topRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topRightEighth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomRightEighth.name, withTransformerName: MASDictionaryTransformerName)
+
             if Defaults.allowAnyShortcut.enabled {
                 let passThroughValidator = PassthroughShortcutValidator()
                 largerWidthShortcutView.shortcutValidator = passThroughValidator
@@ -334,6 +377,14 @@ class SettingsViewController: NSViewController {
                 bottomVerticalThirdShortcutView.shortcutValidator = passThroughValidator
                 topVerticalTwoThirdsShortcutView.shortcutValidator = passThroughValidator
                 bottomVerticalTwoThirdsShortcutView.shortcutValidator = passThroughValidator
+                topLeftEighthShortcutView.shortcutValidator = passThroughValidator
+                topCenterLeftEighthShortcutView.shortcutValidator = passThroughValidator
+                topCenterRightEighthShortcutView.shortcutValidator = passThroughValidator
+                topRightEighthShortcutView.shortcutValidator = passThroughValidator
+                bottomLeftEighthShortcutView.shortcutValidator = passThroughValidator
+                bottomCenterLeftEighthShortcutView.shortcutValidator = passThroughValidator
+                bottomCenterRightEighthShortcutView.shortcutValidator = passThroughValidator
+                bottomRightEighthShortcutView.shortcutValidator = passThroughValidator
             }
 
             let largerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
@@ -363,6 +414,38 @@ class SettingsViewController: NSViewController {
             let bottomVerticalTwoThirdsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             bottomVerticalTwoThirdsIcon.image = WindowAction.bottomVerticalTwoThirds.image
             bottomVerticalTwoThirdsIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let topLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topLeftEighthIcon.image = WindowAction.topLeftEighth.image
+            topLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let topCenterLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topCenterLeftEighthIcon.image = WindowAction.topCenterLeftEighth.image
+            topCenterLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let topCenterRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topCenterRightEighthIcon.image = WindowAction.topCenterRightEighth.image
+            topCenterRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let topRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topRightEighthIcon.image = WindowAction.topRightEighth.image
+            topRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let bottomLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomLeftEighthIcon.image = WindowAction.bottomLeftEighth.image
+            bottomLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let bottomCenterLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomCenterLeftEighthIcon.image = WindowAction.bottomCenterLeftEighth.image
+            bottomCenterLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let bottomCenterRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomCenterRightEighthIcon.image = WindowAction.bottomCenterRightEighth.image
+            bottomCenterRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let bottomRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomRightEighthIcon.image = WindowAction.bottomRightEighth.image
+            bottomRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
 
             let largerWidthLabelStack = NSStackView()
             largerWidthLabelStack.orientation = .horizontal
@@ -412,6 +495,62 @@ class SettingsViewController: NSViewController {
             bottomVerticalTwoThirdsLabelStack.spacing = 8
             bottomVerticalTwoThirdsLabelStack.addArrangedSubview(bottomVerticalTwoThirdsLabel)
             bottomVerticalTwoThirdsLabelStack.addArrangedSubview(bottomVerticalTwoThirdsIcon)
+
+            let topLeftEighthLabelStack = NSStackView()
+            topLeftEighthLabelStack.orientation = .horizontal
+            topLeftEighthLabelStack.alignment = .centerY
+            topLeftEighthLabelStack.spacing = 8
+            topLeftEighthLabelStack.addArrangedSubview(topLeftEighthLabel)
+            topLeftEighthLabelStack.addArrangedSubview(topLeftEighthIcon)
+
+            let topCenterLeftEighthLabelStack = NSStackView()
+            topCenterLeftEighthLabelStack.orientation = .horizontal
+            topCenterLeftEighthLabelStack.alignment = .centerY
+            topCenterLeftEighthLabelStack.spacing = 8
+            topCenterLeftEighthLabelStack.addArrangedSubview(topCenterLeftEighthLabel)
+            topCenterLeftEighthLabelStack.addArrangedSubview(topCenterLeftEighthIcon)
+
+            let topCenterRightEighthLabelStack = NSStackView()
+            topCenterRightEighthLabelStack.orientation = .horizontal
+            topCenterRightEighthLabelStack.alignment = .centerY
+            topCenterRightEighthLabelStack.spacing = 8
+            topCenterRightEighthLabelStack.addArrangedSubview(topCenterRightEighthLabel)
+            topCenterRightEighthLabelStack.addArrangedSubview(topCenterRightEighthIcon)
+
+            let topRightEighthLabelStack = NSStackView()
+            topRightEighthLabelStack.orientation = .horizontal
+            topRightEighthLabelStack.alignment = .centerY
+            topRightEighthLabelStack.spacing = 8
+            topRightEighthLabelStack.addArrangedSubview(topRightEighthLabel)
+            topRightEighthLabelStack.addArrangedSubview(topRightEighthIcon)
+
+            let bottomLeftEighthLabelStack = NSStackView()
+            bottomLeftEighthLabelStack.orientation = .horizontal
+            bottomLeftEighthLabelStack.alignment = .centerY
+            bottomLeftEighthLabelStack.spacing = 8
+            bottomLeftEighthLabelStack.addArrangedSubview(bottomLeftEighthLabel)
+            bottomLeftEighthLabelStack.addArrangedSubview(bottomLeftEighthIcon)
+
+            let bottomCenterLeftEighthLabelStack = NSStackView()
+            bottomCenterLeftEighthLabelStack.orientation = .horizontal
+            bottomCenterLeftEighthLabelStack.alignment = .centerY
+            bottomCenterLeftEighthLabelStack.spacing = 8
+            bottomCenterLeftEighthLabelStack.addArrangedSubview(bottomCenterLeftEighthLabel)
+            bottomCenterLeftEighthLabelStack.addArrangedSubview(bottomCenterLeftEighthIcon)
+
+            let bottomCenterRightEighthLabelStack = NSStackView()
+            bottomCenterRightEighthLabelStack.orientation = .horizontal
+            bottomCenterRightEighthLabelStack.alignment = .centerY
+            bottomCenterRightEighthLabelStack.spacing = 8
+            bottomCenterRightEighthLabelStack.addArrangedSubview(bottomCenterRightEighthLabel)
+            bottomCenterRightEighthLabelStack.addArrangedSubview(bottomCenterRightEighthIcon)
+
+            let bottomRightEighthLabelStack = NSStackView()
+            bottomRightEighthLabelStack.orientation = .horizontal
+            bottomRightEighthLabelStack.alignment = .centerY
+            bottomRightEighthLabelStack.spacing = 8
+            bottomRightEighthLabelStack.addArrangedSubview(bottomRightEighthLabel)
+            bottomRightEighthLabelStack.addArrangedSubview(bottomRightEighthIcon)
 
             let largerWidthRow = NSStackView()
             largerWidthRow.orientation = .horizontal
@@ -469,6 +608,62 @@ class SettingsViewController: NSViewController {
             bottomVerticalTwoThirdsRow.addArrangedSubview(bottomVerticalTwoThirdsLabelStack)
             bottomVerticalTwoThirdsRow.addArrangedSubview(bottomVerticalTwoThirdsShortcutView)
 
+            let topLeftEighthRow = NSStackView()
+            topLeftEighthRow.orientation = .horizontal
+            topLeftEighthRow.alignment = .centerY
+            topLeftEighthRow.spacing = 18
+            topLeftEighthRow.addArrangedSubview(topLeftEighthLabelStack)
+            topLeftEighthRow.addArrangedSubview(topLeftEighthShortcutView)
+
+            let topCenterLeftEighthRow = NSStackView()
+            topCenterLeftEighthRow.orientation = .horizontal
+            topCenterLeftEighthRow.alignment = .centerY
+            topCenterLeftEighthRow.spacing = 18
+            topCenterLeftEighthRow.addArrangedSubview(topCenterLeftEighthLabelStack)
+            topCenterLeftEighthRow.addArrangedSubview(topCenterLeftEighthShortcutView)
+
+            let topCenterRightEighthRow = NSStackView()
+            topCenterRightEighthRow.orientation = .horizontal
+            topCenterRightEighthRow.alignment = .centerY
+            topCenterRightEighthRow.spacing = 18
+            topCenterRightEighthRow.addArrangedSubview(topCenterRightEighthLabelStack)
+            topCenterRightEighthRow.addArrangedSubview(topCenterRightEighthShortcutView)
+
+            let topRightEighthRow = NSStackView()
+            topRightEighthRow.orientation = .horizontal
+            topRightEighthRow.alignment = .centerY
+            topRightEighthRow.spacing = 18
+            topRightEighthRow.addArrangedSubview(topRightEighthLabelStack)
+            topRightEighthRow.addArrangedSubview(topRightEighthShortcutView)
+
+            let bottomLeftEighthRow = NSStackView()
+            bottomLeftEighthRow.orientation = .horizontal
+            bottomLeftEighthRow.alignment = .centerY
+            bottomLeftEighthRow.spacing = 18
+            bottomLeftEighthRow.addArrangedSubview(bottomLeftEighthLabelStack)
+            bottomLeftEighthRow.addArrangedSubview(bottomLeftEighthShortcutView)
+
+            let bottomCenterLeftEighthRow = NSStackView()
+            bottomCenterLeftEighthRow.orientation = .horizontal
+            bottomCenterLeftEighthRow.alignment = .centerY
+            bottomCenterLeftEighthRow.spacing = 18
+            bottomCenterLeftEighthRow.addArrangedSubview(bottomCenterLeftEighthLabelStack)
+            bottomCenterLeftEighthRow.addArrangedSubview(bottomCenterLeftEighthShortcutView)
+
+            let bottomCenterRightEighthRow = NSStackView()
+            bottomCenterRightEighthRow.orientation = .horizontal
+            bottomCenterRightEighthRow.alignment = .centerY
+            bottomCenterRightEighthRow.spacing = 18
+            bottomCenterRightEighthRow.addArrangedSubview(bottomCenterRightEighthLabelStack)
+            bottomCenterRightEighthRow.addArrangedSubview(bottomCenterRightEighthShortcutView)
+
+            let bottomRightEighthRow = NSStackView()
+            bottomRightEighthRow.orientation = .horizontal
+            bottomRightEighthRow.alignment = .centerY
+            bottomRightEighthRow.spacing = 18
+            bottomRightEighthRow.addArrangedSubview(bottomRightEighthLabelStack)
+            bottomRightEighthRow.addArrangedSubview(bottomRightEighthShortcutView)
+
             mainStackView.addArrangedSubview(headerLabel)
             mainStackView.setCustomSpacing(10, after: headerLabel)
             mainStackView.addArrangedSubview(largerWidthRow)
@@ -479,6 +674,14 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(bottomVerticalThirdRow)
             mainStackView.addArrangedSubview(topVerticalTwoThirdsRow)
             mainStackView.addArrangedSubview(bottomVerticalTwoThirdsRow)
+            mainStackView.addArrangedSubview(topLeftEighthRow)
+            mainStackView.addArrangedSubview(topCenterLeftEighthRow)
+            mainStackView.addArrangedSubview(topCenterRightEighthRow)
+            mainStackView.addArrangedSubview(topRightEighthRow)
+            mainStackView.addArrangedSubview(bottomLeftEighthRow)
+            mainStackView.addArrangedSubview(bottomCenterLeftEighthRow)
+            mainStackView.addArrangedSubview(bottomCenterRightEighthRow)
+            mainStackView.addArrangedSubview(bottomRightEighthRow)
 
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
@@ -489,6 +692,14 @@ class SettingsViewController: NSViewController {
                 middleVerticalThirdLabel.widthAnchor.constraint(equalTo: bottomVerticalThirdLabel.widthAnchor),
                 bottomVerticalThirdLabel.widthAnchor.constraint(equalTo: topVerticalTwoThirdsLabel.widthAnchor),
                 topVerticalTwoThirdsLabel.widthAnchor.constraint(equalTo: bottomVerticalTwoThirdsLabel.widthAnchor),
+                bottomVerticalTwoThirdsLabel.widthAnchor.constraint(equalTo: topLeftEighthLabel.widthAnchor),
+                topLeftEighthLabel.widthAnchor.constraint(equalTo: topCenterLeftEighthLabel.widthAnchor),
+                topCenterLeftEighthLabel.widthAnchor.constraint(equalTo: topCenterRightEighthLabel.widthAnchor),
+                topCenterRightEighthLabel.widthAnchor.constraint(equalTo: topRightEighthLabel.widthAnchor),
+                topRightEighthLabel.widthAnchor.constraint(equalTo: bottomLeftEighthLabel.widthAnchor),
+                bottomLeftEighthLabel.widthAnchor.constraint(equalTo: bottomCenterLeftEighthLabel.widthAnchor),
+                bottomCenterLeftEighthLabel.widthAnchor.constraint(equalTo: bottomCenterRightEighthLabel.widthAnchor),
+                bottomCenterRightEighthLabel.widthAnchor.constraint(equalTo: bottomRightEighthLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
@@ -498,6 +709,14 @@ class SettingsViewController: NSViewController {
                 bottomVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 topVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topCenterLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topCenterRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomCenterLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomCenterRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
