@@ -35,7 +35,6 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
-- [Configure half split ratios](#configure-half-split-ratios)
 
 ## Keyboard Shortcuts
 
@@ -518,17 +517,3 @@ By default, display order is left-to-right, line-by-line. You can change this to
 ```bash
 defaults write com.knollsoft.Rectangle screensOrderedByX -int 1
 ```
-
-## Configure half split ratios
-
-By default, left/right/top/bottom half actions split the screen 50/50. You can configure a custom split ratio (1–99) via the Extra Settings popover in the General tab of the preferences window, or via terminal:
-
-```bash
-# Set left half to 60% width (right half will be 40%)
-defaults write com.knollsoft.Rectangle horizontalSplitRatio -float 60
-
-# Set top half to 60% height (bottom half will be 40%)
-defaults write com.knollsoft.Rectangle verticalSplitRatio -float 60
-```
-
-The default value for both is 50 (50/50 split). The drag-to-snap footprint preview also reflects the configured ratio.

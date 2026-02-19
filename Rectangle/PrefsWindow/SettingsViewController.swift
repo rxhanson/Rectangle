@@ -318,6 +318,7 @@ class SettingsViewController: NSViewController {
 
             let splitRatioHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Half Split Ratios", tableName: "Main", value: "", comment: ""))
             splitRatioHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            splitRatioHeaderLabel.alignment = .center
             splitRatioHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
 
             let hSplitLabel = NSTextField(labelWithString: NSLocalizedString("Horizontal (L/R, %)", tableName: "Main", value: "", comment: ""))
@@ -558,7 +559,9 @@ class SettingsViewController: NSViewController {
                 bottomVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 hSplitField.widthAnchor.constraint(equalToConstant: 160),
                 vSplitField.widthAnchor.constraint(equalToConstant: 160),
-                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
+                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
+                hSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
+                vSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
             let containerView = NSView()
