@@ -19,6 +19,10 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcul
         return calculateRepeatedRect(params)
     }
     
+    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
+        return calculateFractionalRect(params, fraction: 1.0 - Defaults.verticalSplitRatio.value / 100.0)
+    }
+
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
 

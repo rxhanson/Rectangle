@@ -33,16 +33,22 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         
     }
     
+    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
+        let ratio = Defaults.horizontalSplitRatio.value / 100.0
+        let fraction = params.action == .rightHalf ? 1.0 - ratio : ratio
+        return calculateFractionalRect(params, fraction: fraction)
+    }
+
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
 
         var rect = visibleFrameOfScreen
-        
+
         rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(fraction))
         if params.action == .rightHalf {
             rect.origin.x = visibleFrameOfScreen.maxX - rect.width
         }
-        
+
         return RectResult(rect)
     }
 
@@ -96,15 +102,15 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
 
     // Used to draw box for snapping
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
+        let ratio = CGFloat(Defaults.horizontalSplitRatio.value / 100.0)
+        var rect = params.visibleFrameOfScreen
+        let leftWidth = floor(rect.width * ratio)
         if params.action == .leftHalf {
-            var oneHalfRect = params.visibleFrameOfScreen
-            oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
-            return RectResult(oneHalfRect)
+            rect.size.width = leftWidth
         } else {
-            var oneHalfRect = params.visibleFrameOfScreen
-            oneHalfRect.size.width = floor(oneHalfRect.width / 2.0)
-            oneHalfRect.origin.x += oneHalfRect.size.width
-            return RectResult(oneHalfRect)
+            rect.size.width = rect.width - leftWidth
+            rect.origin.x += leftWidth
         }
+        return RectResult(rect)
     }
 }
