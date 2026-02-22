@@ -776,7 +776,7 @@ class SettingsViewController: NSViewController {
                 bottomCenterLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomCenterRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
+                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 hSplitField.widthAnchor.constraint(equalToConstant: 160),
                 vSplitField.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
