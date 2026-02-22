@@ -154,7 +154,7 @@ enum WindowAction: Int, Codable {
     // Determines where separators should be used in the menu
     var firstInGroup: Bool {
         switch self {
-        case .leftHalf, .topLeft, .firstThird, .maximize, .nextDisplay, .moveLeft, .firstFourth, .topLeftSixth:
+        case .leftHalf, .topLeft, .firstThird, .maximize, .nextDisplay, .moveLeft, .firstFourth, .topLeftSixth, .topLeftEighth:
             return true
         default:
             return false
@@ -386,9 +386,30 @@ enum WindowAction: Int, Codable {
             return nil
         case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
             return nil
-        case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
-                .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
-            return nil
+        case .topLeftEighth:
+            key = "topLeftEighth.title"
+            value = "Top Left Eighth"
+        case .topCenterLeftEighth:
+            key = "topCenterLeftEighth.title"
+            value = "Top Center Left Eighth"
+        case .topCenterRightEighth:
+            key = "topCenterRightEighth.title"
+            value = "Top Center Right Eighth"
+        case .topRightEighth:
+            key = "topRightEighth.title"
+            value = "Top Right Eighth"
+        case .bottomLeftEighth:
+            key = "bottomLeftEighth.title"
+            value = "Bottom Left Eighth"
+        case .bottomCenterLeftEighth:
+            key = "bottomCenterLeftEighth.title"
+            value = "Bottom Center Left Eighth"
+        case .bottomCenterRightEighth:
+            key = "bottomCenterRightEighth.title"
+            value = "Bottom Center Right Eighth"
+        case .bottomRightEighth:
+            key = "bottomRightEighth.title"
+            value = "Bottom Right Eighth"
         case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight, .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight:
             return nil
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp, .tileActiveApp:
@@ -429,9 +450,7 @@ enum WindowAction: Int, Codable {
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
-            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
-            // Eighths
-            .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth:
+            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
             return false
         default:
             return true
@@ -550,14 +569,14 @@ enum WindowAction: Int, Codable {
         case .topRightThird: return NSImage()
         case .bottomLeftThird: return NSImage()
         case .bottomRightThird: return NSImage()
-        case .topLeftEighth: return  NSImage()
-        case .topCenterLeftEighth: return  NSImage()
-        case .topCenterRightEighth: return  NSImage()
-        case .topRightEighth: return  NSImage()
-        case .bottomLeftEighth: return  NSImage()
-        case .bottomCenterLeftEighth: return  NSImage()
-        case .bottomCenterRightEighth: return  NSImage()
-        case .bottomRightEighth: return  NSImage()
+        case .topLeftEighth: return NSImage(imageLiteralResourceName: "tlEighthTemplate")
+        case .topCenterLeftEighth: return NSImage(imageLiteralResourceName: "ctlEighthTemplate")
+        case .topCenterRightEighth: return NSImage(imageLiteralResourceName: "ctrEighthTemplate")
+        case .topRightEighth: return NSImage(imageLiteralResourceName: "trEighthTemplate")
+        case .bottomLeftEighth: return NSImage(imageLiteralResourceName: "blEighthTemplate")
+        case .bottomCenterLeftEighth: return NSImage(imageLiteralResourceName: "cblEighthTemplate")
+        case .bottomCenterRightEighth: return NSImage(imageLiteralResourceName: "cbrEighthTemplate")
+        case .bottomRightEighth: return NSImage(imageLiteralResourceName: "brEighthTemplate")
         case .doubleHeightUp: return  NSImage()
         case .doubleHeightDown: return  NSImage()
         case .doubleWidthLeft: return  NSImage()
@@ -635,6 +654,7 @@ enum WindowAction: Int, Codable {
         switch self {
         case .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths: return .fourths
         case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
+        case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth: return .eighths
         case .moveUp, .moveDown, .moveLeft, .moveRight: return .move
         default: return nil
         }

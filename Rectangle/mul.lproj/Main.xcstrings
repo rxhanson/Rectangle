@@ -10363,6 +10363,9 @@
         }
       }
     },
+    "Bottom eighths from corners; thirds" : {
+
+    },
     "Bottom sixths from corners; thirds" : {
       "localizations" : {
         "ar" : {
@@ -16055,6 +16058,9 @@
           }
         }
       }
+    },
+    "Eighths" : {
+
     },
     "Enable Todo Mode" : {
       "localizations" : {
@@ -41104,6 +41110,9 @@
           }
         }
       }
+    },
+    "Top eighths from corners; maximize" : {
+
     },
     "Top screen edge tiling in macOS is now disabled" : {
       "extractionState" : "manual",
