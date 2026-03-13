@@ -534,10 +534,10 @@ enum WindowAction: Int, Codable {
             value = "Upper Middle Left Sixteenth"
         case .upperMiddleCenterLeftSixteenth:
             key = "upperMiddleCenterLeftSixteenth.title"
-            value = "Upper Mid Center Left 16th"
+            value = "Upper Middle Center Left Sixteenth"
         case .upperMiddleCenterRightSixteenth:
             key = "upperMiddleCenterRightSixteenth.title"
-            value = "Upper Mid Center Right 16th"
+            value = "Upper Middle Center Right Sixteenth"
         case .upperMiddleRightSixteenth:
             key = "upperMiddleRightSixteenth.title"
             value = "Upper Middle Right Sixteenth"
@@ -546,10 +546,10 @@ enum WindowAction: Int, Codable {
             value = "Lower Middle Left Sixteenth"
         case .lowerMiddleCenterLeftSixteenth:
             key = "lowerMiddleCenterLeftSixteenth.title"
-            value = "Lower Mid Center Left 16th"
+            value = "Lower Middle Center Left Sixteenth"
         case .lowerMiddleCenterRightSixteenth:
             key = "lowerMiddleCenterRightSixteenth.title"
-            value = "Lower Mid Center Right 16th"
+            value = "Lower Middle Center Right Sixteenth"
         case .lowerMiddleRightSixteenth:
             key = "lowerMiddleRightSixteenth.title"
             value = "Lower Middle Right Sixteenth"

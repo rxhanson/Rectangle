@@ -43,8 +43,8 @@ class MiddleLeftTwelfthCalculation: WindowCalculation, OrientationAware, Twelfth
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
-        rect.origin.y = visibleFrameOfScreen.minY + floor(visibleFrameOfScreen.height / 4.0)
-        rect.origin.x = visibleFrameOfScreen.minX
+        rect.origin.y = visibleFrameOfScreen.maxY - (2.0 * rect.height)
+        rect.origin.x = visibleFrameOfScreen.minX + rect.width
         return RectResult(rect, subAction: .middleLeftTwelfth)
     }
 }

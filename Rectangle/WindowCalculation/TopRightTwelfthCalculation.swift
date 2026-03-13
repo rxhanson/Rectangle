@@ -43,8 +43,8 @@ class TopRightTwelfthCalculation: WindowCalculation, OrientationAware, TwelfthsR
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
-        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
-        rect.origin.x = visibleFrameOfScreen.minX + floor(visibleFrameOfScreen.width / 3.0) * 2.0
+        rect.origin.y = visibleFrameOfScreen.maxY - (2.0 * rect.height)
+        rect.origin.x = visibleFrameOfScreen.minX
         return RectResult(rect, subAction: .topRightTwelfth)
     }
 }
