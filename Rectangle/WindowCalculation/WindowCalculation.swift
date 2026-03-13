@@ -190,6 +190,34 @@ class WindowCalculationFactory {
     static let bottomVerticalThirdCalculation = BottomVerticalThirdCalculation()
     static let topVerticalThirdCalculation = TopVerticalThirdCalculation()
     static let middleVerticalThirdCalculation = MiddleVerticalThirdCalculation()
+    static let topLeftTwelfthCalculation = TopLeftTwelfthCalculation()
+    static let topCenterLeftTwelfthCalculation = TopCenterLeftTwelfthCalculation()
+    static let topCenterRightTwelfthCalculation = TopCenterRightTwelfthCalculation()
+    static let topRightTwelfthCalculation = TopRightTwelfthCalculation()
+    static let middleLeftTwelfthCalculation = MiddleLeftTwelfthCalculation()
+    static let middleCenterLeftTwelfthCalculation = MiddleCenterLeftTwelfthCalculation()
+    static let middleCenterRightTwelfthCalculation = MiddleCenterRightTwelfthCalculation()
+    static let middleRightTwelfthCalculation = MiddleRightTwelfthCalculation()
+    static let bottomLeftTwelfthCalculation = BottomLeftTwelfthCalculation()
+    static let bottomCenterLeftTwelfthCalculation = BottomCenterLeftTwelfthCalculation()
+    static let bottomCenterRightTwelfthCalculation = BottomCenterRightTwelfthCalculation()
+    static let bottomRightTwelfthCalculation = BottomRightTwelfthCalculation()
+    static let topLeftSixteenthCalculation = TopLeftSixteenthCalculation()
+    static let topCenterLeftSixteenthCalculation = TopCenterLeftSixteenthCalculation()
+    static let topCenterRightSixteenthCalculation = TopCenterRightSixteenthCalculation()
+    static let topRightSixteenthCalculation = TopRightSixteenthCalculation()
+    static let upperMiddleLeftSixteenthCalculation = UpperMiddleLeftSixteenthCalculation()
+    static let upperMiddleCenterLeftSixteenthCalculation = UpperMiddleCenterLeftSixteenthCalculation()
+    static let upperMiddleCenterRightSixteenthCalculation = UpperMiddleCenterRightSixteenthCalculation()
+    static let upperMiddleRightSixteenthCalculation = UpperMiddleRightSixteenthCalculation()
+    static let lowerMiddleLeftSixteenthCalculation = LowerMiddleLeftSixteenthCalculation()
+    static let lowerMiddleCenterLeftSixteenthCalculation = LowerMiddleCenterLeftSixteenthCalculation()
+    static let lowerMiddleCenterRightSixteenthCalculation = LowerMiddleCenterRightSixteenthCalculation()
+    static let lowerMiddleRightSixteenthCalculation = LowerMiddleRightSixteenthCalculation()
+    static let bottomLeftSixteenthCalculation = BottomLeftSixteenthCalculation()
+    static let bottomCenterLeftSixteenthCalculation = BottomCenterLeftSixteenthCalculation()
+    static let bottomCenterRightSixteenthCalculation = BottomCenterRightSixteenthCalculation()
+    static let bottomRightSixteenthCalculation = BottomRightSixteenthCalculation()
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
@@ -273,7 +301,35 @@ class WindowCalculationFactory {
      .middleVerticalThird: middleVerticalThirdCalculation,
      .bottomVerticalThird: bottomVerticalThirdCalculation,
      .topVerticalTwoThirds: topVerticalTwoThirdsCalculation,
-     .bottomVerticalTwoThirds: bottomVerticalTwoThirdsCalculation
+     .bottomVerticalTwoThirds: bottomVerticalTwoThirdsCalculation,
+     .topLeftTwelfth: topLeftTwelfthCalculation,
+     .topCenterLeftTwelfth: topCenterLeftTwelfthCalculation,
+     .topCenterRightTwelfth: topCenterRightTwelfthCalculation,
+     .topRightTwelfth: topRightTwelfthCalculation,
+     .middleLeftTwelfth: middleLeftTwelfthCalculation,
+     .middleCenterLeftTwelfth: middleCenterLeftTwelfthCalculation,
+     .middleCenterRightTwelfth: middleCenterRightTwelfthCalculation,
+     .middleRightTwelfth: middleRightTwelfthCalculation,
+     .bottomLeftTwelfth: bottomLeftTwelfthCalculation,
+     .bottomCenterLeftTwelfth: bottomCenterLeftTwelfthCalculation,
+     .bottomCenterRightTwelfth: bottomCenterRightTwelfthCalculation,
+     .bottomRightTwelfth: bottomRightTwelfthCalculation,
+     .topLeftSixteenth: topLeftSixteenthCalculation,
+     .topCenterLeftSixteenth: topCenterLeftSixteenthCalculation,
+     .topCenterRightSixteenth: topCenterRightSixteenthCalculation,
+     .topRightSixteenth: topRightSixteenthCalculation,
+     .upperMiddleLeftSixteenth: upperMiddleLeftSixteenthCalculation,
+     .upperMiddleCenterLeftSixteenth: upperMiddleCenterLeftSixteenthCalculation,
+     .upperMiddleCenterRightSixteenth: upperMiddleCenterRightSixteenthCalculation,
+     .upperMiddleRightSixteenth: upperMiddleRightSixteenthCalculation,
+     .lowerMiddleLeftSixteenth: lowerMiddleLeftSixteenthCalculation,
+     .lowerMiddleCenterLeftSixteenth: lowerMiddleCenterLeftSixteenthCalculation,
+     .lowerMiddleCenterRightSixteenth: lowerMiddleCenterRightSixteenthCalculation,
+     .lowerMiddleRightSixteenth: lowerMiddleRightSixteenthCalculation,
+     .bottomLeftSixteenth: bottomLeftSixteenthCalculation,
+     .bottomCenterLeftSixteenth: bottomCenterLeftSixteenthCalculation,
+     .bottomCenterRightSixteenth: bottomCenterRightSixteenthCalculation,
+     .bottomRightSixteenth: bottomRightSixteenthCalculation
         //     .restore: nil
     ]
 }
