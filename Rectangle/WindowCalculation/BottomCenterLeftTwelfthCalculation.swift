@@ -44,7 +44,7 @@ class BottomCenterLeftTwelfthCalculation: WindowCalculation, OrientationAware, T
         rect.size.width = floor(visibleFrameOfScreen.width / 3.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
         rect.origin.y = visibleFrameOfScreen.minY
-        rect.origin.x = visibleFrameOfScreen.minX + rect.width
+        rect.origin.x = visibleFrameOfScreen.minX
         return RectResult(rect, subAction: .bottomCenterLeftTwelfth)
     }
 }
