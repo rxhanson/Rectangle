@@ -203,12 +203,14 @@ class PrefsViewController: NSViewController {
         labelStack.orientation = .horizontal
         labelStack.alignment = .centerY
         labelStack.distribution = .fill
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
 
         let row = NSStackView(views: [labelStack, shortcutView])
         row.orientation = .horizontal
         row.alignment = .centerY
         row.distribution = .fill
         row.spacing = 18
+        row.translatesAutoresizingMaskIntoConstraints = false
 
         actionsToViews[action] = shortcutView
         return row
@@ -221,8 +223,9 @@ class PrefsViewController: NSViewController {
     }
 
     private func subscribeToAllowAnyShortcutToggle() {
-        Notification.Name.allowAnyShortcut.onPost { notification in
-            guard let enabled = notification.object as? Bool else { return }
+        Notification.Name.allowAnyShortcut.onPost { [weak self] notification in
+            guard let self = self,
+                  let enabled = notification.object as? Bool else { return }
             let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
             self.actionsToViews.values.forEach { $0.shortcutValidator = validator }
         }
