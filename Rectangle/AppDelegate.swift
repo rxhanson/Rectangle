@@ -45,8 +45,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var updatesMenuItem: NSMenuItem!
     @IBOutlet weak var quitMenuItem: NSMenuItem!
     
-    var eighthsMenuItem: NSMenuItem?
-    
     static var instance: AppDelegate {
         NSApp.delegate as! AppDelegate
     }

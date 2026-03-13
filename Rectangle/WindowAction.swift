@@ -657,7 +657,7 @@ enum WindowAction: Int, Codable {
         case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
         case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth: return .eighths
         case .moveUp, .moveDown, .moveLeft, .moveRight: return .move
-        case .almostMaximize, .maximizeHeight, .larger, .smaller: return .size
+        case .almostMaximize, .maximizeHeight, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight: return .size
         default: return nil
         }
     }
