@@ -99,7 +99,8 @@ class Defaults {
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = OptionalBoolDefault(key: "screensOrderedByX")
     static let showEighthsInMenu = OptionalBoolDefault(key: "showEighthsInMenu")
-    
+    static let useCyclingShortcuts = BoolDefault(key: "useCyclingShortcuts")
+
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -183,7 +184,8 @@ class Defaults {
         systemWideMouseDown,
         systemWideMouseDownApps,
         screensOrderedByX,
-        showEighthsInMenu
+        showEighthsInMenu,
+        useCyclingShortcuts
     ]
 }
 
