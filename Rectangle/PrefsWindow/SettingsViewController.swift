@@ -748,6 +748,82 @@ class SettingsViewController: NSViewController {
             showEighthsCheckbox.imageHugsTitle = true
             
             mainStackView.addArrangedSubview(showEighthsCheckbox)
+
+            // Grid Positions (cycling shortcuts)
+            let gridHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Grid Positions", tableName: "Main", value: "", comment: ""))
+            gridHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            gridHeaderLabel.alignment = .center
+            gridHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let cyclingHintLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Press the shortcut repeatedly to cycle through all positions in the grid.", tableName: "Main", value: "", comment: ""))
+            cyclingHintLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            cyclingHintLabel.textColor = .secondaryLabelColor
+            cyclingHintLabel.alignment = .center
+            cyclingHintLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let twelfthsLabel = NSTextField(labelWithString: NSLocalizedString("Twelfths (4\u{00d7}3)", tableName: "Main", value: "", comment: ""))
+            twelfthsLabel.alignment = .right
+            twelfthsLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let sixteenthsLabel = NSTextField(labelWithString: NSLocalizedString("Sixteenths (4\u{00d7}4)", tableName: "Main", value: "", comment: ""))
+            sixteenthsLabel.alignment = .right
+            sixteenthsLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let twelfthsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let sixteenthsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            twelfthsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            sixteenthsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+
+            if Defaults.allowAnyShortcut.enabled {
+                let passThroughValidator = PassthroughShortcutValidator()
+                twelfthsShortcutView.shortcutValidator = passThroughValidator
+                sixteenthsShortcutView.shortcutValidator = passThroughValidator
+            }
+
+            let twelfthsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            twelfthsIcon.image = WindowAction.topLeftTwelfth.image
+            twelfthsIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let sixteenthsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            sixteenthsIcon.image = WindowAction.topLeftSixteenth.image
+            sixteenthsIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let twelfthsLabelStack = NSStackView()
+            twelfthsLabelStack.orientation = .horizontal
+            twelfthsLabelStack.alignment = .centerY
+            twelfthsLabelStack.spacing = 8
+            twelfthsLabelStack.addArrangedSubview(twelfthsLabel)
+            twelfthsLabelStack.addArrangedSubview(twelfthsIcon)
+
+            let sixteenthsLabelStack = NSStackView()
+            sixteenthsLabelStack.orientation = .horizontal
+            sixteenthsLabelStack.alignment = .centerY
+            sixteenthsLabelStack.spacing = 8
+            sixteenthsLabelStack.addArrangedSubview(sixteenthsLabel)
+            sixteenthsLabelStack.addArrangedSubview(sixteenthsIcon)
+
+            let twelfthsRow = NSStackView()
+            twelfthsRow.orientation = .horizontal
+            twelfthsRow.alignment = .centerY
+            twelfthsRow.spacing = 18
+            twelfthsRow.addArrangedSubview(twelfthsLabelStack)
+            twelfthsRow.addArrangedSubview(twelfthsShortcutView)
+
+            let sixteenthsRow = NSStackView()
+            sixteenthsRow.orientation = .horizontal
+            sixteenthsRow.alignment = .centerY
+            sixteenthsRow.spacing = 18
+            sixteenthsRow.addArrangedSubview(sixteenthsLabelStack)
+            sixteenthsRow.addArrangedSubview(sixteenthsShortcutView)
+
+            mainStackView.addArrangedSubview(gridHeaderLabel)
+            mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
+            mainStackView.addArrangedSubview(cyclingHintLabel)
+            mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
+            mainStackView.addArrangedSubview(twelfthsRow)
+            mainStackView.addArrangedSubview(sixteenthsRow)
+
             mainStackView.addArrangedSubview(splitRatioHeaderLabel)
             mainStackView.setCustomSpacing(10, after: splitRatioHeaderLabel)
             mainStackView.addArrangedSubview(hSplitRow)
@@ -809,6 +885,14 @@ class SettingsViewController: NSViewController {
                 bottomCenterLeftEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 bottomCenterRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 bottomRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                gridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                cyclingHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
+                twelfthsLabel.widthAnchor.constraint(equalTo: bottomRightEighthLabel.widthAnchor),
+                sixteenthsLabel.widthAnchor.constraint(equalTo: bottomRightEighthLabel.widthAnchor),
+                twelfthsShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                sixteenthsShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                twelfthsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                sixteenthsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 hSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 vSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
