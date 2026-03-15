@@ -112,6 +112,24 @@ class SettingsViewController: NSViewController {
         Defaults.showEighthsInMenu.enabled = enabled
         AppDelegate.instance.eighthsMenuItem?.isHidden = !enabled
     }
+
+    private static var individualRowsKey = "individualRowsKey"
+    private static var cyclingRowsKey = "cyclingRowsKey"
+    private static var cyclingHintKey = "cyclingHintKey"
+
+    @objc func toggleCyclingShortcuts(_ sender: NSButton) {
+        let enabled = sender.state == .on
+        Defaults.useCyclingShortcuts.enabled = enabled
+        if let individualRows = objc_getAssociatedObject(sender, &SettingsViewController.individualRowsKey) as? [NSView] {
+            individualRows.forEach { $0.isHidden = enabled }
+        }
+        if let cyclingRows = objc_getAssociatedObject(sender, &SettingsViewController.cyclingRowsKey) as? [NSView] {
+            cyclingRows.forEach { $0.isHidden = !enabled }
+        }
+        if let hintLabel = objc_getAssociatedObject(sender, &SettingsViewController.cyclingHintKey) as? NSView {
+            hintLabel.isHidden = !enabled
+        }
+    }
     
     @IBAction func checkForUpdates(_ sender: Any) {
         AppDelegate.instance.updaterController?.checkForUpdates(sender)
@@ -746,8 +764,447 @@ class SettingsViewController: NSViewController {
             showEighthsCheckbox.translatesAutoresizingMaskIntoConstraints = false
             showEighthsCheckbox.alignment = .right
             showEighthsCheckbox.imageHugsTitle = true
-            
+
             mainStackView.addArrangedSubview(showEighthsCheckbox)
+
+            // Grid Positions section
+            let gridHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Grid Positions", tableName: "Main", value: "", comment: ""))
+            gridHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            gridHeaderLabel.alignment = .center
+            gridHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let cyclingCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Use cycling shortcuts", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleCyclingShortcuts(_:)))
+            cyclingCheckbox.state = Defaults.useCyclingShortcuts.enabled ? .on : .off
+            cyclingCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            cyclingCheckbox.imageHugsTitle = true
+
+            let cyclingHintLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Press the shortcut repeatedly to cycle through all positions in the grid.", tableName: "Main", value: "", comment: ""))
+            cyclingHintLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            cyclingHintLabel.textColor = .secondaryLabelColor
+            cyclingHintLabel.alignment = .center
+            cyclingHintLabel.translatesAutoresizingMaskIntoConstraints = false
+            cyclingHintLabel.isHidden = !Defaults.useCyclingShortcuts.enabled
+
+            // Individual twelfths rows
+            let topLeftTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Top Left Twelfth", tableName: "Main", value: "", comment: ""))
+            topLeftTwelfthLabel.alignment = .right
+            topLeftTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let topCenterLeftTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Top Center Left Twelfth", tableName: "Main", value: "", comment: ""))
+            topCenterLeftTwelfthLabel.alignment = .right
+            topCenterLeftTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let topCenterRightTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Top Center Right Twelfth", tableName: "Main", value: "", comment: ""))
+            topCenterRightTwelfthLabel.alignment = .right
+            topCenterRightTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let topRightTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Top Right Twelfth", tableName: "Main", value: "", comment: ""))
+            topRightTwelfthLabel.alignment = .right
+            topRightTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let middleLeftTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Middle Left Twelfth", tableName: "Main", value: "", comment: ""))
+            middleLeftTwelfthLabel.alignment = .right
+            middleLeftTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let middleCenterLeftTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Middle Center Left Twelfth", tableName: "Main", value: "", comment: ""))
+            middleCenterLeftTwelfthLabel.alignment = .right
+            middleCenterLeftTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let middleCenterRightTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Middle Center Right Twelfth", tableName: "Main", value: "", comment: ""))
+            middleCenterRightTwelfthLabel.alignment = .right
+            middleCenterRightTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let middleRightTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Middle Right Twelfth", tableName: "Main", value: "", comment: ""))
+            middleRightTwelfthLabel.alignment = .right
+            middleRightTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomLeftTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Left Twelfth", tableName: "Main", value: "", comment: ""))
+            bottomLeftTwelfthLabel.alignment = .right
+            bottomLeftTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomCenterLeftTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Center Left Twelfth", tableName: "Main", value: "", comment: ""))
+            bottomCenterLeftTwelfthLabel.alignment = .right
+            bottomCenterLeftTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomCenterRightTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Center Right Twelfth", tableName: "Main", value: "", comment: ""))
+            bottomCenterRightTwelfthLabel.alignment = .right
+            bottomCenterRightTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomRightTwelfthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Right Twelfth", tableName: "Main", value: "", comment: ""))
+            bottomRightTwelfthLabel.alignment = .right
+            bottomRightTwelfthLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let topLeftTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topCenterLeftTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topCenterRightTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topRightTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let middleLeftTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let middleCenterLeftTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let middleCenterRightTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let middleRightTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomLeftTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomCenterLeftTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomCenterRightTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomRightTwelfthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            topLeftTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            topCenterLeftTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            topCenterRightTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterRightTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            topRightTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topRightTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            middleLeftTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            middleCenterLeftTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleCenterLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            middleCenterRightTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleCenterRightTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            middleRightTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleRightTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomLeftTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomCenterLeftTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomCenterRightTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterRightTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomRightTwelfthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomRightTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+
+            let topLeftTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topLeftTwelfthIcon.image = WindowAction.topLeftTwelfth.image
+            topLeftTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let topCenterLeftTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topCenterLeftTwelfthIcon.image = WindowAction.topCenterLeftTwelfth.image
+            topCenterLeftTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let topCenterRightTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topCenterRightTwelfthIcon.image = WindowAction.topCenterRightTwelfth.image
+            topCenterRightTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let topRightTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topRightTwelfthIcon.image = WindowAction.topRightTwelfth.image
+            topRightTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let middleLeftTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            middleLeftTwelfthIcon.image = WindowAction.middleLeftTwelfth.image
+            middleLeftTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let middleCenterLeftTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            middleCenterLeftTwelfthIcon.image = WindowAction.middleCenterLeftTwelfth.image
+            middleCenterLeftTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let middleCenterRightTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            middleCenterRightTwelfthIcon.image = WindowAction.middleCenterRightTwelfth.image
+            middleCenterRightTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let middleRightTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            middleRightTwelfthIcon.image = WindowAction.middleRightTwelfth.image
+            middleRightTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomLeftTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomLeftTwelfthIcon.image = WindowAction.bottomLeftTwelfth.image
+            bottomLeftTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomCenterLeftTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomCenterLeftTwelfthIcon.image = WindowAction.bottomCenterLeftTwelfth.image
+            bottomCenterLeftTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomCenterRightTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomCenterRightTwelfthIcon.image = WindowAction.bottomCenterRightTwelfth.image
+            bottomCenterRightTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomRightTwelfthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomRightTwelfthIcon.image = WindowAction.bottomRightTwelfth.image
+            bottomRightTwelfthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            func makeLabelStack(_ label: NSTextField, _ icon: NSImageView) -> NSStackView {
+                let stack = NSStackView()
+                stack.orientation = .horizontal
+                stack.alignment = .centerY
+                stack.spacing = 8
+                stack.addArrangedSubview(label)
+                stack.addArrangedSubview(icon)
+                return stack
+            }
+
+            func makeRow(_ labelStack: NSStackView, _ shortcutView: MASShortcutView) -> NSStackView {
+                let row = NSStackView()
+                row.orientation = .horizontal
+                row.alignment = .centerY
+                row.spacing = 18
+                row.addArrangedSubview(labelStack)
+                row.addArrangedSubview(shortcutView)
+                return row
+            }
+
+            let topLeftTwelfthRow = makeRow(makeLabelStack(topLeftTwelfthLabel, topLeftTwelfthIcon), topLeftTwelfthShortcutView)
+            let topCenterLeftTwelfthRow = makeRow(makeLabelStack(topCenterLeftTwelfthLabel, topCenterLeftTwelfthIcon), topCenterLeftTwelfthShortcutView)
+            let topCenterRightTwelfthRow = makeRow(makeLabelStack(topCenterRightTwelfthLabel, topCenterRightTwelfthIcon), topCenterRightTwelfthShortcutView)
+            let topRightTwelfthRow = makeRow(makeLabelStack(topRightTwelfthLabel, topRightTwelfthIcon), topRightTwelfthShortcutView)
+            let middleLeftTwelfthRow = makeRow(makeLabelStack(middleLeftTwelfthLabel, middleLeftTwelfthIcon), middleLeftTwelfthShortcutView)
+            let middleCenterLeftTwelfthRow = makeRow(makeLabelStack(middleCenterLeftTwelfthLabel, middleCenterLeftTwelfthIcon), middleCenterLeftTwelfthShortcutView)
+            let middleCenterRightTwelfthRow = makeRow(makeLabelStack(middleCenterRightTwelfthLabel, middleCenterRightTwelfthIcon), middleCenterRightTwelfthShortcutView)
+            let middleRightTwelfthRow = makeRow(makeLabelStack(middleRightTwelfthLabel, middleRightTwelfthIcon), middleRightTwelfthShortcutView)
+            let bottomLeftTwelfthRow = makeRow(makeLabelStack(bottomLeftTwelfthLabel, bottomLeftTwelfthIcon), bottomLeftTwelfthShortcutView)
+            let bottomCenterLeftTwelfthRow = makeRow(makeLabelStack(bottomCenterLeftTwelfthLabel, bottomCenterLeftTwelfthIcon), bottomCenterLeftTwelfthShortcutView)
+            let bottomCenterRightTwelfthRow = makeRow(makeLabelStack(bottomCenterRightTwelfthLabel, bottomCenterRightTwelfthIcon), bottomCenterRightTwelfthShortcutView)
+            let bottomRightTwelfthRow = makeRow(makeLabelStack(bottomRightTwelfthLabel, bottomRightTwelfthIcon), bottomRightTwelfthShortcutView)
+
+            // Individual sixteenths rows
+            let topLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Top Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            topLeftSixteenthLabel.alignment = .right
+            topLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let topCenterLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Top Center Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            topCenterLeftSixteenthLabel.alignment = .right
+            topCenterLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let topCenterRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Top Center Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            topCenterRightSixteenthLabel.alignment = .right
+            topCenterRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let topRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Top Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            topRightSixteenthLabel.alignment = .right
+            topRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let upperMiddleLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Upper Middle Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            upperMiddleLeftSixteenthLabel.alignment = .right
+            upperMiddleLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let upperMiddleCenterLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Upper Middle Center Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            upperMiddleCenterLeftSixteenthLabel.alignment = .right
+            upperMiddleCenterLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let upperMiddleCenterRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Upper Middle Center Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            upperMiddleCenterRightSixteenthLabel.alignment = .right
+            upperMiddleCenterRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let upperMiddleRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Upper Middle Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            upperMiddleRightSixteenthLabel.alignment = .right
+            upperMiddleRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let lowerMiddleLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Lower Middle Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            lowerMiddleLeftSixteenthLabel.alignment = .right
+            lowerMiddleLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let lowerMiddleCenterLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Lower Middle Center Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            lowerMiddleCenterLeftSixteenthLabel.alignment = .right
+            lowerMiddleCenterLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let lowerMiddleCenterRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Lower Middle Center Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            lowerMiddleCenterRightSixteenthLabel.alignment = .right
+            lowerMiddleCenterRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let lowerMiddleRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Lower Middle Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            lowerMiddleRightSixteenthLabel.alignment = .right
+            lowerMiddleRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            bottomLeftSixteenthLabel.alignment = .right
+            bottomLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomCenterLeftSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Center Left Sixteenth", tableName: "Main", value: "", comment: ""))
+            bottomCenterLeftSixteenthLabel.alignment = .right
+            bottomCenterLeftSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomCenterRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Center Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            bottomCenterRightSixteenthLabel.alignment = .right
+            bottomCenterRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+            let bottomRightSixteenthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Right Sixteenth", tableName: "Main", value: "", comment: ""))
+            bottomRightSixteenthLabel.alignment = .right
+            bottomRightSixteenthLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let topLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topCenterLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topCenterRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let topRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let upperMiddleLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let upperMiddleCenterLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let upperMiddleCenterRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let upperMiddleRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let lowerMiddleLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let lowerMiddleCenterLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let lowerMiddleCenterRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let lowerMiddleRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomCenterLeftSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomCenterRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let bottomRightSixteenthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            topLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            topCenterLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            topCenterRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            topRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            upperMiddleLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.upperMiddleLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            upperMiddleCenterLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.upperMiddleCenterLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            upperMiddleCenterRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.upperMiddleCenterRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            upperMiddleRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.upperMiddleRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            lowerMiddleLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.lowerMiddleLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            lowerMiddleCenterLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.lowerMiddleCenterLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            lowerMiddleCenterRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.lowerMiddleCenterRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            lowerMiddleRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.lowerMiddleRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomCenterLeftSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomCenterRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            bottomRightSixteenthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomRightSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+
+            let topLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topLeftSixteenthIcon.image = WindowAction.topLeftSixteenth.image
+            topLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let topCenterLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topCenterLeftSixteenthIcon.image = WindowAction.topCenterLeftSixteenth.image
+            topCenterLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let topCenterRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topCenterRightSixteenthIcon.image = WindowAction.topCenterRightSixteenth.image
+            topCenterRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let topRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            topRightSixteenthIcon.image = WindowAction.topRightSixteenth.image
+            topRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let upperMiddleLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            upperMiddleLeftSixteenthIcon.image = WindowAction.upperMiddleLeftSixteenth.image
+            upperMiddleLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let upperMiddleCenterLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            upperMiddleCenterLeftSixteenthIcon.image = WindowAction.upperMiddleCenterLeftSixteenth.image
+            upperMiddleCenterLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let upperMiddleCenterRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            upperMiddleCenterRightSixteenthIcon.image = WindowAction.upperMiddleCenterRightSixteenth.image
+            upperMiddleCenterRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let upperMiddleRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            upperMiddleRightSixteenthIcon.image = WindowAction.upperMiddleRightSixteenth.image
+            upperMiddleRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let lowerMiddleLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            lowerMiddleLeftSixteenthIcon.image = WindowAction.lowerMiddleLeftSixteenth.image
+            lowerMiddleLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let lowerMiddleCenterLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            lowerMiddleCenterLeftSixteenthIcon.image = WindowAction.lowerMiddleCenterLeftSixteenth.image
+            lowerMiddleCenterLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let lowerMiddleCenterRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            lowerMiddleCenterRightSixteenthIcon.image = WindowAction.lowerMiddleCenterRightSixteenth.image
+            lowerMiddleCenterRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let lowerMiddleRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            lowerMiddleRightSixteenthIcon.image = WindowAction.lowerMiddleRightSixteenth.image
+            lowerMiddleRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomLeftSixteenthIcon.image = WindowAction.bottomLeftSixteenth.image
+            bottomLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomCenterLeftSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomCenterLeftSixteenthIcon.image = WindowAction.bottomCenterLeftSixteenth.image
+            bottomCenterLeftSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomCenterRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomCenterRightSixteenthIcon.image = WindowAction.bottomCenterRightSixteenth.image
+            bottomCenterRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+            let bottomRightSixteenthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            bottomRightSixteenthIcon.image = WindowAction.bottomRightSixteenth.image
+            bottomRightSixteenthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let topLeftSixteenthRow = makeRow(makeLabelStack(topLeftSixteenthLabel, topLeftSixteenthIcon), topLeftSixteenthShortcutView)
+            let topCenterLeftSixteenthRow = makeRow(makeLabelStack(topCenterLeftSixteenthLabel, topCenterLeftSixteenthIcon), topCenterLeftSixteenthShortcutView)
+            let topCenterRightSixteenthRow = makeRow(makeLabelStack(topCenterRightSixteenthLabel, topCenterRightSixteenthIcon), topCenterRightSixteenthShortcutView)
+            let topRightSixteenthRow = makeRow(makeLabelStack(topRightSixteenthLabel, topRightSixteenthIcon), topRightSixteenthShortcutView)
+            let upperMiddleLeftSixteenthRow = makeRow(makeLabelStack(upperMiddleLeftSixteenthLabel, upperMiddleLeftSixteenthIcon), upperMiddleLeftSixteenthShortcutView)
+            let upperMiddleCenterLeftSixteenthRow = makeRow(makeLabelStack(upperMiddleCenterLeftSixteenthLabel, upperMiddleCenterLeftSixteenthIcon), upperMiddleCenterLeftSixteenthShortcutView)
+            let upperMiddleCenterRightSixteenthRow = makeRow(makeLabelStack(upperMiddleCenterRightSixteenthLabel, upperMiddleCenterRightSixteenthIcon), upperMiddleCenterRightSixteenthShortcutView)
+            let upperMiddleRightSixteenthRow = makeRow(makeLabelStack(upperMiddleRightSixteenthLabel, upperMiddleRightSixteenthIcon), upperMiddleRightSixteenthShortcutView)
+            let lowerMiddleLeftSixteenthRow = makeRow(makeLabelStack(lowerMiddleLeftSixteenthLabel, lowerMiddleLeftSixteenthIcon), lowerMiddleLeftSixteenthShortcutView)
+            let lowerMiddleCenterLeftSixteenthRow = makeRow(makeLabelStack(lowerMiddleCenterLeftSixteenthLabel, lowerMiddleCenterLeftSixteenthIcon), lowerMiddleCenterLeftSixteenthShortcutView)
+            let lowerMiddleCenterRightSixteenthRow = makeRow(makeLabelStack(lowerMiddleCenterRightSixteenthLabel, lowerMiddleCenterRightSixteenthIcon), lowerMiddleCenterRightSixteenthShortcutView)
+            let lowerMiddleRightSixteenthRow = makeRow(makeLabelStack(lowerMiddleRightSixteenthLabel, lowerMiddleRightSixteenthIcon), lowerMiddleRightSixteenthShortcutView)
+            let bottomLeftSixteenthRow = makeRow(makeLabelStack(bottomLeftSixteenthLabel, bottomLeftSixteenthIcon), bottomLeftSixteenthShortcutView)
+            let bottomCenterLeftSixteenthRow = makeRow(makeLabelStack(bottomCenterLeftSixteenthLabel, bottomCenterLeftSixteenthIcon), bottomCenterLeftSixteenthShortcutView)
+            let bottomCenterRightSixteenthRow = makeRow(makeLabelStack(bottomCenterRightSixteenthLabel, bottomCenterRightSixteenthIcon), bottomCenterRightSixteenthShortcutView)
+            let bottomRightSixteenthRow = makeRow(makeLabelStack(bottomRightSixteenthLabel, bottomRightSixteenthIcon), bottomRightSixteenthShortcutView)
+
+            // Cycling rows - one per category (hidden by default, shown when cycling mode is on)
+            let eighthsCyclingLabel = NSTextField(labelWithString: NSLocalizedString("Eighths (4\u{00d7}2)", tableName: "Main", value: "", comment: ""))
+            eighthsCyclingLabel.alignment = .right
+            eighthsCyclingLabel.translatesAutoresizingMaskIntoConstraints = false
+            let twelfthsCyclingLabel = NSTextField(labelWithString: NSLocalizedString("Twelfths (4\u{00d7}3)", tableName: "Main", value: "", comment: ""))
+            twelfthsCyclingLabel.alignment = .right
+            twelfthsCyclingLabel.translatesAutoresizingMaskIntoConstraints = false
+            let sixteenthsCyclingLabel = NSTextField(labelWithString: NSLocalizedString("Sixteenths (4\u{00d7}4)", tableName: "Main", value: "", comment: ""))
+            sixteenthsCyclingLabel.alignment = .right
+            sixteenthsCyclingLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let eighthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let twelfthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let sixteenthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+
+            eighthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
+            twelfthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
+            sixteenthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+
+            let eighthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            eighthsCyclingIcon.image = WindowAction.topLeftEighth.image
+            eighthsCyclingIcon.image?.size = NSSize(width: 21, height: 14)
+            let twelfthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            twelfthsCyclingIcon.image = WindowAction.topLeftTwelfth.image
+            twelfthsCyclingIcon.image?.size = NSSize(width: 21, height: 14)
+            let sixteenthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            sixteenthsCyclingIcon.image = WindowAction.topLeftSixteenth.image
+            sixteenthsCyclingIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let eighthsCyclingRow = makeRow(makeLabelStack(eighthsCyclingLabel, eighthsCyclingIcon), eighthsCyclingShortcutView)
+            let twelfthsCyclingRow = makeRow(makeLabelStack(twelfthsCyclingLabel, twelfthsCyclingIcon), twelfthsCyclingShortcutView)
+            let sixteenthsCyclingRow = makeRow(makeLabelStack(sixteenthsCyclingLabel, sixteenthsCyclingIcon), sixteenthsCyclingShortcutView)
+
+            if Defaults.allowAnyShortcut.enabled {
+                let passThroughValidator = PassthroughShortcutValidator()
+                topLeftTwelfthShortcutView.shortcutValidator = passThroughValidator
+                topCenterLeftTwelfthShortcutView.shortcutValidator = passThroughValidator
+                topCenterRightTwelfthShortcutView.shortcutValidator = passThroughValidator
+                topRightTwelfthShortcutView.shortcutValidator = passThroughValidator
+                middleLeftTwelfthShortcutView.shortcutValidator = passThroughValidator
+                middleCenterLeftTwelfthShortcutView.shortcutValidator = passThroughValidator
+                middleCenterRightTwelfthShortcutView.shortcutValidator = passThroughValidator
+                middleRightTwelfthShortcutView.shortcutValidator = passThroughValidator
+                bottomLeftTwelfthShortcutView.shortcutValidator = passThroughValidator
+                bottomCenterLeftTwelfthShortcutView.shortcutValidator = passThroughValidator
+                bottomCenterRightTwelfthShortcutView.shortcutValidator = passThroughValidator
+                bottomRightTwelfthShortcutView.shortcutValidator = passThroughValidator
+                topLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                topCenterLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                topCenterRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                topRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                upperMiddleLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                upperMiddleCenterLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                upperMiddleCenterRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                upperMiddleRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                lowerMiddleLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                lowerMiddleCenterLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                lowerMiddleCenterRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                lowerMiddleRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                bottomLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                bottomCenterLeftSixteenthShortcutView.shortcutValidator = passThroughValidator
+                bottomCenterRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                bottomRightSixteenthShortcutView.shortcutValidator = passThroughValidator
+                eighthsCyclingShortcutView.shortcutValidator = passThroughValidator
+                twelfthsCyclingShortcutView.shortcutValidator = passThroughValidator
+                sixteenthsCyclingShortcutView.shortcutValidator = passThroughValidator
+            }
+
+            // Collect rows for toggling
+            let individualGridRows: [NSView] = [
+                topLeftTwelfthRow, topCenterLeftTwelfthRow, topCenterRightTwelfthRow, topRightTwelfthRow,
+                middleLeftTwelfthRow, middleCenterLeftTwelfthRow, middleCenterRightTwelfthRow, middleRightTwelfthRow,
+                bottomLeftTwelfthRow, bottomCenterLeftTwelfthRow, bottomCenterRightTwelfthRow, bottomRightTwelfthRow,
+                topLeftSixteenthRow, topCenterLeftSixteenthRow, topCenterRightSixteenthRow, topRightSixteenthRow,
+                upperMiddleLeftSixteenthRow, upperMiddleCenterLeftSixteenthRow, upperMiddleCenterRightSixteenthRow, upperMiddleRightSixteenthRow,
+                lowerMiddleLeftSixteenthRow, lowerMiddleCenterLeftSixteenthRow, lowerMiddleCenterRightSixteenthRow, lowerMiddleRightSixteenthRow,
+                bottomLeftSixteenthRow, bottomCenterLeftSixteenthRow, bottomCenterRightSixteenthRow, bottomRightSixteenthRow
+            ]
+
+            let cyclingGridRows: [NSView] = [eighthsCyclingRow, twelfthsCyclingRow, sixteenthsCyclingRow]
+
+            let isCycling = Defaults.useCyclingShortcuts.enabled
+            individualGridRows.forEach { $0.isHidden = isCycling }
+            cyclingGridRows.forEach { $0.isHidden = !isCycling }
+
+            // Assemble the grid section in main stack
+            mainStackView.addArrangedSubview(gridHeaderLabel)
+            mainStackView.setCustomSpacing(6, after: gridHeaderLabel)
+            mainStackView.addArrangedSubview(cyclingCheckbox)
+            mainStackView.setCustomSpacing(4, after: cyclingCheckbox)
+            mainStackView.addArrangedSubview(cyclingHintLabel)
+            mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
+
+            // Cycling rows
+            mainStackView.addArrangedSubview(eighthsCyclingRow)
+            mainStackView.addArrangedSubview(twelfthsCyclingRow)
+            mainStackView.addArrangedSubview(sixteenthsCyclingRow)
+
+            // Individual twelfths rows
+            mainStackView.addArrangedSubview(topLeftTwelfthRow)
+            mainStackView.addArrangedSubview(topCenterLeftTwelfthRow)
+            mainStackView.addArrangedSubview(topCenterRightTwelfthRow)
+            mainStackView.addArrangedSubview(topRightTwelfthRow)
+            mainStackView.addArrangedSubview(middleLeftTwelfthRow)
+            mainStackView.addArrangedSubview(middleCenterLeftTwelfthRow)
+            mainStackView.addArrangedSubview(middleCenterRightTwelfthRow)
+            mainStackView.addArrangedSubview(middleRightTwelfthRow)
+            mainStackView.addArrangedSubview(bottomLeftTwelfthRow)
+            mainStackView.addArrangedSubview(bottomCenterLeftTwelfthRow)
+            mainStackView.addArrangedSubview(bottomCenterRightTwelfthRow)
+            mainStackView.addArrangedSubview(bottomRightTwelfthRow)
+
+            // Individual sixteenths rows
+            mainStackView.addArrangedSubview(topLeftSixteenthRow)
+            mainStackView.addArrangedSubview(topCenterLeftSixteenthRow)
+            mainStackView.addArrangedSubview(topCenterRightSixteenthRow)
+            mainStackView.addArrangedSubview(topRightSixteenthRow)
+            mainStackView.addArrangedSubview(upperMiddleLeftSixteenthRow)
+            mainStackView.addArrangedSubview(upperMiddleCenterLeftSixteenthRow)
+            mainStackView.addArrangedSubview(upperMiddleCenterRightSixteenthRow)
+            mainStackView.addArrangedSubview(upperMiddleRightSixteenthRow)
+            mainStackView.addArrangedSubview(lowerMiddleLeftSixteenthRow)
+            mainStackView.addArrangedSubview(lowerMiddleCenterLeftSixteenthRow)
+            mainStackView.addArrangedSubview(lowerMiddleCenterRightSixteenthRow)
+            mainStackView.addArrangedSubview(lowerMiddleRightSixteenthRow)
+            mainStackView.addArrangedSubview(bottomLeftSixteenthRow)
+            mainStackView.addArrangedSubview(bottomCenterLeftSixteenthRow)
+            mainStackView.addArrangedSubview(bottomCenterRightSixteenthRow)
+            mainStackView.addArrangedSubview(bottomRightSixteenthRow)
+
+            // Store row references for toggling via tag on cyclingCheckbox
+            cyclingCheckbox.tag = 0
+            objc_setAssociatedObject(cyclingCheckbox, &SettingsViewController.individualRowsKey, individualGridRows, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(cyclingCheckbox, &SettingsViewController.cyclingRowsKey, cyclingGridRows, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(cyclingCheckbox, &SettingsViewController.cyclingHintKey, cyclingHintLabel, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
             mainStackView.addArrangedSubview(splitRatioHeaderLabel)
             mainStackView.setCustomSpacing(10, after: splitRatioHeaderLabel)
             mainStackView.addArrangedSubview(hSplitRow)
@@ -771,7 +1228,38 @@ class SettingsViewController: NSViewController {
                 bottomLeftEighthLabel.widthAnchor.constraint(equalTo: bottomCenterLeftEighthLabel.widthAnchor),
                 bottomCenterLeftEighthLabel.widthAnchor.constraint(equalTo: bottomCenterRightEighthLabel.widthAnchor),
                 bottomCenterRightEighthLabel.widthAnchor.constraint(equalTo: bottomRightEighthLabel.widthAnchor),
-                bottomVerticalTwoThirdsLabel.widthAnchor.constraint(equalTo: hSplitLabel.widthAnchor),
+                bottomRightEighthLabel.widthAnchor.constraint(equalTo: topLeftTwelfthLabel.widthAnchor),
+                topLeftTwelfthLabel.widthAnchor.constraint(equalTo: topCenterLeftTwelfthLabel.widthAnchor),
+                topCenterLeftTwelfthLabel.widthAnchor.constraint(equalTo: topCenterRightTwelfthLabel.widthAnchor),
+                topCenterRightTwelfthLabel.widthAnchor.constraint(equalTo: topRightTwelfthLabel.widthAnchor),
+                topRightTwelfthLabel.widthAnchor.constraint(equalTo: middleLeftTwelfthLabel.widthAnchor),
+                middleLeftTwelfthLabel.widthAnchor.constraint(equalTo: middleCenterLeftTwelfthLabel.widthAnchor),
+                middleCenterLeftTwelfthLabel.widthAnchor.constraint(equalTo: middleCenterRightTwelfthLabel.widthAnchor),
+                middleCenterRightTwelfthLabel.widthAnchor.constraint(equalTo: middleRightTwelfthLabel.widthAnchor),
+                middleRightTwelfthLabel.widthAnchor.constraint(equalTo: bottomLeftTwelfthLabel.widthAnchor),
+                bottomLeftTwelfthLabel.widthAnchor.constraint(equalTo: bottomCenterLeftTwelfthLabel.widthAnchor),
+                bottomCenterLeftTwelfthLabel.widthAnchor.constraint(equalTo: bottomCenterRightTwelfthLabel.widthAnchor),
+                bottomCenterRightTwelfthLabel.widthAnchor.constraint(equalTo: bottomRightTwelfthLabel.widthAnchor),
+                bottomRightTwelfthLabel.widthAnchor.constraint(equalTo: topLeftSixteenthLabel.widthAnchor),
+                topLeftSixteenthLabel.widthAnchor.constraint(equalTo: topCenterLeftSixteenthLabel.widthAnchor),
+                topCenterLeftSixteenthLabel.widthAnchor.constraint(equalTo: topCenterRightSixteenthLabel.widthAnchor),
+                topCenterRightSixteenthLabel.widthAnchor.constraint(equalTo: topRightSixteenthLabel.widthAnchor),
+                topRightSixteenthLabel.widthAnchor.constraint(equalTo: upperMiddleLeftSixteenthLabel.widthAnchor),
+                upperMiddleLeftSixteenthLabel.widthAnchor.constraint(equalTo: upperMiddleCenterLeftSixteenthLabel.widthAnchor),
+                upperMiddleCenterLeftSixteenthLabel.widthAnchor.constraint(equalTo: upperMiddleCenterRightSixteenthLabel.widthAnchor),
+                upperMiddleCenterRightSixteenthLabel.widthAnchor.constraint(equalTo: upperMiddleRightSixteenthLabel.widthAnchor),
+                upperMiddleRightSixteenthLabel.widthAnchor.constraint(equalTo: lowerMiddleLeftSixteenthLabel.widthAnchor),
+                lowerMiddleLeftSixteenthLabel.widthAnchor.constraint(equalTo: lowerMiddleCenterLeftSixteenthLabel.widthAnchor),
+                lowerMiddleCenterLeftSixteenthLabel.widthAnchor.constraint(equalTo: lowerMiddleCenterRightSixteenthLabel.widthAnchor),
+                lowerMiddleCenterRightSixteenthLabel.widthAnchor.constraint(equalTo: lowerMiddleRightSixteenthLabel.widthAnchor),
+                lowerMiddleRightSixteenthLabel.widthAnchor.constraint(equalTo: bottomLeftSixteenthLabel.widthAnchor),
+                bottomLeftSixteenthLabel.widthAnchor.constraint(equalTo: bottomCenterLeftSixteenthLabel.widthAnchor),
+                bottomCenterLeftSixteenthLabel.widthAnchor.constraint(equalTo: bottomCenterRightSixteenthLabel.widthAnchor),
+                bottomCenterRightSixteenthLabel.widthAnchor.constraint(equalTo: bottomRightSixteenthLabel.widthAnchor),
+                bottomRightSixteenthLabel.widthAnchor.constraint(equalTo: eighthsCyclingLabel.widthAnchor),
+                eighthsCyclingLabel.widthAnchor.constraint(equalTo: twelfthsCyclingLabel.widthAnchor),
+                twelfthsCyclingLabel.widthAnchor.constraint(equalTo: sixteenthsCyclingLabel.widthAnchor),
+                sixteenthsCyclingLabel.widthAnchor.constraint(equalTo: hSplitLabel.widthAnchor),
                 hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
@@ -790,11 +1278,42 @@ class SettingsViewController: NSViewController {
                 bottomCenterLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomCenterRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topLeftTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topCenterLeftTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topCenterRightTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topRightTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                middleLeftTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                middleCenterLeftTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                middleCenterRightTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                middleRightTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomLeftTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomCenterLeftTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomCenterRightTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomRightTwelfthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topCenterLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topCenterRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                topRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                upperMiddleLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                upperMiddleCenterLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                upperMiddleCenterRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                upperMiddleRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                lowerMiddleLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                lowerMiddleCenterLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                lowerMiddleCenterRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                lowerMiddleRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomCenterLeftSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomCenterRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                bottomRightSixteenthShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                eighthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                twelfthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                sixteenthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 hSplitField.widthAnchor.constraint(equalToConstant: 160),
                 vSplitField.widthAnchor.constraint(equalToConstant: 160),
-                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 showEighthsCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                cyclingCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 topVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 middleVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
@@ -809,6 +1328,39 @@ class SettingsViewController: NSViewController {
                 bottomCenterLeftEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 bottomCenterRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 bottomRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topLeftTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topCenterLeftTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topCenterRightTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topRightTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                middleLeftTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                middleCenterLeftTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                middleCenterRightTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                middleRightTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomLeftTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomCenterLeftTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomCenterRightTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomRightTwelfthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topCenterLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topCenterRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                topRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                upperMiddleLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                upperMiddleCenterLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                upperMiddleCenterRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                upperMiddleRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                lowerMiddleLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                lowerMiddleCenterLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                lowerMiddleCenterRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                lowerMiddleRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomCenterLeftSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomCenterRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                bottomRightSixteenthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                eighthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                twelfthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                sixteenthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                gridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                cyclingHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
                 hSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 vSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
