@@ -377,6 +377,7 @@ extension AppDelegate: NSMenuDelegate {
     }
     
     func addWindowActionMenuItems() {
+        let additionalSizeCategories: Set<WindowActionCategory> = [.eighths, .ninths, .twelfths, .sixteenths]
         var menuIndex = 0
         var categoryMenus: [CategoryMenu] = []
         for action in WindowAction.active {
@@ -393,7 +394,7 @@ extension AppDelegate: NSMenuDelegate {
                 categoryMenus.last?.menu.addItem(newMenuItem)
                 continue
             }
-            
+
             if menuIndex != 0 && action.firstInGroup {
                 mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
                 menuIndex += 1
@@ -405,16 +406,19 @@ extension AppDelegate: NSMenuDelegate {
         if !categoryMenus.isEmpty {
             mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
             menuIndex += 1
-            
+
             for categoryMenu in categoryMenus {
                 categoryMenu.menu.delegate = self
                 let menuMenuItem = NSMenuItem(title: categoryMenu.category.displayName, action: nil, keyEquivalent: "")
+                if additionalSizeCategories.contains(categoryMenu.category) {
+                    menuMenuItem.isHidden = !Defaults.showAdditionalSizesInMenu.userEnabled
+                }
                 mainStatusMenu.insertItem(menuMenuItem, at: menuIndex)
                 mainStatusMenu.setSubmenu(categoryMenu.menu, for: menuMenuItem)
                 menuIndex += 1
             }
         }
-        
+
         mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
 
         menuIndex += 1

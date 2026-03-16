@@ -10,7 +10,7 @@ import Foundation
 
 enum WindowActionCategory {
 
-    case halves, corners, thirds, max, size, display, move, other, sixths, fourths, eighths, twelfths, sixteenths
+    case halves, corners, thirds, max, size, display, move, other, sixths, fourths, eighths, ninths, twelfths, sixteenths
 
     var displayName: String {
         switch self {
@@ -36,6 +36,8 @@ enum WindowActionCategory {
             return NSLocalizedString("Sixths", tableName: "Main", value: "", comment: "")
         case .eighths:
             return NSLocalizedString("Eighths", tableName: "Main", value: "", comment: "")
+        case .ninths:
+            return NSLocalizedString("Ninths", tableName: "Main", value: "Ninths", comment: "")
         case .twelfths:
             return NSLocalizedString("Twelfths", tableName: "Main", value: "Twelfths", comment: "")
         case .sixteenths:
