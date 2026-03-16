@@ -110,7 +110,6 @@ class SettingsViewController: NSViewController {
     @objc func toggleShowEighthsInMenu(_ sender: NSButton) {
         let enabled: Bool = sender.state == .on
         Defaults.showEighthsInMenu.enabled = enabled
-        AppDelegate.instance.eighthsMenuItem?.isHidden = !enabled
     }
 
     private static var individualRowsKey = "individualRowsKey"
