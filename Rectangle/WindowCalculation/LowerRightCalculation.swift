@@ -8,26 +8,43 @@
 
 import Foundation
 
-class LowerRightCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation {
+class LowerRightCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation, QuartersRepeated {
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
-        if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes {
-            return calculateFirstRect(params)
+        guard Defaults.subsequentExecutionMode.value != .none,
+              let last = params.lastAction,
+              let lastSubAction = last.subAction
+        else {
+            return quarterRect(params.visibleFrameOfScreen)
         }
-        
-        return calculateRepeatedRect(params)
+
+        if last.action != .bottomRight && lastSubAction != .bottomRightQuarter {
+            return quarterRect(params.visibleFrameOfScreen)
+        }
+
+        if let calculation = self.nextCalculation(subAction: lastSubAction, direction: .right) {
+            return calculation(params.visibleFrameOfScreen)
+        }
+
+        return quarterRect(params.visibleFrameOfScreen)
     }
-    
+
+    func quarterRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
+        var rect = visibleFrameOfScreen
+        rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
+        rect.origin.x = visibleFrameOfScreen.maxX - rect.width
+        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
+        return RectResult(rect, subAction: .bottomRightQuarter)
+    }
+
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
 
         var rect = visibleFrameOfScreen
-        
         rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(fraction))
         rect.origin.x = visibleFrameOfScreen.maxX - rect.width
         rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        
         return RectResult(rect)
     }
 }

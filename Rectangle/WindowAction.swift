@@ -931,7 +931,12 @@ enum SubWindowAction {
     topRightThird,
     bottomLeftThird,
     bottomRightThird,
-         
+
+    topLeftQuarter,
+    topRightQuarter,
+    bottomLeftQuarter,
+    bottomRightQuarter,
+
     topLeftEighth,
     topCenterLeftEighth,
     topCenterRightEighth,
@@ -1037,6 +1042,10 @@ enum SubWindowAction {
         case .topRightThird: return [.left, .bottom]
         case .bottomLeftThird: return [.right, .top]
         case .bottomRightThird: return [.left, .top]
+        case .topLeftQuarter: return [.right, .bottom]
+        case .topRightQuarter: return [.left, .bottom]
+        case .bottomLeftQuarter: return [.right, .top]
+        case .bottomRightQuarter: return [.left, .top]
         case .topLeftEighth: return  [.right, .bottom]
         case .topCenterLeftEighth: return  [.right, .left, .bottom]
         case .topCenterRightEighth: return  [.right, .left, .bottom]
