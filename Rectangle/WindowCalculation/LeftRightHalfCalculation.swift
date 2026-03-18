@@ -23,7 +23,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
                 return calculateResize(params)
             }
             return calculateAcrossDisplays(params)
-        case .resize:
+        case .resize, .resizeAndCycleQuadrants:
             return calculateResize(params)
         case .none, .cycleMonitor:
             let screen = usableScreens.currentScreen

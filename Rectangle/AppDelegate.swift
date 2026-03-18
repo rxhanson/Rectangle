@@ -37,7 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var prevActiveAppObservation: NSKeyValueObservation?
     private var prevActiveApp: NSRunningApplication?
-    
+    private var additionalSizeMenuItems: [NSMenuItem] = []
+    private var dynamicMenuItemCount: Int = 0
+
     @IBOutlet weak var mainStatusMenu: NSMenu!
     @IBOutlet weak var unauthorizedMenu: NSMenu!
     @IBOutlet weak var ignoreMenuItem: NSMenuItem!
@@ -51,6 +53,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         Defaults.loadFromSupportDir()
+        migrateShowEighthsInMenu()
 
         checkVersion()
         mainStatusMenu.delegate = self
@@ -75,7 +78,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         mainStatusMenu.autoenablesItems = false
         addWindowActionMenuItems()
- 
+
+        NotificationCenter.default.addObserver(self, selector: #selector(rebuildMenu), name: .showAdditionalSizesInMenuChanged, object: nil)
+
         updaterController = SPUStandardUpdaterController(updaterDelegate: nil, userDriverDelegate: self)
         
         checkAutoCheckForUpdates()
@@ -378,6 +383,8 @@ extension AppDelegate: NSMenuDelegate {
     
     func addWindowActionMenuItems() {
         let additionalSizeCategories: Set<WindowActionCategory> = [.eighths, .ninths, .twelfths, .sixteenths]
+        let submenuOnlyWhenAdditional: Set<WindowActionCategory> = [.thirds, .size]
+        let showAdditional = Defaults.showAdditionalSizesInMenu.userEnabled
         var menuIndex = 0
         var categoryMenus: [CategoryMenu] = []
         for action in WindowAction.active {
@@ -386,16 +393,23 @@ extension AppDelegate: NSMenuDelegate {
             newMenuItem.representedObject = action
 
             if !Defaults.showAllActionsInMenu.userEnabled, let category = action.category {
-                if menuIndex != 0 && action.firstInGroup {
-                    let menu = NSMenu(title: category.displayName)
-                    menu.autoenablesItems = false
-                    categoryMenus.append(CategoryMenu(menu: menu, category: category))
+                // When additional sizes are off, keep Thirds and Size as flat items
+                if submenuOnlyWhenAdditional.contains(category) && !showAdditional {
+                    // Fall through to flat item handling below
+                } else {
+                    if menuIndex != 0 && action.firstInGroup {
+                        let menu = NSMenu(title: category.displayName)
+                        menu.autoenablesItems = false
+                        categoryMenus.append(CategoryMenu(menu: menu, category: category))
+                    }
+                    categoryMenus.last?.menu.addItem(newMenuItem)
+                    continue
                 }
-                categoryMenus.last?.menu.addItem(newMenuItem)
-                continue
             }
 
-            if menuIndex != 0 && action.firstInGroup {
+            // Flat item - suppress extra separator for almostMaximize when Size is not a submenu
+            let showSeparator = action.firstInGroup && !(action == .almostMaximize && !showAdditional)
+            if menuIndex != 0 && showSeparator {
                 mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
                 menuIndex += 1
             }
@@ -412,6 +426,7 @@ extension AppDelegate: NSMenuDelegate {
                 let menuMenuItem = NSMenuItem(title: categoryMenu.category.displayName, action: nil, keyEquivalent: "")
                 if additionalSizeCategories.contains(categoryMenu.category) {
                     menuMenuItem.isHidden = !Defaults.showAdditionalSizesInMenu.userEnabled
+                    additionalSizeMenuItems.append(menuMenuItem)
                 }
                 mainStatusMenu.insertItem(menuMenuItem, at: menuIndex)
                 mainStatusMenu.setSubmenu(categoryMenu.menu, for: menuMenuItem)
@@ -423,13 +438,33 @@ extension AppDelegate: NSMenuDelegate {
 
         menuIndex += 1
         addTodoModeMenuItems(startingIndex: menuIndex)
+        // Track total dynamic items: window actions + separators + todo items (4 items + 1 separator)
+        dynamicMenuItemCount = menuIndex + 5
     }
-    
+
+    @objc func rebuildMenu() {
+        // Remove all dynamically added items
+        for _ in 0..<dynamicMenuItemCount {
+            mainStatusMenu.removeItem(at: 0)
+        }
+        dynamicMenuItemCount = 0
+        additionalSizeMenuItems.removeAll()
+        addWindowActionMenuItems()
+    }
+
+    private func migrateShowEighthsInMenu() {
+        let oldKey = "showEighthsInMenu"
+        let oldValue = UserDefaults.standard.integer(forKey: oldKey)
+        if oldValue != 0 && Defaults.showAdditionalSizesInMenu.notSet {
+            Defaults.showAdditionalSizesInMenu.enabled = (oldValue == 1)
+        }
+    }
+
     struct CategoryMenu {
         let menu: NSMenu
         let category: WindowActionCategory
     }
-    
+
 }
 
 // todo mode

@@ -110,6 +110,7 @@ class SettingsViewController: NSViewController {
     @objc func toggleShowAdditionalSizesInMenu(_ sender: NSButton) {
         let enabled: Bool = sender.state == .on
         Defaults.showAdditionalSizesInMenu.enabled = enabled
+        Notification.Name.showAdditionalSizesInMenuChanged.post()
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -731,24 +732,14 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(bottomVerticalThirdRow)
             mainStackView.addArrangedSubview(topVerticalTwoThirdsRow)
             mainStackView.addArrangedSubview(bottomVerticalTwoThirdsRow)
-            mainStackView.addArrangedSubview(topLeftEighthRow)
-            mainStackView.addArrangedSubview(topCenterLeftEighthRow)
-            mainStackView.addArrangedSubview(topCenterRightEighthRow)
-            mainStackView.addArrangedSubview(topRightEighthRow)
-            mainStackView.addArrangedSubview(bottomLeftEighthRow)
-            mainStackView.addArrangedSubview(bottomCenterLeftEighthRow)
-            mainStackView.addArrangedSubview(bottomCenterRightEighthRow)
-            mainStackView.addArrangedSubview(bottomRightEighthRow)
-                        
+            // Grid Positions - cycling shortcuts for larger grids
             let showAdditionalSizesCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Show additional sizes in menu", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleShowAdditionalSizesInMenu(_:)))
             showAdditionalSizesCheckbox.state = Defaults.showAdditionalSizesInMenu.userEnabled ? .on : .off
             showAdditionalSizesCheckbox.translatesAutoresizingMaskIntoConstraints = false
-            showAdditionalSizesCheckbox.alignment = .right
+            showAdditionalSizesCheckbox.alignment = .left
             showAdditionalSizesCheckbox.imageHugsTitle = true
 
-            mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
-
-            // Grid Positions - cycling shortcuts for larger grids
+            //
             let gridHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Grid Positions", tableName: "Main", value: "", comment: ""))
             gridHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
             gridHeaderLabel.alignment = .center
@@ -823,8 +814,18 @@ class SettingsViewController: NSViewController {
 
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
+            mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
+            mainStackView.setCustomSpacing(8, after: showAdditionalSizesCheckbox)
             mainStackView.addArrangedSubview(cyclingHintLabel)
             mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
+            mainStackView.addArrangedSubview(topLeftEighthRow)
+            mainStackView.addArrangedSubview(topCenterLeftEighthRow)
+            mainStackView.addArrangedSubview(topCenterRightEighthRow)
+            mainStackView.addArrangedSubview(topRightEighthRow)
+            mainStackView.addArrangedSubview(bottomLeftEighthRow)
+            mainStackView.addArrangedSubview(bottomCenterLeftEighthRow)
+            mainStackView.addArrangedSubview(bottomCenterRightEighthRow)
+            mainStackView.addArrangedSubview(bottomRightEighthRow)
             mainStackView.addArrangedSubview(ninthsCyclingRow)
             mainStackView.addArrangedSubview(twelfthsCyclingRow)
             mainStackView.addArrangedSubview(sixteenthsCyclingRow)

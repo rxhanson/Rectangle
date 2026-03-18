@@ -146,12 +146,12 @@ enum WindowAction: Int, Codable {
                          firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, centerThreeFourths, lastThreeFourths,
                          topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
                          specified, reverseAll,
-                         topLeftNinth, topCenterNinth, topRightNinth,
-                         middleLeftNinth, middleCenterNinth, middleRightNinth,
-                         bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
                          topLeftThird, topRightThird, bottomLeftThird, bottomRightThird,
                          topLeftEighth, topCenterLeftEighth, topCenterRightEighth, topRightEighth,
                          bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
+                         topLeftNinth, topCenterNinth, topRightNinth,
+                         middleLeftNinth, middleCenterNinth, middleRightNinth,
+                         bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
                          topLeftTwelfth, topCenterLeftTwelfth, topCenterRightTwelfth, topRightTwelfth,
                          middleLeftTwelfth, middleCenterLeftTwelfth, middleCenterRightTwelfth, middleRightTwelfth,
                          bottomLeftTwelfth, bottomCenterLeftTwelfth, bottomCenterRightTwelfth, bottomRightTwelfth,
@@ -445,8 +445,33 @@ enum WindowAction: Int, Codable {
         case .bottomRightSixth:
             key = "m2F-eA-g7w.title"
             value = "Bottom Right Sixth"
-        case .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth:
-            return nil
+        case .topLeftNinth:
+            key = "topLeftNinth.title"
+            value = "Top Left Ninth"
+        case .topCenterNinth:
+            key = "topCenterNinth.title"
+            value = "Top Center Ninth"
+        case .topRightNinth:
+            key = "topRightNinth.title"
+            value = "Top Right Ninth"
+        case .middleLeftNinth:
+            key = "middleLeftNinth.title"
+            value = "Middle Left Ninth"
+        case .middleCenterNinth:
+            key = "middleCenterNinth.title"
+            value = "Middle Center Ninth"
+        case .middleRightNinth:
+            key = "middleRightNinth.title"
+            value = "Middle Right Ninth"
+        case .bottomLeftNinth:
+            key = "bottomLeftNinth.title"
+            value = "Bottom Left Ninth"
+        case .bottomCenterNinth:
+            key = "bottomCenterNinth.title"
+            value = "Bottom Center Ninth"
+        case .bottomRightNinth:
+            key = "bottomRightNinth.title"
+            value = "Bottom Right Ninth"
         case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
             return nil
         case .topLeftEighth:
@@ -703,15 +728,15 @@ enum WindowAction: Int, Codable {
         case .bottomLeftSixth: return NSImage(imageLiteralResourceName: "bottomLeftSixthTemplate")
         case .bottomCenterSixth: return NSImage(imageLiteralResourceName: "bottomCenterSixthTemplate")
         case .bottomRightSixth: return NSImage(imageLiteralResourceName: "bottomRightSixthTemplate")
-        case .topLeftNinth: return NSImage()
-        case .topCenterNinth: return NSImage()
-        case .topRightNinth: return NSImage()
-        case .middleLeftNinth: return NSImage()
-        case .middleCenterNinth: return NSImage()
-        case .middleRightNinth: return NSImage()
-        case .bottomLeftNinth: return NSImage()
-        case .bottomCenterNinth: return NSImage()
-        case .bottomRightNinth: return NSImage()
+        case .topLeftNinth: return NSImage(imageLiteralResourceName: "topLeftNinthTemplate")
+        case .topCenterNinth: return NSImage(imageLiteralResourceName: "topCenterNinthTemplate")
+        case .topRightNinth: return NSImage(imageLiteralResourceName: "topRightNinthTemplate")
+        case .middleLeftNinth: return NSImage(imageLiteralResourceName: "middleLeftNinthTemplate")
+        case .middleCenterNinth: return NSImage(imageLiteralResourceName: "middleCenterNinthTemplate")
+        case .middleRightNinth: return NSImage(imageLiteralResourceName: "middleRightNinthTemplate")
+        case .bottomLeftNinth: return NSImage(imageLiteralResourceName: "bottomLeftNinthTemplate")
+        case .bottomCenterNinth: return NSImage(imageLiteralResourceName: "bottomCenterNinthTemplate")
+        case .bottomRightNinth: return NSImage(imageLiteralResourceName: "bottomRightNinthTemplate")
         case .topLeftThird: return NSImage()
         case .topRightThird: return NSImage()
         case .bottomLeftThird: return NSImage()

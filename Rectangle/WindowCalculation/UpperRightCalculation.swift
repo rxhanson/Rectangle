@@ -12,22 +12,22 @@ class UpperRightCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcul
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
-        guard Defaults.subsequentExecutionMode.value != .none,
-              let last = params.lastAction,
-              let lastSubAction = last.subAction
-        else {
+        if Defaults.subsequentExecutionMode.cyclesQuadrantPositions {
+            if let last = params.lastAction,
+               let lastSubAction = last.subAction,
+               last.action == .topRight || lastSubAction == .topRightQuarter {
+                if let calculation = self.nextCalculation(subAction: lastSubAction, direction: .right) {
+                    return calculation(params.visibleFrameOfScreen)
+                }
+            }
             return quarterRect(params.visibleFrameOfScreen)
         }
 
-        if last.action != .topRight && lastSubAction != .topRightQuarter {
-            return quarterRect(params.visibleFrameOfScreen)
+        if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes {
+            return calculateFirstRect(params)
         }
 
-        if let calculation = self.nextCalculation(subAction: lastSubAction, direction: .right) {
-            return calculation(params.visibleFrameOfScreen)
-        }
-
-        return quarterRect(params.visibleFrameOfScreen)
+        return calculateRepeatedRect(params)
     }
 
     func quarterRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
