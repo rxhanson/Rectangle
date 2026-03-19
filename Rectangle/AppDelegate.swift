@@ -421,7 +421,8 @@ extension AppDelegate: NSMenuDelegate {
             mainStatusMenu.insertItem(NSMenuItem.separator(), at: menuIndex)
             menuIndex += 1
 
-            for categoryMenu in categoryMenus {
+            let sortedCategoryMenus = categoryMenus.sorted { $0.category.menuOrder < $1.category.menuOrder }
+            for categoryMenu in sortedCategoryMenus {
                 categoryMenu.menu.delegate = self
                 let menuMenuItem = NSMenuItem(title: categoryMenu.category.displayName, action: nil, keyEquivalent: "")
                 if additionalSizeCategories.contains(categoryMenu.category) {
