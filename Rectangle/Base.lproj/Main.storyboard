@@ -2814,6 +2814,7 @@
                                                                     <menuItem title="cycle sizes on half actions" id="gHH-BV-5kP"/>
                                                                     <menuItem title="move to adjacent display on left or right" tag="1" id="Z9d-Rl-RVq"/>
                                                                     <menuItem title="move to adjacent on left/right, or cycle size on half" state="on" tag="3" id="3GE-la-fAZ"/>
+                                                                    <menuItem title="cycle positions on quadrants, cycle sizes on half" tag="5" id="qCy-Kx-9mR"/>
                                                                 </items>
                                                             </menu>
                                                         </popUpButtonCell>

@@ -47,6 +47,7 @@ class Defaults {
     static let lastVersion = StringDefault(key: "lastVersion")
     static let installVersion = StringDefault(key: "installVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
+    static let showAdditionalSizesInMenu = OptionalBoolDefault(key: "showAdditionalSizesInMenu")
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
     static let footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
@@ -98,8 +99,6 @@ class Defaults {
     static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = OptionalBoolDefault(key: "screensOrderedByX")
-    static let showEighthsInMenu = OptionalBoolDefault(key: "showEighthsInMenu")
-    
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -136,6 +135,7 @@ class Defaults {
         screenEdgeGapsOnMainScreenOnly,
         screenEdgeGapTopNotch,
         showAllActionsInMenu,
+        showAdditionalSizesInMenu,
         footprintAlpha,
         footprintBorderWidth,
         footprintFade,
@@ -183,7 +183,7 @@ class Defaults {
         systemWideMouseDown,
         systemWideMouseDownApps,
         screensOrderedByX,
-        showEighthsInMenu
+        showAdditionalSizesInMenu
     ]
 }
 

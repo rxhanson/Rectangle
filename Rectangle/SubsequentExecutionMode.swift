@@ -14,6 +14,7 @@ enum SubsequentExecutionMode: Int {
     case none = 2
     case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
     case cycleMonitor = 4
+    case resizeAndCycleQuadrants = 5
 }
 
 class SubsequentExecutionDefault: Default {
@@ -36,7 +37,14 @@ class SubsequentExecutionDefault: Default {
     
     var resizes: Bool {
         switch value {
-        case .resize, .acrossAndResize: return true
+        case .resize, .acrossAndResize, .resizeAndCycleQuadrants: return true
+        default: return false
+        }
+    }
+
+    var cyclesQuadrantPositions: Bool {
+        switch value {
+        case .resizeAndCycleQuadrants: return true
         default: return false
         }
     }

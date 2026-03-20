@@ -22,6 +22,7 @@ extension Notification.Name {
     static let windowTitleBar = Notification.Name("windowTitleBar")
     static let defaultSnapAreas = Notification.Name("defaultSnapAreas")
     static let updateAvailability = Notification.Name("updateAvailability")
+    static let showAdditionalSizesInMenuChanged = Notification.Name("showAdditionalSizesInMenuChanged")
 
     func post(
         center: NotificationCenter = NotificationCenter.default,
