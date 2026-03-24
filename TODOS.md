@@ -1,14 +1,7 @@
 
-## Phase 1.5: Prefs UI visibility for individual twelfths shortcuts
-**What:** Add storyboard rows + IBOutlets for the 11 twelfths shortcuts that are
-functional but invisible in the preferences shortcuts tab.
-**Why:** After Phase 1 adds default shortcuts, 11/12 twelfths positions will work
-but have no editable row in the Prefs > Shortcuts pane. Only `topLeftTwelfth` shows
-(as the cycling entrypoint). This asymmetric state is confusing.
-**Current state:** `PrefsViewController.swift` uses hardcoded IBOutlets. Adding 11
-rows requires storyboard edits + new IBOutlets. Low complexity, moderate tedium.
-**Start here:** `Rectangle/PrefsWindow/PrefsViewController.swift` and `Base.lproj/Main.storyboard`
-**Depends on:** Phase 1 (PR with default shortcuts) merged first.
+## ~~Phase 1.5: Prefs UI visibility for individual twelfths shortcuts~~ — DONE
+Added 11 individual shortcut rows to Settings → Extra (Grid Positions section) in
+`SettingsViewController.swift`. Popover now scrollable via NSScrollView.
 
 ## Phase 2: Per-display layout memory
 **What:** Windows automatically remember and restore their positions per display UUID.

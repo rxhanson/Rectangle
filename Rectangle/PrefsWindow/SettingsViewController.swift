@@ -812,6 +812,34 @@ class SettingsViewController: NSViewController {
                 sixteenthsCyclingShortcutView.shortcutValidator = passThroughValidator
             }
 
+            // Direct-jump twelfths rows (all 11 positions; topLeftTwelfth is the cycling row above)
+            let directTwelfths: [WindowAction] = [
+                .topCenterLeftTwelfth, .topCenterRightTwelfth, .topRightTwelfth,
+                .middleLeftTwelfth, .middleCenterLeftTwelfth, .middleCenterRightTwelfth,
+                .middleRightTwelfth,
+                .bottomLeftTwelfth, .bottomCenterLeftTwelfth, .bottomCenterRightTwelfth,
+                .bottomRightTwelfth
+            ]
+
+            let twelfthDirectLabels: [NSTextField] = directTwelfths.map { action in
+                let label = NSTextField(labelWithString: action.displayName ?? action.name)
+                label.alignment = .right
+                label.translatesAutoresizingMaskIntoConstraints = false
+                return label
+            }
+
+            let twelfthDirectRows: [(NSStackView, MASShortcutView)] = zip(twelfthDirectLabels, directTwelfths).map { label, action in
+                let icon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+                icon.image = action.image
+                icon.image?.size = NSSize(width: 21, height: 14)
+                let shortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+                shortcutView.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
+                if Defaults.allowAnyShortcut.enabled {
+                    shortcutView.shortcutValidator = PassthroughShortcutValidator()
+                }
+                return (makeRow(makeLabelStack(label, icon), shortcutView), shortcutView)
+            }
+
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
             mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
@@ -828,6 +856,9 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(bottomRightEighthRow)
             mainStackView.addArrangedSubview(ninthsCyclingRow)
             mainStackView.addArrangedSubview(twelfthsCyclingRow)
+            for (row, _) in twelfthDirectRows {
+                mainStackView.addArrangedSubview(row)
+            }
             mainStackView.addArrangedSubview(sixteenthsCyclingRow)
 
 
@@ -856,7 +887,7 @@ class SettingsViewController: NSViewController {
                 bottomCenterRightEighthLabel.widthAnchor.constraint(equalTo: bottomRightEighthLabel.widthAnchor),
                 bottomRightEighthLabel.widthAnchor.constraint(equalTo: ninthsCyclingLabel.widthAnchor),
                 ninthsCyclingLabel.widthAnchor.constraint(equalTo: twelfthsCyclingLabel.widthAnchor),
-                twelfthsCyclingLabel.widthAnchor.constraint(equalTo: sixteenthsCyclingLabel.widthAnchor),
+                twelfthsCyclingLabel.widthAnchor.constraint(equalTo: twelfthDirectLabels[0].widthAnchor),
                 sixteenthsCyclingLabel.widthAnchor.constraint(equalTo: hSplitLabel.widthAnchor),
                 hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
@@ -906,7 +937,25 @@ class SettingsViewController: NSViewController {
                 vSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
+            // Chain the 11 direct twelfths label widths together and to the cycling labels on each end,
+            // plus width (160pt) and leading alignment for each new shortcut view.
+            var directTwelfthConstraints: [NSLayoutConstraint] = []
+            for i in 0..<twelfthDirectLabels.count - 1 {
+                directTwelfthConstraints.append(
+                    twelfthDirectLabels[i].widthAnchor.constraint(equalTo: twelfthDirectLabels[i + 1].widthAnchor)
+                )
+            }
+            directTwelfthConstraints.append(
+                twelfthDirectLabels.last!.widthAnchor.constraint(equalTo: sixteenthsCyclingLabel.widthAnchor)
+            )
+            for (_, shortcutView) in twelfthDirectRows {
+                directTwelfthConstraints.append(shortcutView.widthAnchor.constraint(equalToConstant: 160))
+                directTwelfthConstraints.append(shortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor))
+            }
+            NSLayoutConstraint.activate(directTwelfthConstraints)
+
             let containerView = NSView()
+            containerView.translatesAutoresizingMaskIntoConstraints = false
             containerView.addSubview(mainStackView)
 
             NSLayoutConstraint.activate([
@@ -916,7 +965,16 @@ class SettingsViewController: NSViewController {
                 mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -15)
             ])
 
-            viewController.view = containerView
+            let scrollView = NSScrollView()
+            scrollView.hasVerticalScroller = true
+            scrollView.autohidesScrollers = true
+            scrollView.documentView = containerView
+            NSLayoutConstraint.activate([
+                containerView.widthAnchor.constraint(equalTo: scrollView.contentView.widthAnchor)
+            ])
+
+            popover.contentSize = NSSize(width: 350, height: 520)
+            viewController.view = scrollView
             popover.contentViewController = viewController
             extraSettingsPopover = popover
         }
