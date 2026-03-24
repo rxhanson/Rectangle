@@ -652,6 +652,9 @@ enum WindowAction: Int, Codable {
     }
 
     var alternateDefault: Shortcut? {
+        // Shortcuts gated on install version are only applied to new installs to avoid
+        // overriding existing user bindings. installVersion is set once on first install.
+        let gated = Defaults.installVersion.value.flatMap(Int.init).map { $0 > 94 } ?? false
         switch self {
         case .leftHalf: return Shortcut( ctrl|alt, kVK_LeftArrow )
         case .rightHalf: return Shortcut( ctrl|alt, kVK_RightArrow )
@@ -674,13 +677,20 @@ enum WindowAction: Int, Codable {
         case .centerThird: return Shortcut( ctrl|alt, kVK_ANSI_F )
         case .lastTwoThirds: return Shortcut( ctrl|alt, kVK_ANSI_T )
         case .lastThird: return Shortcut( ctrl|alt, kVK_ANSI_G )
-        case .centerTwoThirds:
-            if let installVersion = Defaults.installVersion.value,
-               let intInstallVersion = Int(installVersion),
-               intInstallVersion > 94 {
-                return Shortcut( ctrl|alt, kVK_ANSI_R )
-            }
-            return nil
+        case .centerTwoThirds: return gated ? Shortcut( ctrl|alt, kVK_ANSI_R ) : nil
+        // Twelfths (4×3): direct-address shortcuts, reading order left-to-right top-to-bottom
+        case .topLeftTwelfth:          return gated ? Shortcut( ctrl|alt, kVK_ANSI_1 ) : nil
+        case .topCenterLeftTwelfth:    return gated ? Shortcut( ctrl|alt, kVK_ANSI_2 ) : nil
+        case .topCenterRightTwelfth:   return gated ? Shortcut( ctrl|alt, kVK_ANSI_3 ) : nil
+        case .topRightTwelfth:         return gated ? Shortcut( ctrl|alt, kVK_ANSI_4 ) : nil
+        case .middleLeftTwelfth:       return gated ? Shortcut( ctrl|alt, kVK_ANSI_5 ) : nil
+        case .middleCenterLeftTwelfth: return gated ? Shortcut( ctrl|alt, kVK_ANSI_6 ) : nil
+        case .middleCenterRightTwelfth:return gated ? Shortcut( ctrl|alt, kVK_ANSI_7 ) : nil
+        case .middleRightTwelfth:      return gated ? Shortcut( ctrl|alt, kVK_ANSI_8 ) : nil
+        case .bottomLeftTwelfth:       return gated ? Shortcut( ctrl|alt, kVK_ANSI_9 ) : nil
+        case .bottomCenterLeftTwelfth: return gated ? Shortcut( ctrl|alt, kVK_ANSI_0 ) : nil
+        case .bottomCenterRightTwelfth:return gated ? Shortcut( ctrl|alt, kVK_ANSI_Q ) : nil
+        case .bottomRightTwelfth:      return gated ? Shortcut( ctrl|alt, kVK_ANSI_W ) : nil
         default: return nil
         }
     }
