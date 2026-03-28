@@ -141,6 +141,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
         self.titleBarManager = TitleBarManager()
+        DisplayLayoutManager.shared = DisplayLayoutManager()
         self.initializeTodo()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)

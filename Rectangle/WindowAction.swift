@@ -132,7 +132,9 @@ enum WindowAction: Int, Codable {
          bottomLeftSixteenth = 116,
          bottomCenterLeftSixteenth = 117,
          bottomCenterRightSixteenth = 118,
-         bottomRightSixteenth = 119
+         bottomRightSixteenth = 119,
+         pinToPosition = 120,
+         unpinFromPosition = 121
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -163,7 +165,8 @@ enum WindowAction: Int, Codable {
                          halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
                          tileAll, cascadeAll,
                          leftTodo, rightTodo,
-                         cascadeActiveApp, tileActiveApp
+                         cascadeActiveApp, tileActiveApp,
+                         pinToPosition, unpinFromPosition
     ]
 
     func post() {
@@ -314,6 +317,8 @@ enum WindowAction: Int, Codable {
         case .bottomCenterLeftSixteenth: return "bottomCenterLeftSixteenth"
         case .bottomCenterRightSixteenth: return "bottomCenterRightSixteenth"
         case .bottomRightSixteenth: return "bottomRightSixteenth"
+        case .pinToPosition: return "pinToPosition"
+        case .unpinFromPosition: return "unpinFromPosition"
         }
     }
 
@@ -590,6 +595,12 @@ enum WindowAction: Int, Codable {
         case .bottomRightSixteenth:
             key = "bottomRightSixteenth.title"
             value = "Bottom Right Sixteenth"
+        case .pinToPosition:
+            key = "pinToPosition.title"
+            value = "Pin to Position"
+        case .unpinFromPosition:
+            key = "unpinFromPosition.title"
+            value = "Unpin from Position"
         }
 
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
@@ -622,7 +633,9 @@ enum WindowAction: Int, Codable {
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
-            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
+            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
+            // Pinning
+            .pinToPosition, .unpinFromPosition:
             return false
         default:
             return true
@@ -812,6 +825,8 @@ enum WindowAction: Int, Codable {
         case .bottomCenterLeftSixteenth: return NSImage(imageLiteralResourceName: "bottomCenterLeftSixteenthTemplate")
         case .bottomCenterRightSixteenth: return NSImage(imageLiteralResourceName: "bottomCenterRightSixteenthTemplate")
         case .bottomRightSixteenth: return NSImage(imageLiteralResourceName: "bottomRightSixteenthTemplate")
+        case .pinToPosition: return NSImage(imageLiteralResourceName: "maximizeTemplate")
+        case .unpinFromPosition: return NSImage(imageLiteralResourceName: "restoreTemplate")
         }
     }
 
@@ -862,7 +877,7 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp, .pinToPosition, .unpinFromPosition:
             return .none
         }
     }

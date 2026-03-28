@@ -204,7 +204,14 @@ class WindowManager {
         }
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-        
+
+        DisplayLayoutManager.shared?.recordWindowPosition(
+            windowId: result.windowId,
+            windowElement: result.windowElement,
+            action: calcResult.resultingAction,
+            rect: resultingRect
+        )
+
         if Logger.logging {
             var logItems = ["\(result.action.name)",
                             "display: \(result.visibleFrameOfScreen.debugDescription)",

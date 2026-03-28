@@ -58,6 +58,10 @@ class AccessibilityElement {
         guard let role = role else { return nil }
         return role == .sheet
     }
+
+    var title: String? {
+        wrappedElement.getValue(.title) as? String
+    }
     
     var isToolbar: Bool? {
         guard let role = role else { return nil }
