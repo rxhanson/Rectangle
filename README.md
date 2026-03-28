@@ -48,7 +48,7 @@ To un-ignore an app that you have selected to ignore, simply bring that app fron
 
 Open the URL `rectangle://execute-action?name=[name]`. Do not activate Rectangle if possible.
 
-Available values for `[name]`: `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`, `top-left`, `top-right`, `bottom-left`, `bottom-right`, `first-third`, `center-third`, `last-third`, `first-two-thirds`, `last-two-thirds`, `maximize`, `almost-maximize`, `maximize-height`, `smaller`, `larger`, `center`, `center-prominently`, `restore`, `next-display`, `previous-display`, `move-left`, `move-right`, `move-up`, `move-down`, `first-fourth`, `second-fourth`, `third-fourth`, `last-fourth`, `first-three-fourths`, `last-three-fourths`, `top-left-sixth`, `top-center-sixth`, `top-right-sixth`, `bottom-left-sixth`, `bottom-center-sixth`, `bottom-right-sixth`, `specified`, `reverse-all`, `top-left-ninth`, `top-center-ninth`, `top-right-ninth`, `middle-left-ninth`, `middle-center-ninth`, `middle-right-ninth`, `bottom-left-ninth`, `bottom-center-ninth`, `bottom-right-ninth`, `top-left-third`, `top-right-third`, `bottom-left-third`, `bottom-right-third`, `top-left-eighth`, `top-center-left-eighth`, `top-center-right-eighth`, `top-right-eighth`, `bottom-left-eighth`, `bottom-center-left-eighth`, `bottom-center-right-eighth`, `bottom-right-eighth`, `tile-all`, `cascade-all`, `cascade-active-app`
+Available values for `[name]`: `left-half`, `right-half`, `center-half`, `top-half`, `bottom-half`, `top-left`, `top-right`, `bottom-left`, `bottom-right`, `first-third`, `center-third`, `last-third`, `first-two-thirds`, `last-two-thirds`, `maximize`, `almost-maximize`, `maximize-height`, `smaller`, `larger`, `center`, `center-prominently`, `restore`, `next-display`, `previous-display`, `move-left`, `move-right`, `move-up`, `move-down`, `first-fourth`, `second-fourth`, `third-fourth`, `last-fourth`, `first-three-fourths`, `last-three-fourths`, `top-left-sixth`, `top-center-sixth`, `top-right-sixth`, `bottom-left-sixth`, `bottom-center-sixth`, `bottom-right-sixth`, `specified`, `reverse-all`, `top-left-ninth`, `top-center-ninth`, `top-right-ninth`, `middle-left-ninth`, `middle-center-ninth`, `middle-right-ninth`, `bottom-left-ninth`, `bottom-center-ninth`, `bottom-right-ninth`, `top-left-third`, `top-right-third`, `bottom-left-third`, `bottom-right-third`, `top-left-eighth`, `top-center-left-eighth`, `top-center-right-eighth`, `top-right-eighth`, `bottom-left-eighth`, `bottom-center-left-eighth`, `bottom-center-right-eighth`, `bottom-right-eighth`, `top-left-twelfth`, `top-center-left-twelfth`, `top-center-right-twelfth`, `top-right-twelfth`, `middle-left-twelfth`, `middle-center-left-twelfth`, `middle-center-right-twelfth`, `middle-right-twelfth`, `bottom-left-twelfth`, `bottom-center-left-twelfth`, `bottom-center-right-twelfth`, `bottom-right-twelfth`, `top-left-sixteenth`, `top-center-left-sixteenth`, `top-center-right-sixteenth`, `top-right-sixteenth`, `upper-middle-left-sixteenth`, `upper-middle-center-left-sixteenth`, `upper-middle-center-right-sixteenth`, `upper-middle-right-sixteenth`, `lower-middle-left-sixteenth`, `lower-middle-center-left-sixteenth`, `lower-middle-center-right-sixteenth`, `lower-middle-right-sixteenth`, `bottom-left-sixteenth`, `bottom-center-left-sixteenth`, `bottom-center-right-sixteenth`, `bottom-right-sixteenth`, `tile-all`, `cascade-all`, `cascade-active-app`
 
 Example, from a shell: `open -g "rectangle://execute-action?name=left-half"`
 
@@ -61,6 +61,32 @@ rectangle://execute-task?name=unignore-app
 A bundle identifier can also be specified, for example:
 ```
 rectangle://execute-task?name=ignore-app&app-bundle-id=com.apple.Safari
+```
+
+## Dense Grid Layouts (Ninths, Twelfths, Sixteenths)
+
+Rectangle supports dense grid layouts beyond the standard halves, thirds, and quarters — designed for workflows that tile many windows simultaneously.
+
+| Grid       | Dimensions | Positions | Use case                          |
+|------------|------------|-----------|-----------------------------------|
+| Ninths     | 3×3        | 9         | Monitoring dashboards, multi-pane |
+| Twelfths   | 3×4        | 12        | Terminal-heavy workflows, AI agents |
+| Sixteenths | 4×4        | 16        | Maximum density on large displays |
+
+These are especially useful for developers running multiple terminal sessions with tools like [Claude Code](https://claude.ai/code), [Codex](https://openai.com/index/codex/), and similar AI coding agents, where you may have 8–16 sessions open at once and need stable, predictable window placement.
+
+All grid positions support **cycling mode**: repeatedly executing the same position action cycles the window through the grid in reading order (left-to-right, top-to-bottom), just like the existing thirds cycling behavior.
+
+Grid position shortcuts are available in **Settings → Extra Shortcuts** (via the ellipsis button at the bottom of the General tab). Twelfths also have default keyboard shortcuts (Ctrl+Option+1 through Ctrl+Option+0/=/- for the 12 positions).
+
+All positions are scriptable via the URL scheme:
+
+```bash
+# Tile a window into the top-left twelfth
+open -g "rectangle://execute-action?name=top-left-twelfth"
+
+# Tile into the bottom-right sixteenth
+open -g "rectangle://execute-action?name=bottom-right-sixteenth"
 ```
 
 ## Terminal Commands for Hidden Preferences
