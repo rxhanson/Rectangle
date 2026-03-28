@@ -99,6 +99,8 @@ class Defaults {
     static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = OptionalBoolDefault(key: "screensOrderedByX")
+    static let displayLayouts = JSONDefault<[String: [SavedWindowPosition]]>(key: "displayLayouts")
+    static let pinnedWindows = JSONDefault<[String: PinnedPosition]>(key: "pinnedWindows")
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -183,7 +185,9 @@ class Defaults {
         systemWideMouseDown,
         systemWideMouseDownApps,
         screensOrderedByX,
-        showAdditionalSizesInMenu
+        showAdditionalSizesInMenu,
+        displayLayouts,
+        pinnedWindows
     ]
 }
 

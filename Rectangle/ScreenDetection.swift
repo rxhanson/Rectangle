@@ -200,5 +200,15 @@ extension NSScreen {
     static var portraitDisplayConnected: Bool {
         NSScreen.screens.contains(where: {!$0.frame.isLandscape})
     }
+
+    var displayUUID: String? {
+        guard let screenNumber = deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID else { return nil }
+        let uuid = CGDisplayCreateUUIDFromDisplayID(screenNumber)
+        return uuid == nil ? nil : CFUUIDCreateString(nil, uuid!.takeUnretainedValue()) as String
+    }
+
+    static var displayConfigurationKey: String {
+        NSScreen.screens.compactMap { $0.displayUUID }.sorted().joined(separator: "+")
+    }
 }
 
