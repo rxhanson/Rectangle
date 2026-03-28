@@ -73,6 +73,21 @@ class ShortcutManager {
     @objc func windowActionTriggered(notification: NSNotification) {
         guard var parameters = notification.object as? ExecutionParameters else { return }
         
+        if parameters.action == .pinToPosition || parameters.action == .unpinFromPosition {
+            guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
+                  let windowId = parameters.windowId ?? windowElement.getWindowId()
+            else {
+                NSSound.beep()
+                return
+            }
+            if parameters.action == .pinToPosition {
+                DisplayLayoutManager.shared?.pinCurrentPosition(windowElement: windowElement, windowId: windowId)
+            } else {
+                DisplayLayoutManager.shared?.unpinWindow(windowElement: windowElement)
+            }
+            return
+        }
+
         if MultiWindowManager.execute(parameters: parameters) {
             return
         }
