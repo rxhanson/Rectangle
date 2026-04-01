@@ -319,7 +319,7 @@ extension AccessibilityElement {
     
     private static func getWindowInfo(_ location: CGPoint) -> WindowInfo? {
         WindowUtil.getWindowList().first(where: {windowInfo in
-            windowInfo.level < 23 // 23 is the level of the Notification Center
+            windowInfo.level < 21 // 21 is the level of the Notification Center
             && !["Dock", "WindowManager"].contains(windowInfo.processName)
             && windowInfo.frame.contains(location)
         })
