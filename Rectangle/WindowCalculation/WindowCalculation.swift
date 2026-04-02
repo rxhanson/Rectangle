@@ -218,6 +218,7 @@ class WindowCalculationFactory {
     static let bottomCenterLeftSixteenthCalculation = BottomCenterLeftSixteenthCalculation()
     static let bottomCenterRightSixteenthCalculation = BottomCenterRightSixteenthCalculation()
     static let bottomRightSixteenthCalculation = BottomRightSixteenthCalculation()
+    static let specificDisplayCalculation = SpecificDisplayCalculation()
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
@@ -329,7 +330,16 @@ class WindowCalculationFactory {
      .bottomLeftSixteenth: bottomLeftSixteenthCalculation,
      .bottomCenterLeftSixteenth: bottomCenterLeftSixteenthCalculation,
      .bottomCenterRightSixteenth: bottomCenterRightSixteenthCalculation,
-     .bottomRightSixteenth: bottomRightSixteenthCalculation
+     .bottomRightSixteenth: bottomRightSixteenthCalculation,
+     .displayOne: specificDisplayCalculation,
+     .displayTwo: specificDisplayCalculation,
+     .displayThree: specificDisplayCalculation,
+     .displayFour: specificDisplayCalculation,
+     .displayFive: specificDisplayCalculation,
+     .displaySix: specificDisplayCalculation,
+     .displaySeven: specificDisplayCalculation,
+     .displayEight: specificDisplayCalculation,
+     .displayNine: specificDisplayCalculation
         //     .restore: nil
     ]
 }

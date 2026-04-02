@@ -132,7 +132,16 @@ enum WindowAction: Int, Codable {
          bottomLeftSixteenth = 116,
          bottomCenterLeftSixteenth = 117,
          bottomCenterRightSixteenth = 118,
-         bottomRightSixteenth = 119
+         bottomRightSixteenth = 119,
+         displayOne = 120,
+         displayTwo = 121,
+         displayThree = 122,
+         displayFour = 123,
+         displayFive = 124,
+         displaySix = 125,
+         displaySeven = 126,
+         displayEight = 127,
+         displayNine = 128
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -163,7 +172,9 @@ enum WindowAction: Int, Codable {
                          halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
                          tileAll, cascadeAll,
                          leftTodo, rightTodo,
-                         cascadeActiveApp, tileActiveApp
+                         cascadeActiveApp, tileActiveApp,
+                         displayOne, displayTwo, displayThree, displayFour, displayFive,
+                         displaySix, displaySeven, displayEight, displayNine
     ]
 
     func post() {
@@ -314,6 +325,30 @@ enum WindowAction: Int, Codable {
         case .bottomCenterLeftSixteenth: return "bottomCenterLeftSixteenth"
         case .bottomCenterRightSixteenth: return "bottomCenterRightSixteenth"
         case .bottomRightSixteenth: return "bottomRightSixteenth"
+        case .displayOne: return "displayOne"
+        case .displayTwo: return "displayTwo"
+        case .displayThree: return "displayThree"
+        case .displayFour: return "displayFour"
+        case .displayFive: return "displayFive"
+        case .displaySix: return "displaySix"
+        case .displaySeven: return "displaySeven"
+        case .displayEight: return "displayEight"
+        case .displayNine: return "displayNine"
+        }
+    }
+
+    var displayIndex: Int? {
+        switch self {
+        case .displayOne: return 0
+        case .displayTwo: return 1
+        case .displayThree: return 2
+        case .displayFour: return 3
+        case .displayFive: return 4
+        case .displaySix: return 5
+        case .displaySeven: return 6
+        case .displayEight: return 7
+        case .displayNine: return 8
+        default: return nil
         }
     }
 
@@ -590,6 +625,9 @@ enum WindowAction: Int, Codable {
         case .bottomRightSixteenth:
             key = "bottomRightSixteenth.title"
             value = "Bottom Right Sixteenth"
+        case .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine:
+            return nil
         }
 
         return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
@@ -601,7 +639,9 @@ enum WindowAction: Int, Codable {
 
     var resizes: Bool {
         switch self {
-        case .center, .centerProminently, .nextDisplay, .previousDisplay: return false
+        case .center, .centerProminently, .nextDisplay, .previousDisplay,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine: return false
         case .moveUp, .moveDown, .moveLeft, .moveRight: return Defaults.resizeOnDirectionalMove.enabled
         default: return true
         }
@@ -622,7 +662,10 @@ enum WindowAction: Int, Codable {
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
-            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
+            .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
+            // Specific displays
+            .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+            .displaySix, .displaySeven, .displayEight, .displayNine:
             return false
         default:
             return true
@@ -802,6 +845,9 @@ enum WindowAction: Int, Codable {
         case .bottomCenterLeftSixteenth: return NSImage(imageLiteralResourceName: "bottomCenterLeftSixteenthTemplate")
         case .bottomCenterRightSixteenth: return NSImage(imageLiteralResourceName: "bottomCenterRightSixteenthTemplate")
         case .bottomRightSixteenth: return NSImage(imageLiteralResourceName: "bottomRightSixteenthTemplate")
+        case .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine:
+            return NSImage(imageLiteralResourceName: "nextDisplayTemplate")
         }
     }
 
@@ -852,11 +898,13 @@ enum WindowAction: Int, Codable {
             return Defaults.applyGapsToMaximize.userDisabled ? .none : .both;
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
-        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp:
+        case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine:
             return .none
         }
     }
-    
+
     var category: WindowActionCategory? { // used to specify a submenu
         switch self {
         case .firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds: return .thirds
@@ -878,7 +926,9 @@ enum WindowAction: Int, Codable {
             return .thirds
         case .smaller, .larger, .smallerWidth, .largerWidth, .smallerHeight, .largerHeight:
             return .size
-        case .previousDisplay, .nextDisplay:
+        case .previousDisplay, .nextDisplay,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine:
             return .display
         default: return nil
         }
