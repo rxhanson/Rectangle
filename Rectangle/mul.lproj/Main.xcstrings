@@ -20031,6 +20031,9 @@
         }
       }
     },
+    "Grid Positions" : {
+
+    },
     "gtf-PD-IHm.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"General\"; ObjectID = \"gtf-PD-IHm\";",
       "extractionState" : "extracted_with_value",
@@ -31099,6 +31102,12 @@
         }
       }
     },
+    "Ninths" : {
+
+    },
+    "Ninths (3×3)" : {
+
+    },
     "NMo-om-nkz.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Services\"; ObjectID = \"NMo-om-nkz\";",
       "extractionState" : "extracted_with_value",
@@ -34502,6 +34511,9 @@
         }
       }
     },
+    "Press the shortcut repeatedly to cycle through all positions in the grid." : {
+
+    },
     "Ptp-SP-VEL.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Bigger\"; ObjectID = \"Ptp-SP-VEL\";",
       "extractionState" : "manual",
@@ -35884,6 +35896,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "-"
+          }
+        }
+      }
+    },
+    "qCy-Kx-9mR.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle positions on quadrants, cycle sizes on half\"; ObjectID = \"qCy-Kx-9mR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "cycle positions on quadrants, cycle sizes on half"
           }
         }
       }
@@ -38776,7 +38800,13 @@
         }
       }
     },
-    "Show Eighths in menu" : {
+    "Show additional sizes in menu" : {
+
+    },
+    "Sixteenths" : {
+
+    },
+    "Sixteenths (4×4)" : {
 
     },
     "Sixths" : {
@@ -41880,6 +41910,12 @@
           }
         }
       }
+    },
+    "Twelfths" : {
+
+    },
+    "Twelfths (4×3)" : {
+
     },
     "tXI-mr-wws.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Open Recent\"; ObjectID = \"tXI-mr-wws\";",
