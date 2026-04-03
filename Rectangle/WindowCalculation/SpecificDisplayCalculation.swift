@@ -25,7 +25,8 @@ class SpecificDisplayCalculation: WindowCalculation {
 
         if targetScreen == usableScreens.currentScreen { return nil }
 
-        let rectParams = params.asRectParams(visibleFrame: targetScreen.adjustedVisibleFrame(params.ignoreTodo))
+        let destFrame = targetScreen.adjustedVisibleFrame(params.ignoreTodo)
+        let rectParams = params.asRectParams(visibleFrame: destFrame)
 
         if Defaults.attemptMatchOnNextPrevDisplay.userEnabled {
             if let lastAction = params.lastAction,
@@ -44,9 +45,20 @@ class SpecificDisplayCalculation: WindowCalculation {
             }
         }
 
-        let rectResult = calculateRect(rectParams)
-        let resultingAction: WindowAction = rectResult.resultingAction ?? params.action
-        return WindowCalculationResult(rect: rectResult.rect, screen: targetScreen, resultingAction: resultingAction)
+        let sourceFrame = usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
+        let windowRect = params.window.rect
+
+        let relativeX = (windowRect.minX - sourceFrame.minX) / sourceFrame.width
+        let relativeY = (windowRect.minY - sourceFrame.minY) / sourceFrame.height
+
+        var newRect = windowRect
+        newRect.origin.x = round(destFrame.minX + relativeX * destFrame.width)
+        newRect.origin.y = round(destFrame.minY + relativeY * destFrame.height)
+
+        newRect.origin.x = max(destFrame.minX, min(newRect.origin.x, destFrame.maxX - newRect.width))
+        newRect.origin.y = max(destFrame.minY, min(newRect.origin.y, destFrame.maxY - newRect.height))
+
+        return WindowCalculationResult(rect: newRect, screen: targetScreen, resultingAction: params.action)
     }
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
