@@ -172,14 +172,6 @@ extension NSScreen {
             }
         }
         
-        if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self, TodoManager.hasTodoWindow() {
-            let sidebarWidth = TodoManager.getSidebarWidth(visibleFrameWidth: visibleFrame.width)
-            newFrame.size.width -= sidebarWidth
-            if Defaults.todoSidebarSide.value == .left {
-                newFrame.origin.x += sidebarWidth
-            }
-        }
-
         if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self != NSScreen.screens.first {
             return newFrame
         }

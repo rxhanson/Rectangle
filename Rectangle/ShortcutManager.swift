@@ -73,14 +73,6 @@ class ShortcutManager {
     @objc func windowActionTriggered(notification: NSNotification) {
         guard var parameters = notification.object as? ExecutionParameters else { return }
         
-        if MultiWindowManager.execute(parameters: parameters) {
-            return
-        }
-        
-        if TodoManager.execute(parameters: parameters) {
-            return
-        }
-        
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
            parameters.action.classification != .size,

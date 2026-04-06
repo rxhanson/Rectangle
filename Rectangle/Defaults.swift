@@ -54,12 +54,6 @@ class Defaults {
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
-    static let todo = OptionalBoolDefault(key: "todo")
-    static let todoMode = BoolDefault(key: "todoMode")
-    static let todoApplication = StringDefault(key: "todoApplication")
-    static let todoSidebarWidth = FloatDefault(key: "todoSidebarWidth", defaultValue: 400)
-    static let todoSidebarWidthUnit = IntEnumDefault<TodoSidebarWidthUnit>(key: "todoSidebarWidthUnit", defaultValue: .pixels)
-    static let todoSidebarSide = IntEnumDefault<TodoSidebarSide>(key: "todoSidebarSide", defaultValue: .right)
     static let snapModifiers = IntDefault(key: "snapModifiers")
     static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
@@ -77,7 +71,6 @@ class Defaults {
     static let applyGapsToMaximizeHeight = OptionalBoolDefault(key: "applyGapsToMaximizeHeight")
     static let cornerSnapAreaSize = FloatDefault(key: "cornerSnapAreaSize", defaultValue: 20)
     static let shortEdgeSnapAreaSize = FloatDefault(key: "shortEdgeSnapAreaSize", defaultValue: 145)
-    static let cascadeAllDeltaSize = FloatDefault(key: "cascadeAllDeltaSize", defaultValue: 30)
     static let sixthsSnapArea = OptionalBoolDefault(key: "sixthsSnapArea")
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
     static let dragFromStage = OptionalBoolDefault(key: "dragFromStage")
@@ -141,11 +134,6 @@ class Defaults {
         footprintFade,
         footprintColor,
         SUEnableAutomaticChecks,
-        todo,
-        todoMode,
-        todoApplication,
-        todoSidebarWidth,
-        todoSidebarSide,
         snapModifiers,
         attemptMatchOnNextPrevDisplay,
         altThirdCycle,
@@ -163,7 +151,6 @@ class Defaults {
         applyGapsToMaximizeHeight,
         cornerSnapAreaSize,
         shortEdgeSnapAreaSize,
-        cascadeAllDeltaSize,
         sixthsSnapArea,
         stageSize,
         dragFromStage,
