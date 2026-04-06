@@ -144,37 +144,9 @@ enum WindowAction: Int, Codable {
          displayNine = 128
 
     // Order matters here - it's used in the menu
-    static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
-                         topLeft, topRight, bottomLeft, bottomRight,
-                         firstThird, centerThird, lastThird, firstTwoThirds, centerTwoThirds, lastTwoThirds,
-                         topVerticalThird, middleVerticalThird, bottomVerticalThird, topVerticalTwoThirds, bottomVerticalTwoThirds,
-                         maximize, almostMaximize, maximizeHeight, larger, smaller, largerWidth, smallerWidth, largerHeight, smallerHeight,
-                         center, centerProminently, restore,
-                         nextDisplay, previousDisplay,
-                         moveLeft, moveRight, moveUp, moveDown,
-                         firstFourth, secondFourth, thirdFourth, lastFourth, firstThreeFourths, centerThreeFourths, lastThreeFourths,
-                         topLeftSixth, topCenterSixth, topRightSixth, bottomLeftSixth, bottomCenterSixth, bottomRightSixth,
-                         specified, reverseAll,
-                         topLeftThird, topRightThird, bottomLeftThird, bottomRightThird,
-                         topLeftEighth, topCenterLeftEighth, topCenterRightEighth, topRightEighth,
-                         bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
-                         topLeftNinth, topCenterNinth, topRightNinth,
-                         middleLeftNinth, middleCenterNinth, middleRightNinth,
-                         bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
-                         topLeftTwelfth, topCenterLeftTwelfth, topCenterRightTwelfth, topRightTwelfth,
-                         middleLeftTwelfth, middleCenterLeftTwelfth, middleCenterRightTwelfth, middleRightTwelfth,
-                         bottomLeftTwelfth, bottomCenterLeftTwelfth, bottomCenterRightTwelfth, bottomRightTwelfth,
-                         topLeftSixteenth, topCenterLeftSixteenth, topCenterRightSixteenth, topRightSixteenth,
-                         upperMiddleLeftSixteenth, upperMiddleCenterLeftSixteenth, upperMiddleCenterRightSixteenth, upperMiddleRightSixteenth,
-                         lowerMiddleLeftSixteenth, lowerMiddleCenterLeftSixteenth, lowerMiddleCenterRightSixteenth, lowerMiddleRightSixteenth,
-                         bottomLeftSixteenth, bottomCenterLeftSixteenth, bottomCenterRightSixteenth, bottomRightSixteenth,
-                         doubleHeightUp, doubleHeightDown, doubleWidthLeft, doubleWidthRight,
-                         halveHeightUp, halveHeightDown, halveWidthLeft, halveWidthRight,
-                         tileAll, cascadeAll,
-                         leftTodo, rightTodo,
-                         cascadeActiveApp, tileActiveApp,
-                         displayOne, displayTwo, displayThree, displayFour, displayFive,
-                         displaySix, displaySeven, displayEight, displayNine
+    static let active = [leftHalf, rightHalf,
+                         maximize, almostMaximize, larger, smaller,
+                         center
     ]
 
     func post() {
