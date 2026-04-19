@@ -133,7 +133,7 @@
 		98D1441324560B1E0090C603 /* AlertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D1441224560B1E0090C603 /* AlertUtil.swift */; };
 		98D16A442592AD55005228CB /* MASShortcutMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D16A432592AD55005228CB /* MASShortcutMigration.swift */; };
 		98D16A492592B460005228CB /* NotificationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D16A482592B460005228CB /* NotificationExtension.swift */; };
-		98D4B6C525B6256C009C7BF6 /* TodoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D4B6C425B6256C009C7BF6 /* TodoManager.swift */; };
+				98D4B6C525B6256C009C7BF6 /* TodoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D4B6C425B6256C009C7BF6 /* TodoManager.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
@@ -189,6 +189,10 @@
 		F7B6C43BB57F8064F49DDBB6 /* BottomLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */; };
 		FA34D0FF2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA34D0FE2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift */; };
 		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
+		EE1100000000000000000003 /* ScreenPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1100000000000000000002 /* ScreenPreset.swift */; };
+		EE1100000000000000000005 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1100000000000000000004 /* PresetManager.swift */; };
+		EE1100000000000000000007 /* MonitorVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1100000000000000000006 /* MonitorVisualizationView.swift */; };
+		EE1100000000000000000009 /* PresetsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1100000000000000000008 /* PresetsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -406,6 +410,10 @@
 		FD222258713B13274FB651B0 /* TopRightSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRightSixteenthCalculation.swift; sourceTree = "<group>"; };
 		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
+		EE1100000000000000000002 /* ScreenPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenPreset.swift; sourceTree = "<group>"; };
+		EE1100000000000000000004 /* PresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetManager.swift; sourceTree = "<group>"; };
+		EE1100000000000000000006 /* MonitorVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitorVisualizationView.swift; sourceTree = "<group>"; };
+		EE1100000000000000000008 /* PresetsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -693,6 +701,7 @@
 				989DA30C243FC0C3008C7AA4 /* WelcomeWindow */,
 				98C2755F231FF6AE009B9292 /* Snapping */,
 				98D4B6C925B625B6009C7BF6 /* TodoMode */,
+				EE1100000000000000000001 /* Presets */,
 				985B9BFA22BE218C00A2E8F0 /* Popover */,
 				982140EA22B7DB0400ABFB3F /* WindowMover */,
 				982140E922B7DA3100ABFB3F /* WindowCalculation */,
@@ -766,6 +775,17 @@
 				98D4B6C425B6256C009C7BF6 /* TodoManager.swift */,
 			);
 			path = TodoMode;
+			sourceTree = "<group>";
+		};
+		EE1100000000000000000001 /* Presets */ = {
+			isa = PBXGroup;
+			children = (
+				EE1100000000000000000002 /* ScreenPreset.swift */,
+				EE1100000000000000000004 /* PresetManager.swift */,
+				EE1100000000000000000006 /* MonitorVisualizationView.swift */,
+				EE1100000000000000000008 /* PresetsViewController.swift */,
+			);
+			path = Presets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1066,6 +1086,10 @@
 				98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */,
 				98A009AD2512498000CFBF0C /* FirstFourthCalculation.swift in Sources */,
 				AA4DA2FB28FDC94A00355CEB /* DispatchTimeExtension.swift in Sources */,
+								EE1100000000000000000003 /* ScreenPreset.swift in Sources */,
+				EE1100000000000000000005 /* PresetManager.swift in Sources */,
+				EE1100000000000000000007 /* MonitorVisualizationView.swift in Sources */,
+				EE1100000000000000000009 /* PresetsViewController.swift in Sources */,
 				98D4B6C525B6256C009C7BF6 /* TodoManager.swift in Sources */,
 				B4780A322BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift in Sources */,
 				AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */,

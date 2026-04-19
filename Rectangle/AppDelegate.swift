@@ -142,6 +142,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.snappingManager = SnappingManager()
         self.titleBarManager = TitleBarManager()
         self.initializeTodo()
+        PresetManager.shared.registerAllShortcuts()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
     }
@@ -246,9 +247,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func openPreferences(_ sender: Any) {
         if prefsWindowController == nil {
             prefsWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "PrefsWindowController") as? NSWindowController
+            injectPresetsTab()
         }
         NSApp.activate(ignoringOtherApps: true)
         prefsWindowController?.showWindow(self)
+    }
+
+    private func injectPresetsTab() {
+        guard let tabVC = prefsWindowController?.contentViewController as? NSTabViewController else { return }
+        let presetsVC = PresetsViewController()
+        let item = NSTabViewItem(viewController: presetsVC)
+        item.label = "Presets"
+        if #available(macOS 11, *) {
+            item.image = NSImage(systemSymbolName: "rectangle.3.group", accessibilityDescription: "Presets")
+        } else {
+            item.image = NSImage(named: NSImage.preferencesGeneralName)
+        }
+        tabVC.addTabViewItem(item)
     }
     
     @IBAction func showAbout(_ sender: Any) {
@@ -648,6 +663,8 @@ extension AppDelegate {
                     let bundleId = extractBundleIdParameter(fromComponents: components)
                     guard isValidParameter(bundleId: bundleId) else { continue }
                     self.applicationToggle.enableApp(appBundleId: bundleId)
+                case ("open-preferences", _):
+                    self.openPreferences(self)
                 default:
                     continue
                 }

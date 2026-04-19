@@ -79,7 +79,7 @@ class AccessibilityElement {
         return role == .staticText
     }
     
-    private var subrole: NSAccessibility.Subrole? {
+    var subrole: NSAccessibility.Subrole? {
         guard let value = wrappedElement.getValue(.subrole) as? String else { return nil }
         return NSAccessibility.Subrole(rawValue: value)
     }
