@@ -77,6 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             : unauthorizedMenu
         
         mainStatusMenu.autoenablesItems = false
+        addMenuIcons()
         addWindowActionMenuItems()
 
         NotificationCenter.default.addObserver(self, selector: #selector(rebuildMenu), name: .showAdditionalSizesInMenuChanged, object: nil)
@@ -130,6 +131,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Notification.Name.appWillBecomeActive.post()
     }
     
+    private func addMenuIcons() {
+        guard #available(macOS 11, *) else { return }
+        for item in mainStatusMenu.items {
+            switch item.action {
+            case #selector(openPreferences):
+                item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: nil)
+            case #selector(viewLogging):
+                item.image = NSImage(systemSymbolName: "doc.text", accessibilityDescription: nil)
+            case #selector(checkForUpdates):
+                item.image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil)
+            default:
+                break
+            }
+        }
+    }
+
     func checkAutoCheckForUpdates() {
         updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
