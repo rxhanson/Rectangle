@@ -124,11 +124,17 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
         }
 
+        if Defaults.cyclingOverlapOffset.userEnabled,
+           action.positionCycles,
+           lastRectangleAction?.action == action {
+            calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
+        }
+
         if currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
-            
+
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-            
+
             return
         }
         
@@ -196,6 +202,64 @@ class WindowManager {
         }
     }
     
+    private func applyOverlapOffsetIfNeeded(_ rect: CGRect, windowId: CGWindowID, screen: NSScreen) -> CGRect {
+        let screenFrameAX = screen.adjustedVisibleFrame().screenFlipped
+        let tolerance: CGFloat = 4
+        let maxCascade = max(1, Int(Defaults.cyclingOverlapOffsetSize.value > 0 ? Defaults.cyclingOverlapMaxCascade.value : 1))
+
+        let otherWindows = AccessibilityElement.getAllWindowElements().filter { element in
+            guard element.getWindowId() != windowId,
+                  element.isWindow == true,
+                  element.isMinimized != true,
+                  element.isHidden != true,
+                  element.isSheet != true
+            else { return false }
+
+            let frame = element.frame
+            return !frame.isNull && screenFrameAX.intersects(frame)
+        }
+
+        let overlapOffset = CGFloat(Defaults.cyclingOverlapOffsetSize.value)
+        let screenFrameNormalized = screen.adjustedVisibleFrame()
+        var candidate = rect
+        var cascadeLevel = 0
+
+        while cascadeLevel < maxCascade {
+            let candidateAX = candidate.screenFlipped
+            let hasOverlap = otherWindows.contains { element in
+                let otherFrame = element.frame
+                return abs(otherFrame.origin.x - candidateAX.origin.x) < tolerance
+                    && abs(otherFrame.origin.y - candidateAX.origin.y) < tolerance
+                    && abs(otherFrame.width - candidateAX.width) < tolerance
+                    && abs(otherFrame.height - candidateAX.height) < tolerance
+            }
+
+            guard hasOverlap else { break }
+
+            candidate.origin.x += overlapOffset
+            candidate.origin.y += overlapOffset
+            cascadeLevel += 1
+
+            if candidate.origin.x + candidate.width > screenFrameNormalized.maxX {
+                candidate.origin.x = screenFrameNormalized.maxX - candidate.width
+            }
+            if candidate.origin.y + candidate.height > screenFrameNormalized.maxY {
+                candidate.origin.y = screenFrameNormalized.maxY - candidate.height
+            }
+            if candidate.origin.x < screenFrameNormalized.origin.x {
+                candidate.origin.x = screenFrameNormalized.origin.x
+            }
+            if candidate.origin.y < screenFrameNormalized.origin.y {
+                candidate.origin.y = screenFrameNormalized.origin.y
+            }
+        }
+
+        if cascadeLevel > 0 {
+            Logger.log("Cycling overlap detected, applied \(cascadeLevel) x \(overlapOffset)pt cascade offset")
+        }
+        return candidate
+    }
+
     func postProcess(result: ResultParameters, resultingRect: CGRect) {
         let calcResult = result.calcResult
         
