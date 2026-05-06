@@ -112,6 +112,10 @@ class SettingsViewController: NSViewController {
         Defaults.showAdditionalSizesInMenu.enabled = enabled
         Notification.Name.showAdditionalSizesInMenuChanged.post()
     }
+
+    @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
+        Defaults.cyclingOverlapOffset.enabled = sender.state == .on
+    }
     
     @IBAction func checkForUpdates(_ sender: Any) {
         AppDelegate.instance.updaterController?.checkForUpdates(sender)
@@ -812,10 +816,17 @@ class SettingsViewController: NSViewController {
                 sixteenthsCyclingShortcutView.shortcutValidator = passThroughValidator
             }
 
+            let overlapOffsetCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Offset cycling position on overlap", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleCyclingOverlapOffset(_:)))
+            overlapOffsetCheckbox.state = Defaults.cyclingOverlapOffset.userEnabled ? .on : .off
+            overlapOffsetCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            overlapOffsetCheckbox.alignment = .left
+            overlapOffsetCheckbox.imageHugsTitle = true
+
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
             mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
-            mainStackView.setCustomSpacing(8, after: showAdditionalSizesCheckbox)
+            mainStackView.addArrangedSubview(overlapOffsetCheckbox)
+            mainStackView.setCustomSpacing(8, after: overlapOffsetCheckbox)
             mainStackView.addArrangedSubview(cyclingHintLabel)
             mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
             mainStackView.addArrangedSubview(topLeftEighthRow)
@@ -883,6 +894,7 @@ class SettingsViewController: NSViewController {
                 hSplitField.widthAnchor.constraint(equalToConstant: 160),
                 vSplitField.widthAnchor.constraint(equalToConstant: 160),
                 showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 topVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 middleVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),

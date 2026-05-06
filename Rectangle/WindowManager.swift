@@ -124,9 +124,7 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
         }
 
-        if Defaults.cyclingOverlapOffset.userEnabled,
-           action.positionCycles,
-           lastRectangleAction?.action == action {
+        if Defaults.cyclingOverlapOffset.userEnabled {
             calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
         }
 
@@ -230,8 +228,6 @@ class WindowManager {
                 let otherFrame = element.frame
                 return abs(otherFrame.origin.x - candidateAX.origin.x) < tolerance
                     && abs(otherFrame.origin.y - candidateAX.origin.y) < tolerance
-                    && abs(otherFrame.width - candidateAX.width) < tolerance
-                    && abs(otherFrame.height - candidateAX.height) < tolerance
             }
 
             guard hasOverlap else { break }
