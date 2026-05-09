@@ -11,7 +11,7 @@ import MASShortcut
 
 class TodoManager {
     private static var todoWindowId: CGWindowID?
-    
+
     static var todoScreen : NSScreen?
     static let toggleDefaultsKey = "toggleTodo"
     static let reflowDefaultsKey = "reflowTodo"
@@ -22,7 +22,7 @@ class TodoManager {
         registerUnregisterReflowShortcut()
         moveAllIfNeeded(bringToFront)
     }
-    
+
     static func initToggleShortcut() {
         if UserDefaults.standard.dictionary(forKey: toggleDefaultsKey) == nil {
             guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
@@ -46,6 +46,11 @@ class TodoManager {
     }
     
     private static func registerToggleShortcut() {
+        guard isTodoShortcutBindable(toggleDefaultsKey) else {
+            unregisterToggleShortcut()
+            return
+        }
+
         MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: toggleDefaultsKey, toAction: {
             let enabled = !Defaults.todoMode.enabled
             setTodoMode(enabled)
@@ -53,6 +58,11 @@ class TodoManager {
     }
     
     private static func registerReflowShortcut() {
+        guard isTodoShortcutBindable(reflowDefaultsKey) else {
+            unregisterReflowShortcut()
+            return
+        }
+
         MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: reflowDefaultsKey, toAction: {
             moveAll()
         })
@@ -81,26 +91,30 @@ class TodoManager {
             unregisterReflowShortcut()
         }
     }
-    
-    static func getToggleKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
+
+    private static func isTodoShortcutBindable(_ defaultsKey: String) -> Bool {
+        guard let shortcut = shortcut(for: defaultsKey) else { return true }
+        return TodoShortcutConflict.conflict(for: shortcut, ignoringTodoDefaultsKey: defaultsKey) == nil
+    }
+
+    private static func shortcut(for defaultsKey: String, userDefaults: UserDefaults = .standard) -> MASShortcut? {
         guard
-            let shortcutDict = UserDefaults.standard.dictionary(forKey: toggleDefaultsKey),
+            let shortcutDict = userDefaults.dictionary(forKey: defaultsKey),
             let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
             let shortcut = dictTransformer.transformedValue(shortcutDict) as? MASShortcut
         else {
             return nil
         }
+        return shortcut
+    }
+
+    static func getToggleKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
+        guard let shortcut = shortcut(for: toggleDefaultsKey) else { return nil }
         return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
     
     static func getReflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard
-            let shortcutDict = UserDefaults.standard.dictionary(forKey: reflowDefaultsKey),
-            let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
-            let shortcut = dictTransformer.transformedValue(shortcutDict) as? MASShortcut
-        else {
-            return nil
-        }
+        guard let shortcut = shortcut(for: reflowDefaultsKey) else { return nil }
         return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
     
@@ -259,6 +273,73 @@ class TodoManager {
             return true
         }
         return false
+    }
+}
+
+struct TodoShortcutConflict {
+
+    let shortcutName: String
+
+    static func conflict(for shortcut: MASShortcut,
+                         ignoringTodoDefaultsKey ignoredDefaultsKey: String,
+                         userDefaults: UserDefaults = .standard) -> TodoShortcutConflict? {
+        let identity = ShortcutCycle.ShortcutIdentity(shortcut)
+
+        for action in WindowAction.active {
+            guard let actionShortcut = ShortcutCycle.shortcut(for: action, userDefaults: userDefaults),
+                  ShortcutCycle.ShortcutIdentity(actionShortcut) == identity
+            else { continue }
+
+            return TodoShortcutConflict(shortcutName: action.displayName ?? action.name)
+        }
+
+        for defaultsKey in TodoManager.defaultsKeys where defaultsKey != ignoredDefaultsKey {
+            guard let todoShortcut = ShortcutCycle.shortcut(forDefaultsKey: defaultsKey, userDefaults: userDefaults),
+                  ShortcutCycle.ShortcutIdentity(todoShortcut) == identity
+            else { continue }
+
+            return TodoShortcutConflict(shortcutName: displayName(forTodoDefaultsKey: defaultsKey))
+        }
+
+        return nil
+    }
+
+    private static func displayName(forTodoDefaultsKey defaultsKey: String) -> String {
+        switch defaultsKey {
+        case TodoManager.toggleDefaultsKey:
+            return NSLocalizedString("Toggle Todo", tableName: "Main", value: "Toggle Todo", comment: "")
+        case TodoManager.reflowDefaultsKey:
+            return NSLocalizedString("Reflow Todo", tableName: "Main", value: "Reflow Todo", comment: "")
+        default:
+            return defaultsKey
+        }
+    }
+}
+
+class TodoShortcutValidator: MASShortcutValidator {
+
+    private let defaultsKey: String
+    private let userDefaults: UserDefaults
+
+    init(defaultsKey: String, userDefaults: UserDefaults = .standard) {
+        self.defaultsKey = defaultsKey
+        self.userDefaults = userDefaults
+        super.init()
+    }
+
+    override func isShortcutValid(_ shortcut: MASShortcut!) -> Bool {
+        guard super.isShortcutValid(shortcut) else { return false }
+
+        // Preserve previous behavior by rejecting Rectangle-internal conflicts quietly,
+        // without routing them through MASShortcut's "already used" alert.
+        return TodoShortcutConflict.conflict(for: shortcut,
+                                             ignoringTodoDefaultsKey: defaultsKey,
+                                             userDefaults: userDefaults) == nil
+    }
+
+    override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!,
+                                         explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
+        return super.isShortcutAlreadyTaken(bySystem: shortcut, explanation: explanation)
     }
 }
 

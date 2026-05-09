@@ -46,6 +46,7 @@ class SettingsViewController: NSViewController {
 
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
+    private let shortcutRecordingObserver = ShortcutRecordingObserver()
     
     private var cycleSizeCheckboxes = [NSButton]()
     
@@ -811,6 +812,26 @@ class SettingsViewController: NSViewController {
                 twelfthsCyclingShortcutView.shortcutValidator = passThroughValidator
                 sixteenthsCyclingShortcutView.shortcutValidator = passThroughValidator
             }
+            shortcutRecordingObserver.observe([
+                largerWidthShortcutView,
+                smallerWidthShortcutView,
+                topVerticalThirdShortcutView,
+                middleVerticalThirdShortcutView,
+                bottomVerticalThirdShortcutView,
+                topVerticalTwoThirdsShortcutView,
+                bottomVerticalTwoThirdsShortcutView,
+                topLeftEighthShortcutView,
+                topCenterLeftEighthShortcutView,
+                topCenterRightEighthShortcutView,
+                topRightEighthShortcutView,
+                bottomLeftEighthShortcutView,
+                bottomCenterLeftEighthShortcutView,
+                bottomCenterRightEighthShortcutView,
+                bottomRightEighthShortcutView,
+                ninthsCyclingShortcutView,
+                twelfthsCyclingShortcutView,
+                sixteenthsCyclingShortcutView
+            ])
 
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
@@ -936,6 +957,7 @@ class SettingsViewController: NSViewController {
         updateCheckForUpdatesTitle()
         
         initializeTodoModeSettings()
+        shortcutRecordingObserver.observe([toggleTodoShortcutView, reflowTodoShortcutView])
         
         self.cycleSizeCheckboxes.forEach {
             $0.removeFromSuperview()
@@ -980,6 +1002,8 @@ class SettingsViewController: NSViewController {
         todoAppSidePopUpButton.selectItem(withTag: Defaults.todoSidebarSide.value.rawValue)
         TodoManager.initToggleShortcut()
         TodoManager.initReflowShortcut()
+        toggleTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
+        reflowTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
         toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
         reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
         showHideTodoModeSettings(animated: false)
