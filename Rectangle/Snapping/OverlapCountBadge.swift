@@ -21,9 +21,15 @@ class OverlapCountBadge {
     private static let hoverMargin: CGFloat = 30
     private static let originTolerance: CGFloat = 15
 
+    private static let maxRegions = 20
+
     static func recordStack(origin: CGPoint, rect: CGRect, screen: NSScreen) {
         stackedRegions.removeAll { abs($0.origin.x - origin.x) < 4 && abs($0.origin.y - origin.y) < 4 }
         stackedRegions.append(StackedRegion(origin: origin, rect: rect, screen: screen))
+
+        if stackedRegions.count > maxRegions {
+            stackedRegions.removeFirst(stackedRegions.count - maxRegions)
+        }
 
         if pollTimer == nil {
             startPolling()

@@ -186,7 +186,10 @@ class Defaults {
         systemWideMouseDown,
         systemWideMouseDownApps,
         screensOrderedByX,
-        showAdditionalSizesInMenu
+        showAdditionalSizesInMenu,
+        cyclingOverlapOffset,
+        cyclingOverlapOffsetSize,
+        cyclingOverlapMaxCascade
     ]
 }
 

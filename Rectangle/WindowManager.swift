@@ -124,7 +124,7 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value)
         }
 
-        if Defaults.cyclingOverlapOffset.userEnabled {
+        if Defaults.cyclingOverlapOffset.userEnabled, action.positionCycles {
             calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
         }
 
@@ -201,9 +201,12 @@ class WindowManager {
     }
     
     private func applyOverlapOffsetIfNeeded(_ rect: CGRect, windowId: CGWindowID, screen: NSScreen) -> CGRect {
+        let overlapOffset = CGFloat(Defaults.cyclingOverlapOffsetSize.value)
+        guard overlapOffset > 0 else { return rect }
+
         let screenFrameAX = screen.adjustedVisibleFrame().screenFlipped
         let tolerance: CGFloat = 4
-        let maxCascade = max(1, Int(Defaults.cyclingOverlapOffsetSize.value > 0 ? Defaults.cyclingOverlapMaxCascade.value : 1))
+        let maxCascade = min(5, max(1, Defaults.cyclingOverlapMaxCascade.value))
 
         let otherWindows = AccessibilityElement.getAllWindowElements().filter { element in
             guard element.getWindowId() != windowId,
@@ -217,7 +220,6 @@ class WindowManager {
             return !frame.isNull && screenFrameAX.intersects(frame)
         }
 
-        let overlapOffset = CGFloat(Defaults.cyclingOverlapOffsetSize.value)
         let screenFrameNormalized = screen.adjustedVisibleFrame()
         var candidate = rect
         var cascadeLevel = 0

@@ -114,7 +114,11 @@ class SettingsViewController: NSViewController {
     }
 
     @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
-        Defaults.cyclingOverlapOffset.enabled = sender.state == .on
+        let enabled = sender.state == .on
+        Defaults.cyclingOverlapOffset.enabled = enabled
+        if !enabled {
+            OverlapCountBadge.clearAll()
+        }
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -820,7 +824,6 @@ class SettingsViewController: NSViewController {
             overlapOffsetCheckbox.state = Defaults.cyclingOverlapOffset.userEnabled ? .on : .off
             overlapOffsetCheckbox.translatesAutoresizingMaskIntoConstraints = false
             overlapOffsetCheckbox.alignment = .left
-            overlapOffsetCheckbox.imageHugsTitle = true
 
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
