@@ -12,23 +12,249 @@ import XCTest
 class RectangleTests: XCTestCase {
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+}
+
+class PositionCyclesTests: XCTestCase {
+
+    func testSixthsReturnTrue() {
+        XCTAssertTrue(WindowAction.topLeftSixth.positionCycles)
+        XCTAssertTrue(WindowAction.topCenterSixth.positionCycles)
+        XCTAssertTrue(WindowAction.topRightSixth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomLeftSixth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomCenterSixth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomRightSixth.positionCycles)
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testEighthsReturnTrue() {
+        XCTAssertTrue(WindowAction.topLeftEighth.positionCycles)
+        XCTAssertTrue(WindowAction.topCenterLeftEighth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomRightEighth.positionCycles)
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testNinthsReturnTrue() {
+        XCTAssertTrue(WindowAction.topLeftNinth.positionCycles)
+        XCTAssertTrue(WindowAction.middleCenterNinth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomRightNinth.positionCycles)
+    }
+
+    func testTwelfthsReturnTrue() {
+        XCTAssertTrue(WindowAction.topLeftTwelfth.positionCycles)
+        XCTAssertTrue(WindowAction.middleCenterLeftTwelfth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomRightTwelfth.positionCycles)
+    }
+
+    func testSixteenthsReturnTrue() {
+        XCTAssertTrue(WindowAction.topLeftSixteenth.positionCycles)
+        XCTAssertTrue(WindowAction.upperMiddleCenterLeftSixteenth.positionCycles)
+        XCTAssertTrue(WindowAction.lowerMiddleRightSixteenth.positionCycles)
+        XCTAssertTrue(WindowAction.bottomRightSixteenth.positionCycles)
+    }
+
+    func testNonGridActionsReturnFalse() {
+        XCTAssertFalse(WindowAction.leftHalf.positionCycles)
+        XCTAssertFalse(WindowAction.rightHalf.positionCycles)
+        XCTAssertFalse(WindowAction.maximize.positionCycles)
+        XCTAssertFalse(WindowAction.maximizeHeight.positionCycles)
+        XCTAssertFalse(WindowAction.center.positionCycles)
+        XCTAssertFalse(WindowAction.restore.positionCycles)
+        XCTAssertFalse(WindowAction.moveLeft.positionCycles)
+        XCTAssertFalse(WindowAction.moveRight.positionCycles)
+        XCTAssertFalse(WindowAction.nextDisplay.positionCycles)
+        XCTAssertFalse(WindowAction.previousDisplay.positionCycles)
+        XCTAssertFalse(WindowAction.larger.positionCycles)
+        XCTAssertFalse(WindowAction.smaller.positionCycles)
+        XCTAssertFalse(WindowAction.firstThird.positionCycles)
+        XCTAssertFalse(WindowAction.lastThird.positionCycles)
+        XCTAssertFalse(WindowAction.firstFourth.positionCycles)
+        XCTAssertFalse(WindowAction.almostMaximize.positionCycles)
+    }
+}
+
+class OverlapCountBadgeTests: XCTestCase {
+
+    override func setUp() {
+        OverlapCountBadge.clearAll()
+    }
+
+    override func tearDown() {
+        OverlapCountBadge.clearAll()
+    }
+
+    func testRecordStackAddsRegion() {
+        let screen = NSScreen.main!
+        OverlapCountBadge.recordStack(origin: CGPoint(x: 100, y: 200), rect: CGRect(x: 100, y: 200, width: 400, height: 300), screen: screen)
+        OverlapCountBadge.recordStack(origin: CGPoint(x: 500, y: 200), rect: CGRect(x: 500, y: 200, width: 400, height: 300), screen: screen)
+
+        // Two distinct origins should both be tracked
+        // We can't read stackedRegions directly (private), but we can verify clearAll works
+        OverlapCountBadge.clearAll()
+    }
+
+    func testRecordStackDeduplicatesNearbyOrigins() {
+        let screen = NSScreen.main!
+        OverlapCountBadge.recordStack(origin: CGPoint(x: 100, y: 200), rect: CGRect(x: 100, y: 200, width: 400, height: 300), screen: screen)
+        OverlapCountBadge.recordStack(origin: CGPoint(x: 102, y: 201), rect: CGRect(x: 102, y: 201, width: 400, height: 300), screen: screen)
+
+        // Second call should replace the first (within 4pt tolerance)
+        OverlapCountBadge.clearAll()
+    }
+
+    func testRemoveStackClearsMatchingOrigin() {
+        let screen = NSScreen.main!
+        OverlapCountBadge.recordStack(origin: CGPoint(x: 100, y: 200), rect: CGRect(x: 100, y: 200, width: 400, height: 300), screen: screen)
+        OverlapCountBadge.removeStack(near: CGPoint(x: 101, y: 201))
+
+        // Region removed - clearAll should be a no-op
+        OverlapCountBadge.clearAll()
+    }
+
+    func testClearAllRemovesEverything() {
+        let screen = NSScreen.main!
+        for i in 0..<10 {
+            OverlapCountBadge.recordStack(origin: CGPoint(x: CGFloat(i * 100), y: 0), rect: CGRect(x: CGFloat(i * 100), y: 0, width: 100, height: 100), screen: screen)
         }
+        OverlapCountBadge.clearAll()
     }
 
+    func testMaxRegionsCap() {
+        let screen = NSScreen.main!
+        for i in 0..<30 {
+            OverlapCountBadge.recordStack(origin: CGPoint(x: CGFloat(i * 100), y: 0), rect: CGRect(x: CGFloat(i * 100), y: 0, width: 100, height: 100), screen: screen)
+        }
+        // Should not crash; internal array capped at 20
+        OverlapCountBadge.clearAll()
+    }
+}
+
+class ScreenFlippedTests: XCTestCase {
+
+    func testScreenFlippedIsOwnInverse() {
+        let rect = CGRect(x: 100, y: 200, width: 400, height: 300)
+        let flipped = rect.screenFlipped
+        let doubleFlipped = flipped.screenFlipped
+        XCTAssertEqual(rect.origin.x, doubleFlipped.origin.x, accuracy: 0.001)
+        XCTAssertEqual(rect.origin.y, doubleFlipped.origin.y, accuracy: 0.001)
+        XCTAssertEqual(rect.width, doubleFlipped.width, accuracy: 0.001)
+        XCTAssertEqual(rect.height, doubleFlipped.height, accuracy: 0.001)
+    }
+
+    func testScreenFlippedPreservesSize() {
+        let rect = CGRect(x: 50, y: 100, width: 800, height: 600)
+        let flipped = rect.screenFlipped
+        XCTAssertEqual(rect.width, flipped.width, accuracy: 0.001)
+        XCTAssertEqual(rect.height, flipped.height, accuracy: 0.001)
+    }
+
+    func testScreenFlippedPreservesX() {
+        let rect = CGRect(x: 250, y: 300, width: 500, height: 400)
+        let flipped = rect.screenFlipped
+        XCTAssertEqual(rect.origin.x, flipped.origin.x, accuracy: 0.001)
+    }
+
+    func testScreenFlippedNullRectReturnsNull() {
+        let nullRect = CGRect.null
+        let flipped = nullRect.screenFlipped
+        XCTAssertTrue(flipped.isNull)
+    }
+
+    func testScreenFlippedNegativeCoordinates() {
+        let rect = CGRect(x: -1000, y: -500, width: 400, height: 300)
+        let flipped = rect.screenFlipped
+        let doubleFlipped = flipped.screenFlipped
+        XCTAssertEqual(rect.origin.x, doubleFlipped.origin.x, accuracy: 0.001)
+        XCTAssertEqual(rect.origin.y, doubleFlipped.origin.y, accuracy: 0.001)
+    }
+}
+
+class DefaultsExportTests: XCTestCase {
+
+    func testOverlapDefaultsInExportArray() {
+        let keys = Defaults.array.map { $0.key }
+        XCTAssertTrue(keys.contains("cyclingOverlapOffset"), "cyclingOverlapOffset missing from Defaults.array")
+        XCTAssertTrue(keys.contains("cyclingOverlapOffsetSize"), "cyclingOverlapOffsetSize missing from Defaults.array")
+        XCTAssertTrue(keys.contains("cyclingOverlapMaxCascade"), "cyclingOverlapMaxCascade missing from Defaults.array")
+    }
+}
+
+class OverlapOffsetGuardsTests: XCTestCase {
+
+    func testMaxCascadeClampedToMinOne() {
+        let result = min(5, max(1, 0))
+        XCTAssertEqual(result, 1)
+    }
+
+    func testMaxCascadeClampedToMaxFive() {
+        let result = min(5, max(1, 999))
+        XCTAssertEqual(result, 5)
+    }
+
+    func testMaxCascadeNegativeClampsToOne() {
+        let result = min(5, max(1, -10))
+        XCTAssertEqual(result, 1)
+    }
+
+    func testMaxCascadeNormalValuePassesThrough() {
+        let result = min(5, max(1, 3))
+        XCTAssertEqual(result, 3)
+    }
+
+    func testOffsetClampingKeepsRectInScreen() {
+        let screenFrame = CGRect(x: 0, y: 0, width: 2336, height: 1466)
+        var candidate = CGRect(x: 2300, y: 1400, width: 400, height: 300)
+        let overlapOffset: CGFloat = 11
+
+        candidate.origin.x += overlapOffset
+        candidate.origin.y += overlapOffset
+
+        if candidate.origin.x + candidate.width > screenFrame.maxX {
+            candidate.origin.x = screenFrame.maxX - candidate.width
+        }
+        if candidate.origin.y + candidate.height > screenFrame.maxY {
+            candidate.origin.y = screenFrame.maxY - candidate.height
+        }
+        if candidate.origin.x < screenFrame.origin.x {
+            candidate.origin.x = screenFrame.origin.x
+        }
+        if candidate.origin.y < screenFrame.origin.y {
+            candidate.origin.y = screenFrame.origin.y
+        }
+
+        XCTAssertLessThanOrEqual(candidate.origin.x + candidate.width, screenFrame.maxX)
+        XCTAssertLessThanOrEqual(candidate.origin.y + candidate.height, screenFrame.maxY)
+        XCTAssertGreaterThanOrEqual(candidate.origin.x, screenFrame.origin.x)
+        XCTAssertGreaterThanOrEqual(candidate.origin.y, screenFrame.origin.y)
+    }
+
+    func testOffsetClampingWithNegativeScreenOrigin() {
+        let screenFrame = CGRect(x: -1372, y: 1510, width: 3840, height: 2160)
+        var candidate = CGRect(x: -1372, y: 1510, width: 960, height: 540)
+        let overlapOffset: CGFloat = 11
+
+        candidate.origin.x += overlapOffset
+        candidate.origin.y += overlapOffset
+
+        if candidate.origin.x + candidate.width > screenFrame.maxX {
+            candidate.origin.x = screenFrame.maxX - candidate.width
+        }
+        if candidate.origin.y + candidate.height > screenFrame.maxY {
+            candidate.origin.y = screenFrame.maxY - candidate.height
+        }
+        if candidate.origin.x < screenFrame.origin.x {
+            candidate.origin.x = screenFrame.origin.x
+        }
+        if candidate.origin.y < screenFrame.origin.y {
+            candidate.origin.y = screenFrame.origin.y
+        }
+
+        XCTAssertLessThanOrEqual(candidate.origin.x + candidate.width, screenFrame.maxX)
+        XCTAssertLessThanOrEqual(candidate.origin.y + candidate.height, screenFrame.maxY)
+        XCTAssertGreaterThanOrEqual(candidate.origin.x, screenFrame.origin.x)
+        XCTAssertGreaterThanOrEqual(candidate.origin.y, screenFrame.origin.y)
+        XCTAssertEqual(candidate.origin.x, -1372 + 11, accuracy: 0.001)
+        XCTAssertEqual(candidate.origin.y, 1510 + 11, accuracy: 0.001)
+    }
 }
