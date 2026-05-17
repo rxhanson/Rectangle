@@ -54,12 +54,24 @@ class PositionCyclesTests: XCTestCase {
         XCTAssertTrue(WindowAction.bottomRightSixteenth.positionCycles)
     }
 
-    func testNonGridActionsReturnFalse() {
-        XCTAssertFalse(WindowAction.leftHalf.positionCycles)
-        XCTAssertFalse(WindowAction.rightHalf.positionCycles)
+    func testGridPositionsReturnTrue() {
+        XCTAssertTrue(WindowAction.leftHalf.positionCycles)
+        XCTAssertTrue(WindowAction.rightHalf.positionCycles)
+        XCTAssertTrue(WindowAction.topLeft.positionCycles)
+        XCTAssertTrue(WindowAction.bottomRight.positionCycles)
+        XCTAssertTrue(WindowAction.firstThird.positionCycles)
+        XCTAssertTrue(WindowAction.lastThird.positionCycles)
+        XCTAssertTrue(WindowAction.firstFourth.positionCycles)
+        XCTAssertTrue(WindowAction.topHalf.positionCycles)
+        XCTAssertTrue(WindowAction.bottomHalf.positionCycles)
+    }
+
+    func testNonPositionalActionsReturnFalse() {
         XCTAssertFalse(WindowAction.maximize.positionCycles)
         XCTAssertFalse(WindowAction.maximizeHeight.positionCycles)
+        XCTAssertFalse(WindowAction.almostMaximize.positionCycles)
         XCTAssertFalse(WindowAction.center.positionCycles)
+        XCTAssertFalse(WindowAction.centerProminently.positionCycles)
         XCTAssertFalse(WindowAction.restore.positionCycles)
         XCTAssertFalse(WindowAction.moveLeft.positionCycles)
         XCTAssertFalse(WindowAction.moveRight.positionCycles)
@@ -67,10 +79,9 @@ class PositionCyclesTests: XCTestCase {
         XCTAssertFalse(WindowAction.previousDisplay.positionCycles)
         XCTAssertFalse(WindowAction.larger.positionCycles)
         XCTAssertFalse(WindowAction.smaller.positionCycles)
-        XCTAssertFalse(WindowAction.firstThird.positionCycles)
-        XCTAssertFalse(WindowAction.lastThird.positionCycles)
-        XCTAssertFalse(WindowAction.firstFourth.positionCycles)
-        XCTAssertFalse(WindowAction.almostMaximize.positionCycles)
+        XCTAssertFalse(WindowAction.tileAll.positionCycles)
+        XCTAssertFalse(WindowAction.cascadeAll.positionCycles)
+        XCTAssertFalse(WindowAction.specified.positionCycles)
     }
 }
 

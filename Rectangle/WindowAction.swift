@@ -907,16 +907,22 @@ enum WindowAction: Int, Codable {
 
     var positionCycles: Bool {
         switch self {
-        case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
-             .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
-             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
-             .topLeftTwelfth, .topCenterLeftTwelfth, .topCenterRightTwelfth, .topRightTwelfth, .middleLeftTwelfth, .middleCenterLeftTwelfth, .middleCenterRightTwelfth, .middleRightTwelfth, .bottomLeftTwelfth, .bottomCenterLeftTwelfth, .bottomCenterRightTwelfth, .bottomRightTwelfth,
-             .topLeftSixteenth, .topCenterLeftSixteenth, .topCenterRightSixteenth, .topRightSixteenth, .upperMiddleLeftSixteenth, .upperMiddleCenterLeftSixteenth, .upperMiddleCenterRightSixteenth, .upperMiddleRightSixteenth, .lowerMiddleLeftSixteenth, .lowerMiddleCenterLeftSixteenth, .lowerMiddleCenterRightSixteenth, .lowerMiddleRightSixteenth, .bottomLeftSixteenth, .bottomCenterLeftSixteenth, .bottomCenterRightSixteenth, .bottomRightSixteenth:
-            return true
-        case .topLeft, .topRight, .bottomLeft, .bottomRight:
-            return Defaults.subsequentExecutionMode.cyclesQuadrantPositions
-        default:
+        case .maximize, .almostMaximize, .maximizeHeight,
+             .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight,
+             .center, .centerProminently,
+             .restore,
+             .nextDisplay, .previousDisplay,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine,
+             .moveLeft, .moveRight, .moveUp, .moveDown,
+             .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
+             .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
+             .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
+             .leftTodo, .rightTodo,
+             .specified:
             return false
+        default:
+            return true
         }
     }
 
