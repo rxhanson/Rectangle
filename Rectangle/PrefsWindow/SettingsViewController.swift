@@ -114,11 +114,7 @@ class SettingsViewController: NSViewController {
     }
 
     @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
-        let enabled = sender.state == .on
-        Defaults.cyclingOverlapOffset.enabled = enabled
-        if !enabled {
-            OverlapCountBadge.clearAll()
-        }
+        Defaults.cyclingOverlapOffset.enabled = sender.state == .on
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {

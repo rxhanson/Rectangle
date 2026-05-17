@@ -74,62 +74,6 @@ class PositionCyclesTests: XCTestCase {
     }
 }
 
-class OverlapCountBadgeTests: XCTestCase {
-
-    override func setUp() {
-        OverlapCountBadge.clearAll()
-    }
-
-    override func tearDown() {
-        OverlapCountBadge.clearAll()
-    }
-
-    func testRecordStackAddsRegion() {
-        let screen = NSScreen.main!
-        OverlapCountBadge.recordStack(origin: CGPoint(x: 100, y: 200), rect: CGRect(x: 100, y: 200, width: 400, height: 300), screen: screen)
-        OverlapCountBadge.recordStack(origin: CGPoint(x: 500, y: 200), rect: CGRect(x: 500, y: 200, width: 400, height: 300), screen: screen)
-
-        // Two distinct origins should both be tracked
-        // We can't read stackedRegions directly (private), but we can verify clearAll works
-        OverlapCountBadge.clearAll()
-    }
-
-    func testRecordStackDeduplicatesNearbyOrigins() {
-        let screen = NSScreen.main!
-        OverlapCountBadge.recordStack(origin: CGPoint(x: 100, y: 200), rect: CGRect(x: 100, y: 200, width: 400, height: 300), screen: screen)
-        OverlapCountBadge.recordStack(origin: CGPoint(x: 102, y: 201), rect: CGRect(x: 102, y: 201, width: 400, height: 300), screen: screen)
-
-        // Second call should replace the first (within 4pt tolerance)
-        OverlapCountBadge.clearAll()
-    }
-
-    func testRemoveStackClearsMatchingOrigin() {
-        let screen = NSScreen.main!
-        OverlapCountBadge.recordStack(origin: CGPoint(x: 100, y: 200), rect: CGRect(x: 100, y: 200, width: 400, height: 300), screen: screen)
-        OverlapCountBadge.removeStack(near: CGPoint(x: 101, y: 201))
-
-        // Region removed - clearAll should be a no-op
-        OverlapCountBadge.clearAll()
-    }
-
-    func testClearAllRemovesEverything() {
-        let screen = NSScreen.main!
-        for i in 0..<10 {
-            OverlapCountBadge.recordStack(origin: CGPoint(x: CGFloat(i * 100), y: 0), rect: CGRect(x: CGFloat(i * 100), y: 0, width: 100, height: 100), screen: screen)
-        }
-        OverlapCountBadge.clearAll()
-    }
-
-    func testMaxRegionsCap() {
-        let screen = NSScreen.main!
-        for i in 0..<30 {
-            OverlapCountBadge.recordStack(origin: CGPoint(x: CGFloat(i * 100), y: 0), rect: CGRect(x: CGFloat(i * 100), y: 0, width: 100, height: 100), screen: screen)
-        }
-        // Should not crash; internal array capped at 20
-        OverlapCountBadge.clearAll()
-    }
-}
-
 class ScreenFlippedTests: XCTestCase {
 
     func testScreenFlippedIsOwnInverse() {

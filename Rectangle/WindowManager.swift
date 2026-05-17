@@ -252,16 +252,8 @@ class WindowManager {
             }
         }
 
-        let originAX = rect.screenFlipped
         if cascadeLevel > 0 {
-            DispatchQueue.main.async {
-                OverlapCountBadge.recordStack(origin: originAX.origin, rect: candidate, screen: screen)
-            }
             Logger.log("Cycling overlap detected, applied \(cascadeLevel) x \(overlapOffset)pt cascade offset")
-        } else {
-            DispatchQueue.main.async {
-                OverlapCountBadge.removeStack(near: originAX.origin)
-            }
         }
         return candidate
     }
