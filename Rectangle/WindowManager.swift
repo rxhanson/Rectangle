@@ -109,7 +109,18 @@ class WindowManager {
         
         let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
         
-        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo)
+        let combinedFrame: CGRect? = Defaults.combinedDisplayMode.enabled && usableScreens.screensOrdered.count > 1
+            ? usableScreens.screensOrdered.reduce(.null) { $0.union($1.adjustedVisibleFrame(ignoreTodo)) }
+            : nil
+
+        let calculationParams = WindowCalculationParameters(
+            window: currentWindow,
+            usableScreens: usableScreens,
+            action: action,
+            lastAction: lastRectangleAction,
+            ignoreTodo: ignoreTodo,
+            combinedDisplayFrame: combinedFrame
+        )
         guard var calcResult = windowCalculation?.calculate(calculationParams) else {
             NSSound.beep()
             Logger.log("Nil calculation result")
@@ -132,7 +143,7 @@ class WindowManager {
             return
         }
         
-        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
+        let visibleFrameOfDestinationScreen = combinedFrame ?? calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
         let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,

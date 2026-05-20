@@ -78,7 +78,8 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
             }
         }
         
-        let oneHalfRect = calculateFirstRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo), differentAction: .leftHalf))
+        let frameToUse = params.combinedDisplayFrame ?? screen.adjustedVisibleFrame(params.ignoreTodo)
+        let oneHalfRect = calculateFirstRect(params.asRectParams(visibleFrame: frameToUse, differentAction: .leftHalf))
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .leftHalf)
     }
     
@@ -96,7 +97,8 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
             }
         }
         
-        let oneHalfRect = calculateFirstRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo), differentAction: .rightHalf))
+        let frameToUse = params.combinedDisplayFrame ?? screen.adjustedVisibleFrame(params.ignoreTodo)
+        let oneHalfRect = calculateFirstRect(params.asRectParams(visibleFrame: frameToUse, differentAction: .rightHalf))
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .rightHalf)
     }
 
