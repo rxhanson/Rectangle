@@ -38960,7 +38960,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모니터 여러개 사용시 하나로 모니터로 인식합니다\n설정 > 데스크탑 및 dock > 각각의 spaces가 있는 디스플레이 off 되어야 합니다"
+            "value" : "모니터 여러개 사용시 하나로 모니터로 인식합니다\n설정 > 데스크탑 및 dock > 각각의 spaces가 있는 디스플레이 설정이 off 되어야 합니다"
           }
         }
       }
