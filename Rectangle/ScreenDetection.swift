@@ -160,7 +160,7 @@ extension NSScreen {
         var newFrame = visibleFrame
 
         if !NSScreen.screensHaveSeparateSpaces && Defaults.combinedDisplayMode.enabled {
-            newFrame = NSScreen.screens.reduce(CGRect.null) { $0.union($1.visibleFrame) }
+            return NSScreen.screens.reduce(CGRect.null) { $0.union($1.visibleFrame) }
         }
 
         if !ignoreStage && Defaults.stageSize.value > 0 {
