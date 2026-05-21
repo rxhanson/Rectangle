@@ -11,13 +11,10 @@ import Foundation
 class CenterCalculation: WindowCalculation {
     
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
-        let screenFrame: CGRect?
-        if let combinedFrame = params.combinedDisplayFrame {
-            screenFrame = combinedFrame
-        } else if !Defaults.alwaysAccountForStage.userEnabled {
+
+        var screenFrame: CGRect?
+        if !Defaults.alwaysAccountForStage.userEnabled {
             screenFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo, true)
-        } else {
-            screenFrame = nil
         }
 
         let rectResult = calculateRect(params.asRectParams(visibleFrame: screenFrame))
