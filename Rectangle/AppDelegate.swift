@@ -377,7 +377,7 @@ extension AppDelegate: NSMenuDelegate {
                 menuItem.isEnabled = false
             }
             if windowAction == .nextDisplay || windowAction == .previousDisplay {
-                menuItem.isHidden = screenCount == 1 || Defaults.combinedDisplayMode.enabled
+                menuItem.isHidden = screenCount == 1 || Defaults.combinedDisplayMode.userEnabled
             }
         }
     }

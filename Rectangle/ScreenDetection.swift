@@ -159,7 +159,7 @@ extension NSScreen {
     func adjustedVisibleFrame(_ ignoreTodo: Bool = false, _ ignoreStage: Bool = false) -> CGRect {
         var newFrame = visibleFrame
 
-        if !NSScreen.screensHaveSeparateSpaces && Defaults.combinedDisplayMode.enabled {
+        if !NSScreen.screensHaveSeparateSpaces && Defaults.combinedDisplayMode.userEnabled {
             return NSScreen.screens.reduce(CGRect.null) { $0.union($1.visibleFrame) }
         }
 
