@@ -81,13 +81,13 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         let oneHalfRect = calculateFirstRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo), differentAction: .leftHalf))
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .leftHalf)
     }
-
-
+    
+    
     func calculateRightAcrossDisplays(_ params: WindowCalculationParameters, screen: NSScreen) -> WindowCalculationResult? {
-
+        
         if isRepeatedCommand(params) {
             if let nextScreen = params.usableScreens.adjacentScreens?.next {
-
+                
                 if Defaults.subsequentExecutionMode.value == .acrossAndResize && nextScreen == params.usableScreens.screensOrdered.first {
                     return calculateResize(params)
                 }
@@ -95,7 +95,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
                 return calculateLeftAcrossDisplays(params.withDifferentAction(.leftHalf), screen: nextScreen)
             }
         }
-
+        
         let oneHalfRect = calculateFirstRect(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo), differentAction: .rightHalf))
         return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: .rightHalf)
     }

@@ -16,9 +16,9 @@ class CenterCalculation: WindowCalculation {
         if !Defaults.alwaysAccountForStage.userEnabled {
             screenFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo, true)
         }
-
+                
         let rectResult = calculateRect(params.asRectParams(visibleFrame: screenFrame))
-
+        
         let resultingAction: WindowAction = rectResult.resultingAction ?? params.action
 
         return WindowCalculationResult(rect: rectResult.rect,

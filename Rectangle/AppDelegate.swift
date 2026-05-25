@@ -381,7 +381,7 @@ extension AppDelegate: NSMenuDelegate {
             }
         }
     }
-
+    
     func menuDidClose(_ menu: NSMenu) {
         for menuItem in menu.items {
             
@@ -396,7 +396,7 @@ extension AppDelegate: NSMenuDelegate {
         guard let windowAction = sender.representedObject as? WindowAction else { return }
         windowAction.postMenu()
     }
-
+    
     func addWindowActionMenuItems() {
         let additionalSizeCategories: Set<WindowActionCategory> = [.eighths, .ninths, .twelfths, .sixteenths]
         let submenuOnlyWhenAdditional: Set<WindowActionCategory> = [.thirds, .size]

@@ -46,7 +46,7 @@ class SettingsViewController: NSViewController {
 
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
-
+    
     private var cycleSizeCheckboxes = [NSButton]()
     private var combinedDisplayModeCheckbox: NSButton?
     
