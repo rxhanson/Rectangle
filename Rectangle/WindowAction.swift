@@ -905,6 +905,27 @@ enum WindowAction: Int, Codable {
         }
     }
 
+    var positionCycles: Bool {
+        switch self {
+        case .maximize, .almostMaximize, .maximizeHeight,
+             .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight,
+             .center, .centerProminently,
+             .restore,
+             .nextDisplay, .previousDisplay,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine,
+             .moveLeft, .moveRight, .moveUp, .moveDown,
+             .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
+             .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
+             .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
+             .leftTodo, .rightTodo,
+             .specified:
+            return false
+        default:
+            return true
+        }
+    }
+
     var category: WindowActionCategory? { // used to specify a submenu
         switch self {
         case .firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds: return .thirds

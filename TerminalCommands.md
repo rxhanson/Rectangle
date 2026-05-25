@@ -35,6 +35,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
+- [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
 
 ## Keyboard Shortcuts
 
@@ -516,4 +517,24 @@ By default, display order is left-to-right, line-by-line. You can change this to
 
 ```bash
 defaults write com.knollsoft.Rectangle screensOrderedByX -int 1
+```
+
+## Offset cycling position when overlapping another window
+
+When cycling through grid positions (sixths, eighths, ninths, twelfths, sixteenths, or quarters with quadrant cycling mode), the target position may land exactly on top of another window, hiding it completely. Enable this to apply a small offset when an overlap is detected, so you can see there's a window underneath.
+
+```bash
+defaults write com.knollsoft.Rectangle cyclingOverlapOffset -bool true
+```
+
+The default offset is 11pt. To customize the offset size:
+
+```bash
+defaults write com.knollsoft.Rectangle cyclingOverlapOffsetSize -float 16
+```
+
+By default, only one cascade layer is shown (the original window plus one offset). To allow more layers:
+
+```bash
+defaults write com.knollsoft.Rectangle cyclingOverlapMaxCascade -int 3
 ```
