@@ -228,8 +228,11 @@ class WindowManager {
             let candidateAX = candidate.screenFlipped
             let hasOverlap = otherWindows.contains { element in
                 let otherFrame = element.frame
-                return abs(otherFrame.origin.x - candidateAX.origin.x) < tolerance
+                let originsMatch = abs(otherFrame.origin.x - candidateAX.origin.x) < tolerance
                     && abs(otherFrame.origin.y - candidateAX.origin.y) < tolerance
+                let otherCoversScreen = otherFrame.width > screenFrameAX.width * 0.9
+                    && otherFrame.height > screenFrameAX.height * 0.9
+                return originsMatch && !otherCoversScreen
             }
 
             guard hasOverlap else { break }
