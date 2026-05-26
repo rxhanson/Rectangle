@@ -1519,8 +1519,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rxhanson/MASShortcut";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = 2f9fbb3f959b7a683c6faaf9638d22afad37a235;
 			};
 		};
 		9877B63B29C8AC3600F02D74 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
