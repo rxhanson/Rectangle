@@ -52,6 +52,7 @@ class SnappingManager {
         }
         
         registerWorkspaceChangeNote()
+        registerSessionChangeNote()
         
         Notification.Name.windowSnapping.onPost { notification in
             if let enabled = notification.object as? Bool {
@@ -107,6 +108,14 @@ class SnappingManager {
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
+        checkFullScreen()
+    }
+    
+    private func registerSessionChangeNote() {
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(receiveSessionNote(_:)), name: NSWorkspace.sessionDidBecomeActiveNotification, object: nil)
+    }
+    
+    @objc func receiveSessionNote(_ notification: Notification) {
         checkFullScreen()
     }
         

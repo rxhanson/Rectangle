@@ -213,3 +213,220 @@ class OverlapOffsetGuardsTests: XCTestCase {
         XCTAssertEqual(candidate.origin.y, 1510 + 11, accuracy: 0.001)
     }
 }
+
+class SnappingManagerSessionTests: XCTestCase {
+
+    private var savedSnappingEnabled: Bool?
+
+    override func setUp() {
+        super.setUp()
+        savedSnappingEnabled = Defaults.windowSnapping.enabled
+        Defaults.windowSnapping.enabled = false
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        Defaults.windowSnapping.enabled = savedSnappingEnabled
+    }
+
+    func testSessionDidBecomeActiveTriggersCheckFullScreen() {
+        let sm = SnappingManager()
+        sm.isFullScreen = true
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        XCTAssertFalse(sm.isFullScreen,
+            "receiveSessionNote should call checkFullScreen, re-evaluating isFullScreen")
+    }
+
+    func testSessionDidBecomeActiveEventMonitorPreserved() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "toggleListening should be called but preserve event monitor state")
+    }
+
+    func testSessionDidBecomeActiveDoesNotEnableSnapping() {
+        let sm = SnappingManager()
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        XCTAssertNil(sm.eventMonitor,
+            "snapping should remain disabled after session became active notification")
+    }
+
+    func testSessionDidBecomeActiveMultiplePostsNoCrash() {
+        let sm = SnappingManager()
+
+        for _ in 0..<5 {
+            NSWorkspace.shared.notificationCenter.post(
+                name: NSWorkspace.sessionDidBecomeActiveNotification,
+                object: nil
+            )
+        }
+
+        XCTAssertFalse(sm.isFullScreen)
+    }
+
+    func testSleepWakeMaintainsSnapping() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "activeSpaceDidChange (simulating wake) should preserve event monitor state")
+    }
+
+    func testSessionUnlockThenWakeMaintainsSnapping() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "session unlock followed by wake should restore event monitor state")
+    }
+
+    func testSessionUnlockWithDisabledSnapping() {
+        let sm = SnappingManager()
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil
+        )
+
+        XCTAssertNil(sm.eventMonitor,
+            "session unlock -> wake should not enable snapping when disabled")
+    }
+
+    func testFullScreenThenWakeThenLeaveFullScreen() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "session restore after full screen should preserve event monitor state")
+    }
+
+    func testSessionResignActiveDoesNotCrash() {
+        let sm = SnappingManager()
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidResignActiveNotification,
+            object: nil
+        )
+
+        XCTAssertFalse(sm.isFullScreen)
+    }
+
+    func testSessionResignActiveThenBecomeActive() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidResignActiveNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "session resign then become active should preserve event monitor state")
+    }
+
+    func testScreensDoNotSleepNotificationsBreakSnapping() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.screensDidSleepNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "screen sleep then wake should preserve event monitor state")
+    }
+
+    func testScreenSleepSessionResignThenWakeAndSessionActive() {
+        Defaults.windowSnapping.enabled = true
+        let sm = SnappingManager()
+        let wasRunning = sm.eventMonitor?.running ?? false
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.screensDidSleepNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidResignActiveNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+
+        NSWorkspace.shared.notificationCenter.post(
+            name: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil
+        )
+
+        let isRunning = sm.eventMonitor?.running ?? false
+        XCTAssertEqual(isRunning, wasRunning,
+            "screen sleep + session resign -> session active + wake should restore event monitor state")
+    }
+}
