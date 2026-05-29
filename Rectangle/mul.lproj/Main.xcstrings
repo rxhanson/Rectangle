@@ -10370,6 +10370,12 @@
             "state" : "translated",
             "value" : "아래 가운데 왼쪽 1/8"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng Trung tâm Bên trái Thứ tám"
+          }
         }
       }
     },
@@ -10379,6 +10385,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 가운데 오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng Trung tâm Bên phải Thứ tám"
           }
         }
       }
@@ -10390,6 +10402,12 @@
             "state" : "translated",
             "value" : "아래쪽 1/8, 모서리에서 3등분"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phần tám dưới cùng từ các góc; phần ba"
+          }
         }
       }
     },
@@ -10400,6 +10418,12 @@
             "state" : "translated",
             "value" : "아래 왼쪽 1/8"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng bên trái thứ tám"
+          }
         }
       }
     },
@@ -10409,6 +10433,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng bên phải thứ tám"
           }
         }
       }
@@ -10598,6 +10628,12 @@
             "state" : "translated",
             "value" : "아래 1/3"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ ba dưới cùng"
+          }
         }
       }
     },
@@ -10607,6 +10643,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 2/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai phần ba dưới cùng"
           }
         }
       }
@@ -16133,6 +16175,12 @@
             "state" : "translated",
             "value" : "1/8"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ tám"
+          }
         }
       }
     },
@@ -20112,6 +20160,12 @@
             "state" : "translated",
             "value" : "그리드 위치"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vị trí lưới"
+          }
         }
       }
     },
@@ -21141,6 +21195,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "절반 분할 비율"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tỷ lệ chia một nửa"
           }
         }
       }
@@ -22349,6 +22409,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "수평 (좌/우, %)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ngang (trái/phải, %)"
           }
         }
       }
@@ -29829,6 +29895,12 @@
             "state" : "translated",
             "value" : "중간 1/3"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ ba ở giữa"
+          }
         }
       }
     },
@@ -31217,6 +31289,12 @@
             "state" : "translated",
             "value" : "1/9"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ chín"
+          }
         }
       }
     },
@@ -31226,6 +31304,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/9 (3×3)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ chín (3×3)"
           }
         }
       }
@@ -34640,6 +34724,12 @@
             "state" : "translated",
             "value" : "그리드의 모든 위치를 순환하려면 단축키를 여러 번 누르십시오."
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nhấn phím tắt nhiều lần để duyệt qua tất cả các vị trí trong lưới."
+          }
         }
       }
     },
@@ -36043,6 +36133,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/4 동작시 위치 순환, 절반 동작시 창 크기 순환"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vị trí chu kỳ trên góc phần tư, kích thước chu kỳ trên một nửa"
           }
         }
       }
@@ -38942,6 +39038,12 @@
             "state" : "translated",
             "value" : "메뉴에 추가 크기 표시"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị kích thước bổ sung trong menu"
+          }
         }
       }
     },
@@ -38952,6 +39054,12 @@
             "state" : "translated",
             "value" : "1/16"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười sáu"
+          }
         }
       }
     },
@@ -38961,6 +39069,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 (4×4)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười sáu (4×4)"
           }
         }
       }
@@ -41331,6 +41445,12 @@
             "state" : "translated",
             "value" : "위 가운데 왼쪽 1/8"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng Bên trái Thứ tám"
+          }
         }
       }
     },
@@ -41340,6 +41460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 가운데 오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng Bên phải Thứ tám"
           }
         }
       }
@@ -41351,6 +41477,12 @@
             "state" : "translated",
             "value" : "위쪽 1/8, 모서리에서 최대화"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ tám hàng đầu từ các quả phạt góc; tối đa"
+          }
         }
       }
     },
@@ -41361,6 +41493,12 @@
             "state" : "translated",
             "value" : "위 왼쪽 1/8"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng bên trái thứ tám"
+          }
         }
       }
     },
@@ -41370,6 +41508,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng bên phải thứ tám"
           }
         }
       }
@@ -41576,6 +41720,12 @@
             "state" : "translated",
             "value" : "위 1/3"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng thứ ba"
+          }
         }
       }
     },
@@ -41585,6 +41735,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 2/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai phần ba hàng đầu"
           }
         }
       }
@@ -42135,6 +42291,12 @@
             "state" : "translated",
             "value" : "1/12"
           }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười hai"
+          }
         }
       }
     },
@@ -42144,6 +42306,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 (4×3)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười hai (4×3)"
           }
         }
       }
@@ -42617,6 +42785,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "업데이트 가능…"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cập nhật có sẵn…"
           }
         }
       }
@@ -44081,6 +44255,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "수직 (상/하, %)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dọc (T/B, %)"
           }
         }
       }
@@ -46312,6 +46492,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Шаг ширины (px)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bước chiều rộng (px)"
           }
         }
       }
