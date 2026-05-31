@@ -205,6 +205,13 @@ class TodoManager {
         return sidebarWidth
     }
     
+    static func changeSidebarWidthUnit(to unit: TodoSidebarWidthUnit) {
+        if let visibleFrameWidth = TodoManager.todoScreen?.adjustedVisibleFrame(true).width {
+            let newValue = TodoManager.convert(width: Defaults.todoSidebarWidth.cgFloat, toUnit: unit, visibleFrameWidth: visibleFrameWidth)
+            Defaults.todoSidebarWidth.value = Float(newValue)
+        }
+    }
+    
     static func convert(width: CGFloat, toUnit unit: TodoSidebarWidthUnit, visibleFrameWidth: CGFloat) -> CGFloat {
         unit == .pixels
         ? ((width * 0.01) * visibleFrameWidth).rounded()
@@ -230,7 +237,7 @@ class TodoManager {
 
         if Defaults.todoSidebarSide.value == .left && rect.minX < screenVisibleFrameMinX {
             // Shift it to the right
-            rect.origin.x = min(screenVisibleFrame.maxX - rect.width, rect.origin.x + (screenVisibleFrameMinX - rect.minX))
+            rect.origin.x = min(screenVisibleFrameMaxX - rect.width, screenVisibleFrameMinX)
             
             // If it's still too wide, scale it down
             if rect.minX < screenVisibleFrameMinX {
@@ -242,7 +249,7 @@ class TodoManager {
             w.setFrame(rect)
         } else if Defaults.todoSidebarSide.value == .right && rect.maxX > screenVisibleFrameMaxX {
             // Shift it to the left
-            rect.origin.x = min(rect.origin.x, max(screenVisibleFrame.minX, rect.origin.x - (rect.maxX - screenVisibleFrameMaxX)))
+            rect.origin.x = min(rect.minX, max(screenVisibleFrameMinX, screenVisibleFrameMaxX - rect.width))
             
             // If it's still too wide, scale it down
             if rect.maxX > screenVisibleFrameMaxX {
