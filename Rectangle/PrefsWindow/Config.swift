@@ -15,7 +15,7 @@ extension Defaults {
         
         var shortcuts = [String: Shortcut]()
         for action in WindowAction.active {
-            if let masShortcut =  MASShortcutBinder.shared()?.value(forKey: action.name) as? MASShortcut {
+            if let masShortcut = ShortcutCycle.shortcut(for: action) {
                 shortcuts[action.name] = Shortcut(masShortcut: masShortcut)
             }
         }
