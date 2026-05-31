@@ -32988,6 +32988,9 @@
         }
       }
     },
+    "Offset cycling position on overlap" : {
+
+    },
     "ogc-rX-tC1.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Loosen\"; ObjectID = \"ogc-rX-tC1\";",
       "extractionState" : "manual",
@@ -41437,6 +41440,9 @@
           }
         }
       }
+    },
+    "Toggle Todo" : {
+
     },
     "Top Center Left Eighth" : {
       "localizations" : {
