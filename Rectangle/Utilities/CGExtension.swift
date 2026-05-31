@@ -35,4 +35,19 @@ extension CGRect {
         if maxY == rect.maxY { sharedEdgeCount += 1 }
         return sharedEdgeCount
     }
+
+    func sharedEdges(withRect rect: CGRect, tolerance: CGFloat = 0) -> Edge {
+        var edges: Edge = .none
+        if abs(minX - rect.minX) <= tolerance { edges.insert(.left) }
+        if abs(maxX - rect.maxX) <= tolerance { edges.insert(.right) }
+        if abs(maxY - rect.maxY) <= tolerance { edges.insert(.top) }
+        if abs(minY - rect.minY) <= tolerance { edges.insert(.bottom) }
+        return edges
+    }
+}
+
+extension OptionSet where RawValue: FixedWidthInteger {
+    var count: Int {
+        rawValue.nonzeroBitCount
+    }
 }

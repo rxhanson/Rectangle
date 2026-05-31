@@ -67,4 +67,14 @@ struct Edge: OptionSet {
     
     static let all: Edge = [.left, .right, .top, .bottom]
     static let none: Edge = []
+
+    var isCorner: Bool {
+        let horizontalCount = (contains(.left) ? 1 : 0) + (contains(.right) ? 1 : 0)
+        let verticalCount = (contains(.top) ? 1 : 0) + (contains(.bottom) ? 1 : 0)
+        return horizontalCount == 1 && verticalCount == 1
+    }
+
+    var isSingleEdge: Bool {
+        return rawValue.nonzeroBitCount == 1
+    }
 }

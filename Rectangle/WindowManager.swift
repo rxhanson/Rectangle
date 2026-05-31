@@ -179,7 +179,7 @@ class WindowManager {
         ? fixedSizeWindowMoverChain
         : standardWindowMoverChain
         
-        let newRect = result.calcResult.rect.screenFlipped
+        let newRect = result.calcResult.rect
         
         for windowMover in windowMoverChain {
             windowMover.moveWindow(toRect: newRect, resultParameters: result)

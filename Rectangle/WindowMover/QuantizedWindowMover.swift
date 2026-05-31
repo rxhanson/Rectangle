@@ -10,26 +10,27 @@ import Foundation
 
 class QuantizedWindowMover: WindowMover {
     func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
+        let flippedRect = rect.screenFlipped
         let windowElement = resultParameters.windowElement
         var movedWindowRect: CGRect = windowElement.frame
-        if !movedWindowRect.equalTo(rect) {
-            var adjustedWindowRect: CGRect = rect
-            while movedWindowRect.width > rect.width || movedWindowRect.height > rect.height {
+        if !movedWindowRect.equalTo(flippedRect) {
+            var adjustedWindowRect: CGRect = flippedRect
+            while movedWindowRect.width > flippedRect.width || movedWindowRect.height > flippedRect.height {
                 
-                if movedWindowRect.width > rect.width {
+                if movedWindowRect.width > flippedRect.width {
                     adjustedWindowRect.size.width -= 2
                 }
-                if movedWindowRect.height > rect.height {
+                if movedWindowRect.height > flippedRect.height {
                     adjustedWindowRect.size.height -= 2
                 }
-                if adjustedWindowRect.width < rect.width * 0.85 || adjustedWindowRect.height < rect.height * 0.85 {
+                if adjustedWindowRect.width < flippedRect.width * 0.85 || adjustedWindowRect.height < flippedRect.height * 0.85 {
                     break
                 }
                 windowElement.setFrame(adjustedWindowRect)
                 movedWindowRect = windowElement.frame
             }
-            adjustedWindowRect.origin.x += floor((rect.size.width - (movedWindowRect.size.width)) / 2.0)
-            adjustedWindowRect.origin.y += floor((rect.size.height - (movedWindowRect.size.height)) / 2.0)
+            adjustedWindowRect.origin.x += floor((flippedRect.size.width - (movedWindowRect.size.width)) / 2.0)
+            adjustedWindowRect.origin.y += floor((flippedRect.size.height - (movedWindowRect.size.height)) / 2.0)
             resultParameters.windowElement.setFrame(adjustedWindowRect)
         }
     }
