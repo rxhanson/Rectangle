@@ -1,10 +1,4 @@
-//
-//  SixthsRepeated.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 9/26/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// SixthsRepeated.swift
 
 import Foundation
 

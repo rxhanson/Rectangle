@@ -1,10 +1,4 @@
-//
-//  CenterTwoThirdsCalculation.swift
-//  Rectangle
-//
-//  Created by Mikhail Savin on 7/14/25.
-//  Copyright © 2025 Mikhail Savin. All rights reserved.
-//
+/// CenterTwoThirdsCalculation.swift
 
 import Foundation
 

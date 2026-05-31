@@ -1,10 +1,4 @@
-//
-//  NotificationExtension.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 12/23/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// NotificationExtension.swift
 
 import Cocoa
 

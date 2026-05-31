@@ -1,9 +1,4 @@
-//
-//  RunLoopThread.swift
-//  Rectangle
-//
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// RunLoopThread.swift
 
 import Foundation
 

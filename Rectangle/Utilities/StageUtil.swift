@@ -1,9 +1,4 @@
-//
-//  StageUtil.swift
-//  Rectangle
-//
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// StageUtil.swift
 
 import Foundation
 

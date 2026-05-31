@@ -1,10 +1,4 @@
-//
-//  HalfOrDoubleDimensionCalculation.swift
-//  Rectangle
-//
-//  Created by Isaac Young on 23/04/24.
-//  Copyright © 2024 Ryan Hanson. All rights reserved.
-//
+/// HalfOrDoubleDimensionCalculation.swift
 
 import Foundation
 

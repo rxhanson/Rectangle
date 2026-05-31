@@ -1,10 +1,4 @@
-//
-//  CycleSize.swift
-//  Rectangle
-//
-//  Created by Eskil Gjerde Sviggum on 01/08/2024.
-//  Copyright © 2024 Ryan Hanson. All rights reserved.
-//
+/// CycleSize.swift
 
 import Foundation
 

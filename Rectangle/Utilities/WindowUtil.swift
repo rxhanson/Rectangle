@@ -1,9 +1,4 @@
-//
-//  WindowUtil.swift
-//  Rectangle
-//
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// WindowUtil.swift
 
 import Foundation
 

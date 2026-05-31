@@ -1,9 +1,4 @@
-//
-//  TopVerticalTwoThirdsCalculation.swift
-//  Rectangle
-//
-//  Created on 12/22/25.
-//
+/// TopVerticalTwoThirdsCalculation.swift
 
 import Foundation
 

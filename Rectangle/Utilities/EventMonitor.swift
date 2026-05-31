@@ -1,10 +1,4 @@
-//
-//  EventMonitor.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 9/4/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// EventMonitor.swift
 
 import Cocoa
 

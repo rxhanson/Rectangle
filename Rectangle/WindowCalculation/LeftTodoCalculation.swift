@@ -1,9 +1,4 @@
-//
-//  LeftTodoCalculation.swift
-//  Rectangle
-//
-//  Copyright © 2023 Ryan Hanson. All rights reserved.
-//
+/// LeftTodoCalculation.swift
 
 import Foundation
 

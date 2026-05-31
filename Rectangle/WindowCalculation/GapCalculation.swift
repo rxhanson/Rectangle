@@ -1,10 +1,4 @@
-//
-//  GapCalculation.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 1/14/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// GapCalculation.swift
 
 import Foundation
 

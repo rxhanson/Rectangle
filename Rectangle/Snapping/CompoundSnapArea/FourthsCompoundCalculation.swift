@@ -1,10 +1,4 @@
-//
-//  FourthsCompoundCalculation.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 8/24/22.
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// FourthsCompoundCalculation.swift
 
 import Foundation
 

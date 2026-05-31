@@ -1,9 +1,4 @@
-//
-//  TimeoutCache.swift
-//  Rectangle
-//
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// TimeoutCache.swift
 
 import Foundation
 

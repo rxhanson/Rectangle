@@ -1,10 +1,4 @@
-//
-//  MultiWindowManager.swift
-//  Rectangle
-//
-//  Created by Mikhail (Dirondin) Polubisok on 2/20/22.
-//  Copyright © 2021 Ryan Hanson. All rights reserved.
-//
+/// MultiWindowManager.swift
 
 import Cocoa
 import MASShortcut

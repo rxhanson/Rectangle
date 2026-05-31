@@ -1,10 +1,4 @@
-//
-//  Config.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 12/15/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// Config.swift
 
 import Foundation
 import MASShortcut

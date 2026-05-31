@@ -1,10 +1,4 @@
-//
-//  MessageView.swift
-//  Multitouch
-//
-//  Created by Ryan Hanson on 9/10/17.
-//  Copyright © 2017-2018 BrassMonkery, LLC. All rights reserved.
-//
+/// MessageView.swift
 
 import Cocoa
 

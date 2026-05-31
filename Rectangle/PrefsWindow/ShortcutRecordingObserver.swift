@@ -1,7 +1,4 @@
-//
-//  ShortcutRecordingObserver.swift
-//  Rectangle
-//
+/// ShortcutRecordingObserver.swift
 
 import Cocoa
 import MASShortcut

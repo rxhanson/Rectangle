@@ -1,7 +1,4 @@
-//
-//  ShortcutRecordingObserverTests.swift
-//  RectangleTests
-//
+/// ShortcutRecordingObserverTests.swift
 
 import MASShortcut
 import XCTest

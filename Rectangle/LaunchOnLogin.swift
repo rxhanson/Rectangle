@@ -1,10 +1,4 @@
-//
-//  LaunchOnLogin.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 2/20/23.
-//  Copyright © 2023 Ryan Hanson. All rights reserved.
-//
+/// LaunchOnLogin.swift
 
 import Foundation
 import ServiceManagement

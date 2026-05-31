@@ -1,10 +1,4 @@
-//
-//  PrefsViewController.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/18/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// PrefsViewController.swift
 
 import Cocoa
 import MASShortcut

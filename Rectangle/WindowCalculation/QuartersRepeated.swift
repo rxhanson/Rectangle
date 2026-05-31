@@ -1,9 +1,4 @@
-//
-//  QuartersRepeated.swift
-//  Rectangle
-//
-//  Copyright © 2026 Ryan Hanson. All rights reserved.
-//
+/// QuartersRepeated.swift
 
 import Foundation
 

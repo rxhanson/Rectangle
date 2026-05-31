@@ -1,10 +1,4 @@
-//
-//  WindowHistory.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 9/6/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// WindowHistory.swift
 
 import Foundation
 

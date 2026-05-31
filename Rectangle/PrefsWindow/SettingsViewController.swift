@@ -1,10 +1,4 @@
-//
-//  SettingsViewController.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 8/24/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// SettingsViewController.swift
 
 import Cocoa
 import ServiceManagement

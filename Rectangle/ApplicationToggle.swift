@@ -1,10 +1,4 @@
-//
-//  ApplicationToggle.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/18/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// ApplicationToggle.swift
 
 import Cocoa
 

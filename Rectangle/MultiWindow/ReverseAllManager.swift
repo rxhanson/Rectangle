@@ -1,10 +1,5 @@
-//
-//  TodoManager.swift
-//  Rectangle
-//
-//  Created by Charlie Harding on 7/25/21.
-//  Copyright © 2021 Ryan Hanson. All rights reserved.
-//
+/// ReverseAllManager.swift
+
 import Cocoa
 import MASShortcut
 

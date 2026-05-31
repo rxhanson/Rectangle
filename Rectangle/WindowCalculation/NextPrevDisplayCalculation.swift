@@ -1,10 +1,4 @@
-//
-//  NextPrevDisplayCalculation.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 8/19/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// NextPrevDisplayCalculation.swift
 
 import Cocoa
 

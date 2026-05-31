@@ -1,10 +1,4 @@
-//
-//  RectangleStatusItem.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/11/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// RectangleStatusItem.swift
 
 import Cocoa
 

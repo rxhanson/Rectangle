@@ -1,10 +1,4 @@
-//
-//  WindowActionCategory.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 10/3/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// WindowActionCategory.swift
 
 import Foundation
 

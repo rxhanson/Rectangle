@@ -1,10 +1,4 @@
-//
-//  RepeatedExecutionsInThirdsCalculation.swift
-//  Rectangle
-//
-//  Created by Charlie Harding on 12/06/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// RepeatedExecutionsInThirdsCalculation.swift
 
 import Foundation
 

@@ -1,10 +1,4 @@
-//
-//  RectangleTests.swift
-//  RectangleTests
-//
-//  Created by Ryan Hanson on 6/11/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// RectangleTests.swift
 
 import MASShortcut
 import XCTest

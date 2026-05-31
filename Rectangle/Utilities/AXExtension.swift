@@ -1,9 +1,4 @@
-//
-//  AXExtension.swift
-//  Rectangle
-//
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// AXExtension.swift
 
 import Foundation
 

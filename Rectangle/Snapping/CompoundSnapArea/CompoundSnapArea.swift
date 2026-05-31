@@ -1,10 +1,4 @@
-//
-//  CompoundSnapArea.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 8/23/22.
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// CompoundSnapArea.swift
 
 import Foundation
 
