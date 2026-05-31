@@ -21,7 +21,7 @@ class WindowManager {
         ]
         
         fixedSizeWindowMoverChain = [
-            CenteringFixedSizedWindowMover(),
+            FixedSizeWindowMover(),
             BestEffortWindowMover()
         ]
     }
@@ -182,11 +182,7 @@ class WindowManager {
         let newRect = result.calcResult.rect.screenFlipped
         
         for windowMover in windowMoverChain {
-            windowMover.moveWindowRect(newRect,
-                                       frameOfScreen: result.usableScreens.frameOfCurrentScreen,
-                                       visibleFrameOfScreen: result.visibleFrameOfScreen,
-                                       frontmostWindowElement: result.windowElement,
-                                       action: result.action)
+            windowMover.moveWindow(toRect: newRect, resultParameters: result)
         }
         
         return result.windowElement.frame
@@ -283,17 +279,17 @@ class WindowManager {
             Logger.log(logItems.joined(separator: ", "))
         }
     }
-    
-    struct ResultParameters {
-        let windowId: CGWindowID
-        let action: WindowAction
-        let windowElement: AccessibilityElement
-        let calcResult: WindowCalculationResult
-        let usableScreens: UsableScreens
-        let visibleFrameOfScreen: CGRect
-        let source: ExecutionSource
-        let isFixedSize: Bool
-    }
+}
+
+struct ResultParameters {
+    let windowId: CGWindowID
+    let action: WindowAction
+    let windowElement: AccessibilityElement
+    let calcResult: WindowCalculationResult
+    let usableScreens: UsableScreens
+    let visibleFrameOfScreen: CGRect
+    let source: ExecutionSource
+    let isFixedSize: Bool
 }
 
 struct RectangleAction {

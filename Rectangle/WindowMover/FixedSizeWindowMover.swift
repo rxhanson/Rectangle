@@ -1,5 +1,5 @@
 //
-//  CenteringFixedSizedWindowMover.swift
+//  FixedSizeWindowMover.swift
 //  Rectangle
 //
 //  Created by Ryan Hanson on 1/14/20.
@@ -12,10 +12,14 @@ import Foundation
     If the window is fixed size, center it in the proposed window area
  */
 
-class CenteringFixedSizedWindowMover: WindowMover {
+class FixedSizeWindowMover: WindowMover {
     
-    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard let currentWindowRect: CGRect = frontmostWindowElement?.frame else { return }
+    func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
+        centerWindowRect(rect, windowElement: resultParameters.windowElement)
+    }
+    
+    func centerWindowRect(_ windowRect: CGRect, windowElement: AccessibilityElement) {
+        let currentWindowRect: CGRect = windowElement.frame
 
         var adjustedWindowRect: CGRect = currentWindowRect
 
@@ -28,7 +32,7 @@ class CenteringFixedSizedWindowMover: WindowMover {
         }
         
         if !adjustedWindowRect.equalTo(currentWindowRect) {
-            frontmostWindowElement?.setFrame(adjustedWindowRect)
+            windowElement.setFrame(adjustedWindowRect)
         }
     }
 }

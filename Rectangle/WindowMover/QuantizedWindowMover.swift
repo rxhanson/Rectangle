@@ -9,29 +9,28 @@
 import Foundation
 
 class QuantizedWindowMover: WindowMover {
-    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard var movedWindowRect: CGRect = frontmostWindowElement?.frame else { return }
-        if !movedWindowRect.equalTo(windowRect) {
-            var adjustedWindowRect: CGRect = windowRect
-            while movedWindowRect.width > windowRect.width || movedWindowRect.height > windowRect.height {
+    func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
+        let windowElement = resultParameters.windowElement
+        var movedWindowRect: CGRect = windowElement.frame
+        if !movedWindowRect.equalTo(rect) {
+            var adjustedWindowRect: CGRect = rect
+            while movedWindowRect.width > rect.width || movedWindowRect.height > rect.height {
                 
-                if movedWindowRect.width > windowRect.width {
+                if movedWindowRect.width > rect.width {
                     adjustedWindowRect.size.width -= 2
                 }
-                if movedWindowRect.height > windowRect.height {
+                if movedWindowRect.height > rect.height {
                     adjustedWindowRect.size.height -= 2
                 }
-                if adjustedWindowRect.width < windowRect.width * 0.85 || adjustedWindowRect.height < windowRect.height * 0.85 {
+                if adjustedWindowRect.width < rect.width * 0.85 || adjustedWindowRect.height < rect.height * 0.85 {
                     break
                 }
-                frontmostWindowElement?.setFrame(adjustedWindowRect)
-                if let frontMostRect = frontmostWindowElement?.frame {
-                    movedWindowRect = frontMostRect
-                }
+                windowElement.setFrame(adjustedWindowRect)
+                movedWindowRect = windowElement.frame
             }
-            adjustedWindowRect.origin.x += floor((windowRect.size.width - (movedWindowRect.size.width)) / 2.0)
-            adjustedWindowRect.origin.y += floor((windowRect.size.height - (movedWindowRect.size.height)) / 2.0)
-            frontmostWindowElement?.setFrame(adjustedWindowRect)
+            adjustedWindowRect.origin.x += floor((rect.size.width - (movedWindowRect.size.width)) / 2.0)
+            adjustedWindowRect.origin.y += floor((rect.size.height - (movedWindowRect.size.height)) / 2.0)
+            resultParameters.windowElement.setFrame(adjustedWindowRect)
         }
     }
 }

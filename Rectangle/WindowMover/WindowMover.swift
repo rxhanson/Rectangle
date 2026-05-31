@@ -9,5 +9,5 @@
 import Foundation
 
 protocol WindowMover {
-    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?)
+    func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters)
 }
