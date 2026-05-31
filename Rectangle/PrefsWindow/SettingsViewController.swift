@@ -48,6 +48,7 @@ class SettingsViewController: NSViewController {
     private var extraSettingsPopover: NSPopover?
     
     private var cycleSizeCheckboxes = [NSButton]()
+    private var combinedDisplayModeCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -149,6 +150,10 @@ class SettingsViewController: NSViewController {
         Notification.Name.windowTitleBar.post()
     }
     
+    @objc func toggleCombinedDisplayMode(_ sender: NSButton) {
+        Defaults.combinedDisplayMode.enabled = sender.state == .on
+    }
+
     @IBAction func toggleTodoMode(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
         Defaults.todo.enabled = newSetting
@@ -959,7 +964,9 @@ class SettingsViewController: NSViewController {
         self.cycleSizeCheckboxes = cycleSizeCheckboxes
         
         initializeCycleSizesView(animated: false)
-        
+
+        initializeCombinedDisplayCheckbox()
+
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
@@ -1022,6 +1029,8 @@ class SettingsViewController: NSViewController {
 
         doubleClickTitleBarCheckbox.state = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil ? .on : .off
 
+        combinedDisplayModeCheckbox?.state = Defaults.combinedDisplayMode.userEnabled ? .on : .off
+
         if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)
             stageSlider.isContinuous = true
@@ -1042,6 +1051,41 @@ class SettingsViewController: NSViewController {
         }
         
         setVisibility(shown: showOptionsView, ofView: cycleSizesView, withConstraint: cycleSizesViewHeightConstraint, animated: animated)
+    }
+    
+    private func initializeCombinedDisplayCheckbox() {
+        if combinedDisplayModeCheckbox == nil, !NSScreen.screensHaveSeparateSpaces,
+           let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
+           let insertIdx = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) {
+            
+            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Treat multiple displays as one", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleCombinedDisplayMode(_:)))
+            checkbox.state = Defaults.combinedDisplayMode.userEnabled ? .on : .off
+            // Match storyboard checkbox content priorities to prevent vertical compression
+            checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
+            checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
+            
+            // Must be set before inserting: NSStackView queries intrinsicContentSize once on
+            // insertion, so preferredMaxLayoutWidth=0 would give zero height permanently.
+            let descLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.", tableName: "Main", value: "", comment: ""))
+            descLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            descLabel.textColor = .secondaryLabelColor
+            descLabel.translatesAutoresizingMaskIntoConstraints = false
+            descLabel.preferredMaxLayoutWidth = 500
+            descLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+            descLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+            
+            let separator = NSBox()
+            separator.boxType = .separator
+            separator.translatesAutoresizingMaskIntoConstraints = false
+            separator.setContentHuggingPriority(.defaultHigh, for: .vertical)
+            
+            parentStack.insertArrangedSubview(separator, at: insertIdx + 1)
+            parentStack.insertArrangedSubview(checkbox, at: insertIdx + 2)
+            parentStack.insertArrangedSubview(descLabel, at: insertIdx + 3)
+            separator.widthAnchor.constraint(equalTo: doubleClickTitleBarCheckbox.widthAnchor).isActive = true
+            separator.heightAnchor.constraint(equalToConstant: 20).isActive = true
+            combinedDisplayModeCheckbox = checkbox
+        }
     }
 
     private func setVisibility(shown: Bool, ofView view: NSView, withConstraint constraint: NSLayoutConstraint, animated: Bool) {

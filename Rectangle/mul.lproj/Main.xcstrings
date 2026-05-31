@@ -41768,6 +41768,20 @@
         }
       }
     },
+    "Treat multiple displays as one" : {
+
+    },
+    "Treat multiple monitors as one" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여러 모니터를 하나로 인식"
+          }
+        }
+      }
+    },
     "tRr-pd-1PS.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Data Detectors\"; ObjectID = \"tRr-pd-1PS\";",
       "extractionState" : "manual",
@@ -46472,6 +46486,9 @@
           }
         }
       }
+    },
+    "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
+
     },
     "Width Step (px)" : {
       "extractionState" : "manual",
