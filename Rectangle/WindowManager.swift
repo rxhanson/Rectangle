@@ -140,16 +140,18 @@ class WindowManager {
                                                 visibleFrameOfScreen: visibleFrameOfDestinationScreen,
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
-        
+
         var resultingRect = apply(result: resultParameters)
-        
+
         let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen
         if isMovedAcrossDisplays {
-            if calcResult.rect.height != resultingRect.height {
+            let sizeMismatch = calcResult.rect.height != resultingRect.height || calcResult.rect.width != resultingRect.width
+            if sizeMismatch {
                 Logger.log("Window size wasn't applied perfectly across displays. Trying again.")
                 resultingRect = apply(result: resultParameters)
-                
-                if calcResult.rect.height != resultingRect.height {
+
+                let stillMismatch = calcResult.rect.height != resultingRect.height || calcResult.rect.width != resultingRect.width
+                if stillMismatch {
                     Logger.log("Final attempt to adjust across displays.")
                     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
                         guard let self else { return }

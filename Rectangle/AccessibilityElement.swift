@@ -121,6 +121,10 @@ class AccessibilityElement {
     /// The Accessebility API only allows size & position adjustments individually.
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
+    /// If the target frame extends beyond the main screen's right edge, we first move the window
+    /// to a safe position (left side), resize it, then move it to the final position.
+    /// This works around a macOS constraint that can prevent windows from being resized
+    /// when their maxX would exceed the main screen's frame.maxX.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
         let appElement = applicationElement
         var enhancedUI: Bool? = nil
@@ -133,11 +137,27 @@ class AccessibilityElement {
             }
         }
 
-        if adjustSizeFirst {
+        // Check if target frame would extend beyond main screen's right edge,
+        // which can trigger a macOS constraint that prevents proper resizing.
+        let mainScreenFrame = NSScreen.screens[0].frame
+        let targetMaxX = frame.maxX  // frame is in screen-flipped coords, X is same as Cocoa
+
+        if targetMaxX > mainScreenFrame.maxX {
+            // Strategy: move to safe X first, resize, then move to final position
+            let safeX = mainScreenFrame.maxX - frame.width
+            let safeOrigin = CGPoint(x: safeX, y: frame.origin.y)
+            position = safeOrigin
+            size = frame.size
+            position = frame.origin
+            size = frame.size
+        } else if adjustSizeFirst {
+            size = frame.size
+            position = frame.origin
+            size = frame.size
+        } else {
+            position = frame.origin
             size = frame.size
         }
-        position = frame.origin
-        size = frame.size
 
         // If "enhanced user interface" was originally enabled for the app, turn it back on
         if Defaults.enhancedUI.value == .disableEnable, let appElement = appElement, enhancedUI == true {
