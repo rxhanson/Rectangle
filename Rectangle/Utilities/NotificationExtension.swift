@@ -3,12 +3,13 @@
 import Cocoa
 
 extension Notification.Name {
-  
+
     static let configImported = Notification.Name("configImported")
     static let windowSnapping = Notification.Name("windowSnapping")
     static let frontAppChanged = Notification.Name("frontAppChanged")
     static let allowAnyShortcut = Notification.Name("allowAnyShortcutToggle")
     static let changeDefaults = Notification.Name("changeDefaults")
+    static let shortcutsChanged = Notification.Name("shortcutsChanged")
     static let todoMenuToggled = Notification.Name("todoMenuToggled")
     static let appWillBecomeActive = Notification.Name("appWillBecomeActive")
     static let missionControlDragging = Notification.Name("missionControlDragging")
@@ -22,24 +23,19 @@ extension Notification.Name {
     func post(
         center: NotificationCenter = NotificationCenter.default,
         object: Any? = nil,
-        userInfo: [AnyHashable : Any]? = nil) {
-        
+        userInfo: [AnyHashable: Any]? = nil
+    ) {
         center.post(name: self, object: object, userInfo: userInfo)
     }
-    
+
     @discardableResult
     func onPost(
         center: NotificationCenter = NotificationCenter.default,
         object: Any? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (Notification) -> Void)
-    -> NSObjectProtocol {
-        
-        return center.addObserver(
-            forName: self,
-            object: object,
-            queue: queue,
-            using: using)
+        using: @escaping (Notification) -> Void
+    ) -> NSObjectProtocol {
+        center.addObserver(forName: self, object: object, queue: queue, using: using)
     }
 
 }

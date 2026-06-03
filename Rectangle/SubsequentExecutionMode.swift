@@ -18,13 +18,13 @@ class SubsequentExecutionDefault: Default {
     var value: SubsequentExecutionMode {
         didSet {
             if initialized {
-                UserDefaults.standard.set(value.rawValue, forKey: key)
+                PreferencesStore.shared.set(value.rawValue, forKey: key)
             }
         }
     }
     
     init() {
-        let intValue = UserDefaults.standard.integer(forKey: key)
+        let intValue = PreferencesStore.shared.int(forKey: key)
         value = SubsequentExecutionMode(rawValue: intValue) ?? .resize
         initialized = true
     }
@@ -58,7 +58,7 @@ class SubsequentExecutionDefault: Default {
     }
     
     func toCodable() -> CodableDefault {
-        return CodableDefault(int: value.rawValue)
+        CodableDefault(int: value.rawValue)
     }
 
 }

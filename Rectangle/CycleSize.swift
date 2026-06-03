@@ -73,11 +73,7 @@ extension CycleSize {
     }
     
     var isAlwaysEnabled: Bool {
-        if self == .firstSize {
-            return true
-        }
-        
-        return false
+        self == .firstSize
     }
     
 }
@@ -99,13 +95,13 @@ class CycleSizesDefault: Default {
     var value: Set<CycleSize> {
         didSet {
             if initialized {
-                UserDefaults.standard.set(value.toBits(), forKey: key)
+                PreferencesStore.shared.set(value.toBits(), forKey: key)
             }
         }
     }
     
     init() {
-        let bits = UserDefaults.standard.integer(forKey: key)
+        let bits = PreferencesStore.shared.int(forKey: key)
         value = CycleSize.fromBits(bits: bits)
         initialized = true
     }
@@ -118,7 +114,7 @@ class CycleSizesDefault: Default {
     }
     
     func toCodable() -> CodableDefault {
-        return CodableDefault(int: value.toBits())
+        CodableDefault(int: value.toBits())
     }
 
 }

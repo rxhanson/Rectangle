@@ -523,6 +523,44 @@ class TodoShortcutValidatorTests: XCTestCase {
     private func shortcut(_ keyCode: Int, _ flags: NSEvent.ModifierFlags) -> MASShortcut {
         MASShortcut(keyCode: keyCode, modifierFlags: flags)
     }
+    
+    func testPreferencesStoreLoadsPlistValues() throws {
+        let plistURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("plist")
+        
+        let sourcePreferences: [String: Any] = [
+            "launchOnLogin": true,
+            "gapSize": 12.5,
+            "todoApplication": "Notes",
+            "nested": [
+                "flag": false
+            ],
+            "actions": [
+                "left-half",
+                2
+            ]
+        ]
+        
+        let plistData = try PropertyListSerialization.data(fromPropertyList: sourcePreferences,
+                                                           format: .xml,
+                                                           options: 0)
+        try plistData.write(to: plistURL)
+        
+        defer {
+            try? FileManager.default.removeItem(at: plistURL)
+        }
+        
+        let store = PreferencesStore(fileURL: plistURL)
+        
+        XCTAssertTrue(store.bool(forKey: "launchOnLogin"))
+        XCTAssertEqual(store.float(forKey: "gapSize"), 12.5, accuracy: 0.001)
+        XCTAssertEqual(store.string(forKey: "todoApplication"), "Notes")
+        XCTAssertEqual(store.foundationObject(forKey: "nested") as? [String: Bool], ["flag": false])
+        let actions = store.foundationObject(forKey: "actions") as? [Any]
+        XCTAssertEqual(actions?.first as? String, "left-half")
+        XCTAssertEqual(actions?.last as? Int, 2)
+    }
 
     private func save(_ shortcut: MASShortcut, forKey key: String, in userDefaults: UserDefaults) {
         let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
