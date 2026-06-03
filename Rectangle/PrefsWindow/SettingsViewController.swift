@@ -16,6 +16,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet weak var checkForUpdatesButton: NSButton!
     @IBOutlet weak var gapSlider: NSSlider!
     @IBOutlet weak var gapLabel: NSTextField!
+    @IBOutlet weak var skipGapTopEdgeCheckbox: NSButton!
     @IBOutlet weak var cursorAcrossCheckbox: NSButton!
     @IBOutlet weak var useCursorScreenDetectionCheckbox: NSButton!
     @IBOutlet weak var doubleClickTitleBarCheckbox: NSButton!
@@ -76,6 +77,10 @@ class SettingsViewController: NSViewController {
         initializeCycleSizesView(animated: true)
     }
     
+    @IBAction func toggleSkipGapTopEdge(_ sender: NSButton) {
+        Defaults.skipGapTopEdge.enabled = sender.state == .on
+    }
+
     @IBAction func gapSliderChanged(_ sender: NSSlider) {
         gapLabel.stringValue = "\(sender.intValue) px"
         if let event = NSApp.currentEvent {
@@ -1037,6 +1042,7 @@ class SettingsViewController: NSViewController {
         gapSlider.intValue = Int32(Defaults.gapSize.value)
         gapLabel.stringValue = "\(gapSlider.intValue) px"
         gapSlider.isContinuous = true
+        skipGapTopEdgeCheckbox.state = Defaults.skipGapTopEdge.enabled ? .on : .off
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
 

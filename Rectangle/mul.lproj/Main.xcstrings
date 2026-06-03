@@ -20355,6 +20355,18 @@
         }
       }
     },
+    "GTP-tg-Cel.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Skip gap on top screen edge\"; ObjectID = \"GTP-tg-Cel\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Skip gap on top screen edge"
+          }
+        }
+      }
+    },
     "GUa-eO-cwY.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Use Default\"; ObjectID = \"GUa-eO-cwY\";",
       "extractionState" : "manual",

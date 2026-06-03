@@ -4,8 +4,7 @@ import Foundation
 
 class GapCalculation {
     
-    static func applyGaps(_ rect: CGRect, dimension: Dimension = .both, sharedEdges: Edge = .none, gapSize: Float) -> CGRect {
-        
+    static func applyGaps(_ rect: CGRect, dimension: Dimension = .both, sharedEdges: Edge = .none, gapSize: Float, skipTopGap: Bool = false) -> CGRect {
         let cgGapSize = CGFloat(gapSize)
         let halfGapSize = cgGapSize / 2
         
@@ -34,6 +33,9 @@ class GapCalculation {
             
             if sharedEdges.contains(.top) {
                 withGaps.size.height += halfGapSize
+            }
+            if skipTopGap && !sharedEdges.contains(.top) {
+                withGaps.size.height += cgGapSize
             }
         }
         
