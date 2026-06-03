@@ -47,6 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        Defaults.loadPreferencesOnStartup()
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()
 
@@ -468,7 +469,7 @@ extension AppDelegate: NSMenuDelegate {
 
     private func migrateShowEighthsInMenu() {
         let oldKey = "showEighthsInMenu"
-        let oldValue = UserDefaults.standard.integer(forKey: oldKey)
+        let oldValue = PreferencesStore.shared.int(forKey: oldKey)
         if oldValue != 0 && Defaults.showAdditionalSizesInMenu.notSet {
             Defaults.showAdditionalSizesInMenu.enabled = (oldValue == 1)
         }
@@ -591,13 +592,13 @@ extension AppDelegate {
 
         todoModeMenuItem.state = Defaults.todoMode.enabled ? .on : .off
         
-        if let fullKeyEquivalent = TodoManager.getToggleKeyDisplay(),
+        if let fullKeyEquivalent = TodoManager.toggleKeyDisplay(),
             let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
             todoModeMenuItem.keyEquivalent = keyEquivalent
             todoModeMenuItem.keyEquivalentModifierMask = fullKeyEquivalent.1
         }
 
-        if let fullKeyEquivalent = TodoManager.getReflowKeyDisplay(),
+        if let fullKeyEquivalent = TodoManager.reflowKeyDisplay(),
             let keyEquivalent = fullKeyEquivalent.0?.lowercased() {
             todoReflowMenuItem.keyEquivalent = keyEquivalent
             todoReflowMenuItem.keyEquivalentModifierMask = fullKeyEquivalent.1

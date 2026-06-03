@@ -1,6 +1,263 @@
 /// Defaults.swift
 
 import Cocoa
+import SwiftPList
+import MASShortcut
+
+final class PreferencesStore {
+    static let shared = PreferencesStore()
+
+    fileprivate static let disabledShortcutMarker = "__RECTANGLE_SHORTCUT_DISABLED__"
+
+    private let fileURL: URL
+    private var format: PListFormat = .binary
+    private var storage: PListDictionary = [:]
+
+    init(fileURL: URL = PreferencesStore.defaultFileURL()) {
+        self.fileURL = fileURL
+        reloadFromDisk()
+    }
+
+    static func defaultFileURL(bundle: Bundle = .main,
+                               fileManager: FileManager = .default) -> URL {
+        let bundleId = bundle.bundleIdentifier ?? "com.knollsoft.Rectangle"
+        let libraryURL = fileManager.urls(for: .libraryDirectory, in: .userDomainMask).first
+            ?? fileManager.temporaryDirectory
+        return libraryURL
+            .appendingPathComponent("Preferences", isDirectory: true)
+            .appendingPathComponent("\(bundleId).plist")
+    }
+
+    func reloadFromDisk() {
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            storage = [:]
+            format = .binary
+            return
+        }
+
+        do {
+            let plist = try DictionaryPList(url: fileURL)
+            storage = plist.storage
+            format = plist.format
+        } catch {
+            storage = [:]
+            format = .binary
+            Logger.log("Unable to load preferences from \(fileURL.path): \(error.localizedDescription)")
+        }
+    }
+
+    func objectExists(forKey key: String) -> Bool {
+        storage[any: key] != nil
+    }
+
+    func plistValue(forKey key: String) -> PListValue? {
+        storage[any: key]
+    }
+
+    func foundationObject(forKey key: String) -> Any? {
+        guard let value = storage[any: key] else { return nil }
+        return Self.foundationObject(from: value)
+    }
+
+    func bool(forKey key: String) -> Bool {
+        storage[bool: key] ?? false
+    }
+
+    func int(forKey key: String) -> Int {
+        storage[int: key] ?? storage[double: key].map(Int.init) ?? 0
+    }
+
+    func float(forKey key: String) -> Float {
+        storage[double: key].map(Float.init) ?? storage[int: key].map(Float.init) ?? 0
+    }
+
+    func string(forKey key: String) -> String? {
+        storage[string: key]
+    }
+
+    func data(forKey key: String) -> Data? {
+        storage[data: key]
+    }
+
+    func set(_ value: Bool, forKey key: String) {
+        storage[bool: key] = value
+        persist()
+    }
+
+    func set(_ value: Int, forKey key: String) {
+        storage[int: key] = value
+        persist()
+    }
+
+    func set(_ value: Float, forKey key: String) {
+        storage[double: key] = Double(value)
+        persist()
+    }
+
+    func set(_ value: String?, forKey key: String) {
+        storage[string: key] = value
+        persist()
+    }
+
+    func set(_ value: Data?, forKey key: String) {
+        storage[data: key] = value
+        persist()
+    }
+
+    func set(any value: Any?, forKey key: String) {
+        guard let value else {
+            removeObject(forKey: key)
+            return
+        }
+
+        guard let plistValue = Self.plistValue(from: value) else {
+            Logger.log("Unable to save unsupported preference value for \(key)")
+            return
+        }
+
+        storage[key] = plistValue
+        persist()
+    }
+
+    func removeObject(forKey key: String) {
+        storage[key] = nil
+        persist()
+    }
+
+    private func persist() {
+        do {
+            if let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
+               let type = attrs[.type] as? FileAttributeType,
+               type == .typeSymbolicLink {
+                return
+            }
+
+            let directoryURL = fileURL.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: directoryURL,
+                                                   withIntermediateDirectories: true,
+                                                   attributes: nil)
+
+            let plist = DictionaryPList(root: storage, format: format)
+            try plist.save(toFileAtURL: fileURL, format: format)
+        } catch {
+            Logger.log("Unable to save preferences to \(fileURL.path): \(error.localizedDescription)")
+        }
+    }
+
+    fileprivate static func foundationObject(from value: PListValue) -> Any {
+        switch value {
+        case let string as String:     string
+        case let int as Int:           int
+        case let double as Double:     double
+        case let bool as Bool:         bool
+        case let date as Date:         date
+        case let data as Data:         data
+        case let dictionary as PListDictionary:
+            dictionary.reduce(into: [String: Any]()) { result, entry in
+                result[entry.key] = foundationObject(from: entry.value)
+            }
+        case let array as PListArray:
+            array.map { foundationObject(from: $0) }
+        default:
+            value
+        }
+    }
+
+    private static func plistValue(from value: Any) -> PListValue? {
+        // NSNumber boxes Bools as well as numbers; check for Bool first before
+        // hitting the numeric cases below.
+        if let boolNumber = value as? NSNumber, CFGetTypeID(boolNumber) == CFBooleanGetTypeID() {
+            return boolNumber.boolValue
+        }
+
+        switch value {
+        case let string as String:  return string
+        case let int as Int:        return int
+        case let float as Float:    return Double(float)
+        case let double as Double:  return double
+        case let bool as Bool:      return bool
+        case let date as Date:      return date
+        case let data as Data:      return data
+        case let dictionary as [String: Any]:
+            var plistDictionary: PListDictionary = [:]
+            for (key, nestedValue) in dictionary {
+                guard let plistValue = plistValue(from: nestedValue) else { return nil }
+                plistDictionary[key] = plistValue
+            }
+            return plistDictionary
+        case let array as [Any]:
+            var plistArray: PListArray = []
+            for nestedValue in array {
+                guard let plistValue = plistValue(from: nestedValue) else { return nil }
+                plistArray.append(plistValue)
+            }
+            return plistArray
+        case let number as NSNumber:
+            // Fall back for numeric NSNumbers that didn't match Swift Int/Double above.
+            let doubleValue = number.doubleValue
+            return floor(doubleValue) == doubleValue ? number.intValue : doubleValue
+        default:
+            return nil
+        }
+    }
+}
+
+enum ShortcutStore {
+    private static var dictTransformer: ValueTransformer? {
+        ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))
+    }
+
+    private static var dataTransformer: ValueTransformer? {
+        ValueTransformer(forName: .secureUnarchiveFromDataTransformerName)
+    }
+
+    static func shortcut(for action: WindowAction) -> MASShortcut? {
+        shortcut(forKey: action.name, fallback: defaultShortcut(for: action))
+    }
+
+    static func shortcut(forKey key: String, fallback: MASShortcut? = nil) -> MASShortcut? {
+        if PreferencesStore.shared.string(forKey: key) == PreferencesStore.disabledShortcutMarker {
+            return nil
+        }
+
+        if let rawShortcut = PreferencesStore.shared.foundationObject(forKey: key) as? [String: Any],
+           let shortcut = dictTransformer?.transformedValue(rawShortcut) as? MASShortcut {
+            return shortcut
+        }
+
+        if let dataValue = PreferencesStore.shared.data(forKey: key),
+           let shortcut = dataTransformer?.transformedValue(dataValue) as? MASShortcut {
+            setShortcut(shortcut, forKey: key)
+            return shortcut
+        }
+
+        return fallback
+    }
+
+    static func setShortcut(_ shortcut: MASShortcut?, forKey key: String) {
+        if let shortcut,
+           let rawShortcut = dictTransformer?.reverseTransformedValue(shortcut) {
+            PreferencesStore.shared.set(any: rawShortcut, forKey: key)
+        } else {
+            // A sentinel string marks an explicitly-cleared shortcut so that the
+            // per-action default is NOT restored on next launch.
+            PreferencesStore.shared.set(PreferencesStore.disabledShortcutMarker, forKey: key)
+        }
+    }
+
+    static func resetShortcut(forKey key: String) {
+        PreferencesStore.shared.removeObject(forKey: key)
+    }
+
+    static func defaultShortcut(for action: WindowAction) -> MASShortcut? {
+        let shortcut = Defaults.alternateDefaultShortcuts.enabled
+            ? action.alternateDefault
+            : action.spectacleDefault
+        guard let shortcut else { return nil }
+        return MASShortcut(keyCode: shortcut.keyCode,
+                           modifierFlags: NSEvent.ModifierFlags(rawValue: shortcut.modifierFlags))
+    }
+}
 
 class Defaults {
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
@@ -45,7 +302,8 @@ class Defaults {
     static let installVersion = StringDefault(key: "installVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static let showAdditionalSizesInMenu = OptionalBoolDefault(key: "showAdditionalSizesInMenu")
-    static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
+    // Sparkle owns this key; we read it directly rather than wrapping it in a BoolDefault.
+    static var SUHasLaunchedBefore: Bool { PreferencesStore.shared.bool(forKey: "SUHasLaunchedBefore") }
     static let footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
@@ -96,7 +354,7 @@ class Defaults {
     static let doubleClickToolBarIgnoredApps = JSONDefault<Set<String>>(key: "doubleClickTitleBarIgnoredApps", defaultValue: ["epp.package.java"])
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
     static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
-    static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
+    static let systemWideMouseDownApps = JSONDefault<Set<String>>(key: "systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = OptionalBoolDefault(key: "screensOrderedByX")
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
@@ -187,13 +445,16 @@ class Defaults {
         systemWideMouseDown,
         systemWideMouseDownApps,
         screensOrderedByX,
-        showAdditionalSizesInMenu,
         cyclingOverlapOffset,
         cyclingOverlapOffsetSize,
         cyclingOverlapMaxCascade,
         moveFixedSizeToEdge,
         greenButtonOverride
     ]
+
+    static func loadPreferencesOnStartup() {
+        PreferencesStore.shared.reloadFromDisk()
+    }
 }
 
 struct CodableDefault: Codable {
@@ -201,7 +462,7 @@ struct CodableDefault: Codable {
     let int: Int?
     let float: Float?
     let string: String?
-    
+
     init(bool: Bool? = nil, int: Int? = nil, float: Float? = nil, string: String? = nil) {
         self.bool = bool
         self.int = int
@@ -219,61 +480,61 @@ protocol Default {
 class BoolDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+
     var enabled: Bool {
         didSet {
             if initialized {
-                UserDefaults.standard.set(enabled, forKey: key)
+                PreferencesStore.shared.set(enabled, forKey: key)
             }
         }
     }
-    
+
     init(key: String) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        enabled = PreferencesStore.shared.bool(forKey: key)
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         if let value = codable.bool {
-            self.enabled = value
+            enabled = value
         }
     }
-    
+
     func toCodable() -> CodableDefault {
-        return CodableDefault(bool: enabled)
+        CodableDefault(bool: enabled)
     }
 }
 
 class OptionalBoolDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+
     var enabled: Bool? {
         didSet {
             if initialized {
                 if enabled == true {
-                    UserDefaults.standard.set(1, forKey: key)
+                    PreferencesStore.shared.set(1, forKey: key)
                 } else if enabled == false {
-                    UserDefaults.standard.set(2, forKey: key)
+                    PreferencesStore.shared.set(2, forKey: key)
                 } else {
-                    UserDefaults.standard.set(0, forKey: key)
+                    PreferencesStore.shared.set(0, forKey: key)
                 }
             }
         }
     }
-    
+
     var userDisabled: Bool { enabled == false }
     var userEnabled: Bool { enabled == true }
     var notSet: Bool { enabled == nil }
-    
+
     init(key: String) {
         self.key = key
-        let intValue = UserDefaults.standard.integer(forKey: key)
+        let intValue = PreferencesStore.shared.int(forKey: key)
         set(using: intValue)
         initialized = true
     }
-    
+
     private func set(using intValue: Int) {
         switch intValue {
         case 0: enabled = nil
@@ -282,117 +543,119 @@ class OptionalBoolDefault: Default {
         default: break
         }
     }
-    
+
     func load(from codable: CodableDefault) {
         if let value = codable.int {
             set(using: value)
         }
     }
-    
+
     func toCodable() -> CodableDefault {
-        guard let enabled = enabled else { return CodableDefault(int: 0)}
-        let intValue = enabled ? 1 : 2
-        return CodableDefault(int: intValue)
+        guard let enabled else { return CodableDefault(int: 0) }
+        return CodableDefault(int: enabled ? 1 : 2)
     }
 }
 
 class StringDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+
     var value: String? {
         didSet {
             if initialized {
-                UserDefaults.standard.set(value, forKey: key)
+                PreferencesStore.shared.set(value, forKey: key)
             }
         }
     }
-    
+
     init(key: String) {
         self.key = key
-        value = UserDefaults.standard.string(forKey: key)
+        value = PreferencesStore.shared.string(forKey: key)
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         value = codable.string
     }
-    
+
     func toCodable() -> CodableDefault {
-        return CodableDefault(string: value)
+        CodableDefault(string: value)
     }
 }
 
 class FloatDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+
     var value: Float {
         didSet {
             if initialized {
-                UserDefaults.standard.set(value, forKey: key)
+                PreferencesStore.shared.set(value, forKey: key)
             }
         }
     }
-    
+
     var cgFloat: CGFloat { CGFloat(value) }
 
     init(key: String, defaultValue: Float = 0) {
         self.key = key
-        value = UserDefaults.standard.float(forKey: key)
-        if(defaultValue != 0 && value == 0) {
+        value = PreferencesStore.shared.float(forKey: key)
+        // Apply the compile-time default only when the key is absent (value == 0)
+        // and the caller specified a non-zero default.
+        if defaultValue != 0 && value == 0 {
             value = defaultValue
         }
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         if let float = codable.float {
             value = float
         }
     }
-    
+
     func toCodable() -> CodableDefault {
-        return CodableDefault(float: value)
+        CodableDefault(float: value)
     }
 }
 
 class IntDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+
     var value: Int {
         didSet {
             if initialized {
-                UserDefaults.standard.set(value, forKey: key)
+                PreferencesStore.shared.set(value, forKey: key)
             }
         }
     }
-    
+
     init(key: String, defaultValue: Int = 0) {
         self.key = key
-        value = UserDefaults.standard.integer(forKey: key)
-        if(defaultValue != 0 && value == 0) {
+        value = PreferencesStore.shared.int(forKey: key)
+        // Apply the compile-time default only when the key is absent (value == 0)
+        // and the caller specified a non-zero default.
+        if defaultValue != 0 && value == 0 {
             value = defaultValue
         }
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         if let int = codable.int {
             value = int
         }
     }
-    
+
     func toCodable() -> CodableDefault {
-        return CodableDefault(int: value)
+        CodableDefault(int: value)
     }
 }
 
 class JSONDefault<T: Codable>: StringDefault {
-    
     private var typeInitialized = false
-    
+
     var typedValue: T? {
         didSet {
             if typeInitialized {
@@ -400,20 +663,23 @@ class JSONDefault<T: Codable>: StringDefault {
             }
         }
     }
-    
+
     override init(key: String) {
         super.init(key: key)
         loadFromJSON()
         typeInitialized = true
     }
-    
+
     init(key: String, defaultValue: T) {
+        super.init(key: key)
+        loadFromJSON()
         if typedValue == nil {
             typedValue = defaultValue
+            saveToJSON(defaultValue)
         }
-        super.init(key: key)
+        typeInitialized = true
     }
-    
+
     override func load(from codable: CodableDefault) {
         if value != codable.string {
             value = codable.string
@@ -422,22 +688,20 @@ class JSONDefault<T: Codable>: StringDefault {
             typeInitialized = true
         }
     }
-    
+
     private func loadFromJSON() {
         guard let jsonString = value else { return }
         let decoder = JSONDecoder()
         guard let jsonData = jsonString.data(using: .utf8) else { return }
         typedValue = try? decoder.decode(T.self, from: jsonData)
     }
-    
+
     private func saveToJSON(_ obj: T?) {
         let encoder = JSONEncoder()
-        
-        if let jsonData = try? encoder.encode(obj) {
-            let jsonString = String(data: jsonData, encoding: .utf8)
-            if jsonString != value {
-                value = jsonString
-            }
+        if let jsonData = try? encoder.encode(obj),
+           let jsonString = String(data: jsonData, encoding: .utf8),
+           jsonString != value {
+            value = jsonString
         }
     }
 }
@@ -446,44 +710,43 @@ class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
     public private(set) var key: String
     private let defaultValue: E
 
-    var _value: E
+    private var backingValue: E
     var value: E {
+        get { backingValue }
         set {
-            if newValue != _value {
-                _value = newValue
-                UserDefaults.standard.set(_value.rawValue, forKey: key)
-            }
+            guard newValue != backingValue else { return }
+            backingValue = newValue
+            PreferencesStore.shared.set(backingValue.rawValue, forKey: key)
         }
-        get { _value }
     }
 
     init(key: String, defaultValue: E) {
         self.key = key
         self.defaultValue = defaultValue
-        let intValue = UserDefaults.standard.integer(forKey: key)
-        _value = E(rawValue: intValue) ?? defaultValue
+        let intValue = PreferencesStore.shared.int(forKey: key)
+        backingValue = E(rawValue: intValue) ?? defaultValue
     }
 
     func load(from codable: CodableDefault) {
-        if let intValue = codable.int, _value.rawValue != intValue {
-            _value = E(rawValue: intValue) ?? defaultValue
-            UserDefaults.standard.set(_value.rawValue, forKey: key)
+        if let intValue = codable.int, backingValue.rawValue != intValue {
+            backingValue = E(rawValue: intValue) ?? defaultValue
+            PreferencesStore.shared.set(backingValue.rawValue, forKey: key)
         }
     }
-    
+
     func toCodable() -> CodableDefault {
         CodableDefault(int: value.rawValue)
     }
 }
 
-struct CodableColor : Codable {
+struct CodableColor: Codable {
     var red: CGFloat = 0.0
     var green: CGFloat = 0.0
     var blue: CGFloat = 0.0
-    var alpha: CGFloat? = 1.0
+    var alpha: CGFloat = 1.0
 
-    var nsColor : NSColor {
-        return NSColor(red: red, green: green, blue: blue, alpha: alpha ?? 1.0)
+    var nsColor: NSColor {
+        NSColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 
     init(nsColor: NSColor) {

@@ -9,19 +9,17 @@ extension Defaults {
         
         var shortcuts = [String: Shortcut]()
         for action in WindowAction.active {
-            if let masShortcut = ShortcutCycle.shortcut(for: action) {
+            if let masShortcut = ShortcutStore.shortcut(for: action) {
                 shortcuts[action.name] = Shortcut(masShortcut: masShortcut)
             }
         }
         for defaultsKey in TodoManager.defaultsKeys {
-            guard
-                let shortcutDict = UserDefaults.standard.dictionary(forKey: defaultsKey),
-                let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
-                let shortcut = dictTransformer.transformedValue(shortcutDict) as? MASShortcut
-            else {
-                continue
+            let fallback = defaultsKey == TodoManager.toggleDefaultsKey
+                ? MASShortcut(keyCode: kVK_ANSI_B, modifierFlags: [.control, .option])
+                : MASShortcut(keyCode: kVK_ANSI_N, modifierFlags: [.control, .option])
+            if let shortcut = ShortcutStore.shortcut(forKey: defaultsKey, fallback: fallback) {
+                shortcuts[defaultsKey] = Shortcut(masShortcut: shortcut)
             }
-            shortcuts[defaultsKey] = Shortcut(masShortcut: shortcut)
         }
         
         var codableDefaults = [String: CodableDefault]()
@@ -39,12 +37,7 @@ extension Defaults {
         if #available(macOS 10.13, *) {
             encoder.outputFormatting.update(with: .sortedKeys)
         }
-        if let encodedJson = try? encoder.encode(config) {
-            if let jsonString = String(data: encodedJson, encoding: .utf8) {
-                return jsonString
-            }
-        }
-        return nil
+        return (try? encoder.encode(config)).flatMap { String(data: $0, encoding: .utf8) }
     }
     
     static func convert(jsonString: String) -> Config? {
@@ -54,8 +47,6 @@ extension Defaults {
     }
     
     static func load(fileUrl: URL) {
-        guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
-        
         // Size cap: legitimate configs are ~tens of KB; refuse anything that
         // looks abusive (defense against OOM via a giant config file).
         if let attrs = try? FileManager.default.attributesOfItem(atPath: fileUrl.path),
@@ -75,18 +66,17 @@ extension Defaults {
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
             if let shortcut = importedShortcut?.toMASSHortcut() {
-                let dictValue = dictTransformer.reverseTransformedValue(shortcut)
-                UserDefaults.standard.setValue(dictValue, forKey: action.name)
+                ShortcutStore.setShortcut(shortcut, forKey: action.name)
             }
         }
         for defaultsKey in TodoManager.defaultsKeys {
             if let shortcut = config.shortcuts[defaultsKey]?.toMASSHortcut() {
-                let dictValue = dictTransformer.reverseTransformedValue(shortcut)
-                UserDefaults.standard.setValue(dictValue, forKey: defaultsKey)
+                ShortcutStore.setShortcut(shortcut, forKey: defaultsKey)
             }
         }
         
         Notification.Name.configImported.post()
+        Notification.Name.shortcutsChanged.post()
     }
     
     static func loadFromSupportDir() {
@@ -94,9 +84,9 @@ extension Defaults {
             .appendingPathComponent("Rectangle", isDirectory: true) {
             
             let configURL = rectangleSupportURL.appendingPathComponent("RectangleConfig.json")
+            let fm = FileManager.default
                         
-            let exists = try? configURL.checkResourceIsReachable()
-            if exists == true {
+            if (try? configURL.checkResourceIsReachable()) == true {
                 // Defense-in-depth: any process running as this user can drop
                 // a RectangleConfig.json in Application Support and have it
                 // silently applied on next launch, overwriting shortcuts and
@@ -105,7 +95,6 @@ extension Defaults {
                 // We also refuse symlinks (could redirect reads elsewhere) and
                 // any file with world-write permission (suggests tampering).
                 let path = configURL.path
-                let fm = FileManager.default
                 var isSafe = true
                 
                 if let attrs = try? fm.attributesOfItem(atPath: path) {
@@ -155,8 +144,7 @@ extension Defaults {
     }
     
     private static func getSupportDir() -> URL? {
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        return paths.isEmpty ? nil : paths[0]
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
     }
     
     private static func timestamp() -> String {

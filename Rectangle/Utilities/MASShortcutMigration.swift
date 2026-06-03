@@ -3,26 +3,16 @@
 import Foundation
 import MASShortcut
 
-class MASShortcutMigration {
-    
-    static func migrate() {
-        
-        guard let dataTransformer = ValueTransformer(forName: .secureUnarchiveFromDataTransformerName) else { return }
-        
-        guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
+enum MASShortcutMigration {
 
+    static func migrate() {
         for action in WindowAction.active {
-            
-            if let dataValue = UserDefaults.standard.data(forKey: action.name) {
-                if let shortcut = dataTransformer.transformedValue(dataValue) {
-                    
-                    let dictValue = dictTransformer.reverseTransformedValue(shortcut)
-                    UserDefaults.standard.setValue(dictValue, forKey: action.name)
-                }
+            if let dataValue = PreferencesStore.shared.data(forKey: action.name),
+               let dataTransformer = ValueTransformer(forName: .secureUnarchiveFromDataTransformerName),
+               let shortcut = dataTransformer.transformedValue(dataValue) as? MASShortcut {
+                ShortcutStore.setShortcut(shortcut, forKey: action.name)
             }
-            
         }
-        
     }
 
     static func syncRenamedSideShortcutAliases(userDefaults: UserDefaults = .standard) {

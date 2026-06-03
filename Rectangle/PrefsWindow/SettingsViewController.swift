@@ -237,12 +237,13 @@ class SettingsViewController: NSViewController {
         if response == .alertThirdButtonReturn { return }
 
         //  Restore default shortcuts
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
+        WindowAction.active.forEach { ShortcutStore.resetShortcut(forKey: $0.name) }
         let rectangleDefaults = response == .alertFirstButtonReturn
         if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
             Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
-            Notification.Name.changeDefaults.post()
         }
+        Notification.Name.changeDefaults.post()
+        Notification.Name.shortcutsChanged.post()
         
         // Restore snap areas
         Defaults.portraitSnapAreas.typedValue = nil
@@ -281,6 +282,7 @@ class SettingsViewController: NSViewController {
     }
 
     @IBAction func showExtraSettings(_ sender: NSButton) {
+        extraSettingsPopover = nil
         if extraSettingsPopover == nil {
             let popover = NSPopover()
             popover.behavior = .transient
@@ -441,23 +443,23 @@ class SettingsViewController: NSViewController {
                 vSplitPopUpButton?.selectCurrentValue()
             }
 
-            largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
-            smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
+            configureShortcutView(largerWidthShortcutView, key: WindowAction.largerWidth.name, fallback: ShortcutStore.defaultShortcut(for: .largerWidth))
+            configureShortcutView(smallerWidthShortcutView, key: WindowAction.smallerWidth.name, fallback: ShortcutStore.defaultShortcut(for: .smallerWidth))
             
-            topVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            middleVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            bottomVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            topVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
-            bottomVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
+            configureShortcutView(topVerticalThirdShortcutView, key: WindowAction.topVerticalThird.name, fallback: ShortcutStore.defaultShortcut(for: .topVerticalThird))
+            configureShortcutView(middleVerticalThirdShortcutView, key: WindowAction.middleVerticalThird.name, fallback: ShortcutStore.defaultShortcut(for: .middleVerticalThird))
+            configureShortcutView(bottomVerticalThirdShortcutView, key: WindowAction.bottomVerticalThird.name, fallback: ShortcutStore.defaultShortcut(for: .bottomVerticalThird))
+            configureShortcutView(topVerticalTwoThirdsShortcutView, key: WindowAction.topVerticalTwoThirds.name, fallback: ShortcutStore.defaultShortcut(for: .topVerticalTwoThirds))
+            configureShortcutView(bottomVerticalTwoThirdsShortcutView, key: WindowAction.bottomVerticalTwoThirds.name, fallback: ShortcutStore.defaultShortcut(for: .bottomVerticalTwoThirds))
 
-            topLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomRightEighth.name, withTransformerName: MASDictionaryTransformerName)
+            configureShortcutView(topLeftEighthShortcutView, key: WindowAction.topLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftEighth))
+            configureShortcutView(topCenterLeftEighthShortcutView, key: WindowAction.topCenterLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topCenterLeftEighth))
+            configureShortcutView(topCenterRightEighthShortcutView, key: WindowAction.topCenterRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topCenterRightEighth))
+            configureShortcutView(topRightEighthShortcutView, key: WindowAction.topRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topRightEighth))
+            configureShortcutView(bottomLeftEighthShortcutView, key: WindowAction.bottomLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomLeftEighth))
+            configureShortcutView(bottomCenterLeftEighthShortcutView, key: WindowAction.bottomCenterLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomCenterLeftEighth))
+            configureShortcutView(bottomCenterRightEighthShortcutView, key: WindowAction.bottomCenterRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomCenterRightEighth))
+            configureShortcutView(bottomRightEighthShortcutView, key: WindowAction.bottomRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomRightEighth))
 
             if Defaults.allowAnyShortcut.enabled {
                 let passThroughValidator = PassthroughShortcutValidator()
@@ -826,9 +828,9 @@ class SettingsViewController: NSViewController {
             let twelfthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let sixteenthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
-            ninthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftNinth.name, withTransformerName: MASDictionaryTransformerName)
-            twelfthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
-            sixteenthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            configureShortcutView(ninthsCyclingShortcutView, key: WindowAction.topLeftNinth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftNinth))
+            configureShortcutView(twelfthsCyclingShortcutView, key: WindowAction.topLeftTwelfth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftTwelfth))
+            configureShortcutView(sixteenthsCyclingShortcutView, key: WindowAction.topLeftSixteenth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftSixteenth))
 
             let ninthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             ninthsCyclingIcon.image = WindowAction.topLeftNinth.image
@@ -1081,9 +1083,18 @@ class SettingsViewController: NSViewController {
         TodoManager.initToggleShortcut()
         TodoManager.initReflowShortcut()
         toggleTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
+        configureShortcutView(toggleTodoShortcutView,
+                              key: TodoManager.toggleDefaultsKey,
+                              fallback: MASShortcut(keyCode: kVK_ANSI_B, modifierFlags: [.control, .option])) {
+            TodoManager.registerUnregisterToggleShortcut()
+        }
+        
         reflowTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
-        toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
-        reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
+        configureShortcutView(reflowTodoShortcutView,
+                              key: TodoManager.reflowDefaultsKey,
+                              fallback: MASShortcut(keyCode: kVK_ANSI_N, modifierFlags: [.control, .option])) {
+            TodoManager.registerUnregisterReflowShortcut()
+        }
         showHideTodoModeSettings(animated: false)
     }
     
@@ -1361,6 +1372,18 @@ class SettingsViewController: NSViewController {
     private func setToggleStatesForCornerCycleExpansionAxisButtons() {
         cornerCycleExpansionAxisButtons.forEach { button in
             button.state = button.tag == Defaults.cornerCycleExpansionAxis.value.rawValue ? .on : .off
+        }
+    }
+
+    private func configureShortcutView(_ view: MASShortcutView,
+                                       key: String,
+                                       fallback: MASShortcut?,
+                                       onChange: (() -> Void)? = nil) {
+        view.shortcutValue = ShortcutStore.shortcut(forKey: key, fallback: fallback)
+        view.shortcutValueChange = { sender in
+            ShortcutStore.setShortcut(sender.shortcutValue, forKey: key)
+            Notification.Name.shortcutsChanged.post()
+            onChange?()
         }
     }
 

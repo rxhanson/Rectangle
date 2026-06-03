@@ -66,7 +66,6 @@ class PrefsViewController: NSViewController {
     
     // Settings
     override func awakeFromNib() {
-        
         actionsToViews = [
             .leftHalf: leftHalfShortcutView,
             .rightHalf: rightHalfShortcutView,
@@ -110,18 +109,11 @@ class PrefsViewController: NSViewController {
             .bottomCenterSixth: bottomCenterSixthShortcutView,
             .bottomRightSixth: bottomRightSixthShortcutView
         ]
-        
-        for (action, view) in actionsToViews {
-            view.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
-        }
+        refreshShortcutViews()
+        applyShortcutValidators(allowAnyShortcut: Defaults.allowAnyShortcut.enabled)
         shortcutRecordingObserver.observe(Array(actionsToViews.values))
-        
-        if Defaults.allowAnyShortcut.enabled {
-            let passThroughValidator = PassthroughShortcutValidator()
-            actionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
-        }
-        
         subscribeToAllowAnyShortcutToggle()
+        subscribeToShortcutChanges()
         
         additionalShortcutsStackView.isHidden = true
     }
@@ -135,25 +127,48 @@ class PrefsViewController: NSViewController {
     private func subscribeToAllowAnyShortcutToggle() {
         Notification.Name.allowAnyShortcut.onPost { notification in
             guard let enabled = notification.object as? Bool else { return }
-            let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
-            self.actionsToViews.values.forEach { $0.shortcutValidator = validator }
+            self.applyShortcutValidators(allowAnyShortcut: enabled)
         }
     }
-    
+
+    private func subscribeToShortcutChanges() {
+        Notification.Name.configImported.onPost { _ in
+            self.refreshShortcutViews()
+        }
+        Notification.Name.changeDefaults.onPost { _ in
+            self.refreshShortcutViews()
+        }
+        Notification.Name.shortcutsChanged.onPost { _ in
+            self.refreshShortcutViews()
+        }
+    }
+
+    private func refreshShortcutViews() {
+        for (action, view) in actionsToViews {
+            configureShortcutView(view, key: action.name, fallback: ShortcutStore.defaultShortcut(for: action))
+        }
+    }
+
+    private func applyShortcutValidators(allowAnyShortcut: Bool) {
+        let validator = allowAnyShortcut ? PassthroughShortcutValidator() : MASShortcutValidator()
+        actionsToViews.values.forEach { $0.shortcutValidator = validator }
+    }
+
+    private func configureShortcutView(_ view: MASShortcutView, key: String, fallback: MASShortcut?) {
+        view.shortcutValue = ShortcutStore.shortcut(forKey: key, fallback: fallback)
+        view.shortcutValueChange = { sender in
+            ShortcutStore.setShortcut(sender.shortcutValue, forKey: key)
+            Notification.Name.shortcutsChanged.post()
+        }
+    }
 }
 
 class PassthroughShortcutValidator: MASShortcutValidator {
     
-    override func isShortcutValid(_ shortcut: MASShortcut!) -> Bool {
-        return true
-    }
+    override func isShortcutValid(_ shortcut: MASShortcut!) -> Bool { true }
     
-    override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
-        return false
-    }
+    override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool { false }
     
-    override func isShortcut(_ shortcut: MASShortcut!, alreadyTakenIn menu: NSMenu!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool {
-        return false
-    }
+    override func isShortcut(_ shortcut: MASShortcut!, alreadyTakenIn menu: NSMenu!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool { false }
     
 }
