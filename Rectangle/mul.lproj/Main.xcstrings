@@ -20356,13 +20356,13 @@
       }
     },
     "GTP-tg-Cel.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Skip gap on top screen edge\"; ObjectID = \"GTP-tg-Cel\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Remove gap on top screen edge\"; ObjectID = \"GTP-tg-Cel\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Skip gap on top screen edge"
+            "value" : "Remove gap on top screen edge"
           }
         }
       }

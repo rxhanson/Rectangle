@@ -2889,7 +2889,7 @@
                                             </stackView>
                                             <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="GTP-tg-Gap">
                                                 <rect key="frame" x="0.0" y="308" width="500" height="16"/>
-                                                <buttonCell key="cell" type="check" title="Skip gap on top screen edge" bezelStyle="regularSquare" imagePosition="left" inset="2" id="GTP-tg-Cel">
+                                                <buttonCell key="cell" type="check" title="Remove gap on top screen edge" bezelStyle="regularSquare" imagePosition="left" inset="2" id="GTP-tg-Cel">
                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
