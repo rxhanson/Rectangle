@@ -15,6 +15,7 @@ class Defaults {
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
     static let gapSize = FloatDefault(key: "gapSize")
+    static let skipGapTopEdge = BoolDefault(key: "skipGapTopEdge")
     static let snapEdgeMarginTop = FloatDefault(key: "snapEdgeMarginTop", defaultValue: 5)
     static let snapEdgeMarginBottom = FloatDefault(key: "snapEdgeMarginBottom", defaultValue: 5)
     static let snapEdgeMarginLeft = FloatDefault(key: "snapEdgeMarginLeft", defaultValue: 5)
@@ -111,6 +112,7 @@ class Defaults {
         almostMaximizeHeight,
         almostMaximizeWidth,
         gapSize,
+        skipGapTopEdge,
         snapEdgeMarginTop,
         snapEdgeMarginBottom,
         snapEdgeMarginLeft,

@@ -2887,6 +2887,16 @@
                                                     <real value="3.4028234663852886e+38"/>
                                                 </customSpacing>
                                             </stackView>
+                                            <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="GTP-tg-Gap">
+                                                <rect key="frame" x="0.0" y="308" width="500" height="16"/>
+                                                <buttonCell key="cell" type="check" title="Remove gap on top screen edge" bezelStyle="regularSquare" imagePosition="left" inset="2" id="GTP-tg-Cel">
+                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                    <font key="font" metaFont="system"/>
+                                                </buttonCell>
+                                                <connections>
+                                                    <action selector="toggleSkipGapTopEdge:" target="yhc-gS-h02" id="GTP-tg-Act"/>
+                                                </connections>
+                                            </button>
                                             <button verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="UY7-Nt-G3K">
                                                 <rect key="frame" x="0.0" y="308" width="500" height="16"/>
                                                 <buttonCell key="cell" type="check" title="Remove keyboard shortcut restrictions" bezelStyle="regularSquare" imagePosition="left" inset="2" id="n4U-FC-L9s">
@@ -3415,6 +3425,7 @@
                         <outlet property="extraSettingsButton" destination="Ext-Set-Btn" id="Ext-Set-Out"/>
                         <outlet property="gapLabel" destination="jd8-SJ-lza" id="pqG-fr-nwW"/>
                         <outlet property="gapSlider" destination="O9H-ZD-bqL" id="H7T-4Y-g8e"/>
+                        <outlet property="skipGapTopEdgeCheckbox" destination="GTP-tg-Gap" id="GTP-tg-Out"/>
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
                         <outlet property="launchOnLoginCheckbox" destination="eQJ-O3-a8H" id="iF3-bq-l1j"/>
                         <outlet property="reflowTodoShortcutView" destination="QTZ-pv-mwo" id="VYl-Tv-gFy"/>
