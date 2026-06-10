@@ -29,21 +29,14 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
         let ratio = Defaults.horizontalSplitRatio.value / 100.0
-        let fraction = params.action == .rightHalf ? 1.0 - ratio : ratio
-        return calculateFractionalRect(params, fraction: fraction)
+        let side: HalfSplitSide = params.action == .rightHalf ? .trailing : .leading
+        let fraction = side == .trailing ? 1.0 - ratio : ratio
+        return RectResult(HalfSplitFrameCalculation.horizontalRect(in: params.visibleFrameOfScreen, side: side, fraction: fraction))
     }
 
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
-
-        var rect = visibleFrameOfScreen
-
-        rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(fraction))
-        if params.action == .rightHalf {
-            rect.origin.x = visibleFrameOfScreen.maxX - rect.width
-        }
-
-        return RectResult(rect)
+        let side: HalfSplitSide = params.action == .rightHalf ? .trailing : .leading
+        return RectResult(HalfSplitFrameCalculation.horizontalRect(in: params.visibleFrameOfScreen, side: side, fraction: fraction))
     }
 
     func calculateResize(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
@@ -96,15 +89,6 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
 
     // Used to draw box for snapping
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
-        let ratio = CGFloat(Defaults.horizontalSplitRatio.value / 100.0)
-        var rect = params.visibleFrameOfScreen
-        let leftWidth = floor(rect.width * ratio)
-        if params.action == .leftHalf {
-            rect.size.width = leftWidth
-        } else {
-            rect.size.width = rect.width - leftWidth
-            rect.origin.x += leftWidth
-        }
-        return RectResult(rect)
+        calculateFirstRect(params)
     }
 }

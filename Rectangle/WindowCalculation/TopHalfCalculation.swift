@@ -14,16 +14,11 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculati
     }
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateFractionalRect(params, fraction: Defaults.verticalSplitRatio.value / 100.0)
+        return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen, side: .leading, fraction: Defaults.verticalSplitRatio.value / 100.0))
     }
 
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
-
-        var rect = visibleFrameOfScreen
-        rect.size.height = floor(visibleFrameOfScreen.height * CGFloat(fraction))
-        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
-        return RectResult(rect)
+        return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen, side: .leading, fraction: fraction))
     }
     
 }

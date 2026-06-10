@@ -25,18 +25,29 @@ class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcula
     }
 
     func quarterRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
-        var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
-        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        return RectResult(rect, subAction: .bottomLeftQuarter)
+        return RectResult(cornerRect(visibleFrameOfScreen,
+                                     horizontalFraction: Defaults.horizontalSplitRatio.value / 100.0,
+                                     verticalFraction: 1.0 - Defaults.verticalSplitRatio.value / 100.0),
+                          subAction: .bottomLeftQuarter)
+    }
+
+    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
+        return RectResult(cornerRect(params.visibleFrameOfScreen,
+                                     horizontalFraction: Defaults.horizontalSplitRatio.value / 100.0,
+                                     verticalFraction: 1.0 - Defaults.verticalSplitRatio.value / 100.0))
     }
 
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
+        return RectResult(cornerRect(params.visibleFrameOfScreen,
+                                     horizontalFraction: fraction,
+                                     verticalFraction: fraction))
+    }
 
-        var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(fraction))
-        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        return RectResult(rect)
+    private func cornerRect(_ visibleFrameOfScreen: CGRect, horizontalFraction: Float, verticalFraction: Float) -> CGRect {
+        HalfSplitFrameCalculation.cornerRect(in: visibleFrameOfScreen,
+                                             horizontalSide: .leading,
+                                             verticalSide: .trailing,
+                                             horizontalFraction: horizontalFraction,
+                                             verticalFraction: verticalFraction)
     }
 }

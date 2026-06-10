@@ -148,6 +148,112 @@ class CycleSizeRatioPresetTests: XCTestCase {
     }
 }
 
+class HalfSplitCornerCalculationTests: XCTestCase {
+    
+    private var savedHorizontalSplitRatio: Float = 50
+    private var savedVerticalSplitRatio: Float = 50
+    private var savedSubsequentExecutionMode: SubsequentExecutionMode = .resize
+    private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
+    
+    override func setUp() {
+        super.setUp()
+        savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
+        savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
+        savedSubsequentExecutionMode = Defaults.subsequentExecutionMode.value
+        Defaults.subsequentExecutionMode.value = .resize
+    }
+    
+    override func tearDown() {
+        Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
+        Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
+        Defaults.subsequentExecutionMode.value = savedSubsequentExecutionMode
+        super.tearDown()
+    }
+    
+    func testCornersUseHalfSplitRatioOneHalf() {
+        setSplitRatio(50)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 470, width: 600, height: 450),
+            topRight: CGRect(x: 610, y: 470, width: 600, height: 450),
+            bottomLeft: CGRect(x: 10, y: 20, width: 600, height: 450),
+            bottomRight: CGRect(x: 610, y: 20, width: 600, height: 450)
+        )
+    }
+    
+    func testCornersUseHalfSplitRatioTwoThirds() {
+        setSplitRatio(CycleSize.twoThirds.percentValue)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 320, width: 800, height: 600),
+            topRight: CGRect(x: 810, y: 320, width: 400, height: 600),
+            bottomLeft: CGRect(x: 10, y: 20, width: 800, height: 300),
+            bottomRight: CGRect(x: 810, y: 20, width: 400, height: 300)
+        )
+    }
+    
+    func testCornersUseHalfSplitRatioThreeQuarters() {
+        setSplitRatio(CycleSize.threeQuarters.percentValue)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 245, width: 900, height: 675),
+            topRight: CGRect(x: 910, y: 245, width: 300, height: 675),
+            bottomLeft: CGRect(x: 10, y: 20, width: 900, height: 225),
+            bottomRight: CGRect(x: 910, y: 20, width: 300, height: 225)
+        )
+    }
+    
+    func testCornersUseCustomHalfSplitRatio() {
+        setSplitRatio(60)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 380, width: 720, height: 540),
+            topRight: CGRect(x: 730, y: 380, width: 480, height: 540),
+            bottomLeft: CGRect(x: 10, y: 20, width: 720, height: 360),
+            bottomRight: CGRect(x: 730, y: 20, width: 480, height: 360)
+        )
+    }
+    
+    func testHalfActionsStillUseHalfSplitRatio() {
+        setSplitRatio(60)
+        
+        assertRect(WindowCalculationFactory.leftHalfCalculation.calculateRect(params(for: .leftHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 720, height: 900))
+        assertRect(WindowCalculationFactory.rightHalfCalculation.calculateRect(params(for: .rightHalf)).rect,
+                   equals: CGRect(x: 730, y: 20, width: 480, height: 900))
+        assertRect(WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf)).rect,
+                   equals: CGRect(x: 10, y: 380, width: 1200, height: 540))
+        assertRect(WindowCalculationFactory.bottomHalfCalculation.calculateRect(params(for: .bottomHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 1200, height: 360))
+    }
+    
+    private func setSplitRatio(_ percent: Float) {
+        Defaults.horizontalSplitRatio.value = percent
+        Defaults.verticalSplitRatio.value = percent
+    }
+    
+    private func assertCornerRects(topLeft: CGRect, topRight: CGRect, bottomLeft: CGRect, bottomRight: CGRect) {
+        assertRect(WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect, equals: topLeft)
+        assertRect(WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect, equals: topRight)
+        assertRect(WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect, equals: bottomLeft)
+        assertRect(WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect, equals: bottomRight)
+    }
+    
+    private func params(for action: WindowAction) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: nil)
+    }
+    
+    private func assertRect(_ rect: CGRect, equals expected: CGRect, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(rect.origin.x, expected.origin.x, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(rect.origin.y, expected.origin.y, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(rect.width, expected.width, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(rect.height, expected.height, accuracy: 0.001, file: file, line: line)
+    }
+}
+
 class OverlapOffsetGuardsTests: XCTestCase {
 
     func testMaxCascadeClampedToMinOne() {
