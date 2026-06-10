@@ -41,6 +41,11 @@ enum CycleSize: Int, CaseIterable {
 }
 
 extension CycleSize {
+    static let matchingTolerance: Float = 0.001
+    
+    static func matching(percentValue: Float) -> CycleSize? {
+        sortedSizes.first { $0.matches(percentValue: percentValue) }
+    }
     
     var title: String {
         switch self {
@@ -70,6 +75,14 @@ extension CycleSize {
         case .threeQuarters:
             3 / 4
         }
+    }
+    
+    var percentValue: Float {
+        fraction * 100
+    }
+    
+    func matches(percentValue: Float, tolerance: Float = Self.matchingTolerance) -> Bool {
+        abs(self.percentValue - percentValue) <= tolerance
     }
     
     var isAlwaysEnabled: Bool {

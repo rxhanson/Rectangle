@@ -130,6 +130,24 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class CycleSizeRatioPresetTests: XCTestCase {
+
+    func testPercentValuesMatchCycleSizeFractions() {
+        XCTAssertEqual(CycleSize.oneHalf.percentValue, 50, accuracy: 0.001)
+        XCTAssertEqual(CycleSize.twoThirds.percentValue, 66.666, accuracy: 0.001)
+        XCTAssertEqual(CycleSize.oneThird.percentValue, 33.333, accuracy: 0.001)
+    }
+
+    func testMatchingPercentValueUsesTolerance() {
+        XCTAssertEqual(CycleSize.matching(percentValue: 33.3334), .oneThird)
+        XCTAssertEqual(CycleSize.matching(percentValue: 66.6666), .twoThirds)
+    }
+
+    func testCustomPercentValueDoesNotMatchPreset() {
+        XCTAssertNil(CycleSize.matching(percentValue: 60))
+    }
+}
+
 class OverlapOffsetGuardsTests: XCTestCase {
 
     func testMaxCascadeClampedToMinOne() {

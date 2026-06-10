@@ -391,6 +391,14 @@ class SettingsViewController: NSViewController {
             hSplitField.alignment = .right
             hSplitField.formatter = percentFormatter
 
+            let hSplitPopUpButton = HalfSplitRatioPopUpButton()
+            hSplitPopUpButton.translatesAutoresizingMaskIntoConstraints = false
+            hSplitPopUpButton.target = self
+            hSplitPopUpButton.action = #selector(didSelectHalfSplitRatioPreset(sender:))
+            hSplitPopUpButton.defaults = Defaults.horizontalSplitRatio
+            hSplitPopUpButton.customField = hSplitField
+            configureHalfSplitRatioPopUpButton(hSplitPopUpButton)
+
             let vSplitField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             vSplitField.stringValue = String(Int(Defaults.verticalSplitRatio.value))
             vSplitField.delegate = self
@@ -400,6 +408,21 @@ class SettingsViewController: NSViewController {
             vSplitField.refusesFirstResponder = true
             vSplitField.alignment = .right
             vSplitField.formatter = percentFormatter
+
+            let vSplitPopUpButton = HalfSplitRatioPopUpButton()
+            vSplitPopUpButton.translatesAutoresizingMaskIntoConstraints = false
+            vSplitPopUpButton.target = self
+            vSplitPopUpButton.action = #selector(didSelectHalfSplitRatioPreset(sender:))
+            vSplitPopUpButton.defaults = Defaults.verticalSplitRatio
+            vSplitPopUpButton.customField = vSplitField
+            configureHalfSplitRatioPopUpButton(vSplitPopUpButton)
+
+            hSplitField.defaultsSetAction = { [weak hSplitPopUpButton] in
+                hSplitPopUpButton?.selectCurrentValue()
+            }
+            vSplitField.defaultsSetAction = { [weak vSplitPopUpButton] in
+                vSplitPopUpButton?.selectCurrentValue()
+            }
 
             largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
             smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
@@ -629,14 +652,26 @@ class SettingsViewController: NSViewController {
             hSplitRow.alignment = .centerY
             hSplitRow.spacing = 18
             hSplitRow.addArrangedSubview(hSplitLabel)
-            hSplitRow.addArrangedSubview(hSplitField)
+            let hSplitControlsStack = NSStackView()
+            hSplitControlsStack.orientation = .horizontal
+            hSplitControlsStack.alignment = .centerY
+            hSplitControlsStack.spacing = 8
+            hSplitControlsStack.addArrangedSubview(hSplitPopUpButton)
+            hSplitControlsStack.addArrangedSubview(hSplitField)
+            hSplitRow.addArrangedSubview(hSplitControlsStack)
 
             let vSplitRow = NSStackView()
             vSplitRow.orientation = .horizontal
             vSplitRow.alignment = .centerY
             vSplitRow.spacing = 18
             vSplitRow.addArrangedSubview(vSplitLabel)
-            vSplitRow.addArrangedSubview(vSplitField)
+            let vSplitControlsStack = NSStackView()
+            vSplitControlsStack.orientation = .horizontal
+            vSplitControlsStack.alignment = .centerY
+            vSplitControlsStack.spacing = 8
+            vSplitControlsStack.addArrangedSubview(vSplitPopUpButton)
+            vSplitControlsStack.addArrangedSubview(vSplitField)
+            vSplitRow.addArrangedSubview(vSplitControlsStack)
             
             let topVerticalThirdRow = NSStackView()
             topVerticalThirdRow.orientation = .horizontal
@@ -896,6 +931,12 @@ class SettingsViewController: NSViewController {
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.widthAnchor.constraint(equalToConstant: 160),
+                hSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
+                vSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
+                hSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
+                vSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
+                hSplitField.widthAnchor.constraint(equalToConstant: 52),
+                vSplitField.widthAnchor.constraint(equalToConstant: 52),
                 topVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 middleVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
@@ -936,8 +977,8 @@ class SettingsViewController: NSViewController {
                 sixteenthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 gridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 cyclingHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
-                hSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
-                vSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
+                hSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
+                vSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
             let containerView = NSView()
@@ -1153,6 +1194,41 @@ class SettingsViewController: NSViewController {
         }
     }
     
+    private func configureHalfSplitRatioPopUpButton(_ popUpButton: HalfSplitRatioPopUpButton) {
+        popUpButton.removeAllItems()
+        
+        CycleSize.sortedSizes.forEach { cycleSize in
+            popUpButton.addItem(withTitle: cycleSize.title)
+            popUpButton.lastItem?.tag = cycleSize.rawValue
+        }
+        
+        popUpButton.addItem(withTitle: NSLocalizedString("Other", tableName: "Main", value: "", comment: ""))
+        popUpButton.lastItem?.tag = HalfSplitRatioPopUpButton.otherTag
+        popUpButton.selectCurrentValue()
+    }
+    
+    @objc private func didSelectHalfSplitRatioPreset(sender: Any?) {
+        guard let popUpButton = sender as? HalfSplitRatioPopUpButton,
+              let defaults = popUpButton.defaults else {
+            Logger.log("Expected action to be sent from HalfSplitRatioPopUpButton. Instead, sender is: \(String(describing: sender))")
+            return
+        }
+        
+        guard popUpButton.selectedTag() != HalfSplitRatioPopUpButton.otherTag else {
+            popUpButton.customField?.isHidden = false
+            return
+        }
+        
+        guard let cycleSize = CycleSize(rawValue: popUpButton.selectedTag()) else {
+            Logger.log("Expected tag of half split ratio popup to match a value of CycleSize. Got: \(String(describing: popUpButton.selectedTag()))")
+            return
+        }
+        
+        defaults.value = cycleSize.percentValue
+        popUpButton.customField?.stringValue = "\(Int(round(cycleSize.percentValue)))"
+        popUpButton.customField?.isHidden = true
+    }
+    
     @objc private func didCheckCycleSizeCheckbox(sender: Any?) {
         guard let checkbox = sender as? NSButton else {
             Logger.log("Expected action to be sent from NSButton. Instead, sender is: \(String(describing: sender))")
@@ -1241,4 +1317,27 @@ class AutoSaveFloatField: NSTextField {
     var defaults: FloatDefault?
     var defaultsSetAction: (() -> Void)?
     var fallbackValue: Float = 30
+}
+
+class HalfSplitRatioPopUpButton: NSPopUpButton {
+    static let otherTag = -1
+    
+    var defaults: FloatDefault?
+    weak var customField: AutoSaveFloatField?
+    
+    func selectCurrentValue() {
+        guard let value = defaults?.value else {
+            selectItem(withTag: Self.otherTag)
+            customField?.isHidden = false
+            return
+        }
+        
+        if let cycleSize = CycleSize.matching(percentValue: value) {
+            selectItem(withTag: cycleSize.rawValue)
+            customField?.isHidden = true
+        } else {
+            selectItem(withTag: Self.otherTag)
+            customField?.isHidden = false
+        }
+    }
 }
