@@ -151,6 +151,7 @@
 		AA0ACC2F2864A86D0025E376 /* StageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0ACC2E2864A86D0025E376 /* StageUtil.swift */; };
 		AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */; };
 		AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */; };
+		AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */; };
 		AA4DA2FB28FDC94A00355CEB /* DispatchTimeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */; };
 		AA536C2729005DD000579AC6 /* TimeoutCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA536C2629005DD000579AC6 /* TimeoutCache.swift */; };
 		AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA69F83B29909A95001A81AF /* RightTodoCalculation.swift */; };
@@ -366,6 +367,7 @@
 		AA0ACC2E2864A86D0025E376 /* StageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageUtil.swift; sourceTree = "<group>"; };
 		AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFExtension.swift; sourceTree = "<group>"; };
 		AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBarManager.swift; sourceTree = "<group>"; };
+		AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenButtonManager.swift; sourceTree = "<group>"; };
 		AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchTimeExtension.swift; sourceTree = "<group>"; };
 		AA536C2629005DD000579AC6 /* TimeoutCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutCache.swift; sourceTree = "<group>"; };
 		AA69F83B29909A95001A81AF /* RightTodoCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightTodoCalculation.swift; sourceTree = "<group>"; };
@@ -689,6 +691,7 @@
 				98C275662322E2DA009B9292 /* WindowHistory.swift */,
 				9824704022B186D00037B409 /* WindowManager.swift */,
 				AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */,
+				AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */,
 				98987AA62391890C00BE72C4 /* Logging */,
 				98910B3C2311304D0066EC23 /* PrefsWindow */,
 				989DA30C243FC0C3008C7AA4 /* WelcomeWindow */,
@@ -1072,6 +1075,7 @@
 				B4780A322BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift in Sources */,
 				AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */,
 				AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */,
+				AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				98A009BF251253AB00CFBF0C /* BottomRightSixthCalculation.swift in Sources */,
 				6490B39527BF96880056C220 /* TopLeftEighthCalculation.swift in Sources */,
@@ -1405,11 +1409,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Rectangle/RectangleRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 102;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = XSYZ3E4B7D;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Rectangle/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

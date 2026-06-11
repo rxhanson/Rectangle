@@ -26,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var windowCalculationFactory: WindowCalculationFactory!
     private var snappingManager: SnappingManager!
     private var titleBarManager: TitleBarManager!
+    private var greenButtonManager: GreenButtonManager!
     
     private var prefsWindowController: NSWindowController?
     
@@ -152,6 +153,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
         self.titleBarManager = TitleBarManager()
+        self.greenButtonManager = GreenButtonManager()
         self.initializeTodo()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)

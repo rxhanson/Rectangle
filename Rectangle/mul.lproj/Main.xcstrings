@@ -11983,6 +11983,12 @@
         }
       }
     },
+    "Click green button to fill screen instead of full screen" : {
+
+    },
+    "Clicking a window's green button maximizes it to fill the screen instead of entering macOS full screen. Hold any modifier key or use the button's menu for the default macOS behavior." : {
+
+    },
     "Conflict with macOS tiling" : {
       "extractionState" : "manual",
       "localizations" : {
