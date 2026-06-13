@@ -44,6 +44,7 @@ class SettingsViewController: NSViewController {
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     
     private var cycleSizeCheckboxes = [NSButton]()
+    private var repeatedCommandCycleAxisCheckboxes = [NSButton]()
     private var combinedDisplayModeCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
@@ -116,6 +117,16 @@ class SettingsViewController: NSViewController {
 
     @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
         Defaults.cyclingOverlapOffset.enabled = sender.state == .on
+    }
+
+    @objc func toggleRepeatedCommandCycleAxis(_ sender: NSButton) {
+        guard let axis = RepeatedCommandCycleAxis(rawValue: sender.tag) else {
+            Logger.log("Expected tag of repeated-command axis lock checkbox to match a value of RepeatedCommandCycleAxis. Got: \(String(describing: sender.tag))")
+            return
+        }
+
+        Defaults.repeatedCommandCycleAxis.value = axis
+        setToggleStatesForRepeatedCommandCycleAxisCheckboxes()
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -1016,12 +1027,21 @@ class SettingsViewController: NSViewController {
         self.cycleSizeCheckboxes.forEach {
             $0.removeFromSuperview()
         }
+        self.repeatedCommandCycleAxisCheckboxes.forEach {
+            $0.removeFromSuperview()
+        }
         
         let cycleSizeCheckboxes = makeCycleSizeCheckboxes()
         cycleSizeCheckboxes.forEach { checkbox in
             cycleSizesView.addArrangedSubview(checkbox)
         }
         self.cycleSizeCheckboxes = cycleSizeCheckboxes
+
+        let repeatedCommandCycleAxisCheckboxes = makeRepeatedCommandCycleAxisCheckboxes()
+        repeatedCommandCycleAxisCheckboxes.forEach { checkbox in
+            cycleSizesView.addArrangedSubview(checkbox)
+        }
+        self.repeatedCommandCycleAxisCheckboxes = repeatedCommandCycleAxisCheckboxes
         
         initializeCycleSizesView(animated: false)
 
@@ -1101,9 +1121,8 @@ class SettingsViewController: NSViewController {
         } else {
             stageView.isHidden = true
         }
-        
-        
         setToggleStatesForCycleSizeCheckboxes()
+        setToggleStatesForRepeatedCommandCycleAxisCheckboxes()
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {
@@ -1111,6 +1130,7 @@ class SettingsViewController: NSViewController {
         
         if showOptionsView {
             setToggleStatesForCycleSizeCheckboxes()
+            setToggleStatesForRepeatedCommandCycleAxisCheckboxes()
         }
         
         setVisibility(shown: showOptionsView, ofView: cycleSizesView, withConstraint: cycleSizesViewHeightConstraint, animated: animated)
@@ -1193,6 +1213,20 @@ class SettingsViewController: NSViewController {
             return button
         }
     }
+
+    private func makeRepeatedCommandCycleAxisCheckboxes() -> [NSButton] {
+        [
+            makeRepeatedCommandCycleAxisCheckbox(title: NSLocalizedString("Lock horizontal axis", tableName: "Main", value: "", comment: ""), axis: .horizontal),
+            makeRepeatedCommandCycleAxisCheckbox(title: NSLocalizedString("Lock vertical axis", tableName: "Main", value: "", comment: ""), axis: .vertical)
+        ]
+    }
+
+    private func makeRepeatedCommandCycleAxisCheckbox(title: String, axis: RepeatedCommandCycleAxis) -> NSButton {
+        let button = NSButton(checkboxWithTitle: title, target: self, action: #selector(toggleRepeatedCommandCycleAxis(_:)))
+        button.tag = axis.rawValue
+        button.setContentCompressionResistancePriority(.required, for: .vertical)
+        return button
+    }
     
     private func configureHalfSplitRatioPopUpButton(_ popUpButton: HalfSplitRatioPopUpButton) {
         popUpButton.removeAllItems()
@@ -1273,6 +1307,12 @@ class SettingsViewController: NSViewController {
             if isAlwaysEnabled {
                 checkbox.isEnabled = false
             }
+        }
+    }
+
+    private func setToggleStatesForRepeatedCommandCycleAxisCheckboxes() {
+        repeatedCommandCycleAxisCheckboxes.forEach { checkbox in
+            checkbox.state = checkbox.tag == Defaults.repeatedCommandCycleAxis.value.rawValue ? .on : .off
         }
     }
 

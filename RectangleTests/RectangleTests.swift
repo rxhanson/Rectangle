@@ -153,6 +153,9 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     private var savedHorizontalSplitRatio: Float = 50
     private var savedVerticalSplitRatio: Float = 50
     private var savedSubsequentExecutionMode: SubsequentExecutionMode = .resize
+    private var savedRepeatedCommandCycleAxis: RepeatedCommandCycleAxis = .horizontal
+    private var savedCycleSizesIsChanged = false
+    private var savedSelectedCycleSizes = Set<CycleSize>()
     private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
     
     override func setUp() {
@@ -160,13 +163,20 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
         savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
         savedSubsequentExecutionMode = Defaults.subsequentExecutionMode.value
+        savedRepeatedCommandCycleAxis = Defaults.repeatedCommandCycleAxis.value
+        savedCycleSizesIsChanged = Defaults.cycleSizesIsChanged.enabled
+        savedSelectedCycleSizes = Defaults.selectedCycleSizes.value
         Defaults.subsequentExecutionMode.value = .resize
+        Defaults.cycleSizesIsChanged.enabled = false
     }
     
     override func tearDown() {
         Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
         Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
         Defaults.subsequentExecutionMode.value = savedSubsequentExecutionMode
+        Defaults.repeatedCommandCycleAxis.value = savedRepeatedCommandCycleAxis
+        Defaults.cycleSizesIsChanged.enabled = savedCycleSizesIsChanged
+        Defaults.selectedCycleSizes.value = savedSelectedCycleSizes
         super.tearDown()
     }
     
@@ -226,6 +236,73 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         assertRect(WindowCalculationFactory.bottomHalfCalculation.calculateRect(params(for: .bottomHalf)).rect,
                    equals: CGRect(x: 10, y: 20, width: 1200, height: 360))
     }
+
+    func testRepeatedCornersWithHorizontalAxisLockCycleWidthOnly() {
+        setSplitRatio(60)
+        Defaults.repeatedCommandCycleAxis.value = .horizontal
+
+        assertRepeatedCornerRects(
+            topLeft: CGRect(x: 10, y: 380, width: 800, height: 540),
+            topRight: CGRect(x: 410, y: 380, width: 800, height: 540),
+            bottomLeft: CGRect(x: 10, y: 20, width: 800, height: 360),
+            bottomRight: CGRect(x: 410, y: 20, width: 800, height: 360)
+        )
+    }
+
+    func testSecondRepeatedCornerShortcutBeginsCyclingImmediately() {
+        setSplitRatio(CycleSize.twoThirds.percentValue)
+        Defaults.repeatedCommandCycleAxis.value = .horizontal
+
+        let firstFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+        let secondFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: firstFrame, count: 1)).rect
+        let thirdFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: secondFrame, count: 2)).rect
+
+        assertRect(firstFrame, equals: CGRect(x: 10, y: 320, width: 800, height: 600))
+        assertRect(secondFrame, equals: CGRect(x: 10, y: 320, width: 400, height: 600))
+        assertRect(thirdFrame, equals: CGRect(x: 10, y: 320, width: 600, height: 600))
+    }
+
+    func testRepeatedCornerCyclingDoesNotReturnNoOpFrameWhenBaseMatchesCycleSize() {
+        setSplitRatio(CycleSize.twoThirds.percentValue)
+        Defaults.repeatedCommandCycleAxis.value = .vertical
+
+        let firstFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
+        let secondFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(repeatedParams(for: .topRight, currentRect: firstFrame, count: 1)).rect
+
+        XCTAssertFalse(firstFrame.equalTo(secondFrame))
+        XCTAssertEqual(firstFrame.maxY, secondFrame.maxY, accuracy: 0.001)
+        XCTAssertEqual(firstFrame.origin.x, secondFrame.origin.x, accuracy: 0.001)
+        XCTAssertEqual(firstFrame.width, secondFrame.width, accuracy: 0.001)
+    }
+
+    func testRepeatedCornersWithVerticalAxisLockCycleHeightOnly() {
+        setSplitRatio(60)
+        Defaults.repeatedCommandCycleAxis.value = .vertical
+
+        assertRepeatedCornerRects(
+            topLeft: CGRect(x: 10, y: 320, width: 720, height: 600),
+            topRight: CGRect(x: 730, y: 320, width: 480, height: 600),
+            bottomLeft: CGRect(x: 10, y: 20, width: 720, height: 600),
+            bottomRight: CGRect(x: 730, y: 20, width: 480, height: 600)
+        )
+    }
+
+    func testRepeatedHalfActionsStillCycleOnTheirNaturalAxis() {
+        setSplitRatio(60)
+        Defaults.repeatedCommandCycleAxis.value = .vertical
+
+        assertRect(WindowCalculationFactory.leftHalfCalculation.calculateRepeatedRect(repeatedParams(for: .leftHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 800, height: 900))
+        assertRect(WindowCalculationFactory.rightHalfCalculation.calculateRepeatedRect(repeatedParams(for: .rightHalf)).rect,
+                   equals: CGRect(x: 410, y: 20, width: 800, height: 900))
+
+        Defaults.repeatedCommandCycleAxis.value = .horizontal
+
+        assertRect(WindowCalculationFactory.topHalfCalculation.calculateRect(repeatedParams(for: .topHalf)).rect,
+                   equals: CGRect(x: 10, y: 320, width: 1200, height: 600))
+        assertRect(WindowCalculationFactory.bottomHalfCalculation.calculateRect(repeatedParams(for: .bottomHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 1200, height: 600))
+    }
     
     private func setSplitRatio(_ percent: Float) {
         Defaults.horizontalSplitRatio.value = percent
@@ -238,12 +315,34 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         assertRect(WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect, equals: bottomLeft)
         assertRect(WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect, equals: bottomRight)
     }
+
+    private func assertRepeatedCornerRects(topLeft: CGRect, topRight: CGRect, bottomLeft: CGRect, bottomRight: CGRect) {
+        let topLeftBase = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+        let topRightBase = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
+        let bottomLeftBase = WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect
+        let bottomRightBase = WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect
+
+        assertRect(WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: topLeftBase)).rect, equals: topLeft)
+        assertRect(WindowCalculationFactory.upperRightCalculation.calculateRect(repeatedParams(for: .topRight, currentRect: topRightBase)).rect, equals: topRight)
+        assertRect(WindowCalculationFactory.lowerLeftCalculation.calculateRect(repeatedParams(for: .bottomLeft, currentRect: bottomLeftBase)).rect, equals: bottomLeft)
+        assertRect(WindowCalculationFactory.lowerRightCalculation.calculateRect(repeatedParams(for: .bottomRight, currentRect: bottomRightBase)).rect, equals: bottomRight)
+    }
     
     private func params(for action: WindowAction) -> RectCalculationParameters {
         RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
                                   visibleFrameOfScreen: visibleFrame,
                                   action: action,
                                   lastAction: nil)
+    }
+
+    private func repeatedParams(for action: WindowAction, currentRect: CGRect? = nil, count: Int = 1) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: 1, rect: currentRect ?? visibleFrame),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: RectangleAction(action: action,
+                                                              subAction: nil,
+                                                              rect: currentRect ?? visibleFrame,
+                                                              count: count))
     }
     
     private func assertRect(_ rect: CGRect, equals expected: CGRect, file: StaticString = #filePath, line: UInt = #line) {

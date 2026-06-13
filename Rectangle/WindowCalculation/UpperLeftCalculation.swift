@@ -2,7 +2,12 @@
 
 import Foundation
 
-class UpperLeftCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation, QuartersRepeated {
+class UpperLeftCalculation: WindowCalculation, AxisLockedCornerRepeatedCalculation, QuartersRepeated {
+    
+    let horizontalSide: HalfSplitSide = .leading
+    let verticalSide: HalfSplitSide = .leading
+    var horizontalSplitFraction: Float { Defaults.horizontalSplitRatio.value / 100.0 }
+    var verticalSplitFraction: Float { Defaults.verticalSplitRatio.value / 100.0 }
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
@@ -26,27 +31,15 @@ class UpperLeftCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcula
 
     func quarterRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
         return RectResult(cornerRect(visibleFrameOfScreen,
-                                     horizontalFraction: Defaults.horizontalSplitRatio.value / 100.0,
-                                     verticalFraction: Defaults.verticalSplitRatio.value / 100.0),
+                                     horizontalFraction: horizontalSplitFraction,
+                                     verticalFraction: verticalSplitFraction),
                           subAction: .topLeftQuarter)
-    }
-
-    func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return RectResult(cornerRect(params.visibleFrameOfScreen,
-                                     horizontalFraction: Defaults.horizontalSplitRatio.value / 100.0,
-                                     verticalFraction: Defaults.verticalSplitRatio.value / 100.0))
-    }
-
-    func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
-        return RectResult(cornerRect(params.visibleFrameOfScreen,
-                                     horizontalFraction: fraction,
-                                     verticalFraction: fraction))
     }
 
     private func cornerRect(_ visibleFrameOfScreen: CGRect, horizontalFraction: Float, verticalFraction: Float) -> CGRect {
         HalfSplitFrameCalculation.cornerRect(in: visibleFrameOfScreen,
-                                             horizontalSide: .leading,
-                                             verticalSide: .leading,
+                                             horizontalSide: horizontalSide,
+                                             verticalSide: verticalSide,
                                              horizontalFraction: horizontalFraction,
                                              verticalFraction: verticalFraction)
     }

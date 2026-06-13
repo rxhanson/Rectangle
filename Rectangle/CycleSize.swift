@@ -40,6 +40,11 @@ enum CycleSize: Int, CaseIterable {
     }()
 }
 
+enum RepeatedCommandCycleAxis: Int {
+    case horizontal = 0
+    case vertical = 1
+}
+
 extension CycleSize {
     static let matchingTolerance: Float = 0.001
     

@@ -28480,6 +28480,12 @@
         }
       }
     },
+    "Lock horizontal axis" : {
+
+    },
+    "Lock vertical axis" : {
+
+    },
     "LqQ-pM-jRN.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Left Sixth\"; ObjectID = \"LqQ-pM-jRN\";",
       "extractionState" : "extracted_with_value",
