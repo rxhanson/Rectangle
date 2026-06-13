@@ -10,7 +10,7 @@ class Defaults {
     static let subsequentExecutionMode = SubsequentExecutionDefault()
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
-    static let repeatedCommandCycleAxis = IntEnumDefault<RepeatedCommandCycleAxis>(key: "repeatedCommandCycleAxis", defaultValue: .horizontal)
+    static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
@@ -108,7 +108,7 @@ class Defaults {
         subsequentExecutionMode,
         selectedCycleSizes,
         cycleSizesIsChanged,
-        repeatedCommandCycleAxis,
+        cornerCycleExpansionAxis,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,

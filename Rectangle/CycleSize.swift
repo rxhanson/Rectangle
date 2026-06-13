@@ -40,7 +40,7 @@ enum CycleSize: Int, CaseIterable {
     }()
 }
 
-enum RepeatedCommandCycleAxis: Int {
+enum CornerCycleExpansionAxis: Int {
     case horizontal = 0
     case vertical = 1
 }

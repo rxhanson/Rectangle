@@ -153,7 +153,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     private var savedHorizontalSplitRatio: Float = 50
     private var savedVerticalSplitRatio: Float = 50
     private var savedSubsequentExecutionMode: SubsequentExecutionMode = .resize
-    private var savedRepeatedCommandCycleAxis: RepeatedCommandCycleAxis = .horizontal
+    private var savedCornerCycleExpansionAxis: CornerCycleExpansionAxis = .horizontal
     private var savedCycleSizesIsChanged = false
     private var savedSelectedCycleSizes = Set<CycleSize>()
     private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
@@ -163,7 +163,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
         savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
         savedSubsequentExecutionMode = Defaults.subsequentExecutionMode.value
-        savedRepeatedCommandCycleAxis = Defaults.repeatedCommandCycleAxis.value
+        savedCornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
         savedCycleSizesIsChanged = Defaults.cycleSizesIsChanged.enabled
         savedSelectedCycleSizes = Defaults.selectedCycleSizes.value
         Defaults.subsequentExecutionMode.value = .resize
@@ -174,7 +174,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
         Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
         Defaults.subsequentExecutionMode.value = savedSubsequentExecutionMode
-        Defaults.repeatedCommandCycleAxis.value = savedRepeatedCommandCycleAxis
+        Defaults.cornerCycleExpansionAxis.value = savedCornerCycleExpansionAxis
         Defaults.cycleSizesIsChanged.enabled = savedCycleSizesIsChanged
         Defaults.selectedCycleSizes.value = savedSelectedCycleSizes
         super.tearDown()
@@ -237,9 +237,9 @@ class HalfSplitCornerCalculationTests: XCTestCase {
                    equals: CGRect(x: 10, y: 20, width: 1200, height: 360))
     }
 
-    func testRepeatedCornersWithHorizontalAxisLockCycleWidthOnly() {
+    func testRepeatedCornersWithHorizontalExpansionCycleWidthOnly() {
         setSplitRatio(60)
-        Defaults.repeatedCommandCycleAxis.value = .horizontal
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
 
         assertRepeatedCornerRects(
             topLeft: CGRect(x: 10, y: 380, width: 800, height: 540),
@@ -251,7 +251,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
 
     func testSecondRepeatedCornerShortcutBeginsCyclingImmediately() {
         setSplitRatio(CycleSize.twoThirds.percentValue)
-        Defaults.repeatedCommandCycleAxis.value = .horizontal
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
 
         let firstFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
         let secondFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: firstFrame, count: 1)).rect
@@ -264,7 +264,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
 
     func testRepeatedCornerCyclingDoesNotReturnNoOpFrameWhenBaseMatchesCycleSize() {
         setSplitRatio(CycleSize.twoThirds.percentValue)
-        Defaults.repeatedCommandCycleAxis.value = .vertical
+        Defaults.cornerCycleExpansionAxis.value = .vertical
 
         let firstFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
         let secondFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(repeatedParams(for: .topRight, currentRect: firstFrame, count: 1)).rect
@@ -275,9 +275,9 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         XCTAssertEqual(firstFrame.width, secondFrame.width, accuracy: 0.001)
     }
 
-    func testRepeatedCornersWithVerticalAxisLockCycleHeightOnly() {
+    func testRepeatedCornersWithVerticalExpansionCycleHeightOnly() {
         setSplitRatio(60)
-        Defaults.repeatedCommandCycleAxis.value = .vertical
+        Defaults.cornerCycleExpansionAxis.value = .vertical
 
         assertRepeatedCornerRects(
             topLeft: CGRect(x: 10, y: 320, width: 720, height: 600),
@@ -289,14 +289,14 @@ class HalfSplitCornerCalculationTests: XCTestCase {
 
     func testRepeatedHalfActionsStillCycleOnTheirNaturalAxis() {
         setSplitRatio(60)
-        Defaults.repeatedCommandCycleAxis.value = .vertical
+        Defaults.cornerCycleExpansionAxis.value = .vertical
 
         assertRect(WindowCalculationFactory.leftHalfCalculation.calculateRepeatedRect(repeatedParams(for: .leftHalf)).rect,
                    equals: CGRect(x: 10, y: 20, width: 800, height: 900))
         assertRect(WindowCalculationFactory.rightHalfCalculation.calculateRepeatedRect(repeatedParams(for: .rightHalf)).rect,
                    equals: CGRect(x: 410, y: 20, width: 800, height: 900))
 
-        Defaults.repeatedCommandCycleAxis.value = .horizontal
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
 
         assertRect(WindowCalculationFactory.topHalfCalculation.calculateRect(repeatedParams(for: .topHalf)).rect,
                    equals: CGRect(x: 10, y: 320, width: 1200, height: 600))

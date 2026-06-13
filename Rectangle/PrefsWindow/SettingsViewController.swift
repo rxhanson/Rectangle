@@ -44,7 +44,7 @@ class SettingsViewController: NSViewController {
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     
     private var cycleSizeCheckboxes = [NSButton]()
-    private var repeatedCommandCycleAxisCheckboxes = [NSButton]()
+    private var cornerCycleExpansionAxisButtons = [NSButton]()
     private var combinedDisplayModeCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
@@ -119,14 +119,14 @@ class SettingsViewController: NSViewController {
         Defaults.cyclingOverlapOffset.enabled = sender.state == .on
     }
 
-    @objc func toggleRepeatedCommandCycleAxis(_ sender: NSButton) {
-        guard let axis = RepeatedCommandCycleAxis(rawValue: sender.tag) else {
-            Logger.log("Expected tag of repeated-command axis lock checkbox to match a value of RepeatedCommandCycleAxis. Got: \(String(describing: sender.tag))")
+    @objc func setCornerCycleExpansionAxis(_ sender: NSButton) {
+        guard let axis = CornerCycleExpansionAxis(rawValue: sender.tag) else {
+            Logger.log("Expected tag of cyclic corner expansion axis radio button to match a value of CornerCycleExpansionAxis. Got: \(String(describing: sender.tag))")
             return
         }
 
-        Defaults.repeatedCommandCycleAxis.value = axis
-        setToggleStatesForRepeatedCommandCycleAxisCheckboxes()
+        Defaults.cornerCycleExpansionAxis.value = axis
+        setToggleStatesForCornerCycleExpansionAxisButtons()
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -1024,24 +1024,20 @@ class SettingsViewController: NSViewController {
         initializeTodoModeSettings()
         shortcutRecordingObserver.observe([toggleTodoShortcutView, reflowTodoShortcutView])
         
-        self.cycleSizeCheckboxes.forEach {
-            $0.removeFromSuperview()
-        }
-        self.repeatedCommandCycleAxisCheckboxes.forEach {
-            $0.removeFromSuperview()
+        cycleSizesView.arrangedSubviews.forEach { view in
+            cycleSizesView.removeArrangedSubview(view)
+            view.removeFromSuperview()
         }
         
         let cycleSizeCheckboxes = makeCycleSizeCheckboxes()
-        cycleSizeCheckboxes.forEach { checkbox in
-            cycleSizesView.addArrangedSubview(checkbox)
-        }
         self.cycleSizeCheckboxes = cycleSizeCheckboxes
 
-        let repeatedCommandCycleAxisCheckboxes = makeRepeatedCommandCycleAxisCheckboxes()
-        repeatedCommandCycleAxisCheckboxes.forEach { checkbox in
-            cycleSizesView.addArrangedSubview(checkbox)
-        }
-        self.repeatedCommandCycleAxisCheckboxes = repeatedCommandCycleAxisCheckboxes
+        let cornerCycleExpansionAxisRow = makeCornerCycleExpansionAxisRow()
+        cycleSizesView.orientation = .vertical
+        cycleSizesView.alignment = .leading
+        cycleSizesView.spacing = 4
+        cycleSizesView.addArrangedSubview(makeCycleSizesRow(cycleSizeCheckboxes))
+        cycleSizesView.addArrangedSubview(cornerCycleExpansionAxisRow)
         
         initializeCycleSizesView(animated: false)
 
@@ -1122,7 +1118,7 @@ class SettingsViewController: NSViewController {
             stageView.isHidden = true
         }
         setToggleStatesForCycleSizeCheckboxes()
-        setToggleStatesForRepeatedCommandCycleAxisCheckboxes()
+        setToggleStatesForCornerCycleExpansionAxisButtons()
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {
@@ -1130,7 +1126,7 @@ class SettingsViewController: NSViewController {
         
         if showOptionsView {
             setToggleStatesForCycleSizeCheckboxes()
-            setToggleStatesForRepeatedCommandCycleAxisCheckboxes()
+            setToggleStatesForCornerCycleExpansionAxisButtons()
         }
         
         setVisibility(shown: showOptionsView, ofView: cycleSizesView, withConstraint: cycleSizesViewHeightConstraint, animated: animated)
@@ -1214,15 +1210,35 @@ class SettingsViewController: NSViewController {
         }
     }
 
-    private func makeRepeatedCommandCycleAxisCheckboxes() -> [NSButton] {
-        [
-            makeRepeatedCommandCycleAxisCheckbox(title: NSLocalizedString("Lock horizontal axis", tableName: "Main", value: "", comment: ""), axis: .horizontal),
-            makeRepeatedCommandCycleAxisCheckbox(title: NSLocalizedString("Lock vertical axis", tableName: "Main", value: "", comment: ""), axis: .vertical)
-        ]
+    private func makeCycleSizesRow(_ checkboxes: [NSButton]) -> NSStackView {
+        let row = NSStackView()
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 8
+        checkboxes.forEach { row.addArrangedSubview($0) }
+        return row
     }
 
-    private func makeRepeatedCommandCycleAxisCheckbox(title: String, axis: RepeatedCommandCycleAxis) -> NSButton {
-        let button = NSButton(checkboxWithTitle: title, target: self, action: #selector(toggleRepeatedCommandCycleAxis(_:)))
+    private func makeCornerCycleExpansionAxisRow() -> NSStackView {
+        let row = NSStackView()
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 8
+
+        let label = NSTextField(labelWithString: NSLocalizedString("Cyclic corner shortcuts expand:", tableName: "Main", value: "", comment: ""))
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        row.addArrangedSubview(label)
+
+        let horizontalButton = makeCornerCycleExpansionAxisButton(title: NSLocalizedString("horizontally", tableName: "Main", value: "", comment: ""), axis: .horizontal)
+        let verticalButton = makeCornerCycleExpansionAxisButton(title: NSLocalizedString("vertically", tableName: "Main", value: "", comment: ""), axis: .vertical)
+        cornerCycleExpansionAxisButtons = [horizontalButton, verticalButton]
+        cornerCycleExpansionAxisButtons.forEach { row.addArrangedSubview($0) }
+
+        return row
+    }
+
+    private func makeCornerCycleExpansionAxisButton(title: String, axis: CornerCycleExpansionAxis) -> NSButton {
+        let button = NSButton(radioButtonWithTitle: title, target: self, action: #selector(setCornerCycleExpansionAxis(_:)))
         button.tag = axis.rawValue
         button.setContentCompressionResistancePriority(.required, for: .vertical)
         return button
@@ -1310,9 +1326,9 @@ class SettingsViewController: NSViewController {
         }
     }
 
-    private func setToggleStatesForRepeatedCommandCycleAxisCheckboxes() {
-        repeatedCommandCycleAxisCheckboxes.forEach { checkbox in
-            checkbox.state = checkbox.tag == Defaults.repeatedCommandCycleAxis.value.rawValue ? .on : .off
+    private func setToggleStatesForCornerCycleExpansionAxisButtons() {
+        cornerCycleExpansionAxisButtons.forEach { button in
+            button.state = button.tag == Defaults.cornerCycleExpansionAxis.value.rawValue ? .on : .off
         }
     }
 

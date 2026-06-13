@@ -11,7 +11,7 @@ class StandardWindowMover: WindowMover {
     }
     
     private func shouldAdjustSizeFirst(_ action: WindowAction) -> Bool {
-        switch (action, Defaults.repeatedCommandCycleAxis.value) {
+        switch (action, Defaults.cornerCycleExpansionAxis.value) {
         case (.topRight, .horizontal),
              (.bottomRight, .horizontal),
              (.bottomLeft, .vertical),

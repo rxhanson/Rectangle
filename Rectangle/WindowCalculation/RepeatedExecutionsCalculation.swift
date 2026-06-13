@@ -37,14 +37,14 @@ extension RepeatedExecutionsCalculation {
     
 }
 
-protocol AxisLockedCornerRepeatedCalculation: RepeatedExecutionsCalculation {
+protocol CornerCycleExpansionCalculation: RepeatedExecutionsCalculation {
     var horizontalSide: HalfSplitSide { get }
     var verticalSide: HalfSplitSide { get }
     var horizontalSplitFraction: Float { get }
     var verticalSplitFraction: Float { get }
 }
 
-extension AxisLockedCornerRepeatedCalculation {
+extension CornerCycleExpansionCalculation {
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
         RectResult(cornerRect(params.visibleFrameOfScreen,
@@ -81,7 +81,7 @@ extension AxisLockedCornerRepeatedCalculation {
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         let normalRect = calculateFirstRect(params).rect
 
-        switch Defaults.repeatedCommandCycleAxis.value {
+        switch Defaults.cornerCycleExpansionAxis.value {
         case .horizontal:
             let cycledRect = cornerRect(params.visibleFrameOfScreen,
                                         horizontalFraction: fraction,

@@ -2,7 +2,7 @@
 
 import Foundation
 
-class UpperRightCalculation: WindowCalculation, AxisLockedCornerRepeatedCalculation, QuartersRepeated {
+class UpperRightCalculation: WindowCalculation, CornerCycleExpansionCalculation, QuartersRepeated {
     
     let horizontalSide: HalfSplitSide = .trailing
     let verticalSide: HalfSplitSide = .leading
