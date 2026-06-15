@@ -24,5 +24,18 @@ class MASShortcutMigration {
         }
         
     }
+
+    static func migrateRenamedSideShortcutKeys(userDefaults: UserDefaults = .standard) {
+        for action in WindowAction.active {
+            guard let legacyName = action.legacyName,
+                  let legacyValue = userDefaults.object(forKey: legacyName)
+            else { continue }
+
+            if userDefaults.object(forKey: action.name) == nil {
+                userDefaults.set(legacyValue, forKey: action.name)
+            }
+            userDefaults.removeObject(forKey: legacyName)
+        }
+    }
     
 }

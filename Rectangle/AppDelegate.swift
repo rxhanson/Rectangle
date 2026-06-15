@@ -117,6 +117,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             Defaults.installVersion.value = currentVersion
             Defaults.allowAnyShortcut.enabled = true
         }
+        MASShortcutMigration.migrateRenamedSideShortcutKeys()
         
         Defaults.lastVersion.value = currentVersion
     }

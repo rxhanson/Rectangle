@@ -702,6 +702,33 @@ class ShortcutCycleTests: XCTestCase {
         MASShortcut(keyCode: keyCode, modifierFlags: flags)
     }
 
+    func testSideShortcutActionsUseRenamedDefaultsKeys() {
+        XCTAssertEqual(WindowAction.leftHalf.name, "leftSide")
+        XCTAssertEqual(WindowAction.rightHalf.name, "rightSide")
+        XCTAssertEqual(WindowAction.centerHalf.name, "centerSection")
+        XCTAssertEqual(WindowAction.topHalf.name, "topSide")
+        XCTAssertEqual(WindowAction.bottomHalf.name, "bottomSide")
+    }
+
+    func testRenamedSideShortcutMigrationMovesLegacyDefaultsKeys() {
+        let suiteName = "ShortcutCycleTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer {
+            userDefaults.removePersistentDomain(forName: suiteName)
+        }
+
+        let centerSectionShortcut = shortcut(1, [.option, .command])
+        let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        let shortcutDict = dictTransformer.reverseTransformedValue(centerSectionShortcut)
+        userDefaults.setValue(shortcutDict, forKey: "centerHalf")
+
+        MASShortcutMigration.migrateRenamedSideShortcutKeys(userDefaults: userDefaults)
+
+        XCTAssertNil(userDefaults.object(forKey: "centerHalf"))
+        XCTAssertNotNil(userDefaults.object(forKey: "centerSection"))
+        XCTAssertNotNil(ShortcutCycle.shortcut(for: .centerHalf, userDefaults: userDefaults))
+    }
+
     func testUniqueShortcutsProduceSingletonGroups() {
         let groups = ShortcutCycle.groups(
             actions: [.centerHalf, .centerThird],

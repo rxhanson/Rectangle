@@ -374,7 +374,7 @@ class SettingsViewController: NSViewController {
             integerFormatter.minimum = 1
             widthStepField.formatter = integerFormatter
 
-            let splitRatioHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Half Split Ratios", tableName: "Main", value: "", comment: ""))
+            let splitRatioHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""))
             splitRatioHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
             splitRatioHeaderLabel.alignment = .center
             splitRatioHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
