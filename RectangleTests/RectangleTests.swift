@@ -585,3 +585,58 @@ class TodoShortcutValidatorTests: XCTestCase {
         XCTAssertFalse(validator.isShortcutAlreadyTaken(bySystem: existingShortcut, explanation: nil))
     }
 }
+
+class ClampedWindowAlignerTests: XCTestCase {
+
+    // Screen 2000x1200 at origin. Coordinates are already screen-flipped (window space):
+    // the zone's maxY edge is the screen TOP, minY edge is the screen BOTTOM.
+
+    func testRightHalfClampedBothAxesAnchorsRightCentersVertically() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 1000, y: 0, width: 600, height: 800) // narrower + shorter than zone
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertEqual(result.origin.x, 1400, accuracy: 0.001) // zone.maxX - width = 2000 - 600
+        XCTAssertEqual(result.origin.y, 200, accuracy: 0.001)  // centered: (1200 - 800)/2
+        XCTAssertEqual(result.width, 600, accuracy: 0.001)
+        XCTAssertEqual(result.height, 800, accuracy: 0.001)
+    }
+
+    func testRightHalfFullHeightLeavesVerticalUntouched() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 1000, y: 0, width: 600, height: 1200) // fills height
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertEqual(result.origin.x, 1400, accuracy: 0.001)
+        XCTAssertEqual(result.origin.y, 0, accuracy: 0.001)
+    }
+
+    func testLeftHalfClampedAnchorsLeftCentersVertically() {
+        let zone = CGRect(x: 0, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 0, y: 0, width: 600, height: 800)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.left, .top, .bottom])
+        XCTAssertEqual(result.origin.x, 0, accuracy: 0.001)
+        XCTAssertEqual(result.origin.y, 200, accuracy: 0.001)
+    }
+
+    func testTopRightQuarterAnchorsToCorner() {
+        let zone = CGRect(x: 1000, y: 600, width: 1000, height: 600) // top-right; maxY=1200=screen top
+        let window = CGRect(x: 1000, y: 600, width: 600, height: 400)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top])
+        XCTAssertEqual(result.origin.x, 1400, accuracy: 0.001) // maxX - width
+        XCTAssertEqual(result.origin.y, 800, accuracy: 0.001)  // maxY - height = 1200 - 400
+    }
+
+    func testInteriorZoneCentersBothAxes() {
+        let zone = CGRect(x: 600, y: 400, width: 800, height: 400)
+        let window = CGRect(x: 600, y: 400, width: 400, height: 200)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [])
+        XCTAssertEqual(result.origin.x, 800, accuracy: 0.001) // (800-400)/2 + 600
+        XCTAssertEqual(result.origin.y, 500, accuracy: 0.001) // (400-200)/2 + 400
+    }
+
+    func testExactFitReturnsUnchanged() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = zone
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertTrue(result.equalTo(window))
+    }
+}
