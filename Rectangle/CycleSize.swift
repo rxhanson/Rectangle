@@ -90,14 +90,6 @@ extension CycleSize {
         abs(self.percentValue - percentValue) <= tolerance
     }
     
-    var isAlwaysEnabled: Bool {
-        if self == .firstSize {
-            return true
-        }
-        
-        return false
-    }
-    
 }
 
 extension Set where Element == CycleSize {

@@ -1205,6 +1205,7 @@ class SettingsViewController: NSViewController {
         CycleSize.sortedSizes.map { division in
             let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleSizeCheckbox(sender:)))
             button.tag = division.rawValue
+            button.refusesFirstResponder = true
             button.setContentCompressionResistancePriority(.required, for: .vertical)
             return button
         }
@@ -1240,6 +1241,7 @@ class SettingsViewController: NSViewController {
     private func makeCornerCycleExpansionAxisButton(title: String, axis: CornerCycleExpansionAxis) -> NSButton {
         let button = NSButton(radioButtonWithTitle: title, target: self, action: #selector(setCornerCycleExpansionAxis(_:)))
         button.tag = axis.rawValue
+        button.refusesFirstResponder = true
         button.setContentCompressionResistancePriority(.required, for: .vertical)
         return button
     }
@@ -1315,14 +1317,9 @@ class SettingsViewController: NSViewController {
                 return
             }
             
-            let isAlwaysEnabled = cycleSizeForCheckbox.isAlwaysEnabled
-            let isChecked = isAlwaysEnabled || cycleSizes.contains(cycleSizeForCheckbox)
+            let isChecked = cycleSizes.contains(cycleSizeForCheckbox)
             checkbox.state = isChecked ? .on : .off
-            
-            // Show that the box cannot be unchecked.
-            if isAlwaysEnabled {
-                checkbox.isEnabled = false
-            }
+            checkbox.isEnabled = true
         }
     }
 

@@ -29,10 +29,21 @@ extension RepeatedExecutionsCalculation {
         }
         
         let sortedPositions = sortedCycleSizes()
+        guard !sortedPositions.isEmpty else {
+            return calculateFirstRect(params)
+        }
                 
-        let position = count % sortedPositions.count
+        let position = cycleIndex(forExecutionCount: count, in: sortedPositions)
         
         return calculateRect(for: sortedPositions[position], params: params)
+    }
+
+    func cycleIndex(forExecutionCount count: Int, in sortedPositions: [CycleSize]) -> Int {
+        if sortedPositions.contains(.firstSize) {
+            return count % sortedPositions.count
+        }
+
+        return max(0, count - 1) % sortedPositions.count
     }
     
 }
@@ -62,6 +73,10 @@ extension CornerCycleExpansionCalculation {
         }
 
         let sortedPositions = sortedCycleSizes()
+        guard !sortedPositions.isEmpty else {
+            return calculateFirstRect(params)
+        }
+
         let currentIndex = sortedPositions.firstIndex { cycleSize in
             calculateRect(for: cycleSize, params: params).rect.equalTo(params.window.rect)
         }
@@ -75,7 +90,7 @@ extension CornerCycleExpansionCalculation {
             return calculateFirstRect(params)
         }
 
-        return calculateRect(for: sortedPositions[count % sortedPositions.count], params: params)
+        return calculateRect(for: sortedPositions[cycleIndex(forExecutionCount: count, in: sortedPositions)], params: params)
     }
     
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
