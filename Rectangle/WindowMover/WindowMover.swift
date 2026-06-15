@@ -40,3 +40,29 @@ enum ClampedWindowAligner {
         return result
     }
 }
+
+/// For resizable windows that clamp smaller than their snap zone (e.g. FaceTime keeping a
+/// fixed aspect ratio), `StandardWindowMover` leaves them at the zone's leading corner with
+/// a gap on the screen-edge side. When `moveFixedSizeToEdge` is enabled, re-anchor them to
+/// the zone's screen edges. No-op when the flag is off or the window already fills the zone.
+class EdgeAlignmentWindowMover: WindowMover {
+
+    func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
+        guard Defaults.moveFixedSizeToEdge.userEnabled, resultParameters.action.resizes else { return }
+
+        let windowElement = resultParameters.windowElement
+        let currentWindowRect: CGRect = windowElement.frame
+        if currentWindowRect.isNull { return }
+
+        let sharedEdges = resultParameters.calcResult.initialRect.screenFlipped
+            .sharedEdges(withRect: resultParameters.visibleFrameOfScreen.screenFlipped)
+
+        let adjusted = ClampedWindowAligner.aligned(window: currentWindowRect,
+                                                    inZone: rect.screenFlipped,
+                                                    sharedEdges: sharedEdges)
+
+        if !adjusted.equalTo(currentWindowRect) {
+            windowElement.setFrame(adjusted)
+        }
+    }
+}
