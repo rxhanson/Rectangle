@@ -12,6 +12,12 @@ struct CooperativeCornerResize {
         let id: CGWindowID
         let oldFrame: CGRect
         let newFrame: CGRect
+        let kind: Kind
+
+        enum Kind {
+            case matchingFocusedFrame
+            case adjacent
+        }
     }
 
     enum MovedEdge {
@@ -47,8 +53,28 @@ struct CooperativeCornerResize {
             return []
         }
 
-        return candidates.compactMap { candidate in
+        let matchingFocusedFrameAdjustments = candidates.compactMap { candidate -> Adjustment? in
             guard !candidate.frame.isNull,
+                  screenFrame.intersects(candidate.frame),
+                  approximatelyMatchesFrame(candidate.frame, oldFocusedFrame, tolerance: tolerance),
+                  newFocusedFrame.width >= minimumSize.width,
+                  newFocusedFrame.height >= minimumSize.height,
+                  screenFrame.intersects(newFocusedFrame)
+            else {
+                return nil
+            }
+
+            return Adjustment(id: candidate.id,
+                              oldFrame: candidate.frame,
+                              newFrame: newFocusedFrame,
+                              kind: .matchingFocusedFrame)
+        }
+
+        let matchingFocusedFrameIds = Set(matchingFocusedFrameAdjustments.map(\.id))
+
+        let adjacentAdjustments = candidates.compactMap { candidate -> Adjustment? in
+            guard !matchingFocusedFrameIds.contains(candidate.id),
+                  !candidate.frame.isNull,
                   screenFrame.intersects(candidate.frame),
                   approximatelyMatchesPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
                   touchesOldMovingEdge(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance)
@@ -70,15 +96,21 @@ struct CooperativeCornerResize {
                 newFrame.size.height = candidate.frame.maxY - newFocusedFrame.maxY
             }
 
-            guard newFrame.width >= minimumSize.width,
+            guard !candidate.frame.isNull,
+                  newFrame.width >= minimumSize.width,
                   newFrame.height >= minimumSize.height,
                   screenFrame.intersects(newFrame)
             else {
                 return nil
             }
 
-            return Adjustment(id: candidate.id, oldFrame: candidate.frame, newFrame: newFrame)
+            return Adjustment(id: candidate.id,
+                              oldFrame: candidate.frame,
+                              newFrame: newFrame,
+                              kind: .adjacent)
         }
+
+        return matchingFocusedFrameAdjustments + adjacentAdjustments
     }
 
     static func focusedWindowIsExpanding(oldFrame: CGRect, newFrame: CGRect, axis: CornerCycleExpansionAxis) -> Bool {
@@ -118,5 +150,14 @@ struct CooperativeCornerResize {
             return abs(candidate.minX - focused.minX) <= tolerance
                 && abs(candidate.maxX - focused.maxX) <= tolerance
         }
+    }
+
+    private static func approximatelyMatchesFrame(_ candidate: CGRect,
+                                                  _ focused: CGRect,
+                                                  tolerance: CGFloat) -> Bool {
+        abs(candidate.minX - focused.minX) <= tolerance
+            && abs(candidate.maxX - focused.maxX) <= tolerance
+            && abs(candidate.minY - focused.minY) <= tolerance
+            && abs(candidate.maxY - focused.maxY) <= tolerance
     }
 }

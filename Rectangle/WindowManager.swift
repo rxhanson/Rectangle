@@ -139,6 +139,7 @@ class WindowManager {
                                                                               oldFocusedFrame: currentNormalizedRect,
                                                                               newFocusedFrame: calcResult.rect,
                                                                               screenFrame: visibleFrameOfDestinationScreen,
+                                                                              destinationScreenIsCurrentScreen: usableScreens.currentScreen == calcResult.screen,
                                                                               lastRectangleAction: lastRectangleAction)
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
@@ -186,12 +187,16 @@ class WindowManager {
         : standardWindowMoverChain
         
         let newRect = result.calcResult.rect
-        let focusedWindowIsExpanding = CooperativeCornerResize.focusedWindowIsExpanding(oldFrame: result.windowElement.frame.screenFlipped,
-                                                                                        newFrame: newRect,
-                                                                                        axis: Defaults.cornerCycleExpansionAxis.value)
+        let cooperativeAxis = result.action.cooperativeResizeAxis
+        let focusedWindowIsExpanding = cooperativeAxis.map {
+            CooperativeCornerResize.focusedWindowIsExpanding(oldFrame: result.windowElement.frame.screenFlipped,
+                                                             newFrame: newRect,
+                                                             axis: $0)
+        } ?? false
 
         if focusedWindowIsExpanding {
-            apply(cooperativeCornerAdjustments)
+            apply(cooperativeCornerAdjustments, kind: .adjacent)
+            apply(cooperativeCornerAdjustments, kind: .matchingFocusedFrame)
         }
         
         for windowMover in windowMoverChain {
@@ -201,7 +206,8 @@ class WindowManager {
         let resultingRect = result.windowElement.frame
 
         if !focusedWindowIsExpanding {
-            apply(cooperativeCornerAdjustments)
+            apply(cooperativeCornerAdjustments, kind: .matchingFocusedFrame)
+            apply(cooperativeCornerAdjustments, kind: .adjacent)
         }
 
         return resultingRect
@@ -214,11 +220,13 @@ class WindowManager {
                                                     oldFocusedFrame: CGRect,
                                                     newFocusedFrame: CGRect,
                                                     screenFrame: CGRect,
+                                                    destinationScreenIsCurrentScreen: Bool,
                                                     lastRectangleAction: RectangleAction?) -> [CooperativeCornerWindowAdjustment] {
         guard Defaults.cooperativeCornerResize.enabled,
               source == .keyboardShortcut,
               !focusedWindowIsFixedSize,
-              action.isBasicCorner,
+              destinationScreenIsCurrentScreen,
+              let cooperativeAxis = action.cooperativeResizeAxis,
               lastRectangleAction?.action == action
         else {
             return []
@@ -256,18 +264,18 @@ class WindowManager {
                                                               newFocusedFrame: newFocusedFrame,
                                                               screenFrame: screenFrame,
                                                               candidates: candidates,
-                                                              axis: Defaults.cornerCycleExpansionAxis.value,
+                                                              axis: cooperativeAxis,
                                                               tolerance: tolerance,
                                                               minimumSize: minimumSize)
 
         return adjustments.compactMap { adjustment in
             guard let element = elementsById[adjustment.id] else { return nil }
-            return CooperativeCornerWindowAdjustment(element: element, newFrame: adjustment.newFrame)
+            return CooperativeCornerWindowAdjustment(element: element, newFrame: adjustment.newFrame, kind: adjustment.kind)
         }
     }
 
-    private func apply(_ adjustments: [CooperativeCornerWindowAdjustment]) {
-        adjustments.forEach { adjustment in
+    private func apply(_ adjustments: [CooperativeCornerWindowAdjustment], kind: CooperativeCornerResize.Adjustment.Kind) {
+        adjustments.filter { $0.kind == kind }.forEach { adjustment in
             adjustment.element.setFrame(adjustment.newFrame.screenFlipped)
         }
     }
@@ -408,15 +416,20 @@ enum ExecutionSource {
 private struct CooperativeCornerWindowAdjustment {
     let element: AccessibilityElement
     let newFrame: CGRect
+    let kind: CooperativeCornerResize.Adjustment.Kind
 }
 
 private extension WindowAction {
-    var isBasicCorner: Bool {
+    var cooperativeResizeAxis: CornerCycleExpansionAxis? {
         switch self {
         case .topLeft, .topRight, .bottomLeft, .bottomRight:
-            return true
+            return Defaults.cornerCycleExpansionAxis.value
+        case .leftHalf, .rightHalf:
+            return .horizontal
+        case .topHalf, .bottomHalf:
+            return .vertical
         default:
-            return false
+            return nil
         }
     }
 }
