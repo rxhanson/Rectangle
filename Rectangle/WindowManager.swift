@@ -11,6 +11,7 @@ class WindowManager {
     init() {
         standardWindowMoverChain = [
             StandardWindowMover(),
+            EdgeAlignmentWindowMover(),
             BestEffortWindowMover()
         ]
         

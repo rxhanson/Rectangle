@@ -2,59 +2,26 @@
 
 import Foundation
 
-/// Handle windows that are a fixed size, default to centering them in the proposed window area
+/// Handle windows that are a fixed size. With `moveFixedSizeToEdge` enabled, anchor them
+/// to the snap zone's screen edges; otherwise center them in the zone (legacy behavior).
 class FixedSizeWindowMover: WindowMover {
-    
+
     func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
         let windowElement = resultParameters.windowElement
         let currentWindowRect: CGRect = windowElement.frame
-        
-        let sharedEdges = resultParameters.calcResult.initialRect.screenFlipped.sharedEdges(withRect: resultParameters.visibleFrameOfScreen.screenFlipped)
-        
-        if Defaults.moveFixedSizeToEdge.userEnabled, sharedEdges.isCorner {
-            matchSharedEdges(rect: rect, currentWindowRect: currentWindowRect, sharedEdges: sharedEdges, windowElement: windowElement)
-        } else {
-            centerWindowRect(rect: rect, currentWindowRect: currentWindowRect, windowElement: windowElement)
-        }
-    }
+        if currentWindowRect.isNull { return }
 
-    func matchSharedEdges(rect: CGRect, currentWindowRect: CGRect, sharedEdges: Edge, windowElement: AccessibilityElement) {
-        var adjustedWindowRect = currentWindowRect
-        let flippedRect = rect.screenFlipped
-        
-        if sharedEdges.contains(.left) {
-            adjustedWindowRect.origin.x = flippedRect.minX
-        }
-        if sharedEdges.contains(.right) {
-            adjustedWindowRect.origin.x = flippedRect.maxX - currentWindowRect.width
-        }
-        if sharedEdges.contains(.top) {
-            adjustedWindowRect.origin.y = flippedRect.maxY - currentWindowRect.height
-        }
-        if sharedEdges.contains(.bottom) {
-            adjustedWindowRect.origin.y = flippedRect.minY
-        }
-        
-        if !adjustedWindowRect.equalTo(currentWindowRect) {
-            windowElement.setFrame(adjustedWindowRect)
-        }
-    }
+        let sharedEdges: Edge = Defaults.moveFixedSizeToEdge.userEnabled
+            ? resultParameters.calcResult.initialRect.screenFlipped
+                .sharedEdges(withRect: resultParameters.visibleFrameOfScreen.screenFlipped)
+            : .none // no shared edges -> aligner centers, matching legacy behavior
 
-    func centerWindowRect(rect: CGRect, currentWindowRect: CGRect, windowElement: AccessibilityElement) {
+        let adjusted = ClampedWindowAligner.aligned(window: currentWindowRect,
+                                                    inZone: rect.screenFlipped,
+                                                    sharedEdges: sharedEdges)
 
-        var adjustedWindowRect: CGRect = currentWindowRect
-        let flippedRect = rect.screenFlipped
-
-        if currentWindowRect.size.width != rect.width {
-            adjustedWindowRect.origin.x = round((rect.width - currentWindowRect.width) / 2.0) + flippedRect.minX
-        }
-        
-        if currentWindowRect.size.height != rect.height {
-            adjustedWindowRect.origin.y = round((rect.height - currentWindowRect.height) / 2.0) + flippedRect.minY
-        }
-        
-        if !adjustedWindowRect.equalTo(currentWindowRect) {
-            windowElement.setFrame(adjustedWindowRect)
+        if !adjusted.equalTo(currentWindowRect) {
+            windowElement.setFrame(adjusted)
         }
     }
 }

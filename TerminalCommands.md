@@ -36,6 +36,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
 - [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
+- [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
 
 ## Keyboard Shortcuts
 
@@ -537,4 +538,12 @@ By default, only one cascade layer is shown (the original window plus one offset
 
 ```bash
 defaults write com.knollsoft.Rectangle cyclingOverlapMaxCascade -int 3
+```
+
+## Move windows that can't fill the snap area to the edge
+
+Some windows can't be resized to fill a snap area — either because they're a fixed size, or because they're resizable but have a maximum size or a fixed aspect ratio (FaceTime is a common example). By default such a window is centered within the snap area, which can leave a gap against the screen edge (e.g. snapping FaceTime to the right half leaves it floating left of the screen's right edge). Enable this to instead align the window to the snap area's screen edge(s): a right-half snap anchors flush right, a corner snap anchors into the corner, and the window stays centered on any axis it can't fill. Off by default.
+
+```bash
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -bool true
 ```
