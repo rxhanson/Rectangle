@@ -46,6 +46,7 @@ class SettingsViewController: NSViewController {
     private var cycleSizeCheckboxes = [NSButton]()
     private var cornerCycleExpansionAxisButtons = [NSButton]()
     private var combinedDisplayModeCheckbox: NSButton?
+    private var greenButtonOverrideCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -163,6 +164,11 @@ class SettingsViewController: NSViewController {
     
     @objc func toggleCombinedDisplayMode(_ sender: NSButton) {
         Defaults.combinedDisplayMode.enabled = sender.state == .on
+    }
+
+    @objc func toggleGreenButtonOverride(_ sender: NSButton) {
+        Defaults.greenButtonOverride.enabled = sender.state == .on
+        Notification.Name.greenButtonOverride.post()
     }
 
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -1041,6 +1047,8 @@ class SettingsViewController: NSViewController {
 
         initializeCombinedDisplayCheckbox()
 
+        initializeGreenButtonOverrideCheckbox()
+
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
@@ -1108,6 +1116,8 @@ class SettingsViewController: NSViewController {
 
         combinedDisplayModeCheckbox?.state = Defaults.combinedDisplayMode.userEnabled ? .on : .off
 
+        greenButtonOverrideCheckbox?.state = Defaults.greenButtonOverride.enabled ? .on : .off
+
         if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)
             stageSlider.isContinuous = true
@@ -1162,6 +1172,33 @@ class SettingsViewController: NSViewController {
             separator.widthAnchor.constraint(equalTo: doubleClickTitleBarCheckbox.widthAnchor).isActive = true
             separator.heightAnchor.constraint(equalToConstant: 20).isActive = true
             combinedDisplayModeCheckbox = checkbox
+        }
+    }
+
+    private func initializeGreenButtonOverrideCheckbox() {
+        if greenButtonOverrideCheckbox == nil,
+           let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
+           let insertIdx = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) {
+
+            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Green stoplight button maximizes instead of Full Screen", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleGreenButtonOverride(_:)))
+            checkbox.state = Defaults.greenButtonOverride.enabled ? .on : .off
+            // Match storyboard checkbox content priorities to prevent vertical compression
+            checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
+            checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+            // Must be set before inserting: NSStackView queries intrinsicContentSize once on
+            // insertion, so preferredMaxLayoutWidth=0 would give zero height permanently.
+            let descLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Hold any modifier key or use the window menu for default macOS behavior", tableName: "Main", value: "", comment: ""))
+            descLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            descLabel.textColor = .secondaryLabelColor
+            descLabel.translatesAutoresizingMaskIntoConstraints = false
+            descLabel.preferredMaxLayoutWidth = 500
+            descLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+            descLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+            parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
+            parentStack.insertArrangedSubview(descLabel, at: insertIdx + 2)
+            greenButtonOverrideCheckbox = checkbox
         }
     }
 

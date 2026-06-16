@@ -82,6 +82,11 @@ class AccessibilityElement {
         guard let subrole = subrole else { return nil }
         return subrole == .systemDialog
     }
+
+    var isFullScreenButton: Bool? {
+        guard let subrole = subrole else { return nil }
+        return subrole == .fullScreenButton
+    }
     
     private var position: CGPoint? {
         get {

@@ -100,6 +100,7 @@ class Defaults {
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = OptionalBoolDefault(key: "screensOrderedByX")
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
+    static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -190,7 +191,8 @@ class Defaults {
         cyclingOverlapOffset,
         cyclingOverlapOffsetSize,
         cyclingOverlapMaxCascade,
-        moveFixedSizeToEdge
+        moveFixedSizeToEdge,
+        greenButtonOverride
     ]
 }
 
