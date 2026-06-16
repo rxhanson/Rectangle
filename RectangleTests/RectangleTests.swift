@@ -685,6 +685,23 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         assertRect(topLeftFrame, equals: CGRect(x: 10, y: 320, width: 600, height: 600))
     }
 
+    func testDifferentTopCornerShortcutDoesNotTriggerVerticalExpansionCycleAtOneThirdSplit() {
+        setSplitRatio(CycleSize.oneThird.percentValue)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let topLeftFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+        let topRightFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(RectCalculationParameters(window: Window(id: 1, rect: topLeftFrame),
+                                                                                                                  visibleFrameOfScreen: visibleFrame,
+                                                                                                                  action: .topRight,
+                                                                                                                  lastAction: RectangleAction(action: .topLeft,
+                                                                                                                                              subAction: nil,
+                                                                                                                                              rect: topLeftFrame,
+                                                                                                                                              count: 1))).rect
+
+        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 620, width: 400, height: 300))
+        assertRect(topRightFrame, equals: CGRect(x: 410, y: 620, width: 800, height: 300))
+    }
+
     func testRepeatedHalfActionWithNoCycleSizesSelectedUsesFirstRect() {
         setSplitRatio(60)
         Defaults.cycleSizesIsChanged.enabled = true

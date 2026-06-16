@@ -18,8 +18,20 @@ extension WindowAction {
 
     func isCompatibleRepeatedResizeAction(with other: WindowAction?) -> Bool {
         guard let other else { return false }
+        if isCooperativeCornerAction, other.isCooperativeCornerAction {
+            return self == other
+        }
         return cooperativeResizeSide == other.cooperativeResizeSide
             && cooperativeResizeAxis == other.cooperativeResizeAxis
+    }
+
+    private var isCooperativeCornerAction: Bool {
+        switch self {
+        case .topLeft, .topRight, .bottomLeft, .bottomRight:
+            return true
+        default:
+            return false
+        }
     }
 
     private var cooperativeResizeSide: CooperativeResizeSide? {
