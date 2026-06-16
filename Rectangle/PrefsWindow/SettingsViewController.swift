@@ -1292,7 +1292,7 @@ class SettingsViewController: NSViewController {
     }
 
     private func makeCooperativeCornerResizeCheckbox() -> NSButton {
-        let button = NSButton(checkboxWithTitle: NSLocalizedString("Resize adjacent windows when cycling corner shortcuts", tableName: "Main", value: "", comment: ""),
+        let button = NSButton(checkboxWithTitle: NSLocalizedString("Resize adjacent windows when cycling side or corner shortcuts", tableName: "Main", value: "", comment: ""),
                               target: self,
                               action: #selector(toggleCooperativeCornerResize(_:)))
         button.refusesFirstResponder = true

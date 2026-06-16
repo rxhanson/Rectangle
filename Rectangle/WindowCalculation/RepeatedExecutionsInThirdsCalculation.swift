@@ -18,5 +18,31 @@ extension RepeatedExecutionsInThirdsCalculation {
         let fraction = cycleDivision.fraction
         return calculateFractionalRect(params, fraction: fraction)
     }
+
+    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
+        guard params.lastAction?.action == params.action else {
+            return calculateFirstRect(params)
+        }
+
+        let sortedPositions = sortedCycleSizes()
+        guard !sortedPositions.isEmpty else {
+            return calculateFirstRect(params)
+        }
+
+        let currentIndex = sortedPositions.firstIndex { cycleSize in
+            calculateRect(for: cycleSize, params: params).rect.equalTo(params.window.rect)
+        }
+
+        if let currentIndex {
+            let nextIndex = (currentIndex + 1) % sortedPositions.count
+            return calculateRect(for: sortedPositions[nextIndex], params: params)
+        }
+
+        guard let count = params.lastAction?.count else {
+            return calculateFirstRect(params)
+        }
+
+        return calculateRect(for: sortedPositions[cycleIndex(forExecutionCount: count, in: sortedPositions)], params: params)
+    }
     
 }
