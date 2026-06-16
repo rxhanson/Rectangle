@@ -965,8 +965,6 @@ class SettingsViewController: NSViewController {
                 twelfthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 sixteenthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
-                hSplitField.widthAnchor.constraint(equalToConstant: 160),
-                vSplitField.widthAnchor.constraint(equalToConstant: 160),
                 showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
