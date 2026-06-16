@@ -1033,7 +1033,7 @@ class SettingsViewController: NSViewController {
         let cornerCycleExpansionAxisRow = makeCornerCycleExpansionAxisRow()
         cycleSizesView.orientation = .vertical
         cycleSizesView.alignment = .leading
-        cycleSizesView.spacing = 4
+        cycleSizesView.spacing = 8
         cycleSizesView.addArrangedSubview(makeCycleSizesRow(cycleSizeCheckboxes))
         cycleSizesView.addArrangedSubview(cornerCycleExpansionAxisRow)
         
