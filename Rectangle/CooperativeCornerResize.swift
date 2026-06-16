@@ -72,8 +72,44 @@ struct CooperativeCornerResize {
 
         let matchingFocusedFrameIds = Set(matchingFocusedFrameAdjustments.map(\.id))
 
+        let matchingMovingSpanAdjustments = candidates.compactMap { candidate -> Adjustment? in
+            guard !matchingFocusedFrameIds.contains(candidate.id),
+                  !candidate.frame.isNull,
+                  screenFrame.intersects(candidate.frame),
+                  matchesMovingSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
+                  isSupportedPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance)
+            else {
+                return nil
+            }
+
+            var newFrame = candidate.frame
+            switch movedEdge {
+            case .left, .right:
+                newFrame.origin.x = newFocusedFrame.minX
+                newFrame.size.width = newFocusedFrame.width
+            case .top, .bottom:
+                newFrame.origin.y = newFocusedFrame.minY
+                newFrame.size.height = newFocusedFrame.height
+            }
+
+            guard newFrame.width >= minimumSize.width,
+                  newFrame.height >= minimumSize.height,
+                  screenFrame.intersects(newFrame)
+            else {
+                return nil
+            }
+
+            return Adjustment(id: candidate.id,
+                              oldFrame: candidate.frame,
+                              newFrame: newFrame,
+                              kind: .matchingFocusedFrame)
+        }
+
+        let matchingMovingSpanIds = Set(matchingMovingSpanAdjustments.map(\.id))
+
         let adjacentAdjustments = candidates.compactMap { candidate -> Adjustment? in
             guard !matchingFocusedFrameIds.contains(candidate.id),
+                  !matchingMovingSpanIds.contains(candidate.id),
                   !candidate.frame.isNull,
                   screenFrame.intersects(candidate.frame),
                   isSupportedPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
@@ -110,7 +146,7 @@ struct CooperativeCornerResize {
                               kind: .adjacent)
         }
 
-        return matchingFocusedFrameAdjustments + adjacentAdjustments
+        return matchingFocusedFrameAdjustments + matchingMovingSpanAdjustments + adjacentAdjustments
     }
 
     static func focusedWindowIsExpanding(oldFrame: CGRect, newFrame: CGRect, axis: CornerCycleExpansionAxis) -> Bool {
@@ -155,6 +191,20 @@ struct CooperativeCornerResize {
                                             focusedMin: focused.minX,
                                             focusedMax: focused.maxX,
                                             tolerance: tolerance)
+        }
+    }
+
+    private static func matchesMovingSpan(_ candidate: CGRect,
+                                          _ focused: CGRect,
+                                          movedEdge: MovedEdge,
+                                          tolerance: CGFloat) -> Bool {
+        switch movedEdge {
+        case .left, .right:
+            return abs(candidate.minX - focused.minX) <= tolerance
+                && abs(candidate.maxX - focused.maxX) <= tolerance
+        case .top, .bottom:
+            return abs(candidate.minY - focused.minY) <= tolerance
+                && abs(candidate.maxY - focused.maxY) <= tolerance
         }
     }
 
