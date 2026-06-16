@@ -203,16 +203,16 @@ enum WindowAction: Int, Codable {
 
     var name: String {
         switch self {
-        case .leftHalf: return "leftSide"
-        case .rightHalf: return "rightSide"
+        case .leftHalf: return "leftHalf"
+        case .rightHalf: return "rightHalf"
         case .maximize: return "maximize"
         case .maximizeHeight: return "maximizeHeight"
         case .previousDisplay: return "previousDisplay"
         case .nextDisplay: return "nextDisplay"
         case .larger: return "larger"
         case .smaller: return "smaller"
-        case .bottomHalf: return "bottomSide"
-        case .topHalf: return "topSide"
+        case .bottomHalf: return "bottomHalf"
+        case .topHalf: return "topHalf"
         case .center: return "center"
         case .bottomLeft: return "bottomLeft"
         case .bottomRight: return "bottomRight"
@@ -230,7 +230,7 @@ enum WindowAction: Int, Codable {
         case .moveUp: return "moveUp"
         case .moveDown: return "moveDown"
         case .almostMaximize: return "almostMaximize"
-        case .centerHalf: return "centerSection"
+        case .centerHalf: return "centerHalf"
         case .firstFourth: return "firstFourth"
         case .secondFourth: return "secondFourth"
         case .thirdFourth: return "thirdFourth"
@@ -331,13 +331,13 @@ enum WindowAction: Int, Codable {
         }
     }
 
-    var legacyName: String? {
+    var aliasName: String? {
         switch self {
-        case .leftHalf: return "leftHalf"
-        case .rightHalf: return "rightHalf"
-        case .bottomHalf: return "bottomHalf"
-        case .topHalf: return "topHalf"
-        case .centerHalf: return "centerHalf"
+        case .leftHalf: return "leftSide"
+        case .rightHalf: return "rightSide"
+        case .bottomHalf: return "bottomSide"
+        case .topHalf: return "topSide"
+        case .centerHalf: return "centerSection"
         default: return nil
         }
     }

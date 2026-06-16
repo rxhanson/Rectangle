@@ -25,16 +25,21 @@ class MASShortcutMigration {
         
     }
 
-    static func migrateRenamedSideShortcutKeys(userDefaults: UserDefaults = .standard) {
+    static func syncRenamedSideShortcutAliases(userDefaults: UserDefaults = .standard) {
         for action in WindowAction.active {
-            guard let legacyName = action.legacyName,
-                  let legacyValue = userDefaults.object(forKey: legacyName)
+            guard let aliasName = action.aliasName,
+                  let aliasValue = userDefaults.object(forKey: aliasName)
             else { continue }
 
-            if userDefaults.object(forKey: action.name) == nil {
-                userDefaults.set(legacyValue, forKey: action.name)
+            if let currentValue = userDefaults.object(forKey: action.name) as? NSObject,
+               let aliasObject = aliasValue as? NSObject,
+               currentValue.isEqual(aliasObject) {
+                userDefaults.removeObject(forKey: aliasName)
+                continue
             }
-            userDefaults.removeObject(forKey: legacyName)
+
+            userDefaults.set(aliasValue, forKey: action.name)
+            userDefaults.removeObject(forKey: aliasName)
         }
     }
     

@@ -73,7 +73,7 @@ extension Defaults {
         }
         
         for action in WindowAction.active {
-            let importedShortcut = config.shortcuts[action.name] ?? action.legacyName.flatMap { config.shortcuts[$0] }
+            let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
             if let shortcut = importedShortcut?.toMASSHortcut() {
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
                 UserDefaults.standard.setValue(dictValue, forKey: action.name)
