@@ -20,7 +20,7 @@ extension RepeatedExecutionsInThirdsCalculation {
     }
 
     func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
-        guard params.lastAction?.action == params.action else {
+        guard params.action.isCompatibleRepeatedResizeAction(with: params.lastAction?.action) else {
             return calculateFirstRect(params)
         }
 
