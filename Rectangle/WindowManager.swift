@@ -227,7 +227,7 @@ class WindowManager {
               !focusedWindowIsFixedSize,
               destinationScreenIsCurrentScreen,
               let cooperativeAxis = action.cooperativeResizeAxis,
-              lastRectangleAction?.action == action
+              action.isCompatibleRepeatedResizeAction(with: lastRectangleAction?.action)
         else {
             return []
         }
@@ -417,19 +417,4 @@ private struct CooperativeCornerWindowAdjustment {
     let element: AccessibilityElement
     let newFrame: CGRect
     let kind: CooperativeCornerResize.Adjustment.Kind
-}
-
-private extension WindowAction {
-    var cooperativeResizeAxis: CornerCycleExpansionAxis? {
-        switch self {
-        case .topLeft, .topRight, .bottomLeft, .bottomRight:
-            return Defaults.cornerCycleExpansionAxis.value
-        case .leftHalf, .rightHalf:
-            return .horizontal
-        case .topHalf, .bottomHalf:
-            return .vertical
-        default:
-            return nil
-        }
-    }
 }

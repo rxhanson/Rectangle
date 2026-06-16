@@ -213,6 +213,19 @@ class CooperativeCornerResizeTests: XCTestCase {
         XCTAssertEqual(focusedNew.maxX, adjustments[0].newFrame.minX, accuracy: 0.001)
     }
 
+    func testLeftSideHorizontalExpansionShrinksStackedRightCornerNeighbors() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 600, height: 900)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 900)
+        let bottomRight = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 600, y: 0, width: 600, height: 450))
+        let topRight = CooperativeCornerResize.Candidate(id: 3, frame: CGRect(x: 600, y: 450, width: 600, height: 450))
+
+        let adjustments = cooperativeAdjustments(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [bottomRight, topRight], axis: .horizontal)
+
+        XCTAssertEqual(adjustments.count, 2)
+        assertRect(adjustments[0].newFrame, equals: CGRect(x: 800, y: 0, width: 400, height: 450))
+        assertRect(adjustments[1].newFrame, equals: CGRect(x: 800, y: 450, width: 400, height: 450))
+    }
+
     func testLeftSideHorizontalShrinkExpandsRightSideNeighbor() {
         let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 900)
         let focusedNew = CGRect(x: 0, y: 0, width: 600, height: 900)
@@ -264,6 +277,19 @@ class CooperativeCornerResizeTests: XCTestCase {
         XCTAssertEqual(adjustments.count, 1)
         assertRect(adjustments[0].newFrame, equals: CGRect(x: 0, y: 0, width: 1200, height: 300))
         XCTAssertEqual(adjustments[0].newFrame.maxY, focusedNew.minY, accuracy: 0.001)
+    }
+
+    func testTopSideVerticalExpansionShrinksStackedBottomCornerNeighbors() {
+        let focusedOld = CGRect(x: 0, y: 450, width: 1200, height: 450)
+        let focusedNew = CGRect(x: 0, y: 300, width: 1200, height: 600)
+        let bottomLeft = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 0, y: 0, width: 600, height: 450))
+        let bottomRight = CooperativeCornerResize.Candidate(id: 3, frame: CGRect(x: 600, y: 0, width: 600, height: 450))
+
+        let adjustments = cooperativeAdjustments(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [bottomLeft, bottomRight], axis: .vertical)
+
+        XCTAssertEqual(adjustments.count, 2)
+        assertRect(adjustments[0].newFrame, equals: CGRect(x: 0, y: 0, width: 600, height: 300))
+        assertRect(adjustments[1].newFrame, equals: CGRect(x: 600, y: 0, width: 600, height: 300))
     }
 
     func testTopSideVerticalShrinkExpandsBottomSideNeighbor() {
@@ -605,6 +631,38 @@ class HalfSplitCornerCalculationTests: XCTestCase {
 
         assertRect(topFrame, equals: CGRect(x: 10, y: 320, width: 1200, height: 600))
         assertRect(repeatedTopFrame, equals: CGRect(x: 10, y: 620, width: 1200, height: 300))
+    }
+
+    func testHorizontalCornerShortcutCanCycleAfterCompatibleSideShortcut() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
+
+        let leftFrame = WindowCalculationFactory.leftHalfCalculation.calculateRect(params(for: .leftHalf)).rect
+        let topLeftFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(RectCalculationParameters(window: Window(id: 1, rect: leftFrame),
+                                                                                                                visibleFrameOfScreen: visibleFrame,
+                                                                                                                action: .topLeft,
+                                                                                                                lastAction: RectangleAction(action: .leftHalf,
+                                                                                                                                            subAction: nil,
+                                                                                                                                            rect: leftFrame,
+                                                                                                                                            count: 1))).rect
+
+        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 470, width: 800, height: 450))
+    }
+
+    func testVerticalCornerShortcutCanCycleAfterCompatibleSideShortcut() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let topFrame = WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf)).rect
+        let topLeftFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(RectCalculationParameters(window: Window(id: 1, rect: topFrame),
+                                                                                                                visibleFrameOfScreen: visibleFrame,
+                                                                                                                action: .topLeft,
+                                                                                                                lastAction: RectangleAction(action: .topHalf,
+                                                                                                                                            subAction: nil,
+                                                                                                                                            rect: topFrame,
+                                                                                                                                            count: 1))).rect
+
+        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 320, width: 600, height: 600))
     }
 
     func testRepeatedHalfActionWithNoCycleSizesSelectedUsesFirstRect() {

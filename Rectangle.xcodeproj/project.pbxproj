@@ -78,6 +78,7 @@
 		9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */; };
 		9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703022AFA8470037B409 /* RectangleStatusItem.swift */; };
 		9824703722B0F3200037B409 /* WindowAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703622B0F3200037B409 /* WindowAction.swift */; };
+		982470382EFA00010037B409 /* WindowActionCooperativeResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */; };
 		9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703822B0F37C0037B409 /* ShortcutManager.swift */; };
 		9824703B22B139780037B409 /* CUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703A22B139780037B409 /* CUtil.swift */; };
 		9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703C22B13C7E0037B409 /* AccessibilityElement.swift */; };
@@ -299,6 +300,7 @@
 		9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuthorization.swift; sourceTree = "<group>"; };
 		9824703022AFA8470037B409 /* RectangleStatusItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleStatusItem.swift; sourceTree = "<group>"; };
 		9824703622B0F3200037B409 /* WindowAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAction.swift; sourceTree = "<group>"; };
+		982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowActionCooperativeResize.swift; sourceTree = "<group>"; };
 		9824703822B0F37C0037B409 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
 		9824703A22B139780037B409 /* CUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CUtil.swift; sourceTree = "<group>"; };
 		9824703C22B13C7E0037B409 /* AccessibilityElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityElement.swift; sourceTree = "<group>"; };
@@ -685,6 +687,7 @@
 				985B9BF422B93EEC00A2E8F0 /* ApplicationToggle.swift */,
 				9824703022AFA8470037B409 /* RectangleStatusItem.swift */,
 				9824703622B0F3200037B409 /* WindowAction.swift */,
+				982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */,
 				98A6EDEB2528FFC100F74B10 /* WindowActionCategory.swift */,
 				9824703822B0F37C0037B409 /* ShortcutManager.swift */,
 				9824703C22B13C7E0037B409 /* AccessibilityElement.swift */,
@@ -1056,6 +1059,7 @@
 				7BE578F12EFA00010083DAE3 /* CooperativeCornerResize.swift in Sources */,
 				98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */,
 				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
+				982470382EFA00010037B409 /* WindowActionCooperativeResize.swift in Sources */,
 				B4521F932BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift in Sources */,
 				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
 				7BE578EF2C5BF4EE0083DAE3 /* CycleSize.swift in Sources */,

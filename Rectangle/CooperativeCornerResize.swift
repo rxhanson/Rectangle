@@ -76,7 +76,7 @@ struct CooperativeCornerResize {
             guard !matchingFocusedFrameIds.contains(candidate.id),
                   !candidate.frame.isNull,
                   screenFrame.intersects(candidate.frame),
-                  approximatelyMatchesPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
+                  isSupportedPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
                   touchesOldMovingEdge(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance)
             else {
                 return nil
@@ -138,18 +138,44 @@ struct CooperativeCornerResize {
         }
     }
 
-    private static func approximatelyMatchesPerpendicularSpan(_ candidate: CGRect,
-                                                              _ focused: CGRect,
-                                                              movedEdge: MovedEdge,
-                                                              tolerance: CGFloat) -> Bool {
+    private static func isSupportedPerpendicularSpan(_ candidate: CGRect,
+                                                     _ focused: CGRect,
+                                                     movedEdge: MovedEdge,
+                                                     tolerance: CGFloat) -> Bool {
         switch movedEdge {
         case .left, .right:
-            return abs(candidate.minY - focused.minY) <= tolerance
-                && abs(candidate.maxY - focused.maxY) <= tolerance
+            return approximatelyMatchesSpan(candidateMin: candidate.minY,
+                                            candidateMax: candidate.maxY,
+                                            focusedMin: focused.minY,
+                                            focusedMax: focused.maxY,
+                                            tolerance: tolerance)
         case .top, .bottom:
-            return abs(candidate.minX - focused.minX) <= tolerance
-                && abs(candidate.maxX - focused.maxX) <= tolerance
+            return approximatelyMatchesSpan(candidateMin: candidate.minX,
+                                            candidateMax: candidate.maxX,
+                                            focusedMin: focused.minX,
+                                            focusedMax: focused.maxX,
+                                            tolerance: tolerance)
         }
+    }
+
+    private static func approximatelyMatchesSpan(candidateMin: CGFloat,
+                                                 candidateMax: CGFloat,
+                                                 focusedMin: CGFloat,
+                                                 focusedMax: CGFloat,
+                                                 tolerance: CGFloat) -> Bool {
+        let fullMatch = abs(candidateMin - focusedMin) <= tolerance
+            && abs(candidateMax - focusedMax) <= tolerance
+        if fullMatch {
+            return true
+        }
+
+        let candidateIsWithinFocused = candidateMin >= focusedMin - tolerance
+            && candidateMax <= focusedMax + tolerance
+        let sharesFocusedBoundary = abs(candidateMin - focusedMin) <= tolerance
+            || abs(candidateMax - focusedMax) <= tolerance
+        let meaningfulSpan = candidateMax - candidateMin > tolerance
+
+        return candidateIsWithinFocused && sharesFocusedBoundary && meaningfulSpan
     }
 
     private static func approximatelyMatchesFrame(_ candidate: CGRect,
