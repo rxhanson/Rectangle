@@ -11983,12 +11983,6 @@
         }
       }
     },
-    "Click green button to fill screen instead of full screen" : {
-
-    },
-    "Clicking a window's green button maximizes it to fill the screen instead of entering macOS full screen. Hold any modifier key or use the button's menu for the default macOS behavior." : {
-
-    },
     "Conflict with macOS tiling" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -20159,6 +20153,9 @@
         }
       }
     },
+    "Green stoplight button maximizes instead of Full Screen" : {
+
+    },
     "Grid Positions" : {
       "localizations" : {
         "ko" : {
@@ -22048,6 +22045,9 @@
           }
         }
       }
+    },
+    "Hold any modifier key or use the window menu for default macOS behavior" : {
+
     },
     "HOm-BV-2jc.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Up\"; ObjectID = \"HOm-BV-2jc\";",

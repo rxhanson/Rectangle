@@ -1125,7 +1125,7 @@ class SettingsViewController: NSViewController {
            let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
            let insertIdx = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) {
 
-            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Click green button to fill screen instead of full screen", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleGreenButtonOverride(_:)))
+            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Green stoplight button maximizes instead of Full Screen", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleGreenButtonOverride(_:)))
             checkbox.state = Defaults.greenButtonOverride.enabled ? .on : .off
             // Match storyboard checkbox content priorities to prevent vertical compression
             checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -1133,7 +1133,7 @@ class SettingsViewController: NSViewController {
 
             // Must be set before inserting: NSStackView queries intrinsicContentSize once on
             // insertion, so preferredMaxLayoutWidth=0 would give zero height permanently.
-            let descLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Clicking a window's green button maximizes it to fill the screen instead of entering macOS full screen. Hold any modifier key or use the button's menu for the default macOS behavior.", tableName: "Main", value: "", comment: ""))
+            let descLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Hold any modifier key or use the window menu for default macOS behavior", tableName: "Main", value: "", comment: ""))
             descLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
             descLabel.textColor = .secondaryLabelColor
             descLabel.translatesAutoresizingMaskIntoConstraints = false
