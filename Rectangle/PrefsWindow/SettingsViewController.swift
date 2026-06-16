@@ -44,6 +44,7 @@ class SettingsViewController: NSViewController {
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     
     private var cycleSizeCheckboxes = [NSButton]()
+    private var cornerCycleExpansionAxisButtons = [NSButton]()
     private var combinedDisplayModeCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
@@ -116,6 +117,16 @@ class SettingsViewController: NSViewController {
 
     @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
         Defaults.cyclingOverlapOffset.enabled = sender.state == .on
+    }
+
+    @objc func setCornerCycleExpansionAxis(_ sender: NSButton) {
+        guard let axis = CornerCycleExpansionAxis(rawValue: sender.tag) else {
+            Logger.log("Expected tag of cyclic corner expansion axis radio button to match a value of CornerCycleExpansionAxis. Got: \(String(describing: sender.tag))")
+            return
+        }
+
+        Defaults.cornerCycleExpansionAxis.value = axis
+        setToggleStatesForCornerCycleExpansionAxisButtons()
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -363,7 +374,7 @@ class SettingsViewController: NSViewController {
             integerFormatter.minimum = 1
             widthStepField.formatter = integerFormatter
 
-            let splitRatioHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Half Split Ratios", tableName: "Main", value: "", comment: ""))
+            let splitRatioHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""))
             splitRatioHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
             splitRatioHeaderLabel.alignment = .center
             splitRatioHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -391,6 +402,14 @@ class SettingsViewController: NSViewController {
             hSplitField.alignment = .right
             hSplitField.formatter = percentFormatter
 
+            let hSplitPopUpButton = HalfSplitRatioPopUpButton()
+            hSplitPopUpButton.translatesAutoresizingMaskIntoConstraints = false
+            hSplitPopUpButton.target = self
+            hSplitPopUpButton.action = #selector(didSelectHalfSplitRatioPreset(sender:))
+            hSplitPopUpButton.defaults = Defaults.horizontalSplitRatio
+            hSplitPopUpButton.customField = hSplitField
+            configureHalfSplitRatioPopUpButton(hSplitPopUpButton)
+
             let vSplitField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             vSplitField.stringValue = String(Int(Defaults.verticalSplitRatio.value))
             vSplitField.delegate = self
@@ -400,6 +419,21 @@ class SettingsViewController: NSViewController {
             vSplitField.refusesFirstResponder = true
             vSplitField.alignment = .right
             vSplitField.formatter = percentFormatter
+
+            let vSplitPopUpButton = HalfSplitRatioPopUpButton()
+            vSplitPopUpButton.translatesAutoresizingMaskIntoConstraints = false
+            vSplitPopUpButton.target = self
+            vSplitPopUpButton.action = #selector(didSelectHalfSplitRatioPreset(sender:))
+            vSplitPopUpButton.defaults = Defaults.verticalSplitRatio
+            vSplitPopUpButton.customField = vSplitField
+            configureHalfSplitRatioPopUpButton(vSplitPopUpButton)
+
+            hSplitField.defaultsSetAction = { [weak hSplitPopUpButton] in
+                hSplitPopUpButton?.selectCurrentValue()
+            }
+            vSplitField.defaultsSetAction = { [weak vSplitPopUpButton] in
+                vSplitPopUpButton?.selectCurrentValue()
+            }
 
             largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
             smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
@@ -629,14 +663,26 @@ class SettingsViewController: NSViewController {
             hSplitRow.alignment = .centerY
             hSplitRow.spacing = 18
             hSplitRow.addArrangedSubview(hSplitLabel)
-            hSplitRow.addArrangedSubview(hSplitField)
+            let hSplitControlsStack = NSStackView()
+            hSplitControlsStack.orientation = .horizontal
+            hSplitControlsStack.alignment = .centerY
+            hSplitControlsStack.spacing = 8
+            hSplitControlsStack.addArrangedSubview(hSplitPopUpButton)
+            hSplitControlsStack.addArrangedSubview(hSplitField)
+            hSplitRow.addArrangedSubview(hSplitControlsStack)
 
             let vSplitRow = NSStackView()
             vSplitRow.orientation = .horizontal
             vSplitRow.alignment = .centerY
             vSplitRow.spacing = 18
             vSplitRow.addArrangedSubview(vSplitLabel)
-            vSplitRow.addArrangedSubview(vSplitField)
+            let vSplitControlsStack = NSStackView()
+            vSplitControlsStack.orientation = .horizontal
+            vSplitControlsStack.alignment = .centerY
+            vSplitControlsStack.spacing = 8
+            vSplitControlsStack.addArrangedSubview(vSplitPopUpButton)
+            vSplitControlsStack.addArrangedSubview(vSplitField)
+            vSplitRow.addArrangedSubview(vSplitControlsStack)
             
             let topVerticalThirdRow = NSStackView()
             topVerticalThirdRow.orientation = .horizontal
@@ -896,6 +942,12 @@ class SettingsViewController: NSViewController {
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.widthAnchor.constraint(equalToConstant: 160),
+                hSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
+                vSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
+                hSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
+                vSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
+                hSplitField.widthAnchor.constraint(equalToConstant: 52),
+                vSplitField.widthAnchor.constraint(equalToConstant: 52),
                 topVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 middleVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 bottomVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
@@ -913,8 +965,6 @@ class SettingsViewController: NSViewController {
                 twelfthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 sixteenthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
-                hSplitField.widthAnchor.constraint(equalToConstant: 160),
-                vSplitField.widthAnchor.constraint(equalToConstant: 160),
                 showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
@@ -936,8 +986,8 @@ class SettingsViewController: NSViewController {
                 sixteenthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 gridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 cyclingHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
-                hSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
-                vSplitField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
+                hSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
+                vSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
             let containerView = NSView()
@@ -972,15 +1022,20 @@ class SettingsViewController: NSViewController {
         initializeTodoModeSettings()
         shortcutRecordingObserver.observe([toggleTodoShortcutView, reflowTodoShortcutView])
         
-        self.cycleSizeCheckboxes.forEach {
-            $0.removeFromSuperview()
+        cycleSizesView.arrangedSubviews.forEach { view in
+            cycleSizesView.removeArrangedSubview(view)
+            view.removeFromSuperview()
         }
         
         let cycleSizeCheckboxes = makeCycleSizeCheckboxes()
-        cycleSizeCheckboxes.forEach { checkbox in
-            cycleSizesView.addArrangedSubview(checkbox)
-        }
         self.cycleSizeCheckboxes = cycleSizeCheckboxes
+
+        let cornerCycleExpansionAxisRow = makeCornerCycleExpansionAxisRow()
+        cycleSizesView.orientation = .vertical
+        cycleSizesView.alignment = .leading
+        cycleSizesView.spacing = 8
+        cycleSizesView.addArrangedSubview(makeCycleSizesRow(cycleSizeCheckboxes))
+        cycleSizesView.addArrangedSubview(cornerCycleExpansionAxisRow)
         
         initializeCycleSizesView(animated: false)
 
@@ -1060,9 +1115,8 @@ class SettingsViewController: NSViewController {
         } else {
             stageView.isHidden = true
         }
-        
-        
         setToggleStatesForCycleSizeCheckboxes()
+        setToggleStatesForCornerCycleExpansionAxisButtons()
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {
@@ -1070,6 +1124,7 @@ class SettingsViewController: NSViewController {
         
         if showOptionsView {
             setToggleStatesForCycleSizeCheckboxes()
+            setToggleStatesForCornerCycleExpansionAxisButtons()
         }
         
         setVisibility(shown: showOptionsView, ofView: cycleSizesView, withConstraint: cycleSizesViewHeightConstraint, animated: animated)
@@ -1148,9 +1203,80 @@ class SettingsViewController: NSViewController {
         CycleSize.sortedSizes.map { division in
             let button = NSButton(checkboxWithTitle: division.title, target: self, action: #selector(didCheckCycleSizeCheckbox(sender:)))
             button.tag = division.rawValue
+            button.refusesFirstResponder = true
             button.setContentCompressionResistancePriority(.required, for: .vertical)
             return button
         }
+    }
+
+    private func makeCycleSizesRow(_ checkboxes: [NSButton]) -> NSStackView {
+        let row = NSStackView()
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 8
+        checkboxes.forEach { row.addArrangedSubview($0) }
+        return row
+    }
+
+    private func makeCornerCycleExpansionAxisRow() -> NSStackView {
+        let row = NSStackView()
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 8
+
+        let label = NSTextField(labelWithString: NSLocalizedString("Cyclic corner shortcuts expand:", tableName: "Main", value: "", comment: ""))
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        row.addArrangedSubview(label)
+
+        let horizontalButton = makeCornerCycleExpansionAxisButton(title: NSLocalizedString("horizontally", tableName: "Main", value: "", comment: ""), axis: .horizontal)
+        let verticalButton = makeCornerCycleExpansionAxisButton(title: NSLocalizedString("vertically", tableName: "Main", value: "", comment: ""), axis: .vertical)
+        cornerCycleExpansionAxisButtons = [horizontalButton, verticalButton]
+        cornerCycleExpansionAxisButtons.forEach { row.addArrangedSubview($0) }
+
+        return row
+    }
+
+    private func makeCornerCycleExpansionAxisButton(title: String, axis: CornerCycleExpansionAxis) -> NSButton {
+        let button = NSButton(radioButtonWithTitle: title, target: self, action: #selector(setCornerCycleExpansionAxis(_:)))
+        button.tag = axis.rawValue
+        button.refusesFirstResponder = true
+        button.setContentCompressionResistancePriority(.required, for: .vertical)
+        return button
+    }
+    
+    private func configureHalfSplitRatioPopUpButton(_ popUpButton: HalfSplitRatioPopUpButton) {
+        popUpButton.removeAllItems()
+        
+        CycleSize.sortedSizes.forEach { cycleSize in
+            popUpButton.addItem(withTitle: cycleSize.title)
+            popUpButton.lastItem?.tag = cycleSize.rawValue
+        }
+        
+        popUpButton.addItem(withTitle: NSLocalizedString("Other", tableName: "Main", value: "", comment: ""))
+        popUpButton.lastItem?.tag = HalfSplitRatioPopUpButton.otherTag
+        popUpButton.selectCurrentValue()
+    }
+    
+    @objc private func didSelectHalfSplitRatioPreset(sender: Any?) {
+        guard let popUpButton = sender as? HalfSplitRatioPopUpButton,
+              let defaults = popUpButton.defaults else {
+            Logger.log("Expected action to be sent from HalfSplitRatioPopUpButton. Instead, sender is: \(String(describing: sender))")
+            return
+        }
+        
+        guard popUpButton.selectedTag() != HalfSplitRatioPopUpButton.otherTag else {
+            popUpButton.customField?.isHidden = false
+            return
+        }
+        
+        guard let cycleSize = CycleSize(rawValue: popUpButton.selectedTag()) else {
+            Logger.log("Expected tag of half split ratio popup to match a value of CycleSize. Got: \(String(describing: popUpButton.selectedTag()))")
+            return
+        }
+        
+        defaults.value = cycleSize.percentValue
+        popUpButton.customField?.stringValue = "\(Int(round(cycleSize.percentValue)))"
+        popUpButton.customField?.isHidden = true
     }
     
     @objc private func didCheckCycleSizeCheckbox(sender: Any?) {
@@ -1189,14 +1315,15 @@ class SettingsViewController: NSViewController {
                 return
             }
             
-            let isAlwaysEnabled = cycleSizeForCheckbox.isAlwaysEnabled
-            let isChecked = isAlwaysEnabled || cycleSizes.contains(cycleSizeForCheckbox)
+            let isChecked = cycleSizes.contains(cycleSizeForCheckbox)
             checkbox.state = isChecked ? .on : .off
-            
-            // Show that the box cannot be unchecked.
-            if isAlwaysEnabled {
-                checkbox.isEnabled = false
-            }
+            checkbox.isEnabled = true
+        }
+    }
+
+    private func setToggleStatesForCornerCycleExpansionAxisButtons() {
+        cornerCycleExpansionAxisButtons.forEach { button in
+            button.state = button.tag == Defaults.cornerCycleExpansionAxis.value.rawValue ? .on : .off
         }
     }
 
@@ -1241,4 +1368,27 @@ class AutoSaveFloatField: NSTextField {
     var defaults: FloatDefault?
     var defaultsSetAction: (() -> Void)?
     var fallbackValue: Float = 30
+}
+
+class HalfSplitRatioPopUpButton: NSPopUpButton {
+    static let otherTag = -1
+    
+    var defaults: FloatDefault?
+    weak var customField: AutoSaveFloatField?
+    
+    func selectCurrentValue() {
+        guard let value = defaults?.value else {
+            selectItem(withTag: Self.otherTag)
+            customField?.isHidden = false
+            return
+        }
+        
+        if let cycleSize = CycleSize.matching(percentValue: value) {
+            selectItem(withTag: cycleSize.rawValue)
+            customField?.isHidden = true
+        } else {
+            selectItem(withTag: Self.otherTag)
+            customField?.isHidden = false
+        }
+    }
 }

@@ -1394,7 +1394,7 @@
       }
     },
     "01Z-t3-cBm.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size.\"; ObjectID = \"01Z-t3-cBm\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"If you repeat move or side actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size.\"; ObjectID = \"01Z-t3-cBm\";",
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
@@ -1424,7 +1424,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."
+            "value" : "If you repeat move or side actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."
           }
         },
         "es" : {
@@ -2438,7 +2438,7 @@
       }
     },
     "3GE-la-fAZ.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"move to adjacent on left/right, or cycle size on half\"; ObjectID = \"3GE-la-fAZ\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"move to adjacent on left/right, or cycle size on side\"; ObjectID = \"3GE-la-fAZ\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -2474,7 +2474,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "es" : {
@@ -2534,7 +2534,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "nn" : {
@@ -2546,19 +2546,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "ro" : {
@@ -10654,7 +10654,7 @@
       }
     },
     "bRX-dV-iAR.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Half\"; ObjectID = \"bRX-dV-iAR\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Section\"; ObjectID = \"bRX-dV-iAR\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -10690,13 +10690,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Center Half"
+            "value" : "Center Section"
           }
         },
         "en-GB" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Centre Half"
+            "value" : "Centre Section"
           }
         },
         "es" : {
@@ -13021,7 +13021,7 @@
       }
     },
     "d7y-s8-7GE.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Half\"; ObjectID = \"d7y-s8-7GE\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Side\"; ObjectID = \"d7y-s8-7GE\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -13057,7 +13057,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Top Half"
+            "value" : "Top Side"
           }
         },
         "es" : {
@@ -15983,7 +15983,7 @@
       }
     },
     "ec4-FB-fMa.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Half\"; ObjectID = \"ec4-FB-fMa\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Side\"; ObjectID = \"ec4-FB-fMa\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -16019,7 +16019,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Bottom Half"
+            "value" : "Bottom Side"
           }
         },
         "es" : {
@@ -16776,7 +16776,7 @@
       }
     },
     "F8S-GI-LiB.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Right Half\"; ObjectID = \"F8S-GI-LiB\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Right Side\"; ObjectID = \"F8S-GI-LiB\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -16812,7 +16812,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Right Half"
+            "value" : "Right Side"
           }
         },
         "es" : {
@@ -19682,7 +19682,7 @@
       }
     },
     "gHH-BV-5kP.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on half actions\"; ObjectID = \"gHH-BV-5kP\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on side actions\"; ObjectID = \"gHH-BV-5kP\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -19718,7 +19718,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "cycle sizes on half actions"
+            "value" : "cycle sizes on side actions"
           }
         },
         "es" : {
@@ -21201,7 +21201,7 @@
         }
       }
     },
-    "Half Split Ratios" : {
+    "Side Split Ratio" : {
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -21217,7 +21217,7 @@
         }
       }
     },
-    "Halves" : {
+    "Sides" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -21306,7 +21306,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Halves"
+            "value" : "Sides"
           }
         },
         "nn" : {
@@ -27938,7 +27938,7 @@
         }
       }
     },
-    "Left half, top/bottom half near corners" : {
+    "Left side, top/bottom side near corners" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27949,13 +27949,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "cs" : {
@@ -27991,7 +27991,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "it" : {
@@ -28027,7 +28027,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "nn" : {
@@ -28039,7 +28039,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "pt-BR" : {
@@ -28051,13 +28051,13 @@
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "ru" : {
@@ -28075,7 +28075,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
+            "value" : "Left side, top/bottom side near corners"
           }
         },
         "tr" : {
@@ -28116,7 +28116,7 @@
         }
       }
     },
-    "Left or right half" : {
+    "Left or right side" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28127,13 +28127,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "cs" : {
@@ -28169,7 +28169,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "it" : {
@@ -28205,7 +28205,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "nn" : {
@@ -28217,7 +28217,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "pt-BR" : {
@@ -28229,13 +28229,13 @@
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "ru" : {
@@ -28253,7 +28253,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "tr" : {
@@ -28479,6 +28479,15 @@
           }
         }
       }
+    },
+    "Cyclic corner shortcuts expand:" : {
+
+    },
+    "horizontally" : {
+
+    },
+    "vertically" : {
+
     },
     "LqQ-pM-jRN.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Left Sixth\"; ObjectID = \"LqQ-pM-jRN\";",
@@ -36135,13 +36144,13 @@
       }
     },
     "qCy-Kx-9mR.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"cycle positions on quadrants, cycle sizes on half\"; ObjectID = \"qCy-Kx-9mR\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle positions on quadrants, cycle sizes on side\"; ObjectID = \"qCy-Kx-9mR\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "cycle positions on quadrants, cycle sizes on half"
+            "value" : "cycle positions on quadrants, cycle sizes on side"
           }
         },
         "ko" : {
@@ -37986,7 +37995,7 @@
         }
       }
     },
-    "Right half, top/bottom half near corners" : {
+    "Right side, top/bottom side near corners" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -37997,13 +38006,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "cs" : {
@@ -38039,7 +38048,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "it" : {
@@ -38075,7 +38084,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "nn" : {
@@ -38087,7 +38096,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "pt-BR" : {
@@ -38099,13 +38108,13 @@
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "ru" : {
@@ -38123,7 +38132,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "tr" : {
@@ -40843,7 +40852,7 @@
         }
       }
     },
-    "Thirds, top/bottom half near corners" : {
+    "Thirds, top/bottom side near corners" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -40854,13 +40863,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "cs" : {
@@ -40896,7 +40905,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "it" : {
@@ -40932,7 +40941,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "nn" : {
@@ -40944,25 +40953,25 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ru" : {
@@ -40980,7 +40989,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "tr" : {
@@ -41763,7 +41772,7 @@
         }
       }
     },
-    "Top/bottom halves" : {
+    "Top/bottom sides" : {
       "extractionState" : "manual",
       "localizations" : {
         "ko" : {
@@ -47234,7 +47243,7 @@
       }
     },
     "Xc8-Sm-pig.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Left Half\"; ObjectID = \"Xc8-Sm-pig\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Left Side\"; ObjectID = \"Xc8-Sm-pig\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -47270,7 +47279,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Left Half"
+            "value" : "Left Side"
           }
         },
         "es" : {

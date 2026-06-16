@@ -163,6 +163,7 @@ class ShortcutManager {
     private func reloadShortcutBindingsIfNeeded() {
         guard !isUpdatingShortcutBindings && !shortcutsSuspendedForRecording else { return }
 
+        MASShortcutMigration.syncRenamedSideShortcutAliases()
         let currentShortcuts = ShortcutCycle.shortcutsByAction()
         let currentIdentities = ShortcutCycle.shortcutIdentities(shortcutsByAction: currentShortcuts)
         guard currentIdentities != shortcutIdentities else { return }

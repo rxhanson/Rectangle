@@ -331,6 +331,17 @@ enum WindowAction: Int, Codable {
         }
     }
 
+    var aliasName: String? {
+        switch self {
+        case .leftHalf: return "leftSide"
+        case .rightHalf: return "rightSide"
+        case .bottomHalf: return "bottomSide"
+        case .topHalf: return "topSide"
+        case .centerHalf: return "centerSection"
+        default: return nil
+        }
+    }
+
     var displayIndex: Int? {
         switch self {
         case .displayOne: return 0
@@ -353,10 +364,10 @@ enum WindowAction: Int, Codable {
         switch self {
         case .leftHalf:
             key = "Xc8-Sm-pig.title"
-            value = "Left Half"
+            value = "Left Side"
         case .rightHalf:
             key = "F8S-GI-LiB.title"
-            value = "Right Half"
+            value = "Right Side"
         case .maximize:
             key = "8oe-J2-oUU.title"
             value = "Maximize"
@@ -377,10 +388,10 @@ enum WindowAction: Int, Codable {
             value = "Smaller"
         case .bottomHalf:
             key = "ec4-FB-fMa.title"
-            value = "Bottom Half"
+            value = "Bottom Side"
         case .topHalf:
             key = "d7y-s8-7GE.title"
-            value = "Top Half"
+            value = "Top Side"
         case .center:
             key = "8Bg-SZ-hDO.title"
             value = "Center"
@@ -434,7 +445,7 @@ enum WindowAction: Int, Codable {
             value = "Almost Maximize"
         case .centerHalf:
             key = "bRX-dV-iAR.title"
-            value = "Center Half"
+            value = "Center Section"
         case .firstFourth:
             key = "Q6Q-6J-okH.title"
             value = "First Fourth"

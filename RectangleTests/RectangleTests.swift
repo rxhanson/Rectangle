@@ -130,6 +130,276 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class CycleSizeRatioPresetTests: XCTestCase {
+
+    func testPercentValuesMatchCycleSizeFractions() {
+        XCTAssertEqual(CycleSize.oneHalf.percentValue, 50, accuracy: 0.001)
+        XCTAssertEqual(CycleSize.twoThirds.percentValue, 66.666, accuracy: 0.001)
+        XCTAssertEqual(CycleSize.oneThird.percentValue, 33.333, accuracy: 0.001)
+    }
+
+    func testMatchingPercentValueUsesTolerance() {
+        XCTAssertEqual(CycleSize.matching(percentValue: 33.3334), .oneThird)
+        XCTAssertEqual(CycleSize.matching(percentValue: 66.6666), .twoThirds)
+    }
+
+    func testCustomPercentValueDoesNotMatchPreset() {
+        XCTAssertNil(CycleSize.matching(percentValue: 60))
+    }
+}
+
+class HalfSplitCornerCalculationTests: XCTestCase {
+    
+    private var savedHorizontalSplitRatio: Float = 50
+    private var savedVerticalSplitRatio: Float = 50
+    private var savedSubsequentExecutionMode: SubsequentExecutionMode = .resize
+    private var savedCornerCycleExpansionAxis: CornerCycleExpansionAxis = .horizontal
+    private var savedCycleSizesIsChanged = false
+    private var savedSelectedCycleSizes = Set<CycleSize>()
+    private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
+    
+    override func setUp() {
+        super.setUp()
+        savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
+        savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
+        savedSubsequentExecutionMode = Defaults.subsequentExecutionMode.value
+        savedCornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
+        savedCycleSizesIsChanged = Defaults.cycleSizesIsChanged.enabled
+        savedSelectedCycleSizes = Defaults.selectedCycleSizes.value
+        Defaults.subsequentExecutionMode.value = .resize
+        Defaults.cycleSizesIsChanged.enabled = false
+    }
+    
+    override func tearDown() {
+        Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
+        Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
+        Defaults.subsequentExecutionMode.value = savedSubsequentExecutionMode
+        Defaults.cornerCycleExpansionAxis.value = savedCornerCycleExpansionAxis
+        Defaults.cycleSizesIsChanged.enabled = savedCycleSizesIsChanged
+        Defaults.selectedCycleSizes.value = savedSelectedCycleSizes
+        super.tearDown()
+    }
+    
+    func testCornersUseHalfSplitRatioOneHalf() {
+        setSplitRatio(50)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 470, width: 600, height: 450),
+            topRight: CGRect(x: 610, y: 470, width: 600, height: 450),
+            bottomLeft: CGRect(x: 10, y: 20, width: 600, height: 450),
+            bottomRight: CGRect(x: 610, y: 20, width: 600, height: 450)
+        )
+    }
+    
+    func testCornersUseHalfSplitRatioTwoThirds() {
+        setSplitRatio(CycleSize.twoThirds.percentValue)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 320, width: 800, height: 600),
+            topRight: CGRect(x: 810, y: 320, width: 400, height: 600),
+            bottomLeft: CGRect(x: 10, y: 20, width: 800, height: 300),
+            bottomRight: CGRect(x: 810, y: 20, width: 400, height: 300)
+        )
+    }
+    
+    func testCornersUseHalfSplitRatioThreeQuarters() {
+        setSplitRatio(CycleSize.threeQuarters.percentValue)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 245, width: 900, height: 675),
+            topRight: CGRect(x: 910, y: 245, width: 300, height: 675),
+            bottomLeft: CGRect(x: 10, y: 20, width: 900, height: 225),
+            bottomRight: CGRect(x: 910, y: 20, width: 300, height: 225)
+        )
+    }
+    
+    func testCornersUseCustomHalfSplitRatio() {
+        setSplitRatio(60)
+        
+        assertCornerRects(
+            topLeft: CGRect(x: 10, y: 380, width: 720, height: 540),
+            topRight: CGRect(x: 730, y: 380, width: 480, height: 540),
+            bottomLeft: CGRect(x: 10, y: 20, width: 720, height: 360),
+            bottomRight: CGRect(x: 730, y: 20, width: 480, height: 360)
+        )
+    }
+    
+    func testHalfActionsStillUseHalfSplitRatio() {
+        setSplitRatio(60)
+        
+        assertRect(WindowCalculationFactory.leftHalfCalculation.calculateRect(params(for: .leftHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 720, height: 900))
+        assertRect(WindowCalculationFactory.rightHalfCalculation.calculateRect(params(for: .rightHalf)).rect,
+                   equals: CGRect(x: 730, y: 20, width: 480, height: 900))
+        assertRect(WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf)).rect,
+                   equals: CGRect(x: 10, y: 380, width: 1200, height: 540))
+        assertRect(WindowCalculationFactory.bottomHalfCalculation.calculateRect(params(for: .bottomHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 1200, height: 360))
+    }
+
+    func testRepeatedCornersWithHorizontalExpansionCycleWidthOnly() {
+        setSplitRatio(60)
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
+
+        assertRepeatedCornerRects(
+            topLeft: CGRect(x: 10, y: 380, width: 800, height: 540),
+            topRight: CGRect(x: 410, y: 380, width: 800, height: 540),
+            bottomLeft: CGRect(x: 10, y: 20, width: 800, height: 360),
+            bottomRight: CGRect(x: 410, y: 20, width: 800, height: 360)
+        )
+    }
+
+    func testSecondRepeatedCornerShortcutBeginsCyclingImmediately() {
+        setSplitRatio(CycleSize.twoThirds.percentValue)
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
+
+        let firstFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+        let secondFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: firstFrame, count: 1)).rect
+        let thirdFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: secondFrame, count: 2)).rect
+
+        assertRect(firstFrame, equals: CGRect(x: 10, y: 320, width: 800, height: 600))
+        assertRect(secondFrame, equals: CGRect(x: 10, y: 320, width: 400, height: 600))
+        assertRect(thirdFrame, equals: CGRect(x: 10, y: 320, width: 600, height: 600))
+    }
+
+    func testRepeatedCornerCyclingDoesNotReturnNoOpFrameWhenBaseMatchesCycleSize() {
+        setSplitRatio(CycleSize.twoThirds.percentValue)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let firstFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
+        let secondFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(repeatedParams(for: .topRight, currentRect: firstFrame, count: 1)).rect
+
+        XCTAssertFalse(firstFrame.equalTo(secondFrame))
+        XCTAssertEqual(firstFrame.maxY, secondFrame.maxY, accuracy: 0.001)
+        XCTAssertEqual(firstFrame.origin.x, secondFrame.origin.x, accuracy: 0.001)
+        XCTAssertEqual(firstFrame.width, secondFrame.width, accuracy: 0.001)
+    }
+
+    func testRepeatedCornersWithVerticalExpansionCycleHeightOnly() {
+        setSplitRatio(60)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        assertRepeatedCornerRects(
+            topLeft: CGRect(x: 10, y: 320, width: 720, height: 600),
+            topRight: CGRect(x: 730, y: 320, width: 480, height: 600),
+            bottomLeft: CGRect(x: 10, y: 20, width: 720, height: 600),
+            bottomRight: CGRect(x: 730, y: 20, width: 480, height: 600)
+        )
+    }
+
+    func testRepeatedHalfActionsStillCycleOnTheirNaturalAxis() {
+        setSplitRatio(60)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        assertRect(WindowCalculationFactory.leftHalfCalculation.calculateRepeatedRect(repeatedParams(for: .leftHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 800, height: 900))
+        assertRect(WindowCalculationFactory.rightHalfCalculation.calculateRepeatedRect(repeatedParams(for: .rightHalf)).rect,
+                   equals: CGRect(x: 410, y: 20, width: 800, height: 900))
+
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
+
+        assertRect(WindowCalculationFactory.topHalfCalculation.calculateRect(repeatedParams(for: .topHalf)).rect,
+                   equals: CGRect(x: 10, y: 320, width: 1200, height: 600))
+        assertRect(WindowCalculationFactory.bottomHalfCalculation.calculateRect(repeatedParams(for: .bottomHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 1200, height: 600))
+    }
+
+    func testRepeatedHalfActionStartsAtFirstSelectedCycleSizeWhenOneHalfIsDeselected() {
+        setSplitRatio(50)
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = [.oneThird, .twoThirds]
+
+        let firstRepeatedRect = WindowCalculationFactory.bottomHalfCalculation.calculateRepeatedRect(repeatedParams(for: .bottomHalf)).rect
+        let secondRepeatedRect = WindowCalculationFactory.bottomHalfCalculation.calculateRepeatedRect(repeatedParams(for: .bottomHalf, currentRect: firstRepeatedRect, count: 2)).rect
+
+        assertRect(firstRepeatedRect, equals: CGRect(x: 10, y: 20, width: 1200, height: 600))
+        assertRect(secondRepeatedRect, equals: CGRect(x: 10, y: 20, width: 1200, height: 300))
+    }
+
+    func testRepeatedBottomCornerStartsAtFirstSelectedCycleSizeWhenOneHalfIsDeselected() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = [.oneThird, .twoThirds]
+
+        let firstRect = WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect
+        let firstRepeatedRect = WindowCalculationFactory.lowerLeftCalculation.calculateRect(repeatedParams(for: .bottomLeft, currentRect: firstRect)).rect
+        let secondRepeatedRect = WindowCalculationFactory.lowerLeftCalculation.calculateRect(repeatedParams(for: .bottomLeft, currentRect: firstRepeatedRect, count: 2)).rect
+
+        assertRect(firstRect, equals: CGRect(x: 10, y: 20, width: 600, height: 450))
+        assertRect(firstRepeatedRect, equals: CGRect(x: 10, y: 20, width: 600, height: 600))
+        assertRect(secondRepeatedRect, equals: CGRect(x: 10, y: 20, width: 600, height: 300))
+    }
+
+    func testRepeatedHalfActionWithNoCycleSizesSelectedUsesFirstRect() {
+        setSplitRatio(60)
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = []
+
+        assertRect(WindowCalculationFactory.leftHalfCalculation.calculateRepeatedRect(repeatedParams(for: .leftHalf)).rect,
+                   equals: CGRect(x: 10, y: 20, width: 720, height: 900))
+    }
+
+    func testRepeatedCornerActionWithNoCycleSizesSelectedUsesFirstRect() {
+        setSplitRatio(60)
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = []
+
+        let firstRect = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+        let repeatedRect = WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: firstRect)).rect
+
+        assertRect(repeatedRect, equals: firstRect)
+    }
+    
+    private func setSplitRatio(_ percent: Float) {
+        Defaults.horizontalSplitRatio.value = percent
+        Defaults.verticalSplitRatio.value = percent
+    }
+    
+    private func assertCornerRects(topLeft: CGRect, topRight: CGRect, bottomLeft: CGRect, bottomRight: CGRect) {
+        assertRect(WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect, equals: topLeft)
+        assertRect(WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect, equals: topRight)
+        assertRect(WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect, equals: bottomLeft)
+        assertRect(WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect, equals: bottomRight)
+    }
+
+    private func assertRepeatedCornerRects(topLeft: CGRect, topRight: CGRect, bottomLeft: CGRect, bottomRight: CGRect) {
+        let topLeftBase = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+        let topRightBase = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
+        let bottomLeftBase = WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect
+        let bottomRightBase = WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect
+
+        assertRect(WindowCalculationFactory.upperLeftCalculation.calculateRect(repeatedParams(for: .topLeft, currentRect: topLeftBase)).rect, equals: topLeft)
+        assertRect(WindowCalculationFactory.upperRightCalculation.calculateRect(repeatedParams(for: .topRight, currentRect: topRightBase)).rect, equals: topRight)
+        assertRect(WindowCalculationFactory.lowerLeftCalculation.calculateRect(repeatedParams(for: .bottomLeft, currentRect: bottomLeftBase)).rect, equals: bottomLeft)
+        assertRect(WindowCalculationFactory.lowerRightCalculation.calculateRect(repeatedParams(for: .bottomRight, currentRect: bottomRightBase)).rect, equals: bottomRight)
+    }
+    
+    private func params(for action: WindowAction) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: nil)
+    }
+
+    private func repeatedParams(for action: WindowAction, currentRect: CGRect? = nil, count: Int = 1) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: 1, rect: currentRect ?? visibleFrame),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: RectangleAction(action: action,
+                                                              subAction: nil,
+                                                              rect: currentRect ?? visibleFrame,
+                                                              count: count))
+    }
+    
+    private func assertRect(_ rect: CGRect, equals expected: CGRect, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(rect.origin.x, expected.origin.x, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(rect.origin.y, expected.origin.y, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(rect.width, expected.width, accuracy: 0.001, file: file, line: line)
+        XCTAssertEqual(rect.height, expected.height, accuracy: 0.001, file: file, line: line)
+    }
+}
+
 class OverlapOffsetGuardsTests: XCTestCase {
 
     func testMaxCascadeClampedToMinOne() {
@@ -430,6 +700,40 @@ class ShortcutCycleTests: XCTestCase {
 
     private func shortcut(_ keyCode: Int, _ flags: NSEvent.ModifierFlags) -> MASShortcut {
         MASShortcut(keyCode: keyCode, modifierFlags: flags)
+    }
+
+    func testSideShortcutActionsKeepLegacyDefaultsKeys() {
+        XCTAssertEqual(WindowAction.leftHalf.name, "leftHalf")
+        XCTAssertEqual(WindowAction.rightHalf.name, "rightHalf")
+        XCTAssertEqual(WindowAction.centerHalf.name, "centerHalf")
+        XCTAssertEqual(WindowAction.topHalf.name, "topHalf")
+        XCTAssertEqual(WindowAction.bottomHalf.name, "bottomHalf")
+    }
+
+    func testRenamedSideShortcutAliasSyncWritesLegacyDefaultsKey() {
+        let suiteName = "ShortcutCycleTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer {
+            userDefaults.removePersistentDomain(forName: suiteName)
+        }
+
+        let centerSectionShortcut = shortcut(1, [.option, .command])
+        let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        let shortcutDict = dictTransformer.reverseTransformedValue(centerSectionShortcut)
+        userDefaults.setValue(shortcutDict, forKey: "centerSection")
+
+        MASShortcutMigration.syncRenamedSideShortcutAliases(userDefaults: userDefaults)
+
+        XCTAssertNil(userDefaults.object(forKey: "centerSection"))
+        XCTAssertNotNil(userDefaults.object(forKey: "centerHalf"))
+        XCTAssertNotNil(ShortcutCycle.shortcut(for: .centerHalf, userDefaults: userDefaults))
+
+        let updatedCenterHalfShortcut = shortcut(2, [.option, .command])
+        let updatedShortcutDict = dictTransformer.reverseTransformedValue(updatedCenterHalfShortcut)
+        userDefaults.setValue(updatedShortcutDict, forKey: "centerHalf")
+
+        MASShortcutMigration.syncRenamedSideShortcutAliases(userDefaults: userDefaults)
+        XCTAssertEqual(ShortcutCycle.shortcut(for: .centerHalf, userDefaults: userDefaults)?.keyCode, updatedCenterHalfShortcut.keyCode)
     }
 
     func testUniqueShortcutsProduceSingletonGroups() {

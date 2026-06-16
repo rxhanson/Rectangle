@@ -117,6 +117,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             Defaults.installVersion.value = currentVersion
             Defaults.allowAnyShortcut.enabled = true
         }
+        MASShortcutMigration.syncRenamedSideShortcutAliases()
         
         Defaults.lastVersion.value = currentVersion
     }
@@ -668,7 +669,12 @@ extension AppDelegate {
                 let name = (components.queryItems?.first { $0.name == "name" })?.value
                 switch (components.host, name) {
                 case ("execute-action", _):
-                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                    let action = (WindowAction.active.first { windowAction in
+                        if let aliasName = windowAction.aliasName, getUrlName(aliasName) == name {
+                            return true
+                        }
+                        return getUrlName(windowAction.name) == name
+                    })
                     action?.postUrl()
                 case ("execute-task", "ignore-app"):
                     let bundleId = extractBundleIdParameter(fromComponents: components)

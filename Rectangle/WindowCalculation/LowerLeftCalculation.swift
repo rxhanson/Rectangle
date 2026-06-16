@@ -2,7 +2,12 @@
 
 import Foundation
 
-class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation, QuartersRepeated {
+class LowerLeftCalculation: WindowCalculation, CornerCycleExpansionCalculation, QuartersRepeated {
+    
+    let horizontalSide: HalfSplitSide = .leading
+    let verticalSide: HalfSplitSide = .trailing
+    var horizontalSplitFraction: Float { Defaults.horizontalSplitRatio.value / 100.0 }
+    var verticalSplitFraction: Float { 1.0 - Defaults.verticalSplitRatio.value / 100.0 }
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
@@ -25,18 +30,17 @@ class LowerLeftCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcula
     }
 
     func quarterRect(_ visibleFrameOfScreen: CGRect) -> RectResult {
-        var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
-        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        return RectResult(rect, subAction: .bottomLeftQuarter)
+        return RectResult(cornerRect(visibleFrameOfScreen,
+                                     horizontalFraction: horizontalSplitFraction,
+                                     verticalFraction: verticalSplitFraction),
+                          subAction: .bottomLeftQuarter)
     }
 
-    func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
-
-        var rect = visibleFrameOfScreen
-        rect.size.width = floor(visibleFrameOfScreen.width * CGFloat(fraction))
-        rect.size.height = floor(visibleFrameOfScreen.height / 2.0)
-        return RectResult(rect)
+    private func cornerRect(_ visibleFrameOfScreen: CGRect, horizontalFraction: Float, verticalFraction: Float) -> CGRect {
+        HalfSplitFrameCalculation.cornerRect(in: visibleFrameOfScreen,
+                                             horizontalSide: horizontalSide,
+                                             verticalSide: verticalSide,
+                                             horizontalFraction: horizontalFraction,
+                                             verticalFraction: verticalFraction)
     }
 }

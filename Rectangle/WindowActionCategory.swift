@@ -24,7 +24,7 @@ enum WindowActionCategory {
     var displayName: String {
         switch self {
         case .halves:
-            return NSLocalizedString("Halves", tableName: "Main", value: "", comment: "")
+            return NSLocalizedString("Sides", tableName: "Main", value: "", comment: "")
         case .corners:
             return NSLocalizedString("Corners", tableName: "Main", value: "", comment: "")
         case .thirds:
