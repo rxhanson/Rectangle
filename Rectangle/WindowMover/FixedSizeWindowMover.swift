@@ -11,10 +11,9 @@ class FixedSizeWindowMover: WindowMover {
         let currentWindowRect: CGRect = windowElement.frame
         if currentWindowRect.isNull { return }
 
-        let sharedEdges: Edge = Defaults.moveFixedSizeToEdge.userEnabled
-            ? resultParameters.calcResult.initialRect.screenFlipped
-                .sharedEdges(withRect: resultParameters.visibleFrameOfScreen.screenFlipped)
-            : .none // no shared edges -> aligner centers, matching legacy behavior
+        let initialFlippedRect = resultParameters.calcResult.initialRect.screenFlipped
+        let screenFrame = resultParameters.visibleFrameOfScreen.screenFlipped
+        let sharedEdges: Edge = getAlignmentEdges(initialNormalizedRect: initialFlippedRect, normalizedScreenFrame: screenFrame)
 
         let adjusted = ClampedWindowAligner.aligned(window: currentWindowRect,
                                                     inZone: rect.screenFlipped,
@@ -24,4 +23,19 @@ class FixedSizeWindowMover: WindowMover {
             windowElement.setFrame(adjusted)
         }
     }
+    
+    private func getAlignmentEdges(initialNormalizedRect rect: CGRect, normalizedScreenFrame: CGRect) -> Edge {
+        let alignment = Defaults.moveFixedSizeToEdge.value
+        
+        switch alignment {
+        case .edgesAndCorners:
+            return rect.sharedEdges(withRect: normalizedScreenFrame)
+        case .corners:
+            let sharedEdges = rect.sharedEdges(withRect: normalizedScreenFrame)
+            return sharedEdges.isCorner ? sharedEdges : .none
+        case .centered:
+            return .none
+        }
+    }
+    
 }
