@@ -156,6 +156,11 @@ class WindowManager {
                                                 isFixedSize: isFixedSize)
         
         var resultingRect = apply(result: resultParameters, cooperativeCornerAdjustments: cooperativeCornerPlan?.adjustments ?? [])
+        if let cooperativeCornerPlan,
+           let settledRect = settleCooperativeCornerResizeIfNeeded(plan: cooperativeCornerPlan,
+                                                                   focusedWindowElement: frontmostWindowElement) {
+            resultingRect = settledRect
+        }
         
         let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen
         if isMovedAcrossDisplays {
@@ -238,7 +243,8 @@ class WindowManager {
             return nil
         }
 
-        let tolerance = max(CGFloat(Defaults.gapSize.value) + 4, 4)
+        let gapSize = max(0, CGFloat(Defaults.gapSize.value))
+        let tolerance = CooperativeCornerResize.detectionTolerance(screenFrame: screenFrame, configuredGap: gapSize)
         let screenFrameAX = screenFrame.screenFlipped
         let elementsById = AccessibilityElement.getAllWindowElements().reduce(into: [CGWindowID: AccessibilityElement]()) { elements, element in
             guard let candidateId = element.getWindowId(),
@@ -275,7 +281,8 @@ class WindowManager {
                                                       axis: cooperativeAxis,
                                                       tolerance: tolerance,
                                                       minimumSize: minimumSize,
-                                                      focusedMinimumSize: focusedWindowMinimumSize)
+                                                      focusedMinimumSize: focusedWindowMinimumSize,
+                                                      gapSize: gapSize)
         else {
             return nil
         }
@@ -284,17 +291,82 @@ class WindowManager {
 
         let adjustments: [CooperativeCornerWindowAdjustment] = plan.adjustments.compactMap { adjustment in
             guard let element = elementsById[adjustment.id] else { return nil }
-            return CooperativeCornerWindowAdjustment(element: element, newFrame: adjustment.newFrame, kind: adjustment.kind)
+            return CooperativeCornerWindowAdjustment(element: element,
+                                                    id: adjustment.id,
+                                                    newFrame: adjustment.newFrame,
+                                                    kind: adjustment.kind)
         }
         guard !adjustments.isEmpty else { return nil }
 
-        return CooperativeCornerApplicationPlan(focusedFrame: plan.focusedFrame, adjustments: adjustments)
+        return CooperativeCornerApplicationPlan(oldFocusedFrame: oldFocusedFrame,
+                                                requestedFocusedFrame: newFocusedFrame,
+                                                focusedFrame: plan.focusedFrame,
+                                                screenFrame: screenFrame,
+                                                candidates: candidates,
+                                                axis: cooperativeAxis,
+                                                detectionTolerance: tolerance,
+                                                layoutTolerance: 4,
+                                                minimumSize: minimumSize,
+                                                focusedMinimumSize: focusedWindowMinimumSize,
+                                                gapSize: gapSize,
+                                                adjustments: adjustments,
+                                                debugLog: plan.debugLog)
     }
 
     private func apply(_ adjustments: [CooperativeCornerWindowAdjustment], kind: CooperativeCornerResize.Adjustment.Kind) {
         adjustments.filter { $0.kind == kind }.forEach { adjustment in
             adjustment.element.setFrame(adjustment.newFrame.screenFlipped)
         }
+    }
+
+    private func settleCooperativeCornerResizeIfNeeded(plan: CooperativeCornerApplicationPlan,
+                                                       focusedWindowElement: AccessibilityElement) -> CGRect? {
+        let actualFocusedFrame = focusedWindowElement.frame.screenFlipped
+        let actualCandidateFramesById = Dictionary(uniqueKeysWithValues: plan.adjustments.map { adjustment in
+            (adjustment.id, adjustment.element.frame.screenFlipped)
+        })
+
+        guard let correctionPlan = CooperativeCornerResize.correctionPlan(oldFocusedFrame: plan.oldFocusedFrame,
+                                                                          requestedFocusedFrame: plan.requestedFocusedFrame,
+                                                                          plannedPlan: plan.asGeometryPlan(),
+                                                                          screenFrame: plan.screenFrame,
+                                                                          candidates: plan.candidates,
+                                                                          actualFocusedFrame: actualFocusedFrame,
+                                                                          actualCandidateFramesById: actualCandidateFramesById,
+                                                                          axis: plan.axis,
+                                                                          tolerance: plan.detectionTolerance,
+                                                                          layoutTolerance: plan.layoutTolerance,
+                                                                          minimumSize: plan.minimumSize,
+                                                                          focusedMinimumSize: plan.focusedMinimumSize,
+                                                                          gapSize: plan.gapSize)
+        else {
+            return nil
+        }
+
+        correctionPlan.debugLog.forEach(Logger.log)
+        let elementsById = Dictionary(uniqueKeysWithValues: plan.adjustments.map { ($0.id, $0.element) })
+        let correctionAdjustments: [CooperativeCornerWindowAdjustment] = correctionPlan.adjustments.compactMap { adjustment in
+            guard let element = elementsById[adjustment.id] else { return nil }
+            return CooperativeCornerWindowAdjustment(element: element,
+                                                    id: adjustment.id,
+                                                    newFrame: adjustment.newFrame,
+                                                    kind: adjustment.kind)
+        }
+
+        let focusedWindowIsExpanding = CooperativeCornerResize.focusedWindowIsExpanding(oldFrame: plan.oldFocusedFrame,
+                                                                                        newFrame: correctionPlan.focusedFrame,
+                                                                                        axis: plan.axis)
+        if focusedWindowIsExpanding {
+            apply(correctionAdjustments, kind: .adjacent)
+            apply(correctionAdjustments, kind: .matchingFocusedFrame)
+            focusedWindowElement.setFrame(correctionPlan.focusedFrame.screenFlipped)
+        } else {
+            focusedWindowElement.setFrame(correctionPlan.focusedFrame.screenFlipped)
+            apply(correctionAdjustments, kind: .matchingFocusedFrame)
+            apply(correctionAdjustments, kind: .adjacent)
+        }
+
+        return focusedWindowElement.frame
     }
     
     func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {
@@ -432,11 +504,35 @@ enum ExecutionSource {
 
 private struct CooperativeCornerWindowAdjustment {
     let element: AccessibilityElement
+    let id: CGWindowID
     let newFrame: CGRect
     let kind: CooperativeCornerResize.Adjustment.Kind
 }
 
 private struct CooperativeCornerApplicationPlan {
+    let oldFocusedFrame: CGRect
+    let requestedFocusedFrame: CGRect
     let focusedFrame: CGRect
+    let screenFrame: CGRect
+    let candidates: [CooperativeCornerResize.Candidate]
+    let axis: CornerCycleExpansionAxis
+    let detectionTolerance: CGFloat
+    let layoutTolerance: CGFloat
+    let minimumSize: CGSize
+    let focusedMinimumSize: CGSize?
+    let gapSize: CGFloat
     let adjustments: [CooperativeCornerWindowAdjustment]
+    let debugLog: [String]
+
+    func asGeometryPlan() -> CooperativeCornerResize.Plan {
+        let geometryAdjustments = adjustments.map { adjustment in
+            CooperativeCornerResize.Adjustment(id: adjustment.id,
+                                               oldFrame: adjustment.element.frame.screenFlipped,
+                                               newFrame: adjustment.newFrame,
+                                               kind: adjustment.kind)
+        }
+        return CooperativeCornerResize.Plan(focusedFrame: focusedFrame,
+                                            adjustments: geometryAdjustments,
+                                            debugLog: debugLog)
+    }
 }

@@ -45,6 +45,7 @@ struct CooperativeCornerResize {
 
     private struct AffectedWindow {
         let candidate: Candidate
+        let layoutFrame: CGRect
         let role: AffectedRole
         let kind: Adjustment.Kind
         let minimumSize: CGSize
@@ -75,6 +76,11 @@ struct CooperativeCornerResize {
         }
     }
 
+    static func detectionTolerance(screenFrame: CGRect, configuredGap: CGFloat) -> CGFloat {
+        let proportionalTolerance = min(screenFrame.width, screenFrame.height) * 0.015
+        return min(24, max(8, proportionalTolerance))
+    }
+
     static func movedEdge(from oldFocusedFrame: CGRect,
                           to newFocusedFrame: CGRect,
                           axis: CornerCycleExpansionAxis,
@@ -99,14 +105,16 @@ struct CooperativeCornerResize {
                             candidates: [Candidate],
                             axis: CornerCycleExpansionAxis,
                             tolerance: CGFloat,
-                            minimumSize: CGSize) -> [Adjustment] {
+                            minimumSize: CGSize,
+                            gapSize: CGFloat = 0) -> [Adjustment] {
         plan(oldFocusedFrame: oldFocusedFrame,
              newFocusedFrame: newFocusedFrame,
              screenFrame: screenFrame,
              candidates: candidates,
              axis: axis,
              tolerance: tolerance,
-             minimumSize: minimumSize)?.adjustments ?? []
+             minimumSize: minimumSize,
+             gapSize: gapSize)?.adjustments ?? []
     }
 
     static func plan(oldFocusedFrame: CGRect,
@@ -116,7 +124,8 @@ struct CooperativeCornerResize {
                      axis: CornerCycleExpansionAxis,
                      tolerance: CGFloat,
                      minimumSize: CGSize,
-                     focusedMinimumSize: CGSize? = nil) -> Plan? {
+                     focusedMinimumSize: CGSize? = nil,
+                     gapSize: CGFloat = 0) -> Plan? {
         guard let movedEdge = movedEdge(from: oldFocusedFrame, to: newFocusedFrame, axis: axis, tolerance: tolerance),
               !oldFocusedFrame.isNull,
               !newFocusedFrame.isNull,
@@ -133,7 +142,8 @@ struct CooperativeCornerResize {
                                               candidates: candidates,
                                               movedEdge: movedEdge,
                                               tolerance: tolerance,
-                                              fallbackMinimumSize: fallbackMinimumSize)
+                                              fallbackMinimumSize: fallbackMinimumSize,
+                                              gapSize: gapSize)
         guard !affectedWindows.isEmpty else { return nil }
 
         let oldEdge = edgeCoordinate(oldFocusedFrame, movedEdge)
@@ -141,6 +151,8 @@ struct CooperativeCornerResize {
         let requestedDelta = desiredEdge - oldEdge
         var debugLog = [
             "Cooperative resize visible frame: \(screenFrame.debugDescription)",
+            "Cooperative resize configured gap: \(gapSize)",
+            "Cooperative resize detection tolerance: \(tolerance)",
             "Cooperative resize requested delta: \(requestedDelta)",
             "Cooperative resize affected windows: \(affectedWindows.map { "\($0.candidate.id)" }.joined(separator: ", "))"
         ]
@@ -159,19 +171,23 @@ struct CooperativeCornerResize {
                                     movedEdge: movedEdge,
                                     axis: axis,
                                     newFocusedFrame: newFocusedFrame,
-                                    screenFrame: screenFrame)
+                                    screenFrame: screenFrame,
+                                    gapSize: gapSize)
         }
 
         let clampedEdge = roundedEdge(clamp(desiredEdge, min: edgeRange.min, max: edgeRange.max),
                                       legalMin: edgeRange.min,
                                       legalMax: edgeRange.max)
         let focusedFrame = roundedFrameInsideVisibleFrame(
-            sameSideFrame(baseFrame: newFocusedFrame,
-                          movedEdge: movedEdge,
-                          axis: axis,
-                          edge: clampedEdge,
-                          newFocusedFrame: newFocusedFrame,
-                          screenFrame: screenFrame),
+            frameWithMinimumSize(sameSideFrame(baseFrame: newFocusedFrame,
+                                               movedEdge: movedEdge,
+                                               axis: axis,
+                                               edge: clampedEdge,
+                                               newFocusedFrame: newFocusedFrame,
+                                               screenFrame: screenFrame),
+                                 minimumSize: resolvedFocusedMinimumSize,
+                                 resizeAxis: axis,
+                                 visibleFrame: screenFrame),
             visibleFrame: screenFrame
         )
         let proposedFocusedFrame = sameSideFrame(baseFrame: newFocusedFrame,
@@ -190,13 +206,15 @@ struct CooperativeCornerResize {
                                                                movedEdge: movedEdge,
                                                                axis: axis,
                                                                newFocusedFrame: newFocusedFrame,
-                                                               screenFrame: screenFrame)
+                                                               screenFrame: screenFrame,
+                                                               gapSize: gapSize)
             let clampedFrame = clampedFrameForAffectedWindow(affectedWindow,
                                                              clampedEdge: clampedEdge,
                                                              movedEdge: movedEdge,
                                                              axis: axis,
                                                              newFocusedFrame: newFocusedFrame,
-                                                             screenFrame: screenFrame)
+                                                             screenFrame: screenFrame,
+                                                             gapSize: gapSize)
             debugLog.append("Cooperative resize proposed rectangle for \(affectedWindow.candidate.id): \(proposedFrame.debugDescription)")
             debugLog.append("Cooperative resize clamped rectangle for \(affectedWindow.candidate.id): \(clampedFrame.debugDescription)")
 
@@ -211,10 +229,81 @@ struct CooperativeCornerResize {
             let reasons = reductionReasons(forDesiredEdge: desiredEdge, edgeRange: edgeRange)
             debugLog.append("Cooperative resize reduced requested movement from \(requestedDelta) to \(appliedDelta): \(reasons.joined(separator: "; "))")
         }
+        if edgeRange.min > edgeRange.max {
+            debugLog.append("Cooperative resize layout over-constrained: legal shared-edge range \(edgeRange.min)...\(edgeRange.max)")
+        }
 
         return Plan(focusedFrame: focusedFrame,
                     adjustments: adjustments,
                     debugLog: debugLog)
+    }
+
+    static func correctionPlan(oldFocusedFrame: CGRect,
+                               requestedFocusedFrame: CGRect,
+                               plannedPlan: Plan,
+                               screenFrame: CGRect,
+                               candidates: [Candidate],
+                               actualFocusedFrame: CGRect,
+                               actualCandidateFramesById: [CGWindowID: CGRect],
+                               axis: CornerCycleExpansionAxis,
+                               tolerance: CGFloat,
+                               layoutTolerance: CGFloat,
+                               minimumSize: CGSize,
+                               focusedMinimumSize: CGSize? = nil,
+                               gapSize: CGFloat = 0) -> Plan? {
+        let plannedAdjustmentsById = Dictionary(uniqueKeysWithValues: plannedPlan.adjustments.map { ($0.id, $0) })
+        let focusedNeedsCorrection = frameNeedsCorrection(plannedFrame: plannedPlan.focusedFrame,
+                                                          actualFrame: actualFocusedFrame,
+                                                          screenFrame: screenFrame,
+                                                          tolerance: layoutTolerance)
+        let cooperatingNeedsCorrection = plannedPlan.adjustments.contains { adjustment in
+            guard let actualFrame = actualCandidateFramesById[adjustment.id] else { return false }
+            return frameNeedsCorrection(plannedFrame: adjustment.newFrame,
+                                        actualFrame: actualFrame,
+                                        screenFrame: screenFrame,
+                                        tolerance: layoutTolerance)
+        }
+
+        guard focusedNeedsCorrection || cooperatingNeedsCorrection else {
+            return nil
+        }
+
+        let fallbackMinimumSize = normalizedMinimumSize(minimumSize)
+        let effectiveFocusedMinimumSize = effectiveMinimumSize(base: focusedMinimumSize ?? fallbackMinimumSize,
+                                                               plannedFrame: plannedPlan.focusedFrame,
+                                                               actualFrame: actualFocusedFrame,
+                                                               layoutTolerance: layoutTolerance)
+        let effectiveCandidates = candidates.map { candidate -> Candidate in
+            guard let plannedAdjustment = plannedAdjustmentsById[candidate.id],
+                  let actualFrame = actualCandidateFramesById[candidate.id]
+            else {
+                return candidate
+            }
+
+            let baseMinimumSize = candidate.minimumSize ?? fallbackMinimumSize
+            let effectiveMinimum = effectiveMinimumSize(base: baseMinimumSize,
+                                                        plannedFrame: plannedAdjustment.newFrame,
+                                                        actualFrame: actualFrame,
+                                                        layoutTolerance: layoutTolerance)
+            return Candidate(id: candidate.id, frame: candidate.frame, minimumSize: effectiveMinimum)
+        }
+
+        guard let correctedPlan = plan(oldFocusedFrame: oldFocusedFrame,
+                                       newFocusedFrame: requestedFocusedFrame,
+                                       screenFrame: screenFrame,
+                                       candidates: effectiveCandidates,
+                                       axis: axis,
+                                       tolerance: tolerance,
+                                       minimumSize: minimumSize,
+                                       focusedMinimumSize: effectiveFocusedMinimumSize,
+                                       gapSize: gapSize)
+        else {
+            return nil
+        }
+
+        return Plan(focusedFrame: correctedPlan.focusedFrame,
+                    adjustments: correctedPlan.adjustments,
+                    debugLog: ["Cooperative resize settling pass: actual frames rejected planned layout"] + correctedPlan.debugLog)
     }
 
     static func focusedWindowIsExpanding(oldFrame: CGRect, newFrame: CGRect, axis: CornerCycleExpansionAxis) -> Bool {
@@ -232,7 +321,8 @@ struct CooperativeCornerResize {
                                         candidates: [Candidate],
                                         movedEdge: MovedEdge,
                                         tolerance: CGFloat,
-                                        fallbackMinimumSize: CGSize) -> [AffectedWindow] {
+                                        fallbackMinimumSize: CGSize,
+                                        gapSize: CGFloat) -> [AffectedWindow] {
         let matchingFocusedFrameAdjustments = candidates.compactMap { candidate -> AffectedWindow? in
             guard !candidate.frame.isNull,
                   screenFrame.intersects(candidate.frame),
@@ -242,12 +332,16 @@ struct CooperativeCornerResize {
             }
 
             return AffectedWindow(candidate: candidate,
+                                  layoutFrame: normalizedFullSpanFrame(candidate.frame,
+                                                                       focusedFrame: oldFocusedFrame,
+                                                                       movedEdge: movedEdge,
+                                                                       tolerance: tolerance),
                                   role: .matchingFocusedFrame,
                                   kind: .matchingFocusedFrame,
                                   minimumSize: normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize))
         }
 
-        let matchingFocusedFrameIds = Set(matchingFocusedFrameAdjustments.map(\.candidate.id))
+        let matchingFocusedFrameIds = Set(matchingFocusedFrameAdjustments.map { $0.candidate.id })
 
         let matchingMovingSpanAdjustments = candidates.compactMap { candidate -> AffectedWindow? in
             guard !matchingFocusedFrameIds.contains(candidate.id),
@@ -260,12 +354,16 @@ struct CooperativeCornerResize {
             }
 
             return AffectedWindow(candidate: candidate,
+                                  layoutFrame: normalizedFullSpanFrame(candidate.frame,
+                                                                       focusedFrame: oldFocusedFrame,
+                                                                       movedEdge: movedEdge,
+                                                                       tolerance: tolerance),
                                   role: .matchingMovingSpan,
                                   kind: .matchingFocusedFrame,
                                   minimumSize: normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize))
         }
 
-        let matchingMovingSpanIds = Set(matchingMovingSpanAdjustments.map(\.candidate.id))
+        let matchingMovingSpanIds = Set(matchingMovingSpanAdjustments.map { $0.candidate.id })
 
         let adjacentAdjustments = candidates.compactMap { candidate -> AffectedWindow? in
             guard !matchingFocusedFrameIds.contains(candidate.id),
@@ -273,12 +371,16 @@ struct CooperativeCornerResize {
                   !candidate.frame.isNull,
                   screenFrame.intersects(candidate.frame),
                   isSupportedPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
-                  touchesOldMovingEdge(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance)
+                  touchesOldMovingEdge(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance, gapSize: gapSize)
             else {
                 return nil
             }
 
             return AffectedWindow(candidate: candidate,
+                                  layoutFrame: normalizedFullSpanFrame(candidate.frame,
+                                                                       focusedFrame: oldFocusedFrame,
+                                                                       movedEdge: movedEdge,
+                                                                       tolerance: tolerance),
                                   role: .adjacent,
                                   kind: .adjacent,
                                   minimumSize: normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize))
@@ -307,7 +409,8 @@ struct CooperativeCornerResize {
                                                 movedEdge: MovedEdge,
                                                 axis: CornerCycleExpansionAxis,
                                                 newFocusedFrame: CGRect,
-                                                screenFrame: CGRect) {
+                                                screenFrame: CGRect,
+                                                gapSize: CGFloat) {
         let label = "window \(affectedWindow.candidate.id)"
         switch affectedWindow.role {
         case .matchingFocusedFrame, .matchingMovingSpan:
@@ -323,9 +426,10 @@ struct CooperativeCornerResize {
                                     label: label,
                                     movedEdge: movedEdge,
                                     axis: axis,
-                                    candidateFrame: affectedWindow.candidate.frame,
+                                    candidateFrame: affectedWindow.layoutFrame,
                                     screenFrame: screenFrame,
-                                    minimumSize: affectedWindow.minimumSize)
+                                    minimumSize: affectedWindow.minimumSize,
+                                    gapSize: gapSize)
         }
     }
 
@@ -357,15 +461,16 @@ struct CooperativeCornerResize {
                                                 axis: CornerCycleExpansionAxis,
                                                 candidateFrame: CGRect,
                                                 screenFrame: CGRect,
-                                                minimumSize: CGSize) {
+                                                minimumSize: CGSize,
+                                                gapSize: CGFloat) {
         let minimumAxisSize = axisSize(minimumSize, axis)
         switch movedEdge {
         case .right, .top:
             let outerMax = min(axisMax(candidateFrame, axis), axisMax(screenFrame, axis))
-            edgeRange.requireMax(outerMax - minimumAxisSize, reason: "\(label) minimum \(axisSizeName(axis)) inside visible frame")
+            edgeRange.requireMax(outerMax - gapSize - minimumAxisSize, reason: "\(label) minimum \(axisSizeName(axis)) inside visible frame with gap")
         case .left, .bottom:
             let outerMin = max(axisMin(candidateFrame, axis), axisMin(screenFrame, axis))
-            edgeRange.requireMin(outerMin + minimumAxisSize, reason: "\(label) minimum \(axisSizeName(axis)) inside visible frame")
+            edgeRange.requireMin(outerMin + gapSize + minimumAxisSize, reason: "\(label) minimum \(axisSizeName(axis)) inside visible frame with gap")
         }
     }
 
@@ -374,13 +479,15 @@ struct CooperativeCornerResize {
                                                        movedEdge: MovedEdge,
                                                        axis: CornerCycleExpansionAxis,
                                                        newFocusedFrame: CGRect,
-                                                       screenFrame: CGRect) -> CGRect {
+                                                       screenFrame: CGRect,
+                                                       gapSize: CGFloat) -> CGRect {
         frameForAffectedWindow(affectedWindow,
                                edge: desiredEdge,
                                movedEdge: movedEdge,
                                axis: axis,
                                newFocusedFrame: newFocusedFrame,
-                               screenFrame: screenFrame)
+                               screenFrame: screenFrame,
+                               gapSize: gapSize)
     }
 
     private static func clampedFrameForAffectedWindow(_ affectedWindow: AffectedWindow,
@@ -388,14 +495,16 @@ struct CooperativeCornerResize {
                                                       movedEdge: MovedEdge,
                                                       axis: CornerCycleExpansionAxis,
                                                       newFocusedFrame: CGRect,
-                                                      screenFrame: CGRect) -> CGRect {
+                                                      screenFrame: CGRect,
+                                                      gapSize: CGFloat) -> CGRect {
         roundedFrameInsideVisibleFrame(
             frameForAffectedWindow(affectedWindow,
                                    edge: clampedEdge,
                                    movedEdge: movedEdge,
                                    axis: axis,
                                    newFocusedFrame: newFocusedFrame,
-                                   screenFrame: screenFrame),
+                                   screenFrame: screenFrame,
+                                   gapSize: gapSize),
             visibleFrame: screenFrame
         )
     }
@@ -405,28 +514,39 @@ struct CooperativeCornerResize {
                                                movedEdge: MovedEdge,
                                                axis: CornerCycleExpansionAxis,
                                                newFocusedFrame: CGRect,
-                                               screenFrame: CGRect) -> CGRect {
+                                               screenFrame: CGRect,
+                                               gapSize: CGFloat) -> CGRect {
         switch affectedWindow.role {
         case .matchingFocusedFrame:
-            return sameSideFrame(baseFrame: newFocusedFrame,
-                                 movedEdge: movedEdge,
-                                 axis: axis,
-                                 edge: edge,
-                                 newFocusedFrame: newFocusedFrame,
-                                 screenFrame: screenFrame)
+            return frameWithMinimumSize(sameSideFrame(baseFrame: newFocusedFrame,
+                                                      movedEdge: movedEdge,
+                                                      axis: axis,
+                                                      edge: edge,
+                                                      newFocusedFrame: newFocusedFrame,
+                                                      screenFrame: screenFrame),
+                                        minimumSize: affectedWindow.minimumSize,
+                                        resizeAxis: axis,
+                                        visibleFrame: screenFrame)
         case .matchingMovingSpan:
-            return sameSideFrame(baseFrame: affectedWindow.candidate.frame,
-                                 movedEdge: movedEdge,
-                                 axis: axis,
-                                 edge: edge,
-                                 newFocusedFrame: newFocusedFrame,
-                                 screenFrame: screenFrame)
+            return frameWithMinimumSize(sameSideFrame(baseFrame: affectedWindow.layoutFrame,
+                                                      movedEdge: movedEdge,
+                                                      axis: axis,
+                                                      edge: edge,
+                                                      newFocusedFrame: newFocusedFrame,
+                                                      screenFrame: screenFrame),
+                                        minimumSize: affectedWindow.minimumSize,
+                                        resizeAxis: axis,
+                                        visibleFrame: screenFrame)
         case .adjacent:
-            return adjacentFrame(baseFrame: affectedWindow.candidate.frame,
-                                 movedEdge: movedEdge,
-                                 axis: axis,
-                                 edge: edge,
-                                 screenFrame: screenFrame)
+            return frameWithMinimumSize(adjacentFrame(baseFrame: affectedWindow.layoutFrame,
+                                                      movedEdge: movedEdge,
+                                                      axis: axis,
+                                                      edge: edge,
+                                                      screenFrame: screenFrame,
+                                                      gapSize: gapSize),
+                                        minimumSize: affectedWindow.minimumSize,
+                                        resizeAxis: axis,
+                                        visibleFrame: screenFrame)
         }
     }
 
@@ -452,14 +572,15 @@ struct CooperativeCornerResize {
                                       movedEdge: MovedEdge,
                                       axis: CornerCycleExpansionAxis,
                                       edge: CGFloat,
-                                      screenFrame: CGRect) -> CGRect {
+                                      screenFrame: CGRect,
+                                      gapSize: CGFloat) -> CGRect {
         switch movedEdge {
         case .right, .top:
             let outerMax = min(axisMax(baseFrame, axis), axisMax(screenFrame, axis))
-            return frame(baseFrame, axis: axis, min: edge, max: outerMax, visibleFrame: screenFrame)
+            return frame(baseFrame, axis: axis, min: edge + gapSize, max: outerMax, visibleFrame: screenFrame)
         case .left, .bottom:
             let outerMin = max(axisMin(baseFrame, axis), axisMin(screenFrame, axis))
-            return frame(baseFrame, axis: axis, min: outerMin, max: edge, visibleFrame: screenFrame)
+            return frame(baseFrame, axis: axis, min: outerMin, max: edge - gapSize, visibleFrame: screenFrame)
         }
     }
 
@@ -516,6 +637,36 @@ struct CooperativeCornerResize {
         return rect
     }
 
+    private static func frameWithMinimumSize(_ frame: CGRect,
+                                             minimumSize: CGSize,
+                                             resizeAxis: CornerCycleExpansionAxis,
+                                             visibleFrame: CGRect) -> CGRect {
+        var rect = frame
+        switch resizeAxis {
+        case .horizontal:
+            if rect.height < minimumSize.height {
+                rect.size.height = min(minimumSize.height, visibleFrame.height)
+                if rect.maxY > visibleFrame.maxY {
+                    rect.origin.y = visibleFrame.maxY - rect.height
+                }
+                if rect.minY < visibleFrame.minY {
+                    rect.origin.y = visibleFrame.minY
+                }
+            }
+        case .vertical:
+            if rect.width < minimumSize.width {
+                rect.size.width = min(minimumSize.width, visibleFrame.width)
+                if rect.maxX > visibleFrame.maxX {
+                    rect.origin.x = visibleFrame.maxX - rect.width
+                }
+                if rect.minX < visibleFrame.minX {
+                    rect.origin.x = visibleFrame.minX
+                }
+            }
+        }
+        return rect
+    }
+
     private static func roundedEdge(_ edge: CGFloat, legalMin: CGFloat, legalMax: CGFloat) -> CGFloat {
         let rounded = round(edge)
         let integerMin = ceil(legalMin)
@@ -539,6 +690,36 @@ struct CooperativeCornerResize {
             return edgeRange.upperReasons.isEmpty ? ["visible frame upper bound"] : edgeRange.upperReasons
         }
         return ["integer pixel rounding"]
+    }
+
+    private static func frameNeedsCorrection(plannedFrame: CGRect,
+                                             actualFrame: CGRect,
+                                             screenFrame: CGRect,
+                                             tolerance: CGFloat) -> Bool {
+        guard !actualFrame.isNull else { return false }
+        if !screenFrame.insetBy(dx: -tolerance, dy: -tolerance).contains(actualFrame) {
+            return true
+        }
+        return abs(plannedFrame.minX - actualFrame.minX) > tolerance
+            || abs(plannedFrame.minY - actualFrame.minY) > tolerance
+            || abs(plannedFrame.width - actualFrame.width) > tolerance
+            || abs(plannedFrame.height - actualFrame.height) > tolerance
+    }
+
+    private static func effectiveMinimumSize(base: CGSize,
+                                             plannedFrame: CGRect,
+                                             actualFrame: CGRect,
+                                             layoutTolerance: CGFloat) -> CGSize {
+        let normalizedBase = normalizedMinimumSize(base)
+        guard !actualFrame.isNull else { return normalizedBase }
+
+        let effectiveWidth = actualFrame.width > plannedFrame.width + layoutTolerance
+            ? max(normalizedBase.width, actualFrame.width)
+            : normalizedBase.width
+        let effectiveHeight = actualFrame.height > plannedFrame.height + layoutTolerance
+            ? max(normalizedBase.height, actualFrame.height)
+            : normalizedBase.height
+        return CGSize(width: effectiveWidth, height: effectiveHeight)
     }
 
     private static func edgeCoordinate(_ frame: CGRect, _ edge: MovedEdge) -> CGFloat {
@@ -581,19 +762,42 @@ struct CooperativeCornerResize {
         CGSize(width: max(1, size.width), height: max(1, size.height))
     }
 
+    private static func normalizedFullSpanFrame(_ candidate: CGRect,
+                                                focusedFrame: CGRect,
+                                                movedEdge: MovedEdge,
+                                                tolerance: CGFloat) -> CGRect {
+        var result = candidate
+        switch movedEdge {
+        case .left, .right:
+            if abs(candidate.minY - focusedFrame.minY) <= tolerance,
+               abs(candidate.maxY - focusedFrame.maxY) <= tolerance {
+                result.origin.y = focusedFrame.minY
+                result.size.height = focusedFrame.height
+            }
+        case .top, .bottom:
+            if abs(candidate.minX - focusedFrame.minX) <= tolerance,
+               abs(candidate.maxX - focusedFrame.maxX) <= tolerance {
+                result.origin.x = focusedFrame.minX
+                result.size.width = focusedFrame.width
+            }
+        }
+        return result
+    }
+
     private static func touchesOldMovingEdge(_ candidate: CGRect,
                                              _ focused: CGRect,
                                              movedEdge: MovedEdge,
-                                             tolerance: CGFloat) -> Bool {
+                                             tolerance: CGFloat,
+                                             gapSize: CGFloat) -> Bool {
         switch movedEdge {
         case .left:
-            return abs(candidate.maxX - focused.minX) <= tolerance
+            return abs((focused.minX - candidate.maxX) - gapSize) <= tolerance
         case .right:
-            return abs(candidate.minX - focused.maxX) <= tolerance
+            return abs((candidate.minX - focused.maxX) - gapSize) <= tolerance
         case .bottom:
-            return abs(candidate.maxY - focused.minY) <= tolerance
+            return abs((focused.minY - candidate.maxY) - gapSize) <= tolerance
         case .top:
-            return abs(candidate.minY - focused.maxY) <= tolerance
+            return abs((candidate.minY - focused.maxY) - gapSize) <= tolerance
         }
     }
 

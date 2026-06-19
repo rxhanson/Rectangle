@@ -260,6 +260,170 @@ class CooperativeCornerResizeTests: XCTestCase {
         XCTAssertEqual(plan.adjustments.map(\.id), [topLeft.id])
     }
 
+    func testNearGridNeighborIsDetectedAndNormalized() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let terminalLikeTop = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 5, y: 304, width: 790, height: 596))
+
+        guard let plan = cooperativePlan(focusedOld: focusedOld,
+                                         focusedNew: focusedNew,
+                                         candidates: [terminalLikeTop],
+                                         axis: .vertical,
+                                         tolerance: 20) else {
+            XCTFail("Expected cooperative resize plan")
+            return
+        }
+
+        assertRect(plan.adjustments[0].newFrame, equals: CGRect(x: 0, y: 600, width: 800, height: 300))
+    }
+
+    func testConfiguredGapIsPreservedForVerticalStack() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 0, y: 312, width: 800, height: 588))
+
+        guard let plan = cooperativePlan(focusedOld: focusedOld,
+                                         focusedNew: focusedNew,
+                                         candidates: [topLeft],
+                                         axis: .vertical,
+                                         gapSize: 12) else {
+            XCTFail("Expected cooperative resize plan")
+            return
+        }
+
+        assertRect(plan.focusedFrame, equals: focusedNew)
+        assertRect(plan.adjustments[0].newFrame, equals: CGRect(x: 0, y: 612, width: 800, height: 288))
+        XCTAssertEqual(plan.adjustments[0].newFrame.minY - plan.focusedFrame.maxY, 12, accuracy: 0.001)
+    }
+
+    func testConfiguredGapAndOversizedNeighborReduceExpansion() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                        frame: CGRect(x: 0, y: 312, width: 800, height: 588),
+                                                        minimumSize: CGSize(width: 100, height: 350))
+
+        guard let plan = cooperativePlan(focusedOld: focusedOld,
+                                         focusedNew: focusedNew,
+                                         candidates: [topLeft],
+                                         axis: .vertical,
+                                         gapSize: 12) else {
+            XCTFail("Expected cooperative resize plan")
+            return
+        }
+
+        assertRect(plan.focusedFrame, equals: CGRect(x: 0, y: 0, width: 800, height: 538))
+        assertRect(plan.adjustments[0].newFrame, equals: CGRect(x: 0, y: 550, width: 800, height: 350))
+        XCTAssertEqual(plan.adjustments[0].newFrame.minY - plan.focusedFrame.maxY, 12, accuracy: 0.001)
+    }
+
+    func testSettlingPassAdjustsVerticalOversizedNeighbor() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 0, y: 300, width: 800, height: 600))
+
+        guard let planned = cooperativePlan(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [topLeft], axis: .vertical),
+              let correction = correctionPlan(focusedOld: focusedOld,
+                                              focusedNew: focusedNew,
+                                              plannedPlan: planned,
+                                              candidates: [topLeft],
+                                              actualFocusedFrame: planned.focusedFrame,
+                                              actualCandidateFramesById: [2: CGRect(x: 0, y: 500, width: 800, height: 400)],
+                                              axis: .vertical) else {
+            XCTFail("Expected cooperative correction plan")
+            return
+        }
+
+        assertRect(correction.focusedFrame, equals: CGRect(x: 0, y: 0, width: 800, height: 500))
+        assertRect(correction.adjustments[0].newFrame, equals: CGRect(x: 0, y: 500, width: 800, height: 400))
+    }
+
+    func testSettlingPassAdjustsHorizontalOversizedNeighbor() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 600, height: 900)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 900)
+        let rightSide = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 600, y: 0, width: 600, height: 900))
+
+        guard let planned = cooperativePlan(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [rightSide], axis: .horizontal),
+              let correction = correctionPlan(focusedOld: focusedOld,
+                                              focusedNew: focusedNew,
+                                              plannedPlan: planned,
+                                              candidates: [rightSide],
+                                              actualFocusedFrame: planned.focusedFrame,
+                                              actualCandidateFramesById: [2: CGRect(x: 700, y: 0, width: 500, height: 900)],
+                                              axis: .horizontal) else {
+            XCTFail("Expected cooperative correction plan")
+            return
+        }
+
+        assertRect(correction.focusedFrame, equals: CGRect(x: 0, y: 0, width: 700, height: 900))
+        assertRect(correction.adjustments[0].newFrame, equals: CGRect(x: 700, y: 0, width: 500, height: 900))
+    }
+
+    func testSettlingPassHandlesBothAxisOversizedNeighborWithoutSpill() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 400, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 400, height: 600)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 0, y: 300, width: 400, height: 600))
+
+        guard let planned = cooperativePlan(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [topLeft], axis: .vertical),
+              let correction = correctionPlan(focusedOld: focusedOld,
+                                              focusedNew: focusedNew,
+                                              plannedPlan: planned,
+                                              candidates: [topLeft],
+                                              actualFocusedFrame: planned.focusedFrame,
+                                              actualCandidateFramesById: [2: CGRect(x: 0, y: 500, width: 700, height: 400)],
+                                              axis: .vertical) else {
+            XCTFail("Expected cooperative correction plan")
+            return
+        }
+
+        assertRect(correction.focusedFrame, equals: CGRect(x: 0, y: 0, width: 400, height: 500))
+        assertRect(correction.adjustments[0].newFrame, equals: CGRect(x: 0, y: 500, width: 700, height: 400))
+        XCTAssertLessThanOrEqual(correction.adjustments[0].newFrame.maxX, screenFrame.maxX)
+        XCTAssertLessThanOrEqual(correction.adjustments[0].newFrame.maxY, screenFrame.maxY)
+    }
+
+    func testSettlingPassHandlesOversizedInitiatingWindow() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 0, y: 300, width: 800, height: 600))
+
+        guard let planned = cooperativePlan(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [topLeft], axis: .vertical),
+              let correction = correctionPlan(focusedOld: focusedOld,
+                                              focusedNew: focusedNew,
+                                              plannedPlan: planned,
+                                              candidates: [topLeft],
+                                              actualFocusedFrame: CGRect(x: 0, y: 0, width: 800, height: 700),
+                                              actualCandidateFramesById: [2: planned.adjustments[0].newFrame],
+                                              axis: .vertical) else {
+            XCTFail("Expected cooperative correction plan")
+            return
+        }
+
+        assertRect(correction.focusedFrame, equals: CGRect(x: 0, y: 0, width: 800, height: 700))
+        assertRect(correction.adjustments[0].newFrame, equals: CGRect(x: 0, y: 700, width: 800, height: 200))
+    }
+
+    func testSettlingPassIsSkippedWhenActualFramesMatchPlan() {
+        let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
+        let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2, frame: CGRect(x: 0, y: 300, width: 800, height: 600))
+
+        guard let planned = cooperativePlan(focusedOld: focusedOld, focusedNew: focusedNew, candidates: [topLeft], axis: .vertical) else {
+            XCTFail("Expected cooperative resize plan")
+            return
+        }
+
+        let correction = correctionPlan(focusedOld: focusedOld,
+                                        focusedNew: focusedNew,
+                                        plannedPlan: planned,
+                                        candidates: [topLeft],
+                                        actualFocusedFrame: planned.focusedFrame,
+                                        actualCandidateFramesById: [2: planned.adjustments[0].newFrame],
+                                        axis: .vertical)
+
+        XCTAssertNil(correction)
+    }
+
     func testBottomLeftVerticalShrinkExpandsTopLeftNeighbor() {
         let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 600)
         let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 300)
@@ -526,28 +690,55 @@ class CooperativeCornerResizeTests: XCTestCase {
     private func cooperativeAdjustments(focusedOld: CGRect,
                                         focusedNew: CGRect,
                                         candidates: [CooperativeCornerResize.Candidate],
-                                        axis: CornerCycleExpansionAxis) -> [CooperativeCornerResize.Adjustment] {
+                                        axis: CornerCycleExpansionAxis,
+                                        gapSize: CGFloat = 0) -> [CooperativeCornerResize.Adjustment] {
         CooperativeCornerResize.adjustments(oldFocusedFrame: focusedOld,
                                             newFocusedFrame: focusedNew,
                                             screenFrame: screenFrame,
                                             candidates: candidates,
                                             axis: axis,
                                             tolerance: tolerance,
-                                            minimumSize: minimumSize)
+                                            minimumSize: minimumSize,
+                                            gapSize: gapSize)
     }
 
     private func cooperativePlan(focusedOld: CGRect,
                                  focusedNew: CGRect,
                                  screenFrame: CGRect? = nil,
                                  candidates: [CooperativeCornerResize.Candidate],
-                                 axis: CornerCycleExpansionAxis) -> CooperativeCornerResize.Plan? {
+                                 axis: CornerCycleExpansionAxis,
+                                 tolerance: CGFloat? = nil,
+                                 gapSize: CGFloat = 0) -> CooperativeCornerResize.Plan? {
         CooperativeCornerResize.plan(oldFocusedFrame: focusedOld,
                                      newFocusedFrame: focusedNew,
                                      screenFrame: screenFrame ?? self.screenFrame,
                                      candidates: candidates,
                                      axis: axis,
-                                     tolerance: tolerance,
-                                     minimumSize: minimumSize)
+                                     tolerance: tolerance ?? self.tolerance,
+                                     minimumSize: minimumSize,
+                                     gapSize: gapSize)
+    }
+
+    private func correctionPlan(focusedOld: CGRect,
+                                focusedNew: CGRect,
+                                plannedPlan: CooperativeCornerResize.Plan,
+                                candidates: [CooperativeCornerResize.Candidate],
+                                actualFocusedFrame: CGRect,
+                                actualCandidateFramesById: [CGWindowID: CGRect],
+                                axis: CornerCycleExpansionAxis,
+                                gapSize: CGFloat = 0) -> CooperativeCornerResize.Plan? {
+        CooperativeCornerResize.correctionPlan(oldFocusedFrame: focusedOld,
+                                               requestedFocusedFrame: focusedNew,
+                                               plannedPlan: plannedPlan,
+                                               screenFrame: screenFrame,
+                                               candidates: candidates,
+                                               actualFocusedFrame: actualFocusedFrame,
+                                               actualCandidateFramesById: actualCandidateFramesById,
+                                               axis: axis,
+                                               tolerance: tolerance,
+                                               layoutTolerance: 4,
+                                               minimumSize: minimumSize,
+                                               gapSize: gapSize)
     }
 
     private func assertRect(_ rect: CGRect, equals expected: CGRect, file: StaticString = #filePath, line: UInt = #line) {
