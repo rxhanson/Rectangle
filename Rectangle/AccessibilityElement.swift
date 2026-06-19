@@ -117,6 +117,11 @@ class AccessibilityElement {
             Logger.log("AX sizing proposed: \(newValue.debugDescription), result: \(size?.debugDescription ?? "N/A")")
         }
     }
+
+    var minimumSize: CGSize? {
+        wrappedElement.getWrappedValue(.minSize)
+            ?? wrappedElement.getWrappedValue(.minimumSize)
+    }
     
     var frame: CGRect {
         guard let position = position, let size = size else { return .null }
