@@ -16,6 +16,21 @@ extension WindowAction {
         }
     }
 
+    var cooperativeResizeMovedEdge: CooperativeCornerResize.MovedEdge? {
+        switch cooperativeResizeSide {
+        case .left:
+            return .right
+        case .right:
+            return .left
+        case .top:
+            return .bottom
+        case .bottom:
+            return .top
+        case .none:
+            return nil
+        }
+    }
+
     func isCompatibleRepeatedResizeAction(with other: WindowAction?) -> Bool {
         guard let other else { return false }
         if isCooperativeCornerAction, other.isCooperativeCornerAction {

@@ -49,6 +49,12 @@ struct CooperativeCornerResize {
         let role: AffectedRole
         let kind: Adjustment.Kind
         let minimumSize: CGSize
+        let inclusionReason: String
+    }
+
+    private struct AffectedWindowsResult {
+        let windows: [AffectedWindow]
+        let debugLog: [String]
     }
 
     private struct EdgeRange {
@@ -81,6 +87,29 @@ struct CooperativeCornerResize {
         return min(24, max(8, proportionalTolerance))
     }
 
+    static func captureTolerance(screenFrame: CGRect, axis: CornerCycleExpansionAxis) -> CGFloat {
+        let dimension = axis == .horizontal ? screenFrame.width : screenFrame.height
+        return min(96, max(8, dimension * 0.08))
+    }
+
+    static func framesDiffer(_ lhs: CGRect, _ rhs: CGRect, tolerance: CGFloat) -> Bool {
+        guard !lhs.isNull, !rhs.isNull else { return lhs.isNull != rhs.isNull }
+        return abs(lhs.minX - rhs.minX) > tolerance
+            || abs(lhs.minY - rhs.minY) > tolerance
+            || abs(lhs.width - rhs.width) > tolerance
+            || abs(lhs.height - rhs.height) > tolerance
+    }
+
+    static func frameNeedsApplication(currentFrame: CGRect,
+                                      solvedFrame: CGRect,
+                                      screenFrame: CGRect,
+                                      layoutTolerance: CGFloat) -> Bool {
+        frameNeedsCorrection(plannedFrame: solvedFrame,
+                             actualFrame: currentFrame,
+                             screenFrame: screenFrame,
+                             tolerance: layoutTolerance)
+    }
+
     static func movedEdge(from oldFocusedFrame: CGRect,
                           to newFocusedFrame: CGRect,
                           axis: CornerCycleExpansionAxis,
@@ -106,7 +135,11 @@ struct CooperativeCornerResize {
                             axis: CornerCycleExpansionAxis,
                             tolerance: CGFloat,
                             minimumSize: CGSize,
-                            gapSize: CGFloat = 0) -> [Adjustment] {
+                            gapSize: CGFloat = 0,
+                            captureTolerance: CGFloat? = nil,
+                            movedEdgeOverride: MovedEdge? = nil,
+                            candidateDiscoveryFrame: CGRect? = nil,
+                            actionDescription: String = "repeated cooperative resize") -> [Adjustment] {
         plan(oldFocusedFrame: oldFocusedFrame,
              newFocusedFrame: newFocusedFrame,
              screenFrame: screenFrame,
@@ -114,7 +147,11 @@ struct CooperativeCornerResize {
              axis: axis,
              tolerance: tolerance,
              minimumSize: minimumSize,
-             gapSize: gapSize)?.adjustments ?? []
+             gapSize: gapSize,
+             captureTolerance: captureTolerance,
+             movedEdgeOverride: movedEdgeOverride,
+             candidateDiscoveryFrame: candidateDiscoveryFrame,
+             actionDescription: actionDescription)?.adjustments ?? []
     }
 
     static func plan(oldFocusedFrame: CGRect,
@@ -125,37 +162,57 @@ struct CooperativeCornerResize {
                      tolerance: CGFloat,
                      minimumSize: CGSize,
                      focusedMinimumSize: CGSize? = nil,
-                     gapSize: CGFloat = 0) -> Plan? {
-        guard let movedEdge = movedEdge(from: oldFocusedFrame, to: newFocusedFrame, axis: axis, tolerance: tolerance),
-              !oldFocusedFrame.isNull,
+                     gapSize: CGFloat = 0,
+                     captureTolerance: CGFloat? = nil,
+                     movedEdgeOverride: MovedEdge? = nil,
+                     candidateDiscoveryFrame: CGRect? = nil,
+                     actionDescription: String = "repeated cooperative resize") -> Plan? {
+        guard !oldFocusedFrame.isNull,
               !newFocusedFrame.isNull,
               !screenFrame.isNull
         else {
             return nil
         }
 
+        guard let movedEdge = movedEdgeOverride ?? movedEdge(from: oldFocusedFrame,
+                                                             to: newFocusedFrame,
+                                                             axis: axis,
+                                                             tolerance: tolerance) else {
+            return nil
+        }
+
         let fallbackMinimumSize = normalizedMinimumSize(minimumSize)
         let resolvedFocusedMinimumSize = normalizedMinimumSize(focusedMinimumSize ?? fallbackMinimumSize)
-        let affectedWindows = affectedWindows(oldFocusedFrame: oldFocusedFrame,
-                                              newFocusedFrame: newFocusedFrame,
-                                              screenFrame: screenFrame,
-                                              candidates: candidates,
-                                              movedEdge: movedEdge,
-                                              tolerance: tolerance,
-                                              fallbackMinimumSize: fallbackMinimumSize,
-                                              gapSize: gapSize)
+        let resolvedCaptureTolerance = captureTolerance ?? tolerance
+        let resolvedPerpendicularCaptureTolerance = captureTolerance == nil
+            ? tolerance
+            : Self.captureTolerance(screenFrame: screenFrame, axis: perpendicularAxis(to: axis))
+        let discoveryFrame = candidateDiscoveryFrame ?? oldFocusedFrame
+        let affectedWindowsResult = affectedWindows(discoveryFocusedFrame: discoveryFrame,
+                                                    newFocusedFrame: newFocusedFrame,
+                                                    screenFrame: screenFrame,
+                                                    candidates: candidates,
+                                                    movedEdge: movedEdge,
+                                                    tolerance: tolerance,
+                                                    captureTolerance: resolvedCaptureTolerance,
+                                                    perpendicularCaptureTolerance: resolvedPerpendicularCaptureTolerance,
+                                                    fallbackMinimumSize: fallbackMinimumSize,
+                                                    gapSize: gapSize)
+        let affectedWindows = affectedWindowsResult.windows
         guard !affectedWindows.isEmpty else { return nil }
 
         let oldEdge = edgeCoordinate(oldFocusedFrame, movedEdge)
         let desiredEdge = edgeCoordinate(newFocusedFrame, movedEdge)
         let requestedDelta = desiredEdge - oldEdge
         var debugLog = [
+            "Cooperative resize action type: \(actionDescription)",
             "Cooperative resize visible frame: \(screenFrame.debugDescription)",
             "Cooperative resize configured gap: \(gapSize)",
             "Cooperative resize detection tolerance: \(tolerance)",
+            "Cooperative resize aggressive capture tolerance: axis \(resolvedCaptureTolerance), perpendicular \(resolvedPerpendicularCaptureTolerance)",
             "Cooperative resize requested delta: \(requestedDelta)",
-            "Cooperative resize affected windows: \(affectedWindows.map { "\($0.candidate.id)" }.joined(separator: ", "))"
-        ]
+            "Cooperative resize affected windows: \(affectedWindows.map { "\($0.candidate.id) (\($0.inclusionReason))" }.joined(separator: ", "))"
+        ] + affectedWindowsResult.debugLog
 
         var edgeRange = EdgeRange(min: axisMin(screenFrame, axis), max: axisMax(screenFrame, axis))
         constrainFocusedWindow(&edgeRange,
@@ -250,7 +307,11 @@ struct CooperativeCornerResize {
                                layoutTolerance: CGFloat,
                                minimumSize: CGSize,
                                focusedMinimumSize: CGSize? = nil,
-                               gapSize: CGFloat = 0) -> Plan? {
+                               gapSize: CGFloat = 0,
+                               captureTolerance: CGFloat? = nil,
+                               movedEdgeOverride: MovedEdge? = nil,
+                               candidateDiscoveryFrame: CGRect? = nil,
+                               actionDescription: String = "cooperative resize settling pass") -> Plan? {
         let plannedAdjustmentsById = Dictionary(uniqueKeysWithValues: plannedPlan.adjustments.map { ($0.id, $0) })
         let focusedNeedsCorrection = frameNeedsCorrection(plannedFrame: plannedPlan.focusedFrame,
                                                           actualFrame: actualFocusedFrame,
@@ -296,7 +357,11 @@ struct CooperativeCornerResize {
                                        tolerance: tolerance,
                                        minimumSize: minimumSize,
                                        focusedMinimumSize: effectiveFocusedMinimumSize,
-                                       gapSize: gapSize)
+                                       gapSize: gapSize,
+                                       captureTolerance: captureTolerance,
+                                       movedEdgeOverride: movedEdgeOverride,
+                                       candidateDiscoveryFrame: candidateDiscoveryFrame,
+                                       actionDescription: actionDescription)
         else {
             return nil
         }
@@ -315,78 +380,283 @@ struct CooperativeCornerResize {
         }
     }
 
-    private static func affectedWindows(oldFocusedFrame: CGRect,
+    private static func affectedWindows(discoveryFocusedFrame: CGRect,
                                         newFocusedFrame: CGRect,
                                         screenFrame: CGRect,
                                         candidates: [Candidate],
                                         movedEdge: MovedEdge,
                                         tolerance: CGFloat,
+                                        captureTolerance: CGFloat,
+                                        perpendicularCaptureTolerance: CGFloat,
                                         fallbackMinimumSize: CGSize,
-                                        gapSize: CGFloat) -> [AffectedWindow] {
-        let matchingFocusedFrameAdjustments = candidates.compactMap { candidate -> AffectedWindow? in
-            guard !candidate.frame.isNull,
-                  screenFrame.intersects(candidate.frame),
-                  approximatelyMatchesFrame(candidate.frame, oldFocusedFrame, tolerance: tolerance)
-            else {
-                return nil
+                                        gapSize: CGFloat) -> AffectedWindowsResult {
+        var matchingFocusedFrameAdjustments: [AffectedWindow] = []
+        var matchingMovingSpanAdjustments: [AffectedWindow] = []
+        var adjacentAdjustments: [AffectedWindow] = []
+        var debugLog: [String] = []
+
+        for candidate in candidates {
+            guard !candidate.frame.isNull else {
+                debugLog.append("Cooperative resize candidate \(candidate.id) excluded: null frame")
+                continue
+            }
+            guard screenFrame.intersects(candidate.frame) else {
+                debugLog.append("Cooperative resize candidate \(candidate.id) excluded: outside visible frame")
+                continue
             }
 
-            return AffectedWindow(candidate: candidate,
-                                  layoutFrame: normalizedFullSpanFrame(candidate.frame,
-                                                                       focusedFrame: oldFocusedFrame,
-                                                                       movedEdge: movedEdge,
-                                                                       tolerance: tolerance),
-                                  role: .matchingFocusedFrame,
-                                  kind: .matchingFocusedFrame,
-                                  minimumSize: normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize))
-        }
+            let minimumSize = normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize)
+            let strictLayoutFrame = normalizedFullSpanFrame(candidate.frame,
+                                                           focusedFrame: discoveryFocusedFrame,
+                                                           movedEdge: movedEdge,
+                                                           tolerance: tolerance)
 
-        let matchingFocusedFrameIds = Set(matchingFocusedFrameAdjustments.map { $0.candidate.id })
-
-        let matchingMovingSpanAdjustments = candidates.compactMap { candidate -> AffectedWindow? in
-            guard !matchingFocusedFrameIds.contains(candidate.id),
-                  !candidate.frame.isNull,
-                  screenFrame.intersects(candidate.frame),
-                  matchesMovingSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
-                  isSupportedPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance)
-            else {
-                return nil
+            if approximatelyMatchesFrame(candidate.frame, discoveryFocusedFrame, tolerance: tolerance) {
+                matchingFocusedFrameAdjustments.append(AffectedWindow(candidate: candidate,
+                                                                      layoutFrame: strictLayoutFrame,
+                                                                      role: .matchingFocusedFrame,
+                                                                      kind: .matchingFocusedFrame,
+                                                                      minimumSize: minimumSize,
+                                                                      inclusionReason: "matches focused frame"))
+                debugLog.append("Cooperative resize candidate \(candidate.id) included: matches focused frame")
+                continue
             }
 
-            return AffectedWindow(candidate: candidate,
-                                  layoutFrame: normalizedFullSpanFrame(candidate.frame,
-                                                                       focusedFrame: oldFocusedFrame,
-                                                                       movedEdge: movedEdge,
-                                                                       tolerance: tolerance),
-                                  role: .matchingMovingSpan,
-                                  kind: .matchingFocusedFrame,
-                                  minimumSize: normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize))
-        }
-
-        let matchingMovingSpanIds = Set(matchingMovingSpanAdjustments.map { $0.candidate.id })
-
-        let adjacentAdjustments = candidates.compactMap { candidate -> AffectedWindow? in
-            guard !matchingFocusedFrameIds.contains(candidate.id),
-                  !matchingMovingSpanIds.contains(candidate.id),
-                  !candidate.frame.isNull,
-                  screenFrame.intersects(candidate.frame),
-                  isSupportedPerpendicularSpan(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
-                  touchesOldMovingEdge(candidate.frame, oldFocusedFrame, movedEdge: movedEdge, tolerance: tolerance, gapSize: gapSize)
-            else {
-                return nil
+            if matchesMovingSpan(candidate.frame, discoveryFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
+               isSupportedPerpendicularSpan(candidate.frame, discoveryFocusedFrame, movedEdge: movedEdge, tolerance: tolerance) {
+                matchingMovingSpanAdjustments.append(AffectedWindow(candidate: candidate,
+                                                                   layoutFrame: strictLayoutFrame,
+                                                                   role: .matchingMovingSpan,
+                                                                   kind: .matchingFocusedFrame,
+                                                                   minimumSize: minimumSize,
+                                                                   inclusionReason: "matches moving span"))
+                debugLog.append("Cooperative resize candidate \(candidate.id) included: matches moving span")
+                continue
             }
 
-            return AffectedWindow(candidate: candidate,
-                                  layoutFrame: normalizedFullSpanFrame(candidate.frame,
-                                                                       focusedFrame: oldFocusedFrame,
-                                                                       movedEdge: movedEdge,
-                                                                       tolerance: tolerance),
-                                  role: .adjacent,
-                                  kind: .adjacent,
-                                  minimumSize: normalizedMinimumSize(candidate.minimumSize ?? fallbackMinimumSize))
+            if isSupportedPerpendicularSpan(candidate.frame, discoveryFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
+               touchesOldMovingEdge(candidate.frame, discoveryFocusedFrame, movedEdge: movedEdge, tolerance: tolerance, gapSize: gapSize) {
+                adjacentAdjustments.append(AffectedWindow(candidate: candidate,
+                                                         layoutFrame: strictLayoutFrame,
+                                                         role: .adjacent,
+                                                         kind: .adjacent,
+                                                         minimumSize: minimumSize,
+                                                         inclusionReason: "touches shared edge"))
+                debugLog.append("Cooperative resize candidate \(candidate.id) included: touches shared edge")
+                continue
+            }
+
+            guard let captured = capturedWindow(candidate: candidate,
+                                                discoveryFocusedFrame: discoveryFocusedFrame,
+                                                newFocusedFrame: newFocusedFrame,
+                                                screenFrame: screenFrame,
+                                                movedEdge: movedEdge,
+                                                captureTolerance: captureTolerance,
+                                                perpendicularCaptureTolerance: perpendicularCaptureTolerance,
+                                                gapSize: gapSize,
+                                                minimumSize: minimumSize)
+            else {
+                debugLog.append("Cooperative resize candidate \(candidate.id) excluded: no shared edge, boundary crossing, or capture-tolerance match")
+                continue
+            }
+
+            switch captured.role {
+            case .matchingFocusedFrame:
+                matchingFocusedFrameAdjustments.append(captured)
+            case .matchingMovingSpan:
+                matchingMovingSpanAdjustments.append(captured)
+            case .adjacent:
+                adjacentAdjustments.append(captured)
+            }
+            debugLog.append("Cooperative resize candidate \(candidate.id) included: \(captured.inclusionReason)")
         }
 
-        return matchingFocusedFrameAdjustments + matchingMovingSpanAdjustments + adjacentAdjustments
+        return AffectedWindowsResult(windows: matchingFocusedFrameAdjustments + matchingMovingSpanAdjustments + adjacentAdjustments,
+                                     debugLog: debugLog)
+    }
+
+    private static func capturedWindow(candidate: Candidate,
+                                       discoveryFocusedFrame: CGRect,
+                                       newFocusedFrame: CGRect,
+                                       screenFrame: CGRect,
+                                       movedEdge: MovedEdge,
+                                       captureTolerance: CGFloat,
+                                       perpendicularCaptureTolerance: CGFloat,
+                                       gapSize: CGFloat,
+                                       minimumSize: CGSize) -> AffectedWindow? {
+        let perpendicularSupported = isSupportedPerpendicularSpan(candidate.frame,
+                                                                  discoveryFocusedFrame,
+                                                                  movedEdge: movedEdge,
+                                                                  tolerance: perpendicularCaptureTolerance)
+        let perpendicularOverlaps = perpendicularOverlap(candidate.frame,
+                                                        discoveryFocusedFrame,
+                                                        movedEdge: movedEdge) > 0
+
+        let touchesDiscoveryEdge = touchesOldMovingEdge(candidate.frame,
+                                                        discoveryFocusedFrame,
+                                                        movedEdge: movedEdge,
+                                                        tolerance: captureTolerance,
+                                                        gapSize: gapSize)
+        let touchesTargetEdge = touchesOldMovingEdge(candidate.frame,
+                                                     newFocusedFrame,
+                                                     movedEdge: movedEdge,
+                                                     tolerance: captureTolerance,
+                                                     gapSize: gapSize)
+        let crossesDiscoveryBoundary = crossesSharedBoundary(candidate.frame,
+                                                             boundary: edgeCoordinate(discoveryFocusedFrame, movedEdge),
+                                                             movedEdge: movedEdge,
+                                                             gapSize: gapSize)
+        let crossesTargetBoundary = crossesSharedBoundary(candidate.frame,
+                                                          boundary: edgeCoordinate(newFocusedFrame, movedEdge),
+                                                          movedEdge: movedEdge,
+                                                          gapSize: gapSize)
+        let overlapsTargetBoundary = overlapsBoundaryBand(candidate.frame,
+                                                          boundary: edgeCoordinate(newFocusedFrame, movedEdge),
+                                                          axis: axis(for: movedEdge),
+                                                          tolerance: captureTolerance)
+
+        let edgeCapture = perpendicularSupported && (touchesDiscoveryEdge
+            || touchesTargetEdge
+            || (newFocusedFrame.intersects(candidate.frame) && overlapsTargetBoundary))
+        let boundaryCapture = perpendicularOverlaps && (crossesDiscoveryBoundary || crossesTargetBoundary)
+
+        guard edgeCapture || boundaryCapture
+        else {
+            return nil
+        }
+
+        let assignment = nearestRole(candidate.frame,
+                                     focusedFrame: newFocusedFrame,
+                                     screenFrame: screenFrame,
+                                     movedEdge: movedEdge,
+                                     gapSize: gapSize)
+        let layoutFrame = normalizedCapturedFrame(candidate.frame,
+                                                  focusedFrame: discoveryFocusedFrame,
+                                                  screenFrame: screenFrame,
+                                                  movedEdge: movedEdge,
+                                                  role: assignment,
+                                                  tolerance: perpendicularCaptureTolerance)
+        let reasonParts = [
+            touchesDiscoveryEdge ? "capture-tolerance shared edge" : nil,
+            touchesTargetEdge ? "capture-tolerance target edge" : nil,
+            crossesDiscoveryBoundary || crossesTargetBoundary ? "boundary crossing" : nil,
+            overlapsTargetBoundary ? "target-boundary overlap" : nil,
+            "nearest-region \(assignment)"
+        ].compactMap { $0 }
+        let kind: Adjustment.Kind = assignment == .adjacent ? .adjacent : .matchingFocusedFrame
+
+        return AffectedWindow(candidate: candidate,
+                              layoutFrame: layoutFrame,
+                              role: assignment,
+                              kind: kind,
+                              minimumSize: minimumSize,
+                              inclusionReason: reasonParts.joined(separator: ", "))
+    }
+
+    private static func nearestRole(_ candidate: CGRect,
+                                    focusedFrame: CGRect,
+                                    screenFrame: CGRect,
+                                    movedEdge: MovedEdge,
+                                    gapSize: CGFloat) -> AffectedRole {
+        let axis = axis(for: movedEdge)
+        let boundary = edgeCoordinate(focusedFrame, movedEdge)
+        let sameInterval: (min: CGFloat, max: CGFloat)
+        let adjacentInterval: (min: CGFloat, max: CGFloat)
+
+        switch movedEdge {
+        case .right, .top:
+            sameInterval = (axisMin(focusedFrame, axis), boundary)
+            adjacentInterval = (boundary + gapSize, axisMax(screenFrame, axis))
+        case .left, .bottom:
+            sameInterval = (boundary, axisMax(focusedFrame, axis))
+            adjacentInterval = (axisMin(screenFrame, axis), boundary - gapSize)
+        }
+
+        let candidateInterval = (axisMin(candidate, axis), axisMax(candidate, axis))
+        let sameOverlap = intervalOverlap(candidateInterval, sameInterval)
+        let adjacentOverlap = intervalOverlap(candidateInterval, adjacentInterval)
+
+        if abs(adjacentOverlap - sameOverlap) > 0.001 {
+            return adjacentOverlap > sameOverlap ? .adjacent : .matchingMovingSpan
+        }
+
+        let center = (candidateInterval.0 + candidateInterval.1) / 2.0
+        switch movedEdge {
+        case .right, .top:
+            return center >= boundary ? .adjacent : .matchingMovingSpan
+        case .left, .bottom:
+            return center <= boundary ? .adjacent : .matchingMovingSpan
+        }
+    }
+
+    private static func crossesSharedBoundary(_ candidate: CGRect,
+                                              boundary: CGFloat,
+                                              movedEdge: MovedEdge,
+                                              gapSize: CGFloat) -> Bool {
+        let axis = axis(for: movedEdge)
+        let candidateMin = axisMin(candidate, axis)
+        let candidateMax = axisMax(candidate, axis)
+
+        switch movedEdge {
+        case .right, .top:
+            return candidateMin < boundary + gapSize && candidateMax > boundary
+        case .left, .bottom:
+            return candidateMin < boundary && candidateMax > boundary - gapSize
+        }
+    }
+
+    private static func overlapsBoundaryBand(_ candidate: CGRect,
+                                             boundary: CGFloat,
+                                             axis: CornerCycleExpansionAxis,
+                                             tolerance: CGFloat) -> Bool {
+        axisMin(candidate, axis) <= boundary + tolerance
+            && axisMax(candidate, axis) >= boundary - tolerance
+    }
+
+    private static func perpendicularOverlap(_ candidate: CGRect,
+                                             _ focused: CGRect,
+                                             movedEdge: MovedEdge) -> CGFloat {
+        switch movedEdge {
+        case .left, .right:
+            return intervalOverlap((candidate.minY, candidate.maxY), (focused.minY, focused.maxY))
+        case .top, .bottom:
+            return intervalOverlap((candidate.minX, candidate.maxX), (focused.minX, focused.maxX))
+        }
+    }
+
+    private static func intervalOverlap(_ lhs: (CGFloat, CGFloat), _ rhs: (CGFloat, CGFloat)) -> CGFloat {
+        max(0, min(lhs.1, rhs.1) - max(lhs.0, rhs.0))
+    }
+
+    private static func normalizedCapturedFrame(_ candidate: CGRect,
+                                                focusedFrame: CGRect,
+                                                screenFrame: CGRect,
+                                                movedEdge: MovedEdge,
+                                                role: AffectedRole,
+                                                tolerance: CGFloat) -> CGRect {
+        var result = normalizedFullSpanFrame(candidate,
+                                             focusedFrame: focusedFrame,
+                                             movedEdge: movedEdge,
+                                             tolerance: tolerance)
+        guard role == .adjacent else {
+            return result
+        }
+
+        switch movedEdge {
+        case .right:
+            result.size.width = screenFrame.maxX - result.minX
+        case .left:
+            let oldMaxX = result.maxX
+            result.origin.x = screenFrame.minX
+            result.size.width = oldMaxX - screenFrame.minX
+        case .top:
+            result.size.height = screenFrame.maxY - result.minY
+        case .bottom:
+            let oldMaxY = result.maxY
+            result.origin.y = screenFrame.minY
+            result.size.height = oldMaxY - screenFrame.minY
+        }
+        return result
     }
 
     private static func constrainFocusedWindow(_ edgeRange: inout EdgeRange,
@@ -749,6 +1019,19 @@ struct CooperativeCornerResize {
 
     private static func axisSizeName(_ axis: CornerCycleExpansionAxis) -> String {
         axis == .horizontal ? "width" : "height"
+    }
+
+    private static func axis(for movedEdge: MovedEdge) -> CornerCycleExpansionAxis {
+        switch movedEdge {
+        case .left, .right:
+            return .horizontal
+        case .top, .bottom:
+            return .vertical
+        }
+    }
+
+    private static func perpendicularAxis(to axis: CornerCycleExpansionAxis) -> CornerCycleExpansionAxis {
+        axis == .horizontal ? .vertical : .horizontal
     }
 
     private static func clamp(_ value: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
