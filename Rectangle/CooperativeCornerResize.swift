@@ -110,6 +110,62 @@ struct CooperativeCornerResize {
                              tolerance: layoutTolerance)
     }
 
+    static func focusedFramePreservingOccupiedCell(requestedFocusedFrame: CGRect,
+                                                   screenFrame: CGRect,
+                                                   candidates: [Candidate],
+                                                   axis: CornerCycleExpansionAxis,
+                                                   movedEdge: MovedEdge,
+                                                   tolerance: CGFloat) -> CGRect {
+        guard !requestedFocusedFrame.isNull,
+              !screenFrame.isNull
+        else {
+            return requestedFocusedFrame
+        }
+
+        let requestedSize = axisSize(requestedFocusedFrame.size, axis)
+        let desiredEdge = edgeCoordinate(requestedFocusedFrame, movedEdge)
+        let matchingCandidates = candidates.filter { candidate in
+            let frame = candidate.frame
+            guard !frame.isNull,
+                  screenFrame.intersects(frame),
+                  axisSize(frame.size, axis) < requestedSize - tolerance,
+                  matchesPerpendicularSpan(frame, requestedFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
+                  isContainedInSameSideRegion(frame, requestedFocusedFrame, movedEdge: movedEdge, axis: axis, tolerance: tolerance)
+            else {
+                return false
+            }
+
+            let candidateEdge = edgeCoordinate(frame, movedEdge)
+            switch movedEdge {
+            case .right, .top:
+                return candidateEdge < desiredEdge - tolerance
+            case .left, .bottom:
+                return candidateEdge > desiredEdge + tolerance
+            }
+        }
+
+        guard let occupiedCell = matchingCandidates.min(by: { lhs, rhs in
+            let lhsSize = axisSize(lhs.frame.size, axis)
+            let rhsSize = axisSize(rhs.frame.size, axis)
+            if abs(lhsSize - rhsSize) > tolerance {
+                return lhsSize < rhsSize
+            }
+            return lhs.id < rhs.id
+        }) else {
+            return requestedFocusedFrame
+        }
+
+        return roundedFrameInsideVisibleFrame(
+            sameSideFrame(baseFrame: requestedFocusedFrame,
+                          movedEdge: movedEdge,
+                          axis: axis,
+                          edge: edgeCoordinate(occupiedCell.frame, movedEdge),
+                          newFocusedFrame: requestedFocusedFrame,
+                          screenFrame: screenFrame),
+            visibleFrame: screenFrame
+        )
+    }
+
     static func movedEdge(from oldFocusedFrame: CGRect,
                           to newFocusedFrame: CGRect,
                           axis: CornerCycleExpansionAxis,
@@ -1144,6 +1200,20 @@ struct CooperativeCornerResize {
         }
     }
 
+    private static func matchesPerpendicularSpan(_ candidate: CGRect,
+                                                 _ focused: CGRect,
+                                                 movedEdge: MovedEdge,
+                                                 tolerance: CGFloat) -> Bool {
+        switch movedEdge {
+        case .left, .right:
+            return abs(candidate.minY - focused.minY) <= tolerance
+                && abs(candidate.maxY - focused.maxY) <= tolerance
+        case .top, .bottom:
+            return abs(candidate.minX - focused.minX) <= tolerance
+                && abs(candidate.maxX - focused.maxX) <= tolerance
+        }
+    }
+
     private static func matchesMovingSpan(_ candidate: CGRect,
                                           _ focused: CGRect,
                                           movedEdge: MovedEdge,
@@ -1176,6 +1246,30 @@ struct CooperativeCornerResize {
         let meaningfulSpan = candidateMax - candidateMin > tolerance
 
         return candidateIsWithinFocused && sharesFocusedBoundary && meaningfulSpan
+    }
+
+    private static func isContainedInSameSideRegion(_ candidate: CGRect,
+                                                    _ focused: CGRect,
+                                                    movedEdge: MovedEdge,
+                                                    axis: CornerCycleExpansionAxis,
+                                                    tolerance: CGFloat) -> Bool {
+        let candidateMin = axisMin(candidate, axis)
+        let candidateMax = axisMax(candidate, axis)
+        let focusedMin = axisMin(focused, axis)
+        let focusedMax = axisMax(focused, axis)
+        let candidateIsWithinFocused = candidateMin >= focusedMin - tolerance
+            && candidateMax <= focusedMax + tolerance
+
+        guard candidateIsWithinFocused else {
+            return false
+        }
+
+        switch movedEdge {
+        case .right, .top:
+            return abs(candidateMin - focusedMin) <= tolerance
+        case .left, .bottom:
+            return abs(candidateMax - focusedMax) <= tolerance
+        }
     }
 
     private static func approximatelyMatchesFrame(_ candidate: CGRect,

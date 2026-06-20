@@ -40,7 +40,7 @@ extension WindowAction {
             && cooperativeResizeAxis == other.cooperativeResizeAxis
     }
 
-    private var isCooperativeCornerAction: Bool {
+    var isCooperativeCornerAction: Bool {
         switch self {
         case .topLeft, .topRight, .bottomLeft, .bottomRight:
             return true

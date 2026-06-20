@@ -162,13 +162,12 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
         
-        var resultingRect = apply(result: resultParameters,
-                                  cooperativeCornerAdjustments: cooperativeCornerPlan?.adjustments ?? [],
-                                  layoutTolerance: cooperativeCornerPlan?.layoutTolerance ?? 0)
-        if let cooperativeCornerPlan,
-           let settledRect = settleCooperativeCornerResizeIfNeeded(plan: cooperativeCornerPlan,
-                                                                   focusedWindowElement: frontmostWindowElement) {
-            resultingRect = settledRect
+        var resultingRect: CGRect
+        if let cooperativeCornerPlan {
+            resultingRect = applyCooperativeCornerResize(result: resultParameters,
+                                                         plan: cooperativeCornerPlan)
+        } else {
+            resultingRect = apply(result: resultParameters)
         }
         
         let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen
@@ -257,6 +256,66 @@ class WindowManager {
         return resultingRect
     }
 
+    private func applyCooperativeCornerResize(result: ResultParameters,
+                                              plan: CooperativeCornerApplicationPlan) -> CGRect {
+        var activePlan = plan
+        let focusedWindowIsExpanding = CooperativeCornerResize.focusedWindowIsExpanding(oldFrame: result.windowElement.frame.screenFlipped,
+                                                                                        newFrame: activePlan.focusedFrame,
+                                                                                        axis: activePlan.axis)
+
+        if focusedWindowIsExpanding {
+            apply(activePlan.adjustments,
+                  kind: .adjacent,
+                  screenFrame: activePlan.screenFrame,
+                  layoutTolerance: activePlan.layoutTolerance)
+            apply(activePlan.adjustments,
+                  kind: .matchingFocusedFrame,
+                  screenFrame: activePlan.screenFrame,
+                  layoutTolerance: activePlan.layoutTolerance)
+
+            if let correctedPlan = correctionPlanAfterApplyingCooperatingWindows(activePlan) {
+                activePlan = correctedPlan
+                apply(activePlan.adjustments,
+                      kind: .adjacent,
+                      screenFrame: activePlan.screenFrame,
+                      layoutTolerance: activePlan.layoutTolerance)
+                apply(activePlan.adjustments,
+                      kind: .matchingFocusedFrame,
+                      screenFrame: activePlan.screenFrame,
+                      layoutTolerance: activePlan.layoutTolerance)
+            }
+
+            var resultingRect = applyFocusedCooperativeFrameIfNeeded(activePlan.focusedFrame,
+                                                                     result: result,
+                                                                     layoutTolerance: activePlan.layoutTolerance)
+            if let settledRect = settleCooperativeCornerResizeIfNeeded(plan: activePlan,
+                                                                       focusedWindowElement: result.windowElement,
+                                                                       result: result) {
+                resultingRect = settledRect
+            }
+            return resultingRect
+        }
+
+        var resultingRect = applyFocusedCooperativeFrameIfNeeded(activePlan.focusedFrame,
+                                                                 result: result,
+                                                                 layoutTolerance: activePlan.layoutTolerance)
+        apply(activePlan.adjustments,
+              kind: .matchingFocusedFrame,
+              screenFrame: activePlan.screenFrame,
+              layoutTolerance: activePlan.layoutTolerance)
+        apply(activePlan.adjustments,
+              kind: .adjacent,
+              screenFrame: activePlan.screenFrame,
+              layoutTolerance: activePlan.layoutTolerance)
+
+        if let settledRect = settleCooperativeCornerResizeIfNeeded(plan: activePlan,
+                                                                   focusedWindowElement: result.windowElement,
+                                                                   result: result) {
+            resultingRect = settledRect
+        }
+        return resultingRect
+    }
+
     private func cooperativeCornerResizePlan(focusedWindowId: CGWindowID,
                                              focusedWindowIsFixedSize: Bool,
                                              focusedWindowMinimumSize: CGSize?,
@@ -282,7 +341,6 @@ class WindowManager {
         let captureTolerance = CooperativeCornerResize.captureTolerance(screenFrame: screenFrame, axis: cooperativeAxis)
         let isRepeatedCooperativeAction = action.isCompatibleRepeatedResizeAction(with: lastRectangleAction?.action)
         let actionDescription = isRepeatedCooperativeAction ? "repeated cooperative resize" : "initial corner/side cooperative placement"
-        let candidateDiscoveryFrame = isRepeatedCooperativeAction ? oldFocusedFrame : newFocusedFrame
         let screenFrameAX = screenFrame.screenFlipped
         let elementsById = AccessibilityElement.getAllWindowElements().reduce(into: [CGWindowID: AccessibilityElement]()) { elements, element in
             guard let candidateId = element.getWindowId(),
@@ -312,8 +370,17 @@ class WindowManager {
         }
         let minimumSize = CGSize(width: max(1, CGFloat(Defaults.minimumWindowWidth.value)),
                                  height: max(1, CGFloat(Defaults.minimumWindowHeight.value)))
+        let requestedFocusedFrame = (!isRepeatedCooperativeAction && action.isCooperativeCornerAction)
+            ? CooperativeCornerResize.focusedFramePreservingOccupiedCell(requestedFocusedFrame: newFocusedFrame,
+                                                                         screenFrame: screenFrame,
+                                                                         candidates: candidates,
+                                                                         axis: cooperativeAxis,
+                                                                         movedEdge: movedEdge,
+                                                                         tolerance: tolerance)
+            : newFocusedFrame
+        let candidateDiscoveryFrame = isRepeatedCooperativeAction ? oldFocusedFrame : requestedFocusedFrame
         guard let plan = CooperativeCornerResize.plan(oldFocusedFrame: oldFocusedFrame,
-                                                      newFocusedFrame: newFocusedFrame,
+                                                      newFocusedFrame: requestedFocusedFrame,
                                                       screenFrame: screenFrame,
                                                       candidates: candidates,
                                                       axis: cooperativeAxis,
@@ -341,7 +408,7 @@ class WindowManager {
         guard !adjustments.isEmpty else { return nil }
 
         return CooperativeCornerApplicationPlan(oldFocusedFrame: oldFocusedFrame,
-                                                requestedFocusedFrame: newFocusedFrame,
+                                                requestedFocusedFrame: requestedFocusedFrame,
                                                 focusedFrame: plan.focusedFrame,
                                                 screenFrame: screenFrame,
                                                 candidates: candidates,
@@ -375,8 +442,39 @@ class WindowManager {
         }
     }
 
+    private func correctionPlanAfterApplyingCooperatingWindows(_ plan: CooperativeCornerApplicationPlan) -> CooperativeCornerApplicationPlan? {
+        let actualCandidateFramesById = Dictionary(uniqueKeysWithValues: plan.adjustments.map { adjustment in
+            (adjustment.id, adjustment.element.frame.screenFlipped)
+        })
+
+        guard let correctionPlan = CooperativeCornerResize.correctionPlan(oldFocusedFrame: plan.oldFocusedFrame,
+                                                                          requestedFocusedFrame: plan.requestedFocusedFrame,
+                                                                          plannedPlan: plan.asGeometryPlan(),
+                                                                          screenFrame: plan.screenFrame,
+                                                                          candidates: plan.candidates,
+                                                                          actualFocusedFrame: plan.focusedFrame,
+                                                                          actualCandidateFramesById: actualCandidateFramesById,
+                                                                          axis: plan.axis,
+                                                                          tolerance: plan.detectionTolerance,
+                                                                          layoutTolerance: plan.layoutTolerance,
+                                                                          minimumSize: plan.minimumSize,
+                                                                          focusedMinimumSize: plan.focusedMinimumSize,
+                                                                          gapSize: plan.gapSize,
+                                                                          captureTolerance: plan.captureTolerance,
+                                                                          movedEdgeOverride: plan.movedEdge,
+                                                                          candidateDiscoveryFrame: plan.candidateDiscoveryFrame,
+                                                                          actionDescription: plan.actionDescription)
+        else {
+            return nil
+        }
+
+        correctionPlan.debugLog.forEach(Logger.log)
+        return plan.replacingGeometry(with: correctionPlan)
+    }
+
     private func settleCooperativeCornerResizeIfNeeded(plan: CooperativeCornerApplicationPlan,
-                                                       focusedWindowElement: AccessibilityElement) -> CGRect? {
+                                                       focusedWindowElement: AccessibilityElement,
+                                                       result: ResultParameters) -> CGRect? {
         let actualFocusedFrame = focusedWindowElement.frame.screenFlipped
         let actualCandidateFramesById = Dictionary(uniqueKeysWithValues: plan.adjustments.map { adjustment in
             (adjustment.id, adjustment.element.frame.screenFlipped)
@@ -425,15 +523,13 @@ class WindowManager {
                   kind: .matchingFocusedFrame,
                   screenFrame: plan.screenFrame,
                   layoutTolerance: plan.layoutTolerance)
-            applyFocusedCooperativeFrameIfNeeded(correctionPlan.focusedFrame,
-                                                 focusedWindowElement: focusedWindowElement,
-                                                 screenFrame: plan.screenFrame,
-                                                 layoutTolerance: plan.layoutTolerance)
+            _ = applyFocusedCooperativeFrameIfNeeded(correctionPlan.focusedFrame,
+                                                     result: result,
+                                                     layoutTolerance: plan.layoutTolerance)
         } else {
-            applyFocusedCooperativeFrameIfNeeded(correctionPlan.focusedFrame,
-                                                 focusedWindowElement: focusedWindowElement,
-                                                 screenFrame: plan.screenFrame,
-                                                 layoutTolerance: plan.layoutTolerance)
+            _ = applyFocusedCooperativeFrameIfNeeded(correctionPlan.focusedFrame,
+                                                     result: result,
+                                                     layoutTolerance: plan.layoutTolerance)
             apply(correctionAdjustments,
                   kind: .matchingFocusedFrame,
                   screenFrame: plan.screenFrame,
@@ -448,17 +544,32 @@ class WindowManager {
     }
 
     private func applyFocusedCooperativeFrameIfNeeded(_ frame: CGRect,
-                                                      focusedWindowElement: AccessibilityElement,
-                                                      screenFrame: CGRect,
-                                                      layoutTolerance: CGFloat) {
-        if CooperativeCornerResize.frameNeedsApplication(currentFrame: focusedWindowElement.frame.screenFlipped,
+                                                      result: ResultParameters,
+                                                      layoutTolerance: CGFloat) -> CGRect {
+        if CooperativeCornerResize.frameNeedsApplication(currentFrame: result.windowElement.frame.screenFlipped,
                                                          solvedFrame: frame,
-                                                         screenFrame: screenFrame,
+                                                         screenFrame: result.visibleFrameOfScreen,
                                                          layoutTolerance: layoutTolerance) {
-            focusedWindowElement.setFrame(frame.screenFlipped)
+            let windowMoverChain = result.isFixedSize
+            ? fixedSizeWindowMoverChain
+            : standardWindowMoverChain
+            var calcResult = result.calcResult
+            calcResult.rect = frame
+            let focusedResult = ResultParameters(windowId: result.windowId,
+                                                 action: result.action,
+                                                 windowElement: result.windowElement,
+                                                 calcResult: calcResult,
+                                                 usableScreens: result.usableScreens,
+                                                 visibleFrameOfScreen: result.visibleFrameOfScreen,
+                                                 source: result.source,
+                                                 isFixedSize: result.isFixedSize)
+            for windowMover in windowMoverChain {
+                windowMover.moveWindow(toRect: frame, resultParameters: focusedResult)
+            }
         } else {
             Logger.log("Cooperative resize focused no-op: current frame already matches solved frame")
         }
+        return result.windowElement.frame
     }
     
     func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {
@@ -646,5 +757,36 @@ private struct CooperativeCornerApplicationPlan {
         return CooperativeCornerResize.Plan(focusedFrame: focusedFrame,
                                             adjustments: geometryAdjustments,
                                             debugLog: debugLog)
+    }
+
+    func replacingGeometry(with geometryPlan: CooperativeCornerResize.Plan) -> CooperativeCornerApplicationPlan? {
+        let elementsById = Dictionary(uniqueKeysWithValues: adjustments.map { ($0.id, $0.element) })
+        let updatedAdjustments: [CooperativeCornerWindowAdjustment] = geometryPlan.adjustments.compactMap { adjustment in
+            guard let element = elementsById[adjustment.id] else { return nil }
+            return CooperativeCornerWindowAdjustment(element: element,
+                                                    id: adjustment.id,
+                                                    newFrame: adjustment.newFrame,
+                                                    kind: adjustment.kind)
+        }
+
+        guard !updatedAdjustments.isEmpty else { return nil }
+
+        return CooperativeCornerApplicationPlan(oldFocusedFrame: oldFocusedFrame,
+                                                requestedFocusedFrame: requestedFocusedFrame,
+                                                focusedFrame: geometryPlan.focusedFrame,
+                                                screenFrame: screenFrame,
+                                                candidates: candidates,
+                                                axis: axis,
+                                                detectionTolerance: detectionTolerance,
+                                                captureTolerance: captureTolerance,
+                                                layoutTolerance: layoutTolerance,
+                                                minimumSize: minimumSize,
+                                                focusedMinimumSize: focusedMinimumSize,
+                                                gapSize: gapSize,
+                                                movedEdge: movedEdge,
+                                                candidateDiscoveryFrame: candidateDiscoveryFrame,
+                                                actionDescription: actionDescription,
+                                                adjustments: updatedAdjustments,
+                                                debugLog: geometryPlan.debugLog)
     }
 }
