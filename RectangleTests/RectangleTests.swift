@@ -80,6 +80,20 @@ class PositionCyclesTests: XCTestCase {
     }
 }
 
+class CooperativeResizeSourceTests: XCTestCase {
+
+    func testKeyboardShortcutsAndDragSnappingAllowCooperativeResize() {
+        XCTAssertTrue(ExecutionSource.keyboardShortcut.allowsCooperativeResize)
+        XCTAssertTrue(ExecutionSource.dragToSnap.allowsCooperativeResize)
+    }
+
+    func testNonSnappingSourcesDoNotAllowCooperativeResize() {
+        XCTAssertFalse(ExecutionSource.menuItem.allowsCooperativeResize)
+        XCTAssertFalse(ExecutionSource.url.allowsCooperativeResize)
+        XCTAssertFalse(ExecutionSource.titleBar.allowsCooperativeResize)
+    }
+}
+
 class ScreenFlippedTests: XCTestCase {
 
     func testScreenFlippedIsOwnInverse() {

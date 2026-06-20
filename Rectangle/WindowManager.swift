@@ -268,7 +268,7 @@ class WindowManager {
                                              destinationScreenIsCurrentScreen: Bool,
                                              lastRectangleAction: RectangleAction?) -> CooperativeCornerApplicationPlan? {
         guard Defaults.cooperativeCornerResize.enabled,
-              source == .keyboardShortcut,
+              source.allowsCooperativeResize,
               !focusedWindowIsFixedSize,
               destinationScreenIsCurrentScreen,
               let cooperativeAxis = action.cooperativeResizeAxis,

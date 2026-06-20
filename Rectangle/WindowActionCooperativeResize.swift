@@ -76,3 +76,14 @@ extension WindowAction {
 private enum CooperativeResizeSide {
     case left, right, top, bottom
 }
+
+extension ExecutionSource {
+    var allowsCooperativeResize: Bool {
+        switch self {
+        case .keyboardShortcut, .dragToSnap:
+            return true
+        case .menuItem, .url, .titleBar:
+            return false
+        }
+    }
+}
