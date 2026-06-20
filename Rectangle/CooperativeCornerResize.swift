@@ -535,7 +535,8 @@ struct CooperativeCornerResize {
                                                   screenFrame: screenFrame,
                                                   movedEdge: movedEdge,
                                                   role: assignment,
-                                                  tolerance: perpendicularCaptureTolerance)
+                                                  tolerance: perpendicularCaptureTolerance,
+                                                  gapSize: gapSize)
         let reasonParts = [
             touchesDiscoveryEdge ? "capture-tolerance shared edge" : nil,
             touchesTargetEdge ? "capture-tolerance target edge" : nil,
@@ -633,7 +634,8 @@ struct CooperativeCornerResize {
                                                 screenFrame: CGRect,
                                                 movedEdge: MovedEdge,
                                                 role: AffectedRole,
-                                                tolerance: CGFloat) -> CGRect {
+                                                tolerance: CGFloat,
+                                                gapSize: CGFloat) -> CGRect {
         var result = normalizedFullSpanFrame(candidate,
                                              focusedFrame: focusedFrame,
                                              movedEdge: movedEdge,
@@ -644,19 +646,57 @@ struct CooperativeCornerResize {
 
         switch movedEdge {
         case .right:
-            result.size.width = screenFrame.maxX - result.minX
+            result.size.width = outerMax(for: candidate.maxX,
+                                         screenMin: screenFrame.minX,
+                                         screenMax: screenFrame.maxX,
+                                         gapSize: gapSize) - result.minX
         case .left:
             let oldMaxX = result.maxX
-            result.origin.x = screenFrame.minX
-            result.size.width = oldMaxX - screenFrame.minX
+            result.origin.x = outerMin(for: candidate.minX,
+                                       screenMin: screenFrame.minX,
+                                       screenMax: screenFrame.maxX,
+                                       gapSize: gapSize)
+            result.size.width = oldMaxX - result.minX
         case .top:
-            result.size.height = screenFrame.maxY - result.minY
+            result.size.height = outerMax(for: candidate.maxY,
+                                          screenMin: screenFrame.minY,
+                                          screenMax: screenFrame.maxY,
+                                          gapSize: gapSize) - result.minY
         case .bottom:
             let oldMaxY = result.maxY
-            result.origin.y = screenFrame.minY
-            result.size.height = oldMaxY - screenFrame.minY
+            result.origin.y = outerMin(for: candidate.minY,
+                                       screenMin: screenFrame.minY,
+                                       screenMax: screenFrame.maxY,
+                                       gapSize: gapSize)
+            result.size.height = oldMaxY - result.minY
         }
         return result
+    }
+
+    private static func outerMin(for candidateMin: CGFloat,
+                                 screenMin: CGFloat,
+                                 screenMax: CGFloat,
+                                 gapSize: CGFloat) -> CGFloat {
+        let resolvedGapSize = max(0, min(gapSize, (screenMax - screenMin) / 2.0))
+        guard resolvedGapSize > 0 else { return screenMin }
+
+        let gapMin = screenMin + resolvedGapSize
+        return abs(candidateMin - screenMin) < abs(candidateMin - gapMin)
+            ? screenMin
+            : gapMin
+    }
+
+    private static func outerMax(for candidateMax: CGFloat,
+                                 screenMin: CGFloat,
+                                 screenMax: CGFloat,
+                                 gapSize: CGFloat) -> CGFloat {
+        let resolvedGapSize = max(0, min(gapSize, (screenMax - screenMin) / 2.0))
+        guard resolvedGapSize > 0 else { return screenMax }
+
+        let gapMax = screenMax - resolvedGapSize
+        return abs(candidateMax - screenMax) < abs(candidateMax - gapMax)
+            ? screenMax
+            : gapMax
     }
 
     private static func constrainFocusedWindow(_ edgeRange: inout EdgeRange,

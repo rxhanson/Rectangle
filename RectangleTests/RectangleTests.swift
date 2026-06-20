@@ -515,6 +515,56 @@ class CooperativeCornerResizeTests: XCTestCase {
         XCTAssertEqual(plan.adjustments[0].newFrame.minY - plan.focusedFrame.maxY, 12, accuracy: 0.001)
     }
 
+    func testCapturedGapPerimeterSurvivesOversizedNeighbor() {
+        let focusedOld = CGRect(x: 12, y: 12, width: 782, height: 282)
+        let focusedNew = CGRect(x: 12, y: 12, width: 782, height: 582)
+        let topLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                        frame: CGRect(x: 102, y: 654, width: 602, height: 234),
+                                                        minimumSize: CGSize(width: 100, height: 350))
+
+        guard let plan = cooperativePlan(focusedOld: focusedOld,
+                                         focusedNew: focusedNew,
+                                         candidates: [topLeft],
+                                         axis: .vertical,
+                                         gapSize: 12,
+                                         captureTolerance: 72,
+                                         movedEdgeOverride: .top,
+                                         candidateDiscoveryFrame: focusedNew) else {
+            XCTFail("Expected gap-aware cooperative resize plan")
+            return
+        }
+
+        assertRect(plan.focusedFrame, equals: CGRect(x: 12, y: 12, width: 782, height: 514))
+        assertRect(plan.adjustments[0].newFrame, equals: CGRect(x: 12, y: 538, width: 782, height: 350))
+        XCTAssertEqual(plan.adjustments[0].newFrame.minY - plan.focusedFrame.maxY, 12, accuracy: 0.001)
+        XCTAssertEqual(plan.adjustments[0].newFrame.maxY, screenFrame.maxY - 12, accuracy: 0.001)
+    }
+
+    func testCapturedHorizontalGapPerimeterSurvivesOversizedNeighbor() {
+        let focusedOld = CGRect(x: 12, y: 12, width: 282, height: 876)
+        let focusedNew = CGRect(x: 12, y: 12, width: 582, height: 876)
+        let rightSide = CooperativeCornerResize.Candidate(id: 2,
+                                                          frame: CGRect(x: 654, y: 72, width: 534, height: 756),
+                                                          minimumSize: CGSize(width: 700, height: 100))
+
+        guard let plan = cooperativePlan(focusedOld: focusedOld,
+                                         focusedNew: focusedNew,
+                                         candidates: [rightSide],
+                                         axis: .horizontal,
+                                         gapSize: 12,
+                                         captureTolerance: 96,
+                                         movedEdgeOverride: .right,
+                                         candidateDiscoveryFrame: focusedNew) else {
+            XCTFail("Expected horizontal gap-aware cooperative resize plan")
+            return
+        }
+
+        assertRect(plan.focusedFrame, equals: CGRect(x: 12, y: 12, width: 464, height: 876))
+        assertRect(plan.adjustments[0].newFrame, equals: CGRect(x: 488, y: 12, width: 700, height: 876))
+        XCTAssertEqual(plan.adjustments[0].newFrame.minX - plan.focusedFrame.maxX, 12, accuracy: 0.001)
+        XCTAssertEqual(plan.adjustments[0].newFrame.maxX, screenFrame.maxX - 12, accuracy: 0.001)
+    }
+
     func testSettlingPassAdjustsVerticalOversizedNeighbor() {
         let focusedOld = CGRect(x: 0, y: 0, width: 800, height: 300)
         let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
