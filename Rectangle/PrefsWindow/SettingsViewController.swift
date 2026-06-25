@@ -529,23 +529,23 @@ class SettingsViewController: NSViewController {
                 vSplitPopUpButton?.selectCurrentValue()
             }
 
-            configureShortcutView(largerWidthShortcutView, key: WindowAction.largerWidth.name, fallback: ShortcutStore.defaultShortcut(for: .largerWidth))
-            configureShortcutView(smallerWidthShortcutView, key: WindowAction.smallerWidth.name, fallback: ShortcutStore.defaultShortcut(for: .smallerWidth))
+            largerWidthShortcutView.bind(to: .largerWidth)
+            smallerWidthShortcutView.bind(to: .smallerWidth)
             
-            configureShortcutView(topVerticalThirdShortcutView, key: WindowAction.topVerticalThird.name, fallback: ShortcutStore.defaultShortcut(for: .topVerticalThird))
-            configureShortcutView(middleVerticalThirdShortcutView, key: WindowAction.middleVerticalThird.name, fallback: ShortcutStore.defaultShortcut(for: .middleVerticalThird))
-            configureShortcutView(bottomVerticalThirdShortcutView, key: WindowAction.bottomVerticalThird.name, fallback: ShortcutStore.defaultShortcut(for: .bottomVerticalThird))
-            configureShortcutView(topVerticalTwoThirdsShortcutView, key: WindowAction.topVerticalTwoThirds.name, fallback: ShortcutStore.defaultShortcut(for: .topVerticalTwoThirds))
-            configureShortcutView(bottomVerticalTwoThirdsShortcutView, key: WindowAction.bottomVerticalTwoThirds.name, fallback: ShortcutStore.defaultShortcut(for: .bottomVerticalTwoThirds))
+            topVerticalThirdShortcutView.bind(to: .topVerticalThird)
+            middleVerticalThirdShortcutView.bind(to: .middleVerticalThird)
+            bottomVerticalThirdShortcutView.bind(to: .bottomVerticalThird)
+            topVerticalTwoThirdsShortcutView.bind(to: .topVerticalTwoThirds)
+            bottomVerticalTwoThirdsShortcutView.bind(to: .bottomVerticalTwoThirds)
 
-            configureShortcutView(topLeftEighthShortcutView, key: WindowAction.topLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftEighth))
-            configureShortcutView(topCenterLeftEighthShortcutView, key: WindowAction.topCenterLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topCenterLeftEighth))
-            configureShortcutView(topCenterRightEighthShortcutView, key: WindowAction.topCenterRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topCenterRightEighth))
-            configureShortcutView(topRightEighthShortcutView, key: WindowAction.topRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .topRightEighth))
-            configureShortcutView(bottomLeftEighthShortcutView, key: WindowAction.bottomLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomLeftEighth))
-            configureShortcutView(bottomCenterLeftEighthShortcutView, key: WindowAction.bottomCenterLeftEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomCenterLeftEighth))
-            configureShortcutView(bottomCenterRightEighthShortcutView, key: WindowAction.bottomCenterRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomCenterRightEighth))
-            configureShortcutView(bottomRightEighthShortcutView, key: WindowAction.bottomRightEighth.name, fallback: ShortcutStore.defaultShortcut(for: .bottomRightEighth))
+            topLeftEighthShortcutView.bind(to: .topLeftEighth)
+            topCenterLeftEighthShortcutView.bind(to: .topCenterLeftEighth)
+            topCenterRightEighthShortcutView.bind(to: .topCenterRightEighth)
+            topRightEighthShortcutView.bind(to: .topRightEighth)
+            bottomLeftEighthShortcutView.bind(to: .bottomLeftEighth)
+            bottomCenterLeftEighthShortcutView.bind(to: .bottomCenterLeftEighth)
+            bottomCenterRightEighthShortcutView.bind(to: .bottomCenterRightEighth)
+            bottomRightEighthShortcutView.bind(to: .bottomRightEighth)
 
             if Defaults.allowAnyShortcut.enabled {
                 let passThroughValidator = PassthroughShortcutValidator()
@@ -914,9 +914,9 @@ class SettingsViewController: NSViewController {
             let twelfthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let sixteenthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
-            configureShortcutView(ninthsCyclingShortcutView, key: WindowAction.topLeftNinth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftNinth))
-            configureShortcutView(twelfthsCyclingShortcutView, key: WindowAction.topLeftTwelfth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftTwelfth))
-            configureShortcutView(sixteenthsCyclingShortcutView, key: WindowAction.topLeftSixteenth.name, fallback: ShortcutStore.defaultShortcut(for: .topLeftSixteenth))
+            ninthsCyclingShortcutView.bind(to: .topLeftNinth)
+            twelfthsCyclingShortcutView.bind(to: .topLeftTwelfth)
+            sixteenthsCyclingShortcutView.bind(to: .topLeftSixteenth)
 
             let ninthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             ninthsCyclingIcon.image = WindowAction.topLeftNinth.image
@@ -1171,16 +1171,11 @@ class SettingsViewController: NSViewController {
         TodoManager.initToggleShortcut()
         TodoManager.initReflowShortcut()
         toggleTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
-        configureShortcutView(toggleTodoShortcutView,
-                              key: TodoManager.toggleDefaultsKey,
-                              fallback: MASShortcut(keyCode: kVK_ANSI_B, modifierFlags: [.control, .option])) {
+        reflowTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
+        toggleTodoShortcutView.bind(toTodoKey: TodoManager.toggleDefaultsKey) {
             TodoManager.registerUnregisterToggleShortcut()
         }
-        
-        reflowTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
-        configureShortcutView(reflowTodoShortcutView,
-                              key: TodoManager.reflowDefaultsKey,
-                              fallback: MASShortcut(keyCode: kVK_ANSI_N, modifierFlags: [.control, .option])) {
+        reflowTodoShortcutView.bind(toTodoKey: TodoManager.reflowDefaultsKey) {
             TodoManager.registerUnregisterReflowShortcut()
         }
         showHideTodoModeSettings(animated: false)
@@ -1460,18 +1455,6 @@ class SettingsViewController: NSViewController {
     private func setToggleStatesForCornerCycleExpansionAxisButtons() {
         cornerCycleExpansionAxisButtons.forEach { button in
             button.state = button.tag == Defaults.cornerCycleExpansionAxis.value.rawValue ? .on : .off
-        }
-    }
-
-    private func configureShortcutView(_ view: MASShortcutView,
-                                       key: String,
-                                       fallback: MASShortcut?,
-                                       onChange: (() -> Void)? = nil) {
-        view.shortcutValue = ShortcutStore.shortcut(forKey: key, fallback: fallback)
-        view.shortcutValueChange = { sender in
-            ShortcutStore.setShortcut(sender.shortcutValue, forKey: key)
-            Notification.Name.shortcutsChanged.post()
-            onChange?()
         }
     }
 

@@ -5,33 +5,33 @@ import MASShortcut
 import ServiceManagement
 
 class PrefsViewController: NSViewController {
-    
+
     var actionsToViews = [WindowAction: MASShortcutView]()
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
-    
+
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
     @IBOutlet weak var centerHalfShortcutView: MASShortcutView!
     @IBOutlet weak var topHalfShortcutView: MASShortcutView!
     @IBOutlet weak var bottomHalfShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var topLeftShortcutView: MASShortcutView!
     @IBOutlet weak var topRightShortcutView: MASShortcutView!
     @IBOutlet weak var bottomLeftShortcutView: MASShortcutView!
     @IBOutlet weak var bottomRightShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var nextDisplayShortcutView: MASShortcutView!
     @IBOutlet weak var previousDisplayShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var makeLargerShortcutView: MASShortcutView!
     @IBOutlet weak var makeSmallerShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var maximizeShortcutView: MASShortcutView!
     @IBOutlet weak var almostMaximizeShortcutView: MASShortcutView!
     @IBOutlet weak var maximizeHeightShortcutView: MASShortcutView!
     @IBOutlet weak var centerShortcutView: MASShortcutView!
     @IBOutlet weak var restoreShortcutView: MASShortcutView!
-    
+
     // Additional
     @IBOutlet weak var firstThirdShortcutView: MASShortcutView!
     @IBOutlet weak var firstTwoThirdsShortcutView: MASShortcutView!
@@ -39,12 +39,12 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var centerTwoThirdsShortcutView: MASShortcutView!
     @IBOutlet weak var lastTwoThirdsShortcutView: MASShortcutView!
     @IBOutlet weak var lastThirdShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var moveLeftShortcutView: MASShortcutView!
     @IBOutlet weak var moveRightShortcutView: MASShortcutView!
     @IBOutlet weak var moveUpShortcutView: MASShortcutView!
     @IBOutlet weak var moveDownShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var firstFourthShortcutView: MASShortcutView!
     @IBOutlet weak var secondFourthShortcutView: MASShortcutView!
     @IBOutlet weak var thirdFourthShortcutView: MASShortcutView!
@@ -52,7 +52,7 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var firstThreeFourthsShortcutView: MASShortcutView!
     @IBOutlet weak var centerThreeFourthsShortcutView: MASShortcutView!
     @IBOutlet weak var lastThreeFourthsShortcutView: MASShortcutView!
-    
+
     @IBOutlet weak var topLeftSixthShortcutView: MASShortcutView!
     @IBOutlet weak var topCenterSixthShortcutView: MASShortcutView!
     @IBOutlet weak var topRightSixthShortcutView: MASShortcutView!
@@ -60,12 +60,12 @@ class PrefsViewController: NSViewController {
     @IBOutlet weak var bottomCenterSixthShortcutView: MASShortcutView!
     @IBOutlet weak var bottomRightSixthShortcutView: MASShortcutView!
 
-    
     @IBOutlet weak var showMoreButton: NSButton!
     @IBOutlet weak var additionalShortcutsStackView: NSStackView!
-    
+
     // Settings
     override func awakeFromNib() {
+
         actionsToViews = [
             .leftHalf: leftHalfShortcutView,
             .rightHalf: rightHalfShortcutView,
@@ -109,66 +109,55 @@ class PrefsViewController: NSViewController {
             .bottomCenterSixth: bottomCenterSixthShortcutView,
             .bottomRightSixth: bottomRightSixthShortcutView
         ]
+
         refreshShortcutViews()
-        applyShortcutValidators(allowAnyShortcut: Defaults.allowAnyShortcut.enabled)
-        shortcutRecordingObserver.observe(Array(actionsToViews.values))
-        subscribeToAllowAnyShortcutToggle()
         subscribeToShortcutChanges()
-        
+
+        shortcutRecordingObserver.observe(Array(actionsToViews.values))
+
+        if Defaults.allowAnyShortcut.enabled {
+            let passThroughValidator = PassthroughShortcutValidator()
+            actionsToViews.values.forEach { $0.shortcutValidator = passThroughValidator }
+        }
+
+        subscribeToAllowAnyShortcutToggle()
+
         additionalShortcutsStackView.isHidden = true
     }
-    
+
     @IBAction func toggleShowMore(_ sender: NSButton) {
         additionalShortcutsStackView.isHidden = !additionalShortcutsStackView.isHidden
-        showMoreButton.title = additionalShortcutsStackView.isHidden
-            ? "▶︎ ⋯" : "▼"
-    }
-    
-    private func subscribeToAllowAnyShortcutToggle() {
-        Notification.Name.allowAnyShortcut.onPost { notification in
-            guard let enabled = notification.object as? Bool else { return }
-            self.applyShortcutValidators(allowAnyShortcut: enabled)
-        }
-    }
-
-    private func subscribeToShortcutChanges() {
-        Notification.Name.configImported.onPost { _ in
-            self.refreshShortcutViews()
-        }
-        Notification.Name.changeDefaults.onPost { _ in
-            self.refreshShortcutViews()
-        }
-        Notification.Name.shortcutsChanged.onPost { _ in
-            self.refreshShortcutViews()
-        }
+        showMoreButton.title = additionalShortcutsStackView.isHidden ? "▶︎ ⋯" : "▼"
     }
 
     private func refreshShortcutViews() {
         for (action, view) in actionsToViews {
-            configureShortcutView(view, key: action.name, fallback: ShortcutStore.defaultShortcut(for: action))
+            view.bind(to: action)
         }
     }
 
-    private func applyShortcutValidators(allowAnyShortcut: Bool) {
-        let validator = allowAnyShortcut ? PassthroughShortcutValidator() : MASShortcutValidator()
-        actionsToViews.values.forEach { $0.shortcutValidator = validator }
+    private func subscribeToShortcutChanges() {
+        let center = NotificationCenter.default
+        let names: [Notification.Name] = [.configImported, .changeDefaults, .shortcutsChanged]
+
+        for name in names {
+            center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                self?.refreshShortcutViews()
+            }
+        }
     }
 
-    private func configureShortcutView(_ view: MASShortcutView, key: String, fallback: MASShortcut?) {
-        view.shortcutValue = ShortcutStore.shortcut(forKey: key, fallback: fallback)
-        view.shortcutValueChange = { sender in
-            ShortcutStore.setShortcut(sender.shortcutValue, forKey: key)
-            Notification.Name.shortcutsChanged.post()
+    private func subscribeToAllowAnyShortcutToggle() {
+        Notification.Name.allowAnyShortcut.onPost { notification in
+            guard let enabled = notification.object as? Bool else { return }
+            let validator = enabled ? PassthroughShortcutValidator() : MASShortcutValidator()
+            self.actionsToViews.values.forEach { $0.shortcutValidator = validator }
         }
     }
 }
 
 class PassthroughShortcutValidator: MASShortcutValidator {
-    
     override func isShortcutValid(_ shortcut: MASShortcut!) -> Bool { true }
-    
     override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool { false }
-    
     override func isShortcut(_ shortcut: MASShortcut!, alreadyTakenIn menu: NSMenu!, explanation: AutoreleasingUnsafeMutablePointer<NSString?>!) -> Bool { false }
-    
 }

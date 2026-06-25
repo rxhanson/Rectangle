@@ -311,3 +311,40 @@ struct ShortcutCycle {
         return currentWindowRect != lastAction.rect
     }
 }
+
+/// Configures a `MASShortcutView` to read from and write to `ShortcutStore`.
+///
+/// All shortcut views in the app use this single function so that the
+/// read/write path is consistent and changes in one place propagate everywhere.
+///
+/// - Parameters:
+///   - view:     The shortcut view to configure.
+///   - key:      The defaults key (action name or todo key) backing this view.
+///   - fallback: The shortcut to display when the key is absent (first-run default).
+///   - onChange: Called after every write, for callers that need to re-register a
+///               system shortcut (e.g. `TodoManager`).
+func configureShortcutView(
+    _ view: MASShortcutView,
+    key: String,
+    fallback: MASShortcut?,
+    onChange: (() -> Void)? = nil
+) {
+    view.shortcutValue = ShortcutStore.shortcut(forKey: key, fallback: fallback)
+    view.shortcutValueChange = { sender in
+        ShortcutStore.setShortcut(sender.shortcutValue, forKey: key)
+        Notification.Name.shortcutsChanged.post()
+        onChange?()
+    }
+}
+
+extension MASShortcutView {
+    func bind(to action: WindowAction) {
+        configureShortcutView(self, key: action.name, fallback: ShortcutStore.defaultShortcut(for: action))
+    }
+    
+    func bind(toTodoKey key: String, onChange: (() -> Void)? = nil) {
+        configureShortcutView(self, key: key, fallback: nil, onChange: onChange)
+    }
+}
+
+
