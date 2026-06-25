@@ -1,17 +1,39 @@
 /// Defaults.swift
 
 import Cocoa
-import SwiftPList
 import MASShortcut
 
+// MARK: - PreferencesStore
+
+/// A thread-safe, plist-backed key-value store that replaces UserDefaults for
+/// all Rectangle preferences.
+///
+/// **Symlink / read-only handling** — the store is designed for use with
+/// externally-managed plist files (e.g. an iTerm2-style live config symlink).
+/// If the resolved plist path is not writable by the current process, the store
+/// silently enters read-only mode: reads work normally (the symlink is followed),
+/// writes are no-ops.  No data is lost because the underlying file is owned and
+/// written by an external tool.
 final class PreferencesStore {
     static let shared = PreferencesStore()
 
+    // Sentinel stored in the plist to distinguish "user explicitly cleared a
+    // shortcut" from "key absent (→ restore the per-action default)".
     fileprivate static let disabledShortcutMarker = "__RECTANGLE_SHORTCUT_DISABLED__"
 
     private let fileURL: URL
-    private var format: PListFormat = .binary
-    private var storage: PListDictionary = [:]
+    private var format: PropertyListSerialization.PropertyListFormat = .binary
+    private var storage: [String: Any] = [:]
+
+    // Concurrent queue: reads are synchronised via sync{}, writes use barrier.
+    private let queue = DispatchQueue(
+        label: "com.knollsoft.Rectangle.PreferencesStore",
+        attributes: .concurrent
+    )
+
+    /// True when the plist file is on a read-only path or is a symlink to a
+    /// file we don't own.  In read-only mode all writes are silently skipped.
+    private(set) var isReadOnly = false
 
     init(fileURL: URL = PreferencesStore.defaultFileURL()) {
         self.fileURL = fileURL
@@ -28,181 +50,179 @@ final class PreferencesStore {
             .appendingPathComponent("\(bundleId).plist")
     }
 
+    // MARK: Disk I/O
+
     func reloadFromDisk() {
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            storage = [:]
-            format = .binary
+        // Determine read-only status by probing write access on the *resolved*
+        // path (so symlinks are followed, not treated as errors).
+        let resolvedPath: String
+        if let dest = try? FileManager.default.destinationOfSymbolicLink(atPath: fileURL.path) {
+            // fileURL is a symlink — follow it for reads, treat as read-only for writes.
+            resolvedPath = dest
+            isReadOnly = true
+        } else {
+            resolvedPath = fileURL.path
+            // Check writability: either the file exists and is writable, or its
+            // parent directory is writable (so we can create the file).
+            let fm = FileManager.default
+            if fm.fileExists(atPath: resolvedPath) {
+                isReadOnly = !fm.isWritableFile(atPath: resolvedPath)
+            } else {
+                let dir = fileURL.deletingLastPathComponent().path
+                isReadOnly = !fm.isWritableFile(atPath: dir)
+            }
+        }
+
+        guard FileManager.default.fileExists(atPath: resolvedPath) else {
+            queue.async(flags: .barrier) {
+                self.storage = [:]
+                self.format = .binary
+            }
             return
         }
 
         do {
-            let plist = try DictionaryPList(url: fileURL)
-            storage = plist.storage
-            format = plist.format
+            let resolvedURL = URL(fileURLWithPath: resolvedPath)
+            let data = try Data(contentsOf: resolvedURL)
+            var readFormat: PropertyListSerialization.PropertyListFormat = .binary
+            let plist = try PropertyListSerialization.propertyList(from: data, options: .mutableContainersAndLeaves, format: &readFormat)
+            if let dict = plist as? [String: Any] {
+                queue.async(flags: .barrier) {
+                    self.storage = dict
+                    self.format = readFormat
+                }
+            } else {
+                throw NSError(domain: "PreferencesStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Root is not a dictionary"])
+            }
         } catch {
-            storage = [:]
-            format = .binary
-            Logger.log("Unable to load preferences from \(fileURL.path): \(error.localizedDescription)")
+            queue.async(flags: .barrier) {
+                self.storage = [:]
+                self.format = .binary
+            }
+            Logger.log("Unable to load preferences from \(resolvedPath): \(error.localizedDescription)")
         }
     }
 
-    func objectExists(forKey key: String) -> Bool {
-        storage[any: key] != nil
-    }
+    // MARK: Existence / raw access
 
-    func plistValue(forKey key: String) -> PListValue? {
-        storage[any: key]
+    func objectExists(forKey key: String) -> Bool {
+        queue.sync { storage[key] != nil }
     }
 
     func foundationObject(forKey key: String) -> Any? {
-        guard let value = storage[any: key] else { return nil }
-        return Self.foundationObject(from: value)
+        queue.sync { storage[key] }
     }
 
+    // MARK: Typed reads
+
     func bool(forKey key: String) -> Bool {
-        storage[bool: key] ?? false
+        queue.sync { storage[key] as? Bool ?? false }
     }
 
     func int(forKey key: String) -> Int {
-        storage[int: key] ?? storage[double: key].map(Int.init) ?? 0
+        queue.sync {
+            if let v = storage[key] as? Int { return v }
+            if let v = storage[key] as? Double { return Int(v) }
+            return 0
+        }
     }
 
     func float(forKey key: String) -> Float {
-        storage[double: key].map(Float.init) ?? storage[int: key].map(Float.init) ?? 0
+        queue.sync {
+            if let v = storage[key] as? Double { return Float(v) }
+            if let v = storage[key] as? Int { return Float(v) }
+            return 0
+        }
     }
 
     func string(forKey key: String) -> String? {
-        storage[string: key]
+        queue.sync { storage[key] as? String }
     }
 
     func data(forKey key: String) -> Data? {
-        storage[data: key]
+        queue.sync { storage[key] as? Data }
     }
 
+    // MARK: Typed writes
+
     func set(_ value: Bool, forKey key: String) {
-        storage[bool: key] = value
-        persist()
+        write { self.storage[key] = value }
     }
 
     func set(_ value: Int, forKey key: String) {
-        storage[int: key] = value
-        persist()
+        write { self.storage[key] = value }
     }
 
     func set(_ value: Float, forKey key: String) {
-        storage[double: key] = Double(value)
-        persist()
+        write { self.storage[key] = Double(value) }
     }
 
     func set(_ value: String?, forKey key: String) {
-        storage[string: key] = value
-        persist()
+        write { self.storage[key] = value }
     }
 
     func set(_ value: Data?, forKey key: String) {
-        storage[data: key] = value
-        persist()
+        write { self.storage[key] = value }
     }
 
+    /// Stores an arbitrary Foundation-compatible value (the type used by
+    /// MASShortcut's dictionary transformer).  Logs and no-ops if the value
+    /// cannot be represented in a plist.
     func set(any value: Any?, forKey key: String) {
         guard let value else {
             removeObject(forKey: key)
             return
         }
-
-        guard let plistValue = Self.plistValue(from: value) else {
+        guard PropertyListSerialization.propertyList(value, isValidFor: .binary) else {
             Logger.log("Unable to save unsupported preference value for \(key)")
             return
         }
-
-        storage[key] = plistValue
-        persist()
+        write { self.storage[key] = value }
     }
 
     func removeObject(forKey key: String) {
-        storage[key] = nil
-        persist()
+        write { self.storage[key] = nil }
+    }
+
+    // MARK: Private helpers
+
+    /// Runs `mutation` under a barrier write, then persists — unless read-only.
+    private func write(_ mutation: @escaping () -> Void) {
+        queue.async(flags: .barrier) {
+            mutation()
+            self.persist()
+        }
     }
 
     private func persist() {
-        do {
-            if let attrs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
-               let type = attrs[.type] as? FileAttributeType,
-               type == .typeSymbolicLink {
-                return
-            }
+        // In read-only mode (symlink target or non-writable path) we skip writes
+        // silently.  Preferences are still readable for the duration of the
+        // session; the external owner is responsible for persistence.
+        guard !isReadOnly else { return }
 
+        do {
             let directoryURL = fileURL.deletingLastPathComponent()
             try FileManager.default.createDirectory(at: directoryURL,
-                                                   withIntermediateDirectories: true,
-                                                   attributes: nil)
-
-            let plist = DictionaryPList(root: storage, format: format)
-            try plist.save(toFileAtURL: fileURL, format: format)
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
+            let data = try PropertyListSerialization.data(fromPropertyList: storage, format: format, options: 0)
+            try data.write(to: fileURL, options: .atomic)
         } catch {
             Logger.log("Unable to save preferences to \(fileURL.path): \(error.localizedDescription)")
         }
     }
-
-    fileprivate static func foundationObject(from value: PListValue) -> Any {
-        switch value {
-        case let string as String:     string
-        case let int as Int:           int
-        case let double as Double:     double
-        case let bool as Bool:         bool
-        case let date as Date:         date
-        case let data as Data:         data
-        case let dictionary as PListDictionary:
-            dictionary.reduce(into: [String: Any]()) { result, entry in
-                result[entry.key] = foundationObject(from: entry.value)
-            }
-        case let array as PListArray:
-            array.map { foundationObject(from: $0) }
-        default:
-            value
-        }
-    }
-
-    private static func plistValue(from value: Any) -> PListValue? {
-        // NSNumber boxes Bools as well as numbers; check for Bool first before
-        // hitting the numeric cases below.
-        if let boolNumber = value as? NSNumber, CFGetTypeID(boolNumber) == CFBooleanGetTypeID() {
-            return boolNumber.boolValue
-        }
-
-        switch value {
-        case let string as String:  return string
-        case let int as Int:        return int
-        case let float as Float:    return Double(float)
-        case let double as Double:  return double
-        case let bool as Bool:      return bool
-        case let date as Date:      return date
-        case let data as Data:      return data
-        case let dictionary as [String: Any]:
-            var plistDictionary: PListDictionary = [:]
-            for (key, nestedValue) in dictionary {
-                guard let plistValue = plistValue(from: nestedValue) else { return nil }
-                plistDictionary[key] = plistValue
-            }
-            return plistDictionary
-        case let array as [Any]:
-            var plistArray: PListArray = []
-            for nestedValue in array {
-                guard let plistValue = plistValue(from: nestedValue) else { return nil }
-                plistArray.append(plistValue)
-            }
-            return plistArray
-        case let number as NSNumber:
-            // Fall back for numeric NSNumbers that didn't match Swift Int/Double above.
-            let doubleValue = number.doubleValue
-            return floor(doubleValue) == doubleValue ? number.intValue : doubleValue
-        default:
-            return nil
-        }
-    }
 }
 
+// MARK: - ShortcutStore
+
+/// Manages reading and writing MASShortcut values through PreferencesStore.
+///
+/// Shortcuts are stored as dictionaries produced by `MASDictionaryTransformerName`.
+/// A sentinel string (`PreferencesStore.disabledShortcutMarker`) is written when
+/// the user explicitly clears a shortcut, so the per-action default is not
+/// restored on next launch.
 enum ShortcutStore {
+
     private static var dictTransformer: ValueTransformer? {
         ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))
     }
@@ -211,10 +231,17 @@ enum ShortcutStore {
         ValueTransformer(forName: .secureUnarchiveFromDataTransformerName)
     }
 
+    // MARK: Reads
+
     static func shortcut(for action: WindowAction) -> MASShortcut? {
         shortcut(forKey: action.name, fallback: defaultShortcut(for: action))
     }
 
+    /// Three-tier read:
+    ///   1. Sentinel present → user explicitly disabled this shortcut.
+    ///   2. Dict format → current storage format.
+    ///   3. Legacy Data format → migrate on the fly and return.
+    ///   4. `fallback` → first-run default.
     static func shortcut(forKey key: String, fallback: MASShortcut? = nil) -> MASShortcut? {
         if PreferencesStore.shared.string(forKey: key) == PreferencesStore.disabledShortcutMarker {
             return nil
@@ -225,14 +252,21 @@ enum ShortcutStore {
             return shortcut
         }
 
+        // Legacy binary Data format — migrate to dict format in place.
         if let dataValue = PreferencesStore.shared.data(forKey: key),
            let shortcut = dataTransformer?.transformedValue(dataValue) as? MASShortcut {
             setShortcut(shortcut, forKey: key)
             return shortcut
         }
 
+        // First run: write the fallback so future reads skip this path.
+        if let fallback {
+            setShortcut(fallback, forKey: key)
+        }
         return fallback
     }
+
+    // MARK: Writes
 
     static func setShortcut(_ shortcut: MASShortcut?, forKey key: String) {
         if let shortcut,
@@ -249,6 +283,8 @@ enum ShortcutStore {
         PreferencesStore.shared.removeObject(forKey: key)
     }
 
+    // MARK: Defaults
+
     static func defaultShortcut(for action: WindowAction) -> MASShortcut? {
         let shortcut = Defaults.alternateDefaultShortcuts.enabled
             ? action.alternateDefault
@@ -258,6 +294,8 @@ enum ShortcutStore {
                            modifierFlags: NSEvent.ModifierFlags(rawValue: shortcut.modifierFlags))
     }
 }
+
+// MARK: - Defaults
 
 class Defaults {
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
@@ -340,8 +378,8 @@ class Defaults {
     static let stageSize = FloatDefault(key: "stageSize", defaultValue: 190)
     static let dragFromStage = OptionalBoolDefault(key: "dragFromStage")
     static let alwaysAccountForStage = OptionalBoolDefault(key: "alwaysAccountForStage")
-    static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
-    static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
+    static let landscapeSnapAreas = JSONDefault<[Directional: SnapAreaConfig]>(key: "landscapeSnapAreas")
+    static let portraitSnapAreas = JSONDefault<[Directional: SnapAreaConfig]>(key: "portraitSnapAreas")
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
     static let enhancedUI = IntEnumDefault<EnhancedUI>(key: "enhancedUI", defaultValue: .disableEnable)
     static let footprintAnimationDurationMultiplier = FloatDefault(key: "footprintAnimationDurationMultiplier", defaultValue: 0)
@@ -359,6 +397,10 @@ class Defaults {
     static let screensOrderedByX = OptionalBoolDefault(key: "screensOrderedByX")
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
+    // Live config file (iTerm2-style). Deliberately excluded from `array` so the
+    // config file never writes its own location/enablement back into itself.
+    static let configFileEnabled = OptionalBoolDefault(key: "configFileEnabled")
+    static let configFileFolder = StringDefault(key: "configFileFolder")
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -451,11 +493,9 @@ class Defaults {
         moveFixedSizeToEdge,
         greenButtonOverride
     ]
-
-    static func loadPreferencesOnStartup() {
-        PreferencesStore.shared.reloadFromDisk()
-    }
 }
+
+// MARK: - CodableDefault
 
 struct CodableDefault: Codable {
     let bool: Bool?
@@ -471,11 +511,15 @@ struct CodableDefault: Codable {
     }
 }
 
+// MARK: - Default protocol
+
 protocol Default {
     var key: String { get }
     func load(from codable: CodableDefault)
     func toCodable() -> CodableDefault
 }
+
+// MARK: - BoolDefault
 
 class BoolDefault: Default {
     public private(set) var key: String
@@ -505,6 +549,8 @@ class BoolDefault: Default {
         CodableDefault(bool: enabled)
     }
 }
+
+// MARK: - OptionalBoolDefault
 
 class OptionalBoolDefault: Default {
     public private(set) var key: String
@@ -556,6 +602,8 @@ class OptionalBoolDefault: Default {
     }
 }
 
+// MARK: - StringDefault
+
 class StringDefault: Default {
     public private(set) var key: String
     private var initialized = false
@@ -582,6 +630,8 @@ class StringDefault: Default {
         CodableDefault(string: value)
     }
 }
+
+// MARK: - FloatDefault
 
 class FloatDefault: Default {
     public private(set) var key: String
@@ -619,6 +669,8 @@ class FloatDefault: Default {
     }
 }
 
+// MARK: - IntDefault
+
 class IntDefault: Default {
     public private(set) var key: String
     private var initialized = false
@@ -652,6 +704,8 @@ class IntDefault: Default {
         CodableDefault(int: value)
     }
 }
+
+// MARK: - JSONDefault
 
 class JSONDefault<T: Codable>: StringDefault {
     private var typeInitialized = false
@@ -690,21 +744,21 @@ class JSONDefault<T: Codable>: StringDefault {
     }
 
     private func loadFromJSON() {
-        guard let jsonString = value else { return }
-        let decoder = JSONDecoder()
-        guard let jsonData = jsonString.data(using: .utf8) else { return }
-        typedValue = try? decoder.decode(T.self, from: jsonData)
+        guard let jsonString = value,
+              let jsonData = jsonString.data(using: .utf8) else { return }
+        typedValue = try? JSONDecoder().decode(T.self, from: jsonData)
     }
 
     private func saveToJSON(_ obj: T?) {
-        let encoder = JSONEncoder()
-        if let jsonData = try? encoder.encode(obj),
+        if let jsonData = try? JSONEncoder().encode(obj),
            let jsonString = String(data: jsonData, encoding: .utf8),
            jsonString != value {
             value = jsonString
         }
     }
 }
+
+// MARK: - IntEnumDefault
 
 class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
     public private(set) var key: String
@@ -739,6 +793,8 @@ class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
     }
 }
 
+// MARK: - CodableColor
+
 struct CodableColor: Codable {
     var red: CGFloat = 0.0
     var green: CGFloat = 0.0
@@ -750,9 +806,9 @@ struct CodableColor: Codable {
     }
 
     init(nsColor: NSColor) {
-        self.red = nsColor.redComponent
-        self.green = nsColor.greenComponent
-        self.blue = nsColor.blueComponent
-        self.alpha = nsColor.alphaComponent
+        red = nsColor.redComponent
+        green = nsColor.greenComponent
+        blue = nsColor.blueComponent
+        alpha = nsColor.alphaComponent
     }
 }

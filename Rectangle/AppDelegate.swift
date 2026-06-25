@@ -47,8 +47,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        Defaults.loadPreferencesOnStartup()
-        Defaults.loadFromSupportDir()
+        // Apply a live config file (if enabled) before the managers that read
+        // preferences are created, so its values are already in place.
+        ConfigFileManager.shared.startIfEnabled()
         migrateShowEighthsInMenu()
 
         checkVersion()
@@ -126,6 +127,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillBecomeActive(_ notification: Notification) {
         Notification.Name.appWillBecomeActive.post()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        // Persist any debounced preference changes to the live config file.
+        ConfigFileManager.shared.flush()
     }
     
     private func addMenuIcons() {

@@ -97,7 +97,6 @@
 		985B9BF922BB6F5100A2E8F0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985B9BF722BB6F5000A2E8F0 /* MessageView.swift */; };
 		9877B63A29C8AC0E00F02D74 /* MASShortcut in Frameworks */ = {isa = PBXBuildFile; productRef = 9877B63929C8AC0E00F02D74 /* MASShortcut */; };
 		9877B63D29C8AC3600F02D74 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 9877B63C29C8AC3600F02D74 /* Sparkle */; };
-		A1B2C3D42F60000100000001 /* SwiftPList in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D42F60000100000003 /* SwiftPList */; };
 		988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066022EB4C7C004EABD7 /* FirstThirdCalculation.swift */; };
 		988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066222EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift */; };
 		988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D066422EB4CB5004EABD7 /* CenterThirdCalculation.swift */; };
@@ -153,6 +152,7 @@
 		AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */; };
 		AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */; };
 		AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */; };
+		CF11E0000000000000000001 /* ConfigFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF11E0000000000000000002 /* ConfigFileManager.swift */; };
 		AA4DA2FB28FDC94A00355CEB /* DispatchTimeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */; };
 		AA536C2729005DD000579AC6 /* TimeoutCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA536C2629005DD000579AC6 /* TimeoutCache.swift */; };
 		AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA69F83B29909A95001A81AF /* RightTodoCalculation.swift */; };
@@ -369,6 +369,7 @@
 		AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFExtension.swift; sourceTree = "<group>"; };
 		AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBarManager.swift; sourceTree = "<group>"; };
 		AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenButtonManager.swift; sourceTree = "<group>"; };
+		CF11E0000000000000000002 /* ConfigFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigFileManager.swift; sourceTree = "<group>"; };
 		AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchTimeExtension.swift; sourceTree = "<group>"; };
 		AA536C2629005DD000579AC6 /* TimeoutCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutCache.swift; sourceTree = "<group>"; };
 		AA69F83B29909A95001A81AF /* RightTodoCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightTodoCalculation.swift; sourceTree = "<group>"; };
@@ -427,7 +428,6 @@
 			files = (
 				9877B63A29C8AC0E00F02D74 /* MASShortcut in Frameworks */,
 				9877B63D29C8AC3600F02D74 /* Sparkle in Frameworks */,
-				A1B2C3D42F60000100000001 /* SwiftPList in Frameworks */,
 				9821405E22B3ED3600ABFB3F /* ServiceManagement.framework in Frameworks */,
 				12D896200936C0DE9FF41FB4 /* (null) in Frameworks */,
 			);
@@ -694,6 +694,7 @@
 				9824704022B186D00037B409 /* WindowManager.swift */,
 				AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */,
 				AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */,
+				CF11E0000000000000000002 /* ConfigFileManager.swift */,
 				98987AA62391890C00BE72C4 /* Logging */,
 				98910B3C2311304D0066EC23 /* PrefsWindow */,
 				989DA30C243FC0C3008C7AA4 /* WelcomeWindow */,
@@ -813,7 +814,6 @@
 			packageProductDependencies = (
 				9877B63929C8AC0E00F02D74 /* MASShortcut */,
 				9877B63C29C8AC3600F02D74 /* Sparkle */,
-				A1B2C3D42F60000100000003 /* SwiftPList */,
 			);
 			productName = Rectangle;
 			productReference = 9824700922AF9B7D0037B409 /* Rectangle.app */;
@@ -919,7 +919,6 @@
 			packageReferences = (
 				9877B63829C8AC0E00F02D74 /* XCRemoteSwiftPackageReference "MASShortcut" */,
 				9877B63B29C8AC3600F02D74 /* XCRemoteSwiftPackageReference "Sparkle" */,
-				A1B2C3D42F60000100000002 /* XCRemoteSwiftPackageReference "swift-plist" */,
 			);
 			productRefGroup = 9824700A22AF9B7D0037B409 /* Products */;
 			projectDirPath = "";
@@ -1080,6 +1079,7 @@
 				AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */,
 				AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */,
 				AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */,
+				CF11E0000000000000000001 /* ConfigFileManager.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				98A009BF251253AB00CFBF0C /* BottomRightSixthCalculation.swift in Sources */,
 				6490B39527BF96880056C220 /* TopLeftEighthCalculation.swift in Sources */,
@@ -1544,14 +1544,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		A1B2C3D42F60000100000002 /* XCRemoteSwiftPackageReference "swift-plist" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/orchetect/swift-plist";
-			requirement = {
-				kind = revision;
-				revision = 38870086dabad659ce8cf9089ff3308e41d77cc6;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1564,11 +1556,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9877B63B29C8AC3600F02D74 /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
-		};
-		A1B2C3D42F60000100000003 /* SwiftPList */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1B2C3D42F60000100000002 /* XCRemoteSwiftPackageReference "swift-plist" */;
-			productName = SwiftPList;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
