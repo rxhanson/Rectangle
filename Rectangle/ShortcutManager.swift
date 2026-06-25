@@ -7,6 +7,9 @@ class ShortcutManager {
 
     let windowManager: WindowManager
     private let shortcutMonitor = MASShortcutMonitor.shared()!
+    // Maps representative action name → the MASShortcut currently registered,
+    // so we can unregister it precisely (MASShortcutMonitor identifies shortcuts
+    // by value, not by key).
     private var registeredShortcuts = [String: MASShortcut]()
     private var shortcutIdentities = [WindowAction: ShortcutCycle.ShortcutIdentity]()
     private var isUpdatingShortcutBindings = false
@@ -21,8 +24,8 @@ class ShortcutManager {
 
         NotificationCenter.default.addObserver(self, selector: #selector(defaultShortcutsChanged), name: .changeDefaults, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(shortcutRecordingChanged), name: .shortcutRecording, object: nil)
-        Notification.Name.shortcutsChanged.onPost { _ in
-            self.reloadShortcutBindingsIfNeeded()
+        Notification.Name.shortcutsChanged.onPost { [weak self] _ in
+            self?.reloadShortcutBindingsIfNeeded()
         }
     }
 
