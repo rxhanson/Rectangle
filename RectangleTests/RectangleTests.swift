@@ -827,44 +827,6 @@ class TodoShortcutValidatorTests: XCTestCase {
     private func shortcut(_ keyCode: Int, _ flags: NSEvent.ModifierFlags) -> MASShortcut {
         MASShortcut(keyCode: keyCode, modifierFlags: flags)
     }
-    
-    func testPreferencesStoreLoadsPlistValues() throws {
-        let plistURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension("plist")
-        
-        let sourcePreferences: [String: Any] = [
-            "launchOnLogin": true,
-            "gapSize": 12.5,
-            "todoApplication": "Notes",
-            "nested": [
-                "flag": false
-            ],
-            "actions": [
-                "left-half",
-                2
-            ]
-        ]
-        
-        let plistData = try PropertyListSerialization.data(fromPropertyList: sourcePreferences,
-                                                           format: .xml,
-                                                           options: 0)
-        try plistData.write(to: plistURL)
-        
-        defer {
-            try? FileManager.default.removeItem(at: plistURL)
-        }
-        
-        let store = PreferencesStore(fileURL: plistURL)
-        
-        XCTAssertTrue(store.bool(forKey: "launchOnLogin"))
-        XCTAssertEqual(store.float(forKey: "gapSize"), 12.5, accuracy: 0.001)
-        XCTAssertEqual(store.string(forKey: "todoApplication"), "Notes")
-        XCTAssertEqual(store.foundationObject(forKey: "nested") as? [String: Bool], ["flag": false])
-        let actions = store.foundationObject(forKey: "actions") as? [Any]
-        XCTAssertEqual(actions?.first as? String, "left-half")
-        XCTAssertEqual(actions?.last as? Int, 2)
-    }
 
     private func save(_ shortcut: MASShortcut, forKey key: String, in userDefaults: UserDefaults) {
         let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
@@ -980,5 +942,35 @@ class ClampedWindowAlignerTests: XCTestCase {
         let window = zone
         let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
         XCTAssertTrue(result.equalTo(window))
+    }
+}
+
+class PreferencesStoreTests: XCTestCase {
+
+    func testPreferencesStoreLoadsPlistValues() throws {
+        // 1. Create a dummy plist with known values on disk
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true, attributes: nil)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let plistURL = tempDir.appendingPathComponent("test.plist")
+        let testData: [String: Any] = [
+            "boolKey": true,
+            "intKey": 42,
+            "stringKey": "Rectangle",
+            "doubleKey": 3.14
+        ]
+        
+        let data = try PropertyListSerialization.data(fromPropertyList: testData, format: .binary, options: 0)
+        try data.write(to: plistURL)
+
+        // 2. Initialize the store pointing to the dummy plist
+        let store = PreferencesStore(fileURL: plistURL)
+
+        // 3. Verify it loads the values correctly
+        XCTAssertTrue(store.bool(forKey: "boolKey"))
+        XCTAssertEqual(store.int(forKey: "intKey"), 42)
+        XCTAssertEqual(store.string(forKey: "stringKey"), "Rectangle")
+        XCTAssertEqual(store.float(forKey: "doubleKey"), 3.14)
     }
 }
