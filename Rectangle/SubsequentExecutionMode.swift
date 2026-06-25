@@ -14,21 +14,21 @@ enum SubsequentExecutionMode: Int {
 class SubsequentExecutionDefault: Default {
     public private(set) var key: String = "subsequentExecutionMode"
     private var initialized = false
-    
+
     var value: SubsequentExecutionMode {
         didSet {
             if initialized {
-                UserDefaults.standard.set(value.rawValue, forKey: key)
+                PreferencesStore.shared.set(value.rawValue, forKey: key)
             }
         }
     }
-    
+
     init() {
-        let intValue = UserDefaults.standard.integer(forKey: key)
+        let intValue = PreferencesStore.shared.int(forKey: key)
         value = SubsequentExecutionMode(rawValue: intValue) ?? .resize
         initialized = true
     }
-    
+
     var resizes: Bool {
         switch value {
         case .resize, .acrossAndResize, .resizeAndCycleQuadrants: return true
@@ -56,9 +56,9 @@ class SubsequentExecutionDefault: Default {
             value = mode
         }
     }
-    
+
     func toCodable() -> CodableDefault {
-        return CodableDefault(int: value.rawValue)
+        CodableDefault(int: value.rawValue)
     }
 
 }

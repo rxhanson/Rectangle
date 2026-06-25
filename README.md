@@ -145,6 +145,10 @@ There are buttons for importing and exporting the config as a JSON file in the s
 
 Upon launch, Rectangle will load a config file at `~/Library/Application Support/Rectangle/RectangleConfig.json` if it is present and will rename that file with a time/date stamp so that it isn't read on subsequent launches.
 
+## Live config file
+
+If you want to interface with rectangle with a configuration file,  enable **Sync settings to a config file** in the settings tab. When enabled, Rectangle reads and writes `RectangleConfig.json` in a folder you choose (defaulting to `~/Library/Application Support/Rectangle/`). Continously two-way syncs.
+
 ## Preferences Storage
 
 The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:

@@ -39,6 +39,11 @@ class SettingsViewController: NSViewController {
 
     @IBOutlet weak var extraSettingsButton: NSButton!
 
+    @IBOutlet weak var importExportRow: NSStackView!
+
+    private var configFileCheckbox: NSButton?
+    private var configFilePathLabel: NSTextField?
+
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
@@ -228,26 +233,22 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
-        // Ask user if they want to restore to Rectangle or Spectacle defaults
-        let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
-        let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
-        let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
-        let cancelText = NSLocalizedString("Cancel", tableName: "Main", value: "", comment: "")
-        let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
-        if response == .alertThirdButtonReturn { return }
-
-        //  Restore default shortcuts
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
-        let rectangleDefaults = response == .alertFirstButtonReturn
-        if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
-            Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
+        let response = AlertUtil.twoButtonAlert(question: "Restore Default Shortcuts?".localized, text: "This will restore all shortcuts to their default state.".localized, confirmText: "Restore".localized, cancelText: "Cancel".localized)
+        if response == .alertFirstButtonReturn {
+            
+            for action in WindowAction.active {
+                ShortcutStore.resetShortcut(forKey: action.name)
+            }
+            
+            for key in TodoManager.defaultsKeys {
+                ShortcutStore.resetShortcut(forKey: key)
+            }
+            TodoManager.initToggleShortcut()
+            TodoManager.initReflowShortcut()
+            
             Notification.Name.changeDefaults.post()
+            Notification.Name.shortcutsChanged.post()
         }
-        
-        // Restore snap areas
-        Defaults.portraitSnapAreas.typedValue = nil
-        Defaults.landscapeSnapAreas.typedValue = nil
-        Notification.Name.defaultSnapAreas.post()
     }
     
     @IBAction func exportConfig(_ sender: NSButton) {
@@ -280,8 +281,94 @@ class SettingsViewController: NSViewController {
         Notification.Name.windowSnapping.post(object: true)
     }
 
+    // MARK: - Live config file (iTerm2-style)
+
+    private func initializeConfigFileControls() {
+        guard configFileCheckbox == nil,
+              let parentStack = importExportRow.superview as? NSStackView,
+              let insertIdx = parentStack.arrangedSubviews.firstIndex(of: importExportRow) else { return }
+
+        let separator = NSBox()
+        separator.boxType = .separator
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Sync settings to a config file", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleConfigFile(_:)))
+        checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
+        checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        let pathLabel = NSTextField(labelWithString: "")
+        pathLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+        pathLabel.textColor = .secondaryLabelColor
+        pathLabel.lineBreakMode = .byTruncatingMiddle
+        pathLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        let chooseButton = NSButton(title: NSLocalizedString("Choose Folder…", tableName: "Main", value: "", comment: ""), target: self, action: #selector(chooseConfigFolder(_:)))
+        chooseButton.bezelStyle = .rounded
+        chooseButton.setContentHuggingPriority(.required, for: .horizontal)
+
+        let pathRow = NSStackView(views: [pathLabel, chooseButton])
+        pathRow.orientation = .horizontal
+        pathRow.alignment = .centerY
+        pathRow.spacing = 8
+        pathRow.translatesAutoresizingMaskIntoConstraints = false
+
+        let helpLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Reads and writes RectangleConfig.json in the chosen folder. External edits are applied immediately, and changes made here are written back to the file.", tableName: "Main", value: "", comment: ""))
+        helpLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+        helpLabel.textColor = .secondaryLabelColor
+        helpLabel.translatesAutoresizingMaskIntoConstraints = false
+        helpLabel.preferredMaxLayoutWidth = 500
+        helpLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        helpLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        parentStack.insertArrangedSubview(separator, at: insertIdx)
+        parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
+        parentStack.insertArrangedSubview(pathRow, at: insertIdx + 2)
+        parentStack.insertArrangedSubview(helpLabel, at: insertIdx + 3)
+
+        separator.widthAnchor.constraint(equalTo: importExportRow.widthAnchor).isActive = true
+        separator.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        pathRow.widthAnchor.constraint(equalTo: importExportRow.widthAnchor).isActive = true
+
+        configFileCheckbox = checkbox
+        configFilePathLabel = pathLabel
+        updateConfigFileControls()
+    }
+
+    private func updateConfigFileControls() {
+        let enabled = Defaults.configFileEnabled.userEnabled
+        configFileCheckbox?.state = enabled ? .on : .off
+        let folder = ConfigFileManager.shared.folderURL?.path ?? ""
+        configFilePathLabel?.stringValue = folder
+        configFilePathLabel?.toolTip = folder
+    }
+
+    @objc private func toggleConfigFile(_ sender: NSButton) {
+        ConfigFileManager.shared.setEnabled(sender.state == .on)
+        updateConfigFileControls()
+    }
+
+    @objc private func chooseConfigFolder(_ sender: NSButton) {
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
+        openPanel.allowsMultipleSelection = false
+        openPanel.prompt = NSLocalizedString("Choose", tableName: "Main", value: "", comment: "")
+        if let current = ConfigFileManager.shared.folderURL {
+            openPanel.directoryURL = current
+        }
+        guard openPanel.runModal() == .OK, let url = openPanel.url else { return }
+        ConfigFileManager.shared.setEnabled(true, folder: url)
+        updateConfigFileControls()
+    }
+
     @IBAction func showExtraSettings(_ sender: NSButton) {
-        if extraSettingsPopover == nil {
+        if let popover = extraSettingsPopover {
+            if popover.isShown {
+                popover.close()
+                return
+            }
+        } else {
             let popover = NSPopover()
             popover.behavior = .transient
             let viewController = NSViewController()
@@ -441,23 +528,23 @@ class SettingsViewController: NSViewController {
                 vSplitPopUpButton?.selectCurrentValue()
             }
 
-            largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
-            smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
+            largerWidthShortcutView.bind(to: .largerWidth)
+            smallerWidthShortcutView.bind(to: .smallerWidth)
             
-            topVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            middleVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            bottomVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            topVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
-            bottomVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
+            topVerticalThirdShortcutView.bind(to: .topVerticalThird)
+            middleVerticalThirdShortcutView.bind(to: .middleVerticalThird)
+            bottomVerticalThirdShortcutView.bind(to: .bottomVerticalThird)
+            topVerticalTwoThirdsShortcutView.bind(to: .topVerticalTwoThirds)
+            bottomVerticalTwoThirdsShortcutView.bind(to: .bottomVerticalTwoThirds)
 
-            topLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomRightEighth.name, withTransformerName: MASDictionaryTransformerName)
+            topLeftEighthShortcutView.bind(to: .topLeftEighth)
+            topCenterLeftEighthShortcutView.bind(to: .topCenterLeftEighth)
+            topCenterRightEighthShortcutView.bind(to: .topCenterRightEighth)
+            topRightEighthShortcutView.bind(to: .topRightEighth)
+            bottomLeftEighthShortcutView.bind(to: .bottomLeftEighth)
+            bottomCenterLeftEighthShortcutView.bind(to: .bottomCenterLeftEighth)
+            bottomCenterRightEighthShortcutView.bind(to: .bottomCenterRightEighth)
+            bottomRightEighthShortcutView.bind(to: .bottomRightEighth)
 
             if Defaults.allowAnyShortcut.enabled {
                 let passThroughValidator = PassthroughShortcutValidator()
@@ -826,9 +913,9 @@ class SettingsViewController: NSViewController {
             let twelfthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             let sixteenthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
-            ninthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftNinth.name, withTransformerName: MASDictionaryTransformerName)
-            twelfthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
-            sixteenthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
+            ninthsCyclingShortcutView.bind(to: .topLeftNinth)
+            twelfthsCyclingShortcutView.bind(to: .topLeftTwelfth)
+            sixteenthsCyclingShortcutView.bind(to: .topLeftSixteenth)
 
             let ninthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             ninthsCyclingIcon.image = WindowAction.topLeftNinth.image
@@ -1048,11 +1135,13 @@ class SettingsViewController: NSViewController {
         initializeCombinedDisplayCheckbox()
 
         initializeGreenButtonOverrideCheckbox()
+        initializeConfigFileControls()
 
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
             self.initializeCycleSizesView(animated: false)
+            self.updateConfigFileControls()
         })
         
         Notification.Name.menuBarIconHidden.onPost(using: {_ in
@@ -1082,8 +1171,12 @@ class SettingsViewController: NSViewController {
         TodoManager.initReflowShortcut()
         toggleTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
         reflowTodoShortcutView.shortcutValidator = TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
-        toggleTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
-        reflowTodoShortcutView.setAssociatedUserDefaultsKey(TodoManager.reflowDefaultsKey, withTransformerName: MASDictionaryTransformerName)
+        toggleTodoShortcutView.bind(toTodoKey: TodoManager.toggleDefaultsKey) {
+            TodoManager.registerUnregisterToggleShortcut()
+        }
+        reflowTodoShortcutView.bind(toTodoKey: TodoManager.reflowDefaultsKey) {
+            TodoManager.registerUnregisterReflowShortcut()
+        }
         showHideTodoModeSettings(animated: false)
     }
     

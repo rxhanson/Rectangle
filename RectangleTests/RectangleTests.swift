@@ -944,3 +944,33 @@ class ClampedWindowAlignerTests: XCTestCase {
         XCTAssertTrue(result.equalTo(window))
     }
 }
+
+class PreferencesStoreTests: XCTestCase {
+
+    func testPreferencesStoreLoadsPlistValues() throws {
+        // 1. Create a dummy plist with known values on disk
+        let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true, attributes: nil)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let plistURL = tempDir.appendingPathComponent("test.plist")
+        let testData: [String: Any] = [
+            "boolKey": true,
+            "intKey": 42,
+            "stringKey": "Rectangle",
+            "doubleKey": 3.14
+        ]
+        
+        let data = try PropertyListSerialization.data(fromPropertyList: testData, format: .binary, options: 0)
+        try data.write(to: plistURL)
+
+        // 2. Initialize the store pointing to the dummy plist
+        let store = PreferencesStore(fileURL: plistURL)
+
+        // 3. Verify it loads the values correctly
+        XCTAssertTrue(store.bool(forKey: "boolKey"))
+        XCTAssertEqual(store.int(forKey: "intKey"), 42)
+        XCTAssertEqual(store.string(forKey: "stringKey"), "Rectangle")
+        XCTAssertEqual(store.float(forKey: "doubleKey"), 3.14)
+    }
+}
