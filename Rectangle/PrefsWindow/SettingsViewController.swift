@@ -39,6 +39,11 @@ class SettingsViewController: NSViewController {
 
     @IBOutlet weak var extraSettingsButton: NSButton!
 
+    @IBOutlet weak var importExportRow: NSStackView!
+
+    private var configFileCheckbox: NSButton?
+    private var configFilePathLabel: NSTextField?
+
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
@@ -279,6 +284,87 @@ class SettingsViewController: NSViewController {
             Defaults.load(fileUrl: url)
         }
         Notification.Name.windowSnapping.post(object: true)
+    }
+
+    // MARK: - Live config file (iTerm2-style)
+
+    private func initializeConfigFileControls() {
+        guard configFileCheckbox == nil,
+              let parentStack = importExportRow.superview as? NSStackView,
+              let insertIdx = parentStack.arrangedSubviews.firstIndex(of: importExportRow) else { return }
+
+        let separator = NSBox()
+        separator.boxType = .separator
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Sync settings to a config file", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleConfigFile(_:)))
+        checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
+        checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        let pathLabel = NSTextField(labelWithString: "")
+        pathLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+        pathLabel.textColor = .secondaryLabelColor
+        pathLabel.lineBreakMode = .byTruncatingMiddle
+        pathLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        let chooseButton = NSButton(title: NSLocalizedString("Choose Folder…", tableName: "Main", value: "", comment: ""), target: self, action: #selector(chooseConfigFolder(_:)))
+        chooseButton.bezelStyle = .rounded
+        chooseButton.setContentHuggingPriority(.required, for: .horizontal)
+
+        let pathRow = NSStackView(views: [pathLabel, chooseButton])
+        pathRow.orientation = .horizontal
+        pathRow.alignment = .centerY
+        pathRow.spacing = 8
+        pathRow.translatesAutoresizingMaskIntoConstraints = false
+
+        let helpLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Reads and writes RectangleConfig.json in the chosen folder. External edits are applied immediately, and changes made here are written back to the file.", tableName: "Main", value: "", comment: ""))
+        helpLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+        helpLabel.textColor = .secondaryLabelColor
+        helpLabel.translatesAutoresizingMaskIntoConstraints = false
+        helpLabel.preferredMaxLayoutWidth = 500
+        helpLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        helpLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+        parentStack.insertArrangedSubview(separator, at: insertIdx)
+        parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
+        parentStack.insertArrangedSubview(pathRow, at: insertIdx + 2)
+        parentStack.insertArrangedSubview(helpLabel, at: insertIdx + 3)
+
+        separator.widthAnchor.constraint(equalTo: importExportRow.widthAnchor).isActive = true
+        separator.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        pathRow.widthAnchor.constraint(equalTo: importExportRow.widthAnchor).isActive = true
+
+        configFileCheckbox = checkbox
+        configFilePathLabel = pathLabel
+        updateConfigFileControls()
+    }
+
+    private func updateConfigFileControls() {
+        let enabled = Defaults.configFileEnabled.userEnabled
+        configFileCheckbox?.state = enabled ? .on : .off
+        let folder = ConfigFileManager.shared.folderURL?.path ?? ""
+        configFilePathLabel?.stringValue = folder
+        configFilePathLabel?.toolTip = folder
+    }
+
+    @objc private func toggleConfigFile(_ sender: NSButton) {
+        ConfigFileManager.shared.setEnabled(sender.state == .on)
+        updateConfigFileControls()
+    }
+
+    @objc private func chooseConfigFolder(_ sender: NSButton) {
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
+        openPanel.allowsMultipleSelection = false
+        openPanel.prompt = NSLocalizedString("Choose", tableName: "Main", value: "", comment: "")
+        if let current = ConfigFileManager.shared.folderURL {
+            openPanel.directoryURL = current
+        }
+        guard openPanel.runModal() == .OK, let url = openPanel.url else { return }
+        ConfigFileManager.shared.setEnabled(true, folder: url)
+        updateConfigFileControls()
     }
 
     @IBAction func showExtraSettings(_ sender: NSButton) {
@@ -1050,11 +1136,13 @@ class SettingsViewController: NSViewController {
         initializeCombinedDisplayCheckbox()
 
         initializeGreenButtonOverrideCheckbox()
+        initializeConfigFileControls()
 
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
             self.initializeCycleSizesView(animated: false)
+            self.updateConfigFileControls()
         })
         
         Notification.Name.menuBarIconHidden.onPost(using: {_ in
