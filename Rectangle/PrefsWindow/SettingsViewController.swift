@@ -233,27 +233,22 @@ class SettingsViewController: NSViewController {
     }
     
     @IBAction func restoreDefaults(_ sender: Any) {
-        // Ask user if they want to restore to Rectangle or Spectacle defaults
-        let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
-        let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
-        let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
-        let cancelText = NSLocalizedString("Cancel", tableName: "Main", value: "", comment: "")
-        let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
-        if response == .alertThirdButtonReturn { return }
-
-        //  Restore default shortcuts
-        WindowAction.active.forEach { ShortcutStore.resetShortcut(forKey: $0.name) }
-        let rectangleDefaults = response == .alertFirstButtonReturn
-        if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
-            Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
+        let response = AlertUtil.twoButtonAlert(question: "Restore Default Shortcuts?".localized, text: "This will restore all shortcuts to their default state.".localized, confirmText: "Restore".localized, cancelText: "Cancel".localized)
+        if response == .alertFirstButtonReturn {
+            
+            for action in WindowAction.active {
+                ShortcutStore.resetShortcut(forKey: action.name)
+            }
+            
+            for key in TodoManager.defaultsKeys {
+                ShortcutStore.resetShortcut(forKey: key)
+            }
+            TodoManager.initToggleShortcut()
+            TodoManager.initReflowShortcut()
+            
+            Notification.Name.changeDefaults.post()
+            Notification.Name.shortcutsChanged.post()
         }
-        Notification.Name.changeDefaults.post()
-        Notification.Name.shortcutsChanged.post()
-        
-        // Restore snap areas
-        Defaults.portraitSnapAreas.typedValue = nil
-        Defaults.landscapeSnapAreas.typedValue = nil
-        Notification.Name.defaultSnapAreas.post()
     }
     
     @IBAction func exportConfig(_ sender: NSButton) {
@@ -368,8 +363,12 @@ class SettingsViewController: NSViewController {
     }
 
     @IBAction func showExtraSettings(_ sender: NSButton) {
-        extraSettingsPopover = nil
-        if extraSettingsPopover == nil {
+        if let popover = extraSettingsPopover {
+            if popover.isShown {
+                popover.close()
+                return
+            }
+        } else {
             let popover = NSPopover()
             popover.behavior = .transient
             let viewController = NSViewController()
