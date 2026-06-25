@@ -6,7 +6,7 @@ import MASShortcut
 extension Defaults {
     static func encoded() -> String? {
         guard let version = Bundle.main.infoDictionary?["CFBundleVersion"] as? String else { return nil }
-        
+
         var shortcuts = [String: Shortcut]()
         for action in WindowAction.active {
             if let masShortcut = ShortcutStore.shortcut(for: action) {
@@ -14,38 +14,39 @@ extension Defaults {
             }
         }
         for defaultsKey in TodoManager.defaultsKeys {
-            let fallback = defaultsKey == TodoManager.toggleDefaultsKey
-                ? MASShortcut(keyCode: kVK_ANSI_B, modifierFlags: [.control, .option])
-                : MASShortcut(keyCode: kVK_ANSI_N, modifierFlags: [.control, .option])
-            if let shortcut = ShortcutStore.shortcut(forKey: defaultsKey, fallback: fallback) {
-                shortcuts[defaultsKey] = Shortcut(masShortcut: shortcut)
-            }
+            guard let masShortcut = ShortcutStore.shortcut(forKey: defaultsKey) else { continue }
+            shortcuts[defaultsKey] = Shortcut(masShortcut: masShortcut)
         }
-        
+
         var codableDefaults = [String: CodableDefault]()
         for exportableDefault in Defaults.array {
             codableDefaults[exportableDefault.key] = exportableDefault.toCodable()
         }
-                
+
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: version,
                             shortcuts: shortcuts,
                             defaults: codableDefaults)
-        
+
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         if #available(macOS 10.13, *) {
             encoder.outputFormatting.update(with: .sortedKeys)
         }
-        return (try? encoder.encode(config)).flatMap { String(data: $0, encoding: .utf8) }
+        if let encodedJson = try? encoder.encode(config) {
+            if let jsonString = String(data: encodedJson, encoding: .utf8) {
+                return jsonString
+            }
+        }
+        return nil
     }
-    
+
     static func convert(jsonString: String) -> Config? {
         guard let jsonData = jsonString.data(using: .utf8) else { return nil }
         let decoder = JSONDecoder()
         return try? decoder.decode(Config.self, from: jsonData)
     }
-    
+
     static func load(fileUrl: URL) {
         // Size cap: legitimate configs are ~tens of KB; refuse anything that
         // looks abusive (defense against OOM via a giant config file).
@@ -53,7 +54,7 @@ extension Defaults {
            let size = attrs[.size] as? NSNumber, size.intValue > 1_048_576 {
             return
         }
-        
+
         guard let jsonString = try? String(contentsOf: fileUrl, encoding: .utf8),
               let config = convert(jsonString: jsonString) else { return }
 
@@ -62,7 +63,7 @@ extension Defaults {
                 availableDefault.load(from: codedDefault)
             }
         }
-        
+
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
             if let shortcut = importedShortcut?.toMASSHortcut() {
@@ -74,19 +75,19 @@ extension Defaults {
                 ShortcutStore.setShortcut(shortcut, forKey: defaultsKey)
             }
         }
-        
+
         Notification.Name.configImported.post()
         Notification.Name.shortcutsChanged.post()
     }
-    
+
     static func loadFromSupportDir() {
         if let rectangleSupportURL = getSupportDir()?
             .appendingPathComponent("Rectangle", isDirectory: true) {
-            
+
             let configURL = rectangleSupportURL.appendingPathComponent("RectangleConfig.json")
-            let fm = FileManager.default
-                        
-            if (try? configURL.checkResourceIsReachable()) == true {
+
+            let exists = try? configURL.checkResourceIsReachable()
+            if exists == true {
                 // Defense-in-depth: any process running as this user can drop
                 // a RectangleConfig.json in Application Support and have it
                 // silently applied on next launch, overwriting shortcuts and
@@ -95,8 +96,9 @@ extension Defaults {
                 // We also refuse symlinks (could redirect reads elsewhere) and
                 // any file with world-write permission (suggests tampering).
                 let path = configURL.path
+                let fm = FileManager.default
                 var isSafe = true
-                
+
                 if let attrs = try? fm.attributesOfItem(atPath: path) {
                     if (attrs[.type] as? FileAttributeType) == .typeSymbolicLink {
                         isSafe = false
@@ -106,7 +108,7 @@ extension Defaults {
                         isSafe = false
                     }
                 }
-                
+
                 guard isSafe else {
                     AlertUtil.oneButtonAlert(
                         question: "Refused to load RectangleConfig.json",
@@ -115,7 +117,7 @@ extension Defaults {
                     try? fm.removeItem(at: configURL)
                     return
                 }
-                
+
                 let response = AlertUtil.twoButtonAlert(
                     question: "Apply Rectangle configuration?",
                     text: "A configuration file was found at \(path). Applying it will overwrite your current Rectangle shortcuts and preferences. Apply now?",
@@ -126,11 +128,11 @@ extension Defaults {
                     try? fm.removeItem(at: configURL)
                     return
                 }
-                
+
                 load(fileUrl: configURL)
                 do {
                     let newFilename = "RectangleConfig\(timestamp()).json"
-                    
+
                     try fm.moveItem(atPath: configURL.path, toPath: rectangleSupportURL.appendingPathComponent(newFilename).path)
                 } catch {
                     do {
@@ -142,11 +144,11 @@ extension Defaults {
             }
         }
     }
-    
+
     private static func getSupportDir() -> URL? {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
     }
-    
+
     private static func timestamp() -> String {
         let date = Date()
         let formatter = DateFormatter()

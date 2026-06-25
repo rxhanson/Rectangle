@@ -9,7 +9,7 @@ class TodoManager {
     private static var registeredToggleShortcut: MASShortcut?
     private static var registeredReflowShortcut: MASShortcut?
 
-    static var todoScreen : NSScreen?
+    static var todoScreen: NSScreen?
     static let toggleDefaultsKey = "toggleTodo"
     static let reflowDefaultsKey = "reflowTodo"
     static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
@@ -20,91 +20,100 @@ class TodoManager {
         moveAllIfNeeded(bringToFront)
     }
 
+    // MARK: Shortcut initialisation
+
     static func initToggleShortcut() {
-        _ = ShortcutStore.shortcut(forKey: toggleDefaultsKey, fallback: defaultToggleShortcut())
+        // Write the default only when the key is genuinely absent so that an
+        // explicit user clearance (sentinel string) is not overwritten.
+        if ShortcutStore.shortcut(forKey: toggleDefaultsKey) == nil,
+           PreferencesStore.shared.string(forKey: toggleDefaultsKey) == nil {
+            ShortcutStore.setShortcut(defaultToggleShortcut(), forKey: toggleDefaultsKey)
+        }
     }
 
     static func initReflowShortcut() {
-        _ = ShortcutStore.shortcut(forKey: reflowDefaultsKey, fallback: defaultReflowShortcut())
-    }
-
-    private static func registerToggleShortcut() {
-        unregisterToggleShortcut()
-        guard isTodoShortcutBindable(toggleDefaultsKey) else { return }
-        guard let shortcut = ShortcutStore.shortcut(forKey: toggleDefaultsKey, fallback: defaultToggleShortcut()) else { return }
-        if shortcutMonitor.register(shortcut, withAction: {
-            let enabled = !Defaults.todoMode.enabled
-            setTodoMode(enabled)
-        }) {
-            registeredToggleShortcut = shortcut
+        if ShortcutStore.shortcut(forKey: reflowDefaultsKey) == nil,
+           PreferencesStore.shared.string(forKey: reflowDefaultsKey) == nil {
+            ShortcutStore.setShortcut(defaultReflowShortcut(), forKey: reflowDefaultsKey)
         }
     }
 
-    private static func registerReflowShortcut() {
-        unregisterReflowShortcut()
-        guard isTodoShortcutBindable(reflowDefaultsKey) else { return }
-        guard let shortcut = ShortcutStore.shortcut(forKey: reflowDefaultsKey, fallback: defaultReflowShortcut()) else { return }
-        if shortcutMonitor.register(shortcut, withAction: {
-            moveAll()
-        }) {
-            registeredReflowShortcut = shortcut
-        }
-    }
+    // MARK: Registration
 
-    private static func unregisterToggleShortcut() {
-        if let shortcut = registeredToggleShortcut {
-            shortcutMonitor.unregisterShortcut(shortcut)
-            registeredToggleShortcut = nil
+    private static func bindTodoShortcut(key: String,
+                                         fallback: MASShortcut,
+                                         registered: inout MASShortcut?,
+                                         enabled: Bool,
+                                         action: @escaping () -> Void) {
+        if let current = registered {
+            shortcutMonitor.unregisterShortcut(current)
+            registered = nil
         }
-    }
-
-    private static func unregisterReflowShortcut() {
-        if let shortcut = registeredReflowShortcut {
-            shortcutMonitor.unregisterShortcut(shortcut)
-            registeredReflowShortcut = nil
+        
+        guard enabled,
+              isTodoShortcutBindable(key),
+              let shortcut = ShortcutStore.shortcut(forKey: key, fallback: fallback)
+        else { return }
+        
+        if shortcutMonitor.register(shortcut, withAction: action) {
+            registered = shortcut
         }
     }
 
     static func registerUnregisterToggleShortcut() {
-        if Defaults.todo.userEnabled {
-            registerToggleShortcut()
-        } else {
-            unregisterToggleShortcut()
+        bindTodoShortcut(
+            key: toggleDefaultsKey,
+            fallback: defaultToggleShortcut(),
+            registered: &registeredToggleShortcut,
+            enabled: Defaults.todo.userEnabled
+        ) {
+            setTodoMode(!Defaults.todoMode.enabled)
         }
     }
 
     static func registerUnregisterReflowShortcut() {
-        if Defaults.todo.userEnabled && Defaults.todoMode.enabled {
-            registerReflowShortcut()
-        } else {
-            unregisterReflowShortcut()
+        bindTodoShortcut(
+            key: reflowDefaultsKey,
+            fallback: defaultReflowShortcut(),
+            registered: &registeredReflowShortcut,
+            enabled: Defaults.todo.userEnabled && Defaults.todoMode.enabled
+        ) {
+            moveAll()
         }
     }
+
+    // MARK: Conflict detection
 
     private static func isTodoShortcutBindable(_ defaultsKey: String) -> Bool {
         guard let shortcut = ShortcutStore.shortcut(forKey: defaultsKey) else { return true }
         return TodoShortcutConflict.conflict(for: shortcut, ignoringTodoDefaultsKey: defaultsKey) == nil
     }
 
+    // MARK: Key display (for menu item labels)
+
     static func toggleKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard let shortcut = ShortcutStore.shortcut(forKey: toggleDefaultsKey, fallback: defaultToggleShortcut()) else { return nil }
+        guard let shortcut = ShortcutStore.shortcut(forKey: toggleDefaultsKey,
+                                                    fallback: defaultToggleShortcut()) else { return nil }
         return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
 
     static func reflowKeyDisplay() -> (String?, NSEvent.ModifierFlags)? {
-        guard let shortcut = ShortcutStore.shortcut(forKey: reflowDefaultsKey, fallback: defaultReflowShortcut()) else { return nil }
+        guard let shortcut = ShortcutStore.shortcut(forKey: reflowDefaultsKey,
+                                                    fallback: defaultReflowShortcut()) else { return nil }
         return (shortcut.keyCodeStringForKeyEquivalent, shortcut.modifierFlags)
     }
 
+    // MARK: Defaults
+
     private static func defaultToggleShortcut() -> MASShortcut {
-        MASShortcut(keyCode: kVK_ANSI_B,
-                    modifierFlags: [.control, .option])
+        MASShortcut(keyCode: kVK_ANSI_B, modifierFlags: [.control, .option])
     }
 
     private static func defaultReflowShortcut() -> MASShortcut {
-        MASShortcut(keyCode: kVK_ANSI_N,
-                    modifierFlags: [.control, .option])
+        MASShortcut(keyCode: kVK_ANSI_N, modifierFlags: [.control, .option])
     }
+
+    // MARK: Window management
 
     private static func getTodoWindowElement() -> AccessibilityElement? {
         guard let bundleId = Defaults.todoApplication.value, let windowElements = AccessibilityElement(bundleId)?.windowElements else {
@@ -207,7 +216,7 @@ class TodoManager {
     }
 
     static func changeSidebarWidthUnit(to unit: TodoSidebarWidthUnit) {
-        if let visibleFrameWidth = TodoManager.todoScreen?.adjustedVisibleFrame(true).width {
+        if let visibleFrameWidth = todoScreen?.adjustedVisibleFrame(true).width {
             let newValue = TodoManager.convert(width: Defaults.todoSidebarWidth.cgFloat, toUnit: unit, visibleFrameWidth: visibleFrameWidth)
             Defaults.todoSidebarWidth.value = Float(newValue)
         }
@@ -270,40 +279,34 @@ class TodoManager {
     }
 }
 
+// MARK: - TodoShortcutConflict
+
 struct TodoShortcutConflict {
 
     let shortcutName: String
 
+    /// Checks whether `shortcut` conflicts with any existing window-action or
+    /// todo shortcut, ignoring `ignoredDefaultsKey`.
+    ///
+    /// Pass `userDefaults` only in tests; the live path uses `ShortcutStore`.
     static func conflict(for shortcut: MASShortcut,
                          ignoringTodoDefaultsKey ignoredDefaultsKey: String,
                          userDefaults: UserDefaults? = nil) -> TodoShortcutConflict? {
         let identity = ShortcutCycle.ShortcutIdentity(shortcut)
 
         for action in WindowAction.active {
-            let actionShortcut: MASShortcut?
-            if let userDefaults {
-                actionShortcut = ShortcutCycle.shortcut(for: action, userDefaults: userDefaults)
-            } else {
-                actionShortcut = ShortcutCycle.shortcut(for: action)
-            }
-            guard let actionShortcut,
-                  ShortcutCycle.ShortcutIdentity(actionShortcut) == identity
+            let actionShortcut = userDefaults.map { ShortcutCycle.shortcut(for: action, userDefaults: $0) }
+                               ?? ShortcutCycle.shortcut(for: action)
+            guard let actionShortcut, ShortcutCycle.ShortcutIdentity(actionShortcut) == identity
             else { continue }
-
             return TodoShortcutConflict(shortcutName: action.displayName ?? action.name)
         }
 
         for defaultsKey in TodoManager.defaultsKeys where defaultsKey != ignoredDefaultsKey {
-            let todoShortcut: MASShortcut?
-            if let userDefaults {
-                todoShortcut = ShortcutCycle.shortcut(forDefaultsKey: defaultsKey, userDefaults: userDefaults)
-            } else {
-                todoShortcut = ShortcutCycle.shortcut(forDefaultsKey: defaultsKey)
-            }
-            guard let todoShortcut,
-                  ShortcutCycle.ShortcutIdentity(todoShortcut) == identity
+            let todoShortcut = userDefaults.map { ShortcutCycle.shortcut(forDefaultsKey: defaultsKey, userDefaults: $0) }
+                             ?? ShortcutCycle.shortcut(forDefaultsKey: defaultsKey)
+            guard let todoShortcut, ShortcutCycle.ShortcutIdentity(todoShortcut) == identity
             else { continue }
-
             return TodoShortcutConflict(shortcutName: displayName(forTodoDefaultsKey: defaultsKey))
         }
 
@@ -321,6 +324,8 @@ struct TodoShortcutConflict {
         }
     }
 }
+
+// MARK: - TodoShortcutValidator
 
 class TodoShortcutValidator: MASShortcutValidator {
 
@@ -349,6 +354,8 @@ class TodoShortcutValidator: MASShortcutValidator {
     }
 }
 
+// MARK: - Enums
+
 enum TodoSidebarSide: Int {
     case right = 1
     case left = 2
@@ -360,10 +367,8 @@ enum TodoSidebarWidthUnit: Int, CustomStringConvertible {
 
     var description: String {
         switch self {
-        case .pixels:
-            return "px"
-        case .pct:
-            return "%"
+        case .pixels: return "px"
+        case .pct:    return "%"
         }
     }
 }
