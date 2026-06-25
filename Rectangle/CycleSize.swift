@@ -8,7 +8,7 @@ enum CycleSize: Int, CaseIterable {
     case oneThird = 2
     case oneQuarter = 3
     case threeQuarters = 4
-    
+
     static func fromBits(bits: Int) -> Set<CycleSize> {
         Set(
             Self.allCases.filter {
@@ -16,10 +16,10 @@ enum CycleSize: Int, CaseIterable {
             }
         )
     }
-    
+
     static var firstSize = CycleSize.oneHalf
     static var defaultSizes: Set<CycleSize> = [.oneHalf, .twoThirds, .oneThird]
-    
+
     // The expected order of the cycle sizes is to start with the
     // first division, then go gradually upwards in size and wrap
     // around to the smaller sizes.
@@ -28,14 +28,14 @@ enum CycleSize: Int, CaseIterable {
     // 1/2, 2/3, 3/4, 1/4, 1/3
     static var sortedSizes: [CycleSize] = {
         let sortedSizes = Self.allCases.sorted(by: { $0.fraction < $1.fraction })
-        
+
         guard let firstSizeIndex = sortedSizes.firstIndex(of: firstSize) else {
             return sortedSizes
         }
-        
+
         let lessThanFistSizes = sortedSizes[0..<firstSizeIndex]
         let greaterThanFistSizes = sortedSizes[(firstSizeIndex + 1)..<sortedSizes.count]
-        
+
         return [firstSize] + greaterThanFistSizes + lessThanFistSizes
     }()
 }
@@ -51,34 +51,24 @@ extension CycleSize {
     static func matching(percentValue: Float) -> CycleSize? {
         sortedSizes.first { $0.matches(percentValue: percentValue) }
     }
-    
+
     var title: String {
         switch self {
-        case .twoThirds:
-            "⅔"
-        case .oneHalf:
-            "½"
-        case .oneThird:
-            "⅓"
-        case .oneQuarter:
-            "¼"
-        case .threeQuarters:
-            "¾"
+        case .twoThirds:     return "⅔"
+        case .oneHalf:       return "½"
+        case .oneThird:      return "⅓"
+        case .oneQuarter:    return "¼"
+        case .threeQuarters: return "¾"
         }
     }
-    
+
     var fraction: Float {
         switch self {
-        case .twoThirds:
-            2 / 3
-        case .oneHalf:
-            1 / 2
-        case .oneThird:
-            1 / 3
-        case .oneQuarter:
-            1 / 4
-        case .threeQuarters:
-            3 / 4
+        case .twoThirds:     return 2 / 3
+        case .oneHalf:       return 1 / 2
+        case .oneThird:      return 1 / 3
+        case .oneQuarter:    return 1 / 4
+        case .threeQuarters: return 3 / 4
         }
     }
     
@@ -90,10 +80,8 @@ extension CycleSize {
         abs(self.percentValue - percentValue) <= tolerance
     }
     
-    var isAlwaysEnabled: Bool {
-        self == .firstSize
-    }
-    
+    var isAlwaysEnabled: Bool { self == .firstSize }
+
 }
 
 extension Set where Element == CycleSize {
@@ -109,7 +97,7 @@ extension Set where Element == CycleSize {
 class CycleSizesDefault: Default {
     public private(set) var key: String = "selectedCycleSizes"
     private var initialized = false
-    
+
     var value: Set<CycleSize> {
         didSet {
             if initialized {
@@ -117,7 +105,7 @@ class CycleSizesDefault: Default {
             }
         }
     }
-    
+
     init() {
         let bits = PreferencesStore.shared.int(forKey: key)
         value = CycleSize.fromBits(bits: bits)
@@ -130,7 +118,7 @@ class CycleSizesDefault: Default {
             value = divisions
         }
     }
-    
+
     func toCodable() -> CodableDefault {
         CodableDefault(int: value.toBits())
     }
