@@ -28,7 +28,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
     }
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        let ratio = ActiveSideSplitRatios.shared.horizontalRatio(for: params.visibleFrameOfScreen)
+        let ratio = Defaults.horizontalSplitRatio.value / 100.0
         let side: HalfSplitSide = params.action == .rightHalf ? .trailing : .leading
         let fraction = side == .trailing ? 1.0 - ratio : ratio
         return RectResult(HalfSplitFrameCalculation.horizontalRect(in: params.visibleFrameOfScreen, side: side, fraction: fraction))
@@ -39,13 +39,9 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         return RectResult(HalfSplitFrameCalculation.horizontalRect(in: params.visibleFrameOfScreen, side: side, fraction: fraction))
     }
 
-    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
-        calculateRepeatedSideRect(params)
-    }
-
     func calculateResize(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         let screen = params.usableScreens.currentScreen
-        let rectResult: RectResult = calculateRepeatedSideRect(params.asRectParams())
+        let rectResult: RectResult = calculateRepeatedRect(params.asRectParams())
         return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
     }
     

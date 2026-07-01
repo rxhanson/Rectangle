@@ -455,8 +455,8 @@ extension WindowManager {
     }
 
     private func configuredCornerFrame(action: WindowAction, screenFrame: CGRect) -> CGRect? {
-        let horizontalRatio = ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame)
-        let verticalRatio = ActiveSideSplitRatios.shared.verticalRatio(for: screenFrame)
+        let horizontalRatio = Defaults.horizontalSplitRatio.value / 100.0
+        let verticalRatio = Defaults.verticalSplitRatio.value / 100.0
         let horizontalSide: HalfSplitSide
         let verticalSide: HalfSplitSide
         let horizontalFraction: Float

@@ -139,10 +139,6 @@ class WindowManager {
             calcResult.rect = cooperativeCornerPlan.focusedFrame
         }
 
-        ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
-                                                      targetFrame: calcResult.initialRect,
-                                                      screenFrame: visibleFrameOfDestinationScreen)
-
         if let cooperativeCornerPlan {
             if !cooperativeCornerPlan.needsApplication(focusedCurrentFrame: currentNormalizedRect) {
                 Logger.log("Cooperative resize no-op: solved frames already match current frames")

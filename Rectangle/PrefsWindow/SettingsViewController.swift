@@ -1331,7 +1331,6 @@ class SettingsViewController: NSViewController {
         }
         
         defaults.value = cycleSize.percentValue
-        ActiveSideSplitRatios.shared.resetAll()
         popUpButton.customField?.stringValue = "\(Int(round(cycleSize.percentValue)))"
         popUpButton.customField?.isHidden = true
     }
@@ -1408,7 +1407,6 @@ extension SettingsViewController: NSTextFieldDelegate {
 
         Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
             defaults.value = floatValue
-            self.resetActiveSideSplitRatiosIfNeeded(for: defaults)
             sender.defaultsSetAction?()
         }
     }
@@ -1421,19 +1419,8 @@ extension SettingsViewController: NSTextFieldDelegate {
             let fallback = sender.fallbackValue
             sender.stringValue = "\(Int(fallback))"
             defaults.value = fallback
-            resetActiveSideSplitRatiosIfNeeded(for: defaults)
             sender.defaultsSetAction?()
         }
-    }
-
-    private func resetActiveSideSplitRatiosIfNeeded(for defaults: FloatDefault) {
-        guard defaults.key == Defaults.horizontalSplitRatio.key
-            || defaults.key == Defaults.verticalSplitRatio.key
-        else {
-            return
-        }
-
-        ActiveSideSplitRatios.shared.resetAll()
     }
 }
 
