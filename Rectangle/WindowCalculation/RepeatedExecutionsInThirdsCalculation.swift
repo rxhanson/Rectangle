@@ -44,5 +44,31 @@ extension RepeatedExecutionsInThirdsCalculation {
 
         return calculateRect(for: sortedPositions[cycleIndex(forExecutionCount: count, in: sortedPositions)], params: params)
     }
+
+    func calculateRepeatedSideRect(_ params: RectCalculationParameters) -> RectResult {
+        guard params.action.isCompatibleRepeatedResizeAction(with: params.lastAction?.action) else {
+            return calculateFirstRect(params)
+        }
+
+        let sortedPositions = sortedCycleSizes()
+        guard !sortedPositions.isEmpty else {
+            return calculateFirstRect(params)
+        }
+
+        guard let count = params.lastAction?.count else {
+            return calculateFirstRect(params)
+        }
+
+        var position = cycleIndex(forExecutionCount: count, in: sortedPositions)
+        for _ in sortedPositions.indices {
+            let result = calculateRect(for: sortedPositions[position], params: params)
+            if !result.rect.equalTo(params.window.rect) {
+                return result
+            }
+            position = (position + 1) % sortedPositions.count
+        }
+
+        return calculateFirstRect(params)
+    }
     
 }

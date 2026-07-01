@@ -1238,6 +1238,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         Defaults.cycleSizesIsChanged.enabled = false
         Defaults.gapSize.value = 0
         Defaults.skipGapTopEdge.enabled = false
+        ActiveSideSplitRatios.shared.resetAll()
     }
     
     override func tearDown() {
@@ -1249,6 +1250,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         Defaults.selectedCycleSizes.value = savedSelectedCycleSizes
         Defaults.gapSize.value = savedGapSize
         Defaults.skipGapTopEdge.enabled = savedSkipGapTopEdge
+        ActiveSideSplitRatios.shared.resetAll()
         super.tearDown()
     }
     
@@ -1478,6 +1480,83 @@ class HalfSplitCornerCalculationTests: XCTestCase {
 
         assertRect(topFrame, equals: CGRect(x: 10, y: 320, width: 1200, height: 600))
         assertRect(repeatedTopFrame, equals: CGRect(x: 10, y: 620, width: 1200, height: 300))
+    }
+
+    func testRepeatedRightShortcutUpdatesActiveSplitForSubsequentCorners() {
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        Defaults.verticalSplitRatio.value = 50
+        ActiveSideSplitRatios.shared.resetAll()
+
+        let firstRightFrame = WindowCalculationFactory.rightHalfCalculation.calculateRect(params(for: .rightHalf)).rect
+        let repeatedRightFrame = WindowCalculationFactory.rightHalfCalculation.calculateRepeatedRect(repeatedParams(for: .rightHalf,
+                                                                                                                    currentRect: firstRightFrame)).rect
+
+        ActiveSideSplitRatios.shared.recordSideAction(.rightHalf,
+                                                      targetFrame: repeatedRightFrame,
+                                                      screenFrame: visibleFrame)
+
+        let topRightFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
+        let topLeftFrame = WindowCalculationFactory.upperLeftCalculation.calculateRect(params(for: .topLeft)).rect
+
+        assertRect(firstRightFrame, equals: CGRect(x: 810, y: 20, width: 400, height: 900))
+        assertRect(repeatedRightFrame, equals: CGRect(x: 410, y: 20, width: 800, height: 900))
+        assertRect(topRightFrame, equals: CGRect(x: 410, y: 470, width: 800, height: 450))
+        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 470, width: 400, height: 450))
+        XCTAssertEqual(Defaults.horizontalSplitRatio.value, CycleSize.twoThirds.percentValue, accuracy: 0.001)
+    }
+
+    func testRepeatedBottomShortcutUpdatesActiveSplitForSubsequentCorners() {
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = CycleSize.twoThirds.percentValue
+        ActiveSideSplitRatios.shared.resetAll()
+
+        let firstBottomFrame = WindowCalculationFactory.bottomHalfCalculation.calculateRect(params(for: .bottomHalf)).rect
+        let repeatedBottomFrame = WindowCalculationFactory.bottomHalfCalculation.calculateRepeatedRect(repeatedParams(for: .bottomHalf,
+                                                                                                                      currentRect: firstBottomFrame)).rect
+
+        ActiveSideSplitRatios.shared.recordSideAction(.bottomHalf,
+                                                      targetFrame: repeatedBottomFrame,
+                                                      screenFrame: visibleFrame)
+
+        let bottomRightFrame = WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect
+        let topRightFrame = WindowCalculationFactory.upperRightCalculation.calculateRect(params(for: .topRight)).rect
+
+        assertRect(firstBottomFrame, equals: CGRect(x: 10, y: 20, width: 1200, height: 300))
+        assertRect(repeatedBottomFrame, equals: CGRect(x: 10, y: 20, width: 1200, height: 600))
+        assertRect(bottomRightFrame, equals: CGRect(x: 610, y: 20, width: 600, height: 600))
+        assertRect(topRightFrame, equals: CGRect(x: 610, y: 620, width: 600, height: 300))
+        XCTAssertEqual(Defaults.verticalSplitRatio.value, CycleSize.twoThirds.percentValue, accuracy: 0.001)
+    }
+
+    func testActiveSideSplitIsScopedToDisplayFrame() {
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        ActiveSideSplitRatios.shared.resetAll()
+
+        let cycledRightFrame = CGRect(x: 410, y: 20, width: 800, height: 900)
+        let otherDisplayFrame = CGRect(x: 2000, y: 20, width: 1200, height: 900)
+
+        ActiveSideSplitRatios.shared.recordSideAction(.rightHalf,
+                                                      targetFrame: cycledRightFrame,
+                                                      screenFrame: visibleFrame)
+
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: visibleFrame),
+                       CycleSize.oneThird.fraction,
+                       accuracy: 0.001)
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: otherDisplayFrame),
+                       CycleSize.twoThirds.fraction,
+                       accuracy: 0.001)
+    }
+
+    func testChangingSavedSplitRatioResetsActiveRuntimeSplit() {
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        ActiveSideSplitRatios.shared.resetAll()
+        ActiveSideSplitRatios.shared.recordSideAction(.rightHalf,
+                                                      targetFrame: CGRect(x: 410, y: 20, width: 800, height: 900),
+                                                      screenFrame: visibleFrame)
+
+        Defaults.horizontalSplitRatio.value = 50
+
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: visibleFrame), 0.5, accuracy: 0.001)
     }
 
     func testHorizontalCornerShortcutCanCycleAfterCompatibleSideShortcut() {

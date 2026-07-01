@@ -51,16 +51,14 @@ extension RepeatedExecutionsCalculation {
 protocol CornerCycleExpansionCalculation: RepeatedExecutionsCalculation {
     var horizontalSide: HalfSplitSide { get }
     var verticalSide: HalfSplitSide { get }
-    var horizontalSplitFraction: Float { get }
-    var verticalSplitFraction: Float { get }
 }
 
 extension CornerCycleExpansionCalculation {
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        RectResult(cornerRect(params.visibleFrameOfScreen,
-                              horizontalFraction: horizontalSplitFraction,
-                              verticalFraction: verticalSplitFraction))
+        RectResult(cornerRect(params,
+                              horizontalFraction: horizontalSplitFraction(params),
+                              verticalFraction: verticalSplitFraction(params)))
     }
     
     func calculateRect(for cycleDivision: CycleSize, params: RectCalculationParameters) -> RectResult {
@@ -100,16 +98,16 @@ extension CornerCycleExpansionCalculation {
 
         switch Defaults.cornerCycleExpansionAxis.value {
         case .horizontal:
-            let cycledRect = cornerRect(params.visibleFrameOfScreen,
+            let cycledRect = cornerRect(params,
                                         horizontalFraction: fraction,
-                                        verticalFraction: verticalSplitFraction)
+                                        verticalFraction: verticalSplitFraction(params))
             return RectResult(CGRect(x: cycledRect.origin.x,
                                      y: normalRect.origin.y,
                                      width: cycledRect.width,
                                      height: normalRect.height))
         case .vertical:
-            let cycledRect = cornerRect(params.visibleFrameOfScreen,
-                                        horizontalFraction: horizontalSplitFraction,
+            let cycledRect = cornerRect(params,
+                                        horizontalFraction: horizontalSplitFraction(params),
                                         verticalFraction: fraction)
             return RectResult(CGRect(x: normalRect.origin.x,
                                      y: cycledRect.origin.y,
@@ -118,8 +116,18 @@ extension CornerCycleExpansionCalculation {
         }
     }
     
-    private func cornerRect(_ visibleFrameOfScreen: CGRect, horizontalFraction: Float, verticalFraction: Float) -> CGRect {
-        HalfSplitFrameCalculation.cornerRect(in: visibleFrameOfScreen,
+    func horizontalSplitFraction(_ params: RectCalculationParameters) -> Float {
+        let ratio = ActiveSideSplitRatios.shared.horizontalRatio(for: params.visibleFrameOfScreen)
+        return horizontalSide == .trailing ? 1.0 - ratio : ratio
+    }
+
+    func verticalSplitFraction(_ params: RectCalculationParameters) -> Float {
+        let ratio = ActiveSideSplitRatios.shared.verticalRatio(for: params.visibleFrameOfScreen)
+        return verticalSide == .trailing ? 1.0 - ratio : ratio
+    }
+
+    func cornerRect(_ params: RectCalculationParameters, horizontalFraction: Float, verticalFraction: Float) -> CGRect {
+        HalfSplitFrameCalculation.cornerRect(in: params.visibleFrameOfScreen,
                                              horizontalSide: horizontalSide,
                                              verticalSide: verticalSide,
                                              horizontalFraction: horizontalFraction,
