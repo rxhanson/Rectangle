@@ -82,6 +82,13 @@ struct CooperativeCornerResize {
         }
     }
 
+    private struct ObservedCornerBoundary {
+        let edge: CGFloat
+        let priority: Int
+        let distanceFromRequestedEdge: CGFloat
+        let id: CGWindowID
+    }
+
     static func detectionTolerance(screenFrame: CGRect, configuredGap: CGFloat) -> CGFloat {
         let proportionalTolerance = min(screenFrame.width, screenFrame.height) * 0.015
         return min(24, max(8, proportionalTolerance))
@@ -116,42 +123,38 @@ struct CooperativeCornerResize {
                                                    axis: CornerCycleExpansionAxis,
                                                    movedEdge: MovedEdge,
                                                    tolerance: CGFloat) -> CGRect {
+        focusedFrameResolvingRealizedCornerBoundary(requestedFocusedFrame: requestedFocusedFrame,
+                                                    screenFrame: screenFrame,
+                                                    candidates: candidates,
+                                                    axis: axis,
+                                                    movedEdge: movedEdge,
+                                                    tolerance: tolerance)
+    }
+
+    static func focusedFrameResolvingRealizedCornerBoundary(requestedFocusedFrame: CGRect,
+                                                            screenFrame: CGRect,
+                                                            candidates: [Candidate],
+                                                            axis: CornerCycleExpansionAxis,
+                                                            movedEdge: MovedEdge,
+                                                            tolerance: CGFloat,
+                                                            gapSize: CGFloat = 0) -> CGRect {
         guard !requestedFocusedFrame.isNull,
               !screenFrame.isNull
         else {
             return requestedFocusedFrame
         }
 
-        let requestedSize = axisSize(requestedFocusedFrame.size, axis)
         let desiredEdge = edgeCoordinate(requestedFocusedFrame, movedEdge)
-        let matchingCandidates = candidates.filter { candidate in
-            let frame = candidate.frame
-            guard !frame.isNull,
-                  screenFrame.intersects(frame),
-                  axisSize(frame.size, axis) < requestedSize - tolerance,
-                  matchesPerpendicularSpan(frame, requestedFocusedFrame, movedEdge: movedEdge, tolerance: tolerance),
-                  isContainedInSameSideRegion(frame, requestedFocusedFrame, movedEdge: movedEdge, axis: axis, tolerance: tolerance)
-            else {
-                return false
-            }
-
-            let candidateEdge = edgeCoordinate(frame, movedEdge)
-            switch movedEdge {
-            case .right, .top:
-                return candidateEdge < desiredEdge - tolerance
-            case .left, .bottom:
-                return candidateEdge > desiredEdge + tolerance
-            }
-        }
-
-        guard let occupiedCell = matchingCandidates.min(by: { lhs, rhs in
-            let lhsSize = axisSize(lhs.frame.size, axis)
-            let rhsSize = axisSize(rhs.frame.size, axis)
-            if abs(lhsSize - rhsSize) > tolerance {
-                return lhsSize < rhsSize
-            }
-            return lhs.id < rhs.id
-        }) else {
+        guard let observedBoundary = observedCornerBoundary(requestedFocusedFrame: requestedFocusedFrame,
+                                                            screenFrame: screenFrame,
+                                                            candidates: candidates,
+                                                            axis: axis,
+                                                            movedEdge: movedEdge,
+                                                            desiredEdge: desiredEdge,
+                                                            tolerance: tolerance,
+                                                            gapSize: gapSize),
+              abs(observedBoundary.edge - desiredEdge) > tolerance
+        else {
             return requestedFocusedFrame
         }
 
@@ -159,11 +162,156 @@ struct CooperativeCornerResize {
             sameSideFrame(baseFrame: requestedFocusedFrame,
                           movedEdge: movedEdge,
                           axis: axis,
-                          edge: edgeCoordinate(occupiedCell.frame, movedEdge),
+                          edge: observedBoundary.edge,
                           newFocusedFrame: requestedFocusedFrame,
                           screenFrame: screenFrame),
             visibleFrame: screenFrame
         )
+    }
+
+    private static func observedCornerBoundary(requestedFocusedFrame: CGRect,
+                                               screenFrame: CGRect,
+                                               candidates: [Candidate],
+                                               axis: CornerCycleExpansionAxis,
+                                               movedEdge: MovedEdge,
+                                               desiredEdge: CGFloat,
+                                               tolerance: CGFloat,
+                                               gapSize: CGFloat) -> ObservedCornerBoundary? {
+        let observedBoundaries = candidates.compactMap { candidate -> ObservedCornerBoundary? in
+            let frame = candidate.frame
+            guard !frame.isNull,
+                  screenFrame.intersects(frame),
+                  matchesPerpendicularSpan(frame, requestedFocusedFrame, movedEdge: movedEdge, tolerance: tolerance)
+            else {
+                return nil
+            }
+
+            if sharesSameSideFixedEdge(frame,
+                                       requestedFocusedFrame,
+                                       movedEdge: movedEdge,
+                                       axis: axis,
+                                       tolerance: tolerance) {
+                let edge = edgeCoordinate(frame, movedEdge)
+                guard isValidObservedBoundary(edge,
+                                              requestedFocusedFrame: requestedFocusedFrame,
+                                              screenFrame: screenFrame,
+                                              movedEdge: movedEdge,
+                                              axis: axis,
+                                              tolerance: tolerance)
+                else {
+                    return nil
+                }
+
+                return ObservedCornerBoundary(edge: edge,
+                                              priority: 0,
+                                              distanceFromRequestedEdge: abs(edge - desiredEdge),
+                                              id: candidate.id)
+            }
+
+            guard let adjacentEdge = observedBoundaryFromAdjacentFrame(frame,
+                                                                       screenFrame: screenFrame,
+                                                                       movedEdge: movedEdge,
+                                                                       axis: axis,
+                                                                       tolerance: tolerance,
+                                                                       gapSize: gapSize),
+                  isValidObservedBoundary(adjacentEdge,
+                                          requestedFocusedFrame: requestedFocusedFrame,
+                                          screenFrame: screenFrame,
+                                          movedEdge: movedEdge,
+                                          axis: axis,
+                                          tolerance: tolerance)
+            else {
+                return nil
+            }
+
+            return ObservedCornerBoundary(edge: adjacentEdge,
+                                          priority: 1,
+                                          distanceFromRequestedEdge: abs(adjacentEdge - desiredEdge),
+                                          id: candidate.id)
+        }
+
+        return observedBoundaries.max { lhs, rhs in
+            if lhs.priority != rhs.priority {
+                return lhs.priority > rhs.priority
+            }
+            if abs(lhs.distanceFromRequestedEdge - rhs.distanceFromRequestedEdge) > 0.001 {
+                return lhs.distanceFromRequestedEdge < rhs.distanceFromRequestedEdge
+            }
+            return lhs.id > rhs.id
+        }
+    }
+
+    private static func sharesSameSideFixedEdge(_ candidate: CGRect,
+                                                _ focused: CGRect,
+                                                movedEdge: MovedEdge,
+                                                axis: CornerCycleExpansionAxis,
+                                                tolerance: CGFloat) -> Bool {
+        switch movedEdge {
+        case .right, .top:
+            return abs(axisMin(candidate, axis) - axisMin(focused, axis)) <= tolerance
+        case .left, .bottom:
+            return abs(axisMax(candidate, axis) - axisMax(focused, axis)) <= tolerance
+        }
+    }
+
+    private static func observedBoundaryFromAdjacentFrame(_ candidate: CGRect,
+                                                          screenFrame: CGRect,
+                                                          movedEdge: MovedEdge,
+                                                          axis: CornerCycleExpansionAxis,
+                                                          tolerance: CGFloat,
+                                                          gapSize: CGFloat) -> CGFloat? {
+        switch movedEdge {
+        case .right:
+            guard matchesOuterMax(axisMax(candidate, axis),
+                                  screenFrame: screenFrame,
+                                  axis: axis,
+                                  tolerance: tolerance,
+                                  gapSize: gapSize) else { return nil }
+            return axisMin(candidate, axis) - gapSize
+        case .left:
+            guard matchesOuterMin(axisMin(candidate, axis),
+                                  screenFrame: screenFrame,
+                                  axis: axis,
+                                  tolerance: tolerance,
+                                  gapSize: gapSize) else { return nil }
+            return axisMax(candidate, axis) + gapSize
+        case .top:
+            guard matchesOuterMax(axisMax(candidate, axis),
+                                  screenFrame: screenFrame,
+                                  axis: axis,
+                                  tolerance: tolerance,
+                                  gapSize: gapSize) else { return nil }
+            return axisMin(candidate, axis) - gapSize
+        case .bottom:
+            guard matchesOuterMin(axisMin(candidate, axis),
+                                  screenFrame: screenFrame,
+                                  axis: axis,
+                                  tolerance: tolerance,
+                                  gapSize: gapSize) else { return nil }
+            return axisMax(candidate, axis) + gapSize
+        }
+    }
+
+    private static func isValidObservedBoundary(_ edge: CGFloat,
+                                                requestedFocusedFrame: CGRect,
+                                                screenFrame: CGRect,
+                                                movedEdge: MovedEdge,
+                                                axis: CornerCycleExpansionAxis,
+                                                tolerance: CGFloat) -> Bool {
+        let visibleMin = axisMin(screenFrame, axis)
+        let visibleMax = axisMax(screenFrame, axis)
+        guard edge > visibleMin + tolerance,
+              edge < visibleMax - tolerance
+        else {
+            return false
+        }
+
+        switch movedEdge {
+        case .right, .top:
+            return edge > axisMin(requestedFocusedFrame, axis) + tolerance
+        case .left, .bottom:
+            return edge < axisMax(requestedFocusedFrame, axis) - tolerance
+        }
     }
 
     static func movedEdge(from oldFocusedFrame: CGRect,
@@ -753,6 +901,26 @@ struct CooperativeCornerResize {
         return abs(candidateMax - screenMax) < abs(candidateMax - gapMax)
             ? screenMax
             : gapMax
+    }
+
+    private static func matchesOuterMin(_ value: CGFloat,
+                                        screenFrame: CGRect,
+                                        axis: CornerCycleExpansionAxis,
+                                        tolerance: CGFloat,
+                                        gapSize: CGFloat) -> Bool {
+        let screenMin = axisMin(screenFrame, axis)
+        return abs(value - screenMin) <= tolerance
+            || abs(value - (screenMin + gapSize)) <= tolerance
+    }
+
+    private static func matchesOuterMax(_ value: CGFloat,
+                                        screenFrame: CGRect,
+                                        axis: CornerCycleExpansionAxis,
+                                        tolerance: CGFloat,
+                                        gapSize: CGFloat) -> Bool {
+        let screenMax = axisMax(screenFrame, axis)
+        return abs(value - screenMax) <= tolerance
+            || abs(value - (screenMax - gapSize)) <= tolerance
     }
 
     private static func constrainFocusedWindow(_ edgeRange: inout EdgeRange,

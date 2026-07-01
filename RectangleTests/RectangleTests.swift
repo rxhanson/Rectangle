@@ -439,6 +439,104 @@ class CooperativeCornerResizeTests: XCTestCase {
         assertRect(plan.adjustments[1].newFrame, equals: bottomLeft.frame)
     }
 
+    func testInitialCornerPlacementUsesLargerRealizedBoundaryBeforePlanning() {
+        let focusedOld = CGRect(x: 225, y: 120, width: 420, height: 360)
+        let focusedDefault = CGRect(x: 400, y: 600, width: 800, height: 300)
+        let constrainedTopRight = CooperativeCornerResize.Candidate(id: 2,
+                                                                    frame: CGRect(x: 400, y: 540, width: 800, height: 360))
+        let focusedNew = CooperativeCornerResize.focusedFrameResolvingRealizedCornerBoundary(requestedFocusedFrame: focusedDefault,
+                                                                                             screenFrame: screenFrame,
+                                                                                             candidates: [constrainedTopRight],
+                                                                                             axis: .vertical,
+                                                                                             movedEdge: .bottom,
+                                                                                             tolerance: tolerance)
+
+        guard let plan = cooperativePlan(focusedOld: focusedOld,
+                                         focusedNew: focusedNew,
+                                         candidates: [constrainedTopRight],
+                                         axis: .vertical,
+                                         movedEdgeOverride: .bottom,
+                                         candidateDiscoveryFrame: focusedNew,
+                                         actionDescription: "initial corner/side cooperative placement") else {
+            XCTFail("Expected initial cooperative placement plan")
+            return
+        }
+
+        assertRect(focusedNew, equals: constrainedTopRight.frame)
+        assertRect(plan.focusedFrame, equals: constrainedTopRight.frame)
+        assertRect(plan.adjustments[0].newFrame, equals: constrainedTopRight.frame)
+        XCTAssertFalse(CooperativeCornerResize.frameNeedsApplication(currentFrame: constrainedTopRight.frame,
+                                                                     solvedFrame: plan.adjustments[0].newFrame,
+                                                                     screenFrame: screenFrame,
+                                                                     layoutTolerance: 4))
+    }
+
+    func testInitialCornerPlacementUsesObservedCyclicBoundaryBeforePlanning() {
+        let focusedDefault = CGRect(x: 400, y: 600, width: 800, height: 300)
+        let cycledTopRight = CooperativeCornerResize.Candidate(id: 2,
+                                                               frame: CGRect(x: 400, y: 300, width: 800, height: 600))
+
+        let focusedNew = CooperativeCornerResize.focusedFrameResolvingRealizedCornerBoundary(requestedFocusedFrame: focusedDefault,
+                                                                                             screenFrame: screenFrame,
+                                                                                             candidates: [cycledTopRight],
+                                                                                             axis: .vertical,
+                                                                                             movedEdge: .bottom,
+                                                                                             tolerance: tolerance)
+
+        assertRect(focusedNew, equals: cycledTopRight.frame)
+    }
+
+    func testCornerCleanupRebalancesRemainingWindowsAfterMinConstrainedWindowLeaves() {
+        let removedTopRight = CGRect(x: 400, y: 540, width: 800, height: 360)
+        let targetTopRight = CGRect(x: 400, y: 600, width: 800, height: 300)
+        let remainingTopRight = CooperativeCornerResize.Candidate(id: 2,
+                                                                  frame: CGRect(x: 400, y: 540, width: 800, height: 360))
+        let bottomRight = CooperativeCornerResize.Candidate(id: 3,
+                                                            frame: CGRect(x: 400, y: 0, width: 800, height: 540))
+
+        guard let plan = cooperativePlan(focusedOld: removedTopRight,
+                                         focusedNew: targetTopRight,
+                                         candidates: [remainingTopRight, bottomRight],
+                                         axis: .vertical,
+                                         focusedMinimumSize: CGSize(width: 1, height: 1),
+                                         movedEdgeOverride: .bottom,
+                                         candidateDiscoveryFrame: removedTopRight,
+                                         actionDescription: "cooperative resize cleanup after focused window left corner") else {
+            XCTFail("Expected cleanup cooperative plan")
+            return
+        }
+
+        assertRect(plan.focusedFrame, equals: targetTopRight)
+        assertRect(plan.adjustments[0].newFrame, equals: targetTopRight)
+        assertRect(plan.adjustments[1].newFrame, equals: CGRect(x: 400, y: 0, width: 800, height: 600))
+    }
+
+    func testCornerCleanupKeepsConstrainedLayoutWhenRemainingWindowCannotFitTarget() {
+        let removedTopRight = CGRect(x: 400, y: 540, width: 800, height: 360)
+        let targetTopRight = CGRect(x: 400, y: 600, width: 800, height: 300)
+        let remainingTopRight = CooperativeCornerResize.Candidate(id: 2,
+                                                                  frame: CGRect(x: 400, y: 540, width: 800, height: 360),
+                                                                  minimumSize: CGSize(width: 100, height: 360))
+        let bottomRight = CooperativeCornerResize.Candidate(id: 3,
+                                                            frame: CGRect(x: 400, y: 0, width: 800, height: 540))
+
+        guard let plan = cooperativePlan(focusedOld: removedTopRight,
+                                         focusedNew: targetTopRight,
+                                         candidates: [remainingTopRight, bottomRight],
+                                         axis: .vertical,
+                                         focusedMinimumSize: CGSize(width: 1, height: 1),
+                                         movedEdgeOverride: .bottom,
+                                         candidateDiscoveryFrame: removedTopRight,
+                                         actionDescription: "cooperative resize cleanup after focused window left corner") else {
+            XCTFail("Expected constrained cleanup cooperative plan")
+            return
+        }
+
+        assertRect(plan.focusedFrame, equals: removedTopRight)
+        assertRect(plan.adjustments[0].newFrame, equals: remainingTopRight.frame)
+        assertRect(plan.adjustments[1].newFrame, equals: bottomRight.frame)
+    }
+
     func testNearbyWindowEightPercentOffGridIsCapturedAndNormalized() {
         let focusedOld = CGRect(x: 250, y: 160, width: 320, height: 260)
         let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
@@ -1122,6 +1220,8 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     private var savedCornerCycleExpansionAxis: CornerCycleExpansionAxis = .horizontal
     private var savedCycleSizesIsChanged = false
     private var savedSelectedCycleSizes = Set<CycleSize>()
+    private var savedGapSize: Float = 0
+    private var savedSkipGapTopEdge = false
     private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
     
     override func setUp() {
@@ -1132,8 +1232,12 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         savedCornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
         savedCycleSizesIsChanged = Defaults.cycleSizesIsChanged.enabled
         savedSelectedCycleSizes = Defaults.selectedCycleSizes.value
+        savedGapSize = Defaults.gapSize.value
+        savedSkipGapTopEdge = Defaults.skipGapTopEdge.enabled
         Defaults.subsequentExecutionMode.value = .resize
         Defaults.cycleSizesIsChanged.enabled = false
+        Defaults.gapSize.value = 0
+        Defaults.skipGapTopEdge.enabled = false
     }
     
     override func tearDown() {
@@ -1143,6 +1247,8 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         Defaults.cornerCycleExpansionAxis.value = savedCornerCycleExpansionAxis
         Defaults.cycleSizesIsChanged.enabled = savedCycleSizesIsChanged
         Defaults.selectedCycleSizes.value = savedSelectedCycleSizes
+        Defaults.gapSize.value = savedGapSize
+        Defaults.skipGapTopEdge.enabled = savedSkipGapTopEdge
         super.tearDown()
     }
     
@@ -1239,6 +1345,63 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         XCTAssertEqual(firstFrame.maxY, secondFrame.maxY, accuracy: 0.001)
         XCTAssertEqual(firstFrame.origin.x, secondFrame.origin.x, accuracy: 0.001)
         XCTAssertEqual(firstFrame.width, secondFrame.width, accuracy: 0.001)
+    }
+
+    func testRepeatedCornerCyclingRecognizesGapAdjustedCooperativeBoundary() {
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        Defaults.gapSize.value = 20
+
+        let rawTwoThirdsFrame = WindowCalculationFactory.lowerRightCalculation.calculateRect(params(for: .bottomRight)).rect
+        var cooperativeCurrentFrame = GapCalculation.applyGaps(rawTwoThirdsFrame,
+                                                               dimension: .both,
+                                                               sharedEdges: WindowAction.bottomRight.gapSharedEdge,
+                                                               gapSize: Defaults.gapSize.value,
+                                                               skipTopGap: Defaults.skipGapTopEdge.enabled)
+        cooperativeCurrentFrame.size.height = rawTwoThirdsFrame.height
+
+        let repeatedFrame = WindowCalculationFactory.lowerRightCalculation.calculateRect(repeatedParams(for: .bottomRight,
+                                                                                                        currentRect: cooperativeCurrentFrame,
+                                                                                                        count: 1)).rect
+
+        assertRect(rawTwoThirdsFrame, equals: CGRect(x: 810, y: 20, width: 400, height: 600))
+        assertRect(cooperativeCurrentFrame, equals: CGRect(x: 820, y: 40, width: 370, height: 600))
+        assertRect(repeatedFrame, equals: CGRect(x: 810, y: 20, width: 400, height: 300))
+    }
+
+    func testCleanupTargetSkipsCornerReducedByAdjacentMinimumConstraint() {
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let reducedBottomLeft = CGRect(x: 10, y: 20, width: 800, height: 500)
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .bottomLeft,
+                                                              observedFrame: reducedBottomLeft,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .top,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: true)
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testCleanupTargetAllowsExpandedMinimumConstrainedCorner() {
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let expandedTopLeft = CGRect(x: 10, y: 400, width: 800, height: 520)
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .topLeft,
+                                                              observedFrame: expandedTopLeft,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .bottom,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false)
+
+        assertRect(cleanupTarget ?? .null, equals: CGRect(x: 10, y: 620, width: 800, height: 300))
     }
 
     func testRepeatedCornersWithVerticalExpansionCycleHeightOnly() {

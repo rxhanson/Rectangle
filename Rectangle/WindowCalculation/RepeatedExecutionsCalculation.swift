@@ -78,7 +78,9 @@ extension CornerCycleExpansionCalculation {
         }
 
         let currentIndex = sortedPositions.firstIndex { cycleSize in
-            calculateRect(for: cycleSize, params: params).rect.equalTo(params.window.rect)
+            currentFrame(params.window.rect,
+                         matchesCycleFrame: calculateRect(for: cycleSize, params: params).rect,
+                         params: params)
         }
 
         if let currentIndex {
@@ -122,5 +124,93 @@ extension CornerCycleExpansionCalculation {
                                              verticalSide: verticalSide,
                                              horizontalFraction: horizontalFraction,
                                              verticalFraction: verticalFraction)
+    }
+
+    private func currentFrame(_ currentFrame: CGRect,
+                              matchesCycleFrame cycleFrame: CGRect,
+                              params: RectCalculationParameters) -> Bool {
+        if cycleFrame.equalTo(currentFrame) {
+            return true
+        }
+
+        let gappedCycleFrame = gapAdjustedCycleFrame(cycleFrame, params: params)
+        if gappedCycleFrame.equalTo(currentFrame) {
+            return true
+        }
+
+        guard params.action.isCooperativeCornerAction else {
+            return false
+        }
+
+        let axis = Defaults.cornerCycleExpansionAxis.value
+        let tolerance = max(CGFloat(4), CGFloat(Defaults.gapSize.value) * 2.0 + 4.0)
+        let currentAxisSize = axisSize(currentFrame, axis)
+        let expectedAxisSizes = [axisSize(cycleFrame, axis), axisSize(gappedCycleFrame, axis)]
+        guard expectedAxisSizes.contains(where: { abs(currentAxisSize - $0) <= tolerance }) else {
+            return false
+        }
+
+        return [cycleFrame, gappedCycleFrame].contains { expectedFrame in
+            matchesFixedEdge(currentFrame, expectedFrame, action: params.action, axis: axis, tolerance: tolerance)
+                && matchesPerpendicularSpan(currentFrame, expectedFrame, axis: axis, tolerance: tolerance)
+        }
+    }
+
+    private func gapAdjustedCycleFrame(_ cycleFrame: CGRect, params: RectCalculationParameters) -> CGRect {
+        let gapsApplicable = params.action.gapsApplicable
+        guard Defaults.gapSize.value > 0,
+              gapsApplicable != .none
+        else {
+            return cycleFrame
+        }
+
+        return GapCalculation.applyGaps(cycleFrame,
+                                        dimension: gapsApplicable,
+                                        sharedEdges: params.action.gapSharedEdge,
+                                        gapSize: Defaults.gapSize.value,
+                                        skipTopGap: Defaults.skipGapTopEdge.enabled)
+    }
+
+    private func matchesFixedEdge(_ currentFrame: CGRect,
+                                  _ expectedFrame: CGRect,
+                                  action: WindowAction,
+                                  axis: CornerCycleExpansionAxis,
+                                  tolerance: CGFloat) -> Bool {
+        guard let movedEdge = action.cooperativeResizeMovedEdge else {
+            return false
+        }
+
+        switch movedEdge {
+        case .right, .top:
+            return abs(axisMin(currentFrame, axis) - axisMin(expectedFrame, axis)) <= tolerance
+        case .left, .bottom:
+            return abs(axisMax(currentFrame, axis) - axisMax(expectedFrame, axis)) <= tolerance
+        }
+    }
+
+    private func matchesPerpendicularSpan(_ currentFrame: CGRect,
+                                          _ expectedFrame: CGRect,
+                                          axis: CornerCycleExpansionAxis,
+                                          tolerance: CGFloat) -> Bool {
+        switch axis {
+        case .horizontal:
+            return abs(currentFrame.minY - expectedFrame.minY) <= tolerance
+                && abs(currentFrame.maxY - expectedFrame.maxY) <= tolerance
+        case .vertical:
+            return abs(currentFrame.minX - expectedFrame.minX) <= tolerance
+                && abs(currentFrame.maxX - expectedFrame.maxX) <= tolerance
+        }
+    }
+
+    private func axisMin(_ frame: CGRect, _ axis: CornerCycleExpansionAxis) -> CGFloat {
+        axis == .horizontal ? frame.minX : frame.minY
+    }
+
+    private func axisMax(_ frame: CGRect, _ axis: CornerCycleExpansionAxis) -> CGFloat {
+        axis == .horizontal ? frame.maxX : frame.maxY
+    }
+
+    private func axisSize(_ frame: CGRect, _ axis: CornerCycleExpansionAxis) -> CGFloat {
+        axis == .horizontal ? frame.width : frame.height
     }
 }

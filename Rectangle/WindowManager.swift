@@ -189,6 +189,16 @@ class WindowManager {
             }
             windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect)
         }
+
+        if !isMovedAcrossDisplays {
+            applyCooperativeCornerCleanupIfNeeded(focusedWindowId: windowId,
+                                                  source: parameters.source,
+                                                  oldFocusedFrame: currentNormalizedRect,
+                                                  newFocusedFrame: resultingRect.screenFlipped,
+                                                  screenFrame: usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
+                                                  currentAction: action,
+                                                  lastRectangleAction: lastRectangleAction)
+        }
         
         postProcess(result: resultParameters, resultingRect: resultingRect)
     }
