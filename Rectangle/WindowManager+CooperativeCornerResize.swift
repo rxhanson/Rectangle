@@ -202,9 +202,8 @@ extension WindowManager {
         let captureTolerance = CooperativeCornerResize.captureTolerance(screenFrame: screenFrame, axis: cooperativeAxis)
         let layoutTolerance: CGFloat = 4
         let screenFrameAX = screenFrame.screenFlipped
-        let elementsById = AccessibilityElement.getAllWindowElements().reduce(into: [CGWindowID: AccessibilityElement]()) { elements, element in
+        let allElementsById = AccessibilityElement.getAllWindowElements().reduce(into: [CGWindowID: AccessibilityElement]()) { elements, element in
             guard let candidateId = element.getWindowId(),
-                  candidateId != focusedWindowId,
                   element.isWindow == true,
                   element.isMinimized != true,
                   element.isFullScreen != true,
@@ -222,6 +221,7 @@ extension WindowManager {
 
             elements[candidateId] = element
         }
+        var elementsById = allElementsById.filter { $0.key != focusedWindowId }
 
         let candidates = elementsById.map { id, element in
             CooperativeCornerResize.Candidate(id: id,
@@ -250,10 +250,25 @@ extension WindowManager {
         let minimumSize = CGSize(width: max(1, CGFloat(Defaults.minimumWindowWidth.value)),
                                  height: max(1, CGFloat(Defaults.minimumWindowHeight.value)))
         let syntheticFocusedMinimumSize = CGSize(width: 1, height: 1)
+        if let focusedElement = allElementsById[focusedWindowId],
+           frameIsAdjacentToCleanupSource(focusedElement.frame.screenFlipped,
+                                          sourceFrame: observedCornerFrame,
+                                          movedEdge: movedEdge,
+                                          axis: cooperativeAxis,
+                                          tolerance: tolerance,
+                                          gapSize: gapSize) {
+            elementsById[focusedWindowId] = focusedElement
+        }
+
+        let cleanupCandidates = elementsById.map { id, element in
+            CooperativeCornerResize.Candidate(id: id,
+                                              frame: element.frame.screenFlipped,
+                                              minimumSize: element.minimumSize)
+        }
         guard let cleanupPlan = CooperativeCornerResize.plan(oldFocusedFrame: observedCornerFrame,
                                                              newFocusedFrame: targetFrame,
                                                              screenFrame: screenFrame,
-                                                             candidates: candidates,
+                                                             candidates: cleanupCandidates,
                                                              axis: cooperativeAxis,
                                                              tolerance: tolerance,
                                                              minimumSize: minimumSize,
@@ -293,7 +308,7 @@ extension WindowManager {
                                                                           requestedFocusedFrame: targetFrame,
                                                                           plannedPlan: cleanupPlan,
                                                                           screenFrame: screenFrame,
-                                                                          candidates: candidates,
+                                                                          candidates: cleanupCandidates,
                                                                           actualFocusedFrame: cleanupPlan.focusedFrame,
                                                                           actualCandidateFramesById: actualCandidateFramesById,
                                                                           axis: cooperativeAxis,
@@ -419,6 +434,54 @@ extension WindowManager {
                      movedEdge: movedEdge,
                      size: targetSize,
                      screenFrame: screenFrame)
+    }
+
+    func frameIsAdjacentToCleanupSource(_ frame: CGRect,
+                                        sourceFrame: CGRect,
+                                        movedEdge: CooperativeCornerResize.MovedEdge,
+                                        axis: CornerCycleExpansionAxis,
+                                        tolerance: CGFloat,
+                                        gapSize: CGFloat) -> Bool {
+        guard movedEdgeMatches(axis: axis, movedEdge: movedEdge),
+              matchesPerpendicularSpan(frame, sourceFrame: sourceFrame, movedEdge: movedEdge, tolerance: tolerance)
+        else {
+            return false
+        }
+
+        switch movedEdge {
+        case .right:
+            return abs((frame.minX - sourceFrame.maxX) - gapSize) <= tolerance
+        case .left:
+            return abs((sourceFrame.minX - frame.maxX) - gapSize) <= tolerance
+        case .top:
+            return abs((frame.minY - sourceFrame.maxY) - gapSize) <= tolerance
+        case .bottom:
+            return abs((sourceFrame.minY - frame.maxY) - gapSize) <= tolerance
+        }
+    }
+
+    private func movedEdgeMatches(axis: CornerCycleExpansionAxis,
+                                  movedEdge: CooperativeCornerResize.MovedEdge) -> Bool {
+        switch (axis, movedEdge) {
+        case (.horizontal, .left), (.horizontal, .right), (.vertical, .top), (.vertical, .bottom):
+            return true
+        default:
+            return false
+        }
+    }
+
+    private func matchesPerpendicularSpan(_ frame: CGRect,
+                                          sourceFrame: CGRect,
+                                          movedEdge: CooperativeCornerResize.MovedEdge,
+                                          tolerance: CGFloat) -> Bool {
+        switch movedEdge {
+        case .left, .right:
+            return abs(frame.minY - sourceFrame.minY) <= tolerance
+                && abs(frame.maxY - sourceFrame.maxY) <= tolerance
+        case .top, .bottom:
+            return abs(frame.minX - sourceFrame.minX) <= tolerance
+                && abs(frame.maxX - sourceFrame.maxX) <= tolerance
+        }
     }
 
     private func intendedCornerAxisSizes(action: WindowAction,

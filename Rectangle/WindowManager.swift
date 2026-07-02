@@ -198,6 +198,7 @@ class WindowManager {
                                                   screenFrame: usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                                   currentAction: action,
                                                   lastRectangleAction: lastRectangleAction)
+            resultingRect = frontmostWindowElement.frame
         }
         
         postProcess(result: resultParameters, resultingRect: resultingRect)

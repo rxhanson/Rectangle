@@ -537,6 +537,33 @@ class CooperativeCornerResizeTests: XCTestCase {
         assertRect(plan.adjustments[1].newFrame, equals: bottomRight.frame)
     }
 
+    func testCornerCleanupRebalancesFocusedAdjacentDestinationAfterMinConstrainedWindowLeaves() {
+        let removedTopLeft = CGRect(x: 0, y: 540, width: 800, height: 360)
+        let targetTopLeft = CGRect(x: 0, y: 600, width: 800, height: 300)
+        let remainingTopLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                                 frame: removedTopLeft)
+        let focusedBottomLeft = CooperativeCornerResize.Candidate(id: 99,
+                                                                  frame: CGRect(x: 0, y: 0, width: 800, height: 540))
+
+        guard let plan = cooperativePlan(focusedOld: removedTopLeft,
+                                         focusedNew: targetTopLeft,
+                                         candidates: [remainingTopLeft, focusedBottomLeft],
+                                         axis: .vertical,
+                                         focusedMinimumSize: CGSize(width: 1, height: 1),
+                                         movedEdgeOverride: .bottom,
+                                         candidateDiscoveryFrame: removedTopLeft,
+                                         actionDescription: "cooperative resize cleanup after focused window left corner") else {
+            XCTFail("Expected focused destination cleanup cooperative plan")
+            return
+        }
+
+        let focusedDestinationAdjustment = plan.adjustments.first { $0.id == focusedBottomLeft.id }
+
+        assertRect(plan.focusedFrame, equals: targetTopLeft)
+        assertRect(focusedDestinationAdjustment?.newFrame ?? .null,
+                   equals: CGRect(x: 0, y: 0, width: 800, height: 600))
+    }
+
     func testNearbyWindowEightPercentOffGridIsCapturedAndNormalized() {
         let focusedOld = CGRect(x: 250, y: 160, width: 320, height: 260)
         let focusedNew = CGRect(x: 0, y: 0, width: 800, height: 600)
@@ -1402,6 +1429,32 @@ class HalfSplitCornerCalculationTests: XCTestCase {
                                                               includeCycleTargets: false)
 
         assertRect(cleanupTarget ?? .null, equals: CGRect(x: 10, y: 620, width: 800, height: 300))
+    }
+
+    func testCleanupSourceAdjacencyOnlyMatchesDirectDestination() {
+        let manager = WindowManager()
+        let sourceTopLeft = CGRect(x: 10, y: 400, width: 800, height: 520)
+        let adjacentBottomLeft = CGRect(x: 10, y: 20, width: 800, height: 380)
+        let otherBottom = CGRect(x: 810, y: 20, width: 400, height: 380)
+
+        XCTAssertTrue(manager.frameIsAdjacentToCleanupSource(adjacentBottomLeft,
+                                                             sourceFrame: sourceTopLeft,
+                                                             movedEdge: .bottom,
+                                                             axis: .vertical,
+                                                             tolerance: 8,
+                                                             gapSize: 0))
+        XCTAssertFalse(manager.frameIsAdjacentToCleanupSource(otherBottom,
+                                                              sourceFrame: sourceTopLeft,
+                                                              movedEdge: .bottom,
+                                                              axis: .vertical,
+                                                              tolerance: 8,
+                                                              gapSize: 0))
+        XCTAssertFalse(manager.frameIsAdjacentToCleanupSource(adjacentBottomLeft,
+                                                              sourceFrame: sourceTopLeft,
+                                                              movedEdge: .right,
+                                                              axis: .vertical,
+                                                              tolerance: 8,
+                                                              gapSize: 0))
     }
 
     func testRepeatedCornersWithVerticalExpansionCycleHeightOnly() {
