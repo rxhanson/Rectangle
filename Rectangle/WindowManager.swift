@@ -122,17 +122,37 @@ class WindowManager {
         if Defaults.cyclingOverlapOffset.userEnabled, action.positionCycles {
             calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
         }
+        
+        let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
+        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
+        let cooperativeCornerPlan = cooperativeCornerResizePlan(focusedWindowId: windowId,
+                                                                focusedWindowIsFixedSize: isFixedSize,
+                                                                focusedWindowMinimumSize: frontmostWindowElement.minimumSize,
+                                                                action: action,
+                                                                source: parameters.source,
+                                                                oldFocusedFrame: currentNormalizedRect,
+                                                                newFocusedFrame: calcResult.rect,
+                                                                screenFrame: visibleFrameOfDestinationScreen,
+                                                                destinationScreenIsCurrentScreen: usableScreens.currentScreen == calcResult.screen,
+                                                                lastRectangleAction: lastRectangleAction)
+        if let cooperativeCornerPlan {
+            calcResult.rect = cooperativeCornerPlan.focusedFrame
+        }
 
-        if currentNormalizedRect.equalTo(calcResult.rect) {
+        if let cooperativeCornerPlan {
+            if !cooperativeCornerPlan.needsApplication(focusedCurrentFrame: currentNormalizedRect) {
+                Logger.log("Cooperative resize no-op: solved frames already match current frames")
+                recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+                return
+            }
+        } else if currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
 
             return
         }
-        
-        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
-        let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
+
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
@@ -142,7 +162,13 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
         
-        var resultingRect = apply(result: resultParameters)
+        var resultingRect: CGRect
+        if let cooperativeCornerPlan {
+            resultingRect = applyCooperativeCornerResize(result: resultParameters,
+                                                         plan: cooperativeCornerPlan)
+        } else {
+            resultingRect = apply(result: resultParameters)
+        }
         
         let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen
         if isMovedAcrossDisplays {
@@ -163,6 +189,17 @@ class WindowManager {
             }
             windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect)
         }
+
+        if !isMovedAcrossDisplays {
+            applyCooperativeCornerCleanupIfNeeded(focusedWindowId: windowId,
+                                                  source: parameters.source,
+                                                  oldFocusedFrame: currentNormalizedRect,
+                                                  newFocusedFrame: resultingRect.screenFlipped,
+                                                  screenFrame: usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
+                                                  currentAction: action,
+                                                  lastRectangleAction: lastRectangleAction)
+            resultingRect = frontmostWindowElement.frame
+        }
         
         postProcess(result: resultParameters, resultingRect: resultingRect)
     }
@@ -170,17 +207,20 @@ class WindowManager {
     /// Move/resize a window based on the calculation results.
     /// - Returns: The rect of the window after applying the window action
     func apply(result: ResultParameters) -> CGRect {
+        let newRect = result.calcResult.rect
+        if !result.windowElement.frame.screenFlipped.equalTo(newRect) {
+            moveWindow(toRect: newRect, result: result)
+        }
+        return result.windowElement.frame
+    }
+
+    func moveWindow(toRect rect: CGRect, result: ResultParameters) {
         let windowMoverChain = result.isFixedSize
         ? fixedSizeWindowMoverChain
         : standardWindowMoverChain
-        
-        let newRect = result.calcResult.rect
-        
         for windowMover in windowMoverChain {
-            windowMover.moveWindow(toRect: newRect, resultParameters: result)
+            windowMover.moveWindow(toRect: rect, resultParameters: result)
         }
-        
-        return result.windowElement.frame
     }
     
     func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {

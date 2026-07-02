@@ -37677,6 +37677,9 @@
         }
       }
     },
+    "Resize adjacent windows when cycling side or corner shortcuts" : {
+
+    },
     "rgM-f4-ycn.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Smart Dashes\"; ObjectID = \"rgM-f4-ycn\";",
       "extractionState" : "manual",
