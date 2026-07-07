@@ -10,15 +10,21 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcul
             return calculateFirstRect(params)
         }
         
-        return calculateRepeatedRect(params)
+        return calculateRepeatedSideRect(params)
     }
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen, side: .trailing, fraction: 1.0 - Defaults.verticalSplitRatio.value / 100.0))
+        return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen,
+                                                                 side: .trailing,
+                                                                 fraction: 1.0 - ActiveSideSplitRatios.shared.verticalRatio(for: params.visibleFrameOfScreen)))
     }
 
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen, side: .trailing, fraction: fraction))
+    }
+
+    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
+        calculateRepeatedSideRect(params)
     }
     
 }
