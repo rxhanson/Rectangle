@@ -969,3 +969,21 @@ class NilWindowIdCalculationTests: XCTestCase {
                                   lastAction: nil)
     }
 }
+
+class DerivedWindowIdTests: XCTestCase {
+    
+    func testDerivedIdHasHighBitSet() {
+        XCTAssertEqual(AccessibilityElement.deriveWindowId(fromElementHash: 0) & 0x8000_0000, 0x8000_0000)
+        XCTAssertEqual(AccessibilityElement.deriveWindowId(fromElementHash: CFHashCode.max) & 0x8000_0000, 0x8000_0000)
+    }
+    
+    func testDerivedIdIsDeterministic() {
+        XCTAssertEqual(AccessibilityElement.deriveWindowId(fromElementHash: 1668292462),
+                       AccessibilityElement.deriveWindowId(fromElementHash: 1668292462))
+    }
+    
+    func testDistinctHashesGiveDistinctIds() {
+        let ids: [CGWindowID] = [1668318964, 1668318948, 1668321588].map { AccessibilityElement.deriveWindowId(fromElementHash: CFHashCode($0)) }
+        XCTAssertEqual(Set(ids).count, ids.count)
+    }
+}

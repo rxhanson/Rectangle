@@ -205,8 +205,22 @@ class AccessibilityElement {
         if let pid = pid, let info = (WindowUtil.getWindowList().first { $0.pid == pid && $0.frame == frame }) {
             return info.id
         }
+        if !frame.isNull {
+            // Last resort (#640): derive a stand-in id from the accessibility
+            // element's identity so window-id-keyed bookkeeping keeps working
+            // when macOS isn't vending real window ids. CFHash is constant for
+            // the same window across fetches and unaffected by moves/resizes.
+            Logger.log("Using a derived window id for bookkeeping")
+            return AccessibilityElement.deriveWindowId(fromElementHash: CFHash(wrappedElement))
+        }
         Logger.log("Unable to obtain window id")
         return nil
+    }
+
+    /// The high bit keeps derived ids out of the real window id space;
+    /// real ids are assigned incrementally by the window server.
+    static func deriveWindowId(fromElementHash hash: CFHashCode) -> CGWindowID {
+        CGWindowID(0x8000_0000) | (CGWindowID(truncatingIfNeeded: hash) & 0x7FFF_FFFF)
     }
     
     var pid: pid_t? {
