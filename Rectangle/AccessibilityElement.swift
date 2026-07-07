@@ -368,6 +368,25 @@ extension AccessibilityElement {
             }
             return windowElement
         }
+
+        // Last resort for when the window server isn't vending window info (#640):
+        // the frontmost app's own accessibility windows don't depend on it.
+        if let frontAppElement = getFrontApplicationElement(),
+           let windowElements = frontAppElement.windowElements {
+            let windowElement = windowElements
+                .map { (element: $0, frame: $0.frame) }
+                .filter { !$0.frame.isNull && $0.frame.contains(position) }
+                .min { $0.frame.width * $0.frame.height < $1.frame.width * $1.frame.height }?
+                .element
+            if let windowElement {
+                if Logger.logging, let pid = windowElement.pid {
+                    let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
+                    Logger.log("Window under cursor frontmost app fallback matched: \(appName)")
+                }
+                return windowElement
+            }
+        }
+
         Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
         return nil
     }

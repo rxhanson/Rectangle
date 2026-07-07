@@ -210,11 +210,12 @@ class SnappingManager {
                 // this typically only happens if the user is dragging and dropping windows really quickly
                 // in this scenario, the footprint doesn't display but the snap will still occur, as long as the window position is updated as of mouse up.
                 if let currentRect = windowElement?.frame,
-                   let windowId = windowId,
                    currentRect.size == initialWindowRect?.size,
                    currentRect.origin != initialWindowRect?.origin {
   
-                    unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
+                    if let windowId {
+                        unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
+                    }
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
                         box?.orderOut(nil)
@@ -246,18 +247,19 @@ class SnappingManager {
                 windowIdAttempt += 1
                 lastWindowIdAttempt = event.timestamp
             }
-            guard let currentRect = windowElement?.frame,
-                let windowId = windowId
+            guard let currentRect = windowElement?.frame
             else { return }
             
             if !windowMoving {
                 if let initialWindowRect, (currentRect.size == initialWindowRect.size || currentRect.numSharedEdges(withRect: initialWindowRect) < 2) {
                     if currentRect.origin != initialWindowRect.origin {
                         windowMoving = true
-                        unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
+                        if let windowId {
+                            unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
+                        }
                     }
                 }
-                else {
+                else if let windowId {
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -378,7 +380,7 @@ class SnappingManager {
     func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
-            let ignoreTodo = TodoManager.isTodoWindow(currentWindow.id)
+            let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
             let rectCalcParams = RectCalculationParameters(window: currentWindow, visibleFrameOfScreen: hotSpot.screen.adjustedVisibleFrame(ignoreTodo), action: hotSpot.action, lastAction: nil)
             let rectResult = calculation.calculateRect(rectCalcParams)
             

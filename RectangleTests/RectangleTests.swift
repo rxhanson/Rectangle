@@ -944,3 +944,28 @@ class ClampedWindowAlignerTests: XCTestCase {
         XCTAssertTrue(result.equalTo(window))
     }
 }
+
+class NilWindowIdCalculationTests: XCTestCase {
+    
+    private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
+    private let windowRect = CGRect(x: 100, y: 100, width: 600, height: 400)
+    
+    /// The window id is bookkeeping only (#640); geometry must not depend on it.
+    func testRectCalculationsMatchWithAndWithoutWindowId() {
+        for action in WindowAction.active {
+            guard let calculation = WindowCalculationFactory.calculationsByAction[action] else { continue }
+            
+            let withId = calculation.calculateRect(params(windowId: 1, action: action)).rect
+            let withoutId = calculation.calculateRect(params(windowId: nil, action: action)).rect
+            
+            XCTAssertEqual(withId, withoutId, "\(action.name) geometry should not depend on window id")
+        }
+    }
+    
+    private func params(windowId: CGWindowID?, action: WindowAction) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: windowId, rect: windowRect),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: nil)
+    }
+}

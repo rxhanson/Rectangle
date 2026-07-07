@@ -21,7 +21,8 @@ class WindowManager {
         ]
     }
     
-    private func recordAction(windowId: CGWindowID, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
+    private func recordAction(windowId: CGWindowID?, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
+        guard let windowId else { return }
         let newCount: Int
         if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId], lastRectangleAction.action == action {
             newCount = lastRectangleAction.count + 1
@@ -38,16 +39,24 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
-        guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
-              let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
+        guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
             NSSound.beep()
             return
         }
         
+        // The window id can be unavailable when macOS stops vending window info
+        // after a session transition (#640). Actions still execute; only
+        // window-id-keyed history is skipped.
+        let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
+
         let action = parameters.action
         
         if action == .restore {
+            guard let windowId else {
+                NSSound.beep()
+                return
+            }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 frontmostWindowElement.setFrame(restoreRect)
             }
@@ -72,23 +81,25 @@ class WindowManager {
         
         let currentWindowRect: CGRect = frontmostWindowElement.frame
         
-        var lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
+        var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
         
         let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
         
         if windowMovedExternally {
             lastRectangleAction = nil
-            AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            if let windowId {
+                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            }
         }
         
-        if parameters.updateRestoreRect {
+        if parameters.updateRestoreRect, let windowId {
             if AppDelegate.windowHistory.restoreRects[windowId] == nil
                 || windowMovedExternally {
                 AppDelegate.windowHistory.restoreRects[windowId] = currentWindowRect
             }
         }
         
-        let ignoreTodo = TodoManager.isTodoWindow(windowId)
+        let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
         
         if frontmostWindowElement.isSheet == true
             || currentWindowRect.isNull
@@ -191,9 +202,13 @@ class WindowManager {
         }
     }
     
-    private func applyOverlapOffsetIfNeeded(_ rect: CGRect, windowId: CGWindowID, screen: NSScreen) -> CGRect {
+    private func applyOverlapOffsetIfNeeded(_ rect: CGRect, windowId: CGWindowID?, screen: NSScreen) -> CGRect {
         let overlapOffset = CGFloat(Defaults.cyclingOverlapOffsetSize.value)
         guard overlapOffset > 0 else { return rect }
+
+        // Without a window id the current window can't be excluded from the
+        // overlap scan, so skip the offset rather than cascade against itself.
+        guard let windowId else { return rect }
 
         let screenFrameAX = screen.adjustedVisibleFrame().screenFlipped
         let tolerance: CGFloat = 4
@@ -277,7 +292,7 @@ class WindowManager {
 }
 
 struct ResultParameters {
-    let windowId: CGWindowID
+    let windowId: CGWindowID?
     let action: WindowAction
     let windowElement: AccessibilityElement
     let calcResult: WindowCalculationResult
