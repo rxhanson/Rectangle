@@ -2,8 +2,7 @@
 
 import Foundation
 
-/// Handle windows that are a fixed size. With `moveFixedSizeToEdge` enabled, anchor them
-/// to the snap zone's screen edges; otherwise center them in the zone (legacy behavior).
+/// Handle windows that are a fixed size. Align or center them according to `moveFixedSizeToEdge`.
 class FixedSizeWindowMover: WindowMover {
 
     func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
@@ -11,9 +10,10 @@ class FixedSizeWindowMover: WindowMover {
         let currentWindowRect: CGRect = windowElement.frame
         if currentWindowRect.isNull { return }
 
-        let initialFlippedRect = resultParameters.calcResult.initialRect.screenFlipped
-        let screenFrame = resultParameters.visibleFrameOfScreen.screenFlipped
-        let sharedEdges: Edge = getAlignmentEdges(initialNormalizedRect: initialFlippedRect, normalizedScreenFrame: screenFrame)
+        let sharedEdges = Defaults.moveFixedSizeToEdge.value.alignmentEdges(
+            for: resultParameters.calcResult.initialRect.screenFlipped,
+            in: resultParameters.visibleFrameOfScreen.screenFlipped
+        )
 
         let adjusted = ClampedWindowAligner.aligned(window: currentWindowRect,
                                                     inZone: rect.screenFlipped,
@@ -23,19 +23,4 @@ class FixedSizeWindowMover: WindowMover {
             windowElement.setFrame(adjusted)
         }
     }
-    
-    private func getAlignmentEdges(initialNormalizedRect rect: CGRect, normalizedScreenFrame: CGRect) -> Edge {
-        let alignment = Defaults.moveFixedSizeToEdge.value
-        
-        switch alignment {
-        case .edgesAndCorners:
-            return rect.sharedEdges(withRect: normalizedScreenFrame)
-        case .corners:
-            let sharedEdges = rect.sharedEdges(withRect: normalizedScreenFrame)
-            return sharedEdges.isCorner ? sharedEdges : .none
-        case .centered:
-            return .none
-        }
-    }
-    
 }

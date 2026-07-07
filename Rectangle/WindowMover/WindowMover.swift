@@ -43,19 +43,21 @@ enum ClampedWindowAligner {
 
 /// For resizable windows that clamp smaller than their snap zone (e.g. FaceTime keeping a
 /// fixed aspect ratio), `StandardWindowMover` leaves them at the zone's leading corner with
-/// a gap on the screen-edge side. When `moveFixedSizeToEdge` is enabled, re-anchor them to
-/// the zone's screen edges. No-op when the flag is off or the window already fills the zone.
+/// a gap on the screen-edge side. Re-anchor or center them according to `moveFixedSizeToEdge`.
+/// No-op when the window already fills the zone.
 class EdgeAlignmentWindowMover: WindowMover {
 
     func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
-        guard Defaults.moveFixedSizeToEdge.value != .centered, resultParameters.action.resizes else { return }
+        guard resultParameters.action.resizes else { return }
 
         let windowElement = resultParameters.windowElement
         let currentWindowRect: CGRect = windowElement.frame
         if currentWindowRect.isNull { return }
 
-        let sharedEdges = resultParameters.calcResult.initialRect.screenFlipped
-            .sharedEdges(withRect: resultParameters.visibleFrameOfScreen.screenFlipped)
+        let sharedEdges = Defaults.moveFixedSizeToEdge.value.alignmentEdges(
+            for: resultParameters.calcResult.initialRect.screenFlipped,
+            in: resultParameters.visibleFrameOfScreen.screenFlipped
+        )
 
         let adjusted = ClampedWindowAligner.aligned(window: currentWindowRect,
                                                     inZone: rect.screenFlipped,
@@ -71,4 +73,17 @@ enum EdgeAlignment: Int {
     case edgesAndCorners = 1
     case corners = 2
     case centered = 3
+
+    func alignmentEdges(for rect: CGRect, in screenFrame: CGRect) -> Edge {
+        let sharedEdges = rect.sharedEdges(withRect: screenFrame)
+
+        switch self {
+        case .edgesAndCorners:
+            return sharedEdges
+        case .corners:
+            return sharedEdges.isCorner ? sharedEdges : .none
+        case .centered:
+            return .none
+        }
+    }
 }
