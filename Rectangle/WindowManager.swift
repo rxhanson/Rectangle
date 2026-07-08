@@ -137,6 +137,9 @@ class WindowManager {
                                                                 lastRectangleAction: lastRectangleAction)
         if let cooperativeCornerPlan {
             calcResult.rect = cooperativeCornerPlan.focusedFrame
+            if let sideSplitRecordingFrame = cooperativeCornerPlan.sideSplitRecordingFrame {
+                calcResult.initialRect = sideSplitRecordingFrame
+            }
         }
 
         ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,

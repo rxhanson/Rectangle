@@ -1433,11 +1433,267 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         assertRect(cleanupTarget ?? .null, equals: CGRect(x: 10, y: 620, width: 800, height: 300))
     }
 
+    func testCleanupTargetShrinksMinimumRestrictedSourceAtConfiguredSize() {
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = 40
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let minimumRestrictedTopRight = CGRect(x: 610, y: 560, width: 600, height: 360)
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .topRight,
+                                                              observedFrame: minimumRestrictedTopRight,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .bottom,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false)
+
+        assertRect(cleanupTarget ?? .null, equals: CGRect(x: 610, y: 620, width: 600, height: 300))
+    }
+
+    func testCleanupDestinationAllowsNonAdjacentMinimumRestrictedSourceCleanup() {
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = 40
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let manager = WindowManager()
+        let minimumRestrictedTopRight = CGRect(x: 610, y: 560, width: 600, height: 360)
+        let focusedTopLeftDestination = CGRect(x: 10, y: 620, width: 600, height: 300)
+        guard let cleanupTarget = manager.cleanupTargetFrame(action: .topRight,
+                                                            observedFrame: minimumRestrictedTopRight,
+                                                            screenFrame: visibleFrame,
+                                                            axis: .vertical,
+                                                            movedEdge: .bottom,
+                                                            tolerance: 8,
+                                                            includeCycleTargets: false)
+        else {
+            XCTFail("Expected minimum-restricted cleanup target")
+            return
+        }
+
+        XCTAssertFalse(manager.frameIsAdjacentToCleanupSource(focusedTopLeftDestination,
+                                                              sourceFrame: minimumRestrictedTopRight,
+                                                              movedEdge: .bottom,
+                                                              axis: .vertical,
+                                                              tolerance: 8,
+                                                              gapSize: 0))
+        XCTAssertTrue(manager.cleanupDestinationAllowsSourceResize(action: .topRight,
+                                                                   observedFrame: minimumRestrictedTopRight,
+                                                                   targetFrame: cleanupTarget,
+                                                                   focusedDestinationFrame: focusedTopLeftDestination,
+                                                                   screenFrame: visibleFrame,
+                                                                   axis: .vertical,
+                                                                   movedEdge: .bottom,
+                                                                   tolerance: 8,
+                                                                   gapSize: 0))
+    }
+
+    func testCleanupDestinationRejectsNonAdjacentCycleSourceCleanup() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let manager = WindowManager()
+        let cycledBottomRight = CGRect(x: 610, y: 20, width: 600, height: 600)
+        let focusedTopLeftDestination = CGRect(x: 10, y: 620, width: 600, height: 300)
+        let hypotheticalCleanupTarget = CGRect(x: 610, y: 20, width: 600, height: 450)
+
+        XCTAssertFalse(manager.frameIsAdjacentToCleanupSource(focusedTopLeftDestination,
+                                                              sourceFrame: cycledBottomRight,
+                                                              movedEdge: .top,
+                                                              axis: .vertical,
+                                                              tolerance: 8,
+                                                              gapSize: 0))
+        XCTAssertFalse(manager.cleanupDestinationAllowsSourceResize(action: .bottomRight,
+                                                                    observedFrame: cycledBottomRight,
+                                                                    targetFrame: hypotheticalCleanupTarget,
+                                                                    focusedDestinationFrame: focusedTopLeftDestination,
+                                                                    screenFrame: visibleFrame,
+                                                                    axis: .vertical,
+                                                                    movedEdge: .top,
+                                                                    tolerance: 8,
+                                                                    gapSize: 0))
+    }
+
+    func testCleanupTargetDoesNotShrinkComplementOfMinimumRestrictedAdjacent() {
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let complementaryBottomRight = CGRect(x: 610, y: 20, width: 600, height: 540)
+        let minimumBandTopRight = CooperativeCornerResize.Candidate(id: 2,
+                                                                    frame: CGRect(x: 610, y: 560, width: 600, height: 360))
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .bottomRight,
+                                                              observedFrame: complementaryBottomRight,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .top,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false,
+                                                              candidates: [minimumBandTopRight])
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testCleanupTargetDoesNotShrinkInitialCycleSourceWithMinimumCycleAdjacent() {
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let cycledBottomLeft = CGRect(x: 10, y: 20, width: 600, height: 600)
+        let selectedCycleTopLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                                     frame: CGRect(x: 10, y: 620, width: 600, height: 300))
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .bottomLeft,
+                                                              observedFrame: cycledBottomLeft,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .top,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false,
+                                                              candidates: [selectedCycleTopLeft])
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testCleanupTargetDoesNotShrinkRepeatedCycleSourceWithMinimumCycleAdjacent() {
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let cycledBottomLeft = CGRect(x: 10, y: 20, width: 600, height: 600)
+        let selectedCycleTopLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                                     frame: CGRect(x: 10, y: 620, width: 600, height: 300))
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .bottomLeft,
+                                                              observedFrame: cycledBottomLeft,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .top,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: true,
+                                                              candidates: [selectedCycleTopLeft])
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testCleanupTargetDoesNotShrinkValidCycleCornerFromOriginalLocation() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let cycledTopRight = CGRect(x: 610, y: 320, width: 600, height: 600)
+        let minimumCycleBottomRight = CooperativeCornerResize.Candidate(id: 2,
+                                                                        frame: CGRect(x: 610, y: 20, width: 600, height: 300))
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .topRight,
+                                                              observedFrame: cycledTopRight,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .bottom,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false,
+                                                              candidates: [minimumCycleBottomRight])
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testCleanupTargetDoesNotShrinkComplementOfSelectedAdjacentCycleSize() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = [.oneHalf, .oneThird]
+
+        let complementaryBottomLeft = CGRect(x: 10, y: 20, width: 600, height: 600)
+        let selectedCycleTopLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                                     frame: CGRect(x: 10, y: 620, width: 600, height: 300))
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .bottomLeft,
+                                                              observedFrame: complementaryBottomLeft,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .top,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false,
+                                                              candidates: [selectedCycleTopLeft])
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testCleanupTargetDoesNotShrinkBalancedCorner() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let bottomRight = CGRect(x: 610, y: 20, width: 600, height: 450)
+        let balancedTopRight = CooperativeCornerResize.Candidate(id: 2,
+                                                                 frame: CGRect(x: 610, y: 470, width: 600, height: 450))
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .bottomRight,
+                                                              observedFrame: bottomRight,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .top,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false,
+                                                              candidates: [balancedTopRight])
+
+        XCTAssertNil(cleanupTarget)
+    }
+
+    func testRepeatedCornerLookAheadSkipsExpansionWhenAdjacentIsInMinimumCycleBand() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let oldFocusedFrame = CGRect(x: 10, y: 20, width: 600, height: 540)
+        let requestedTwoThirdsFrame = CGRect(x: 10, y: 20, width: 600, height: 600)
+        let minimumRestrictedTop = CooperativeCornerResize.Candidate(id: 2,
+                                                                     frame: CGRect(x: 10, y: 560, width: 600, height: 360))
+
+        let lookAheadTarget = WindowManager().cycleLookAheadTargetForMinimumRestrictedAdjacent(action: .bottomLeft,
+                                                                                               oldFocusedFrame: oldFocusedFrame,
+                                                                                               requestedFocusedFrame: requestedTwoThirdsFrame,
+                                                                                               screenFrame: visibleFrame,
+                                                                                               candidates: [minimumRestrictedTop],
+                                                                                               axis: .vertical,
+                                                                                               movedEdge: .top,
+                                                                                               tolerance: 8,
+                                                                                               gapSize: 0)
+
+        XCTAssertEqual(lookAheadTarget?.skippedCycleSize, .twoThirds)
+        XCTAssertEqual(lookAheadTarget?.targetCycleSize, .oneThird)
+        XCTAssertEqual(lookAheadTarget?.restrictedAdjacentId, 2)
+        assertRect(lookAheadTarget?.rawFrame ?? .null, equals: CGRect(x: 10, y: 20, width: 600, height: 300))
+        assertRect(lookAheadTarget?.gappedFrame ?? .null, equals: CGRect(x: 10, y: 20, width: 600, height: 300))
+    }
+
+    func testRepeatedCornerLookAheadDoesNotSkipWhenAdjacentIsAtCycleBoundary() {
+        setSplitRatio(50)
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+
+        let oldFocusedFrame = CGRect(x: 10, y: 20, width: 600, height: 450)
+        let requestedTwoThirdsFrame = CGRect(x: 10, y: 20, width: 600, height: 600)
+        let halfHeightTop = CooperativeCornerResize.Candidate(id: 2,
+                                                              frame: CGRect(x: 10, y: 470, width: 600, height: 450))
+
+        let lookAheadTarget = WindowManager().cycleLookAheadTargetForMinimumRestrictedAdjacent(action: .bottomLeft,
+                                                                                               oldFocusedFrame: oldFocusedFrame,
+                                                                                               requestedFocusedFrame: requestedTwoThirdsFrame,
+                                                                                               screenFrame: visibleFrame,
+                                                                                               candidates: [halfHeightTop],
+                                                                                               axis: .vertical,
+                                                                                               movedEdge: .top,
+                                                                                               tolerance: 8,
+                                                                                               gapSize: 0)
+
+        XCTAssertNil(lookAheadTarget)
+    }
+
     func testCleanupSourceAdjacencyOnlyMatchesDirectDestination() {
         let manager = WindowManager()
         let sourceTopLeft = CGRect(x: 10, y: 400, width: 800, height: 520)
         let adjacentBottomLeft = CGRect(x: 10, y: 20, width: 800, height: 380)
         let otherBottom = CGRect(x: 810, y: 20, width: 400, height: 380)
+        let sourceBottomRight = CGRect(x: 610, y: 20, width: 600, height: 540)
+        let diagonalTopLeft = CGRect(x: 10, y: 560, width: 600, height: 360)
 
         XCTAssertTrue(manager.frameIsAdjacentToCleanupSource(adjacentBottomLeft,
                                                              sourceFrame: sourceTopLeft,
@@ -1454,6 +1710,12 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         XCTAssertFalse(manager.frameIsAdjacentToCleanupSource(adjacentBottomLeft,
                                                               sourceFrame: sourceTopLeft,
                                                               movedEdge: .right,
+                                                              axis: .vertical,
+                                                              tolerance: 8,
+                                                              gapSize: 0))
+        XCTAssertFalse(manager.frameIsAdjacentToCleanupSource(diagonalTopLeft,
+                                                              sourceFrame: sourceBottomRight,
+                                                              movedEdge: .top,
                                                               axis: .vertical,
                                                               tolerance: 8,
                                                               gapSize: 0))

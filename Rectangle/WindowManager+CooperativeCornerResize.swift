@@ -118,7 +118,8 @@ extension WindowManager {
         }
         let minimumSize = CGSize(width: max(1, CGFloat(Defaults.minimumWindowWidth.value)),
                                  height: max(1, CGFloat(Defaults.minimumWindowHeight.value)))
-        let requestedFocusedFrame = (!isRepeatedCooperativeAction && action.isCooperativeCornerAction)
+        var sideSplitRecordingFrame: CGRect?
+        var requestedFocusedFrame = (!isRepeatedCooperativeAction && action.isCooperativeCornerAction)
             ? CooperativeCornerResize.focusedFrameResolvingRealizedCornerBoundary(requestedFocusedFrame: newFocusedFrame,
                                                                                   screenFrame: screenFrame,
                                                                                   candidates: candidates,
@@ -127,6 +128,20 @@ extension WindowManager {
                                                                                   tolerance: tolerance,
                                                                                   gapSize: gapSize)
             : newFocusedFrame
+        if isRepeatedCooperativeAction,
+           let lookAheadTarget = cycleLookAheadTargetForMinimumRestrictedAdjacent(action: action,
+                                                                                  oldFocusedFrame: oldFocusedFrame,
+                                                                                  requestedFocusedFrame: requestedFocusedFrame,
+                                                                                  screenFrame: screenFrame,
+                                                                                  candidates: candidates,
+                                                                                  axis: cooperativeAxis,
+                                                                                  movedEdge: movedEdge,
+                                                                                  tolerance: tolerance,
+                                                                                  gapSize: gapSize) {
+            Logger.log("Cooperative resize skipped cyclic target \(lookAheadTarget.skippedCycleSize.title) for \(lookAheadTarget.targetCycleSize.title): adjacent window \(lookAheadTarget.restrictedAdjacentId) is already in the minimum cycle band")
+            requestedFocusedFrame = lookAheadTarget.gappedFrame
+            sideSplitRecordingFrame = lookAheadTarget.rawFrame
+        }
         let candidateDiscoveryFrame = isRepeatedCooperativeAction ? oldFocusedFrame : requestedFocusedFrame
         guard let plan = CooperativeCornerResize.plan(oldFocusedFrame: oldFocusedFrame,
                                                       newFocusedFrame: requestedFocusedFrame,
@@ -172,6 +187,7 @@ extension WindowManager {
                                                 candidateDiscoveryFrame: candidateDiscoveryFrame,
                                                 actionDescription: actionDescription,
                                                 adjustments: adjustments,
+                                                sideSplitRecordingFrame: sideSplitRecordingFrame,
                                                 debugLog: plan.debugLog)
     }
 
@@ -235,14 +251,42 @@ extension WindowManager {
                                                                     axis: cooperativeAxis,
                                                                     tolerance: tolerance,
                                                                     captureTolerance: captureTolerance,
-                                                                    gapSize: gapSize),
-              let targetFrame = cleanupTargetFrame(action: previousAction,
+                                                                    gapSize: gapSize)
+        else {
+            return
+        }
+
+        var targetCandidates = candidates
+        let focusedElement = allElementsById[focusedWindowId]
+        if let focusedElement {
+            targetCandidates.append(CooperativeCornerResize.Candidate(id: focusedWindowId,
+                                                                      frame: focusedElement.frame.screenFlipped,
+                                                                      minimumSize: focusedElement.minimumSize))
+        }
+
+        guard let targetFrame = cleanupTargetFrame(action: previousAction,
                                                    observedFrame: observedCornerFrame,
                                                    screenFrame: screenFrame,
                                                    axis: cooperativeAxis,
                                                    movedEdge: movedEdge,
                                                    tolerance: tolerance,
-                                                   includeCycleTargets: (lastRectangleAction?.count ?? 0) > 1)
+                                                   includeCycleTargets: (lastRectangleAction?.count ?? 0) > 1,
+                                                   candidates: targetCandidates,
+                                                   gapSize: gapSize)
+        else {
+            return
+        }
+
+        let focusedDestinationFrame = focusedElement?.frame.screenFlipped ?? newFocusedFrame
+        guard cleanupDestinationAllowsSourceResize(action: previousAction,
+                                                   observedFrame: observedCornerFrame,
+                                                   targetFrame: targetFrame,
+                                                   focusedDestinationFrame: focusedDestinationFrame,
+                                                   screenFrame: screenFrame,
+                                                   axis: cooperativeAxis,
+                                                   movedEdge: movedEdge,
+                                                   tolerance: tolerance,
+                                                   gapSize: gapSize)
         else {
             return
         }
@@ -250,13 +294,7 @@ extension WindowManager {
         let minimumSize = CGSize(width: max(1, CGFloat(Defaults.minimumWindowWidth.value)),
                                  height: max(1, CGFloat(Defaults.minimumWindowHeight.value)))
         let syntheticFocusedMinimumSize = CGSize(width: 1, height: 1)
-        if let focusedElement = allElementsById[focusedWindowId],
-           frameIsAdjacentToCleanupSource(focusedElement.frame.screenFlipped,
-                                          sourceFrame: observedCornerFrame,
-                                          movedEdge: movedEdge,
-                                          axis: cooperativeAxis,
-                                          tolerance: tolerance,
-                                          gapSize: gapSize) {
+        if let focusedElement {
             elementsById[focusedWindowId] = focusedElement
         }
 
@@ -409,31 +447,171 @@ extension WindowManager {
                             axis: CornerCycleExpansionAxis,
                             movedEdge: CooperativeCornerResize.MovedEdge,
                             tolerance: CGFloat,
-                            includeCycleTargets: Bool) -> CGRect? {
+                            includeCycleTargets: Bool,
+                            candidates: [CooperativeCornerResize.Candidate] = [],
+                            gapSize: CGFloat = 0) -> CGRect? {
         let observedSize = axisSize(observedFrame, axis)
-        guard let configuredFrame = configuredCornerFrame(action: action, screenFrame: screenFrame),
-              observedSize > axisSize(configuredFrame, axis) + tolerance
-        else {
+        let targetFrames = intendedCleanupTargetFrames(action: action,
+                                                       screenFrame: screenFrame,
+                                                       axis: axis,
+                                                       includeCycleTargets: includeCycleTargets,
+                                                       gapSize: gapSize)
+        if let configuredFrame = configuredCornerFrame(action: action, screenFrame: screenFrame) {
+            let configuredSize = axisSize(gappedFrame(configuredFrame, action: action, gapSize: gapSize), axis)
+            if observedSize > configuredSize + tolerance {
+                if observedFrameMatchesNonConfiguredCycleTarget(action: action,
+                                                                observedFrame: observedFrame,
+                                                                screenFrame: screenFrame,
+                                                                axis: axis,
+                                                                configuredSize: configuredSize,
+                                                                tolerance: tolerance,
+                                                                gapSize: gapSize) {
+                    return nil
+                }
+                if adjacentSmallerCycleTargetContainsWindow(candidates,
+                                                            adjacentTo: observedFrame,
+                                                            action: action,
+                                                            screenFrame: screenFrame,
+                                                            axis: axis,
+                                                            movedEdge: movedEdge,
+                                                            configuredSize: configuredSize,
+                                                            tolerance: tolerance,
+                                                            gapSize: gapSize) {
+                    return nil
+                }
+
+                if let targetSize = nearestTargetSize(to: observedSize, frames: targetFrames, axis: axis, tolerance: tolerance) {
+                    return frame(observedFrame,
+                                 axis: axis,
+                                 movedEdge: movedEdge,
+                                 size: targetSize,
+                                 screenFrame: screenFrame)
+                }
+            }
+        }
+
+        if includeCycleTargets,
+           observedFrameMatchesCycleTarget(action: action,
+                                           observedFrame: observedFrame,
+                                           screenFrame: screenFrame,
+                                           axis: axis,
+                                           tolerance: tolerance,
+                                           gapSize: gapSize) {
             return nil
         }
 
-        let intendedSizes = intendedCornerAxisSizes(action: action,
+        return minimumRestrictedCleanupTargetFrame(action: action,
+                                                   observedFrame: observedFrame,
                                                    screenFrame: screenFrame,
                                                    axis: axis,
-                                                   includeCycleTargets: includeCycleTargets)
-        guard let targetSize = intendedSizes.min(by: { lhs, rhs in
-            abs(lhs - observedSize) < abs(rhs - observedSize)
-        }),
-              abs(targetSize - observedSize) > tolerance
-        else {
-            return nil
+                                                   movedEdge: movedEdge,
+                                                   tolerance: tolerance,
+                                                   gapSize: gapSize)
+    }
+
+    func cleanupDestinationAllowsSourceResize(action: WindowAction,
+                                              observedFrame: CGRect,
+                                              targetFrame: CGRect,
+                                              focusedDestinationFrame: CGRect,
+                                              screenFrame: CGRect,
+                                              axis: CornerCycleExpansionAxis,
+                                              movedEdge: CooperativeCornerResize.MovedEdge,
+                                              tolerance: CGFloat,
+                                              gapSize: CGFloat) -> Bool {
+        if frameIsAdjacentToCleanupSource(focusedDestinationFrame,
+                                          sourceFrame: observedFrame,
+                                          movedEdge: movedEdge,
+                                          axis: axis,
+                                          tolerance: tolerance,
+                                          gapSize: gapSize) {
+            return true
         }
 
-        return frame(observedFrame,
-                     axis: axis,
-                     movedEdge: movedEdge,
-                     size: targetSize,
-                     screenFrame: screenFrame)
+        guard let minimumRestrictedTarget = minimumRestrictedCleanupTargetFrame(action: action,
+                                                                               observedFrame: observedFrame,
+                                                                               screenFrame: screenFrame,
+                                                                               axis: axis,
+                                                                               movedEdge: movedEdge,
+                                                                               tolerance: tolerance,
+                                                                               gapSize: gapSize)
+        else {
+            return false
+        }
+
+        return framesMatch(minimumRestrictedTarget, targetFrame, tolerance: max(CGFloat(4), tolerance))
+    }
+
+    private func observedFrameMatchesNonConfiguredCycleTarget(action: WindowAction,
+                                                              observedFrame: CGRect,
+                                                              screenFrame: CGRect,
+                                                              axis: CornerCycleExpansionAxis,
+                                                              configuredSize: CGFloat,
+                                                              tolerance: CGFloat,
+                                                              gapSize: CGFloat) -> Bool {
+        let observedSize = axisSize(observedFrame, axis)
+        return cycleTargetFrames(action: action,
+                                 screenFrame: screenFrame,
+                                 axis: axis,
+                                 gapSize: gapSize)
+            .contains { targetFrame in
+                let targetSize = axisSize(targetFrame.gappedFrame, axis)
+                return abs(targetSize - observedSize) <= tolerance
+                    && abs(targetSize - configuredSize) > tolerance
+            }
+    }
+
+    private func observedFrameMatchesCycleTarget(action: WindowAction,
+                                                 observedFrame: CGRect,
+                                                 screenFrame: CGRect,
+                                                 axis: CornerCycleExpansionAxis,
+                                                 tolerance: CGFloat,
+                                                 gapSize: CGFloat) -> Bool {
+        let observedSize = axisSize(observedFrame, axis)
+        return cycleTargetFrames(action: action,
+                                 screenFrame: screenFrame,
+                                 axis: axis,
+                                 gapSize: gapSize)
+            .contains { targetFrame in
+                abs(axisSize(targetFrame.gappedFrame, axis) - observedSize) <= tolerance
+            }
+    }
+
+    private func adjacentSmallerCycleTargetContainsWindow(_ candidates: [CooperativeCornerResize.Candidate],
+                                                          adjacentTo observedFrame: CGRect,
+                                                          action: WindowAction,
+                                                          screenFrame: CGRect,
+                                                          axis: CornerCycleExpansionAxis,
+                                                          movedEdge: CooperativeCornerResize.MovedEdge,
+                                                          configuredSize: CGFloat,
+                                                          tolerance: CGFloat,
+                                                          gapSize: CGFloat) -> Bool {
+        guard let adjacentAction = adjacentCycleAction(for: action, movedEdge: movedEdge) else {
+            return false
+        }
+
+        let adjacentCycleSizes = cycleTargetFrames(action: adjacentAction,
+                                                   screenFrame: screenFrame,
+                                                   axis: axis,
+                                                   gapSize: gapSize)
+            .map { axisSize($0.gappedFrame, axis) }
+        let sizeTolerance = max(CGFloat(4), tolerance)
+
+        return candidates.contains { candidate in
+            let frame = candidate.frame
+            guard frameIsAdjacentToCleanupSource(frame,
+                                                 sourceFrame: observedFrame,
+                                                 movedEdge: movedEdge,
+                                                 axis: axis,
+                                                 tolerance: tolerance,
+                                                 gapSize: gapSize)
+            else {
+                return false
+            }
+
+            let currentSize = axisSize(frame, axis)
+            return currentSize < configuredSize - sizeTolerance
+                && adjacentCycleSizes.contains { abs($0 - currentSize) <= sizeTolerance }
+        }
     }
 
     func frameIsAdjacentToCleanupSource(_ frame: CGRect,
@@ -460,6 +638,122 @@ extension WindowManager {
         }
     }
 
+    func cycleLookAheadTargetForMinimumRestrictedAdjacent(action: WindowAction,
+                                                          oldFocusedFrame: CGRect,
+                                                          requestedFocusedFrame: CGRect,
+                                                          screenFrame: CGRect,
+                                                          candidates: [CooperativeCornerResize.Candidate],
+                                                          axis: CornerCycleExpansionAxis,
+                                                          movedEdge: CooperativeCornerResize.MovedEdge,
+                                                          tolerance: CGFloat,
+                                                          gapSize: CGFloat) -> CooperativeCycleLookAheadTarget? {
+        // A neighbor between the smallest and second-smallest cycle sizes is often already
+        // minimum-constrained, so expanding into that band would consume a press as a no-op.
+        guard CooperativeCornerResize.focusedWindowIsExpanding(oldFrame: oldFocusedFrame,
+                                                               newFrame: requestedFocusedFrame,
+                                                               axis: axis),
+              let adjacentAction = adjacentCycleAction(for: action, movedEdge: movedEdge)
+        else {
+            return nil
+        }
+
+        let targetFrames = cycleTargetFrames(action: action,
+                                             screenFrame: screenFrame,
+                                             axis: axis,
+                                             gapSize: gapSize)
+        guard targetFrames.count > 1,
+              let requestedIndex = targetFrames.firstIndex(where: { framesMatch($0.gappedFrame, requestedFocusedFrame, tolerance: 1) })
+        else {
+            return nil
+        }
+
+        let adjacentCycleSizes = uniqueSortedSizes(cycleTargetFrames(action: adjacentAction,
+                                                                     screenFrame: screenFrame,
+                                                                     axis: axis,
+                                                                     gapSize: gapSize)
+            .map { axisSize($0.gappedFrame, axis) })
+        guard adjacentCycleSizes.count >= 2 else {
+            return nil
+        }
+
+        let minimumCycleSize = adjacentCycleSizes[0]
+        let secondMinimumCycleSize = adjacentCycleSizes[1]
+        let sizeTolerance = max(CGFloat(4), tolerance)
+
+        guard let restrictedAdjacent = candidates.first(where: { candidate in
+            let frame = candidate.frame
+            guard frameIsAdjacentToCleanupSource(frame,
+                                                 sourceFrame: oldFocusedFrame,
+                                                 movedEdge: movedEdge,
+                                                 axis: axis,
+                                                 tolerance: tolerance,
+                                                 gapSize: gapSize)
+            else {
+                return false
+            }
+
+            let currentSize = axisSize(frame, axis)
+            let proposedSize = adjacentAxisSize(frame,
+                                                afterFocusedFrame: requestedFocusedFrame,
+                                                movedEdge: movedEdge,
+                                                gapSize: gapSize)
+            return currentSize > minimumCycleSize + sizeTolerance
+                && currentSize < secondMinimumCycleSize - sizeTolerance
+                && proposedSize < currentSize - sizeTolerance
+        }) else {
+            return nil
+        }
+
+        var nextIndex = (requestedIndex + 1) % targetFrames.count
+        for _ in targetFrames.indices {
+            let targetFrame = targetFrames[nextIndex]
+            if !framesMatch(targetFrame.gappedFrame, oldFocusedFrame, tolerance: sizeTolerance) {
+                return CooperativeCycleLookAheadTarget(rawFrame: targetFrame.rawFrame,
+                                                       gappedFrame: targetFrame.gappedFrame,
+                                                       skippedCycleSize: targetFrames[requestedIndex].cycleSize,
+                                                       targetCycleSize: targetFrame.cycleSize,
+                                                       restrictedAdjacentId: restrictedAdjacent.id)
+            }
+            nextIndex = (nextIndex + 1) % targetFrames.count
+        }
+
+        return nil
+    }
+
+    private func minimumRestrictedCleanupTargetFrame(action: WindowAction,
+                                                     observedFrame: CGRect,
+                                                     screenFrame: CGRect,
+                                                     axis: CornerCycleExpansionAxis,
+                                                     movedEdge: CooperativeCornerResize.MovedEdge,
+                                                     tolerance: CGFloat,
+                                                     gapSize: CGFloat) -> CGRect? {
+        let cycleSizes = uniqueSortedSizes(cycleTargetFrames(action: action,
+                                                             screenFrame: screenFrame,
+                                                             axis: axis,
+                                                             gapSize: gapSize)
+            .map { axisSize($0.gappedFrame, axis) })
+        guard cycleSizes.count >= 2 else {
+            return nil
+        }
+
+        let minimumCycleSize = cycleSizes[0]
+        let secondMinimumCycleSize = cycleSizes[1]
+        let observedSize = axisSize(observedFrame, axis)
+        let sizeTolerance = max(CGFloat(4), tolerance)
+
+        guard observedSize > minimumCycleSize + sizeTolerance,
+              observedSize < secondMinimumCycleSize - sizeTolerance
+        else {
+            return nil
+        }
+
+        return frame(observedFrame,
+                     axis: axis,
+                     movedEdge: movedEdge,
+                     size: minimumCycleSize,
+                     screenFrame: screenFrame)
+    }
+
     private func movedEdgeMatches(axis: CornerCycleExpansionAxis,
                                   movedEdge: CooperativeCornerResize.MovedEdge) -> Bool {
         switch (axis, movedEdge) {
@@ -484,37 +778,221 @@ extension WindowManager {
         }
     }
 
-    private func intendedCornerAxisSizes(action: WindowAction,
-                                         screenFrame: CGRect,
-                                         axis: CornerCycleExpansionAxis,
-                                         includeCycleTargets: Bool) -> [CGFloat] {
-        var sizes: [CGFloat] = []
-        func appendUnique(_ value: CGFloat) {
-            guard value > 0,
-                  !sizes.contains(where: { abs($0 - value) <= 0.001 })
+    private func intendedCleanupTargetFrames(action: WindowAction,
+                                             screenFrame: CGRect,
+                                             axis: CornerCycleExpansionAxis,
+                                             includeCycleTargets: Bool,
+                                             gapSize: CGFloat) -> [CGRect] {
+        var frames: [CGRect] = []
+        func appendUnique(_ frame: CGRect) {
+            guard !frame.isNull,
+                  !frames.contains(where: { !CooperativeCornerResize.framesDiffer($0, frame, tolerance: 0.001) })
             else {
                 return
             }
-            sizes.append(value)
+            frames.append(frame)
         }
 
         if let configuredFrame = configuredCornerFrame(action: action, screenFrame: screenFrame) {
-            appendUnique(axisSize(configuredFrame, axis))
+            appendUnique(gappedFrame(configuredFrame, action: action, gapSize: gapSize))
         }
 
         guard includeCycleTargets,
               Defaults.subsequentExecutionMode.resizes else {
-            return sizes
+            return frames
         }
 
+        cycleTargetFrames(action: action,
+                          screenFrame: screenFrame,
+                          axis: axis,
+                          gapSize: gapSize)
+            .forEach { appendUnique($0.gappedFrame) }
+        return frames
+    }
+
+    private func nearestTargetSize(to observedSize: CGFloat,
+                                   frames: [CGRect],
+                                   axis: CornerCycleExpansionAxis,
+                                   tolerance: CGFloat) -> CGFloat? {
+        guard let targetSize = frames.map({ axisSize($0, axis) }).min(by: { lhs, rhs in
+            abs(lhs - observedSize) < abs(rhs - observedSize)
+        }),
+              abs(targetSize - observedSize) > tolerance
+        else {
+            return nil
+        }
+
+        return targetSize
+    }
+
+    private func sortedCooperativeCycleSizes() -> [CycleSize] {
         let useDefaultPositions = !Defaults.cycleSizesIsChanged.enabled
         let positions = useDefaultPositions ? CycleSize.defaultSizes : Defaults.selectedCycleSizes.value
-        let sortedPositions = CycleSize.sortedSizes.filter { positions.contains($0) }
-        let screenSize = axis == .horizontal ? screenFrame.width : screenFrame.height
-        sortedPositions.forEach { cycleSize in
-            appendUnique(floor(screenSize * CGFloat(cycleSize.fraction) + 0.0001))
+        return CycleSize.sortedSizes.filter { positions.contains($0) }
+    }
+
+    private func cycleTargetFrames(action: WindowAction,
+                                   screenFrame: CGRect,
+                                   axis: CornerCycleExpansionAxis,
+                                   gapSize: CGFloat) -> [CooperativeCycleTargetFrame] {
+        sortedCooperativeCycleSizes().compactMap { cycleSize in
+            guard let rawFrame = rawCycleFrame(action: action,
+                                               cycleSize: cycleSize,
+                                               screenFrame: screenFrame,
+                                               axis: axis)
+            else {
+                return nil
+            }
+
+            return CooperativeCycleTargetFrame(cycleSize: cycleSize,
+                                               rawFrame: rawFrame,
+                                               gappedFrame: gappedFrame(rawFrame,
+                                                                        action: action,
+                                                                        gapSize: gapSize))
         }
-        return sizes
+    }
+
+    private func rawCycleFrame(action: WindowAction,
+                               cycleSize: CycleSize,
+                               screenFrame: CGRect,
+                               axis: CornerCycleExpansionAxis) -> CGRect? {
+        let fraction = cycleSize.fraction
+
+        switch action {
+        case .leftHalf:
+            return HalfSplitFrameCalculation.horizontalRect(in: screenFrame, side: .leading, fraction: fraction)
+        case .rightHalf:
+            return HalfSplitFrameCalculation.horizontalRect(in: screenFrame, side: .trailing, fraction: fraction)
+        case .topHalf:
+            return HalfSplitFrameCalculation.verticalRect(in: screenFrame, side: .leading, fraction: fraction)
+        case .bottomHalf:
+            return HalfSplitFrameCalculation.verticalRect(in: screenFrame, side: .trailing, fraction: fraction)
+        case .topLeft, .topRight, .bottomLeft, .bottomRight:
+            return rawCornerCycleFrame(action: action,
+                                       cycleFraction: fraction,
+                                       screenFrame: screenFrame,
+                                       axis: axis)
+        default:
+            return nil
+        }
+    }
+
+    private func rawCornerCycleFrame(action: WindowAction,
+                                     cycleFraction: Float,
+                                     screenFrame: CGRect,
+                                     axis: CornerCycleExpansionAxis) -> CGRect? {
+        let horizontalRatio = ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame)
+        let verticalRatio = ActiveSideSplitRatios.shared.verticalRatio(for: screenFrame)
+        let horizontalSide: HalfSplitSide
+        let verticalSide: HalfSplitSide
+
+        switch action {
+        case .topLeft:
+            horizontalSide = .leading
+            verticalSide = .leading
+        case .topRight:
+            horizontalSide = .trailing
+            verticalSide = .leading
+        case .bottomLeft:
+            horizontalSide = .leading
+            verticalSide = .trailing
+        case .bottomRight:
+            horizontalSide = .trailing
+            verticalSide = .trailing
+        default:
+            return nil
+        }
+
+        let horizontalFraction = axis == .horizontal
+            ? cycleFraction
+            : (horizontalSide == .trailing ? 1.0 - horizontalRatio : horizontalRatio)
+        let verticalFraction = axis == .vertical
+            ? cycleFraction
+            : (verticalSide == .trailing ? 1.0 - verticalRatio : verticalRatio)
+
+        return HalfSplitFrameCalculation.cornerRect(in: screenFrame,
+                                                    horizontalSide: horizontalSide,
+                                                    verticalSide: verticalSide,
+                                                    horizontalFraction: horizontalFraction,
+                                                    verticalFraction: verticalFraction)
+    }
+
+    private func gappedFrame(_ frame: CGRect,
+                             action: WindowAction,
+                             gapSize: CGFloat) -> CGRect {
+        let gapsApplicable = action.gapsApplicable
+        guard gapSize > 0,
+              gapsApplicable != .none
+        else {
+            return frame
+        }
+
+        return GapCalculation.applyGaps(frame,
+                                        dimension: gapsApplicable,
+                                        sharedEdges: action.gapSharedEdge,
+                                        gapSize: Float(gapSize),
+                                        skipTopGap: Defaults.skipGapTopEdge.enabled)
+    }
+
+    private func adjacentCycleAction(for action: WindowAction,
+                                     movedEdge: CooperativeCornerResize.MovedEdge) -> WindowAction? {
+        switch (action, movedEdge) {
+        case (.leftHalf, .right):
+            return .rightHalf
+        case (.rightHalf, .left):
+            return .leftHalf
+        case (.topHalf, .bottom):
+            return .bottomHalf
+        case (.bottomHalf, .top):
+            return .topHalf
+        case (.topLeft, .right):
+            return .topRight
+        case (.topLeft, .bottom):
+            return .bottomLeft
+        case (.topRight, .left):
+            return .topLeft
+        case (.topRight, .bottom):
+            return .bottomRight
+        case (.bottomLeft, .right):
+            return .bottomRight
+        case (.bottomLeft, .top):
+            return .topLeft
+        case (.bottomRight, .left):
+            return .bottomLeft
+        case (.bottomRight, .top):
+            return .topRight
+        default:
+            return nil
+        }
+    }
+
+    private func uniqueSortedSizes(_ sizes: [CGFloat]) -> [CGFloat] {
+        sizes.sorted().reduce(into: [CGFloat]()) { uniqueSizes, size in
+            guard !uniqueSizes.contains(where: { abs($0 - size) <= 0.001 }) else {
+                return
+            }
+            uniqueSizes.append(size)
+        }
+    }
+
+    private func adjacentAxisSize(_ frame: CGRect,
+                                  afterFocusedFrame focusedFrame: CGRect,
+                                  movedEdge: CooperativeCornerResize.MovedEdge,
+                                  gapSize: CGFloat) -> CGFloat {
+        switch movedEdge {
+        case .right:
+            return max(0, frame.maxX - (focusedFrame.maxX + gapSize))
+        case .left:
+            return max(0, (focusedFrame.minX - gapSize) - frame.minX)
+        case .top:
+            return max(0, frame.maxY - (focusedFrame.maxY + gapSize))
+        case .bottom:
+            return max(0, (focusedFrame.minY - gapSize) - frame.minY)
+        }
+    }
+
+    private func framesMatch(_ lhs: CGRect, _ rhs: CGRect, tolerance: CGFloat) -> Bool {
+        !CooperativeCornerResize.framesDiffer(lhs, rhs, tolerance: tolerance)
     }
 
     private func configuredCornerFrame(action: WindowAction, screenFrame: CGRect) -> CGRect? {
@@ -781,6 +1259,20 @@ struct CooperativeCornerWindowAdjustment {
     let kind: CooperativeCornerResize.Adjustment.Kind
 }
 
+private struct CooperativeCycleTargetFrame {
+    let cycleSize: CycleSize
+    let rawFrame: CGRect
+    let gappedFrame: CGRect
+}
+
+struct CooperativeCycleLookAheadTarget {
+    let rawFrame: CGRect
+    let gappedFrame: CGRect
+    let skippedCycleSize: CycleSize
+    let targetCycleSize: CycleSize
+    let restrictedAdjacentId: CGWindowID
+}
+
 struct CooperativeCornerApplicationPlan {
     let oldFocusedFrame: CGRect
     let requestedFocusedFrame: CGRect
@@ -798,6 +1290,7 @@ struct CooperativeCornerApplicationPlan {
     let candidateDiscoveryFrame: CGRect
     let actionDescription: String
     let adjustments: [CooperativeCornerWindowAdjustment]
+    let sideSplitRecordingFrame: CGRect?
     let debugLog: [String]
 
     func needsApplication(focusedCurrentFrame: CGRect) -> Bool {
@@ -856,6 +1349,7 @@ struct CooperativeCornerApplicationPlan {
                                                 candidateDiscoveryFrame: candidateDiscoveryFrame,
                                                 actionDescription: actionDescription,
                                                 adjustments: updatedAdjustments,
+                                                sideSplitRecordingFrame: sideSplitRecordingFrame,
                                                 debugLog: geometryPlan.debugLog)
     }
 }
