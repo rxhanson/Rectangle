@@ -21,10 +21,15 @@ class WindowManager {
         ]
     }
     
-    private func recordAction(windowId: CGWindowID, resultingRect: CGRect, action: WindowAction, subAction: SubWindowAction?) {
+    func recordAction(windowId: CGWindowID,
+                      resultingRect: CGRect,
+                      action: WindowAction,
+                      subAction: SubWindowAction?,
+                      incrementCount: Bool = true) {
         let newCount: Int
-        if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId], lastRectangleAction.action == action {
-            newCount = lastRectangleAction.count + 1
+        if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
+           lastRectangleAction.action == action {
+            newCount = incrementCount ? lastRectangleAction.count + 1 : lastRectangleAction.count
         } else {
             newCount = 1
         }
@@ -122,7 +127,7 @@ class WindowManager {
         if Defaults.cyclingOverlapOffset.userEnabled, action.positionCycles {
             calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
         }
-        
+
         let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
         let cooperativeCornerPlan = cooperativeCornerResizePlan(focusedWindowId: windowId,

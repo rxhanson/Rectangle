@@ -1416,6 +1416,83 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         XCTAssertNil(cleanupTarget)
     }
 
+    func testCleanupSourceFinderSupportsSideActionsAndIgnoresCorners() {
+        setSplitRatio(50)
+
+        let expandedLeft = CGRect(x: 10, y: 20, width: 700, height: 900)
+        let remainingLeft = CooperativeCornerResize.Candidate(id: 2,
+                                                              frame: expandedLeft)
+        let cornerWidthMatch = CooperativeCornerResize.Candidate(id: 3,
+                                                                 frame: CGRect(x: 10, y: 470, width: 800, height: 450))
+        let sourceFrame = WindowManager().observedCooperativeSourceFrame(action: .leftHalf,
+                                                                         oldFocusedFrame: expandedLeft,
+                                                                         candidates: [cornerWidthMatch, remainingLeft],
+                                                                         screenFrame: visibleFrame,
+                                                                         axis: .horizontal,
+                                                                         movedEdge: .right,
+                                                                         tolerance: 8,
+                                                                         captureTolerance: 96,
+                                                                         gapSize: 0)
+
+        assertRect(sourceFrame ?? .null, equals: expandedLeft)
+    }
+
+    func testCleanupTargetShrinksExpandedSideSource() {
+        setSplitRatio(50)
+
+        let expandedLeft = CGRect(x: 10, y: 20, width: 700, height: 900)
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .leftHalf,
+                                                              observedFrame: expandedLeft,
+                                                              screenFrame: visibleFrame,
+                                                              axis: .horizontal,
+                                                              movedEdge: .right,
+                                                              tolerance: 8,
+                                                              includeCycleTargets: false)
+
+        assertRect(cleanupTarget ?? .null, equals: CGRect(x: 10, y: 20, width: 600, height: 900))
+    }
+
+    func testCooperativeHistoryActionMapsAdjacentSideAndCornerActions() {
+        let manager = WindowManager()
+
+        XCTAssertEqual(manager.cooperativeHistoryAction(for: .matchingFocusedFrame,
+                                                        sourceAction: .leftHalf,
+                                                        movedEdge: .right),
+                       .leftHalf)
+        XCTAssertEqual(manager.cooperativeHistoryAction(for: .adjacent,
+                                                        sourceAction: .leftHalf,
+                                                        movedEdge: .right),
+                       .rightHalf)
+        XCTAssertEqual(manager.cooperativeHistoryAction(for: .adjacent,
+                                                        sourceAction: .topLeft,
+                                                        movedEdge: .bottom),
+                       .bottomLeft)
+    }
+
+    func testRecordActionCanPreserveCooperativeCorrectionCount() {
+        let manager = WindowManager()
+        let windowId = CGWindowID(987_654)
+        let originalRect = CGRect(x: 10, y: 20, width: 600, height: 900)
+        let correctedRect = CGRect(x: 10, y: 20, width: 800, height: 900)
+        AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(action: .leftHalf,
+                                                                                   subAction: nil,
+                                                                                   rect: originalRect,
+                                                                                   count: 3)
+        defer {
+            AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        }
+
+        manager.recordAction(windowId: windowId,
+                             resultingRect: correctedRect,
+                             action: .leftHalf,
+                             subAction: nil,
+                             incrementCount: false)
+
+        let recorded = AppDelegate.windowHistory.lastRectangleActions[windowId]
+        XCTAssertEqual(recorded?.count, 3)
+        assertRect(recorded?.rect ?? .null, equals: correctedRect)
+    }
+
     func testCleanupTargetAllowsExpandedMinimumConstrainedCorner() {
         Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
         Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue

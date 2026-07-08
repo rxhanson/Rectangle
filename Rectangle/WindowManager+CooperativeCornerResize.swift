@@ -15,22 +15,34 @@ extension WindowManager {
             apply(activePlan.adjustments,
                   kind: .adjacent,
                   screenFrame: activePlan.screenFrame,
-                  layoutTolerance: activePlan.layoutTolerance)
+                  layoutTolerance: activePlan.layoutTolerance,
+                  sourceAction: activePlan.action,
+                  movedEdge: activePlan.movedEdge,
+                  historyUpdate: .advance)
             apply(activePlan.adjustments,
                   kind: .matchingFocusedFrame,
                   screenFrame: activePlan.screenFrame,
-                  layoutTolerance: activePlan.layoutTolerance)
+                  layoutTolerance: activePlan.layoutTolerance,
+                  sourceAction: activePlan.action,
+                  movedEdge: activePlan.movedEdge,
+                  historyUpdate: .advance)
 
             if let correctedPlan = correctionPlanAfterApplyingCooperatingWindows(activePlan) {
                 activePlan = correctedPlan
                 apply(activePlan.adjustments,
                       kind: .adjacent,
                       screenFrame: activePlan.screenFrame,
-                      layoutTolerance: activePlan.layoutTolerance)
+                      layoutTolerance: activePlan.layoutTolerance,
+                      sourceAction: activePlan.action,
+                      movedEdge: activePlan.movedEdge,
+                      historyUpdate: .preserve)
                 apply(activePlan.adjustments,
                       kind: .matchingFocusedFrame,
                       screenFrame: activePlan.screenFrame,
-                      layoutTolerance: activePlan.layoutTolerance)
+                      layoutTolerance: activePlan.layoutTolerance,
+                      sourceAction: activePlan.action,
+                      movedEdge: activePlan.movedEdge,
+                      historyUpdate: .preserve)
             }
 
             var resultingRect = applyFocusedCooperativeFrameIfNeeded(activePlan.focusedFrame,
@@ -50,11 +62,17 @@ extension WindowManager {
         apply(activePlan.adjustments,
               kind: .matchingFocusedFrame,
               screenFrame: activePlan.screenFrame,
-              layoutTolerance: activePlan.layoutTolerance)
+              layoutTolerance: activePlan.layoutTolerance,
+              sourceAction: activePlan.action,
+              movedEdge: activePlan.movedEdge,
+              historyUpdate: .advance)
         apply(activePlan.adjustments,
               kind: .adjacent,
               screenFrame: activePlan.screenFrame,
-              layoutTolerance: activePlan.layoutTolerance)
+              layoutTolerance: activePlan.layoutTolerance,
+              sourceAction: activePlan.action,
+              movedEdge: activePlan.movedEdge,
+              historyUpdate: .advance)
 
         if let settledRect = settleCooperativeCornerResizeIfNeeded(plan: activePlan,
                                                                    focusedWindowElement: result.windowElement,
@@ -184,6 +202,7 @@ extension WindowManager {
                                                 focusedMinimumSize: focusedWindowMinimumSize,
                                                 gapSize: gapSize,
                                                 movedEdge: movedEdge,
+                                                action: action,
                                                 candidateDiscoveryFrame: candidateDiscoveryFrame,
                                                 actionDescription: actionDescription,
                                                 adjustments: adjustments,
@@ -201,7 +220,6 @@ extension WindowManager {
         guard Defaults.cooperativeCornerResize.enabled,
               source.allowsCooperativeResize,
               let previousAction = lastRectangleAction?.action,
-              previousAction.isCooperativeCornerAction,
               currentAction != previousAction,
               let cooperativeAxis = previousAction.cooperativeResizeAxis,
               let movedEdge = previousAction.cooperativeResizeMovedEdge,
@@ -244,14 +262,15 @@ extension WindowManager {
                                               frame: element.frame.screenFlipped,
                                               minimumSize: element.minimumSize)
         }
-        guard let observedCornerFrame = observedCornerOccupantFrame(action: previousAction,
-                                                                    oldFocusedFrame: oldFocusedFrame,
-                                                                    candidates: candidates,
-                                                                    screenFrame: screenFrame,
-                                                                    axis: cooperativeAxis,
-                                                                    tolerance: tolerance,
-                                                                    captureTolerance: captureTolerance,
-                                                                    gapSize: gapSize)
+        guard let observedSourceFrame = observedCooperativeSourceFrame(action: previousAction,
+                                                                       oldFocusedFrame: oldFocusedFrame,
+                                                                       candidates: candidates,
+                                                                       screenFrame: screenFrame,
+                                                                       axis: cooperativeAxis,
+                                                                       movedEdge: movedEdge,
+                                                                       tolerance: tolerance,
+                                                                       captureTolerance: captureTolerance,
+                                                                       gapSize: gapSize)
         else {
             return
         }
@@ -265,7 +284,7 @@ extension WindowManager {
         }
 
         guard let targetFrame = cleanupTargetFrame(action: previousAction,
-                                                   observedFrame: observedCornerFrame,
+                                                   observedFrame: observedSourceFrame,
                                                    screenFrame: screenFrame,
                                                    axis: cooperativeAxis,
                                                    movedEdge: movedEdge,
@@ -279,7 +298,7 @@ extension WindowManager {
 
         let focusedDestinationFrame = focusedElement?.frame.screenFlipped ?? newFocusedFrame
         guard cleanupDestinationAllowsSourceResize(action: previousAction,
-                                                   observedFrame: observedCornerFrame,
+                                                   observedFrame: observedSourceFrame,
                                                    targetFrame: targetFrame,
                                                    focusedDestinationFrame: focusedDestinationFrame,
                                                    screenFrame: screenFrame,
@@ -303,7 +322,7 @@ extension WindowManager {
                                               frame: element.frame.screenFlipped,
                                               minimumSize: element.minimumSize)
         }
-        guard let cleanupPlan = CooperativeCornerResize.plan(oldFocusedFrame: observedCornerFrame,
+        guard let cleanupPlan = CooperativeCornerResize.plan(oldFocusedFrame: observedSourceFrame,
                                                              newFocusedFrame: targetFrame,
                                                              screenFrame: screenFrame,
                                                              candidates: cleanupCandidates,
@@ -314,8 +333,8 @@ extension WindowManager {
                                                              gapSize: gapSize,
                                                              captureTolerance: captureTolerance,
                                                              movedEdgeOverride: movedEdge,
-                                                             candidateDiscoveryFrame: observedCornerFrame,
-                                                             actionDescription: "cooperative resize cleanup after focused window left corner")
+                                                             candidateDiscoveryFrame: observedSourceFrame,
+                                                             actionDescription: "cooperative resize cleanup after focused window left source")
         else {
             return
         }
@@ -333,8 +352,10 @@ extension WindowManager {
         }
 
         applyCleanupAdjustments(cleanupAdjustments,
-                                oldFocusedFrame: observedCornerFrame,
+                                oldFocusedFrame: observedSourceFrame,
                                 solvedFocusedFrame: cleanupPlan.focusedFrame,
+                                sourceAction: previousAction,
+                                movedEdge: movedEdge,
                                 axis: cooperativeAxis,
                                 screenFrame: screenFrame,
                                 layoutTolerance: layoutTolerance)
@@ -342,7 +363,7 @@ extension WindowManager {
         let actualCandidateFramesById = Dictionary(uniqueKeysWithValues: cleanupAdjustments.map { adjustment in
             (adjustment.id, adjustment.element.frame.screenFlipped)
         })
-        guard let correctionPlan = CooperativeCornerResize.correctionPlan(oldFocusedFrame: observedCornerFrame,
+        guard let correctionPlan = CooperativeCornerResize.correctionPlan(oldFocusedFrame: observedSourceFrame,
                                                                           requestedFocusedFrame: targetFrame,
                                                                           plannedPlan: cleanupPlan,
                                                                           screenFrame: screenFrame,
@@ -357,7 +378,7 @@ extension WindowManager {
                                                                           gapSize: gapSize,
                                                                           captureTolerance: captureTolerance,
                                                                           movedEdgeOverride: movedEdge,
-                                                                          candidateDiscoveryFrame: observedCornerFrame,
+                                                                          candidateDiscoveryFrame: observedSourceFrame,
                                                                           actionDescription: "cooperative resize cleanup settling pass")
         else {
             return
@@ -365,8 +386,10 @@ extension WindowManager {
 
         correctionPlan.debugLog.forEach(Logger.log)
         applyCleanupAdjustments(applicationAdjustments(for: correctionPlan.adjustments, elementsById: elementsById),
-                                oldFocusedFrame: observedCornerFrame,
+                                oldFocusedFrame: observedSourceFrame,
                                 solvedFocusedFrame: correctionPlan.focusedFrame,
+                                sourceAction: previousAction,
+                                movedEdge: movedEdge,
                                 axis: cooperativeAxis,
                                 screenFrame: screenFrame,
                                 layoutTolerance: layoutTolerance)
@@ -386,6 +409,8 @@ extension WindowManager {
     private func applyCleanupAdjustments(_ adjustments: [CooperativeCornerWindowAdjustment],
                                          oldFocusedFrame: CGRect,
                                          solvedFocusedFrame: CGRect,
+                                         sourceAction: WindowAction,
+                                         movedEdge: CooperativeCornerResize.MovedEdge,
                                          axis: CornerCycleExpansionAxis,
                                          screenFrame: CGRect,
                                          layoutTolerance: CGFloat) {
@@ -396,42 +421,64 @@ extension WindowManager {
             apply(adjustments,
                   kind: .adjacent,
                   screenFrame: screenFrame,
-                  layoutTolerance: layoutTolerance)
+                  layoutTolerance: layoutTolerance,
+                  sourceAction: sourceAction,
+                  movedEdge: movedEdge,
+                  historyUpdate: .preserve)
             apply(adjustments,
                   kind: .matchingFocusedFrame,
                   screenFrame: screenFrame,
-                  layoutTolerance: layoutTolerance)
+                  layoutTolerance: layoutTolerance,
+                  sourceAction: sourceAction,
+                  movedEdge: movedEdge,
+                  historyUpdate: .preserve)
         } else {
             apply(adjustments,
                   kind: .matchingFocusedFrame,
                   screenFrame: screenFrame,
-                  layoutTolerance: layoutTolerance)
+                  layoutTolerance: layoutTolerance,
+                  sourceAction: sourceAction,
+                  movedEdge: movedEdge,
+                  historyUpdate: .preserve)
             apply(adjustments,
                   kind: .adjacent,
                   screenFrame: screenFrame,
-                  layoutTolerance: layoutTolerance)
+                  layoutTolerance: layoutTolerance,
+                  sourceAction: sourceAction,
+                  movedEdge: movedEdge,
+                  historyUpdate: .preserve)
         }
     }
 
-    private func observedCornerOccupantFrame(action: WindowAction,
-                                             oldFocusedFrame: CGRect,
-                                             candidates: [CooperativeCornerResize.Candidate],
-                                             screenFrame: CGRect,
-                                             axis: CornerCycleExpansionAxis,
-                                             tolerance: CGFloat,
-                                             captureTolerance: CGFloat,
-                                             gapSize: CGFloat) -> CGRect? {
-        let cornerCandidates = candidates.filter { candidate in
+    func observedCooperativeSourceFrame(action: WindowAction,
+                                        oldFocusedFrame: CGRect,
+                                        candidates: [CooperativeCornerResize.Candidate],
+                                        screenFrame: CGRect,
+                                        axis: CornerCycleExpansionAxis,
+                                        movedEdge: CooperativeCornerResize.MovedEdge,
+                                        tolerance: CGFloat,
+                                        captureTolerance: CGFloat,
+                                        gapSize: CGFloat) -> CGRect? {
+        let sourceCandidates = candidates.filter { candidate in
             let frame = candidate.frame
-            return abs(axisSize(frame, axis) - axisSize(oldFocusedFrame, axis)) <= max(tolerance, captureTolerance)
-                && self.frame(frame,
-                              occupiesCornerFor: action,
-                              screenFrame: screenFrame,
-                              tolerance: tolerance,
-                              gapSize: gapSize)
+            guard abs(axisSize(frame, axis) - axisSize(oldFocusedFrame, axis)) <= max(tolerance, captureTolerance),
+                  self.frame(frame,
+                             occupiesSourceFor: action,
+                             screenFrame: screenFrame,
+                             tolerance: tolerance,
+                             gapSize: gapSize)
+            else {
+                return false
+            }
+
+            return action.isCooperativeCornerAction
+                || matchesPerpendicularSpan(frame,
+                                            sourceFrame: oldFocusedFrame,
+                                            movedEdge: movedEdge,
+                                            tolerance: max(tolerance, captureTolerance))
         }
 
-        return cornerCandidates.max { lhs, rhs in
+        return sourceCandidates.max { lhs, rhs in
             let lhsSize = axisSize(lhs.frame, axis)
             let rhsSize = axisSize(rhs.frame, axis)
             if abs(lhsSize - rhsSize) > tolerance {
@@ -456,7 +503,7 @@ extension WindowManager {
                                                        axis: axis,
                                                        includeCycleTargets: includeCycleTargets,
                                                        gapSize: gapSize)
-        if let configuredFrame = configuredCornerFrame(action: action, screenFrame: screenFrame) {
+        if let configuredFrame = configuredActionFrame(action: action, screenFrame: screenFrame) {
             let configuredSize = axisSize(gappedFrame(configuredFrame, action: action, gapSize: gapSize), axis)
             if observedSize > configuredSize + tolerance {
                 if observedFrameMatchesNonConfiguredCycleTarget(action: action,
@@ -793,7 +840,7 @@ extension WindowManager {
             frames.append(frame)
         }
 
-        if let configuredFrame = configuredCornerFrame(action: action, screenFrame: screenFrame) {
+        if let configuredFrame = configuredActionFrame(action: action, screenFrame: screenFrame) {
             appendUnique(gappedFrame(configuredFrame, action: action, gapSize: gapSize))
         }
 
@@ -995,7 +1042,7 @@ extension WindowManager {
         !CooperativeCornerResize.framesDiffer(lhs, rhs, tolerance: tolerance)
     }
 
-    private func configuredCornerFrame(action: WindowAction, screenFrame: CGRect) -> CGRect? {
+    private func configuredActionFrame(action: WindowAction, screenFrame: CGRect) -> CGRect? {
         let horizontalRatio = ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame)
         let verticalRatio = ActiveSideSplitRatios.shared.verticalRatio(for: screenFrame)
         let horizontalSide: HalfSplitSide
@@ -1004,6 +1051,22 @@ extension WindowManager {
         let verticalFraction: Float
 
         switch action {
+        case .leftHalf:
+            return HalfSplitFrameCalculation.horizontalRect(in: screenFrame,
+                                                            side: .leading,
+                                                            fraction: horizontalRatio)
+        case .rightHalf:
+            return HalfSplitFrameCalculation.horizontalRect(in: screenFrame,
+                                                            side: .trailing,
+                                                            fraction: 1.0 - horizontalRatio)
+        case .topHalf:
+            return HalfSplitFrameCalculation.verticalRect(in: screenFrame,
+                                                          side: .leading,
+                                                          fraction: verticalRatio)
+        case .bottomHalf:
+            return HalfSplitFrameCalculation.verticalRect(in: screenFrame,
+                                                          side: .trailing,
+                                                          fraction: 1.0 - verticalRatio)
         case .topLeft:
             horizontalSide = .leading
             verticalSide = .leading
@@ -1036,7 +1099,7 @@ extension WindowManager {
     }
 
     private func frame(_ frame: CGRect,
-                       occupiesCornerFor action: WindowAction,
+                       occupiesSourceFor action: WindowAction,
                        screenFrame: CGRect,
                        tolerance: CGFloat,
                        gapSize: CGFloat) -> Bool {
@@ -1047,6 +1110,14 @@ extension WindowManager {
         }
 
         switch action {
+        case .leftHalf:
+            return matchesOuterMin(frame.minX, screenFrame: screenFrame, axis: .horizontal, tolerance: tolerance, gapSize: gapSize)
+        case .rightHalf:
+            return matchesOuterMax(frame.maxX, screenFrame: screenFrame, axis: .horizontal, tolerance: tolerance, gapSize: gapSize)
+        case .topHalf:
+            return matchesOuterMax(frame.maxY, screenFrame: screenFrame, axis: .vertical, tolerance: tolerance, gapSize: gapSize)
+        case .bottomHalf:
+            return matchesOuterMin(frame.minY, screenFrame: screenFrame, axis: .vertical, tolerance: tolerance, gapSize: gapSize)
         case .topLeft:
             return matchesOuterMin(frame.minX, screenFrame: screenFrame, axis: .horizontal, tolerance: tolerance, gapSize: gapSize)
                 && matchesOuterMax(frame.maxY, screenFrame: screenFrame, axis: .vertical, tolerance: tolerance, gapSize: gapSize)
@@ -1113,7 +1184,10 @@ extension WindowManager {
     private func apply(_ adjustments: [CooperativeCornerWindowAdjustment],
                        kind: CooperativeCornerResize.Adjustment.Kind,
                        screenFrame: CGRect,
-                       layoutTolerance: CGFloat) {
+                       layoutTolerance: CGFloat,
+                       sourceAction: WindowAction,
+                       movedEdge: CooperativeCornerResize.MovedEdge,
+                       historyUpdate: CooperativeHistoryUpdate) {
         adjustments.filter { $0.kind == kind }.forEach { adjustment in
             if CooperativeCornerResize.frameNeedsApplication(currentFrame: adjustment.element.frame.screenFlipped,
                                                              solvedFrame: adjustment.newFrame,
@@ -1123,7 +1197,46 @@ extension WindowManager {
             } else {
                 Logger.log("Cooperative resize no-op for \(adjustment.id): current frame already matches solved frame")
             }
+            recordCooperativeHistory(for: adjustment,
+                                     sourceAction: sourceAction,
+                                     movedEdge: movedEdge,
+                                     historyUpdate: historyUpdate)
         }
+    }
+
+    func cooperativeHistoryAction(for kind: CooperativeCornerResize.Adjustment.Kind,
+                                  sourceAction: WindowAction,
+                                  movedEdge: CooperativeCornerResize.MovedEdge) -> WindowAction? {
+        switch kind {
+        case .matchingFocusedFrame:
+            return sourceAction
+        case .adjacent:
+            return adjacentCycleAction(for: sourceAction, movedEdge: movedEdge)
+        }
+    }
+
+    private func recordCooperativeHistory(for adjustment: CooperativeCornerWindowAdjustment,
+                                          sourceAction: WindowAction,
+                                          movedEdge: CooperativeCornerResize.MovedEdge,
+                                          historyUpdate: CooperativeHistoryUpdate) {
+        guard historyUpdate != .none,
+              let action = cooperativeHistoryAction(for: adjustment.kind,
+                                                    sourceAction: sourceAction,
+                                                    movedEdge: movedEdge)
+        else {
+            return
+        }
+
+        let resultingRect = adjustment.element.frame
+        guard !resultingRect.isNull else {
+            return
+        }
+
+        recordAction(windowId: adjustment.id,
+                     resultingRect: resultingRect,
+                     action: action,
+                     subAction: nil,
+                     incrementCount: historyUpdate == .advance)
     }
 
     private func correctionPlanAfterApplyingCooperatingWindows(_ plan: CooperativeCornerApplicationPlan) -> CooperativeCornerApplicationPlan? {
@@ -1202,11 +1315,17 @@ extension WindowManager {
             apply(correctionAdjustments,
                   kind: .adjacent,
                   screenFrame: plan.screenFrame,
-                  layoutTolerance: plan.layoutTolerance)
+                  layoutTolerance: plan.layoutTolerance,
+                  sourceAction: plan.action,
+                  movedEdge: plan.movedEdge,
+                  historyUpdate: .preserve)
             apply(correctionAdjustments,
                   kind: .matchingFocusedFrame,
                   screenFrame: plan.screenFrame,
-                  layoutTolerance: plan.layoutTolerance)
+                  layoutTolerance: plan.layoutTolerance,
+                  sourceAction: plan.action,
+                  movedEdge: plan.movedEdge,
+                  historyUpdate: .preserve)
             _ = applyFocusedCooperativeFrameIfNeeded(correctionPlan.focusedFrame,
                                                      result: result,
                                                      layoutTolerance: plan.layoutTolerance)
@@ -1217,11 +1336,17 @@ extension WindowManager {
             apply(correctionAdjustments,
                   kind: .matchingFocusedFrame,
                   screenFrame: plan.screenFrame,
-                  layoutTolerance: plan.layoutTolerance)
+                  layoutTolerance: plan.layoutTolerance,
+                  sourceAction: plan.action,
+                  movedEdge: plan.movedEdge,
+                  historyUpdate: .preserve)
             apply(correctionAdjustments,
                   kind: .adjacent,
                   screenFrame: plan.screenFrame,
-                  layoutTolerance: plan.layoutTolerance)
+                  layoutTolerance: plan.layoutTolerance,
+                  sourceAction: plan.action,
+                  movedEdge: plan.movedEdge,
+                  historyUpdate: .preserve)
         }
 
         return focusedWindowElement.frame
@@ -1273,6 +1398,12 @@ struct CooperativeCycleLookAheadTarget {
     let restrictedAdjacentId: CGWindowID
 }
 
+enum CooperativeHistoryUpdate {
+    case advance
+    case preserve
+    case none
+}
+
 struct CooperativeCornerApplicationPlan {
     let oldFocusedFrame: CGRect
     let requestedFocusedFrame: CGRect
@@ -1287,6 +1418,7 @@ struct CooperativeCornerApplicationPlan {
     let focusedMinimumSize: CGSize?
     let gapSize: CGFloat
     let movedEdge: CooperativeCornerResize.MovedEdge
+    let action: WindowAction
     let candidateDiscoveryFrame: CGRect
     let actionDescription: String
     let adjustments: [CooperativeCornerWindowAdjustment]
@@ -1346,6 +1478,7 @@ struct CooperativeCornerApplicationPlan {
                                                 focusedMinimumSize: focusedMinimumSize,
                                                 gapSize: gapSize,
                                                 movedEdge: movedEdge,
+                                                action: action,
                                                 candidateDiscoveryFrame: candidateDiscoveryFrame,
                                                 actionDescription: actionDescription,
                                                 adjustments: updatedAdjustments,
