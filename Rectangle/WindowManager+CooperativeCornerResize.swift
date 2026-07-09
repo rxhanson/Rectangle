@@ -262,15 +262,15 @@ extension WindowManager {
                                               frame: element.frame.screenFlipped,
                                               minimumSize: element.minimumSize)
         }
-        guard let observedSourceFrame = observedCooperativeSourceFrame(action: previousAction,
-                                                                       oldFocusedFrame: oldFocusedFrame,
-                                                                       candidates: candidates,
-                                                                       screenFrame: screenFrame,
-                                                                       axis: cooperativeAxis,
-                                                                       movedEdge: movedEdge,
-                                                                       tolerance: tolerance,
-                                                                       captureTolerance: captureTolerance,
-                                                                       gapSize: gapSize)
+        guard let observedSourceFrame = cleanupSourceFrame(action: previousAction,
+                                                           oldFocusedFrame: oldFocusedFrame,
+                                                           candidates: candidates,
+                                                           screenFrame: screenFrame,
+                                                           axis: cooperativeAxis,
+                                                           movedEdge: movedEdge,
+                                                           tolerance: tolerance,
+                                                           captureTolerance: captureTolerance,
+                                                           gapSize: gapSize)
         else {
             return
         }
@@ -486,6 +486,58 @@ extension WindowManager {
             }
             return lhs.id > rhs.id
         }?.frame
+    }
+
+    func cleanupSourceFrame(action: WindowAction,
+                            oldFocusedFrame: CGRect,
+                            candidates: [CooperativeCornerResize.Candidate],
+                            screenFrame: CGRect,
+                            axis: CornerCycleExpansionAxis,
+                            movedEdge: CooperativeCornerResize.MovedEdge,
+                            tolerance: CGFloat,
+                            captureTolerance: CGFloat,
+                            gapSize: CGFloat) -> CGRect? {
+        if let observedSourceFrame = observedCooperativeSourceFrame(action: action,
+                                                                    oldFocusedFrame: oldFocusedFrame,
+                                                                    candidates: candidates,
+                                                                    screenFrame: screenFrame,
+                                                                    axis: axis,
+                                                                    movedEdge: movedEdge,
+                                                                    tolerance: tolerance,
+                                                                    captureTolerance: captureTolerance,
+                                                                    gapSize: gapSize) {
+            return observedSourceFrame
+        }
+
+        return departedMinimumRestrictedCleanupSourceFrame(action: action,
+                                                           oldFocusedFrame: oldFocusedFrame,
+                                                           screenFrame: screenFrame,
+                                                           axis: axis,
+                                                           movedEdge: movedEdge,
+                                                           tolerance: tolerance,
+                                                           gapSize: gapSize)
+    }
+
+    private func departedMinimumRestrictedCleanupSourceFrame(action: WindowAction,
+                                                             oldFocusedFrame: CGRect,
+                                                             screenFrame: CGRect,
+                                                             axis: CornerCycleExpansionAxis,
+                                                             movedEdge: CooperativeCornerResize.MovedEdge,
+                                                             tolerance: CGFloat,
+                                                             gapSize: CGFloat) -> CGRect? {
+        guard action.isCooperativeCornerAction,
+              minimumRestrictedCleanupTargetFrame(action: action,
+                                                  observedFrame: oldFocusedFrame,
+                                                  screenFrame: screenFrame,
+                                                  axis: axis,
+                                                  movedEdge: movedEdge,
+                                                  tolerance: tolerance,
+                                                  gapSize: gapSize) != nil
+        else {
+            return nil
+        }
+
+        return oldFocusedFrame
     }
 
     func cleanupTargetFrame(action: WindowAction,
