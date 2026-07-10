@@ -1239,6 +1239,212 @@ class CycleSizeRatioPresetTests: XCTestCase {
     }
 }
 
+class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
+    private let screenFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
+    private let gapSize: CGFloat = 20
+    private var savedHorizontalSplitRatio: Float = 50
+    private var savedVerticalSplitRatio: Float = 50
+    private var savedCornerCycleExpansionAxis: CornerCycleExpansionAxis = .horizontal
+    private var savedSubsequentExecutionMode: SubsequentExecutionMode = .resize
+
+    override func setUp() {
+        super.setUp()
+        savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
+        savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
+        savedCornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
+        savedSubsequentExecutionMode = Defaults.subsequentExecutionMode.value
+        Defaults.horizontalSplitRatio.value = CycleSize.oneQuarter.percentValue
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        Defaults.subsequentExecutionMode.value = .resize
+        ActiveSideSplitRatios.shared.resetAll()
+    }
+
+    override func tearDown() {
+        Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
+        Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
+        Defaults.cornerCycleExpansionAxis.value = savedCornerCycleExpansionAxis
+        Defaults.subsequentExecutionMode.value = savedSubsequentExecutionMode
+        ActiveSideSplitRatios.shared.resetAll()
+        super.tearDown()
+    }
+
+    func testMinWidthConstrainedTopLeftRecordsAchievedHorizontalSplit() throws {
+        let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
+
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: plan.focusedFrame,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        XCTAssertEqual(plan.focusedFrame.width, 360, accuracy: 0.001)
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame), 0.325, accuracy: 0.001)
+    }
+
+    func testBottomLeftAfterMinWidthConstraintUsesAchievedHorizontalSplit() throws {
+        let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: plan.focusedFrame,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        let bottomLeft = WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect
+        let gappedBottomLeft = GapCalculation.applyGaps(bottomLeft,
+                                                        sharedEdges: WindowAction.bottomLeft.gapSharedEdge,
+                                                        gapSize: Float(gapSize))
+
+        XCTAssertEqual(bottomLeft.width, 390, accuracy: 0.001)
+        XCTAssertEqual(gappedBottomLeft.width, plan.focusedFrame.width, accuracy: 0.001)
+        XCTAssertEqual(gappedBottomLeft.maxX, plan.focusedFrame.maxX, accuracy: 0.001)
+    }
+
+    func testMinHeightConstrainedTopLeftRecordsAchievedVerticalSplit() throws {
+        let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 100, height: 360)))
+
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: plan.focusedFrame,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        XCTAssertEqual(plan.focusedFrame.height, 360, accuracy: 0.001)
+        XCTAssertEqual(ActiveSideSplitRatios.shared.verticalRatio(for: screenFrame), 390.0 / 900.0, accuracy: 0.001)
+        XCTAssertEqual(WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf)).rect.height,
+                       390,
+                       accuracy: 0.001)
+    }
+
+    func testRightAndBottomConstraintsRecordSymmetricLeadingSplits() {
+        let constrainedTopRight = gappedCornerFrame(horizontalSide: .trailing,
+                                                    verticalSide: .leading,
+                                                    horizontalFraction: 390.0 / 1200.0,
+                                                    verticalFraction: CycleSize.oneThird.fraction,
+                                                    action: .topRight)
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topRight,
+                                                                    achievedFrame: constrainedTopRight,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame), 0.675, accuracy: 0.001)
+        XCTAssertEqual(WindowCalculationFactory.rightHalfCalculation.calculateRect(params(for: .rightHalf)).rect.width,
+                       390,
+                       accuracy: 0.001)
+
+        let constrainedBottomRight = gappedCornerFrame(horizontalSide: .trailing,
+                                                       verticalSide: .trailing,
+                                                       horizontalFraction: 390.0 / 1200.0,
+                                                       verticalFraction: 390.0 / 900.0,
+                                                       action: .bottomRight)
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.bottomRight,
+                                                                    achievedFrame: constrainedBottomRight,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        XCTAssertEqual(ActiveSideSplitRatios.shared.verticalRatio(for: screenFrame), 1.0 - 390.0 / 900.0, accuracy: 0.001)
+        XCTAssertEqual(WindowCalculationFactory.bottomHalfCalculation.calculateRect(params(for: .bottomHalf)).rect.height,
+                       390,
+                       accuracy: 0.001)
+    }
+
+    func testAchievedCooperativeRatiosDoNotChangeSavedDefaults() throws {
+        let savedHorizontal = Defaults.horizontalSplitRatio.value
+        let savedVertical = Defaults.verticalSplitRatio.value
+        let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 360)))
+
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: plan.focusedFrame,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        XCTAssertEqual(Defaults.horizontalSplitRatio.value, savedHorizontal, accuracy: 0.001)
+        XCTAssertEqual(Defaults.verticalSplitRatio.value, savedVertical, accuracy: 0.001)
+        XCTAssertNotEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame), savedHorizontal / 100.0)
+        XCTAssertNotEqual(ActiveSideSplitRatios.shared.verticalRatio(for: screenFrame), savedVertical / 100.0)
+    }
+
+    func testGapIsIncludedWhenDerivingAchievedSplit() throws {
+        let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: plan.focusedFrame,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        let ratioIgnoringInternalHalfGap = Float((plan.focusedFrame.maxX - screenFrame.minX) / screenFrame.width)
+        XCTAssertEqual(ratioIgnoringInternalHalfGap, 380.0 / 1200.0, accuracy: 0.001)
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screenFrame), 390.0 / 1200.0, accuracy: 0.001)
+    }
+
+    func testCyclicCornerAfterConstraintUsesAchievedPerpendicularRatio() throws {
+        let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: plan.focusedFrame,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: gapSize)
+
+        let firstBottomLeft = WindowCalculationFactory.lowerLeftCalculation.calculateRect(params(for: .bottomLeft)).rect
+        let cycledBottomLeft = WindowCalculationFactory.lowerLeftCalculation.calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: firstBottomLeft),
+                                      visibleFrameOfScreen: screenFrame,
+                                      action: .bottomLeft,
+                                      lastAction: RectangleAction(action: .bottomLeft,
+                                                                  subAction: nil,
+                                                                  rect: firstBottomLeft,
+                                                                  count: 1))
+        ).rect
+
+        XCTAssertNotEqual(cycledBottomLeft.height, firstBottomLeft.height)
+        XCTAssertEqual(cycledBottomLeft.width, 390, accuracy: 0.001)
+    }
+
+    private func topLeftPlan(focusedMinimumSize: CGSize) -> CooperativeCornerResize.Plan? {
+        let requestedTopLeft = gappedCornerFrame(horizontalSide: .leading,
+                                                 verticalSide: .leading,
+                                                 horizontalFraction: CycleSize.oneQuarter.fraction,
+                                                 verticalFraction: CycleSize.oneThird.fraction,
+                                                 action: .topLeft)
+        let bottomLeft = gappedCornerFrame(horizontalSide: .leading,
+                                           verticalSide: .trailing,
+                                           horizontalFraction: CycleSize.oneQuarter.fraction,
+                                           verticalFraction: 1.0 - CycleSize.oneThird.fraction,
+                                           action: .bottomLeft)
+
+        return CooperativeCornerResize.plan(oldFocusedFrame: CGRect(x: 300, y: 250, width: 400, height: 300),
+                                            newFocusedFrame: requestedTopLeft,
+                                            screenFrame: screenFrame,
+                                            candidates: [CooperativeCornerResize.Candidate(id: 2, frame: bottomLeft)],
+                                            axis: .vertical,
+                                            tolerance: 8,
+                                            minimumSize: CGSize(width: 100, height: 100),
+                                            focusedMinimumSize: focusedMinimumSize,
+                                            gapSize: gapSize,
+                                            captureTolerance: 72,
+                                            movedEdgeOverride: .bottom,
+                                            candidateDiscoveryFrame: requestedTopLeft,
+                                            actionDescription: "test constrained top-left placement")
+    }
+
+    private func gappedCornerFrame(horizontalSide: HalfSplitSide,
+                                   verticalSide: HalfSplitSide,
+                                   horizontalFraction: Float,
+                                   verticalFraction: Float,
+                                   action: WindowAction) -> CGRect {
+        let rawFrame = HalfSplitFrameCalculation.cornerRect(in: screenFrame,
+                                                            horizontalSide: horizontalSide,
+                                                            verticalSide: verticalSide,
+                                                            horizontalFraction: horizontalFraction,
+                                                            verticalFraction: verticalFraction)
+        return GapCalculation.applyGaps(rawFrame,
+                                        sharedEdges: action.gapSharedEdge,
+                                        gapSize: Float(gapSize))
+    }
+
+    private func params(for action: WindowAction) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: 1, rect: screenFrame),
+                                  visibleFrameOfScreen: screenFrame,
+                                  action: action,
+                                  lastAction: nil)
+    }
+}
+
 class HalfSplitCornerCalculationTests: XCTestCase {
     
     private var savedHorizontalSplitRatio: Float = 50
@@ -1829,6 +2035,76 @@ class HalfSplitCornerCalculationTests: XCTestCase {
                                                                                                gapSize: 0)
 
         XCTAssertNil(lookAheadTarget)
+    }
+
+    func testRepeatedCornerLookAheadWrapsPastMaximumBlockedByMinimumRestrictedAdjacent() {
+        let screenFrame = CGRect(x: 0, y: 140, width: 3200, height: 1660)
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = Set(CycleSize.allCases)
+        Defaults.gapSize.value = 20
+        ActiveSideSplitRatios.shared.resetAll()
+
+        let achievedBottomLeft = CGRect(x: 20, y: 160, width: 2200, height: 1100)
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.bottomLeft,
+                                                                    achievedFrame: achievedBottomLeft,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: 20)
+        let cycleParams = RectCalculationParameters(window: Window(id: 1, rect: achievedBottomLeft),
+                                                    visibleFrameOfScreen: screenFrame,
+                                                    action: .bottomLeft,
+                                                    lastAction: nil)
+        let rawThreeQuarters = WindowCalculationFactory.lowerLeftCalculation.calculateFractionalRect(cycleParams,
+                                                                                                      fraction: CycleSize.threeQuarters.fraction).rect
+        let requestedThreeQuarters = GapCalculation.applyGaps(rawThreeQuarters,
+                                                              sharedEdges: WindowAction.bottomLeft.gapSharedEdge,
+                                                              gapSize: 20)
+        let minimumRestrictedTop = CooperativeCornerResize.Candidate(id: 2,
+                                                                     frame: CGRect(x: 20, y: 1280, width: 2200, height: 500))
+
+        let lookAheadTarget = WindowManager().cycleLookAheadTargetForMinimumRestrictedAdjacent(action: .bottomLeft,
+                                                                                               oldFocusedFrame: achievedBottomLeft,
+                                                                                               requestedFocusedFrame: requestedThreeQuarters,
+                                                                                               screenFrame: screenFrame,
+                                                                                               candidates: [minimumRestrictedTop],
+                                                                                               axis: .vertical,
+                                                                                               movedEdge: .top,
+                                                                                               tolerance: 24,
+                                                                                               gapSize: 20)
+
+        XCTAssertEqual(lookAheadTarget?.skippedCycleSize, .threeQuarters)
+        XCTAssertEqual(lookAheadTarget?.targetCycleSize, .oneQuarter)
+        XCTAssertEqual(lookAheadTarget?.gappedFrame.height ?? -1, 385, accuracy: 0.001)
+    }
+
+    func testRestrictedHeightCornerLeavingAttemptsNextSmallerCycleSize() {
+        let screenFrame = CGRect(x: 0, y: 140, width: 3200, height: 1660)
+        Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
+        Defaults.verticalSplitRatio.value = CycleSize.oneThird.percentValue
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = Set(CycleSize.allCases)
+        Defaults.gapSize.value = 20
+        ActiveSideSplitRatios.shared.resetAll()
+
+        let minimumRestrictedTop = CGRect(x: 20, y: 1280, width: 2200, height: 500)
+        ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
+                                                                    achievedFrame: minimumRestrictedTop,
+                                                                    screenFrame: screenFrame,
+                                                                    gapSize: 20)
+
+        let cleanupTarget = WindowManager().cleanupTargetFrame(action: .topLeft,
+                                                              observedFrame: minimumRestrictedTop,
+                                                              screenFrame: screenFrame,
+                                                              axis: .vertical,
+                                                              movedEdge: .bottom,
+                                                              tolerance: 24,
+                                                              includeCycleTargets: false,
+                                                              gapSize: 20)
+
+        assertRect(cleanupTarget ?? .null, equals: CGRect(x: 20, y: 1395, width: 2200, height: 385))
     }
 
     func testCleanupSourceAdjacencyOnlyMatchesDirectDestination() {

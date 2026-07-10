@@ -73,6 +73,49 @@ final class ActiveSideSplitRatios {
         }
     }
 
+    func recordAchievedCooperativeAction(_ action: WindowAction,
+                                         achievedFrame: CGRect,
+                                         screenFrame: CGRect,
+                                         gapSize: CGFloat) {
+        resetChangedConfiguredDefaults()
+
+        guard !achievedFrame.isNull,
+              !screenFrame.isNull,
+              screenFrame.width > 0,
+              screenFrame.height > 0
+        else {
+            return
+        }
+
+        // GapCalculation leaves half of the internal gap on each side of the raw split boundary.
+        let halfGap = max(0, gapSize) / 2.0
+
+        switch action {
+        case .leftHalf:
+            recordLeadingHorizontalBoundary(achievedFrame.maxX + halfGap, screenFrame: screenFrame)
+        case .rightHalf:
+            recordLeadingHorizontalBoundary(achievedFrame.minX - halfGap, screenFrame: screenFrame)
+        case .topHalf:
+            recordLeadingVerticalBoundary(achievedFrame.minY - halfGap, screenFrame: screenFrame)
+        case .bottomHalf:
+            recordLeadingVerticalBoundary(achievedFrame.maxY + halfGap, screenFrame: screenFrame)
+        case .topLeft:
+            recordLeadingHorizontalBoundary(achievedFrame.maxX + halfGap, screenFrame: screenFrame)
+            recordLeadingVerticalBoundary(achievedFrame.minY - halfGap, screenFrame: screenFrame)
+        case .topRight:
+            recordLeadingHorizontalBoundary(achievedFrame.minX - halfGap, screenFrame: screenFrame)
+            recordLeadingVerticalBoundary(achievedFrame.minY - halfGap, screenFrame: screenFrame)
+        case .bottomLeft:
+            recordLeadingHorizontalBoundary(achievedFrame.maxX + halfGap, screenFrame: screenFrame)
+            recordLeadingVerticalBoundary(achievedFrame.maxY + halfGap, screenFrame: screenFrame)
+        case .bottomRight:
+            recordLeadingHorizontalBoundary(achievedFrame.minX - halfGap, screenFrame: screenFrame)
+            recordLeadingVerticalBoundary(achievedFrame.maxY + halfGap, screenFrame: screenFrame)
+        default:
+            return
+        }
+    }
+
     func resetAll() {
         ratiosByScreen.removeAll()
         configuredHorizontalPercent = Defaults.horizontalSplitRatio.value
@@ -101,6 +144,14 @@ final class ActiveSideSplitRatios {
         updateRatios(for: screenFrame) { splitRatios in
             splitRatios.vertical = normalized(ratio)
         }
+    }
+
+    private func recordLeadingHorizontalBoundary(_ boundary: CGFloat, screenFrame: CGRect) {
+        setHorizontalRatio(Float((boundary - screenFrame.minX) / screenFrame.width), for: screenFrame)
+    }
+
+    private func recordLeadingVerticalBoundary(_ boundary: CGFloat, screenFrame: CGRect) {
+        setVerticalRatio(Float((screenFrame.maxY - boundary) / screenFrame.height), for: screenFrame)
     }
 
     private func updateRatios(for screenFrame: CGRect, update: (inout SplitRatios) -> Void) {

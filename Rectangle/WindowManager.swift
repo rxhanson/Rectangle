@@ -147,12 +147,18 @@ class WindowManager {
             }
         }
 
-        ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
-                                                      targetFrame: calcResult.initialRect,
-                                                      screenFrame: visibleFrameOfDestinationScreen)
+        if cooperativeCornerPlan == nil {
+            ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
+                                                          targetFrame: calcResult.initialRect,
+                                                          screenFrame: visibleFrameOfDestinationScreen)
+        }
 
         if let cooperativeCornerPlan {
             if !cooperativeCornerPlan.needsApplication(focusedCurrentFrame: currentNormalizedRect) {
+                ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
+                                                                            achievedFrame: currentNormalizedRect,
+                                                                            screenFrame: cooperativeCornerPlan.screenFrame,
+                                                                            gapSize: cooperativeCornerPlan.gapSize)
                 Logger.log("Cooperative resize no-op: solved frames already match current frames")
                 recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
                 return
@@ -180,6 +186,14 @@ class WindowManager {
                                                          plan: cooperativeCornerPlan)
         } else {
             resultingRect = apply(result: resultParameters)
+        }
+
+        if let cooperativeCornerPlan {
+            // AX can enforce a minimum size that was not reported before the settling pass.
+            ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
+                                                                        achievedFrame: resultingRect.screenFlipped,
+                                                                        screenFrame: cooperativeCornerPlan.screenFrame,
+                                                                        gapSize: cooperativeCornerPlan.gapSize)
         }
         
         let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen

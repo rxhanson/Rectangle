@@ -778,6 +778,8 @@ extension WindowManager {
         let minimumCycleSize = adjacentCycleSizes[0]
         let secondMinimumCycleSize = adjacentCycleSizes[1]
         let sizeTolerance = max(CGFloat(4), tolerance)
+        // Detection tolerance finds neighbors; only layout tolerance means a size is on a cycle boundary.
+        let cycleBoundaryTolerance: CGFloat = 4
 
         guard let restrictedAdjacent = candidates.first(where: { candidate in
             let frame = candidate.frame
@@ -796,8 +798,8 @@ extension WindowManager {
                                                 afterFocusedFrame: requestedFocusedFrame,
                                                 movedEdge: movedEdge,
                                                 gapSize: gapSize)
-            return currentSize > minimumCycleSize + sizeTolerance
-                && currentSize < secondMinimumCycleSize - sizeTolerance
+            return currentSize > minimumCycleSize + cycleBoundaryTolerance
+                && currentSize < secondMinimumCycleSize - cycleBoundaryTolerance
                 && proposedSize < currentSize - sizeTolerance
         }) else {
             return nil
@@ -838,10 +840,11 @@ extension WindowManager {
         let minimumCycleSize = cycleSizes[0]
         let secondMinimumCycleSize = cycleSizes[1]
         let observedSize = axisSize(observedFrame, axis)
-        let sizeTolerance = max(CGFloat(4), tolerance)
+        // Keep a near-boundary constrained size distinct from the exact cycle size it could not reach.
+        let cycleBoundaryTolerance: CGFloat = 4
 
-        guard observedSize > minimumCycleSize + sizeTolerance,
-              observedSize < secondMinimumCycleSize - sizeTolerance
+        guard observedSize > minimumCycleSize + cycleBoundaryTolerance,
+              observedSize < secondMinimumCycleSize - cycleBoundaryTolerance
         else {
             return nil
         }
