@@ -45,6 +45,7 @@ class SettingsViewController: NSViewController {
     
     private var cycleSizeCheckboxes = [NSButton]()
     private var cornerCycleExpansionAxisButtons = [NSButton]()
+    private var cooperativeCornerResizeCheckbox: NSButton?
     private var combinedDisplayModeCheckbox: NSButton?
     private var greenButtonOverrideCheckbox: NSButton?
     
@@ -128,6 +129,10 @@ class SettingsViewController: NSViewController {
 
         Defaults.cornerCycleExpansionAxis.value = axis
         setToggleStatesForCornerCycleExpansionAxisButtons()
+    }
+
+    @objc func toggleCooperativeCornerResize(_ sender: NSButton) {
+        Defaults.cooperativeCornerResize.enabled = sender.state == .on
     }
     
     @IBAction func checkForUpdates(_ sender: Any) {
@@ -1037,11 +1042,14 @@ class SettingsViewController: NSViewController {
         self.cycleSizeCheckboxes = cycleSizeCheckboxes
 
         let cornerCycleExpansionAxisRow = makeCornerCycleExpansionAxisRow()
+        let cooperativeCornerResizeCheckbox = makeCooperativeCornerResizeCheckbox()
+        self.cooperativeCornerResizeCheckbox = cooperativeCornerResizeCheckbox
         cycleSizesView.orientation = .vertical
         cycleSizesView.alignment = .leading
         cycleSizesView.spacing = 8
         cycleSizesView.addArrangedSubview(makeCycleSizesRow(cycleSizeCheckboxes))
         cycleSizesView.addArrangedSubview(cornerCycleExpansionAxisRow)
+        cycleSizesView.addArrangedSubview(cooperativeCornerResizeCheckbox)
         
         initializeCycleSizesView(animated: false)
 
@@ -1127,6 +1135,7 @@ class SettingsViewController: NSViewController {
         }
         setToggleStatesForCycleSizeCheckboxes()
         setToggleStatesForCornerCycleExpansionAxisButtons()
+        setToggleStateForCooperativeCornerResizeCheckbox()
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {
@@ -1135,6 +1144,7 @@ class SettingsViewController: NSViewController {
         if showOptionsView {
             setToggleStatesForCycleSizeCheckboxes()
             setToggleStatesForCornerCycleExpansionAxisButtons()
+            setToggleStateForCooperativeCornerResizeCheckbox()
         }
         
         setVisibility(shown: showOptionsView, ofView: cycleSizesView, withConstraint: cycleSizesViewHeightConstraint, animated: animated)
@@ -1280,6 +1290,15 @@ class SettingsViewController: NSViewController {
         button.setContentCompressionResistancePriority(.required, for: .vertical)
         return button
     }
+
+    private func makeCooperativeCornerResizeCheckbox() -> NSButton {
+        let button = NSButton(checkboxWithTitle: NSLocalizedString("Resize adjacent windows when cycling side or corner shortcuts", tableName: "Main", value: "", comment: ""),
+                              target: self,
+                              action: #selector(toggleCooperativeCornerResize(_:)))
+        button.refusesFirstResponder = true
+        button.setContentCompressionResistancePriority(.required, for: .vertical)
+        return button
+    }
     
     private func configureHalfSplitRatioPopUpButton(_ popUpButton: HalfSplitRatioPopUpButton) {
         popUpButton.removeAllItems()
@@ -1312,6 +1331,7 @@ class SettingsViewController: NSViewController {
         }
         
         defaults.value = cycleSize.percentValue
+        ActiveSideSplitRatios.shared.resetAll()
         popUpButton.customField?.stringValue = "\(Int(round(cycleSize.percentValue)))"
         popUpButton.customField?.isHidden = true
     }
@@ -1364,6 +1384,10 @@ class SettingsViewController: NSViewController {
         }
     }
 
+    private func setToggleStateForCooperativeCornerResizeCheckbox() {
+        cooperativeCornerResizeCheckbox?.state = Defaults.cooperativeCornerResize.enabled ? .on : .off
+    }
+
 }
 
 extension SettingsViewController {
@@ -1384,6 +1408,7 @@ extension SettingsViewController: NSTextFieldDelegate {
 
         Debounce<Float>.input(sender.floatValue, comparedAgainst: sender.floatValue) { floatValue in
             defaults.value = floatValue
+            self.resetActiveSideSplitRatiosIfNeeded(for: defaults)
             sender.defaultsSetAction?()
         }
     }
@@ -1396,8 +1421,19 @@ extension SettingsViewController: NSTextFieldDelegate {
             let fallback = sender.fallbackValue
             sender.stringValue = "\(Int(fallback))"
             defaults.value = fallback
+            resetActiveSideSplitRatiosIfNeeded(for: defaults)
             sender.defaultsSetAction?()
         }
+    }
+
+    private func resetActiveSideSplitRatiosIfNeeded(for defaults: FloatDefault) {
+        guard defaults.key == Defaults.horizontalSplitRatio.key
+            || defaults.key == Defaults.verticalSplitRatio.key
+        else {
+            return
+        }
+
+        ActiveSideSplitRatios.shared.resetAll()
     }
 }
 
