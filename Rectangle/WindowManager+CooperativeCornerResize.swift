@@ -82,7 +82,7 @@ extension WindowManager {
         return resultingRect
     }
 
-    func cooperativeCornerResizePlan(focusedWindowId: CGWindowID,
+    func cooperativeCornerResizePlan(focusedWindowId: CGWindowID?,
                                      focusedWindowIsFixedSize: Bool,
                                      focusedWindowMinimumSize: CGSize?,
                                      action: WindowAction,
@@ -94,6 +94,7 @@ extension WindowManager {
                                      lastRectangleAction: RectangleAction?) -> CooperativeCornerApplicationPlan? {
         guard Defaults.cooperativeCornerResize.enabled,
               source.allowsCooperativeResize,
+              let focusedWindowId,
               !focusedWindowIsFixedSize,
               destinationScreenIsCurrentScreen,
               let cooperativeAxis = action.cooperativeResizeAxis,
@@ -210,7 +211,7 @@ extension WindowManager {
                                                 debugLog: plan.debugLog)
     }
 
-    func applyCooperativeCornerCleanupIfNeeded(focusedWindowId: CGWindowID,
+    func applyCooperativeCornerCleanupIfNeeded(focusedWindowId: CGWindowID?,
                                                source: ExecutionSource,
                                                oldFocusedFrame: CGRect,
                                                newFocusedFrame: CGRect,
@@ -226,7 +227,8 @@ extension WindowManager {
               !oldFocusedFrame.isNull,
               !newFocusedFrame.isNull,
               !screenFrame.isNull,
-              screenFrame.intersects(oldFocusedFrame)
+              screenFrame.intersects(oldFocusedFrame),
+              let focusedWindowId
         else {
             return
         }
