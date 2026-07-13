@@ -95,7 +95,7 @@ struct RectResult {
 
 struct WindowCalculationResult {
     var rect: CGRect
-    let initialRect: CGRect
+    var initialRect: CGRect
     let screen: NSScreen
     let resultingAction: WindowAction
     let resultingSubAction: SubWindowAction?
