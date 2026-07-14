@@ -2955,6 +2955,34 @@ class ClampedWindowAlignerTests: XCTestCase {
         let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
         XCTAssertTrue(result.equalTo(window))
     }
+
+    func testEdgesAndCornersAlignmentKeepsHalfEdges() {
+        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
+        let rightHalf = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let result = EdgeAlignment.edgesAndCorners.alignmentEdges(for: rightHalf, in: screenFrame)
+        XCTAssertEqual(result, [.right, .top, .bottom])
+    }
+
+    func testCornersAlignmentCentersHalfEdges() {
+        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
+        let rightHalf = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let result = EdgeAlignment.corners.alignmentEdges(for: rightHalf, in: screenFrame)
+        XCTAssertEqual(result, .none)
+    }
+
+    func testCornersAlignmentKeepsCornerEdges() {
+        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
+        let topRight = CGRect(x: 1000, y: 600, width: 1000, height: 600)
+        let result = EdgeAlignment.corners.alignmentEdges(for: topRight, in: screenFrame)
+        XCTAssertEqual(result, [.right, .top])
+    }
+
+    func testCenteredAlignmentIgnoresSharedEdges() {
+        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
+        let topRight = CGRect(x: 1000, y: 600, width: 1000, height: 600)
+        let result = EdgeAlignment.centered.alignmentEdges(for: topRight, in: screenFrame)
+        XCTAssertEqual(result, .none)
+    }
 }
 
 class NilWindowIdCalculationTests: XCTestCase {

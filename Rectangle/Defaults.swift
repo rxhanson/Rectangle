@@ -24,7 +24,7 @@ class Defaults {
     static let snapEdgeMarginRight = FloatDefault(key: "snapEdgeMarginRight", defaultValue: 5)
     static let centeredDirectionalMove = OptionalBoolDefault(key: "centeredDirectionalMove")
     static let resizeOnDirectionalMove = BoolDefault(key: "resizeOnDirectionalMove")
-    static let moveFixedSizeToEdge = IntEnumDefault<EdgeAlignment>(key: "moveFixedSizeToEdge", defaultValue: .centered)
+    static let moveFixedSizeToEdge = IntEnumDefault<EdgeAlignment>(key: "moveFixedSizeToEdge", defaultValue: .edgesAndCorners)
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
     static let useCursorScreenDetection = BoolDefault(key: "useCursorScreenDetection")

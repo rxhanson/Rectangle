@@ -542,8 +542,10 @@ defaults write com.knollsoft.Rectangle cyclingOverlapMaxCascade -int 3
 
 ## Move windows that can't fill the snap area to the edge
 
-Some windows can't be resized to fill a snap area — either because they're a fixed size, or because they're resizable but have a maximum size or a fixed aspect ratio (FaceTime is a common example). By default such a window is centered within the snap area, which can leave a gap against the screen edge (e.g. snapping FaceTime to the right half leaves it floating left of the screen's right edge). Enable this to instead align the window to the snap area's screen edge(s): a right-half snap anchors flush right, a corner snap anchors into the corner, and the window stays centered on any axis it can't fill. Off by default.
+Some windows can't be resized to fill a snap area — either because they're a fixed size, or because they're resizable but have a maximum size or a fixed aspect ratio (FaceTime is a common example). By default such a window aligns to the snap area's screen edge(s): a right-half snap anchors flush right, a corner snap anchors into the corner, and the window stays centered on any axis it can't fill. To choose a different behavior:
 
 ```bash
-defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -bool true
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 1  # align edges and corners (default)
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 2  # align corners only, center halves/sides
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 3  # center within the snap area
 ```
