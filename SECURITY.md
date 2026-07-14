@@ -1,6 +1,6 @@
 # Security Policy
 
-Rectangle is maintained by a single developer. While I take security seriously, I appreciate your patience and responsible disclosure to help protect our users.
+Rectangle is maintained by a single developer. While I take security seriously, I appreciate your patience and responsible disclosure to help protect Rectangle users.
 
 ## Supported Versions
 
