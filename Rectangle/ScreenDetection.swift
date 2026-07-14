@@ -102,23 +102,24 @@ class ScreenDetection {
     }
 
     func order(screens: [NSScreen]) -> [NSScreen] {
-        if Defaults.screensOrderedByX.userEnabled {
-            let screensOrderedByX = screens.sorted(by: { screen1, screen2 in
-                return screen1.frame.origin.x < screen2.frame.origin.x
+        switch Defaults.screensOrderedByX.value {
+            
+        case .midX:
+            return screens.sorted(by: { $0.frame.midX < $1.frame.midX })
+        case .minX:
+            return screens.sorted(by: { $0.frame.minX < $1.frame.minX })
+        case .yThenMinX:
+            let sortedScreens = screens.sorted(by: { screen1, screen2 in
+                if screen2.frame.maxY <= screen1.frame.minY {
+                    return true
+                }
+                if screen1.frame.maxY <= screen2.frame.minY {
+                    return false
+                }
+                return screen1.frame.minX < screen2.frame.minX
             })
-            return screensOrderedByX
+            return sortedScreens
         }
-        
-        let sortedScreens = screens.sorted(by: { screen1, screen2 in
-            if screen2.frame.maxY <= screen1.frame.minY {
-                return true
-            }
-            if screen1.frame.maxY <= screen2.frame.minY {
-                return false
-            }
-            return screen1.frame.minX < screen2.frame.minX
-        })
-        return sortedScreens
     }
     
     private func computeAreaOfRect(rect: CGRect) -> CGFloat {
@@ -146,6 +147,12 @@ struct UsableScreens {
 struct AdjacentScreens {
     let prev: NSScreen
     let next: NSScreen
+}
+
+enum ScreenOrdering: Int {
+    case midX = 1
+    case minX = 2
+    case yThenMinX = 3
 }
 
 extension NSScreen {
