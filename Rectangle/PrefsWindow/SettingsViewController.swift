@@ -1136,6 +1136,9 @@ class SettingsViewController: NSViewController {
         setToggleStatesForCycleSizeCheckboxes()
         setToggleStatesForCornerCycleExpansionAxisButtons()
         setToggleStateForCooperativeCornerResizeCheckbox()
+        
+        // Temporarily hide the cooperative resize feature for now
+        cooperativeCornerResizeCheckbox?.isHidden = !Defaults.cooperativeCornerResize.enabled
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {
