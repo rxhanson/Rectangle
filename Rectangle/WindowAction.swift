@@ -364,10 +364,10 @@ enum WindowAction: Int, Codable {
         switch self {
         case .leftHalf:
             key = "Xc8-Sm-pig.title"
-            value = "Left Side"
+            value = "Left"
         case .rightHalf:
             key = "F8S-GI-LiB.title"
-            value = "Right Side"
+            value = "Right"
         case .maximize:
             key = "8oe-J2-oUU.title"
             value = "Maximize"
@@ -388,13 +388,13 @@ enum WindowAction: Int, Codable {
             value = "Smaller"
         case .bottomHalf:
             key = "ec4-FB-fMa.title"
-            value = "Bottom Side"
+            value = "Bottom"
         case .topHalf:
             key = "d7y-s8-7GE.title"
-            value = "Top Side"
+            value = "Top"
         case .center:
             key = "8Bg-SZ-hDO.title"
-            value = "Center"
+            value = "Move to Center"
         case .bottomLeft:
             key = "6ma-hP-5xX.title"
             value = "Bottom Left"
@@ -445,7 +445,7 @@ enum WindowAction: Int, Codable {
             value = "Almost Maximize"
         case .centerHalf:
             key = "bRX-dV-iAR.title"
-            value = "Center Section"
+            value = "Center"
         case .firstFourth:
             key = "Q6Q-6J-okH.title"
             value = "First Fourth"

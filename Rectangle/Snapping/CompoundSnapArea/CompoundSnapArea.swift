@@ -23,13 +23,13 @@ enum CompoundSnapArea: Int, Codable {
     var displayName: String {
         switch self {
         case .leftTopBottomHalf:
-            return NSLocalizedString("Left side, top/bottom side near corners", tableName: "Main", value: "", comment: "")
+            return NSLocalizedString("Left side, top/bottom near corners", tableName: "Main", value: "", comment: "")
         case .rightTopBottomHalf:
-            return NSLocalizedString("Right side, top/bottom side near corners", tableName: "Main", value: "", comment: "")
+            return NSLocalizedString("Right side, top/bottom near corners", tableName: "Main", value: "", comment: "")
         case .thirds:
             return NSLocalizedString("Thirds, drag toward center for two thirds", tableName: "Main", value: "", comment: "")
         case .portraitThirdsSide:
-            return NSLocalizedString("Thirds, top/bottom side near corners", tableName: "Main", value: "", comment: "")
+            return NSLocalizedString("Thirds, top/bottom near corners", tableName: "Main", value: "", comment: "")
         case .halves:
             return NSLocalizedString("Left or right side", tableName: "Main", value: "", comment: "")
         case .topSixths:
@@ -39,7 +39,7 @@ enum CompoundSnapArea: Int, Codable {
         case .fourths:
             return NSLocalizedString("Fourths columns", tableName: "Main", value: "", comment: "")
         case .portraitTopBottomHalves:
-            return NSLocalizedString("Top/bottom sides", tableName: "Main", value: "", comment: "")
+            return NSLocalizedString("Top/bottoms", tableName: "Main", value: "", comment: "")
         case .topEighths:
             return NSLocalizedString("Top eighths from corners; maximize", tableName: "Main", value: "", comment: "")
         case .bottomEighths:
