@@ -47,7 +47,7 @@ class WindowCalculation: Calculation {
 }
 
 struct Window {
-    let id: CGWindowID
+    let id: CGWindowID?
     let rect: CGRect
 }
 

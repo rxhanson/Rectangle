@@ -2956,3 +2956,46 @@ class ClampedWindowAlignerTests: XCTestCase {
         XCTAssertTrue(result.equalTo(window))
     }
 }
+
+class NilWindowIdCalculationTests: XCTestCase {
+    
+    private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
+    private let windowRect = CGRect(x: 100, y: 100, width: 600, height: 400)
+    
+    /// The window id is bookkeeping only (#640); geometry must not depend on it.
+    func testRectCalculationsMatchWithAndWithoutWindowId() {
+        for action in WindowAction.active {
+            guard let calculation = WindowCalculationFactory.calculationsByAction[action] else { continue }
+            
+            let withId = calculation.calculateRect(params(windowId: 1, action: action)).rect
+            let withoutId = calculation.calculateRect(params(windowId: nil, action: action)).rect
+            
+            XCTAssertEqual(withId, withoutId, "\(action.name) geometry should not depend on window id")
+        }
+    }
+    
+    private func params(windowId: CGWindowID?, action: WindowAction) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: windowId, rect: windowRect),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: nil)
+    }
+}
+
+class DerivedWindowIdTests: XCTestCase {
+    
+    func testDerivedIdHasHighBitSet() {
+        XCTAssertEqual(AccessibilityElement.deriveWindowId(fromElementHash: 0) & 0x8000_0000, 0x8000_0000)
+        XCTAssertEqual(AccessibilityElement.deriveWindowId(fromElementHash: CFHashCode.max) & 0x8000_0000, 0x8000_0000)
+    }
+    
+    func testDerivedIdIsDeterministic() {
+        XCTAssertEqual(AccessibilityElement.deriveWindowId(fromElementHash: 1668292462),
+                       AccessibilityElement.deriveWindowId(fromElementHash: 1668292462))
+    }
+    
+    func testDistinctHashesGiveDistinctIds() {
+        let ids: [CGWindowID] = [1668318964, 1668318948, 1668321588].map { AccessibilityElement.deriveWindowId(fromElementHash: CFHashCode($0)) }
+        XCTAssertEqual(Set(ids).count, ids.count)
+    }
+}

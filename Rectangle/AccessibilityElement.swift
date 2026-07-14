@@ -210,8 +210,22 @@ class AccessibilityElement {
         if let pid = pid, let info = (WindowUtil.getWindowList().first { $0.pid == pid && $0.frame == frame }) {
             return info.id
         }
+        if !frame.isNull {
+            // Last resort (#640): derive a stand-in id from the accessibility
+            // element's identity so window-id-keyed bookkeeping keeps working
+            // when macOS isn't vending real window ids. CFHash is constant for
+            // the same window across fetches and unaffected by moves/resizes.
+            Logger.log("Using a derived window id for bookkeeping")
+            return AccessibilityElement.deriveWindowId(fromElementHash: CFHash(wrappedElement))
+        }
         Logger.log("Unable to obtain window id")
         return nil
+    }
+
+    /// The high bit keeps derived ids out of the real window id space;
+    /// real ids are assigned incrementally by the window server.
+    static func deriveWindowId(fromElementHash hash: CFHashCode) -> CGWindowID {
+        CGWindowID(0x8000_0000) | (CGWindowID(truncatingIfNeeded: hash) & 0x7FFF_FFFF)
     }
     
     var pid: pid_t? {
@@ -373,6 +387,25 @@ extension AccessibilityElement {
             }
             return windowElement
         }
+
+        // Last resort for when the window server isn't vending window info (#640):
+        // the frontmost app's own accessibility windows don't depend on it.
+        if let frontAppElement = getFrontApplicationElement(),
+           let windowElements = frontAppElement.windowElements {
+            let windowElement = windowElements
+                .map { (element: $0, frame: $0.frame) }
+                .filter { !$0.frame.isNull && $0.frame.contains(position) }
+                .min { $0.frame.width * $0.frame.height < $1.frame.width * $1.frame.height }?
+                .element
+            if let windowElement {
+                if Logger.logging, let pid = windowElement.pid {
+                    let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
+                    Logger.log("Window under cursor frontmost app fallback matched: \(appName)")
+                }
+                return windowElement
+            }
+        }
+
         Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
         return nil
     }
