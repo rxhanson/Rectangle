@@ -1049,7 +1049,11 @@ class SettingsViewController: NSViewController {
         cycleSizesView.spacing = 8
         cycleSizesView.addArrangedSubview(makeCycleSizesRow(cycleSizeCheckboxes))
         cycleSizesView.addArrangedSubview(cornerCycleExpansionAxisRow)
-        cycleSizesView.addArrangedSubview(cooperativeCornerResizeCheckbox)
+        
+        // Holding off on showing the cooperative resize feature for now
+        if Defaults.cooperativeCornerResize.enabled {
+            cycleSizesView.addArrangedSubview(cooperativeCornerResizeCheckbox)
+        }
         
         initializeCycleSizesView(animated: false)
 
@@ -1136,9 +1140,6 @@ class SettingsViewController: NSViewController {
         setToggleStatesForCycleSizeCheckboxes()
         setToggleStatesForCornerCycleExpansionAxisButtons()
         setToggleStateForCooperativeCornerResizeCheckbox()
-        
-        // Temporarily hide the cooperative resize feature for now
-        cooperativeCornerResizeCheckbox?.isHidden = !Defaults.cooperativeCornerResize.enabled
     }
     
     private func initializeCycleSizesView(animated: Bool = false) {

@@ -39,13 +39,19 @@ final class ActiveSideSplitRatios {
     }
 
     func horizontalRatio(for screenFrame: CGRect) -> Float {
-        resetChangedConfiguredDefaults()
-        return ratiosByScreen[ScreenKey(screenFrame)]?.horizontal ?? configuredHorizontalRatio
+        if Defaults.cooperativeCornerResize.enabled {
+            resetChangedConfiguredDefaults()
+            return ratiosByScreen[ScreenKey(screenFrame)]?.horizontal ?? configuredHorizontalRatio
+        }
+        return Defaults.horizontalSplitRatio.value / 100.0
     }
 
     func verticalRatio(for screenFrame: CGRect) -> Float {
-        resetChangedConfiguredDefaults()
-        return ratiosByScreen[ScreenKey(screenFrame)]?.vertical ?? configuredVerticalRatio
+        if Defaults.cooperativeCornerResize.enabled {
+            resetChangedConfiguredDefaults()
+            return ratiosByScreen[ScreenKey(screenFrame)]?.vertical ?? configuredVerticalRatio
+        }
+        return Defaults.verticalSplitRatio.value / 100.0
     }
 
     func recordSideAction(_ action: WindowAction, targetFrame: CGRect, screenFrame: CGRect) {
