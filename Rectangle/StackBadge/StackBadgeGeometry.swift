@@ -47,10 +47,26 @@ enum StackBadgeGeometry {
         return points
     }
 
+    /// The indices of the window origins (AX coordinates) that form a
+    /// cascade stack, anchored on the leftmost origin. The overlap offset
+    /// cascades diagonally: +x always, but y can run either way (the offset
+    /// is applied in AppKit coordinates, where +y converts to an upward move
+    /// in AX space), so the y window is symmetric. Anchoring on the leftmost
+    /// origin keeps unrelated neighbors out of a gap-widened candidate box.
+    static func stackIndices(among origins: [CGPoint], cascadeRange: CGFloat, tolerance: CGFloat) -> [Int] {
+        guard let anchor = (origins.min { $0.x < $1.x }) else { return [] }
+        return origins.indices.filter { index in
+            let dx = origins[index].x - anchor.x
+            let dy = origins[index].y - anchor.y
+            return dx >= -tolerance && dx <= cascadeRange
+                && dy >= -cascadeRange && dy <= cascadeRange
+        }
+    }
+
     /// The corner whose hover zone contains the point, or nil. The zone is a
-    /// square extending right and DOWN from the corner (AppKit y-down means
-    /// minus y), because the peek revealed by the overlap offset hangs
-    /// down-right of the buried window's top-left corner.
+    /// square extending right and down from the corner (down in AppKit means
+    /// minus y), covering where gap-shifted windows and their title bars sit
+    /// relative to the geometric corner.
     static func corner(near point: CGPoint, in corners: [CGPoint], zone: CGFloat) -> CGPoint? {
         var best: (corner: CGPoint, distance: CGFloat)?
         for corner in corners {
