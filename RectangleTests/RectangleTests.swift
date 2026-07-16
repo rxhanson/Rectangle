@@ -216,6 +216,47 @@ class StackBadgeGeometryTests: XCTestCase {
         let hit = StackBadgeGeometry.corner(near: CGPoint(x: 105, y: 495), in: [far, near], zone: 30)
         XCTAssertEqual(hit, near)
     }
+
+    // Regression: the cascade offset runs +x but UP in AX y (it's applied in
+    // AppKit coordinates and the y-axis flips), so clustering must accept
+    // origins above the anchor. Real-world origins from a two-window stack
+    // that the first implementation failed to count.
+    func testStackClusterAcceptsUpwardCascade() {
+        let origins = [CGPoint(x: 903, y: -2121), CGPoint(x: 892, y: -2110)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 2)
+    }
+
+    // Regression: with maxCascade capped at 1, the second and third windows
+    // share an origin. All three belong to the stack.
+    func testStackClusterCountsCascadeCapSharedOrigins() {
+        let origins = [
+            CGPoint(x: 903, y: -2121),
+            CGPoint(x: 903, y: -2121),
+            CGPoint(x: 892, y: -2110)
+        ]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 3)
+    }
+
+    func testStackClusterExcludesUnrelatedNeighbor() {
+        // A window 30pt away from the anchor is a neighbor, not a stack member,
+        // even though a gap-widened candidate box may have caught it.
+        let origins = [CGPoint(x: 100, y: 100), CGPoint(x: 111, y: 89), CGPoint(x: 130, y: 130)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.sorted(), [0, 1])
+    }
+
+    func testStackClusterAcceptsDownwardCascade() {
+        // Edge clamping can flip the cascade direction locally; both must count.
+        let origins = [CGPoint(x: 100, y: 100), CGPoint(x: 111, y: 111)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 2)
+    }
+
+    func testStackClusterEmptyInput() {
+        XCTAssertTrue(StackBadgeGeometry.stackIndices(among: [], cascadeRange: 15, tolerance: 4).isEmpty)
+    }
 }
 
 class CooperativeCornerResizeTests: XCTestCase {

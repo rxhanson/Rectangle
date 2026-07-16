@@ -104,9 +104,13 @@ class StackBadgeManager {
         else { return }
         dwellFired = true
 
+        // Gaps shift window origins away from the geometric grid corner, so
+        // the hover zone has to reach across the gap to the shifted peek.
+        let zone = Self.hoverZone + CGFloat(Defaults.gapSize.value)
+
         guard visibleUIFrames.isEmpty,
               let entry = (cornersByScreenFrame.first { NSPointInRect(location, $0.screenFrame) }),
-              let corner = StackBadgeGeometry.corner(near: location, in: entry.corners, zone: Self.hoverZone)
+              let corner = StackBadgeGeometry.corner(near: location, in: entry.corners, zone: zone)
         else { return }
 
         query(corner: corner, screenFrame: entry.screenFrame)
@@ -128,18 +132,40 @@ class StackBadgeManager {
         let maxCascade = CGFloat(min(5, max(1, Defaults.cyclingOverlapMaxCascade.value)))
         let cascadeRange = max(offsetSize, 1) * maxCascade + tolerance
 
-        let stacked = WindowUtil.getWindowList().filter { info in
+        // Gaps place a cell's window up to a full gap away from the
+        // geometric corner, so candidates are gathered from a widened box...
+        let gap = CGFloat(Defaults.gapSize.value)
+        let candidateRange = gap + cascadeRange
+
+        // The cascade offset is diagonal in x but can run either way in y
+        // (the offset is applied in AppKit coords, where +y converts to an
+        // upward move in AX space), so the y window is symmetric.
+        let candidates = WindowUtil.getWindowList().filter { info in
             guard info.level == kCGNormalWindowLevel else { return false }
             let coversScreen = info.frame.width > screenFrameAX.width * 0.9
                 && info.frame.height > screenFrameAX.height * 0.9
             guard !coversScreen else { return false }
             let dx = info.frame.origin.x - cornerAX.x
             let dy = info.frame.origin.y - cornerAX.y
-            return dx >= -tolerance && dx <= cascadeRange
-                && dy >= -tolerance && dy <= cascadeRange
+            return dx >= -tolerance && dx <= candidateRange
+                && dy >= -candidateRange && dy <= candidateRange
         }
 
-        guard stacked.count >= 2 else { return }
+        // ...and the stack is then clustered around the leftmost candidate,
+        // so the widened box doesn't count unrelated neighbors.
+        let stacked = StackBadgeGeometry
+            .stackIndices(among: candidates.map { $0.frame.origin }, cascadeRange: cascadeRange, tolerance: tolerance)
+            .map { candidates[$0] }
+
+        guard stacked.count >= 2,
+              let leftMost = (stacked.min { $0.frame.origin.x < $1.frame.origin.x }),
+              let topMost = (stacked.min { $0.frame.origin.y < $1.frame.origin.y })
+        else { return }
+
+        // The badge sits at the stack's visual top-left extremity - where
+        // the title bars start - not the geometric corner the gaps shifted
+        // the windows away from.
+        let anchorTopLeft = CGPoint(x: leftMost.frame.origin.x, y: topMost.frame.origin.y).screenFlipped
 
         let requestGeneration = generation
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
@@ -151,7 +177,7 @@ class StackBadgeManager {
             }
             DispatchQueue.main.async {
                 guard let self, self.generation == requestGeneration else { return }
-                self.show(windows: windows, corner: corner)
+                self.show(windows: windows, corner: anchorTopLeft)
             }
         }
     }
