@@ -11,10 +11,10 @@ import Cocoa
 /// grid corner where multiple windows are stacked. Clicking a name brings
 /// that window forward.
 ///
-/// Deliberately stateless: nothing about windows is retained between dwells.
-/// Every dwell asks the window server fresh, so windows moving, closing, or
-/// changing screens through paths Rectangle doesn't control cannot leave
-/// stale UI behind.
+/// Deliberately stateless: nothing about windows or screens is retained
+/// between dwells. Every dwell asks the window server fresh, so windows
+/// moving, closing, or changing screens through paths Rectangle doesn't
+/// control cannot leave stale UI behind.
 class StackBadgeManager {
 
     struct StackedWindow {
@@ -27,17 +27,17 @@ class StackBadgeManager {
     private static let dwellInterval: TimeInterval = 0.25
     private static let hoverZone: CGFloat = 30
     private static let moveTolerance: CGFloat = 2
+    private static let axTimeout: Float = 0.25
 
+    // A Timer polling NSEvent.mouseLocation is deliberate: a global
+    // mouse-moved event monitor stops delivering events after sleep/wake,
+    // while the synchronous location read cannot. The tick is a coordinate
+    // comparison and only runs while the feature is enabled.
     private var timer: Timer?
     private var lastMouseLocation = CGPoint.zero
     private var lastMoveTime: TimeInterval = 0
     private var dwellFired = false
     private var generation = 0
-
-    /// Grid corner points per screen, in AppKit coordinates. Cached because
-    /// screen geometry - unlike window state - has a reliable invalidation
-    /// signal (didChangeScreenParametersNotification).
-    private var cornersByScreenFrame = [(screenFrame: CGRect, corners: [CGPoint])]()
 
     private var badgeWindow: NSWindow?
     private var listWindow: NSPanel?
@@ -48,11 +48,16 @@ class StackBadgeManager {
             forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main
         ) { [weak self] _ in
-            self?.rebuildCorners()
             self?.dismiss()
         }
         NotificationCenter.default.addObserver(
             forName: .stackBadgeChanged,
+            object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.toggleListening()
+        }
+        NotificationCenter.default.addObserver(
+            forName: .configImported,
             object: nil, queue: .main
         ) { [weak self] _ in
             self?.toggleListening()
@@ -63,7 +68,6 @@ class StackBadgeManager {
     private func toggleListening() {
         if Defaults.stackBadge.userEnabled {
             guard timer == nil else { return }
-            rebuildCorners()
             let timer = Timer.scheduledTimer(withTimeInterval: Self.tickInterval, repeats: true) { [weak self] _ in
                 self?.tick()
             }
@@ -73,13 +77,6 @@ class StackBadgeManager {
             timer?.invalidate()
             timer = nil
             dismiss()
-        }
-    }
-
-    private func rebuildCorners() {
-        cornersByScreenFrame = NSScreen.screens.map { screen in
-            let frame = screen.adjustedVisibleFrame()
-            return (frame, StackBadgeGeometry.cornerPoints(in: frame))
         }
     }
 
@@ -108,12 +105,19 @@ class StackBadgeManager {
         // the hover zone has to reach across the gap to the shifted peek.
         let zone = Self.hoverZone + CGFloat(Defaults.gapSize.value)
 
+        // Corner points are recomputed per dwell (a few hundred additions)
+        // rather than cached: adjustedVisibleFrame depends on more inputs
+        // than post didChangeScreenParametersNotification (Todo mode, Stage
+        // Manager, edge-gap defaults), so a cache has no reliable
+        // invalidation signal - the same reason window state isn't cached.
         guard visibleUIFrames.isEmpty,
-              let entry = (cornersByScreenFrame.first { NSPointInRect(location, $0.screenFrame) }),
-              let corner = StackBadgeGeometry.corner(near: location, in: entry.corners, zone: zone)
+              let screen = (NSScreen.screens.first { NSPointInRect(location, $0.frame) })
         else { return }
+        let screenFrame = screen.adjustedVisibleFrame()
+        let corners = StackBadgeGeometry.cornerPoints(in: screenFrame)
+        guard let corner = StackBadgeGeometry.corner(near: location, in: corners, zone: zone) else { return }
 
-        query(corner: corner, screenFrame: entry.screenFrame)
+        query(corner: corner, screenFrame: screenFrame)
     }
 
     private func isInsideVisibleUI(_ location: CGPoint) -> Bool {
@@ -151,8 +155,9 @@ class StackBadgeManager {
                 && dy >= -candidateRange && dy <= candidateRange
         }
 
-        // ...and the stack is then clustered around the leftmost candidate,
-        // so the widened box doesn't count unrelated neighbors.
+        // ...and the stack is the densest cascade cluster among them, so
+        // the widened box doesn't count unrelated neighbors and an
+        // unrelated leftmost window doesn't mask a real stack.
         let stacked = StackBadgeGeometry
             .stackIndices(among: candidates.map { $0.frame.origin }, cascadeRange: cascadeRange, tolerance: tolerance)
             .map { candidates[$0] }
@@ -169,24 +174,42 @@ class StackBadgeManager {
 
         let requestGeneration = generation
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let titles = Self.titlesByWindowId(for: stacked)
             // CGWindowList order is front to back; keep it for the list.
             let windows = stacked.map { info in
                 StackedWindow(windowId: info.id,
                               pid: info.pid,
-                              title: Self.title(for: info))
+                              title: Self.displayTitle(for: info, axTitle: titles[info.id]))
             }
             DispatchQueue.main.async {
-                guard let self, self.generation == requestGeneration else { return }
-                self.show(windows: windows, corner: anchorTopLeft)
+                guard let self,
+                      self.generation == requestGeneration,
+                      self.timer != nil
+                else { return }
+                self.show(windows: windows, corner: anchorTopLeft, screenFrame: screenFrame)
             }
         }
     }
 
-    private static func title(for info: WindowInfo) -> String {
-        let appElement = AccessibilityElement(info.pid)
-        appElement.setMessagingTimeout(0.25)
-        let windowElement = appElement.windowElements?.first { $0.windowId == info.id }
-        let title = windowElement?.title ?? ""
+    /// One AX window enumeration per application, however many of its
+    /// windows are in the stack.
+    private static func titlesByWindowId(for stacked: [WindowInfo]) -> [CGWindowID: String] {
+        var titles = [CGWindowID: String]()
+        for pid in Set(stacked.map { $0.pid }) {
+            let appElement = AccessibilityElement(pid)
+            appElement.setMessagingTimeout(axTimeout)
+            let stackedIds = Set(stacked.filter { $0.pid == pid }.map { $0.id })
+            for element in appElement.windowElements ?? [] {
+                if let id = element.windowId, stackedIds.contains(id) {
+                    titles[id] = element.title
+                }
+            }
+        }
+        return titles
+    }
+
+    private static func displayTitle(for info: WindowInfo, axTitle: String?) -> String {
+        let title = axTitle ?? ""
         let processName = info.processName ?? ""
         if title.isEmpty { return processName }
         if processName.isEmpty || title.hasPrefix(processName) { return title }
@@ -195,15 +218,15 @@ class StackBadgeManager {
 
     // MARK: - UI
 
-    private func show(windows: [StackedWindow], corner: CGPoint) {
+    private func show(windows: [StackedWindow], corner: CGPoint, screenFrame: CGRect) {
         dismiss()
 
         let badge = Self.makeBadgeWindow(count: windows.count, corner: corner)
         badge.orderFrontRegardless()
         badgeWindow = badge
 
-        let list = Self.makeListWindow(windows: windows, corner: corner) { [weak self] windowId in
-            self?.focus(windowId: windowId)
+        let list = Self.makeListWindow(windows: windows, corner: corner, screenFrame: screenFrame) { [weak self] window in
+            self?.focus(window)
         }
         list.orderFrontRegardless()
         listWindow = list
@@ -212,6 +235,9 @@ class StackBadgeManager {
     }
 
     private func dismiss() {
+        // Invalidate any in-flight title fetch so a stale result can't
+        // resurrect the UI after a dismissal.
+        generation += 1
         badgeWindow?.orderOut(nil)
         badgeWindow = nil
         listWindow?.orderOut(nil)
@@ -219,16 +245,23 @@ class StackBadgeManager {
         visibleUIFrames = []
     }
 
-    private func focus(windowId: CGWindowID) {
+    /// Resolves the window by pid directly (no shared window-list cache off
+    /// the main thread), with AX timeouts so an unresponsive app can't hang
+    /// the focus attempt.
+    private func focus(_ window: StackedWindow) {
         dismiss()
         DispatchQueue.global(qos: .userInitiated).async {
-            AccessibilityElement.getWindowElement(windowId)?.bringToFront(force: true)
+            let appElement = AccessibilityElement(window.pid)
+            appElement.setMessagingTimeout(Self.axTimeout)
+            guard let windowElement = (appElement.windowElements?.first { $0.windowId == window.windowId }) else { return }
+            windowElement.setMessagingTimeout(Self.axTimeout)
+            windowElement.bringToFront(force: true)
         }
     }
 
     /// Small click-through count pill sitting in the peek. Kept under 16pt
-    /// tall so it clears the front window's traffic lights, which the +11
-    /// offset pushes below the peek strip.
+    /// tall so it clears the front window's traffic lights, which the
+    /// offset pushes out of the peek strip.
     private static func makeBadgeWindow(count: Int, corner: CGPoint) -> NSWindow {
         let size = NSSize(width: 26, height: 15)
         let frame = NSRect(x: corner.x, y: corner.y - size.height, width: size.width, height: size.height)
@@ -254,19 +287,23 @@ class StackBadgeManager {
     }
 
     /// Clickable window-name list, opening downward from the peek into the
-    /// window body. A non-activating panel so clicking a name doesn't
-    /// activate Rectangle itself.
+    /// window body and clamped to the screen so every row stays reachable.
+    /// A non-activating panel so clicking a name doesn't activate Rectangle
+    /// itself.
     private static func makeListWindow(windows: [StackedWindow],
                                        corner: CGPoint,
-                                       onSelect: @escaping (CGWindowID) -> Void) -> NSPanel {
+                                       screenFrame: CGRect,
+                                       onSelect: @escaping (StackedWindow) -> Void) -> NSPanel {
         let rowHeight: CGFloat = 22
         let width: CGFloat = 260
         let padding: CGFloat = 4
         let height = CGFloat(windows.count) * rowHeight + padding * 2
-        let frame = NSRect(x: corner.x + 12,
+        var frame = NSRect(x: corner.x + 12,
                            y: corner.y - 18 - height,
                            width: width,
                            height: height)
+        if frame.maxX > screenFrame.maxX { frame.origin.x = screenFrame.maxX - frame.width }
+        if frame.origin.y < screenFrame.minY { frame.origin.y = screenFrame.minY }
 
         let panel = NSPanel(contentRect: frame,
                             styleMask: [.borderless, .nonactivatingPanel],
@@ -287,7 +324,7 @@ class StackBadgeManager {
 
         for (index, window) in windows.enumerated() {
             let button = StackBadgeRowButton(title: window.title) {
-                onSelect(window.windowId)
+                onSelect(window)
             }
             button.frame = NSRect(x: padding,
                                   y: frame.height - padding - CGFloat(index + 1) * rowHeight,

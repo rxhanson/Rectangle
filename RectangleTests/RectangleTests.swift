@@ -257,6 +257,18 @@ class StackBadgeGeometryTests: XCTestCase {
     func testStackClusterEmptyInput() {
         XCTAssertTrue(StackBadgeGeometry.stackIndices(among: [], cascadeRange: 15, tolerance: 4).isEmpty)
     }
+
+    // Regression (review finding): an unrelated window that happens to be the
+    // leftmost candidate in the gap-widened box must not mask the real stack.
+    func testStackClusterLeftOutlierDoesNotMaskStack() {
+        let origins = [
+            CGPoint(x: 100, y: 105),   // unrelated leftmost outlier
+            CGPoint(x: 120, y: 100),   // buried
+            CGPoint(x: 131, y: 89)     // front (cascade +11, -11)
+        ]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.sorted(), [1, 2])
+    }
 }
 
 class CooperativeCornerResizeTests: XCTestCase {

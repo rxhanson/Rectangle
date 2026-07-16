@@ -48,19 +48,26 @@ enum StackBadgeGeometry {
     }
 
     /// The indices of the window origins (AX coordinates) that form a
-    /// cascade stack, anchored on the leftmost origin. The overlap offset
-    /// cascades diagonally: +x always, but y can run either way (the offset
-    /// is applied in AppKit coordinates, where +y converts to an upward move
-    /// in AX space), so the y window is symmetric. Anchoring on the leftmost
-    /// origin keeps unrelated neighbors out of a gap-widened candidate box.
+    /// cascade stack. The overlap offset cascades diagonally: +x always, but
+    /// y can run either way (the offset is applied in AppKit coordinates,
+    /// where +y converts to an upward move in AX space), so the y window is
+    /// symmetric. Every origin is tried as the stack's left anchor and the
+    /// densest cluster wins, so neither unrelated neighbors in a gap-widened
+    /// candidate box nor an unrelated leftmost outlier can distort the count.
     static func stackIndices(among origins: [CGPoint], cascadeRange: CGFloat, tolerance: CGFloat) -> [Int] {
-        guard let anchor = (origins.min { $0.x < $1.x }) else { return [] }
-        return origins.indices.filter { index in
-            let dx = origins[index].x - anchor.x
-            let dy = origins[index].y - anchor.y
-            return dx >= -tolerance && dx <= cascadeRange
-                && dy >= -cascadeRange && dy <= cascadeRange
+        var best = [Int]()
+        for anchor in origins {
+            let cluster = origins.indices.filter { index in
+                let dx = origins[index].x - anchor.x
+                let dy = origins[index].y - anchor.y
+                return dx >= -tolerance && dx <= cascadeRange
+                    && dy >= -cascadeRange && dy <= cascadeRange
+            }
+            if cluster.count > best.count {
+                best = cluster
+            }
         }
+        return best
     }
 
     /// The corner whose hover zone contains the point, or nil. The zone is a
