@@ -250,6 +250,16 @@ class AccessibilityElement {
     var isMinimized: Bool? {
         windowElement?.wrappedElement.getValue(.minimized) as? Bool
     }
+
+    var title: String? {
+        wrappedElement.getValue(.title) as? String
+    }
+
+    /// Caps how long AX calls through this element can block on an
+    /// unresponsive app (the systemwide default is several seconds).
+    func setMessagingTimeout(_ seconds: Float) {
+        AXUIElementSetMessagingTimeout(wrappedElement, seconds)
+    }
     
     var isFullScreen: Bool? {
         guard let subrole = windowElement?.getElementValue(.fullScreenButton)?.subrole else { return nil }

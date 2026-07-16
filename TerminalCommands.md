@@ -540,6 +540,14 @@ By default, only one cascade layer is shown (the original window plus one offset
 defaults write com.knollsoft.Rectangle cyclingOverlapMaxCascade -int 3
 ```
 
+## Show a badge with the stacked windows when hovering over a grid corner
+
+When multiple windows are stacked at the same grid position, resting the cursor on that position's top-left corner shows a small badge with the stack count and a list of the window names. Clicking a name brings that window forward.
+
+```bash
+defaults write com.knollsoft.Rectangle stackBadge -bool true
+```
+
 ## Move windows that can't fill the snap area to the edge
 
 Some windows can't be resized to fill a snap area — either because they're a fixed size, or because they're resizable but have a maximum size or a fixed aspect ratio (FaceTime is a common example). By default such a window aligns to the snap area's screen edge(s): a right-half snap anchors flush right, a corner snap anchors into the corner, and the window stays centered on any axis it can't fill. To choose a different behavior:
