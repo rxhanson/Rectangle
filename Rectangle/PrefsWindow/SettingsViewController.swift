@@ -48,6 +48,7 @@ class SettingsViewController: NSViewController {
     private var cooperativeCornerResizeCheckbox: NSButton?
     private var combinedDisplayModeCheckbox: NSButton?
     private var greenButtonOverrideCheckbox: NSButton?
+    private var autoMaximizeCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -174,6 +175,12 @@ class SettingsViewController: NSViewController {
     @objc func toggleGreenButtonOverride(_ sender: NSButton) {
         Defaults.greenButtonOverride.enabled = sender.state == .on
         Notification.Name.greenButtonOverride.post()
+    }
+
+    @objc func toggleAutoMaximize(_ sender: NSButton) {
+        // autoMaximize is tri-state; the re-maximize behavior is active unless explicitly disabled.
+        // Checked = keep default behavior (nil), unchecked = disabled (false).
+        Defaults.autoMaximize.enabled = sender.state == .on ? nil : false
     }
 
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -1061,6 +1068,8 @@ class SettingsViewController: NSViewController {
 
         initializeGreenButtonOverrideCheckbox()
 
+        initializeAutoMaximizeCheckbox()
+
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
@@ -1129,6 +1138,8 @@ class SettingsViewController: NSViewController {
         combinedDisplayModeCheckbox?.state = Defaults.combinedDisplayMode.userEnabled ? .on : .off
 
         greenButtonOverrideCheckbox?.state = Defaults.greenButtonOverride.enabled ? .on : .off
+
+        autoMaximizeCheckbox?.state = Defaults.autoMaximize.userDisabled ? .off : .on
 
         if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)
@@ -1213,6 +1224,34 @@ class SettingsViewController: NSViewController {
             parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
             parentStack.insertArrangedSubview(descLabel, at: insertIdx + 2)
             greenButtonOverrideCheckbox = checkbox
+        }
+    }
+
+    private func initializeAutoMaximizeCheckbox() {
+        if autoMaximizeCheckbox == nil,
+           let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
+           let insertIdx = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) {
+
+            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Maximize window when moved to another display", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleAutoMaximize(_:)))
+            // autoMaximize is tri-state; the re-maximize behavior is active unless explicitly disabled.
+            checkbox.state = Defaults.autoMaximize.userDisabled ? .off : .on
+            // Match storyboard checkbox content priorities to prevent vertical compression
+            checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
+            checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+            // Must be set before inserting: NSStackView queries intrinsicContentSize once on
+            // insertion, so preferredMaxLayoutWidth=0 would give zero height permanently.
+            let descLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("When off, a maximized window keeps its size and is centered on the new display instead of filling it.", tableName: "Main", value: "", comment: ""))
+            descLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            descLabel.textColor = .secondaryLabelColor
+            descLabel.translatesAutoresizingMaskIntoConstraints = false
+            descLabel.preferredMaxLayoutWidth = 500
+            descLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+            descLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+
+            parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
+            parentStack.insertArrangedSubview(descLabel, at: insertIdx + 2)
+            autoMaximizeCheckbox = checkbox
         }
     }
 

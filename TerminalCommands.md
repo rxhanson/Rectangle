@@ -35,6 +35,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
+- [Keep window size when moving a maximized window to another display](#keep-window-size-when-moving-a-maximized-window-to-another-display)
 - [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
 - [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
 
@@ -518,6 +519,20 @@ By default, display order is left-to-right, line-by-line. You can change this to
 
 ```bash
 defaults write com.knollsoft.Rectangle screensOrderedByX -int 1
+```
+
+## Keep window size when moving a maximized window to another display
+
+By default, moving a maximized window to the next or previous display re-maximizes it to fill the destination display. Disable this to keep the window's size and center it on the destination display instead (so a window maximized on a smaller display won't grow to fill a larger one). This can also be toggled from Settings via the "Maximize window when moved to another display" checkbox.
+
+```bash
+defaults write com.knollsoft.Rectangle autoMaximize -int 2
+```
+
+To restore the default behavior:
+
+```bash
+defaults write com.knollsoft.Rectangle autoMaximize -int 0
 ```
 
 ## Offset cycling position when overlapping another window
