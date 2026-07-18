@@ -23,11 +23,14 @@ class StackBadgeManager {
         let title: String
     }
 
-    private static let tickInterval: TimeInterval = 0.2
-    private static let dwellInterval: TimeInterval = 0.25
-    private static let hoverZone: CGFloat = 30
+    private static let tickInterval: TimeInterval = 0.1
+    private static let dwellInterval: TimeInterval = 0.15
+    private static let hoverZone: CGFloat = 48
     private static let moveTolerance: CGFloat = 2
     private static let axTimeout: Float = 0.25
+    // Clears the standard title-bar band (and its traffic lights) so the
+    // badge and list sit below it in the window body.
+    private static let titleBarClearance: CGFloat = 30
 
     // A Timer polling NSEvent.mouseLocation is deliberate: a global
     // mouse-moved event monitor stops delivering events after sleep/wake,
@@ -209,11 +212,18 @@ class StackBadgeManager {
     }
 
     private static func displayTitle(for info: WindowInfo, axTitle: String?) -> String {
-        let title = axTitle ?? ""
         let processName = info.processName ?? ""
-        if title.isEmpty { return processName }
-        if processName.isEmpty || title.hasPrefix(processName) { return title }
-        return "\(processName) — \(title)"
+        var title = axTitle ?? ""
+        // The row already shows the app's icon, so a leading app-name prefix
+        // ("Terminal — voice-bridge" -> "voice-bridge") is redundant. Strip it.
+        for separator in [" — ", " - ", ": "] where !processName.isEmpty {
+            let prefix = processName + separator
+            if title.hasPrefix(prefix) {
+                title = String(title.dropFirst(prefix.count))
+                break
+            }
+        }
+        return title.isEmpty ? processName : title
     }
 
     // MARK: - UI
@@ -221,17 +231,33 @@ class StackBadgeManager {
     private func show(windows: [StackedWindow], corner: CGPoint, screenFrame: CGRect) {
         dismiss()
 
-        let badge = Self.makeBadgeWindow(count: windows.count, corner: corner)
+        // Drop the badge and list below the window's title-bar band so the
+        // front window's traffic lights stay clickable. The buried windows'
+        // own lights are reached by clicking their name in the list.
+        let anchor = CGPoint(x: corner.x, y: corner.y - Self.titleBarClearance)
+
+        let badge = Self.makeBadgeWindow(count: windows.count, corner: anchor)
         badge.orderFrontRegardless()
         badgeWindow = badge
 
-        let list = Self.makeListWindow(windows: windows, corner: corner, screenFrame: screenFrame) { [weak self] window in
+        let list = Self.makeListWindow(windows: windows, corner: anchor, screenFrame: screenFrame) { [weak self] window in
             self?.focus(window)
         }
         list.orderFrontRegardless()
         listWindow = list
 
-        visibleUIFrames = [badge.frame, list.frame]
+        // Keep-alive corridor: the UI sits titleBarClearance BELOW the peek
+        // where the cursor triggered it, so without this the cursor crosses
+        // dead space travelling down to the list and it dismisses. The
+        // corridor spans the UI's width from the list bottom up to the peek,
+        // so moving from trigger to list stays inside a live region.
+        let uiMinX = min(badge.frame.minX, list.frame.minX)
+        let uiMaxX = max(badge.frame.maxX, list.frame.maxX)
+        let uiMinY = min(badge.frame.minY, list.frame.minY)
+        let corridor = CGRect(x: uiMinX, y: uiMinY,
+                              width: uiMaxX - uiMinX, height: corner.y - uiMinY)
+
+        visibleUIFrames = [badge.frame, list.frame, corridor]
     }
 
     private func dismiss() {
@@ -259,11 +285,17 @@ class StackBadgeManager {
         }
     }
 
-    /// Small click-through count pill sitting in the peek. Kept under 16pt
-    /// tall so it clears the front window's traffic lights, which the
-    /// offset pushes out of the peek strip.
+    /// Click-through count pill sitting at the stack's top-left. Sized to fit
+    /// its contents so multi-digit counts never clip. Click-through
+    /// (ignoresMouseEvents) since the list, not the badge, takes clicks.
     private static func makeBadgeWindow(count: Int, corner: CGPoint) -> NSWindow {
-        let size = NSSize(width: 26, height: 15)
+        let label = NSTextField(labelWithString: "⧉ \(count)")
+        label.font = NSFont.monospacedDigitSystemFont(ofSize: 14, weight: .semibold)
+        label.textColor = .white
+        label.alignment = .center
+        label.sizeToFit()
+
+        let size = NSSize(width: ceil(label.frame.width) + 16, height: 24)
         let frame = NSRect(x: corner.x, y: corner.y - size.height, width: size.width, height: size.height)
         let window = NSWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false)
         window.isOpaque = false
@@ -274,14 +306,10 @@ class StackBadgeManager {
         window.collectionBehavior = [.transient, .ignoresCycle]
         window.ignoresMouseEvents = true
 
-        let label = NSTextField(labelWithString: "⧉ \(count)")
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .semibold)
-        label.textColor = .white
-        label.alignment = .center
         label.frame = NSRect(origin: .zero, size: size)
         label.wantsLayer = true
         label.layer?.backgroundColor = NSColor(white: 0.15, alpha: 0.92).cgColor
-        label.layer?.cornerRadius = 5
+        label.layer?.cornerRadius = 6
         window.contentView = label
         return window
     }
@@ -323,42 +351,74 @@ class StackBadgeManager {
         container.layer?.cornerRadius = 8
 
         for (index, window) in windows.enumerated() {
-            let button = StackBadgeRowButton(title: window.title) {
+            let row = StackBadgeRowView(title: window.title, icon: appIcon(pid: window.pid)) {
                 onSelect(window)
             }
-            button.frame = NSRect(x: padding,
-                                  y: frame.height - padding - CGFloat(index + 1) * rowHeight,
-                                  width: width - padding * 2,
-                                  height: rowHeight)
-            container.addSubview(button)
+            row.frame = NSRect(x: padding,
+                               y: frame.height - padding - CGFloat(index + 1) * rowHeight,
+                               width: width - padding * 2,
+                               height: rowHeight)
+            container.addSubview(row)
         }
 
         panel.contentView = container
         return panel
     }
+
+    /// The running app's icon, drawn down to a crisp row-sized copy so the
+    /// shared full-resolution icon isn't mutated.
+    private static func appIcon(pid: pid_t) -> NSImage? {
+        guard let icon = NSRunningApplication(processIdentifier: pid)?.icon else { return nil }
+        let size = NSSize(width: 16, height: 16)
+        let resized = NSImage(size: size)
+        resized.lockFocus()
+        icon.draw(in: NSRect(origin: .zero, size: size))
+        resized.unlockFocus()
+        return resized
+    }
 }
 
-/// A flat, left-aligned row button with a hover highlight.
-private class StackBadgeRowButton: NSButton {
+/// A single window row: app icon, then the window name. Highlights like a
+/// native menu row - the system selection color with white text - when the
+/// cursor is over it, and invokes its action on click.
+private class StackBadgeRowView: NSView {
     private let onClick: () -> Void
+    private let textField: NSTextField
 
-    init(title: String, onClick: @escaping () -> Void) {
+    init(title: String, icon: NSImage?, onClick: @escaping () -> Void) {
         self.onClick = onClick
+        self.textField = NSTextField(labelWithString: title)
         super.init(frame: .zero)
-        self.title = title
-        isBordered = false
-        alignment = .left
-        lineBreakMode = .byTruncatingTail
-        font = NSFont.systemFont(ofSize: 12)
-        contentTintColor = .labelColor
         wantsLayer = true
         layer?.cornerRadius = 5
-        target = self
-        action = #selector(clicked)
+
+        let iconView = NSImageView(frame: NSRect(x: 6, y: 3, width: 16, height: 16))
+        iconView.image = icon
+        iconView.imageScaling = .scaleProportionallyUpOrDown
+        addSubview(iconView)
+
+        textField.font = NSFont.systemFont(ofSize: 12)
+        textField.textColor = .labelColor
+        textField.lineBreakMode = .byTruncatingTail
+        textField.autoresizingMask = [.width]
+        addSubview(textField)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layout() {
+        super.layout()
+        let x: CGFloat = 28
+        let height: CGFloat = 16
+        textField.frame = NSRect(x: x, y: (bounds.height - height) / 2,
+                                 width: bounds.width - x - 6, height: height)
+    }
+
+    private func setSelected(_ selected: Bool) {
+        layer?.backgroundColor = selected ? NSColor.selectedContentBackgroundColor.cgColor : nil
+        textField.textColor = selected ? .selectedMenuItemTextColor : .labelColor
     }
 
     override func updateTrackingAreas() {
@@ -370,14 +430,16 @@ private class StackBadgeRowButton: NSButton {
     }
 
     override func mouseEntered(with event: NSEvent) {
-        layer?.backgroundColor = NSColor.labelColor.withAlphaComponent(0.15).cgColor
+        setSelected(true)
     }
 
     override func mouseExited(with event: NSEvent) {
-        layer?.backgroundColor = nil
+        setSelected(false)
     }
 
-    @objc private func clicked() {
-        onClick()
+    override func mouseUp(with event: NSEvent) {
+        if bounds.contains(convert(event.locationInWindow, from: nil)) {
+            onClick()
+        }
     }
 }
