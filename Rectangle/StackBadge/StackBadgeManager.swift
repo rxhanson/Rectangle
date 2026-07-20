@@ -247,15 +247,21 @@ class StackBadgeManager {
         listWindow = list
 
         // Keep-alive corridor: the UI sits titleBarClearance BELOW the peek
-        // where the cursor triggered it, so without this the cursor crosses
-        // dead space travelling down to the list and it dismisses. The
-        // corridor spans the UI's width from the list bottom up to the peek,
-        // so moving from trigger to list stays inside a live region.
+        // where the cursor triggered it, so without a bridge the cursor
+        // crosses dead space travelling down to it and it dismisses. The
+        // corridor spans only the gap between the peek and the TOP of the UI
+        // (the badge/list frames themselves are already live). Bounding it to
+        // that gap - rather than down to the list bottom - avoids a tall
+        // sticky column when the list is clamped to the screen bottom.
         let uiMinX = min(badge.frame.minX, list.frame.minX)
         let uiMaxX = max(badge.frame.maxX, list.frame.maxX)
-        let uiMinY = min(badge.frame.minY, list.frame.minY)
-        let corridor = CGRect(x: uiMinX, y: uiMinY,
-                              width: uiMaxX - uiMinX, height: corner.y - uiMinY)
+        // Bridge from the list's top edge up to the peek. Because the list's
+        // top sits a fixed distance below the peek (the clamp only ever
+        // pushes it UP, never down), this height is bounded - it never grows
+        // with the stack size, so no sticky column.
+        let corridorBottom = list.frame.maxY
+        let corridor = CGRect(x: uiMinX, y: corridorBottom,
+                              width: uiMaxX - uiMinX, height: max(0, corner.y - corridorBottom))
 
         visibleUIFrames = [badge.frame, list.frame, corridor]
     }
@@ -441,5 +447,18 @@ private class StackBadgeRowView: NSView {
         if bounds.contains(convert(event.locationInWindow, from: nil)) {
             onClick()
         }
+    }
+
+    // Route clicks anywhere in the row - including on the icon and the label
+    // subviews - to the row itself, so the whole row is one click target.
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        return bounds.contains(convert(point, from: superview)) ? self : nil
+    }
+
+    // The list is a non-activating background panel, so without this the
+    // first click on a row (while another app is active) is swallowed as an
+    // activation click instead of focusing the window.
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
     }
 }
