@@ -285,8 +285,13 @@ class StackBadgeManager {
     /// Resolves the window by pid directly (no shared window-list cache off
     /// the main thread), with AX timeouts so an unresponsive app can't hang
     /// the focus attempt.
+    ///
+    /// The list is deliberately NOT dismissed here, so you can click through
+    /// several windows in the stack in a row without re-opening it. It
+    /// dismisses when the cursor leaves the overlay (see tick()). Clicks keep
+    /// working even though another app is now frontmost because the rows opt
+    /// into first-mouse and the panel is non-activating.
     private func focus(_ window: StackedWindow) {
-        dismiss()
         DispatchQueue.global(qos: .userInitiated).async {
             let appElement = AccessibilityElement(window.pid)
             appElement.setMessagingTimeout(Self.axTimeout)
