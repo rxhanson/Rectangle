@@ -28,9 +28,11 @@ class StackBadgeManager {
     private static let hoverZone: CGFloat = 48
     private static let moveTolerance: CGFloat = 2
     private static let axTimeout: Float = 0.25
-    // Clears the standard title-bar band (and its traffic lights) so the
-    // badge and list sit below it in the window body.
-    private static let titleBarClearance: CGFloat = 35
+    // Drops the badge and list below the window's top chrome so the traffic
+    // lights stay clickable and the list clears typical toolbars (e.g. a
+    // browser's tab bar + URL bar). A fixed value since there's no general
+    // way to know an arbitrary app's toolbar height.
+    private static let titleBarClearance: CGFloat = 50
 
     // A Timer polling NSEvent.mouseLocation is deliberate: a global
     // mouse-moved event monitor stops delivering events after sleep/wake,
@@ -300,7 +302,7 @@ class StackBadgeManager {
     /// (ignoresMouseEvents) since the list, not the badge, takes clicks.
     private static func makeBadgeWindow(count: Int, corner: CGPoint) -> NSWindow {
         let label = NSTextField(labelWithString: "\(count)")
-        label.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
+        label.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
         // Semantic color adapts with the (appearance-following) hudWindow
         // material: dark on the light material in Light Mode, light on the
         // dark material in Dark Mode. Hardcoded white washes out in Light.
@@ -314,16 +316,17 @@ class StackBadgeManager {
         var symbolView: NSImageView?
         if #available(macOS 11, *),
            let symbol = NSImage(systemSymbolName: "rectangle.stack.fill", accessibilityDescription: "stacked windows")?
-            .withSymbolConfiguration(.init(pointSize: 11, weight: .semibold)) {
+            .withSymbolConfiguration(.init(pointSize: 14, weight: .semibold)) {
             let iv = NSImageView(image: symbol)
             iv.contentTintColor = .labelColor
             symbolView = iv
         }
-        let symbolW: CGFloat = symbolView == nil ? 0 : 16
-        let gap: CGFloat = symbolView == nil ? 0 : 6
+        let symbolW: CGFloat = symbolView == nil ? 0 : 19
+        let symbolH: CGFloat = 16
+        let gap: CGFloat = symbolView == nil ? 0 : 7
 
-        let hPad: CGFloat = 10
-        let height: CGFloat = 22
+        let hPad: CGFloat = 12
+        let height: CGFloat = 28
         let size = NSSize(width: symbolW + gap + labelW + hPad * 2, height: height)
         let frame = NSRect(x: corner.x, y: corner.y - size.height, width: size.width, height: size.height)
 
@@ -347,7 +350,7 @@ class StackBadgeManager {
 
         var x = hPad
         if let symbolView {
-            symbolView.frame = NSRect(x: x, y: (height - 13) / 2, width: symbolW, height: 13)
+            symbolView.frame = NSRect(x: x, y: (height - symbolH) / 2, width: symbolW, height: symbolH)
             effect.addSubview(symbolView)
             x += symbolW + gap
         }
