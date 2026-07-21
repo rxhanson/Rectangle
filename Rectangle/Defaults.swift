@@ -152,6 +152,7 @@ class Defaults {
         todoMode,
         todoApplication,
         todoSidebarWidth,
+        todoSidebarWidthUnit,
         todoSidebarSide,
         snapModifiers,
         attemptMatchOnNextPrevDisplay,
