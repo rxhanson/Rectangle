@@ -30,7 +30,7 @@ class StackBadgeManager {
     private static let axTimeout: Float = 0.25
     // Clears the standard title-bar band (and its traffic lights) so the
     // badge and list sit below it in the window body.
-    private static let titleBarClearance: CGFloat = 30
+    private static let titleBarClearance: CGFloat = 35
 
     // A Timer polling NSEvent.mouseLocation is deliberate: a global
     // mouse-moved event monitor stops delivering events after sleep/wake,
@@ -240,7 +240,10 @@ class StackBadgeManager {
         badge.orderFrontRegardless()
         badgeWindow = badge
 
-        let list = Self.makeListWindow(windows: windows, corner: anchor, screenFrame: screenFrame) { [weak self] window in
+        // Open the list just below the badge (indented to sit under the peek)
+        // with a real gap, so the badge never overlaps the list's top.
+        let listTop = CGPoint(x: anchor.x + 12, y: badge.frame.minY - 6)
+        let list = Self.makeListWindow(windows: windows, listTop: listTop, screenFrame: screenFrame) { [weak self] window in
             self?.focus(window)
         }
         list.orderFrontRegardless()
@@ -291,32 +294,67 @@ class StackBadgeManager {
         }
     }
 
-    /// Click-through count pill sitting at the stack's top-left. Sized to fit
-    /// its contents so multi-digit counts never clip. Click-through
+    /// Click-through count pill sitting at the stack's top-left. A vibrancy
+    /// capsule with an SF Symbol stack glyph, matching the list's material so
+    /// badge and list read as one native element. Click-through
     /// (ignoresMouseEvents) since the list, not the badge, takes clicks.
     private static func makeBadgeWindow(count: Int, corner: CGPoint) -> NSWindow {
-        let label = NSTextField(labelWithString: "⧉ \(count)")
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 14, weight: .semibold)
-        label.textColor = .white
-        label.alignment = .center
+        let label = NSTextField(labelWithString: "\(count)")
+        label.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
+        // Semantic color adapts with the (appearance-following) hudWindow
+        // material: dark on the light material in Light Mode, light on the
+        // dark material in Dark Mode. Hardcoded white washes out in Light.
+        label.textColor = .labelColor
         label.sizeToFit()
+        let labelW = ceil(label.frame.width)
+        let labelH = ceil(label.frame.height)
 
-        let size = NSSize(width: ceil(label.frame.width) + 16, height: 24)
+        // SF Symbol stack glyph on macOS 11+ (guarded exactly like the menu
+        // icons); pre-11 the pill is just the count.
+        var symbolView: NSImageView?
+        if #available(macOS 11, *),
+           let symbol = NSImage(systemSymbolName: "rectangle.stack.fill", accessibilityDescription: "stacked windows")?
+            .withSymbolConfiguration(.init(pointSize: 11, weight: .semibold)) {
+            let iv = NSImageView(image: symbol)
+            iv.contentTintColor = .labelColor
+            symbolView = iv
+        }
+        let symbolW: CGFloat = symbolView == nil ? 0 : 16
+        let gap: CGFloat = symbolView == nil ? 0 : 6
+
+        let hPad: CGFloat = 10
+        let height: CGFloat = 22
+        let size = NSSize(width: symbolW + gap + labelW + hPad * 2, height: height)
         let frame = NSRect(x: corner.x, y: corner.y - size.height, width: size.width, height: size.height)
+
         let window = NSWindow(contentRect: frame, styleMask: .borderless, backing: .buffered, defer: false)
         window.isOpaque = false
         window.backgroundColor = .clear
         window.level = .floating
-        window.hasShadow = false
+        window.hasShadow = true
         window.isReleasedWhenClosed = false
         window.collectionBehavior = [.transient, .ignoresCycle]
         window.ignoresMouseEvents = true
 
-        label.frame = NSRect(origin: .zero, size: size)
-        label.wantsLayer = true
-        label.layer?.backgroundColor = NSColor(white: 0.15, alpha: 0.92).cgColor
-        label.layer?.cornerRadius = 6
-        window.contentView = label
+        let effect = NSVisualEffectView(frame: NSRect(origin: .zero, size: size))
+        effect.material = .hudWindow
+        effect.blendingMode = .behindWindow
+        effect.state = .active
+        effect.wantsLayer = true
+        effect.layer?.cornerRadius = height / 2
+        effect.layer?.cornerCurve = .continuous
+        effect.layer?.masksToBounds = true
+
+        var x = hPad
+        if let symbolView {
+            symbolView.frame = NSRect(x: x, y: (height - 13) / 2, width: symbolW, height: 13)
+            effect.addSubview(symbolView)
+            x += symbolW + gap
+        }
+        label.frame = NSRect(x: x, y: (height - labelH) / 2, width: labelW, height: labelH)
+        effect.addSubview(label)
+
+        window.contentView = effect
         return window
     }
 
@@ -325,15 +363,16 @@ class StackBadgeManager {
     /// A non-activating panel so clicking a name doesn't activate Rectangle
     /// itself.
     private static func makeListWindow(windows: [StackedWindow],
-                                       corner: CGPoint,
+                                       listTop: CGPoint,
                                        screenFrame: CGRect,
                                        onSelect: @escaping (StackedWindow) -> Void) -> NSPanel {
         let rowHeight: CGFloat = 22
         let width: CGFloat = 260
         let padding: CGFloat = 4
         let height = CGFloat(windows.count) * rowHeight + padding * 2
-        var frame = NSRect(x: corner.x + 12,
-                           y: corner.y - 18 - height,
+        // listTop is the desired top-left of the list; it grows downward.
+        var frame = NSRect(x: listTop.x,
+                           y: listTop.y - height,
                            width: width,
                            height: height)
         if frame.maxX > screenFrame.maxX { frame.origin.x = screenFrame.maxX - frame.width }
@@ -352,9 +391,12 @@ class StackBadgeManager {
 
         let container = NSVisualEffectView(frame: NSRect(origin: .zero, size: frame.size))
         container.material = .hudWindow
+        container.blendingMode = .behindWindow
         container.state = .active
         container.wantsLayer = true
         container.layer?.cornerRadius = 8
+        container.layer?.cornerCurve = .continuous
+        container.layer?.masksToBounds = true
 
         for (index, window) in windows.enumerated() {
             let row = StackBadgeRowView(title: window.title, icon: appIcon(pid: window.pid)) {
@@ -397,13 +439,14 @@ private class StackBadgeRowView: NSView {
         super.init(frame: .zero)
         wantsLayer = true
         layer?.cornerRadius = 5
+        layer?.cornerCurve = .continuous
 
         let iconView = NSImageView(frame: NSRect(x: 6, y: 3, width: 16, height: 16))
         iconView.image = icon
         iconView.imageScaling = .scaleProportionallyUpOrDown
         addSubview(iconView)
 
-        textField.font = NSFont.systemFont(ofSize: 12)
+        textField.font = NSFont.systemFont(ofSize: 13)
         textField.textColor = .labelColor
         textField.lineBreakMode = .byTruncatingTail
         textField.autoresizingMask = [.width]
