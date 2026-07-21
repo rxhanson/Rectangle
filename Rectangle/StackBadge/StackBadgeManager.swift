@@ -369,14 +369,18 @@ class StackBadgeManager {
         let rowHeight: CGFloat = 22
         let width: CGFloat = 260
         let padding: CGFloat = 4
-        let height = CGFloat(windows.count) * rowHeight + padding * 2
-        // listTop is the desired top-left of the list; it grows downward.
+        let fullHeight = CGFloat(windows.count) * rowHeight + padding * 2
+        // Pin the top at listTop and grow DOWN. If the full list won't fit
+        // above the screen bottom, cap its height rather than clamping the
+        // origin upward - clamping upward would push the top back into the
+        // badge. (Overflow rows clip via the container's masksToBounds; only
+        // possible for a very tall stack pinned near the screen bottom.)
+        let height = min(fullHeight, max(0, listTop.y - screenFrame.minY))
         var frame = NSRect(x: listTop.x,
                            y: listTop.y - height,
                            width: width,
                            height: height)
         if frame.maxX > screenFrame.maxX { frame.origin.x = screenFrame.maxX - frame.width }
-        if frame.origin.y < screenFrame.minY { frame.origin.y = screenFrame.minY }
 
         let panel = NSPanel(contentRect: frame,
                             styleMask: [.borderless, .nonactivatingPanel],
