@@ -301,17 +301,17 @@ class StackBadgeManager {
         }
     }
 
-    /// Click-through count pill sitting at the stack's top-left. A vibrancy
-    /// capsule with an SF Symbol stack glyph, matching the list's material so
-    /// badge and list read as one native element. Click-through
-    /// (ignoresMouseEvents) since the list, not the badge, takes clicks.
+    /// Click-through count pill at the stack's top-left: a solid accent-color
+    /// capsule with an SF Symbol stack glyph, sized to fit its contents. The
+    /// accent fill makes it stand out against arbitrary window content.
+    /// Click-through (ignoresMouseEvents) since the list, not the badge,
+    /// takes clicks.
     private static func makeBadgeWindow(count: Int, corner: CGPoint) -> NSWindow {
         let label = NSTextField(labelWithString: "\(count)")
         label.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
-        // Semantic color adapts with the (appearance-following) hudWindow
-        // material: dark on the light material in Light Mode, light on the
-        // dark material in Dark Mode. Hardcoded white washes out in Light.
-        label.textColor = .labelColor
+        // White reads on the saturated accent fill in both appearances - the
+        // standard pairing for accent-colored controls.
+        label.textColor = .white
         label.sizeToFit()
         let labelW = ceil(label.frame.width)
         let labelH = ceil(label.frame.height)
@@ -323,7 +323,7 @@ class StackBadgeManager {
            let symbol = NSImage(systemSymbolName: "rectangle.stack.fill", accessibilityDescription: "stacked windows")?
             .withSymbolConfiguration(.init(pointSize: 14, weight: .semibold)) {
             let iv = NSImageView(image: symbol)
-            iv.contentTintColor = .labelColor
+            iv.contentTintColor = .white
             symbolView = iv
         }
         let symbolW: CGFloat = symbolView == nil ? 0 : 19
@@ -344,25 +344,25 @@ class StackBadgeManager {
         window.collectionBehavior = [.transient, .ignoresCycle]
         window.ignoresMouseEvents = true
 
-        let effect = NSVisualEffectView(frame: NSRect(origin: .zero, size: size))
-        effect.material = .hudWindow
-        effect.blendingMode = .behindWindow
-        effect.state = .active
-        effect.wantsLayer = true
-        effect.layer?.cornerRadius = height / 2
-        effect.layer?.cornerCurve = .continuous
-        effect.layer?.masksToBounds = true
+        let container = NSView(frame: NSRect(origin: .zero, size: size))
+        container.wantsLayer = true
+        // Solid accent-color capsule (the user's chosen system accent) so the
+        // badge stands out against window content.
+        container.layer?.backgroundColor = NSColor.controlAccentColor.cgColor
+        container.layer?.cornerRadius = height / 2
+        container.layer?.cornerCurve = .continuous
+        container.layer?.masksToBounds = true
 
         var x = hPad
         if let symbolView {
             symbolView.frame = NSRect(x: x, y: (height - symbolH) / 2, width: symbolW, height: symbolH)
-            effect.addSubview(symbolView)
+            container.addSubview(symbolView)
             x += symbolW + gap
         }
         label.frame = NSRect(x: x, y: (height - labelH) / 2, width: labelW, height: labelH)
-        effect.addSubview(label)
+        container.addSubview(label)
 
-        window.contentView = effect
+        window.contentView = container
         return window
     }
 
