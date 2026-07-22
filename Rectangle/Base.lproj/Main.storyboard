@@ -3428,6 +3428,7 @@
                         <outlet property="gapLabel" destination="jd8-SJ-lza" id="pqG-fr-nwW"/>
                         <outlet property="gapSlider" destination="O9H-ZD-bqL" id="H7T-4Y-g8e"/>
                         <outlet property="hideMenuBarIconCheckbox" destination="wBT-R4-q9s" id="bkO-zn-yAZ"/>
+                        <outlet property="importExportRow" destination="OhI-U9-bZb" id="imp-ExR-ow0"/>
                         <outlet property="launchOnLoginCheckbox" destination="eQJ-O3-a8H" id="iF3-bq-l1j"/>
                         <outlet property="reflowTodoShortcutView" destination="QTZ-pv-mwo" id="VYl-Tv-gFy"/>
                         <outlet property="skipGapTopEdgeCheckbox" destination="GTP-tg-Gap" id="GTP-tg-Out"/>

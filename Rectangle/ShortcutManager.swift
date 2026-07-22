@@ -6,7 +6,11 @@ import MASShortcut
 class ShortcutManager {
 
     let windowManager: WindowManager
-    private var boundShortcutActions = Set<WindowAction>()
+    private let shortcutMonitor = MASShortcutMonitor.shared()!
+    // Maps representative action name → the MASShortcut currently registered,
+    // so we can unregister it precisely (MASShortcutMonitor identifies shortcuts
+    // by value, not by key).
+    private var registeredShortcuts = [String: MASShortcut]()
     private var shortcutIdentities = [WindowAction: ShortcutCycle.ShortcutIdentity]()
     private var isUpdatingShortcutBindings = false
     private var shortcutsSuspendedForRecording = false
@@ -14,25 +18,20 @@ class ShortcutManager {
     init(windowManager: WindowManager) {
         self.windowManager = windowManager
 
-        MASShortcutBinder.shared()?.bindingOptions = [NSBindingOption.valueTransformerName: MASDictionaryTransformerName]
-
-        registerDefaults()
-
         bindShortcuts()
 
         subscribeAll(selector: #selector(windowActionTriggered))
 
         NotificationCenter.default.addObserver(self, selector: #selector(defaultShortcutsChanged), name: .changeDefaults, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(shortcutRecordingChanged), name: .shortcutRecording, object: nil)
+        Notification.Name.shortcutsChanged.onPost { [weak self] _ in
+            self?.reloadShortcutBindingsIfNeeded()
+        }
     }
 
     public func reloadFromDefaults() {
-        unsubscribeWindowActions()
         unbindShortcuts()
-        registerDefaults()
         bindShortcuts()
-        subscribeAll(selector: #selector(windowActionTriggered))
     }
 
     public func bindShortcuts() {
@@ -45,14 +44,13 @@ class ShortcutManager {
 
         for group in groups {
             let representativeAction = group.representativeAction
-            boundShortcutActions.insert(representativeAction)
-
-            if group.isCycle {
-                MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: representativeAction.name, toAction: { [weak self] in
-                    self?.executeCycle(group)
-                })
+            let action: () -> Void = group.isCycle
+                ? { [weak self] in self?.executeCycle(group) }
+                : representativeAction.post
+            if shortcutMonitor.register(group.shortcut, withAction: action) {
+                registeredShortcuts[representativeAction.name] = group.shortcut
             } else {
-                MASShortcutBinder.shared()?.bindShortcut(withDefaultsKey: representativeAction.name, toAction: representativeAction.post)
+                Logger.log("Unable to register shortcut for \(representativeAction.name)")
             }
         }
     }
@@ -61,34 +59,19 @@ class ShortcutManager {
         isUpdatingShortcutBindings = true
         defer { isUpdatingShortcutBindings = false }
 
-        for action in Set(WindowAction.active).union(boundShortcutActions) {
-            MASShortcutBinder.shared()?.breakBinding(withDefaultsKey: action.name)
+        for shortcut in registeredShortcuts.values {
+            shortcutMonitor.unregisterShortcut(shortcut)
         }
-
-        boundShortcutActions.removeAll()
+        registeredShortcuts.removeAll()
     }
 
     public func getKeyEquivalent(action: WindowAction) -> (String?, NSEvent.ModifierFlags)? {
-        guard let masShortcut = ShortcutCycle.shortcut(for: action) else { return nil }
+        guard let masShortcut = ShortcutStore.shortcut(for: action) else { return nil }
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-
-    private func registerDefaults() {
-
-        let defaultShortcuts = WindowAction.active.reduce(into: [String: MASShortcut]()) { dict, windowAction in
-            guard let defaultShortcut = Defaults.alternateDefaultShortcuts.enabled
-                ? windowAction.alternateDefault
-                : windowAction.spectacleDefault
-            else { return }
-            let shortcut = MASShortcut(keyCode: defaultShortcut.keyCode, modifierFlags: NSEvent.ModifierFlags(rawValue: defaultShortcut.modifierFlags))
-            dict[windowAction.name] = shortcut
-        }
-
-        MASShortcutBinder.shared()?.registerDefaultShortcuts(defaultShortcuts)
     }
 
     @objc func windowActionTriggered(notification: NSNotification) {
@@ -152,11 +135,6 @@ class ShortcutManager {
     }
 
     @objc private func defaultShortcutsChanged() {
-        registerDefaults()
-        reloadShortcutBindingsIfNeeded()
-    }
-
-    @objc private func userDefaultsChanged(_ notification: Notification) {
         reloadShortcutBindingsIfNeeded()
     }
 
@@ -255,22 +233,40 @@ struct ShortcutCycle {
         }
     }
 
-    static func shortcut(for action: WindowAction, userDefaults: UserDefaults = .standard) -> MASShortcut? {
-        return shortcut(forDefaultsKey: action.name, userDefaults: userDefaults)
+    static func shortcut(for action: WindowAction) -> MASShortcut? {
+        ShortcutStore.shortcut(for: action)
     }
 
-    static func shortcut(forDefaultsKey defaultsKey: String, userDefaults: UserDefaults = .standard) -> MASShortcut? {
+    // For test injection via custom UserDefaults
+    static func shortcut(for action: WindowAction, userDefaults: UserDefaults) -> MASShortcut? {
+        shortcut(forDefaultsKey: action.name, userDefaults: userDefaults)
+    }
+
+    static func shortcut(forDefaultsKey defaultsKey: String) -> MASShortcut? {
+        ShortcutStore.shortcut(forKey: defaultsKey)
+    }
+
+    // For test injection via custom UserDefaults
+    static func shortcut(forDefaultsKey defaultsKey: String, userDefaults: UserDefaults) -> MASShortcut? {
         guard let shortcutDict = userDefaults.dictionary(forKey: defaultsKey),
               let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
               let shortcut = dictTransformer.transformedValue(shortcutDict) as? MASShortcut
         else {
             return nil
         }
-
         return shortcut
     }
 
-    static func shortcutsByAction(actions: [WindowAction] = WindowAction.active, userDefaults: UserDefaults = .standard) -> [WindowAction: MASShortcut] {
+    static func shortcutsByAction(actions: [WindowAction] = WindowAction.active) -> [WindowAction: MASShortcut] {
+        actions.reduce(into: [WindowAction: MASShortcut]()) { dict, action in
+            if let shortcut = shortcut(for: action) {
+                dict[action] = shortcut
+            }
+        }
+    }
+
+    // For test injection via custom UserDefaults
+    static func shortcutsByAction(actions: [WindowAction] = WindowAction.active, userDefaults: UserDefaults) -> [WindowAction: MASShortcut] {
         actions.reduce(into: [WindowAction: MASShortcut]()) { dict, action in
             if let shortcut = shortcut(for: action, userDefaults: userDefaults) {
                 dict[action] = shortcut
@@ -318,3 +314,40 @@ struct ShortcutCycle {
         return currentWindowRect != lastAction.rect
     }
 }
+
+/// Configures a `MASShortcutView` to read from and write to `ShortcutStore`.
+///
+/// All shortcut views in the app use this single function so that the
+/// read/write path is consistent and changes in one place propagate everywhere.
+///
+/// - Parameters:
+///   - view:     The shortcut view to configure.
+///   - key:      The defaults key (action name or todo key) backing this view.
+///   - fallback: The shortcut to display when the key is absent (first-run default).
+///   - onChange: Called after every write, for callers that need to re-register a
+///               system shortcut (e.g. `TodoManager`).
+func configureShortcutView(
+    _ view: MASShortcutView,
+    key: String,
+    fallback: MASShortcut?,
+    onChange: (() -> Void)? = nil
+) {
+    view.shortcutValue = ShortcutStore.shortcut(forKey: key, fallback: fallback)
+    view.shortcutValueChange = { sender in
+        ShortcutStore.setShortcut(sender.shortcutValue, forKey: key)
+        Notification.Name.shortcutsChanged.post()
+        onChange?()
+    }
+}
+
+extension MASShortcutView {
+    func bind(to action: WindowAction) {
+        configureShortcutView(self, key: action.name, fallback: ShortcutStore.defaultShortcut(for: action))
+    }
+    
+    func bind(toTodoKey key: String, onChange: (() -> Void)? = nil) {
+        configureShortcutView(self, key: key, fallback: nil, onChange: onChange)
+    }
+}
+
+
