@@ -1394,7 +1394,7 @@
       }
     },
     "01Z-t3-cBm.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size.\"; ObjectID = \"01Z-t3-cBm\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"If you repeat move or side actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size.\"; ObjectID = \"01Z-t3-cBm\";",
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
@@ -1424,7 +1424,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If you repeat move or half actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."
+            "value" : "If you repeat move or side actions, the window will move to the next display instead of 1/2, 2/3, and 1/3 size."
           }
         },
         "es" : {
@@ -2438,7 +2438,7 @@
       }
     },
     "3GE-la-fAZ.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"move to adjacent on left/right, or cycle size on half\"; ObjectID = \"3GE-la-fAZ\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"move to adjacent on left/right, or cycle size on side\"; ObjectID = \"3GE-la-fAZ\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -2474,7 +2474,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "es" : {
@@ -2534,7 +2534,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "nn" : {
@@ -2546,19 +2546,19 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "move to adjacent on left/right, or cycle size on half"
+            "value" : "move to adjacent on left/right, or cycle size on side"
           }
         },
         "ro" : {
@@ -6008,192 +6008,192 @@
       }
     },
     "8Bg-SZ-hDO.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center\"; ObjectID = \"8Bg-SZ-hDO\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Move to Center\"; ObjectID = \"8Bg-SZ-hDO\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "مركز"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centre"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centre"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vycentrovat"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Zentrieren"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Center"
+            "value" : "Move to Center"
           }
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centre"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centrar"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centrar"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centrer"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tengah"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centro"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中央に表示"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "가운데"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Į centrą"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Midten"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centreer"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Midten"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Środek"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centro"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centro"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centru"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "В центр"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vycentrovať"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitten"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Orta"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Центр"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Căn giữa"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中间"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中央"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中央"
           }
         }
@@ -10364,19 +10364,84 @@
       }
     },
     "Bottom Center Left Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 가운데 왼쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng Trung tâm Bên trái Thứ tám"
+          }
+        }
+      }
     },
     "Bottom Center Right Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 가운데 오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng Trung tâm Bên phải Thứ tám"
+          }
+        }
+      }
     },
     "Bottom eighths from corners; thirds" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래쪽 1/8, 모서리에서 3등분"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phần tám dưới cùng từ các góc; phần ba"
+          }
+        }
+      }
     },
     "Bottom Left Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 왼쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng bên trái thứ tám"
+          }
+        }
+      }
     },
     "Bottom Right Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dưới cùng bên phải thứ tám"
+          }
+        }
+      }
     },
     "Bottom sixths from corners; thirds" : {
       "localizations" : {
@@ -10557,198 +10622,224 @@
       }
     },
     "Bottom Third" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 1/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ ba dưới cùng"
+          }
+        }
+      }
     },
     "Bottom Two Thirds" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 2/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai phần ba dưới cùng"
+          }
+        }
+      }
     },
     "bRX-dV-iAR.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Half\"; ObjectID = \"bRX-dV-iAR\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Center\"; ObjectID = \"bRX-dV-iAR\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "نصف المركز"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat central"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat central"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vycentrovat polovinu"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mittlere Hälfte"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Center Half"
+            "value" : "Center"
           }
         },
         "en-GB" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Centre Half"
+            "state" : "needs_review",
+            "value" : "Centre Section"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad central"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad central"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié centrale"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Separuh Tengah"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metà centrale"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "半分にして中央に表示"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "가운데 절반"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Centrinė pusė"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Midtre halvdel"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Middelste helft"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Midtre halvdel"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Połowa na środku"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade central"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade Central"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Jumătatea Centrală"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Центральная половина"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vycentrovať polovicu"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitthalvan"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Orta Yarım"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Центральна половина"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "1/2 giữa"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中间半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "中半"
           }
         }
@@ -12617,6 +12708,12 @@
             "value" : "Use cursor position for screen detection"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "화면 감지에 커서 위치 사용"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12923,187 +13020,190 @@
         }
       }
     },
+    "Cyclic corner shortcuts expand:" : {
+
+    },
     "d7y-s8-7GE.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Half\"; ObjectID = \"d7y-s8-7GE\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Top\"; ObjectID = \"d7y-s8-7GE\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "النصف العلوي"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat superior"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat superior"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Horní polovina"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Obere Hälfte"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Top Half"
+            "value" : "Top"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad superior"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad superior"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié du haut"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Setengah Atas"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metà superiore"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "上半分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "위쪽 절반"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Viršutinė pusė"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Øverste halvdel"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Bovenste helft"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Øvste halvdel"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Górna połowa"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade superior"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade superior"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Jumătatea de Sus"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Верхняя половина"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Horná polovica"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Övre halvan"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Üst Yarım"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Верхня половина"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nửa trên"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "上半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "上半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "上半"
           }
         }
@@ -15886,193 +15986,206 @@
       }
     },
     "ec4-FB-fMa.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Half\"; ObjectID = \"ec4-FB-fMa\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom\"; ObjectID = \"ec4-FB-fMa\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "النصف الأسفل"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat inferior"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat inferior"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Spodní polovina"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Untere Hälfte"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Bottom Half"
+            "value" : "Bottom"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad inferior"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad inferior"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié du bas"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Setengah Bawah"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metà inferiore"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "下半分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "아래쪽 절반"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Apatinė pusė"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nederste halvdel"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Onderste helft"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nedste halvdel"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Dolna połowa"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade inferior"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade inferior"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Jumătatea de Jos"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Нижняя половина"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Spodná polovica"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nedre halvan"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Alt Yarım"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Нижня половина"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nửa dưới"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "下半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "下半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "下半"
           }
         }
       }
     },
     "Eighths" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ tám"
+          }
+        }
+      }
     },
     "Enable Todo Mode" : {
       "localizations" : {
@@ -16244,6 +16357,12 @@
             "value" : "⋯"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⋯"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16265,6 +16384,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Extra Shortcuts"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가 단축키"
           }
         },
         "ru" : {
@@ -16654,186 +16779,186 @@
       }
     },
     "F8S-GI-LiB.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Right Half\"; ObjectID = \"F8S-GI-LiB\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Right\"; ObjectID = \"F8S-GI-LiB\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "النصف الأيمن"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat dreta"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat dreta"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Pravá polovina"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rechte Hälfte"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Right Half"
+            "value" : "Right"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad derecha"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad derecha"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié droite"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Setengah Kanan"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metà destra"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "오른쪽 절반"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Dešinė pusė"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Høgre halvdel"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rechterhelft"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Høgre halvdel"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Prawa połowa"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade direita"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade direita"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Jumătatea din Dreapta"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Правая половина"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Pravá polovica"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Högra halvan"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Sağ yarım"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Права половина"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "1/2 cuối"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半"
           }
         }
@@ -19560,7 +19685,7 @@
       }
     },
     "gHH-BV-5kP.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on half actions\"; ObjectID = \"gHH-BV-5kP\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on side actions\"; ObjectID = \"gHH-BV-5kP\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
@@ -19596,7 +19721,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "cycle sizes on half actions"
+            "value" : "cycle sizes on side actions"
           }
         },
         "es" : {
@@ -20031,8 +20156,24 @@
         }
       }
     },
-    "Grid Positions" : {
+    "Green stoplight button maximizes instead of Full Screen" : {
 
+    },
+    "Grid Positions" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그리드 위치"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vị trí lưới"
+          }
+        }
+      }
     },
     "gtf-PD-IHm.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"General\"; ObjectID = \"gtf-PD-IHm\";",
@@ -20112,8 +20253,8 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "설정"
+            "state" : "translated",
+            "value" : "일반"
           }
         },
         "lt" : {
@@ -20216,6 +20357,18 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "設定"
+          }
+        }
+      }
+    },
+    "GTP-tg-Cel.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Remove gap on top screen edge\"; ObjectID = \"GTP-tg-Cel\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove gap on top screen edge"
           }
         }
       }
@@ -21054,181 +21207,6 @@
         }
       }
     },
-    "Half Split Ratios" : {
-
-    },
-    "Halves" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moitiés"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meitats"
-          }
-        },
-        "ca-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meitats"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poloviny"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hälften"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mitades"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mitades"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moitiés"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bagian"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metà"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "半分"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2등분"
-          }
-        },
-        "lt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pusės"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Halvdeler"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Halves"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Halvdelar"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Połowy"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metades"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metades"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Половинки"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Polovice"
-          }
-        },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hälfter"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yarımlar"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Половини"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Một nửa"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "半屏"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一半螢幕"
-          }
-        },
-        "zh-Hant-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一半螢幕"
-          }
-        }
-      }
-    },
     "heT-W6-Fyf.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Double-click window title bar to maximize/restore\"; ObjectID = \"heT-W6-Fyf\";",
       "extractionState" : "extracted_with_value",
@@ -21883,6 +21861,9 @@
         }
       }
     },
+    "Hold any modifier key or use the window menu for default macOS behavior" : {
+
+    },
     "HOm-BV-2jc.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Up\"; ObjectID = \"HOm-BV-2jc\";",
       "extractionState" : "extracted_with_value",
@@ -22256,6 +22237,22 @@
       }
     },
     "Horizontal (L/R, %)" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수평 (좌/우, %)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ngang (trái/phải, %)"
+          }
+        }
+      }
+    },
+    "horizontally" : {
 
     },
     "hQb-2v-fYv.title" : {
@@ -27469,6 +27466,12 @@
             "value" : "Larger Width"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "너비 크게"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27759,185 +27762,7 @@
         }
       }
     },
-    "Left half, top/bottom half near corners" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moitié gauche, moitié du haut/bas près des coins"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "ca-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Levá polovina, horní/spodní polovina blízko rohů"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Linke Hälfte, Obere/Untere Hälfte in der Nähe der Ecken"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mitad izquierda, mitad superior/inferior cerca de las esquinas"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mitad izquierda, mitad superior/inferior cerca de las esquinas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moitié gauche, moitié du haut/bas près des coins"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metà sinistra, metà superiore/inferiore vicino gli angoli"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左半分、画面端付近の上半分・下半分"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "왼쪽 반, 위/아래 반에 근접한 모서리"
-          }
-        },
-        "lt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kairė pusė, viršutinė/apačioje pusė šalia kampų"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Venstre halvdel, øverste/nederste halvdel nære hjørne"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Venstre halvdel, øvste/nedste halvdel nære hjørne"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metade esquerda, metade de cima/baixo próximo das bordas"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Левая половина, верхняя/нижняя половина возле углов"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ľavá polovica, horná/spodná polovica blízko rohov"
-          }
-        },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left half, top/bottom half near corners"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sol yarım (köşelere yaklaşıldığında ise üst/alt yarım)"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ліва половина, верхня/нижня половина близько кутів"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nửa trái, nửa trên/dưới nếu ngay góc"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左半屏，靠近角落则上／下半屏"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左半，靠近角落則上半／下半"
-          }
-        },
-        "zh-Hant-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "左半，靠近角落則上半／下半"
-          }
-        }
-      }
-    },
-    "Left or right half" : {
+    "Left or right side" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27948,13 +27773,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "cs" : {
@@ -27990,7 +27815,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "it" : {
@@ -28026,7 +27851,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "nn" : {
@@ -28038,7 +27863,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "pt-BR" : {
@@ -28050,13 +27875,13 @@
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "ru" : {
@@ -28074,7 +27899,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Left or right half"
+            "value" : "Left or right side"
           }
         },
         "tr" : {
@@ -28111,6 +27936,188 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "左半或右半"
+          }
+        }
+      }
+    },
+    "Left side, top/bottom near corners" : {
+
+    },
+    "Left side, top/bottom side near corners" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moitié gauche, moitié du haut/bas près des coins"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "ca-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levá polovina, horní/spodní polovina blízko rohů"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linke Hälfte, Obere/Untere Hälfte in der Nähe der Ecken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitad izquierda, mitad superior/inferior cerca de las esquinas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitad izquierda, mitad superior/inferior cerca de las esquinas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moitié gauche, moitié du haut/bas près des coins"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metà sinistra, metà superiore/inferiore vicino gli angoli"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左半分、画面端付近の上半分・下半分"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽 반, 위/아래 반에 근접한 모서리"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kairė pusė, viršutinė/apačioje pusė šalia kampų"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venstre halvdel, øverste/nederste halvdel nære hjørne"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Venstre halvdel, øvste/nedste halvdel nære hjørne"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metade esquerda, metade de cima/baixo próximo das bordas"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Левая половина, верхняя/нижняя половина возле углов"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ľavá polovica, horná/spodná polovica blízko rohov"
+          }
+        },
+        "sv-SE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left side, top/bottom side near corners"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sol yarım (köşelere yaklaşıldığında ise üst/alt yarım)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ліва половина, верхня/нижня половина близько кутів"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nửa trái, nửa trên/dưới nếu ngay góc"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左半屏，靠近角落则上／下半屏"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左半，靠近角落則上半／下半"
+          }
+        },
+        "zh-Hant-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左半，靠近角落則上半／下半"
           }
         }
       }
@@ -29722,7 +29729,20 @@
       }
     },
     "Middle Third" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "중간 1/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ ba ở giữa"
+          }
+        }
+      }
     },
     "mK6-2p-4JG.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Check Grammar With Spelling\"; ObjectID = \"mK6-2p-4JG\";",
@@ -31103,10 +31123,36 @@
       }
     },
     "Ninths" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ chín"
+          }
+        }
+      }
     },
     "Ninths (3×3)" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 (3×3)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ chín (3×3)"
+          }
+        }
+      }
     },
     "NMo-om-nkz.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Services\"; ObjectID = \"NMo-om-nkz\";",
@@ -32781,6 +32827,9 @@
           }
         }
       }
+    },
+    "Offset cycling position on overlap" : {
+
     },
     "ogc-rX-tC1.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Loosen\"; ObjectID = \"ogc-rX-tC1\";",
@@ -34512,7 +34561,20 @@
       }
     },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그리드의 모든 위치를 순환하려면 단축키를 여러 번 누르십시오."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nhấn phím tắt nhiều lần để duyệt qua tất cả các vị trí trong lưới."
+          }
+        }
+      }
     },
     "Ptp-SP-VEL.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Bigger\"; ObjectID = \"Ptp-SP-VEL\";",
@@ -35901,13 +35963,25 @@
       }
     },
     "qCy-Kx-9mR.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"cycle positions on quadrants, cycle sizes on half\"; ObjectID = \"qCy-Kx-9mR\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"cycle positions on quadrants, cycle sizes on side\"; ObjectID = \"qCy-Kx-9mR\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "cycle positions on quadrants, cycle sizes on half"
+            "value" : "cycle positions on quadrants, cycle sizes on side"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/4 동작시 위치 순환, 절반 동작시 창 크기 순환"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "vị trí chu kỳ trên góc phần tư, kích thước chu kỳ trên một nửa"
           }
         }
       }
@@ -37416,6 +37490,9 @@
         }
       }
     },
+    "Resize adjacent windows when cycling side or corner shortcuts" : {
+
+    },
     "rgM-f4-ycn.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Smart Dashes\"; ObjectID = \"rgM-f4-ycn\";",
       "extractionState" : "manual",
@@ -37740,7 +37817,11 @@
         }
       }
     },
-    "Right half, top/bottom half near corners" : {
+    "Right side, top/bottom near corners" : {
+
+    },
+    "Right side, top/bottom side near corners" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -37751,13 +37832,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "cs" : {
@@ -37793,7 +37874,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "it" : {
@@ -37829,7 +37910,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "nn" : {
@@ -37841,7 +37922,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "pt-BR" : {
@@ -37853,13 +37934,13 @@
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "ru" : {
@@ -37877,7 +37958,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right half, top/bottom half near corners"
+            "value" : "Right side, top/bottom side near corners"
           }
         },
         "tr" : {
@@ -38801,13 +38882,240 @@
       }
     },
     "Show additional sizes in menu" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메뉴에 추가 크기 표시"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiển thị kích thước bổ sung trong menu"
+          }
+        }
+      }
+    },
+    "Side Split Ratio" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "절반 분할 비율"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tỷ lệ chia một nửa"
+          }
+        }
+      }
+    },
+    "Sides" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moitiés"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meitats"
+          }
+        },
+        "ca-ES" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meitats"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poloviny"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hälften"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitades"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitades"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moitiés"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bagian"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metà"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半分"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "절반"
+          }
+        },
+        "lt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pusės"
+          }
+        },
+        "nb" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halvdeler"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sides"
+          }
+        },
+        "nn" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halvdelar"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Połowy"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metades"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metades"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Половинки"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Polovice"
+          }
+        },
+        "sv-SE" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hälfter"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yarımlar"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Половини"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Một nửa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半屏"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一半螢幕"
+          }
+        },
+        "zh-Hant-HK" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一半螢幕"
+          }
+        }
+      }
     },
     "Sixteenths" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười sáu"
+          }
+        }
+      }
     },
     "Sixteenths (4×4)" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 (4×4)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười sáu (4×4)"
+          }
+        }
+      }
     },
     "Sixths" : {
       "localizations" : {
@@ -39162,6 +39470,12 @@
             "value" : "Smaller Width"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "너비 작게"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39392,8 +39706,8 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Rectangle 환경설정"
+            "state" : "translated",
+            "value" : "Rectangle 설정"
           }
         },
         "lt" : {
@@ -40552,7 +40866,11 @@
         }
       }
     },
-    "Thirds, top/bottom half near corners" : {
+    "Thirds, top/bottom near corners" : {
+
+    },
+    "Thirds, top/bottom side near corners" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -40563,13 +40881,13 @@
         "ca" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "cs" : {
@@ -40605,7 +40923,7 @@
         "id" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "it" : {
@@ -40641,7 +40959,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "nn" : {
@@ -40653,25 +40971,25 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ru" : {
@@ -40689,7 +41007,7 @@
         "sv-SE" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom half near corners"
+            "value" : "Thirds, top/bottom side near corners"
           }
         },
         "tr" : {
@@ -41162,20 +41480,88 @@
         }
       }
     },
-    "Top Center Left Eighth" : {
+    "Toggle Todo" : {
 
+    },
+    "Top Center Left Eighth" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 가운데 왼쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng Bên trái Thứ tám"
+          }
+        }
+      }
     },
     "Top Center Right Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 가운데 오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng Bên phải Thứ tám"
+          }
+        }
+      }
     },
     "Top eighths from corners; maximize" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위쪽 1/8, 모서리에서 최대화"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ tám hàng đầu từ các quả phạt góc; tối đa"
+          }
+        }
+      }
     },
     "Top Left Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 왼쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng bên trái thứ tám"
+          }
+        }
+      }
     },
     "Top Right Eighth" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽 1/8"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng bên phải thứ tám"
+          }
+        }
+      }
     },
     "Top screen edge tiling in macOS is now disabled" : {
       "extractionState" : "manual",
@@ -41373,14 +41759,46 @@
       }
     },
     "Top Third" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 1/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trên cùng thứ ba"
+          }
+        }
+      }
     },
     "Top Two Thirds" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 2/3"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai phần ba hàng đầu"
+          }
+        }
+      }
     },
-    "Top/bottom halves" : {
+    "Top/bottom sides" : {
       "extractionState" : "manual",
       "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위/아래 반"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41391,6 +41809,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nửa trên/dưới"
+          }
+        }
+      }
+    },
+    "Top/bottoms" : {
+
+    },
+    "Treat multiple displays as one" : {
+
+    },
+    "Treat multiple monitors as one" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여러 모니터를 하나로 인식"
           }
         }
       }
@@ -41912,10 +42347,36 @@
       }
     },
     "Twelfths" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười hai"
+          }
+        }
+      }
     },
     "Twelfths (4×3)" : {
-
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 (4×3)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thứ mười hai (4×3)"
+          }
+        }
+      }
     },
     "tXI-mr-wws.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Open Recent\"; ObjectID = \"tXI-mr-wws\";",
@@ -42380,7 +42841,21 @@
       }
     },
     "Update Available…" : {
-      "extractionState" : "manual"
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업데이트 가능…"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cập nhật có sẵn…"
+          }
+        }
+      }
     },
     "uQy-DD-JDr.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Rectangle\"; ObjectID = \"uQy-DD-JDr\";",
@@ -43170,8 +43645,8 @@
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "키보드 단축키"
+            "state" : "translated",
+            "value" : "단축키"
           }
         },
         "lt" : {
@@ -43837,6 +44312,22 @@
       }
     },
     "Vertical (T/B, %)" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수직 (상/하, %)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dọc (T/B, %)"
+          }
+        }
+      }
+    },
+    "vertically" : {
 
     },
     "Vfd-fe-hCe.title" : {
@@ -46047,6 +46538,9 @@
         }
       }
     },
+    "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
+
+    },
     "Width Step (px)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -46056,10 +46550,22 @@
             "value" : "Width Step (px)"
           }
         },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "너비 단위 (px)"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Шаг ширины (px)"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bước chiều rộng (px)"
           }
         }
       }
@@ -46761,186 +47267,186 @@
       }
     },
     "Xc8-Sm-pig.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Left Half\"; ObjectID = \"Xc8-Sm-pig\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Left\"; ObjectID = \"Xc8-Sm-pig\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "النصف الأيسر"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat esquerra"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Meitat esquerra"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Levá polovina"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Linke Hälfte"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Left Half"
+            "value" : "Left"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad izquierda"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad izquierda"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié gauche"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Setengah Kiri"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metà sinistra"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "左半分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "왼쪽 절반"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Kairė pusė"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Venstre halvdel"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Linkerhelft"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Venstre halvdel"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Lewa połowa"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade esquerda"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade esquerda"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Prima Jumătate"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Левая половина"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ľavá polovica"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Vänstra halvan"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Sol Yarım"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ліва половина"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "1/2 đầu"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "左半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "左半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "左半"
           }
         }

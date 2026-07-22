@@ -1,10 +1,4 @@
-//
-//  Config.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 12/15/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// Config.swift
 
 import Foundation
 import MASShortcut
@@ -15,7 +9,7 @@ extension Defaults {
         
         var shortcuts = [String: Shortcut]()
         for action in WindowAction.active {
-            if let masShortcut =  MASShortcutBinder.shared()?.value(forKey: action.name) as? MASShortcut {
+            if let masShortcut = ShortcutCycle.shortcut(for: action) {
                 shortcuts[action.name] = Shortcut(masShortcut: masShortcut)
             }
         }
@@ -51,6 +45,13 @@ extension Defaults {
     static func load(fileUrl: URL) {
         guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
         
+        // Size cap: legitimate configs are ~tens of KB; refuse anything that
+        // looks abusive (defense against OOM via a giant config file).
+        if let attrs = try? FileManager.default.attributesOfItem(atPath: fileUrl.path),
+           let size = attrs[.size] as? NSNumber, size.intValue > 1_048_576 {
+            return
+        }
+        
         guard let jsonString = try? String(contentsOf: fileUrl, encoding: .utf8),
               let config = convert(jsonString: jsonString) else { return }
 
@@ -61,7 +62,8 @@ extension Defaults {
         }
         
         for action in WindowAction.active {
-            if let shortcut = config.shortcuts[action.name]?.toMASSHortcut() {
+            let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
+            if let shortcut = importedShortcut?.toMASSHortcut() {
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
                 UserDefaults.standard.setValue(dictValue, forKey: action.name)
             }
@@ -77,14 +79,55 @@ extension Defaults {
                         
             let exists = try? configURL.checkResourceIsReachable()
             if exists == true {
+                // Defense-in-depth: any process running as this user can drop
+                // a RectangleConfig.json in Application Support and have it
+                // silently applied on next launch, overwriting shortcuts and
+                // defaults. Require the user to confirm before loading.
+                //
+                // We also refuse symlinks (could redirect reads elsewhere) and
+                // any file with world-write permission (suggests tampering).
+                let path = configURL.path
+                let fm = FileManager.default
+                var isSafe = true
+                
+                if let attrs = try? fm.attributesOfItem(atPath: path) {
+                    if (attrs[.type] as? FileAttributeType) == .typeSymbolicLink {
+                        isSafe = false
+                    }
+                    if let perms = attrs[.posixPermissions] as? NSNumber,
+                       (perms.intValue & 0o002) != 0 {
+                        isSafe = false
+                    }
+                }
+                
+                guard isSafe else {
+                    AlertUtil.oneButtonAlert(
+                        question: "Refused to load RectangleConfig.json",
+                        text: "The configuration file at \(path) is a symlink or world-writable. Rectangle has refused to load it. Remove the file or fix its permissions and try again."
+                    )
+                    try? fm.removeItem(at: configURL)
+                    return
+                }
+                
+                let response = AlertUtil.twoButtonAlert(
+                    question: "Apply Rectangle configuration?",
+                    text: "A configuration file was found at \(path). Applying it will overwrite your current Rectangle shortcuts and preferences. Apply now?",
+                    confirmText: "Apply",
+                    cancelText: "Discard"
+                )
+                guard response == .alertFirstButtonReturn else {
+                    try? fm.removeItem(at: configURL)
+                    return
+                }
+                
                 load(fileUrl: configURL)
                 do {
                     let newFilename = "RectangleConfig\(timestamp()).json"
                     
-                    try FileManager.default.moveItem(atPath: configURL.path, toPath: rectangleSupportURL.appendingPathComponent(newFilename).path)
+                    try fm.moveItem(atPath: configURL.path, toPath: rectangleSupportURL.appendingPathComponent(newFilename).path)
                 } catch {
                     do {
-                        try FileManager.default.removeItem(at: configURL)
+                        try fm.removeItem(at: configURL)
                     } catch {
                         AlertUtil.oneButtonAlert(question: "Error after loading from Support Dir", text: "Unable to rename/remove RectangleConfig.json from \(rectangleSupportURL) after loading.")
                     }

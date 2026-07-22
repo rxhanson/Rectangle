@@ -1,10 +1,4 @@
-//
-//  BottomLeftNinthCalculation.swift
-//  Rectangle
-//
-//  Created by Daniel Schultz on 1/2/22.
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// BottomLeftNinthCalculation.swift
 
 import Foundation
 

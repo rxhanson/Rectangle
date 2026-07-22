@@ -1,10 +1,4 @@
-//
-//  TopHalfCalculation.swift
-//  Rectangle, Ported from Spectacle
-//
-//  Created by Ryan Hanson on 6/14/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// TopHalfCalculation.swift
 
 import Foundation
 
@@ -16,20 +10,21 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculati
             return calculateFirstRect(params)
         }
         
-        return calculateRepeatedRect(params)
+        return calculateRepeatedSideRect(params)
     }
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
-        return calculateFractionalRect(params, fraction: Defaults.verticalSplitRatio.value / 100.0)
+        return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen,
+                                                                 side: .leading,
+                                                                 fraction: ActiveSideSplitRatios.shared.verticalRatio(for: params.visibleFrameOfScreen)))
     }
 
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
-        let visibleFrameOfScreen = params.visibleFrameOfScreen
+        return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen, side: .leading, fraction: fraction))
+    }
 
-        var rect = visibleFrameOfScreen
-        rect.size.height = floor(visibleFrameOfScreen.height * CGFloat(fraction))
-        rect.origin.y = visibleFrameOfScreen.maxY - rect.height
-        return RectResult(rect)
+    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
+        calculateRepeatedSideRect(params)
     }
     
 }

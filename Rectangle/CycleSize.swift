@@ -1,10 +1,4 @@
-//
-//  CycleSize.swift
-//  Rectangle
-//
-//  Created by Eskil Gjerde Sviggum on 01/08/2024.
-//  Copyright © 2024 Ryan Hanson. All rights reserved.
-//
+/// CycleSize.swift
 
 import Foundation
 
@@ -46,7 +40,17 @@ enum CycleSize: Int, CaseIterable {
     }()
 }
 
+enum CornerCycleExpansionAxis: Int {
+    case horizontal = 0
+    case vertical = 1
+}
+
 extension CycleSize {
+    static let matchingTolerance: Float = 0.001
+    
+    static func matching(percentValue: Float) -> CycleSize? {
+        sortedSizes.first { $0.matches(percentValue: percentValue) }
+    }
     
     var title: String {
         switch self {
@@ -78,12 +82,12 @@ extension CycleSize {
         }
     }
     
-    var isAlwaysEnabled: Bool {
-        if self == .firstSize {
-            return true
-        }
-        
-        return false
+    var percentValue: Float {
+        fraction * 100
+    }
+    
+    func matches(percentValue: Float, tolerance: Float = Self.matchingTolerance) -> Bool {
+        abs(self.percentValue - percentValue) <= tolerance
     }
     
 }

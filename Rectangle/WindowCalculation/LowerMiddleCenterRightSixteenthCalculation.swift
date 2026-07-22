@@ -1,9 +1,4 @@
-//
-//  LowerMiddleCenterRightSixteenthCalculation.swift
-//  Rectangle
-//
-//  Copyright © 2024 Ryan Hanson. All rights reserved.
-//
+/// LowerMiddleCenterRightSixteenthCalculation.swift
 
 import Foundation
 

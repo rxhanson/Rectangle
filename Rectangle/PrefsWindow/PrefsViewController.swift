@@ -1,10 +1,4 @@
-//
-//  PrefsViewController.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/18/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// PrefsViewController.swift
 
 import Cocoa
 import MASShortcut
@@ -13,6 +7,7 @@ import ServiceManagement
 class PrefsViewController: NSViewController {
     
     var actionsToViews = [WindowAction: MASShortcutView]()
+    private let shortcutRecordingObserver = ShortcutRecordingObserver()
     
     @IBOutlet weak var leftHalfShortcutView: MASShortcutView!
     @IBOutlet weak var rightHalfShortcutView: MASShortcutView!
@@ -119,6 +114,7 @@ class PrefsViewController: NSViewController {
         for (action, view) in actionsToViews {
             view.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
         }
+        shortcutRecordingObserver.observe(Array(actionsToViews.values))
         
         if Defaults.allowAnyShortcut.enabled {
             let passThroughValidator = PassthroughShortcutValidator()

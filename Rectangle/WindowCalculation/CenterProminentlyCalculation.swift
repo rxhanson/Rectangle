@@ -1,9 +1,4 @@
-//
-//  CenterProminentlyCalculation.swift
-//  Rectangle
-//
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// CenterProminentlyCalculation.swift
 
 import Foundation
 

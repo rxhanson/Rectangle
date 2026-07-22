@@ -1,10 +1,4 @@
-//
-//  WindowAction.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/12/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// WindowAction.swift
 
 import Foundation
 import Carbon
@@ -309,6 +303,17 @@ enum WindowAction: Int, Codable {
         }
     }
 
+    var aliasName: String? {
+        switch self {
+        case .leftHalf: return "leftSide"
+        case .rightHalf: return "rightSide"
+        case .bottomHalf: return "bottomSide"
+        case .topHalf: return "topSide"
+        case .centerHalf: return "centerSection"
+        default: return nil
+        }
+    }
+
     var displayIndex: Int? {
         switch self {
         case .displayOne: return 0
@@ -331,10 +336,10 @@ enum WindowAction: Int, Codable {
         switch self {
         case .leftHalf:
             key = "Xc8-Sm-pig.title"
-            value = "Left Half"
+            value = "Left"
         case .rightHalf:
             key = "F8S-GI-LiB.title"
-            value = "Right Half"
+            value = "Right"
         case .maximize:
             key = "8oe-J2-oUU.title"
             value = "Maximize"
@@ -355,13 +360,13 @@ enum WindowAction: Int, Codable {
             value = "Smaller"
         case .bottomHalf:
             key = "ec4-FB-fMa.title"
-            value = "Bottom Half"
+            value = "Bottom"
         case .topHalf:
             key = "d7y-s8-7GE.title"
-            value = "Top Half"
+            value = "Top"
         case .center:
             key = "8Bg-SZ-hDO.title"
-            value = "Center"
+            value = "Move to Center"
         case .bottomLeft:
             key = "6ma-hP-5xX.title"
             value = "Bottom Left"
@@ -412,7 +417,7 @@ enum WindowAction: Int, Codable {
             value = "Almost Maximize"
         case .centerHalf:
             key = "bRX-dV-iAR.title"
-            value = "Center Half"
+            value = "Center"
         case .firstFourth:
             key = "Q6Q-6J-okH.title"
             value = "First Fourth"
@@ -874,6 +879,27 @@ enum WindowAction: Int, Codable {
              .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
              .displaySix, .displaySeven, .displayEight, .displayNine:
             return .none
+        }
+    }
+
+    var positionCycles: Bool {
+        switch self {
+        case .maximize, .almostMaximize, .maximizeHeight,
+             .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight,
+             .center, .centerProminently,
+             .restore,
+             .nextDisplay, .previousDisplay,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine,
+             .moveLeft, .moveRight, .moveUp, .moveDown,
+             .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
+             .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
+             .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
+             .leftTodo, .rightTodo,
+             .specified:
+            return false
+        default:
+            return true
         }
     }
 

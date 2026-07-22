@@ -1,10 +1,4 @@
-//
-//  AccessibilityWindow.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/13/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// AccessibilityWindowController.swift
 
 import Cocoa
 

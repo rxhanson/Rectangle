@@ -1,10 +1,4 @@
-//
-//  FirstThreeFourthsCalculation.swift
-//  Rectangle
-//
-//  Created by Björn Orri Sæmundsson on 26.06.21.
-//  Copyright © 2021 Ryan Hanson. All rights reserved.
-//
+/// FirstThreeFourthsCalculation.swift
 
 import Foundation
 

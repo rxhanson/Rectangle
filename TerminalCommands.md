@@ -35,6 +35,8 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
+- [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
+- [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
 
 ## Keyboard Shortcuts
 
@@ -516,4 +518,34 @@ By default, display order is left-to-right, line-by-line. You can change this to
 
 ```bash
 defaults write com.knollsoft.Rectangle screensOrderedByX -int 1
+```
+
+## Offset cycling position when overlapping another window
+
+When cycling through grid positions (sixths, eighths, ninths, twelfths, sixteenths, or quarters with quadrant cycling mode), the target position may land exactly on top of another window, hiding it completely. Enable this to apply a small offset when an overlap is detected, so you can see there's a window underneath.
+
+```bash
+defaults write com.knollsoft.Rectangle cyclingOverlapOffset -bool true
+```
+
+The default offset is 11pt. To customize the offset size:
+
+```bash
+defaults write com.knollsoft.Rectangle cyclingOverlapOffsetSize -float 16
+```
+
+By default, only one cascade layer is shown (the original window plus one offset). To allow more layers:
+
+```bash
+defaults write com.knollsoft.Rectangle cyclingOverlapMaxCascade -int 3
+```
+
+## Move windows that can't fill the snap area to the edge
+
+Some windows can't be resized to fill a snap area — either because they're a fixed size, or because they're resizable but have a maximum size or a fixed aspect ratio (FaceTime is a common example). By default such a window aligns to the snap area's screen edge(s): a right-half snap anchors flush right, a corner snap anchors into the corner, and the window stays centered on any axis it can't fill. To choose a different behavior:
+
+```bash
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 1  # align edges and corners (default)
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 2  # align corners only, center halves/sides
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 3  # center within the snap area
 ```

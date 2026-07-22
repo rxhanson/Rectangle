@@ -1,10 +1,4 @@
-//
-//  WindowCalculation.swift
-//  Rectangle, Ported from Spectacle
-//
-//  Created by Ryan Hanson on 6/13/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// WindowCalculation.swift
 
 import Cocoa
 
@@ -53,7 +47,7 @@ class WindowCalculation: Calculation {
 }
 
 struct Window {
-    let id: CGWindowID
+    let id: CGWindowID?
     let rect: CGRect
 }
 
@@ -101,6 +95,7 @@ struct RectResult {
 
 struct WindowCalculationResult {
     var rect: CGRect
+    var initialRect: CGRect
     let screen: NSScreen
     let resultingAction: WindowAction
     let resultingSubAction: SubWindowAction?
@@ -113,10 +108,62 @@ struct WindowCalculationResult {
          resultingScreenFrame: CGRect? = nil) {
         
         self.rect = rect
+        self.initialRect = rect
         self.screen = screen
         self.resultingAction = resultingAction
         self.resultingSubAction = resultingSubAction
         self.resultingScreenFrame = resultingScreenFrame
+    }
+}
+
+enum HalfSplitSide {
+    case leading
+    case trailing
+}
+
+struct HalfSplitFrameCalculation {
+    private static let floorTolerance: CGFloat = 0.0001
+    
+    static func horizontalRect(in visibleFrameOfScreen: CGRect, side: HalfSplitSide, fraction: Float) -> CGRect {
+        var rect = visibleFrameOfScreen
+        rect.size.width = floorDimension(visibleFrameOfScreen.width * CGFloat(fraction))
+        
+        if side == .trailing {
+            rect.origin.x = visibleFrameOfScreen.maxX - rect.width
+        }
+        
+        return rect
+    }
+    
+    static func verticalRect(in visibleFrameOfScreen: CGRect, side: HalfSplitSide, fraction: Float) -> CGRect {
+        var rect = visibleFrameOfScreen
+        rect.size.height = floorDimension(visibleFrameOfScreen.height * CGFloat(fraction))
+        
+        if side == .leading {
+            rect.origin.y = visibleFrameOfScreen.maxY - rect.height
+        }
+        
+        return rect
+    }
+    
+    static func cornerRect(in visibleFrameOfScreen: CGRect,
+                           horizontalSide: HalfSplitSide,
+                           verticalSide: HalfSplitSide,
+                           horizontalFraction: Float,
+                           verticalFraction: Float) -> CGRect {
+        let horizontalRect = horizontalRect(in: visibleFrameOfScreen, side: horizontalSide, fraction: horizontalFraction)
+        let verticalRect = verticalRect(in: visibleFrameOfScreen, side: verticalSide, fraction: verticalFraction)
+        
+        var rect = visibleFrameOfScreen
+        rect.origin.x = horizontalRect.origin.x
+        rect.size.width = horizontalRect.width
+        rect.origin.y = verticalRect.origin.y
+        rect.size.height = verticalRect.height
+        return rect
+    }
+    
+    private static func floorDimension(_ value: CGFloat) -> CGFloat {
+        floor(value + floorTolerance)
     }
 }
 

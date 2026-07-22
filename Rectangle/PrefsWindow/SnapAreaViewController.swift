@@ -1,10 +1,4 @@
-//
-//  SnapAreaViewController.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 8/13/22.
-//  Copyright © 2022 Ryan Hanson. All rights reserved.
-//
+/// SnapAreaViewController.swift
 
 import Cocoa
 
@@ -93,7 +87,6 @@ class SnapAreaViewController: NSViewController {
         hapticFeedbackCheckbox.state = Defaults.hapticFeedbackOnSnap.userEnabled ? .on : .off
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userDisabled
-        loadSnapAreas()
         showHidePortrait()
         
         Notification.Name.configImported.onPost(using: { [weak self] _ in
@@ -115,6 +108,15 @@ class SnapAreaViewController: NSViewController {
     
     func showHidePortrait() {
         portraitStackView.isHidden = !NSScreen.portraitDisplayConnected
+    }
+    
+    // Only load the selects when the view appears, to fix a performance issue where switching to this tab was taking a long time to load
+    var selectsLoaded = false
+    override func viewWillAppear() {
+        if !selectsLoaded {
+            loadSnapAreas()
+            selectsLoaded = true
+        }
     }
     
     func loadSnapAreas() {
@@ -141,46 +143,99 @@ class SnapAreaViewController: NSViewController {
             bottomRightPortraitSelect
         ]
         
-        landscapeSelects.forEach { configure(select: $0, orientation: .landscape)}
-        portraitSelects.forEach { configure(select: $0, orientation: .portrait)}
+        landscapeSelects.forEach { initialize(select: $0, orientation: .landscape)}
+        portraitSelects.forEach { initialize(select: $0, orientation: .portrait)}
+    }
+    
+    /// Fix a performance bug by loading only selected menu items first, then dispatching async to fill out all menu items
+    private func initialize(select: NSPopUpButton, orientation: DisplayOrientation) {
+        
+        defer {
+            DispatchQueue.main.async {
+                self.configure(select: select, orientation: orientation)
+            }
+        }
+        
+        guard let directional = Directional(rawValue: select.tag) else { return }
+        
+        reset(select: select)
+        let selectedTag = getSelectedTag(for: directional, orientation: orientation)
+        
+        for compoundSnapArea in CompoundSnapArea.all {
+            guard compoundSnapArea.compatibleOrientation.contains(orientation), compoundSnapArea.compatibleDirectionals.contains(directional) else { continue }
+            if selectedTag == compoundSnapArea.rawValue {
+                addCompoundSnapAreaMenuItem(for: compoundSnapArea, to: select, isSelected: true)
+                return
+            }
+        }
+        
+        for windowAction in WindowAction.active {
+            if windowAction.isDragSnappable, selectedTag == windowAction.rawValue {
+                addWindowActionMenuItem(for: windowAction, to: select, isSelected: true)
+                return
+            }
+        }
     }
     
     private func configure(select: NSPopUpButton, orientation: DisplayOrientation) {
         guard let directional = Directional(rawValue: select.tag) else { return }
-        let snapAreaConfig = orientation == .landscape
-            ? SnapAreaModel.instance.landscape[directional]
-            : SnapAreaModel.instance.portrait[directional]
         
-        select.removeAllItems()
-        select.addItem(withTitle: "-")
-        select.menu?.items.first?.tag = -1
-
-        let selectedTag = snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? -1
+        reset(select: select)
+        let selectedTag = getSelectedTag(for: directional, orientation: orientation)
 
         for compoundSnapArea in CompoundSnapArea.all {
             guard compoundSnapArea.compatibleOrientation.contains(orientation), compoundSnapArea.compatibleDirectionals.contains(directional) else { continue }
             
-            let item = NSMenuItem(title: compoundSnapArea.displayName, action: nil, keyEquivalent: "")
-            item.tag = compoundSnapArea.rawValue
-            select.menu?.addItem(item)
-            if selectedTag == item.tag {
-                select.select(item)
+            addCompoundSnapAreaMenuItem(for: compoundSnapArea, to: select, isSelected: selectedTag == compoundSnapArea.rawValue)
+        }
+        
+        select.menu?.addItem(NSMenuItem.separator())
+        
+        for windowAction in WindowAction.active {
+            if windowAction.isDragSnappable {
+                addWindowActionMenuItem(for: windowAction, to: select, isSelected: selectedTag == windowAction.rawValue)
             }
         }
-        select.menu?.addItem(NSMenuItem.separator())
-        for windowAction in WindowAction.active {
-            if windowAction.isDragSnappable,
-                let name = windowAction.displayName {
-                let item = NSMenuItem(title: name, action: nil, keyEquivalent: "")
-                item.tag = windowAction.rawValue
-                item.image = windowAction.image.copy() as? NSImage
-                item.image?.size.height = 12
-                item.image?.size.width = 18
-                select.menu?.addItem(item)
-                if selectedTag == item.tag {
-                    select.select(item)
-                }
-            }
+    }
+    
+    // MARK: - Menu Item & Setup Helpers
+    
+    private func reset(select: NSPopUpButton) {
+        select.removeAllItems()
+        select.addItem(withTitle: "-")
+        select.menu?.items.first?.tag = -1
+    }
+    
+    private func getSelectedTag(for directional: Directional, orientation: DisplayOrientation) -> Int {
+        let snapAreaConfig = orientation == .landscape
+            ? SnapAreaModel.instance.landscape[directional]
+            : SnapAreaModel.instance.portrait[directional]
+        
+        return snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? -1
+    }
+    
+    private func addCompoundSnapAreaMenuItem(for compoundSnapArea: CompoundSnapArea, to select: NSPopUpButton, isSelected: Bool) {
+        let item = NSMenuItem(title: compoundSnapArea.displayName, action: nil, keyEquivalent: "")
+        item.tag = compoundSnapArea.rawValue
+        select.menu?.addItem(item)
+        
+        if isSelected {
+            select.select(item)
+        }
+    }
+    
+    private func addWindowActionMenuItem(for windowAction: WindowAction, to select: NSPopUpButton, isSelected: Bool) {
+        guard let name = windowAction.displayName else { return }
+        
+        let item = NSMenuItem(title: name, action: nil, keyEquivalent: "")
+        item.tag = windowAction.rawValue
+        item.image = windowAction.image.copy() as? NSImage
+        item.image?.size.height = 12
+        item.image?.size.width = 18
+        select.menu?.addItem(item)
+        
+        if isSelected {
+            select.select(item)
         }
     }
 }

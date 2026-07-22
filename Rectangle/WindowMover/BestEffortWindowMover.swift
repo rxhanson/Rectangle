@@ -1,10 +1,4 @@
-//
-//  BestEffortWindowMover.swift
-//  Rectangle, Ported from Spectacle
-//
-//  Created by Ryan Hanson on 6/13/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// BestEffortWindowMover.swift
 
 import Foundation
 
@@ -13,9 +7,13 @@ import Foundation
  */
 
 class BestEffortWindowMover: WindowMover {
-    func moveWindowRect(_ windowRect: CGRect, frameOfScreen: CGRect, visibleFrameOfScreen: CGRect, frontmostWindowElement: AccessibilityElement?, action: WindowAction?) {
-        guard let currentWindowRect: CGRect = frontmostWindowElement?.frame else { return }
-        if action?.allowedToExtendOutsideCurrentScreenArea == true && !NSScreen.screensHaveSeparateSpaces { return }
+    func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
+        let action = resultParameters.action
+        let windowElement = resultParameters.windowElement
+        let currentWindowRect: CGRect = windowElement.frame
+        let visibleFrameOfScreen = resultParameters.visibleFrameOfScreen
+        
+        if action.allowedToExtendOutsideCurrentScreenArea == true && !NSScreen.screensHaveSeparateSpaces { return }
         
         var adjustedWindowRect: CGRect = currentWindowRect
         
@@ -40,7 +38,7 @@ class BestEffortWindowMover: WindowMover {
         
         adjustedWindowRect = adjustedWindowRect.screenFlipped
         if !currentWindowRect.equalTo(adjustedWindowRect) {
-            frontmostWindowElement?.setFrame(adjustedWindowRect)
+            windowElement.setFrame(adjustedWindowRect)
         }
     }
 }

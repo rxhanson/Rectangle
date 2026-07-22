@@ -1,10 +1,4 @@
-//
-//  WindowActionCategory.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 10/3/20.
-//  Copyright © 2020 Ryan Hanson. All rights reserved.
-//
+/// WindowActionCategory.swift
 
 import Foundation
 
@@ -30,7 +24,7 @@ enum WindowActionCategory {
     var displayName: String {
         switch self {
         case .halves:
-            return NSLocalizedString("Halves", tableName: "Main", value: "", comment: "")
+            return NSLocalizedString("Sides", tableName: "Main", value: "", comment: "")
         case .corners:
             return NSLocalizedString("Corners", tableName: "Main", value: "", comment: "")
         case .thirds:

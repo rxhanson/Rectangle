@@ -1,9 +1,4 @@
-//
-//  TopVerticalThirdCalculation.swift
-//  Rectangle
-//
-//  Created on 12/22/25.
-//
+/// TopVerticalThirdCalculation.swift
 
 import Foundation
 

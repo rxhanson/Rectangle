@@ -1,10 +1,4 @@
-//
-//  SpecificDisplayCalculation.swift
-//  Rectangle
-//
-//  Created by Lucas on 4/2/26.
-//  Copyright © 2026 Ryan Hanson. All rights reserved.
-//
+/// SpecificDisplayCalculation.swift
 
 import Cocoa
 
@@ -31,7 +25,9 @@ class SpecificDisplayCalculation: WindowCalculation {
             if let lastAction = params.lastAction,
                let calculation = WindowCalculationFactory.calculationsByAction[lastAction.action] {
 
-                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: params.window.id)
+                if let windowId = params.window.id {
+                    AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                }
 
                 let newCalculationParams = RectCalculationParameters(
                     window: rectParams.window,

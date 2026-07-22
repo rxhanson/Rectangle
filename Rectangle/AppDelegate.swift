@@ -1,10 +1,4 @@
-//
-//  AppDelegate.swift
-//  Rectangle
-//
-//  Created by Ryan Hanson on 6/11/19.
-//  Copyright © 2019 Ryan Hanson. All rights reserved.
-//
+/// AppDelegate.swift
 
 import Cocoa
 import Sparkle
@@ -32,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var windowCalculationFactory: WindowCalculationFactory!
     private var snappingManager: SnappingManager!
     private var titleBarManager: TitleBarManager!
+    private var greenButtonManager: GreenButtonManager!
     
     private var prefsWindowController: NSWindowController?
     
@@ -77,6 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             : unauthorizedMenu
         
         mainStatusMenu.autoenablesItems = false
+        addMenuIcons()
         addWindowActionMenuItems()
 
         NotificationCenter.default.addObserver(self, selector: #selector(rebuildMenu), name: .showAdditionalSizesInMenuChanged, object: nil)
@@ -117,6 +113,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             Defaults.installVersion.value = currentVersion
             Defaults.allowAnyShortcut.enabled = true
         }
+        MASShortcutMigration.syncRenamedSideShortcutAliases()
         
         Defaults.lastVersion.value = currentVersion
     }
@@ -125,6 +122,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Notification.Name.appWillBecomeActive.post()
     }
     
+    private func addMenuIcons() {
+        guard #available(macOS 11, *) else { return }
+        for item in mainStatusMenu.items {
+            switch item.action {
+            case #selector(openPreferences):
+                item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: nil)
+            case #selector(viewLogging):
+                item.image = NSImage(systemSymbolName: "doc.text", accessibilityDescription: nil)
+            case #selector(checkForUpdates):
+                item.image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil)
+            default:
+                break
+            }
+        }
+    }
+
     func checkAutoCheckForUpdates() {
         updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
@@ -136,6 +149,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
         self.titleBarManager = TitleBarManager()
+        self.greenButtonManager = GreenButtonManager()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
     }
@@ -351,9 +365,8 @@ extension AppDelegate: NSMenuDelegate {
             if frontmostWindow == nil {
                 menuItem.isEnabled = false
             }
-            if screenCount == 1
-                && (windowAction == .nextDisplay || windowAction == .previousDisplay) {
-                menuItem.isEnabled = false
+            if windowAction == .nextDisplay || windowAction == .previousDisplay {
+                menuItem.isHidden = screenCount == 1 || Defaults.combinedDisplayMode.userEnabled
             }
         }
     }
@@ -488,6 +501,26 @@ extension AppDelegate {
                 return isValid
             }
             
+            func confirmExecuteTask(action: String, bundleId: String) -> Bool {
+                // Defense-in-depth: any web page or another app can trigger the
+                // `rectangle://execute-task=ignore-app` URL with an arbitrary
+                // bundle-id. Without confirmation this silently mutates
+                // Rectangle's `disabledApps` defaults. Skip the prompt only
+                // when Rectangle itself is frontmost (i.e. the user almost
+                // certainly clicked this from inside Rectangle's own UI).
+                if NSWorkspace.shared.frontmostApplication == NSRunningApplication.current {
+                    return true
+                }
+                let alert = NSAlert()
+                alert.alertStyle = .warning
+                alert.messageText = "Allow Rectangle URL action?".localized
+                alert.informativeText = String(format: "An external source asked Rectangle to perform \"%@\" on app bundle id \"%@\". Allow?".localized, action, bundleId)
+                alert.addButton(withTitle: "Allow".localized)
+                alert.addButton(withTitle: "Cancel".localized)
+                NSApp.activate(ignoringOtherApps: true)
+                return alert.runModal() == .alertFirstButtonReturn
+            }
+            
             for url in urls {
                 guard
                     let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
@@ -499,15 +532,22 @@ extension AppDelegate {
                 let name = (components.queryItems?.first { $0.name == "name" })?.value
                 switch (components.host, name) {
                 case ("execute-action", _):
-                    let action = (WindowAction.active.first { getUrlName($0.name) == name })
+                    let action = (WindowAction.active.first { windowAction in
+                        if let aliasName = windowAction.aliasName, getUrlName(aliasName) == name {
+                            return true
+                        }
+                        return getUrlName(windowAction.name) == name
+                    })
                     action?.postUrl()
                 case ("execute-task", "ignore-app"):
                     let bundleId = extractBundleIdParameter(fromComponents: components)
-                    guard isValidParameter(bundleId: bundleId) else { continue }
+                    guard isValidParameter(bundleId: bundleId), let bundleId else { continue }
+                    guard confirmExecuteTask(action: "ignore-app", bundleId: bundleId) else { continue }
                     self.applicationToggle.disableApp(appBundleId: bundleId)
                 case ("execute-task", "unignore-app"):
                     let bundleId = extractBundleIdParameter(fromComponents: components)
-                    guard isValidParameter(bundleId: bundleId) else { continue }
+                    guard isValidParameter(bundleId: bundleId), let bundleId else { continue }
+                    guard confirmExecuteTask(action: "unignore-app", bundleId: bundleId) else { continue }
                     self.applicationToggle.enableApp(appBundleId: bundleId)
                 default:
                     continue
