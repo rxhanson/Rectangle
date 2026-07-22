@@ -2713,6 +2713,255 @@ class SnappingManagerSessionTests: XCTestCase {
     }
 }
 
+class ShortcutManagerSessionTests: XCTestCase {
+
+    private final class ValueBox<Value> {
+        var value: Value
+
+        init(_ value: Value) {
+            self.value = value
+        }
+    }
+
+    private final class BindingStoreSpy: ShortcutBindingStore {
+        private(set) var configureCallCount = 0
+        private(set) var registeredDefaultKeys = Set<String>()
+        private(set) var boundKeys = Set<String>()
+        private(set) var bindCallCount = 0
+        private(set) var breakBindingCallCount = 0
+
+        func configure() {
+            configureCallCount += 1
+        }
+
+        func registerDefaultShortcuts(_ shortcuts: [String: MASShortcut]) {
+            registeredDefaultKeys.formUnion(shortcuts.keys)
+        }
+
+        func bindShortcut(withDefaultsKey defaultsKey: String, toAction action: @escaping () -> Void) {
+            bindCallCount += 1
+            boundKeys.insert(defaultsKey)
+        }
+
+        func breakBinding(withDefaultsKey defaultsKey: String) {
+            breakBindingCallCount += 1
+            boundKeys.remove(defaultsKey)
+        }
+    }
+
+    private final class SchedulerSpy {
+        private var scheduledActions = [() -> Void]()
+
+        var pendingCount: Int {
+            scheduledActions.count
+        }
+
+        func schedule(_ action: @escaping () -> Void) {
+            scheduledActions.append(action)
+        }
+
+        func runNext() {
+            guard !scheduledActions.isEmpty else {
+                XCTFail("Expected a scheduled shortcut rebind")
+                return
+            }
+            scheduledActions.removeFirst()()
+        }
+    }
+
+    private struct Harness {
+        let manager: ShortcutManager
+        let bindingStore: BindingStoreSpy
+        let notificationCenter: NotificationCenter
+        let workspaceNotificationCenter: NotificationCenter
+        let shortcuts: ValueBox<[WindowAction: MASShortcut]>
+        let appDisabled: ValueBox<Bool>
+        let scheduler: SchedulerSpy
+        let todoSessionStates: ValueBox<[Bool]>
+    }
+
+    private func shortcut(_ keyCode: Int) -> MASShortcut {
+        MASShortcut(keyCode: keyCode, modifierFlags: [.command, .option])
+    }
+
+    private func makeHarness(
+        initiallyActive: Bool = true,
+        appDisabled: Bool = false,
+        shortcuts: [WindowAction: MASShortcut]? = nil
+    ) -> Harness {
+        let bindingStore = BindingStoreSpy()
+        let notificationCenter = NotificationCenter()
+        let workspaceNotificationCenter = NotificationCenter()
+        let shortcuts = ValueBox(shortcuts ?? [.leftHalf: shortcut(1)])
+        let appDisabled = ValueBox(appDisabled)
+        let scheduler = SchedulerSpy()
+        let todoSessionStates = ValueBox<[Bool]>([])
+        let manager = ShortcutManager(
+            windowManager: WindowManager(),
+            bindingStore: bindingStore,
+            notificationCenter: notificationCenter,
+            workspaceNotificationCenter: workspaceNotificationCenter,
+            shortcutsProvider: { shortcuts.value },
+            activeStateProvider: { initiallyActive },
+            appDisabledProvider: { appDisabled.value },
+            scheduler: { scheduler.schedule($0) },
+            todoSessionStateChanged: { todoSessionStates.value.append($0) }
+        )
+
+        return Harness(
+            manager: manager,
+            bindingStore: bindingStore,
+            notificationCenter: notificationCenter,
+            workspaceNotificationCenter: workspaceNotificationCenter,
+            shortcuts: shortcuts,
+            appDisabled: appDisabled,
+            scheduler: scheduler,
+            todoSessionStates: todoSessionStates
+        )
+    }
+
+    private func resignSession(_ harness: Harness) {
+        harness.workspaceNotificationCenter.post(
+            name: NSWorkspace.sessionDidResignActiveNotification,
+            object: nil
+        )
+    }
+
+    private func activateSession(_ harness: Harness) {
+        harness.workspaceNotificationCenter.post(
+            name: NSWorkspace.sessionDidBecomeActiveNotification,
+            object: nil
+        )
+    }
+
+    func testActiveSessionResignThenDelayedActivationRestoresBindings() {
+        let harness = makeHarness()
+        let expectedKeys: Set<String> = [WindowAction.leftHalf.name]
+
+        XCTAssertEqual(harness.bindingStore.boundKeys, expectedKeys)
+        XCTAssertEqual(harness.todoSessionStates.value, [true])
+
+        resignSession(harness)
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+        XCTAssertEqual(harness.scheduler.pendingCount, 0)
+        XCTAssertEqual(harness.todoSessionStates.value, [true, false])
+
+        activateSession(harness)
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+        XCTAssertEqual(harness.scheduler.pendingCount, 1)
+        XCTAssertEqual(harness.todoSessionStates.value, [true, false])
+
+        harness.scheduler.runNext()
+
+        XCTAssertEqual(harness.bindingStore.boundKeys, expectedKeys)
+        XCTAssertEqual(harness.scheduler.pendingCount, 0)
+        XCTAssertEqual(harness.todoSessionStates.value, [true, false, true])
+    }
+
+    func testDuplicateSessionNotificationsAreIdempotent() {
+        let harness = makeHarness()
+
+        resignSession(harness)
+        let breakCallsAfterFirstResign = harness.bindingStore.breakBindingCallCount
+
+        resignSession(harness)
+
+        XCTAssertEqual(harness.bindingStore.breakBindingCallCount, breakCallsAfterFirstResign)
+
+        activateSession(harness)
+        activateSession(harness)
+
+        XCTAssertEqual(harness.scheduler.pendingCount, 1)
+
+        harness.scheduler.runNext()
+        let bindCallsAfterActivation = harness.bindingStore.bindCallCount
+
+        activateSession(harness)
+
+        XCTAssertEqual(harness.scheduler.pendingCount, 0)
+        XCTAssertEqual(harness.bindingStore.bindCallCount, bindCallsAfterActivation)
+        XCTAssertEqual(harness.bindingStore.boundKeys, [WindowAction.leftHalf.name])
+    }
+
+    func testActivationRestoresCurrentLogicalShortcutsAfterTheyChangeWhileInactive() {
+        let harness = makeHarness()
+
+        resignSession(harness)
+        harness.shortcuts.value = [.rightHalf: shortcut(2)]
+
+        activateSession(harness)
+        harness.scheduler.runNext()
+
+        XCTAssertEqual(harness.bindingStore.boundKeys, [WindowAction.rightHalf.name])
+        XCTAssertFalse(harness.bindingStore.boundKeys.contains(WindowAction.leftHalf.name))
+    }
+
+    func testDisabledApplicationBlocksSessionRestore() {
+        let harness = makeHarness()
+
+        resignSession(harness)
+        harness.appDisabled.value = true
+
+        activateSession(harness)
+        harness.scheduler.runNext()
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+    }
+
+    func testRecordingBlocksSessionRestoreUntilRecordingEnds() {
+        let harness = makeHarness()
+
+        harness.notificationCenter.post(name: .shortcutRecording, object: true)
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+
+        resignSession(harness)
+        activateSession(harness)
+        harness.scheduler.runNext()
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+
+        harness.notificationCenter.post(name: .shortcutRecording, object: false)
+
+        XCTAssertEqual(harness.bindingStore.boundKeys, [WindowAction.leftHalf.name])
+    }
+
+    func testInitiallyInactiveSessionDoesNotBindUntilActivationCompletes() {
+        let harness = makeHarness(initiallyActive: false)
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+        XCTAssertEqual(harness.scheduler.pendingCount, 0)
+        XCTAssertEqual(harness.todoSessionStates.value, [false])
+
+        activateSession(harness)
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+        XCTAssertEqual(harness.scheduler.pendingCount, 1)
+        XCTAssertEqual(harness.todoSessionStates.value, [false])
+
+        harness.scheduler.runNext()
+
+        XCTAssertEqual(harness.bindingStore.boundKeys, [WindowAction.leftHalf.name])
+        XCTAssertEqual(harness.todoSessionStates.value, [false, true])
+    }
+
+    func testResignBeforeQueuedActivationCompletesCancelsRestore() {
+        let harness = makeHarness()
+
+        resignSession(harness)
+        activateSession(harness)
+        XCTAssertEqual(harness.scheduler.pendingCount, 1)
+
+        resignSession(harness)
+        harness.scheduler.runNext()
+
+        XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
+        XCTAssertEqual(harness.scheduler.pendingCount, 0)
+        XCTAssertEqual(harness.todoSessionStates.value, [true, false, false])
+    }
+}
+
 class ShortcutCycleTests: XCTestCase {
 
     private func shortcut(_ keyCode: Int, _ flags: NSEvent.ModifierFlags) -> MASShortcut {
