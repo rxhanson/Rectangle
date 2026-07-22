@@ -20156,6 +20156,12 @@
         }
       }
     },
+    "Maximize window when moved to another display" : {
+
+    },
+    "When off, a maximized window keeps its size and is centered on the new display instead of filling it." : {
+
+    },
     "Green stoplight button maximizes instead of Full Screen" : {
 
     },
