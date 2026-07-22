@@ -142,6 +142,132 @@ class DefaultsExportTests: XCTestCase {
         XCTAssertTrue(keys.contains("cyclingOverlapOffsetSize"), "cyclingOverlapOffsetSize missing from Defaults.array")
         XCTAssertTrue(keys.contains("cyclingOverlapMaxCascade"), "cyclingOverlapMaxCascade missing from Defaults.array")
         XCTAssertTrue(keys.contains("cooperativeCornerResize"), "cooperativeCornerResize missing from Defaults.array")
+        XCTAssertTrue(keys.contains("stackBadge"), "stackBadge missing from Defaults.array")
+    }
+}
+
+class StackBadgeGeometryTests: XCTestCase {
+
+    private let laptopFrame = CGRect(x: 0, y: 0, width: 2336, height: 1510)
+    // Real rig geometry: external 4K TVs with negative origins.
+    private let tvFrame = CGRect(x: -5212, y: 1510, width: 3840, height: 2160)
+
+    func testCornerCountMatchesUnionOfGridFractions() {
+        // Column fractions across all grids: 0, 1/4, 1/3, 1/2, 2/3, 3/4 (6 values).
+        // Row fractions are the same set. 6 x 6 = 36 unique corners.
+        let corners = StackBadgeGeometry.cornerPoints(in: laptopFrame)
+        XCTAssertEqual(corners.count, 36)
+    }
+
+    func testCoincidentCornersAreDeduplicated() {
+        // The half corner and the quarter corner at x = width/2 coincide;
+        // they must appear once, not once per grid.
+        let corners = StackBadgeGeometry.cornerPoints(in: laptopFrame)
+        let midTop = corners.filter { abs($0.x - 1168) < 1 && abs($0.y - 1510) < 1 }
+        XCTAssertEqual(midTop.count, 1)
+    }
+
+    func testScreenOriginIsACorner() {
+        let corners = StackBadgeGeometry.cornerPoints(in: laptopFrame)
+        XCTAssertTrue(corners.contains { abs($0.x - 0) < 1 && abs($0.y - 1510) < 1 },
+                      "top-left of the screen must be a corner")
+    }
+
+    func testFarEdgesAreNotCorners() {
+        // A cell's top-left can never sit on the right or bottom screen edge.
+        let corners = StackBadgeGeometry.cornerPoints(in: laptopFrame)
+        XCTAssertFalse(corners.contains { abs($0.x - laptopFrame.maxX) < 1 })
+        XCTAssertFalse(corners.contains { abs($0.y - laptopFrame.minY) < 1 })
+    }
+
+    func testNegativeOriginScreenCorners() {
+        let corners = StackBadgeGeometry.cornerPoints(in: tvFrame)
+        XCTAssertEqual(corners.count, 36)
+        XCTAssertTrue(corners.contains { abs($0.x - (-5212)) < 1 && abs($0.y - 3670) < 1 },
+                      "top-left corner of a negative-origin screen")
+        XCTAssertTrue(corners.contains { abs($0.x - (-5212 + 3840.0 / 3)) < 1 && abs($0.y - (3670 - 2160.0 / 3)) < 1 },
+                      "interior ninth corner on a negative-origin screen")
+    }
+
+    func testEmptyFrameYieldsNoCorners() {
+        XCTAssertTrue(StackBadgeGeometry.cornerPoints(in: .zero).isEmpty)
+        XCTAssertTrue(StackBadgeGeometry.cornerPoints(in: .null).isEmpty)
+    }
+
+    func testHoverZoneHitInsideZone() {
+        let corners = [CGPoint(x: 100, y: 500)]
+        // 20pt right, 20pt below (AppKit y down = minus y) - inside a 30pt zone.
+        let hit = StackBadgeGeometry.corner(near: CGPoint(x: 120, y: 480), in: corners, zone: 30)
+        XCTAssertEqual(hit, corners[0])
+    }
+
+    func testHoverZoneMissOutsideZone() {
+        let corners = [CGPoint(x: 100, y: 500)]
+        XCTAssertNil(StackBadgeGeometry.corner(near: CGPoint(x: 140, y: 480), in: corners, zone: 30))
+        // Above the corner is the neighboring cell - must not trigger.
+        XCTAssertNil(StackBadgeGeometry.corner(near: CGPoint(x: 110, y: 520), in: corners, zone: 30))
+        // Left of the corner is the neighboring cell - must not trigger.
+        XCTAssertNil(StackBadgeGeometry.corner(near: CGPoint(x: 80, y: 490), in: corners, zone: 30))
+    }
+
+    func testHoverZonePicksNearestOfTwoCandidates() {
+        let near = CGPoint(x: 100, y: 500)
+        let far = CGPoint(x: 90, y: 510)
+        let hit = StackBadgeGeometry.corner(near: CGPoint(x: 105, y: 495), in: [far, near], zone: 30)
+        XCTAssertEqual(hit, near)
+    }
+
+    // Regression: the cascade offset runs +x but UP in AX y (it's applied in
+    // AppKit coordinates and the y-axis flips), so clustering must accept
+    // origins above the anchor. Real-world origins from a two-window stack
+    // that the first implementation failed to count.
+    func testStackClusterAcceptsUpwardCascade() {
+        let origins = [CGPoint(x: 903, y: -2121), CGPoint(x: 892, y: -2110)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 2)
+    }
+
+    // Regression: with maxCascade capped at 1, the second and third windows
+    // share an origin. All three belong to the stack.
+    func testStackClusterCountsCascadeCapSharedOrigins() {
+        let origins = [
+            CGPoint(x: 903, y: -2121),
+            CGPoint(x: 903, y: -2121),
+            CGPoint(x: 892, y: -2110)
+        ]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 3)
+    }
+
+    func testStackClusterExcludesUnrelatedNeighbor() {
+        // A window 30pt away from the anchor is a neighbor, not a stack member,
+        // even though a gap-widened candidate box may have caught it.
+        let origins = [CGPoint(x: 100, y: 100), CGPoint(x: 111, y: 89), CGPoint(x: 130, y: 130)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.sorted(), [0, 1])
+    }
+
+    func testStackClusterAcceptsDownwardCascade() {
+        // Edge clamping can flip the cascade direction locally; both must count.
+        let origins = [CGPoint(x: 100, y: 100), CGPoint(x: 111, y: 111)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 2)
+    }
+
+    func testStackClusterEmptyInput() {
+        XCTAssertTrue(StackBadgeGeometry.stackIndices(among: [], cascadeRange: 15, tolerance: 4).isEmpty)
+    }
+
+    // Regression (review finding): an unrelated window that happens to be the
+    // leftmost candidate in the gap-widened box must not mask the real stack.
+    func testStackClusterLeftOutlierDoesNotMaskStack() {
+        let origins = [
+            CGPoint(x: 100, y: 105),   // unrelated leftmost outlier
+            CGPoint(x: 120, y: 100),   // buried
+            CGPoint(x: 131, y: 89)     // front (cascade +11, -11)
+        ]
+        let indices = StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.sorted(), [1, 2])
     }
 
     func testTodoSidebarWidthUnitInExportArray() {
