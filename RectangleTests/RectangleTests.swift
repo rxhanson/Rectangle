@@ -143,6 +143,11 @@ class DefaultsExportTests: XCTestCase {
         XCTAssertTrue(keys.contains("cyclingOverlapMaxCascade"), "cyclingOverlapMaxCascade missing from Defaults.array")
         XCTAssertTrue(keys.contains("cooperativeCornerResize"), "cooperativeCornerResize missing from Defaults.array")
     }
+
+    func testTodoSidebarWidthUnitInExportArray() {
+        let keys = Defaults.array.map { $0.key }
+        XCTAssertTrue(keys.contains("todoSidebarWidthUnit"), "todoSidebarWidthUnit missing from Defaults.array")
+    }
 }
 
 class CooperativeCornerResizeTests: XCTestCase {
