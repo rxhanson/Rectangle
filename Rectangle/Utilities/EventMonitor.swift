@@ -79,6 +79,13 @@ public class ActiveEventMonitor: EventMonitor {
             thread!.cancel()
             thread = nil
             CGEvent.tapEnable(tap: tap, enable: false)
+            // CoreGraphics holds internal references to the CFMachPort from tapCreate, so
+            // releasing ours never deallocates it; without an explicit invalidate, the
+            // WindowServer keeps the (disabled) tap registration until the process exits.
+            // stop()/start() cycles (app switches while snapping is active, and the
+            // tapDisabledByTimeout recovery above) would otherwise each leak one entry,
+            // degrading system-wide input latency once they accumulate.
+            CFMachPortInvalidate(tap)
         }
         tap = nil
     }
