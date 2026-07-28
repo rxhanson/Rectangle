@@ -135,10 +135,11 @@ enum WindowAction: Int, Codable {
          displaySix = 125,
          displaySeven = 126,
          displayEight = 127,
-         displayNine = 128
+         displayNine = 128,
+         fixedSixtyPercentLeft = 129
 
     // Order matters here - it's used in the menu
-    static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
+    static let active = [leftHalf, rightHalf, fixedSixtyPercentLeft, centerHalf, topHalf, bottomHalf,
                          topLeft, topRight, bottomLeft, bottomRight,
                          firstThird, centerThird, lastThird, firstTwoThirds, centerTwoThirds, lastTwoThirds,
                          topVerticalThird, middleVerticalThird, bottomVerticalThird, topVerticalTwoThirds, bottomVerticalTwoThirds,
@@ -328,6 +329,7 @@ enum WindowAction: Int, Codable {
         case .displaySeven: return "displaySeven"
         case .displayEight: return "displayEight"
         case .displayNine: return "displayNine"
+        case .fixedSixtyPercentLeft: return "fixedSixtyPercentLeft"
         }
     }
 
@@ -368,6 +370,9 @@ enum WindowAction: Int, Codable {
         case .rightHalf:
             key = "F8S-GI-LiB.title"
             value = "Right"
+        case .fixedSixtyPercentLeft:
+            key = "fixedSixtyPercentLeft.title"
+            value = "60% Left"
         case .maximize:
             key = "8oe-J2-oUU.title"
             value = "Maximize"
@@ -737,6 +742,7 @@ enum WindowAction: Int, Codable {
         switch self {
         case .leftHalf: return NSImage(imageLiteralResourceName: "leftHalfTemplate")
         case .rightHalf: return NSImage(imageLiteralResourceName: "rightHalfTemplate")
+        case .fixedSixtyPercentLeft: return NSImage(imageLiteralResourceName: "leftHalfTemplate")
         case .maximize: return NSImage(imageLiteralResourceName: "maximizeTemplate")
         case .maximizeHeight: return NSImage(imageLiteralResourceName: "maximizeHeightTemplate")
         case .previousDisplay: return NSImage(imageLiteralResourceName: "prevDisplayTemplate")
@@ -858,7 +864,7 @@ enum WindowAction: Int, Codable {
 
     var gapSharedEdge: Edge {
         switch self {
-        case .leftHalf: return .right
+        case .leftHalf, .fixedSixtyPercentLeft: return .right
         case .rightHalf: return .left
         case .bottomHalf: return .top
         case .topHalf: return .bottom
@@ -877,7 +883,7 @@ enum WindowAction: Int, Codable {
 
     var gapsApplicable: Dimension {
         switch self {
-        case .leftHalf, .rightHalf, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird,
+        case .leftHalf, .rightHalf, .fixedSixtyPercentLeft, .bottomHalf, .topHalf, .centerHalf, .bottomLeft, .bottomRight, .topLeft, .topRight, .firstThird, .firstTwoThirds, .centerThird, .centerTwoThirds, .lastTwoThirds, .lastThird,
                 .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths, .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
@@ -924,7 +930,7 @@ enum WindowAction: Int, Codable {
              .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
              .reverseAll, .tileAll, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
              .leftTodo, .rightTodo,
-             .specified:
+             .specified, .fixedSixtyPercentLeft:
             return false
         default:
             return true

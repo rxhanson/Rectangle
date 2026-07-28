@@ -171,6 +171,7 @@ class WindowCalculationFactory {
     
     static let leftHalfCalculation = LeftRightHalfCalculation()
     static let rightHalfCalculation = LeftRightHalfCalculation()
+    static let fixedSixtyPercentLeftCalculation = FixedHorizontalSplitCalculation(side: .leading, fraction: 0.6)
     static let centerHalfCalculation = CenterHalfCalculation()
     static let bottomHalfCalculation = BottomHalfCalculation()
     static let topHalfCalculation = TopHalfCalculation()
@@ -270,6 +271,7 @@ class WindowCalculationFactory {
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
      .rightHalf: rightHalfCalculation,
+     .fixedSixtyPercentLeft: fixedSixtyPercentLeftCalculation,
      .maximize: maximizeCalculation,
      .maximizeHeight: maxHeightCalculation,
      .previousDisplay: nextPrevDisplayCalculation,

@@ -2990,6 +2990,70 @@ class ClampedWindowAlignerTests: XCTestCase {
     }
 }
 
+class FixedHorizontalSplitCalculationTests: XCTestCase {
+
+    func testSixtyPercentLeftUsesVisibleFrameOriginAndFullHeight() {
+        let visibleFrame = CGRect(x: 120, y: 45, width: 1000, height: 700)
+
+        XCTAssertEqual(calculatedRect(in: visibleFrame),
+                       CGRect(x: 120, y: 45, width: 600, height: 700))
+    }
+
+    func testSixtyPercentLeftFloorsOddWidths() {
+        let visibleFrame = CGRect(x: 17, y: 30, width: 1001, height: 500)
+
+        XCTAssertEqual(calculatedRect(in: visibleFrame),
+                       CGRect(x: 17, y: 30, width: 600, height: 500))
+    }
+
+    func testSixtyPercentLeftSupportsNegativeOrigins() {
+        let visibleFrame = CGRect(x: -900, y: -200, width: 1000, height: 700)
+
+        XCTAssertEqual(calculatedRect(in: visibleFrame),
+                       CGRect(x: -900, y: -200, width: 600, height: 700))
+    }
+
+    func testSixtyPercentLeftRemainsHorizontalOnPortraitDisplays() {
+        let visibleFrame = CGRect(x: 40, y: 25, width: 700, height: 1200)
+
+        XCTAssertEqual(calculatedRect(in: visibleFrame),
+                       CGRect(x: 40, y: 25, width: 420, height: 1200))
+    }
+
+    func testSixtyPercentLeftDoesNotDependOnHorizontalSplitRatio() {
+        let savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
+        defer { Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio }
+
+        let visibleFrame = CGRect(x: 0, y: 0, width: 1000, height: 600)
+        Defaults.horizontalSplitRatio.value = 20
+        let firstRect = calculatedRect(in: visibleFrame)
+
+        Defaults.horizontalSplitRatio.value = 80
+        let secondRect = calculatedRect(in: visibleFrame)
+
+        XCTAssertEqual(firstRect, CGRect(x: 0, y: 0, width: 600, height: 600))
+        XCTAssertEqual(secondRect, firstRect)
+    }
+
+    func testSixtyPercentLeftIsResolvedByFactoryAndIsIdempotent() {
+        XCTAssertTrue(WindowCalculationFactory.calculationsByAction[.fixedSixtyPercentLeft]
+                        === WindowCalculationFactory.fixedSixtyPercentLeftCalculation)
+        XCTAssertFalse(WindowAction.fixedSixtyPercentLeft.positionCycles)
+        XCTAssertEqual(WindowAction.fixedSixtyPercentLeft.gapsApplicable, .both)
+        XCTAssertEqual(WindowAction.fixedSixtyPercentLeft.gapSharedEdge, .right)
+    }
+
+    private func calculatedRect(in visibleFrame: CGRect) -> CGRect {
+        let params = RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                               visibleFrameOfScreen: visibleFrame,
+                                               action: .fixedSixtyPercentLeft,
+                                               lastAction: nil)
+        return WindowCalculationFactory.calculationsByAction[.fixedSixtyPercentLeft]!
+            .calculateRect(params)
+            .rect
+    }
+}
+
 class NilWindowIdCalculationTests: XCTestCase {
     
     private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
