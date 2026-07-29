@@ -178,9 +178,7 @@ class SettingsViewController: NSViewController {
     }
 
     @objc func toggleAutoMaximize(_ sender: NSButton) {
-        // autoMaximize is tri-state; the re-maximize behavior is active unless explicitly disabled.
-        // Checked = keep default behavior (nil), unchecked = disabled (false).
-        Defaults.autoMaximize.enabled = sender.state == .on ? nil : false
+        Defaults.autoMaximize.enabled = sender.state == .on
     }
 
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -1233,9 +1231,7 @@ class SettingsViewController: NSViewController {
            let insertIdx = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) {
 
             let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Preserve maximize state when moving across displays", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleAutoMaximize(_:)))
-            // autoMaximize is tri-state; the re-maximize behavior is active unless explicitly disabled.
             checkbox.state = Defaults.autoMaximize.userDisabled ? .off : .on
-            // Match storyboard checkbox content priorities to prevent vertical compression
             checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
             checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
 
