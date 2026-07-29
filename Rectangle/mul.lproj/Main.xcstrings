@@ -20156,12 +20156,6 @@
         }
       }
     },
-    "Maximize window when moved to another display" : {
-
-    },
-    "When off, a maximized window keeps its size and is centered on the new display instead of filling it." : {
-
-    },
     "Green stoplight button maximizes instead of Full Screen" : {
 
     },
@@ -34565,6 +34559,9 @@
           }
         }
       }
+    },
+    "Preserve maximize state when moving across displays" : {
+
     },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
       "localizations" : {

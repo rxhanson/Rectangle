@@ -1232,25 +1232,14 @@ class SettingsViewController: NSViewController {
            let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
            let insertIdx = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) {
 
-            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Maximize window when moved to another display", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleAutoMaximize(_:)))
+            let checkbox = NSButton(checkboxWithTitle: NSLocalizedString("Preserve maximize state when moving across displays", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleAutoMaximize(_:)))
             // autoMaximize is tri-state; the re-maximize behavior is active unless explicitly disabled.
             checkbox.state = Defaults.autoMaximize.userDisabled ? .off : .on
             // Match storyboard checkbox content priorities to prevent vertical compression
             checkbox.setContentCompressionResistancePriority(.required, for: .vertical)
             checkbox.setContentHuggingPriority(.defaultHigh, for: .vertical)
 
-            // Must be set before inserting: NSStackView queries intrinsicContentSize once on
-            // insertion, so preferredMaxLayoutWidth=0 would give zero height permanently.
-            let descLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("When off, a maximized window keeps its size and is centered on the new display instead of filling it.", tableName: "Main", value: "", comment: ""))
-            descLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-            descLabel.textColor = .secondaryLabelColor
-            descLabel.translatesAutoresizingMaskIntoConstraints = false
-            descLabel.preferredMaxLayoutWidth = 500
-            descLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-            descLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-
             parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
-            parentStack.insertArrangedSubview(descLabel, at: insertIdx + 2)
             autoMaximizeCheckbox = checkbox
         }
     }
