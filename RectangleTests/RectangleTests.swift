@@ -2910,7 +2910,15 @@ class ShortcutManagerSessionTests: XCTestCase {
         XCTAssertTrue(harness.bindingStore.boundKeys.isEmpty)
     }
 
-    func testRecordingBlocksSessionRestoreUntilRecordingEnds() {
+    func testRecordingBlocksSessionRestoreUntilRecordingEnds() throws {
+        let binder = try XCTUnwrap(MASShortcutBinder.shared())
+        let previousBindingOptions = binder.bindingOptions
+        binder.bindingOptions = [NSBindingOption.valueTransformerName: MASDictionaryTransformerName]
+        defer {
+            TodoManager.setShortcutBindingsSuspended(false)
+            binder.bindingOptions = previousBindingOptions
+        }
+
         let harness = makeHarness()
 
         harness.notificationCenter.post(name: .shortcutRecording, object: true)

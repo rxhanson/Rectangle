@@ -34560,6 +34560,9 @@
         }
       }
     },
+    "Preserve maximize state when moving across displays" : {
+
+    },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
       "localizations" : {
         "ko" : {

@@ -11,6 +11,7 @@ class TodoManager {
     static let toggleDefaultsKey = "toggleTodo"
     static let reflowDefaultsKey = "reflowTodo"
     static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
+    private static var shortcutBindingsSuspended = false
     
     static func setTodoMode(_ enabled: Bool, _ bringToFront: Bool = true) {
         Defaults.todoMode.enabled = enabled
@@ -72,7 +73,7 @@ class TodoManager {
     }
     
     static func registerUnregisterToggleShortcut() {
-        if Defaults.todo.userEnabled && shortcutBindingsSessionActive {
+        if Defaults.todo.userEnabled && shortcutBindingsSessionActive && !shortcutBindingsSuspended {
             registerToggleShortcut()
         } else {
             unregisterToggleShortcut()
@@ -80,7 +81,7 @@ class TodoManager {
     }
     
     static func registerUnregisterReflowShortcut() {
-        if Defaults.todo.userEnabled && Defaults.todoMode.enabled && shortcutBindingsSessionActive {
+        if Defaults.todo.userEnabled && Defaults.todoMode.enabled && shortcutBindingsSessionActive && !shortcutBindingsSuspended {
             registerReflowShortcut()
         } else {
             unregisterReflowShortcut()
@@ -98,6 +99,13 @@ class TodoManager {
             registerUnregisterToggleShortcut()
             registerUnregisterReflowShortcut()
         }
+    }
+
+    static func setShortcutBindingsSuspended(_ suspended: Bool) {
+        guard shortcutBindingsSuspended != suspended else { return }
+        shortcutBindingsSuspended = suspended
+        registerUnregisterToggleShortcut()
+        registerUnregisterReflowShortcut()
     }
 
     private static func isTodoShortcutBindable(_ defaultsKey: String) -> Bool {
