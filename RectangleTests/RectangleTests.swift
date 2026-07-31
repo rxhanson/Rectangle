@@ -150,6 +150,118 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class ChangeSizeCalculationTests: XCTestCase {
+    private let visibleFrame = CGRect(x: 0, y: 0, width: 2560, height: 1415)
+    private let issueWindowRect = CGRect(x: 1895, y: 0, width: 665, height: 1415)
+    private var minimumWindowWidth: Float = 0
+    private var minimumWindowHeight: Float = 0
+    private var sizeOffset: Float = 0
+    private var gapSize: Float = 0
+    private var curtainChangeSize: Bool?
+    private var storedMinimumWindowWidth: Any?
+    private var storedMinimumWindowHeight: Any?
+
+    override func setUp() {
+        super.setUp()
+
+        minimumWindowWidth = Defaults.minimumWindowWidth.value
+        minimumWindowHeight = Defaults.minimumWindowHeight.value
+        sizeOffset = Defaults.sizeOffset.value
+        gapSize = Defaults.gapSize.value
+        curtainChangeSize = Defaults.curtainChangeSize.enabled
+        storedMinimumWindowWidth = UserDefaults.standard.object(forKey: Defaults.minimumWindowWidth.key)
+        storedMinimumWindowHeight = UserDefaults.standard.object(forKey: Defaults.minimumWindowHeight.key)
+
+        Defaults.minimumWindowWidth.value = 0
+        Defaults.minimumWindowHeight.value = 0
+        Defaults.sizeOffset.value = 30
+        Defaults.gapSize.value = 0
+        Defaults.curtainChangeSize.enabled = true
+    }
+
+    override func tearDown() {
+        Defaults.minimumWindowWidth.value = minimumWindowWidth
+        Defaults.minimumWindowHeight.value = minimumWindowHeight
+        restoreStoredValue(storedMinimumWindowWidth, for: Defaults.minimumWindowWidth.key)
+        restoreStoredValue(storedMinimumWindowHeight, for: Defaults.minimumWindowHeight.key)
+        Defaults.sizeOffset.value = sizeOffset
+        Defaults.gapSize.value = gapSize
+        Defaults.curtainChangeSize.enabled = curtainChangeSize
+
+        super.tearDown()
+    }
+
+    func testExplicitZeroDisablesScreenFractionMinimum() {
+        XCTAssertEqual(smallerResult(for: issueWindowRect),
+                       CGRect(x: 1925, y: 0, width: 635, height: 1415))
+    }
+
+    func testMinimumFractionDefaultDistinguishesAbsentFromExplicitZero() {
+        let key = "ChangeSizeCalculationTests.minimumWindowWidth"
+        UserDefaults.standard.removeObject(forKey: key)
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+
+        let absentPreference = MinimumWindowFractionDefault(key: key)
+        XCTAssertEqual(absentPreference.value, 0.25)
+        XCTAssertEqual(absentPreference.toCodable().float, 0.25)
+
+        absentPreference.value = 0
+        let explicitZeroPreference = MinimumWindowFractionDefault(key: key)
+        XCTAssertEqual(explicitZeroPreference.value, 0)
+        XCTAssertEqual(explicitZeroPreference.toCodable().float, -1)
+
+        explicitZeroPreference.load(from: CodableDefault(float: 0))
+        XCTAssertEqual(explicitZeroPreference.value, 0.25)
+
+        explicitZeroPreference.load(from: CodableDefault(float: -1))
+        XCTAssertEqual(explicitZeroPreference.value, 0)
+    }
+
+    func testSmallerCanReachExactConfiguredMinimum() {
+        Defaults.minimumWindowWidth.value = 0.25
+        let windowRect = CGRect(x: 1890, y: 0, width: 670, height: 1415)
+
+        XCTAssertEqual(smallerResult(for: windowRect),
+                       CGRect(x: 1920, y: 0, width: 640, height: 1415))
+    }
+
+    func testSmallerHonorsConfiguredScreenFractionMinimum() {
+        Defaults.minimumWindowWidth.value = 0.25
+
+        XCTAssertEqual(smallerResult(for: issueWindowRect), issueWindowRect)
+    }
+
+    func testSmallConfiguredScreenFractionAllowsIssueRegressionStep() {
+        Defaults.minimumWindowWidth.value = 0.01
+
+        XCTAssertEqual(smallerResult(for: issueWindowRect),
+                       CGRect(x: 1925, y: 0, width: 635, height: 1415))
+    }
+
+    func testExplicitZeroStillRejectsNonpositiveSize() {
+        let narrowWindow = CGRect(x: 100, y: 100, width: 20, height: 100)
+
+        XCTAssertEqual(smallerResult(for: narrowWindow), narrowWindow)
+    }
+
+    private func smallerResult(for windowRect: CGRect) -> CGRect {
+        ChangeSizeCalculation().calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: windowRect),
+                                      visibleFrameOfScreen: visibleFrame,
+                                      action: .smaller,
+                                      lastAction: nil)
+        ).rect
+    }
+
+    private func restoreStoredValue(_ value: Any?, for key: String) {
+        if let value {
+            UserDefaults.standard.set(value, forKey: key)
+        } else {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+    }
+}
+
 class CooperativeCornerResizeTests: XCTestCase {
     private let screenFrame = CGRect(x: 0, y: 0, width: 1200, height: 900)
     private let minimumSize = CGSize(width: 100, height: 100)

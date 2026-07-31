@@ -8,22 +8,24 @@ protocol ChangeWindowDimensionCalculation {
 
 extension ChangeWindowDimensionCalculation {
     private func minimumWindowWidth() -> CGFloat {
-        let defaultWidth = Defaults.minimumWindowWidth.value
-        return (defaultWidth <= 0 || defaultWidth > 1)
-            ? 0.25
-            : CGFloat(defaultWidth)
+        minimumWindowFraction(Defaults.minimumWindowWidth)
     }
-    
+
     private func minimumWindowHeight() -> CGFloat {
-        let defaultHeight = Defaults.minimumWindowHeight.value
-        return (defaultHeight <= 0 || defaultHeight > 1)
+        minimumWindowFraction(Defaults.minimumWindowHeight)
+    }
+
+    private func minimumWindowFraction(_ preference: FloatDefault) -> CGFloat {
+        let value = preference.value
+        return (!value.isFinite || value < 0 || value > 1)
             ? 0.25
-            : CGFloat(defaultHeight)
+            : CGFloat(value)
     }
     
     func resizedWindowRectIsTooSmall(windowRect: CGRect, visibleFrameOfScreen: CGRect) -> Bool {
-        let minimumWindowRectWidth = floor(visibleFrameOfScreen.width * minimumWindowWidth())
-        let minimumWindowRectHeight = floor(visibleFrameOfScreen.height * minimumWindowHeight())
-        return (windowRect.width <= minimumWindowRectWidth) || (windowRect.height <= minimumWindowRectHeight)
+        let minimumWindowRectWidth = max(1, floor(visibleFrameOfScreen.width * minimumWindowWidth()))
+        let minimumWindowRectHeight = max(1, floor(visibleFrameOfScreen.height * minimumWindowHeight()))
+        return (windowRect.size.width < minimumWindowRectWidth)
+            || (windowRect.size.height < minimumWindowRectHeight)
     }
 }

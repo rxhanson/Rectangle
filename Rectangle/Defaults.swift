@@ -28,8 +28,8 @@ class Defaults {
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
     static let useCursorScreenDetection = BoolDefault(key: "useCursorScreenDetection")
-    static let minimumWindowWidth = FloatDefault(key: "minimumWindowWidth")
-    static let minimumWindowHeight = FloatDefault(key: "minimumWindowHeight")
+    static let minimumWindowWidth = MinimumWindowFractionDefault(key: "minimumWindowWidth")
+    static let minimumWindowHeight = MinimumWindowFractionDefault(key: "minimumWindowHeight")
     static let sizeOffset = FloatDefault(key: "sizeOffset")
     static let widthStepSize = FloatDefault(key: "widthStepSize", defaultValue: 30)
     static let unsnapRestore = OptionalBoolDefault(key: "unsnapRestore")
@@ -341,10 +341,11 @@ class FloatDefault: Default {
     
     var cgFloat: CGFloat { CGFloat(value) }
 
-    init(key: String, defaultValue: Float = 0) {
+    init(key: String, defaultValue: Float = 0, zeroValueIsValid: Bool = false) {
         self.key = key
         value = UserDefaults.standard.float(forKey: key)
-        if(defaultValue != 0 && value == 0) {
+        let hasStoredValue = UserDefaults.standard.object(forKey: key) != nil
+        if defaultValue != 0, value == 0, !zeroValueIsValid || !hasStoredValue {
             value = defaultValue
         }
         initialized = true
@@ -358,6 +359,33 @@ class FloatDefault: Default {
     
     func toCodable() -> CodableDefault {
         return CodableDefault(float: value)
+    }
+}
+
+class MinimumWindowFractionDefault: FloatDefault {
+    // Legacy configs serialized the implicit 25% default as zero. Use a sentinel
+    // so newly disabled limits can round-trip without changing old config imports.
+    private static let disabledConfigValue: Float = -1
+
+    init(key: String) {
+        super.init(key: key, defaultValue: 0.25, zeroValueIsValid: true)
+    }
+
+    override func load(from codable: CodableDefault) {
+        guard let value = codable.float else { return }
+        switch value {
+        case Self.disabledConfigValue:
+            self.value = 0
+        case 0:
+            // Older configs exported an unset preference as zero, which meant 25%.
+            self.value = 0.25
+        default:
+            self.value = value
+        }
+    }
+
+    override func toCodable() -> CodableDefault {
+        CodableDefault(float: value == 0 ? Self.disabledConfigValue : value)
     }
 }
 
