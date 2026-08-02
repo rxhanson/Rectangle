@@ -92,6 +92,8 @@
 		9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704A22B189250037B409 /* BestEffortWindowMover.swift */; };
 		9824705122B28D7A0037B409 /* LeftRightHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */; };
 		983BBD6F253B609D000D223E /* FootprintWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983BBD6E253B609D000D223E /* FootprintWindow.swift */; };
+		F1AC0DE000000000000000A2 /* StackBadgeGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AC0DE000000000000000A1 /* StackBadgeGeometry.swift */; };
+		F1AC0DE000000000000000A4 /* StackBadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AC0DE000000000000000A3 /* StackBadgeManager.swift */; };
 		983DD04028A844BE00BF1EEE /* SnapAreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */; };
 		983DD04428B0639E00BF1EEE /* SnapAreaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */; };
 		984EDB0F29A42ED200D119D2 /* LaunchOnLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */; };
@@ -317,6 +319,8 @@
 		9824704A22B189250037B409 /* BestEffortWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BestEffortWindowMover.swift; sourceTree = "<group>"; };
 		9824705022B28D7A0037B409 /* LeftRightHalfCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftRightHalfCalculation.swift; sourceTree = "<group>"; };
 		983BBD6E253B609D000D223E /* FootprintWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootprintWindow.swift; sourceTree = "<group>"; };
+		F1AC0DE000000000000000A1 /* StackBadgeGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackBadgeGeometry.swift; sourceTree = "<group>"; };
+		F1AC0DE000000000000000A3 /* StackBadgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackBadgeManager.swift; sourceTree = "<group>"; };
 		983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaViewController.swift; sourceTree = "<group>"; };
 		983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaModel.swift; sourceTree = "<group>"; };
 		984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOnLogin.swift; sourceTree = "<group>"; };
@@ -708,6 +712,7 @@
 				98910B3C2311304D0066EC23 /* PrefsWindow */,
 				989DA30C243FC0C3008C7AA4 /* WelcomeWindow */,
 				98C2755F231FF6AE009B9292 /* Snapping */,
+				F1AC0DE000000000000000A5 /* StackBadge */,
 				98D4B6C925B625B6009C7BF6 /* TodoMode */,
 				985B9BFA22BE218C00A2E8F0 /* Popover */,
 				982140EA22B7DB0400ABFB3F /* WindowMover */,
@@ -784,6 +789,15 @@
 				98D4B6C425B6256C009C7BF6 /* TodoManager.swift */,
 			);
 			path = TodoMode;
+			sourceTree = "<group>";
+		};
+		F1AC0DE000000000000000A5 /* StackBadge */ = {
+			isa = PBXGroup;
+			children = (
+				F1AC0DE000000000000000A1 /* StackBadgeGeometry.swift */,
+				F1AC0DE000000000000000A3 /* StackBadgeManager.swift */,
+			);
+			path = StackBadge;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1081,6 +1095,8 @@
 				9824702C22AFA22E0037B409 /* AccessibilityWindowController.swift in Sources */,
 				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
 				983BBD6F253B609D000D223E /* FootprintWindow.swift in Sources */,
+				F1AC0DE000000000000000A2 /* StackBadgeGeometry.swift in Sources */,
+				F1AC0DE000000000000000A4 /* StackBadgeManager.swift in Sources */,
 				988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */,
 				AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */,
 				98C6DEF023CE191700CC0C1E /* GapCalculation.swift in Sources */,

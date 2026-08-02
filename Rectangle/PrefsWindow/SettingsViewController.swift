@@ -118,6 +118,11 @@ class SettingsViewController: NSViewController {
         Notification.Name.showAdditionalSizesInMenuChanged.post()
     }
 
+    @objc func toggleStackBadge(_ sender: NSButton) {
+        Defaults.stackBadge.enabled = sender.state == .on
+        Notification.Name.stackBadgeChanged.post()
+    }
+
     @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
         Defaults.cyclingOverlapOffset.enabled = sender.state == .on
     }
@@ -906,11 +911,17 @@ class SettingsViewController: NSViewController {
             overlapOffsetCheckbox.translatesAutoresizingMaskIntoConstraints = false
             overlapOffsetCheckbox.alignment = .left
 
+            let stackBadgeCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Show stacked window badge on hover", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleStackBadge(_:)))
+            stackBadgeCheckbox.state = Defaults.stackBadge.userEnabled ? .on : .off
+            stackBadgeCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            stackBadgeCheckbox.alignment = .left
+
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
             mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
             mainStackView.addArrangedSubview(overlapOffsetCheckbox)
-            mainStackView.setCustomSpacing(8, after: overlapOffsetCheckbox)
+            mainStackView.addArrangedSubview(stackBadgeCheckbox)
+            mainStackView.setCustomSpacing(8, after: stackBadgeCheckbox)
             mainStackView.addArrangedSubview(cyclingHintLabel)
             mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
             mainStackView.addArrangedSubview(topLeftEighthRow)
@@ -983,6 +994,7 @@ class SettingsViewController: NSViewController {
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                stackBadgeCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 topVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 middleVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),

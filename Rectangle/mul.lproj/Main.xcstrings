@@ -38900,6 +38900,9 @@
         }
       }
     },
+    "Show stacked window badge on hover" : {
+
+    },
     "Side Split Ratio" : {
       "localizations" : {
         "ko" : {
