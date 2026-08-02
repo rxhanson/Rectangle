@@ -19,8 +19,10 @@ class ShortcutRecordingObserverTests: XCTestCase {
         binder.bindingOptions = [NSBindingOption.valueTransformerName: MASDictionaryTransformerName]
 
         TodoManager.setShortcutBindingsSuspended(true)
+        TodoManager.setShortcutBindingsSessionActive(true)
         defer {
             TodoManager.setShortcutBindingsSuspended(true)
+            TodoManager.setShortcutBindingsSessionActive(true)
 
             if let previousToggleShortcut {
                 userDefaults.set(previousToggleShortcut, forKey: TodoManager.toggleDefaultsKey)
@@ -197,6 +199,38 @@ class ShortcutRecordingObserverTests: XCTestCase {
 
             XCTAssertFalse(monitor.isShortcutRegistered(toggleShortcut))
             XCTAssertFalse(monitor.isShortcutRegistered(reflowShortcut))
+        }
+    }
+
+    func testEndingRecordingDoesNotRebindTodoShortcutsWhileSessionIsInactive() throws {
+        try withRegisteredTodoShortcuts { monitor, toggleShortcut, reflowShortcut in
+            TodoManager.setShortcutBindingsSessionActive(false)
+            TodoManager.setShortcutBindingsSuspended(true)
+            TodoManager.setShortcutBindingsSuspended(false)
+
+            XCTAssertFalse(monitor.isShortcutRegistered(toggleShortcut))
+            XCTAssertFalse(monitor.isShortcutRegistered(reflowShortcut))
+
+            TodoManager.setShortcutBindingsSessionActive(true)
+
+            XCTAssertTrue(monitor.isShortcutRegistered(toggleShortcut))
+            XCTAssertTrue(monitor.isShortcutRegistered(reflowShortcut))
+        }
+    }
+
+    func testSessionActivationDoesNotRebindTodoShortcutsWhileRecording() throws {
+        try withRegisteredTodoShortcuts { monitor, toggleShortcut, reflowShortcut in
+            TodoManager.setShortcutBindingsSuspended(true)
+            TodoManager.setShortcutBindingsSessionActive(false)
+            TodoManager.setShortcutBindingsSessionActive(true)
+
+            XCTAssertFalse(monitor.isShortcutRegistered(toggleShortcut))
+            XCTAssertFalse(monitor.isShortcutRegistered(reflowShortcut))
+
+            TodoManager.setShortcutBindingsSuspended(false)
+
+            XCTAssertTrue(monitor.isShortcutRegistered(toggleShortcut))
+            XCTAssertTrue(monitor.isShortcutRegistered(reflowShortcut))
         }
     }
 

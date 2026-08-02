@@ -5,6 +5,7 @@ import MASShortcut
 
 class TodoManager {
     private static var todoWindowId: CGWindowID?
+    private static var shortcutBindingsSessionActive = true
 
     static var todoScreen : NSScreen?
     static let toggleDefaultsKey = "toggleTodo"
@@ -72,7 +73,7 @@ class TodoManager {
     }
     
     static func registerUnregisterToggleShortcut() {
-        if Defaults.todo.userEnabled && !shortcutBindingsSuspended {
+        if Defaults.todo.userEnabled && shortcutBindingsSessionActive && !shortcutBindingsSuspended {
             registerToggleShortcut()
         } else {
             unregisterToggleShortcut()
@@ -80,10 +81,23 @@ class TodoManager {
     }
     
     static func registerUnregisterReflowShortcut() {
-        if Defaults.todo.userEnabled && Defaults.todoMode.enabled && !shortcutBindingsSuspended {
+        if Defaults.todo.userEnabled && Defaults.todoMode.enabled && shortcutBindingsSessionActive && !shortcutBindingsSuspended {
             registerReflowShortcut()
         } else {
             unregisterReflowShortcut()
+        }
+    }
+
+    static func setShortcutBindingsSessionActive(_ isActive: Bool) {
+        guard shortcutBindingsSessionActive != isActive else { return }
+
+        shortcutBindingsSessionActive = isActive
+        unregisterToggleShortcut()
+        unregisterReflowShortcut()
+
+        if isActive {
+            registerUnregisterToggleShortcut()
+            registerUnregisterReflowShortcut()
         }
     }
 
