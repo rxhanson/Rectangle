@@ -153,8 +153,8 @@ class DefaultsExportTests: XCTestCase {
 class ChangeSizeCalculationTests: XCTestCase {
     private let visibleFrame = CGRect(x: 0, y: 0, width: 2560, height: 1415)
     private let issueWindowRect = CGRect(x: 1895, y: 0, width: 665, height: 1415)
-    private var minimumWindowWidth: Float = 0
-    private var minimumWindowHeight: Float = 0
+    private var minimumWindowWidth: Double = 0
+    private var minimumWindowHeight: Double = 0
     private var sizeOffset: Float = 0
     private var gapSize: Float = 0
     private var curtainChangeSize: Bool?
@@ -196,25 +196,57 @@ class ChangeSizeCalculationTests: XCTestCase {
                        CGRect(x: 1925, y: 0, width: 635, height: 1415))
     }
 
-    func testMinimumFractionDefaultDistinguishesAbsentFromExplicitZero() {
+    func testDoubleDefaultDistinguishesAbsentFromExplicitZero() {
         let key = "ChangeSizeCalculationTests.minimumWindowWidth"
         UserDefaults.standard.removeObject(forKey: key)
         defer { UserDefaults.standard.removeObject(forKey: key) }
 
-        let absentPreference = MinimumWindowFractionDefault(key: key)
+        let absentPreference = DoubleDefault(key: key, defaultValue: 0.25)
         XCTAssertEqual(absentPreference.value, 0.25)
-        XCTAssertEqual(absentPreference.toCodable().float, 0.25)
+        XCTAssertEqual(absentPreference.toCodable().double, 0.25)
+        XCTAssertNil(absentPreference.toCodable().float)
 
         absentPreference.value = 0
-        let explicitZeroPreference = MinimumWindowFractionDefault(key: key)
+        let explicitZeroPreference = DoubleDefault(key: key, defaultValue: 0.25)
         XCTAssertEqual(explicitZeroPreference.value, 0)
-        XCTAssertEqual(explicitZeroPreference.toCodable().float, -1)
+        XCTAssertEqual(explicitZeroPreference.toCodable().double, 0)
+        XCTAssertNil(explicitZeroPreference.toCodable().float)
+    }
 
-        explicitZeroPreference.load(from: CodableDefault(float: 0))
-        XCTAssertEqual(explicitZeroPreference.value, 0.25)
+    func testDoubleDefaultLoadsLegacyFloatAndNewDoubleConfigValues() throws {
+        let key = "ChangeSizeCalculationTests.minimumWindowWidthConfig"
+        UserDefaults.standard.removeObject(forKey: key)
+        defer { UserDefaults.standard.removeObject(forKey: key) }
 
-        explicitZeroPreference.load(from: CodableDefault(float: -1))
-        XCTAssertEqual(explicitZeroPreference.value, 0)
+        let preference = DoubleDefault(key: key, defaultValue: 0.25)
+        let legacyZero = try JSONDecoder().decode(
+            CodableDefault.self,
+            from: Data(#"{"float":0}"#.utf8)
+        )
+        let legacyFraction = try JSONDecoder().decode(
+            CodableDefault.self,
+            from: Data(#"{"float":0.01}"#.utf8)
+        )
+        let currentZero = try JSONDecoder().decode(
+            CodableDefault.self,
+            from: Data(#"{"double":0}"#.utf8)
+        )
+        let currentFraction = try JSONDecoder().decode(
+            CodableDefault.self,
+            from: Data(#"{"double":0.123456789012345}"#.utf8)
+        )
+
+        preference.load(from: legacyZero)
+        XCTAssertEqual(preference.value, 0.25)
+
+        preference.load(from: legacyFraction)
+        XCTAssertEqual(preference.value, Double(Float(0.01)))
+
+        preference.load(from: currentFraction)
+        XCTAssertEqual(preference.value, 0.123456789012345)
+
+        preference.load(from: currentZero)
+        XCTAssertEqual(preference.value, 0)
     }
 
     func testSmallerCanReachExactConfiguredMinimum() {

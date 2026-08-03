@@ -15,11 +15,11 @@ extension ChangeWindowDimensionCalculation {
         minimumWindowFraction(Defaults.minimumWindowHeight)
     }
 
-    private func minimumWindowFraction(_ preference: FloatDefault) -> CGFloat {
+    private func minimumWindowFraction(_ preference: DoubleDefault) -> CGFloat {
         let value = preference.value
         return (!value.isFinite || value < 0 || value > 1)
             ? 0.25
-            : CGFloat(value)
+            : value
     }
     
     func resizedWindowRectIsTooSmall(windowRect: CGRect, visibleFrameOfScreen: CGRect) -> Bool {

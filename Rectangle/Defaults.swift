@@ -28,8 +28,8 @@ class Defaults {
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
     static let useCursorScreenDetection = BoolDefault(key: "useCursorScreenDetection")
-    static let minimumWindowWidth = MinimumWindowFractionDefault(key: "minimumWindowWidth")
-    static let minimumWindowHeight = MinimumWindowFractionDefault(key: "minimumWindowHeight")
+    static let minimumWindowWidth = DoubleDefault(key: "minimumWindowWidth", defaultValue: 0.25)
+    static let minimumWindowHeight = DoubleDefault(key: "minimumWindowHeight", defaultValue: 0.25)
     static let sizeOffset = FloatDefault(key: "sizeOffset")
     static let widthStepSize = FloatDefault(key: "widthStepSize", defaultValue: 30)
     static let unsnapRestore = OptionalBoolDefault(key: "unsnapRestore")
@@ -204,12 +204,14 @@ struct CodableDefault: Codable {
     let bool: Bool?
     let int: Int?
     let float: Float?
+    let double: Double?
     let string: String?
     
-    init(bool: Bool? = nil, int: Int? = nil, float: Float? = nil, string: String? = nil) {
+    init(bool: Bool? = nil, int: Int? = nil, float: Float? = nil, double: Double? = nil, string: String? = nil) {
         self.bool = bool
         self.int = int
         self.float = float
+        self.double = double
         self.string = string
     }
 }
@@ -341,11 +343,10 @@ class FloatDefault: Default {
     
     var cgFloat: CGFloat { CGFloat(value) }
 
-    init(key: String, defaultValue: Float = 0, zeroValueIsValid: Bool = false) {
+    init(key: String, defaultValue: Float = 0) {
         self.key = key
         value = UserDefaults.standard.float(forKey: key)
-        let hasStoredValue = UserDefaults.standard.object(forKey: key) != nil
-        if defaultValue != 0, value == 0, !zeroValueIsValid || !hasStoredValue {
+        if(defaultValue != 0 && value == 0) {
             value = defaultValue
         }
         initialized = true
@@ -362,30 +363,42 @@ class FloatDefault: Default {
     }
 }
 
-class MinimumWindowFractionDefault: FloatDefault {
-    // Legacy configs serialized the implicit 25% default as zero. Use a sentinel
-    // so newly disabled limits can round-trip without changing old config imports.
-    private static let disabledConfigValue: Float = -1
+class DoubleDefault: Default {
+    public private(set) var key: String
+    private var initialized = false
+    private let defaultValue: Double
 
-    init(key: String) {
-        super.init(key: key, defaultValue: 0.25, zeroValueIsValid: true)
-    }
-
-    override func load(from codable: CodableDefault) {
-        guard let value = codable.float else { return }
-        switch value {
-        case Self.disabledConfigValue:
-            self.value = 0
-        case 0:
-            // Older configs exported an unset preference as zero, which meant 25%.
-            self.value = 0.25
-        default:
-            self.value = value
+    var value: Double {
+        didSet {
+            if initialized {
+                UserDefaults.standard.set(value, forKey: key)
+            }
         }
     }
 
-    override func toCodable() -> CodableDefault {
-        CodableDefault(float: value == 0 ? Self.disabledConfigValue : value)
+    init(key: String, defaultValue: Double = 0) {
+        self.key = key
+        self.defaultValue = defaultValue
+        if UserDefaults.standard.object(forKey: key) == nil {
+            value = defaultValue
+        } else {
+            value = UserDefaults.standard.double(forKey: key)
+        }
+        initialized = true
+    }
+
+    func load(from codable: CodableDefault) {
+        if let double = codable.double {
+            value = double
+        } else if let float = codable.float {
+            // Legacy float-backed defaults could not distinguish an absent value
+            // from zero; preserve their effective default when migrating.
+            value = float == 0 && defaultValue != 0 ? defaultValue : Double(float)
+        }
+    }
+
+    func toCodable() -> CodableDefault {
+        CodableDefault(double: value)
     }
 }
 
