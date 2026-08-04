@@ -153,7 +153,7 @@ class CustomLayoutStoreTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        suiteName = "com.perg593.divvy2.tests.\(UUID().uuidString)"
+        suiteName = "com.perg593.chiva.tests.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suiteName)
     }
 

@@ -10,7 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             terminate()
             return
         }
-        let mainAppIdentifier = "com.perg593.divvy2"
+        let mainAppIdentifier = "com.perg593.chiva"
         let running = NSWorkspace.shared.runningApplications
         let isRunning = !running.filter({$0.bundleIdentifier == mainAppIdentifier}).isEmpty
         

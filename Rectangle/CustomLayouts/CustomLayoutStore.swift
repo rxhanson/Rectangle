@@ -1,7 +1,7 @@
 /// CustomLayoutStore.swift
 ///
 /// Persistence for custom layouts: a versioned JSON envelope stored under our OWN
-/// UserDefaults key `com.perg593.divvy2.customLayouts`. Independent of Rectangle's
+/// UserDefaults key `com.perg593.chiva.customLayouts`. Independent of Rectangle's
 /// own config import/export. Posts `.customLayoutsChanged` on every successful
 /// mutation so the (M2) shortcut manager can re-register. See
 /// docs/2026-06-23-Design-M1-Model-Store.md.
@@ -9,7 +9,7 @@
 import Foundation
 
 extension Notification.Name {
-    static let customLayoutsChanged = Notification.Name("com.perg593.divvy2.customLayoutsChanged")
+    static let customLayoutsChanged = Notification.Name("com.perg593.chiva.customLayoutsChanged")
 }
 
 enum CustomLayoutImportError: Error, Equatable {
@@ -27,7 +27,7 @@ struct CustomLayoutsEnvelope: Codable {
 
 final class CustomLayoutStore {
 
-    static let defaultsKey = "com.perg593.divvy2.customLayouts"
+    static let defaultsKey = "com.perg593.chiva.customLayouts"
     static let currentSchemaVersion = 1
 
     private let defaults: UserDefaults

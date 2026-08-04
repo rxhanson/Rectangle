@@ -10,7 +10,7 @@
         <scene sceneID="lVl-bK-43b">
             <objects>
                 <windowController storyboardIdentifier="LogWindowController" id="vJi-GS-BV5" customClass="LogWindowController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Rectangle Logging" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Uij-UE-jd5">
+                    <window key="window" title="Chiva Logging" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Uij-UE-jd5">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="245" y="301" width="480" height="270"/>

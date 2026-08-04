@@ -130,7 +130,7 @@ class SettingsViewController: NSViewController {
             let conflictTitleText = NSLocalizedString(
                 "Conflict with system setting", tableName: "Main", value: "", comment: "")
             let conflictDescriptionText = NSLocalizedString(
-                "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.", tableName: "Main", value: "", comment: "")
+                "To let Chiva manage the title bar double click functionality, you need to disable the corresponding macOS setting.", tableName: "Main", value: "", comment: "")
 
             
             let closeText = NSLocalizedString("DVo-aG-piG.title", tableName: "Main", value: "Close", comment: "")
@@ -231,7 +231,7 @@ class SettingsViewController: NSViewController {
         Notification.Name.windowSnapping.post(object: false)
         let savePanel = NSSavePanel()
         savePanel.allowedFileTypes = ["json"]
-        savePanel.nameFieldStringValue = "RectangleConfig"
+        savePanel.nameFieldStringValue = "ChivaConfig"
         let response = savePanel.runModal()
         if response == .OK, let url = savePanel.url {
             do {

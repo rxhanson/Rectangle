@@ -28,7 +28,7 @@ final class CustomLayoutConflictHelperTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        suiteName = "com.perg593.divvy2.m3conf.\(UUID().uuidString)"
+        suiteName = "com.perg593.chiva.m3conf.\(UUID().uuidString)"
         conflicts = UserDefaults(suiteName: suiteName)
     }
     override func tearDown() { conflicts.removePersistentDomain(forName: suiteName); super.tearDown() }

@@ -9,7 +9,7 @@ class FootprintWindow: NSWindow {
         let initialRect = NSRect(x: 0, y: 0, width: 0, height: 0)
         super.init(contentRect: initialRect, styleMask: .titled, backing: .buffered, defer: false)
 
-        title = "Rectangle"
+        title = "Chiva"
         isOpaque = false
         level = .modalPanel
         hasShadow = false

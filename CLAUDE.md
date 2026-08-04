@@ -1,4 +1,4 @@
-# Divvy-2 — Agent Guide
+# Divvy-2 / Chiva — Agent Guide
 
 > **Lean by design.** This file holds load-bearing rules + orientation only.
 > Detail lives in `docs/` (dated `YYYY-MM-DD-<Type>-<Name>.md`). Follow the
@@ -6,14 +6,18 @@
 
 ## What this is
 
-A native Apple-Silicon window snapper to replace Mizage Divvy (Intel-only,
-losing support). Built by **forking `rxhanson/Rectangle`** (MIT, Swift/AppKit).
-MVP = keyboard layouts: hotkeys that snap the focused window to user-saved
-arbitrary screen fractions ("Custom Layouts") — a parallel subsystem that
-bypasses Rectangle's fixed `WindowAction` enum. Bundle ID `com.perg593.divvy2`.
+A native Apple-Silicon window snapper (**Chiva**) to replace Mizage Divvy
+(Intel-only, losing support). Built by **forking `rxhanson/Rectangle`** (MIT,
+Swift/AppKit). MVP = keyboard layouts: hotkeys that snap the focused window to
+user-saved arbitrary screen fractions ("Custom Layouts") — a parallel subsystem
+that bypasses Rectangle's fixed `WindowAction` enum.
 
-**Status:** plan is **Codex-GREEN**; next step is **M0** (fork + build), then the
-**M0.5 architecture spike** before any model/UI code. Personal side project.
+**Identity:** bundle ID `com.perg593.chiva`, product/display name **Chiva**,
+install path **`/Applications/Chiva.app`**. URL scheme `chiva`. (Repo folder is
+still `divvy-2`; Xcode targets/module remain `Rectangle*` internally.)
+
+**Status:** M0–M0.5 complete; custom layouts + prefs present. Identity cutover
+plan: [`docs/2026-08-03-Plan-Chiva-Identity.md`](docs/2026-08-03-Plan-Chiva-Identity.md).
 
 ## MANDATORY: Plan → Codex green-gate → checkpoint reviews
 
@@ -38,6 +42,9 @@ chore), e.g. `feat(layouts): add CustomLayout store + JSON persistence`.
 - **QA gate before "done":** the Swift equivalent of a green build — `swift
   build` / `xcodebuild build` + `swift test` (and SwiftLint once added) must pass
   before marking work complete. Fix root causes; don't route around failures.
+- **Dev install:** `scripts/dev-signing-setup.sh` (once; identity **Chiva Dev**)
+  then `scripts/build-install.sh` → `/Applications/Chiva.app`. One-time Divvy2
+  cutover: `scripts/chiva-cutover.sh`.
 - **Secrets:** never commit credentials, signing identities, or `.env`. Use
   1Password (`op read`) at use-time if any secret is ever needed.
 - **Memory:** per-project file-based memory lives in this repo's project memory
@@ -46,4 +53,5 @@ chore), e.g. `feat(layouts): add CustomLayout store + JSON persistence`.
 ## See Also
 
 - **The plan (Codex-GREEN):** [`docs/2026-06-23-Plan-Divvy2-Window-Snapper.md`](docs/2026-06-23-Plan-Divvy2-Window-Snapper.md)
-- Architecture spike output (created at M0.5): `SPIKE.md`
+- **Identity cutover (Codex-GREEN):** [`docs/2026-08-03-Plan-Chiva-Identity.md`](docs/2026-08-03-Plan-Chiva-Identity.md)
+- Architecture spike output: `SPIKE.md`

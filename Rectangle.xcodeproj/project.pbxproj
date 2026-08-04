@@ -25,6 +25,9 @@
 		4EF0BC3E7226C16DCCA2F1D7 /* CustomLayoutConflict.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633F964BD9D602D8B3FDD264 /* CustomLayoutConflict.swift */; };
 		4F0BDBE2CD4612727941C7B1 /* CustomLayoutShortcutManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572E5025C9709404549929C7 /* CustomLayoutShortcutManagerTests.swift */; };
 		52953B57D48A4F110779E9BD /* BottomCenterLeftTwelfthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71FE3EBE50F91F9EE2989279 /* BottomCenterLeftTwelfthCalculation.swift */; };
+		46A1688B316A4C2EB1AF36D7 /* IdentityMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D6C2129C0A4FB1BB1C60CD /* IdentityMigration.swift */; };
+		7FBEFB3BB35240048FEF7524 /* UnregisterLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1A043881A74433A8F43840 /* UnregisterLogin.swift */; };
+		8D8DAE7C95E1472A951E5E77 /* IdentityMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EA3AAD0CE544F991282BC7 /* IdentityMigrationTests.swift */; };
 		553FCE005BDDED5D1AE550BF /* CustomLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA591DC9637CACC3DD97DAA /* CustomLayoutTests.swift */; };
 		562018A56BC897E769500F1F /* LowerMiddleLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C796BCAA3DA5F85B55A7EE83 /* LowerMiddleLeftSixteenthCalculation.swift */; };
 		630644571003EB468CB643D8 /* BottomCenterRightSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24EBF1F9A6209449A988E15 /* BottomCenterRightSixteenthCalculation.swift */; };
@@ -440,6 +443,9 @@
 		D24EBF1F9A6209449A988E15 /* BottomCenterRightSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomCenterRightSixteenthCalculation.swift; sourceTree = "<group>"; };
 		D7D038C68560DC11F14496F6 /* BottomRightTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomRightTwelfthCalculation.swift; sourceTree = "<group>"; };
 		D9FDCA1333C1BF6930A8D7F3 /* TopLeftTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopLeftTwelfthCalculation.swift; sourceTree = "<group>"; };
+		F3D6C2129C0A4FB1BB1C60CD /* IdentityMigration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IdentityMigration.swift; sourceTree = "<group>"; };
+		5C1A043881A74433A8F43840 /* UnregisterLogin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnregisterLogin.swift; sourceTree = "<group>"; };
+		67EA3AAD0CE544F991282BC7 /* IdentityMigrationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = IdentityMigrationTests.swift; sourceTree = "<group>"; };
 		DBA591DC9637CACC3DD97DAA /* CustomLayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CustomLayoutTests.swift; sourceTree = "<group>"; };
 		EEABF10E66D648DDB37DABBA /* MiddleLeftTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleLeftTwelfthCalculation.swift; sourceTree = "<group>"; };
 		EF104BDB48AE421AEEF481CB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -756,6 +762,8 @@
 			isa = PBXGroup;
 			children = (
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
+				F3D6C2129C0A4FB1BB1C60CD /* IdentityMigration.swift */,
+				5C1A043881A74433A8F43840 /* UnregisterLogin.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
 				9824701222AF9B7E0037B409 /* Main.storyboard */,
@@ -801,6 +809,7 @@
 				9824701F22AF9B7E0037B409 /* RectangleTests.swift */,
 				944F25D02CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift */,
 				9824702122AF9B7E0037B409 /* Info.plist */,
+				67EA3AAD0CE544F991282BC7 /* IdentityMigrationTests.swift */,
 				DBA591DC9637CACC3DD97DAA /* CustomLayoutTests.swift */,
 				572E5025C9709404549929C7 /* CustomLayoutShortcutManagerTests.swift */,
 				062B38F7E90594C292EB3A6F /* CustomLayoutUITests.swift */,
@@ -1280,6 +1289,8 @@
 				4A8B9A3298B9B0C38E3478D9 /* NormalizedRect.swift in Sources */,
 				4E00E2C1ACF2C6FC852DC949 /* HotkeyData.swift in Sources */,
 				E60FF5489186CC8C163FE4D3 /* CustomLayout.swift in Sources */,
+				46A1688B316A4C2EB1AF36D7 /* IdentityMigration.swift in Sources */,
+				7FBEFB3BB35240048FEF7524 /* UnregisterLogin.swift in Sources */,
 				7F42B2D5CBD7A97F33DBD322 /* CustomLayoutStore.swift in Sources */,
 				75EBA26ED4BD97525929EAE7 /* CustomLayoutShortcutManager.swift in Sources */,
 				4EF0BC3E7226C16DCCA2F1D7 /* CustomLayoutConflict.swift in Sources */,
@@ -1293,6 +1304,7 @@
 			files = (
 				9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */,
 				944F25D12CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift in Sources */,
+				8D8DAE7C95E1472A951E5E77 /* IdentityMigrationTests.swift in Sources */,
 				553FCE005BDDED5D1AE550BF /* CustomLayoutTests.swift in Sources */,
 				4F0BDBE2CD4612727941C7B1 /* CustomLayoutShortcutManagerTests.swift in Sources */,
 				9A3149C9EA43383E2ECA295F /* CustomLayoutUITests.swift in Sources */,
@@ -1354,7 +1366,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2.spikehelper;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva.spikehelper;
 				PRODUCT_NAME = Divvy2SpikeHelper;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
@@ -1380,7 +1392,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2.RectangleLauncher;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva.launcher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1408,7 +1420,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2.RectangleLauncher;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva.launcher;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1566,7 +1578,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 0.96;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva;
 				PRODUCT_MODULE_NAME = Rectangle;
 				PRODUCT_NAME = "Chiva";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1599,7 +1611,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 0.96;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva;
 				PRODUCT_MODULE_NAME = Rectangle;
 				PRODUCT_NAME = "Chiva";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1626,7 +1638,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2.RectangleTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1651,7 +1663,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2.RectangleTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1676,7 +1688,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.divvy2.spikehelper;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perg593.chiva.spikehelper;
 				PRODUCT_NAME = Divvy2SpikeHelper;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;

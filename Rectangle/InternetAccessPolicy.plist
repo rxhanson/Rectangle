@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ApplicationDescription</key>
-	<string>Rectangle is the gold standard for window management on macOS. Free and open source.</string>
+	<string>Chiva is a window snapper for window management on macOS. Free and open source.</string>
 	<key>Connections</key>
 	<array>
 		<dict>
@@ -16,7 +16,7 @@
 			<key>Port</key>
 			<string>443</string>
 			<key>Purpose</key>
-			<string>Rectangle checks for new versions</string>
+			<string>Chiva does not check for updates</string>
 			<key>DenyConsequences</key>
 			<string>If you deny this connection, you will not be notified about new versions.</string>
 		</dict>

@@ -53,7 +53,7 @@ final class CustomLayoutShortcutManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        suiteName = "com.perg593.divvy2.m2tests.\(UUID().uuidString)"
+        suiteName = "com.perg593.chiva.m2tests.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suiteName)
         conflicts = UserDefaults(suiteName: suiteName + ".conf")
         monitor = FakeMonitor()

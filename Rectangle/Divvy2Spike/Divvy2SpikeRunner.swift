@@ -67,7 +67,7 @@ enum Divvy2SpikeRunner {
         }
 
         // The isolated suite the conflict checks consult (never real prefs).
-        let suiteName = "com.perg593.divvy2.spike"
+        let suiteName = "com.perg593.chiva.spike"
         let suite = UserDefaults(suiteName: suiteName)!
         suite.removePersistentDomain(forName: suiteName)
         addCleanup { suite.removePersistentDomain(forName: suiteName) }
@@ -147,8 +147,8 @@ enum Divvy2SpikeRunner {
     private static func check1RegisterReloadOwnership(_ report: Report, suite: UserDefaults) {
         report.section("Check 1 — register + reload + ownership (non-mutating)")
         // Empty conflict defaults so our novel chords never collide with real prefs.
-        let conflicts = UserDefaults(suiteName: "com.perg593.divvy2.spike.c1")!
-        conflicts.removePersistentDomain(forName: "com.perg593.divvy2.spike.c1")
+        let conflicts = UserDefaults(suiteName: "com.perg593.chiva.spike.c1")!
+        conflicts.removePersistentDomain(forName: "com.perg593.chiva.spike.c1")
         let mgr = SpikeCustomLayoutShortcutManager(conflictDefaults: conflicts)
         addCleanup { mgr.unregisterAllOwned() }
 
@@ -201,9 +201,9 @@ enum Divvy2SpikeRunner {
 
     private static func check2ConflictRejection(_ report: Report, suite: UserDefaults) {
         report.section("Check 2 — conflict rejection (isolated suite)")
-        let conflicts = UserDefaults(suiteName: "com.perg593.divvy2.spike.c2")!
-        conflicts.removePersistentDomain(forName: "com.perg593.divvy2.spike.c2")
-        addCleanup { conflicts.removePersistentDomain(forName: "com.perg593.divvy2.spike.c2") }
+        let conflicts = UserDefaults(suiteName: "com.perg593.chiva.spike.c2")!
+        conflicts.removePersistentDomain(forName: "com.perg593.chiva.spike.c2")
+        addCleanup { conflicts.removePersistentDomain(forName: "com.perg593.chiva.spike.c2") }
 
         // Inject a live WindowAction shortcut (leftHalf = ctrl+opt+Left) into the isolated suite.
         let waChord = mas(123, [.control, .option]) // 123 = left arrow
@@ -232,9 +232,9 @@ enum Divvy2SpikeRunner {
 
     private static func check3Lifecycle(_ report: Report, applicationToggle: ApplicationToggle) {
         report.section("Check 3 — lifecycle suppression (recording + shortcutsDisabled)")
-        let conflicts = UserDefaults(suiteName: "com.perg593.divvy2.spike.c3")!
-        conflicts.removePersistentDomain(forName: "com.perg593.divvy2.spike.c3")
-        addCleanup { conflicts.removePersistentDomain(forName: "com.perg593.divvy2.spike.c3") }
+        let conflicts = UserDefaults(suiteName: "com.perg593.chiva.spike.c3")!
+        conflicts.removePersistentDomain(forName: "com.perg593.chiva.spike.c3")
+        addCleanup { conflicts.removePersistentDomain(forName: "com.perg593.chiva.spike.c3") }
         let mgr = SpikeCustomLayoutShortcutManager(conflictDefaults: conflicts)
         mgr.startObservingRecording()
         addCleanup { mgr.unregisterAllOwned() }
@@ -262,7 +262,7 @@ enum Divvy2SpikeRunner {
         }
         let initial = ApplicationToggle.shortcutsDisabled // false
         let disabledSnapshot = Defaults.disabledApps.value
-        let fakeId = "com.perg593.divvy2.spike.fakeapp"
+        let fakeId = "com.perg593.chiva.spike.fakeapp"
         // Idempotent teardown wired into cleanup as well.
         let restore: () -> Void = {
             applicationToggle.enableApp(appBundleId: fakeId)
@@ -302,7 +302,7 @@ enum Divvy2SpikeRunner {
         }
 
         // Refuse to proceed if a helper instance is somehow already running.
-        let already = NSRunningApplication.runningApplications(withBundleIdentifier: "com.perg593.divvy2.spikehelper")
+        let already = NSRunningApplication.runningApplications(withBundleIdentifier: "com.perg593.chiva.spikehelper")
         if !already.isEmpty {
             report.note("- [SKIP] a Divvy2SpikeHelper instance is already running")
             record(report, name: "Check 4", passed: false, notReady: true)
@@ -480,7 +480,7 @@ enum Divvy2SpikeRunner {
                                "transformedValue reproduces an equal MASShortcut") && ok
         }
         // Recorder-emission proof: a REAL MASShortcutView bound to a temp key emits the same dict.
-        let recKey = "com.perg593.divvy2.spike.recorder." + UUID().uuidString
+        let recKey = "com.perg593.chiva.spike.recorder." + UUID().uuidString
         addCleanup { UserDefaults.standard.removeObject(forKey: recKey) } // crash-safe temp-key removal
         let view = MASShortcutView()
         view.setAssociatedUserDefaultsKey(recKey, withTransformerName: MASDictionaryTransformerName)
@@ -502,7 +502,7 @@ enum Divvy2SpikeRunner {
                                && decoded.toMASShortcut().modifierFlags == shortcut.modifierFlags,
                                "SpikeHotkeyData JSON round-trip preserves the chord (schemaVersion \(hk.schemaVersion))") && ok
         } else { ok = false }
-        report.note("- Canonical SpikeHotkeyData: `{ keyCode: Int, modifierFlags: UInt, schemaVersion: Int = 1 }`, persisted under `com.perg593.divvy2.customLayouts`. Proven above that the real MASShortcutView recorder emits exactly this `{keyCode, modifierFlags}` dict — so SpikeHotkeyData is interchangeable with the recorder's on-disk output.")
+        report.note("- Canonical SpikeHotkeyData: `{ keyCode: Int, modifierFlags: UInt, schemaVersion: Int = 1 }`, persisted under `com.perg593.chiva.customLayouts`. Proven above that the real MASShortcutView recorder emits exactly this `{keyCode, modifierFlags}` dict — so SpikeHotkeyData is interchangeable with the recorder's on-disk output.")
         record(report, name: "Check 6", passed: ok)
     }
 
@@ -559,7 +559,7 @@ enum Divvy2SpikeRunner {
             record(report, name: "Check 8", passed: false, notReady: true); return
         }
 
-        let suiteName = "com.perg593.divvy2.spike.c8"
+        let suiteName = "com.perg593.chiva.spike.c8"
         let suite = UserDefaults(suiteName: suiteName)!
         suite.removePersistentDomain(forName: suiteName)
         addCleanup { suite.removePersistentDomain(forName: suiteName) }
@@ -605,7 +605,7 @@ enum Divvy2SpikeRunner {
         // Snapshot the PERSISTENT (on-disk) override, NOT the effective value — otherwise a
         // key that was merely inherited from registered defaults would get written back as a
         // persistent user value on restore, mutating real prefs.
-        let domain = Bundle.main.bundleIdentifier ?? "com.perg593.divvy2"
+        let domain = Bundle.main.bundleIdentifier ?? "com.perg593.chiva"
         let savedLeftHalf = std.persistentDomain(forName: domain)?[leftHalfKey]
         addCleanup {
             if let saved = savedLeftHalf { std.set(saved, forKey: leftHalfKey) }
@@ -613,7 +613,7 @@ enum Divvy2SpikeRunner {
             rectMgr.reloadFromDefaults()   // restore Rectangle to its original bindings
         }
 
-        let suiteName = "com.perg593.divvy2.spike.c9"
+        let suiteName = "com.perg593.chiva.spike.c9"
         let suite = UserDefaults(suiteName: suiteName)!
         suite.removePersistentDomain(forName: suiteName)
         addCleanup { suite.removePersistentDomain(forName: suiteName) }

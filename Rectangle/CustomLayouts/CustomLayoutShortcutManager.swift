@@ -11,7 +11,7 @@ import MASShortcut
 
 extension Notification.Name {
     /// Posted after each reconcile so the M3 UI can refresh per-layout binding status.
-    static let customLayoutBindingsReconciled = Notification.Name("com.perg593.divvy2.customLayoutBindingsReconciled")
+    static let customLayoutBindingsReconciled = Notification.Name("com.perg593.chiva.customLayoutBindingsReconciled")
 }
 
 // MARK: - Injectable seams (so unit tests don't touch the real monitor / move real windows)

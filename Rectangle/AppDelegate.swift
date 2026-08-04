@@ -7,7 +7,9 @@ import os.log
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    static let launcherAppId = "com.perg593.divvy2.RectangleLauncher"
+    static let launcherAppId = "com.perg593.chiva.launcher"
+    /// Immutable pre-cutover launcher ID for login-item cleanup (compiled; not rewritten by xcodebuild overrides).
+    static let legacyLauncherAppId = "com.perg593.divvy2.RectangleLauncher"
 
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
@@ -42,6 +44,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        if CommandLine.arguments.contains("--unregister-login") {
+            UnregisterLogin.runAndExit()
+            return
+        }
+
+        IdentityMigration.runIfNeeded()
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()
 
@@ -175,7 +183,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for app in runningApps {
             guard let bundleId = app.bundleIdentifier else { continue }
             if let conflictingAppName = conflictingAppsIds[bundleId] {
-                AlertUtil.oneButtonAlert(question: "Potential window manager conflict: \(conflictingAppName)", text: "Since \(conflictingAppName) might have some overlapping behavior with Rectangle, it's recommended that you either disable or quit \(conflictingAppName).")
+                AlertUtil.oneButtonAlert(question: "Potential window manager conflict: \(conflictingAppName)", text: "Since \(conflictingAppName) might have some overlapping behavior with Chiva, it's recommended that you either disable or quit \(conflictingAppName).")
                 break
             }
         }
@@ -227,7 +235,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let displayNameString = displayNames.joined(separator: "\n")
         
         if !problemBundles.isEmpty {
-            AlertUtil.oneButtonAlert(question: "Known issues with installed applications", text: "\(displayNameString)\n\nThese applications have issues with the drag to screen edge to snap functionality in Rectangle.\n\nYou can either ignore the applications using the menu item in Rectangle, or disable drag to screen edge snapping in Rectangle preferences.")
+            AlertUtil.oneButtonAlert(question: "Known issues with installed applications", text: "\(displayNameString)\n\nThese applications have issues with the drag to screen edge to snap functionality in Chiva.\n\nYou can either ignore the applications using the menu item in Chiva, or disable drag to screen edge snapping in Chiva preferences.")
             Defaults.notifiedOfProblemApps.enabled = true
         }
     }
@@ -667,11 +675,11 @@ extension AppDelegate {
             
             func confirmExecuteTask(action: String, bundleId: String) -> Bool {
                 // Defense-in-depth: any web page or another app can trigger the
-                // `divvy2://execute-task=ignore-app` URL with an arbitrary
+                // `chiva://execute-task=ignore-app` URL with an arbitrary
                 // bundle-id. Without confirmation this silently mutates
-                // Rectangle's `disabledApps` defaults. Skip the prompt only
-                // when Rectangle itself is frontmost (i.e. the user almost
-                // certainly clicked this from inside Rectangle's own UI).
+                // Chiva's `disabledApps` defaults. Skip the prompt only
+                // when Chiva itself is frontmost (i.e. the user almost
+                // certainly clicked this from inside Chiva's own UI).
                 if NSWorkspace.shared.frontmostApplication == NSRunningApplication.current {
                     return true
                 }
