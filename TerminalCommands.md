@@ -318,6 +318,8 @@ defaults write com.knollsoft.Rectangle centeredDirectionalMove -int 2
 
 By default, "Make Smaller" will decrease the window until it reaches 25% of the screen (width & height).
 
+Set either value to `0` to disable Rectangle's screen-relative limit for that dimension and rely on the application's native minimum size.
+
 ```bash
 defaults write com.knollsoft.Rectangle minimumWindowWidth -float <VALUE_BETWEEN_0_&_1>
 ```
