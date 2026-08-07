@@ -319,7 +319,7 @@ class ChangeSizeCalculationTests: XCTestCase {
 
     func testExplicitZeroDisablesScreenFractionMinimum() {
         XCTAssertEqual(smallerResult(for: issueWindowRect),
-                       CGRect(x: 1925, y: 0, width: 635, height: 1415))
+                       CGRect(x: 1925, y: 15, width: 635, height: 1385))
     }
 
     func testDoubleDefaultDistinguishesAbsentFromExplicitZero() {
@@ -380,7 +380,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         let windowRect = CGRect(x: 1890, y: 0, width: 670, height: 1415)
 
         XCTAssertEqual(smallerResult(for: windowRect),
-                       CGRect(x: 1920, y: 0, width: 640, height: 1415))
+                       CGRect(x: 1920, y: 15, width: 640, height: 1385))
     }
 
     func testSmallerHonorsConfiguredScreenFractionMinimum() {
@@ -389,11 +389,21 @@ class ChangeSizeCalculationTests: XCTestCase {
         XCTAssertEqual(smallerResult(for: issueWindowRect), issueWindowRect)
     }
 
+    func testSmallerShrinksHeightOfFullHeightWindow() {
+        // Regression for #1737: a vertically-maximized (Half / full-height) window must shrink in
+        // BOTH dimensions under the combined `.smaller` command, not only in width. Mirrors the
+        // `.smallerHeight` exception added in b97a353 (fixes #1645), extended to `.smaller`.
+        let fullHeightHalf = CGRect(x: 0, y: 0, width: 1280, height: 1415)
+
+        XCTAssertEqual(smallerResult(for: fullHeightHalf),
+                       CGRect(x: 0, y: 15, width: 1250, height: 1385))
+    }
+
     func testSmallConfiguredScreenFractionAllowsIssueRegressionStep() {
         Defaults.minimumWindowWidth.value = 0.01
 
         XCTAssertEqual(smallerResult(for: issueWindowRect),
-                       CGRect(x: 1925, y: 0, width: 635, height: 1415))
+                       CGRect(x: 1925, y: 15, width: 635, height: 1385))
     }
 
     func testExplicitZeroStillRejectsNonpositiveSize() {
