@@ -146,6 +146,107 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class ConfigImportTests: XCTestCase {
+
+    private static let shortcutKeys = WindowAction.active.map(\.name) + TodoManager.defaultsKeys
+    private var storedValues = [String: Any]()
+    private var absentKeys = Set<String>()
+
+    override func setUp() {
+        super.setUp()
+        for key in Self.shortcutKeys {
+            if let value = UserDefaults.standard.object(forKey: key) {
+                storedValues[key] = value
+            } else {
+                absentKeys.insert(key)
+            }
+        }
+    }
+
+    override func tearDown() {
+        for key in Self.shortcutKeys {
+            if let value = storedValues[key] {
+                UserDefaults.standard.set(value, forKey: key)
+            } else if absentKeys.contains(key) {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+        }
+        storedValues.removeAll()
+        absentKeys.removeAll()
+        super.tearDown()
+    }
+
+    func testImportClearsOmittedActiveShortcut() throws {
+        let action = WindowAction.almostMaximize
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 10), forKey: action.name)
+
+        try loadConfig(shortcuts: [:])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: action.name))
+    }
+
+    func testImportClearsOmittedTodoShortcut() throws {
+        let defaultsKey = TodoManager.toggleDefaultsKey
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 11), forKey: defaultsKey)
+
+        try loadConfig(shortcuts: [:])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: defaultsKey))
+    }
+
+    func testImportAppliesSuppliedActiveShortcut() throws {
+        let action = WindowAction.almostMaximize
+        let importedShortcut = Shortcut(NSEvent.ModifierFlags.command.rawValue, 12)
+
+        try loadConfig(shortcuts: [action.name: importedShortcut])
+
+        let storedShortcut = try XCTUnwrap(ShortcutCycle.shortcut(for: action))
+        XCTAssertEqual(storedShortcut.keyCode, importedShortcut.keyCode)
+        XCTAssertEqual(storedShortcut.modifierFlags.rawValue, importedShortcut.modifierFlags)
+    }
+
+    func testImportUsesActiveShortcutAlias() throws {
+        let action = WindowAction.leftHalf
+        let alias = try XCTUnwrap(action.aliasName)
+        let importedShortcut = Shortcut(NSEvent.ModifierFlags.command.rawValue, 13)
+
+        try loadConfig(shortcuts: [alias: importedShortcut])
+
+        let storedShortcut = try XCTUnwrap(ShortcutCycle.shortcut(for: action))
+        XCTAssertEqual(storedShortcut.keyCode, importedShortcut.keyCode)
+        XCTAssertEqual(storedShortcut.modifierFlags.rawValue, importedShortcut.modifierFlags)
+    }
+
+    func testImportClearsInvalidActiveShortcut() throws {
+        let action = WindowAction.almostMaximize
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 14), forKey: action.name)
+
+        try loadConfig(shortcuts: [action.name: Shortcut(NSEvent.ModifierFlags.command.rawValue, -1)])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: action.name))
+    }
+
+    private func store(_ shortcut: Shortcut, forKey key: String) {
+        let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        let value = transformer.reverseTransformedValue(shortcut.toMASSHortcut())
+        UserDefaults.standard.set(value, forKey: key)
+    }
+
+    private func loadConfig(shortcuts: [String: Shortcut]) throws {
+        let config = Config(bundleId: "com.knollsoft.Rectangle",
+                            version: "ConfigImportTests",
+                            shortcuts: shortcuts,
+                            defaults: [:])
+        let data = try JSONEncoder().encode(config)
+        let fileURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ConfigImportTests-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+        try data.write(to: fileURL, options: .atomic)
+
+        Defaults.load(fileUrl: fileURL, notificationCenter: NotificationCenter())
+    }
+}
+
 class StackBadgeGeometryTests: XCTestCase {
 
     private let laptopFrame = CGRect(x: 0, y: 0, width: 2336, height: 1510)
