@@ -146,6 +146,83 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class ShortcutDefaultsRestoreTests: XCTestCase {
+
+    private static let defaultsKeys = WindowAction.active.map(\.name) + [Defaults.alternateDefaultShortcuts.key]
+    private var storedValues = [String: Any]()
+    private var absentKeys = Set<String>()
+    private var alternateDefaultShortcuts = false
+
+    override func setUp() {
+        super.setUp()
+        storedValues.removeAll()
+        absentKeys.removeAll()
+        alternateDefaultShortcuts = Defaults.alternateDefaultShortcuts.enabled
+
+        for key in Self.defaultsKeys {
+            if let value = UserDefaults.standard.object(forKey: key) {
+                storedValues[key] = value
+            } else {
+                absentKeys.insert(key)
+            }
+        }
+    }
+
+    override func tearDown() {
+        Defaults.alternateDefaultShortcuts.enabled = alternateDefaultShortcuts
+        for key in Self.defaultsKeys {
+            if let value = storedValues[key] {
+                UserDefaults.standard.set(value, forKey: key)
+            } else if absentKeys.contains(key) {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+        }
+        storedValues.removeAll()
+        absentKeys.removeAll()
+        super.tearDown()
+    }
+
+    func testRestoreSameSchemeClearsOverrideAndPostsChangeDefaultsOnce() {
+        let action = WindowAction.almostMaximize
+        let rectangleDefaults = Defaults.alternateDefaultShortcuts.enabled
+        UserDefaults.standard.set(["keyCode": 12, "modifierFlags": NSEvent.ModifierFlags.command.rawValue],
+                                  forKey: action.name)
+        let notificationCenter = NotificationCenter()
+        var notificationCount = 0
+        let observer = notificationCenter.addObserver(forName: .changeDefaults, object: nil, queue: nil) { _ in
+            notificationCount += 1
+        }
+        defer { notificationCenter.removeObserver(observer) }
+
+        SettingsViewController.restoreShortcutDefaults(rectangleDefaults: rectangleDefaults,
+                                                       notificationCenter: notificationCenter)
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: action.name))
+        XCTAssertEqual(Defaults.alternateDefaultShortcuts.enabled, rectangleDefaults)
+        XCTAssertEqual(notificationCount, 1)
+    }
+
+    func testRestoreChangedSchemeClearsOverrideAndPostsChangeDefaultsOnce() {
+        let action = WindowAction.almostMaximize
+        let rectangleDefaults = !Defaults.alternateDefaultShortcuts.enabled
+        UserDefaults.standard.set(["keyCode": 13, "modifierFlags": NSEvent.ModifierFlags.option.rawValue],
+                                  forKey: action.name)
+        let notificationCenter = NotificationCenter()
+        var notificationCount = 0
+        let observer = notificationCenter.addObserver(forName: .changeDefaults, object: nil, queue: nil) { _ in
+            notificationCount += 1
+        }
+        defer { notificationCenter.removeObserver(observer) }
+
+        SettingsViewController.restoreShortcutDefaults(rectangleDefaults: rectangleDefaults,
+                                                       notificationCenter: notificationCenter)
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: action.name))
+        XCTAssertEqual(Defaults.alternateDefaultShortcuts.enabled, rectangleDefaults)
+        XCTAssertEqual(notificationCount, 1)
+    }
+}
+
 class StackBadgeGeometryTests: XCTestCase {
 
     private let laptopFrame = CGRect(x: 0, y: 0, width: 2336, height: 1510)
