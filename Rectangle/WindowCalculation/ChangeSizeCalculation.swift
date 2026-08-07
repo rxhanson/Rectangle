@@ -68,7 +68,7 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
             resizedWindowRect.size.height = resizedWindowRect.height + sizeOffset
             resizedWindowRect.origin.y = resizedWindowRect.minY - floor(sizeOffset / 2.0)
 
-            if curtainChangeSize, params.action != .smallerHeight {
+            if curtainChangeSize, ![.smaller, .smallerHeight].contains(params.action) {
                 resizedWindowRect = againstTopAndBottomScreenEdges(
                     originalWindowRect: window.rect,
                     resizedWindowRect: resizedWindowRect,
