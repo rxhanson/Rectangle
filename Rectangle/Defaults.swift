@@ -436,6 +436,18 @@ class IntDefault: Default {
     }
 }
 
+private struct SortedSnapAreaConfigs: Encodable {
+    let snapAreas: [Directional: SnapAreaConfig]
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        for (directional, snapAreaConfig) in snapAreas.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+            try container.encode(directional)
+            try container.encode(snapAreaConfig)
+        }
+    }
+}
+
 class JSONDefault<T: Codable>: StringDefault {
     
     private var typeInitialized = false
@@ -478,14 +490,28 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     private func saveToJSON(_ obj: T?) {
-        let encoder = JSONEncoder()
-        
-        if let jsonData = try? encoder.encode(obj) {
-            let jsonString = String(data: jsonData, encoding: .utf8)
-            if jsonString != value {
-                value = jsonString
-            }
+        if let jsonString = encodedString(obj), jsonString != value {
+            value = jsonString
         }
+    }
+
+    private func encodedString(_ obj: T?) -> String? {
+        let encoder = JSONEncoder()
+
+        let jsonData: Data?
+        if let snapAreas = obj as? [Directional: SnapAreaConfig] {
+            encoder.outputFormatting = .sortedKeys
+            jsonData = try? encoder.encode(SortedSnapAreaConfigs(snapAreas: snapAreas))
+        } else {
+            jsonData = try? encoder.encode(obj)
+        }
+        guard let jsonData = jsonData else { return nil }
+        return String(data: jsonData, encoding: .utf8)
+    }
+
+    override func toCodable() -> CodableDefault {
+        guard typedValue is [Directional: SnapAreaConfig] else { return super.toCodable() }
+        return CodableDefault(string: encodedString(typedValue))
     }
 }
 
