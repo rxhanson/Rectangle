@@ -146,6 +146,67 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class JSONDefaultSerializationTests: XCTestCase {
+
+    func testSnapAreaSerializationSortsDirectionalKeys() {
+        let key = "JSONDefaultSerializationTests-\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        let jsonDefault = JSONDefault<[Directional: SnapAreaConfig]>(key: key)
+
+        jsonDefault.typedValue = [
+            .bl: SnapAreaConfig(action: .bottomLeft),
+            .b: SnapAreaConfig(compound: .thirds),
+            .l: SnapAreaConfig(compound: .leftTopBottomHalf),
+            .tl: SnapAreaConfig(action: .topLeft),
+            .br: SnapAreaConfig(action: .bottomRight),
+            .tr: SnapAreaConfig(action: .topRight),
+            .r: SnapAreaConfig(compound: .rightTopBottomHalf)
+        ]
+
+        XCTAssertEqual(UserDefaults.standard.string(forKey: key), "[1,{\"action\":15},3,{\"action\":16},4,{\"compound\":-2},5,{\"compound\":-3},6,{\"action\":13},7,{\"compound\":-4},8,{\"action\":14}]")
+    }
+
+    func testSnapAreaExportCanonicalizesLoadedJSON() {
+        let key = "JSONDefaultSerializationTests-\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        UserDefaults.standard.set("[6,{\"action\":13},7,{\"compound\":-4},4,{\"compound\":-2},1,{\"action\":15},8,{\"action\":14},3,{\"action\":16},5,{\"compound\":-3}]", forKey: key)
+
+        let jsonDefault = JSONDefault<[Directional: SnapAreaConfig]>(key: key)
+
+        XCTAssertEqual(jsonDefault.toCodable().string, "[1,{\"action\":15},3,{\"action\":16},4,{\"compound\":-2},5,{\"compound\":-3},6,{\"action\":13},7,{\"compound\":-4},8,{\"action\":14}]")
+    }
+
+    func testNonSnapStoredJSONExportsRawValue() {
+        let key = "JSONDefaultSerializationTests-\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        let storedJSON = "{\"z\":1,\"a\":2}"
+        UserDefaults.standard.set(storedJSON, forKey: key)
+
+        let jsonDefault = JSONDefault<[String: Int]>(key: key)
+
+        XCTAssertEqual(jsonDefault.toCodable().string, storedJSON)
+    }
+
+    func testUnsetJSONDefaultExportsAsUnset() {
+        let key = "JSONDefaultSerializationTests-\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        let jsonDefault = JSONDefault<[String: Int]>(key: key)
+
+        XCTAssertNil(jsonDefault.toCodable().string)
+    }
+
+    func testInvalidStoredJSONExportsRawValue() {
+        let key = "JSONDefaultSerializationTests-\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        let invalidJSON = "not valid JSON"
+        UserDefaults.standard.set(invalidJSON, forKey: key)
+
+        let jsonDefault = JSONDefault<[String: Int]>(key: key)
+
+        XCTAssertEqual(jsonDefault.toCodable().string, invalidJSON)
+    }
+}
+
 class StackBadgeGeometryTests: XCTestCase {
 
     private let laptopFrame = CGRect(x: 0, y: 0, width: 2336, height: 1510)
