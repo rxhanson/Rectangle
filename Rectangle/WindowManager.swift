@@ -276,6 +276,15 @@ class WindowManager {
         // overlap scan, so skip the offset rather than cascade against itself.
         guard let windowId else { return rect }
 
+        // This scan enumerates every window over the accessibility API on the
+        // main thread. A hung or (under heavy system load) sluggish app can
+        // otherwise block that for the full default AX timeout - seconds -
+        // freezing the UI on each window move. Cap messaging for the scan and
+        // restore the default immediately after; an app that can't answer in
+        // time is simply skipped (no offset), which is harmless.
+        AXUIElementSetMessagingTimeout(AXUIElement.systemWide, 0.25)
+        defer { AXUIElementSetMessagingTimeout(AXUIElement.systemWide, 0) }
+
         let screenFrameAX = screen.adjustedVisibleFrame().screenFlipped
         let tolerance: CGFloat = 4
         let maxCascade = min(5, max(1, Defaults.cyclingOverlapMaxCascade.value))
