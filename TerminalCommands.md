@@ -36,6 +36,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
 - [Keep window size when moving a maximized window to another display](#keep-window-size-when-moving-a-maximized-window-to-another-display)
+- [Attempt to preserve window position when moving to another display](#attempt-to-preserve-window-position-when-moving-to-another-display)
 - [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
 - [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
 
@@ -535,6 +536,20 @@ To restore the default behavior:
 
 ```bash
 defaults write com.knollsoft.Rectangle autoMaximize -int 0
+```
+
+## Attempt to preserve window position when moving to another display
+
+By default, moving a window to the next, previous, or a specific display centers it on the destination display. Enable this to instead try preserving the window's position on the destination. If the previous action was a Rectangle snap (half, third, maximize, etc.), that snap is replayed on the destination display. If the window was positioned manually, its rect is mapped proportionally from the source display to the destination display (a window at the right third stays at the right third) and clamped so it never overflows. This is off by default.
+
+```bash
+defaults write com.knollsoft.Rectangle attemptMatchOnNextPrevDisplay -int 1
+```
+
+To disable it again:
+
+```bash
+defaults write com.knollsoft.Rectangle attemptMatchOnNextPrevDisplay -int 2
 ```
 
 ## Offset cycling position when overlapping another window

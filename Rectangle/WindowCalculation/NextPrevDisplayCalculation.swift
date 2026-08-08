@@ -36,9 +36,18 @@ class NextPrevDisplayCalculation: WindowCalculation {
                     let rectResult = calculation.calculateRect(newCalculationParams)
                     
                     return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: lastAction.action)
+                } else {
+                    // Issue #1723: opt-in ON but no replayable lastAction (e.g. a manually positioned
+                    // window). Map the window proportionally from the source screen to the destination
+                    // screen so it keeps its relative spot instead of jumping to the center.
+                    let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
+                    let mappedRect = NextPrevDisplayCalculation.relativePositionedRect(window: rectParams.window.rect,
+                                                                                       source: sourceFrame,
+                                                                                       destination: rectParams.visibleFrameOfScreen)
+                    return WindowCalculationResult(rect: mappedRect, screen: screen, resultingAction: params.action)
                 }
             }
-            
+
             let rectResult = calculateRect(rectParams)
             let resultingAction: WindowAction = rectResult.resultingAction ?? params.action
             return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: resultingAction)
@@ -54,5 +63,39 @@ class NextPrevDisplayCalculation: WindowCalculation {
         }
         
         return WindowCalculationFactory.centerCalculation.calculateRect(params)
+    }
+
+    /// Proportionally map `window` from the coordinate space of `source` to `destination`,
+    /// preserving its relative position and size as fractions of the source frame, then clamp the
+    /// result inside `destination` so a near-full-size window can never overflow. Shared by the
+    /// next/previous-display and specific-display moves when `attemptMatchOnNextPrevDisplay` is on
+    /// but there is no Rectangle snap action to replay (issue #1723).
+    static func relativePositionedRect(window: CGRect, source: CGRect, destination: CGRect) -> CGRect {
+        guard source.width > 0, source.height > 0 else { return window }
+
+        let originXFrac = (window.minX - source.minX) / source.width
+        let originYFrac = (window.minY - source.minY) / source.height
+        let widthFrac = window.width / source.width
+        let heightFrac = window.height / source.height
+
+        var rect = CGRect(x: destination.minX + originXFrac * destination.width,
+                          y: destination.minY + originYFrac * destination.height,
+                          width: widthFrac * destination.width,
+                          height: heightFrac * destination.height)
+
+        if rect.maxX > destination.maxX {
+            rect.origin.x = destination.maxX - rect.width
+        }
+        if rect.minX < destination.minX {
+            rect.origin.x = destination.minX
+        }
+        if rect.maxY > destination.maxY {
+            rect.origin.y = destination.maxY - rect.height
+        }
+        if rect.minY < destination.minY {
+            rect.origin.y = destination.minY
+        }
+
+        return rect
     }
 }
