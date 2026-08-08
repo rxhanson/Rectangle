@@ -455,10 +455,11 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     init(key: String, defaultValue: T) {
+        super.init(key: key)
+        loadFromJSON()
         if typedValue == nil {
             typedValue = defaultValue
         }
-        super.init(key: key)
     }
     
     override func load(from codable: CodableDefault) {
