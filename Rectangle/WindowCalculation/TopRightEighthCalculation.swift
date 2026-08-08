@@ -38,7 +38,7 @@ class TopRightEighthCalculation: WindowCalculation, OrientationAware, EighthsRep
         var rect = visibleFrameOfScreen
         rect.size.width = floor(visibleFrameOfScreen.width / 2.0)
         rect.size.height = floor(visibleFrameOfScreen.height / 4.0)
-        rect.origin.y = visibleFrameOfScreen.maxY - (visibleFrameOfScreen.height / 2.0)
+        rect.origin.y = visibleFrameOfScreen.maxY - (rect.height * 2.0)
         rect.origin.x = visibleFrameOfScreen.minX + rect.width
         return RectResult(rect, subAction: .topRightEighth)
     }
