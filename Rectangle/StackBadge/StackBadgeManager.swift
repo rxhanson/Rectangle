@@ -48,6 +48,12 @@ class StackBadgeManager {
     private var listWindow: NSPanel?
     private var visibleUIFrames = [CGRect]()
 
+    // Keyboard/hover selection state for the list. Selection is owned here so
+    // arrow keys and mouse hover drive the same highlighted row.
+    private var rows: [StackBadgeRowView] = []
+    private var stackedWindows: [StackedWindow] = []
+    private var selectedIndex = 0
+
     init() {
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
@@ -245,10 +251,24 @@ class StackBadgeManager {
         // Open the list just below the badge (indented to sit under the peek)
         // with a real gap, so the badge never overlaps the list's top.
         let listTop = CGPoint(x: anchor.x + 12, y: badge.frame.minY - 6)
-        let list = Self.makeListWindow(windows: windows, listTop: listTop, screenFrame: screenFrame) { [weak self] window in
-            self?.focus(window)
-        }
+        let (list, rows) = Self.makeListWindow(
+            windows: windows, listTop: listTop, screenFrame: screenFrame,
+            onHover: { [weak self] index in self?.selectRow(at: index) },
+            onSelect: { [weak self] index in self?.commit(at: index) })
+        self.rows = rows
+        self.stackedWindows = windows
+        selectedIndex = 0
+        applySelection()
+
+        // Arrow-key / Return / Escape navigation. The panel becomes key
+        // (non-activating, so no app switch) to receive these keys.
+        list.onArrowUp = { [weak self] in self?.moveSelection(by: -1) }
+        list.onArrowDown = { [weak self] in self?.moveSelection(by: 1) }
+        list.onCommit = { [weak self] in self?.commitSelection() }
+        list.onEscape = { [weak self] in self?.dismiss() }
+
         list.orderFrontRegardless()
+        list.makeKey()
         listWindow = list
 
         // Keep-alive corridor: the UI sits titleBarClearance BELOW the peek
@@ -280,6 +300,44 @@ class StackBadgeManager {
         listWindow?.orderOut(nil)
         listWindow = nil
         visibleUIFrames = []
+        rows = []
+        stackedWindows = []
+        selectedIndex = 0
+    }
+
+    // MARK: - Selection (shared by hover and keyboard)
+
+    /// Mouse hover over a row selects it (highlight only, no focus change).
+    private func selectRow(at index: Int) {
+        guard rows.indices.contains(index) else { return }
+        selectedIndex = index
+        applySelection()
+    }
+
+    /// Arrow keys move the highlight, clamped to the ends of the list.
+    private func moveSelection(by delta: Int) {
+        guard !rows.isEmpty else { return }
+        selectedIndex = max(0, min(rows.count - 1, selectedIndex + delta))
+        applySelection()
+    }
+
+    private func applySelection() {
+        for (i, row) in rows.enumerated() {
+            row.setSelected(i == selectedIndex)
+        }
+    }
+
+    /// A row click: select it, then bring its window forward.
+    private func commit(at index: Int) {
+        selectRow(at: index)
+        commitSelection()
+    }
+
+    /// Return (or a click): bring the selected window forward. The list stays
+    /// open so you can keep flipping through the stack.
+    private func commitSelection() {
+        guard stackedWindows.indices.contains(selectedIndex) else { return }
+        focus(stackedWindows[selectedIndex])
     }
 
     /// Resolves the window by pid directly (no shared window-list cache off
@@ -373,7 +431,8 @@ class StackBadgeManager {
     private static func makeListWindow(windows: [StackedWindow],
                                        listTop: CGPoint,
                                        screenFrame: CGRect,
-                                       onSelect: @escaping (StackedWindow) -> Void) -> NSPanel {
+                                       onHover: @escaping (Int) -> Void,
+                                       onSelect: @escaping (Int) -> Void) -> (panel: StackBadgeListPanel, rows: [StackBadgeRowView]) {
         let rowHeight: CGFloat = 22
         let width: CGFloat = 260
         let padding: CGFloat = 4
@@ -390,10 +449,10 @@ class StackBadgeManager {
                            height: height)
         if frame.maxX > screenFrame.maxX { frame.origin.x = screenFrame.maxX - frame.width }
 
-        let panel = NSPanel(contentRect: frame,
-                            styleMask: [.borderless, .nonactivatingPanel],
-                            backing: .buffered,
-                            defer: false)
+        let panel = StackBadgeListPanel(contentRect: frame,
+                                        styleMask: [.borderless, .nonactivatingPanel],
+                                        backing: .buffered,
+                                        defer: false)
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.level = .floating
@@ -410,19 +469,22 @@ class StackBadgeManager {
         container.layer?.cornerCurve = .continuous
         container.layer?.masksToBounds = true
 
+        var rows: [StackBadgeRowView] = []
         for (index, window) in windows.enumerated() {
-            let row = StackBadgeRowView(title: window.title, icon: appIcon(pid: window.pid)) {
-                onSelect(window)
-            }
+            let row = StackBadgeRowView(title: window.title,
+                                        icon: appIcon(pid: window.pid),
+                                        onHover: { onHover(index) },
+                                        onClick: { onSelect(index) })
             row.frame = NSRect(x: padding,
                                y: frame.height - padding - CGFloat(index + 1) * rowHeight,
                                width: width - padding * 2,
                                height: rowHeight)
             container.addSubview(row)
+            rows.append(row)
         }
 
         panel.contentView = container
-        return panel
+        return (panel, rows)
     }
 
     /// The running app's icon, drawn down to a crisp row-sized copy so the
@@ -438,14 +500,39 @@ class StackBadgeManager {
     }
 }
 
+/// The stacked-window list. A non-activating panel that can still become key,
+/// so it receives arrow-key / Return / Escape navigation without activating
+/// Rectangle or switching the frontmost app. Unhandled keys are swallowed
+/// (no system beep) while the transient overlay is up.
+private class StackBadgeListPanel: NSPanel {
+    var onArrowUp: (() -> Void)?
+    var onArrowDown: (() -> Void)?
+    var onCommit: (() -> Void)?
+    var onEscape: (() -> Void)?
+
+    override var canBecomeKey: Bool { true }
+
+    override func keyDown(with event: NSEvent) {
+        switch event.keyCode {
+        case 126: onArrowUp?()      // up arrow
+        case 125: onArrowDown?()    // down arrow
+        case 36, 76: onCommit?()    // return / keypad enter
+        case 53: onEscape?()        // escape
+        default: break
+        }
+    }
+}
+
 /// A single window row: app icon, then the window name. Highlights like a
-/// native menu row - the system selection color with white text - when the
-/// cursor is over it, and invokes its action on click.
+/// native menu row - the system selection color with white text - when
+/// selected (by hover or arrow keys), and invokes its action on click.
 private class StackBadgeRowView: NSView {
+    private let onHover: () -> Void
     private let onClick: () -> Void
     private let textField: NSTextField
 
-    init(title: String, icon: NSImage?, onClick: @escaping () -> Void) {
+    init(title: String, icon: NSImage?, onHover: @escaping () -> Void, onClick: @escaping () -> Void) {
+        self.onHover = onHover
         self.onClick = onClick
         self.textField = NSTextField(labelWithString: title)
         super.init(frame: .zero)
@@ -477,7 +564,7 @@ private class StackBadgeRowView: NSView {
                                  width: bounds.width - x - 6, height: height)
     }
 
-    private func setSelected(_ selected: Bool) {
+    func setSelected(_ selected: Bool) {
         layer?.backgroundColor = selected ? NSColor.selectedContentBackgroundColor.cgColor : nil
         textField.textColor = selected ? .selectedMenuItemTextColor : .labelColor
     }
@@ -490,12 +577,10 @@ private class StackBadgeRowView: NSView {
                                        owner: self))
     }
 
+    // Hover selects this row via the manager (which owns selection, so hover
+    // and arrow keys stay in sync). The manager clears the previous row.
     override func mouseEntered(with event: NSEvent) {
-        setSelected(true)
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        setSelected(false)
+        onHover()
     }
 
     override func mouseUp(with event: NSEvent) {
