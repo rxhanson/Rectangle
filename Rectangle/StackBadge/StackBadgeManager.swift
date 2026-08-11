@@ -151,9 +151,6 @@ class StackBadgeManager {
         // upward move in AX space), so the y window is symmetric.
         let candidates = WindowUtil.getWindowList().filter { info in
             guard info.level == kCGNormalWindowLevel else { return false }
-            let coversScreen = info.frame.width > screenFrameAX.width * 0.9
-                && info.frame.height > screenFrameAX.height * 0.9
-            guard !coversScreen else { return false }
             let dx = info.frame.origin.x - cornerAX.x
             let dy = info.frame.origin.y - cornerAX.y
             return dx >= -tolerance && dx <= candidateRange
@@ -162,9 +159,18 @@ class StackBadgeManager {
 
         // ...and the stack is the densest cascade cluster among them, so
         // the widened box doesn't count unrelated neighbors and an
-        // unrelated leftmost window doesn't mask a real stack.
+        // unrelated leftmost window doesn't mask a real stack. Windows
+        // covering the screen only form the stack when the tiled ones don't,
+        // so a pile of maximized windows is still revealed.
+        let coversScreen = candidates.map {
+            $0.frame.width > screenFrameAX.width * 0.9
+                && $0.frame.height > screenFrameAX.height * 0.9
+        }
         let stacked = StackBadgeGeometry
-            .stackIndices(among: candidates.map { $0.frame.origin }, cascadeRange: cascadeRange, tolerance: tolerance)
+            .stackIndices(among: candidates.map { $0.frame.origin },
+                          coversScreen: coversScreen,
+                          cascadeRange: cascadeRange,
+                          tolerance: tolerance)
             .map { candidates[$0] }
 
         guard stacked.count >= 2,

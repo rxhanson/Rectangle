@@ -70,6 +70,34 @@ enum StackBadgeGeometry {
         return best
     }
 
+    /// Indices of the cascade stack, when some candidates cover the screen.
+    ///
+    /// A window covering the screen shares its origin with every left/right
+    /// half and corner placement, so counting one would inflate the badge on
+    /// ordinary tiled stacks. Tiled windows therefore win: the stack is taken
+    /// from them whenever they form one. Only when they don't is the stack
+    /// taken from the screen-covering windows - a pile of maximized windows,
+    /// where the badge is the only way to see what's buried.
+    static func stackIndices(among origins: [CGPoint],
+                             coversScreen: [Bool],
+                             cascadeRange: CGFloat,
+                             tolerance: CGFloat) -> [Int] {
+        guard coversScreen.count == origins.count else { return [] }
+
+        func stack(of indices: [Int]) -> [Int] {
+            stackIndices(among: indices.map { origins[$0] },
+                         cascadeRange: cascadeRange,
+                         tolerance: tolerance)
+                .map { indices[$0] }
+        }
+
+        let tiled = stack(of: origins.indices.filter { !coversScreen[$0] })
+        guard tiled.count < 2 else { return tiled }
+
+        let covering = stack(of: origins.indices.filter { coversScreen[$0] })
+        return covering.count >= 2 ? covering : tiled
+    }
+
     /// The corner whose hover zone contains the point, or nil. The zone is a
     /// square extending right and down from the corner (down in AppKit means
     /// minus y), covering where gap-shifted windows and their title bars sit

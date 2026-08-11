@@ -135,7 +135,11 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
         }
 
-        if Defaults.cyclingOverlapOffset.userEnabled, action.positionCycles {
+        // Maximize doesn't cycle through positions, but two maximized windows
+        // still land exactly on top of each other, which is what the offset
+        // exists to reveal. (When gaps apply there's room to shift into; with
+        // no gaps the clamping in the offset leaves the window where it was.)
+        if Defaults.cyclingOverlapOffset.userEnabled, action.positionCycles || action == .maximize {
             calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
         }
 
@@ -296,6 +300,15 @@ class WindowManager {
         var candidate = rect
         var cascadeLevel = 0
 
+        // A window covering the screen shares its origin with every left/right
+        // half and corner placement, so matching one would offset all of them
+        // (#1766) - it's ignored. That only holds while the window being placed
+        // is smaller than it: when this window covers the screen too, a shared
+        // origin is a genuine stack of maximized windows, which is exactly what
+        // the offset is meant to reveal.
+        let candidateCoversScreen = rect.width > screenFrameAX.width * 0.9
+            && rect.height > screenFrameAX.height * 0.9
+
         while cascadeLevel < maxCascade {
             let candidateAX = candidate.screenFlipped
             let hasOverlap = otherWindows.contains { element in
@@ -304,7 +317,7 @@ class WindowManager {
                     && abs(otherFrame.origin.y - candidateAX.origin.y) < tolerance
                 let otherCoversScreen = otherFrame.width > screenFrameAX.width * 0.9
                     && otherFrame.height > screenFrameAX.height * 0.9
-                return originsMatch && !otherCoversScreen
+                return originsMatch && (candidateCoversScreen || !otherCoversScreen)
             }
 
             guard hasOverlap else { break }

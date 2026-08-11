@@ -258,6 +258,46 @@ class StackBadgeGeometryTests: XCTestCase {
         XCTAssertTrue(StackBadgeGeometry.stackIndices(among: [], cascadeRange: 15, tolerance: 4).isEmpty)
     }
 
+    // A pile of maximized windows shares one origin and is invisible without
+    // the badge, so it forms a stack when no tiled stack is present.
+    func testStackClusterFallsBackToScreenCoveringWindows() {
+        let origins = [CGPoint(x: 0, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: 11, y: -11)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins,
+                                                      coversScreen: [true, true, true],
+                                                      cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.count, 3)
+    }
+
+    // A single maximized window sharing its origin with one tiled window is
+    // not a stack - counting it would inflate the badge on ordinary layouts.
+    func testStackClusterIgnoresLoneScreenCoveringWindow() {
+        let origins = [CGPoint(x: 0, y: 0), CGPoint(x: 0, y: 0)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins,
+                                                      coversScreen: [true, false],
+                                                      cascadeRange: 15, tolerance: 4)
+        // Fewer than two is no stack: the badge requires two windows, so the
+        // maximized window must not pair up with the single tiled one.
+        XCTAssertLessThan(indices.count, 2)
+        XCTAssertFalse(indices.contains(0))
+    }
+
+    // Tiled windows win: a maximized window sharing the corner must not be
+    // added to a stack of tiled windows.
+    func testStackClusterPrefersTiledOverScreenCovering() {
+        let origins = [CGPoint(x: 0, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: 11, y: -11)]
+        let indices = StackBadgeGeometry.stackIndices(among: origins,
+                                                      coversScreen: [true, false, false],
+                                                      cascadeRange: 15, tolerance: 4)
+        XCTAssertEqual(indices.sorted(), [1, 2])
+    }
+
+    func testStackClusterMismatchedCoveringFlagsIsEmpty() {
+        let indices = StackBadgeGeometry.stackIndices(among: [CGPoint(x: 0, y: 0)],
+                                                      coversScreen: [],
+                                                      cascadeRange: 15, tolerance: 4)
+        XCTAssertTrue(indices.isEmpty)
+    }
+
     // Regression (review finding): an unrelated window that happens to be the
     // leftmost candidate in the gap-widened box must not mask the real stack.
     func testStackClusterLeftOutlierDoesNotMaskStack() {
