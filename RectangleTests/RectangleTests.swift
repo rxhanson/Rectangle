@@ -218,6 +218,19 @@ class DefaultsExportTests: XCTestCase {
         XCTAssertTrue(keys.contains("cooperativeCornerResize"), "cooperativeCornerResize missing from Defaults.array")
         XCTAssertTrue(keys.contains("stackBadge"), "stackBadge missing from Defaults.array")
     }
+
+    func testPresetsInExportArray() {
+        let keys = Defaults.array.map { $0.key }
+        XCTAssertTrue(keys.contains("presets"), "presets missing from Defaults.array")
+    }
+
+    func testPresetScopeExcludesOnlyRealDefaultsKeys() {
+        let keys = Set(Defaults.array.map { $0.key })
+        for excluded in PresetScope.excludedDefaultKeys {
+            XCTAssertTrue(keys.contains(excluded),
+                          "\(excluded) is excluded from presets but is not a Defaults key — it was renamed or misspelled")
+        }
+    }
 }
 
 class ConfigImportTests: XCTestCase {
