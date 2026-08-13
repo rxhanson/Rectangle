@@ -284,6 +284,7 @@ class ChangeSizeCalculationTests: XCTestCase {
     private var sizeOffset: Float = 0
     private var gapSize: Float = 0
     private var curtainChangeSize: Bool?
+    private var smallerShrinksMaximizedHeight = false
     private var storedMinimumWindowWidth: Any?
     private var storedMinimumWindowHeight: Any?
 
@@ -295,6 +296,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         sizeOffset = Defaults.sizeOffset.value
         gapSize = Defaults.gapSize.value
         curtainChangeSize = Defaults.curtainChangeSize.enabled
+        smallerShrinksMaximizedHeight = Defaults.smallerShrinksMaximizedHeight.enabled
         storedMinimumWindowWidth = UserDefaults.standard.object(forKey: Defaults.minimumWindowWidth.key)
         storedMinimumWindowHeight = UserDefaults.standard.object(forKey: Defaults.minimumWindowHeight.key)
 
@@ -303,6 +305,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         Defaults.sizeOffset.value = 30
         Defaults.gapSize.value = 0
         Defaults.curtainChangeSize.enabled = true
+        Defaults.smallerShrinksMaximizedHeight.enabled = false
     }
 
     override func tearDown() {
@@ -313,13 +316,14 @@ class ChangeSizeCalculationTests: XCTestCase {
         Defaults.sizeOffset.value = sizeOffset
         Defaults.gapSize.value = gapSize
         Defaults.curtainChangeSize.enabled = curtainChangeSize
+        Defaults.smallerShrinksMaximizedHeight.enabled = smallerShrinksMaximizedHeight
 
         super.tearDown()
     }
 
     func testExplicitZeroDisablesScreenFractionMinimum() {
         XCTAssertEqual(smallerResult(for: issueWindowRect),
-                       CGRect(x: 1925, y: 15, width: 635, height: 1385))
+                       CGRect(x: 1925, y: 0, width: 635, height: 1415))
     }
 
     func testDoubleDefaultDistinguishesAbsentFromExplicitZero() {
@@ -380,7 +384,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         let windowRect = CGRect(x: 1890, y: 0, width: 670, height: 1415)
 
         XCTAssertEqual(smallerResult(for: windowRect),
-                       CGRect(x: 1920, y: 15, width: 640, height: 1385))
+                       CGRect(x: 1920, y: 0, width: 640, height: 1415))
     }
 
     func testSmallerHonorsConfiguredScreenFractionMinimum() {
@@ -389,10 +393,23 @@ class ChangeSizeCalculationTests: XCTestCase {
         XCTAssertEqual(smallerResult(for: issueWindowRect), issueWindowRect)
     }
 
+    func testSmallerKeepsHeightOfFullHeightWindowByDefault() {
+        // Default behavior (see #1737): the combined `.smaller` command only shrinks the width of
+        // a window pinned to the top and bottom screen edges. The height shrinks only under the
+        // height-only `.smallerHeight` command (b97a353, fixes #1645) or when the
+        // smallerShrinksMaximizedHeight terminal command config is enabled.
+        let fullHeightHalf = CGRect(x: 0, y: 0, width: 1280, height: 1415)
+
+        XCTAssertEqual(smallerResult(for: fullHeightHalf),
+                       CGRect(x: 0, y: 0, width: 1250, height: 1415))
+    }
+
     func testSmallerShrinksHeightOfFullHeightWindow() {
-        // Regression for #1737: a vertically-maximized (Half / full-height) window must shrink in
-        // BOTH dimensions under the combined `.smaller` command, not only in width. Mirrors the
-        // `.smallerHeight` exception added in b97a353 (fixes #1645), extended to `.smaller`.
+        // Regression for #1737, opt-in via the terminal command config: a vertically-maximized
+        // (Half / full-height) window shrinks in BOTH dimensions under the combined `.smaller`
+        // command. Mirrors the `.smallerHeight` exception added in b97a353 (fixes #1645),
+        // extended to `.smaller`.
+        Defaults.smallerShrinksMaximizedHeight.enabled = true
         let fullHeightHalf = CGRect(x: 0, y: 0, width: 1280, height: 1415)
 
         XCTAssertEqual(smallerResult(for: fullHeightHalf),
@@ -403,7 +420,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         Defaults.minimumWindowWidth.value = 0.01
 
         XCTAssertEqual(smallerResult(for: issueWindowRect),
-                       CGRect(x: 1925, y: 15, width: 635, height: 1385))
+                       CGRect(x: 1925, y: 0, width: 635, height: 1415))
     }
 
     func testExplicitZeroStillRejectsNonpositiveSize() {
