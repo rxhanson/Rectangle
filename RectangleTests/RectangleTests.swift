@@ -134,6 +134,80 @@ class ScreenFlippedTests: XCTestCase {
     }
 }
 
+class DefaultCodableTests: XCTestCase {
+
+    private let scratchKeys = [
+        "testDefaultCodableBool",
+        "testDefaultCodableOptionalBool",
+        "testDefaultCodableString",
+        "testDefaultCodableFloat",
+        "testDefaultCodableInt",
+        "testDefaultCodableDouble",
+        "testDefaultCodableIntEnum",
+        "testDefaultCodableJSON"
+    ]
+
+    override func tearDown() {
+        scratchKeys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+        super.tearDown()
+    }
+
+    func testBoolDefaultReportsFalse() {
+        let sut = BoolDefault(key: "testDefaultCodableBool")
+        XCTAssertEqual(sut.defaultCodable().bool, false, "a BoolDefault is off unless the user turns it on")
+    }
+
+    func testOptionalBoolDefaultReportsNotSet() {
+        let sut = OptionalBoolDefault(key: "testDefaultCodableOptionalBool")
+        XCTAssertEqual(sut.defaultCodable().int, 0, "0 is the notSet encoding for OptionalBoolDefault")
+    }
+
+    func testStringDefaultReportsNil() {
+        let sut = StringDefault(key: "testDefaultCodableString")
+        XCTAssertNil(sut.defaultCodable().string)
+    }
+
+    func testFloatDefaultReportsDeclaredDefaultValue() {
+        let sut = FloatDefault(key: "testDefaultCodableFloat", defaultValue: 30)
+        XCTAssertEqual(sut.defaultCodable().float, 30)
+    }
+
+    func testIntDefaultReportsDeclaredDefaultValue() {
+        let sut = IntDefault(key: "testDefaultCodableInt", defaultValue: 250)
+        XCTAssertEqual(sut.defaultCodable().int, 250)
+    }
+
+    func testDoubleDefaultReportsDeclaredDefaultValue() {
+        let sut = DoubleDefault(key: "testDefaultCodableDouble", defaultValue: 0.25)
+        XCTAssertEqual(sut.defaultCodable().double, 0.25)
+    }
+
+    func testIntEnumDefaultReportsDeclaredDefaultValue() {
+        let sut = IntEnumDefault<EdgeAlignment>(key: "testDefaultCodableIntEnum", defaultValue: .edgesAndCorners)
+        XCTAssertEqual(sut.defaultCodable().int, EdgeAlignment.edgesAndCorners.rawValue)
+    }
+
+    func testJSONDefaultClearsTypedValueWhenLoadingNilString() {
+        let sut = JSONDefault<[String]>(key: "testDefaultCodableJSON")
+        sut.typedValue = ["a", "b"]
+        XCTAssertNotNil(sut.typedValue, "precondition: the typed value was stored")
+
+        sut.load(from: CodableDefault(string: nil))
+
+        XCTAssertNil(sut.typedValue, "a nil string must clear the decoded value, not leave the previous one")
+    }
+
+    func testRealDefaultsReportTheirDeclaredValues() {
+        XCTAssertEqual(Defaults.gapSize.defaultCodable().float, 0, "gapSize declares no default")
+        XCTAssertEqual(Defaults.widthStepSize.defaultCodable().float, 30)
+        XCTAssertEqual(Defaults.minimumWindowWidth.defaultCodable().double, 0.25)
+        XCTAssertEqual(Defaults.cyclingOverlapMaxCascade.defaultCodable().int, 1)
+        XCTAssertEqual(Defaults.moveFixedSizeToEdge.defaultCodable().int, EdgeAlignment.edgesAndCorners.rawValue)
+        XCTAssertEqual(Defaults.subsequentExecutionMode.defaultCodable().int, SubsequentExecutionMode.resize.rawValue)
+        XCTAssertEqual(Defaults.selectedCycleSizes.defaultCodable().int, 0)
+    }
+}
+
 class DefaultsExportTests: XCTestCase {
 
     func testOverlapDefaultsInExportArray() {
