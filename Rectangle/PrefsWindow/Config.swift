@@ -53,7 +53,7 @@ extension Defaults {
         return try? decoder.decode(Config.self, from: jsonData)
     }
     
-    static func load(fileUrl: URL) {
+    static func load(fileUrl: URL, notificationCenter: NotificationCenter = .default) {
         guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
         
         // Size cap: legitimate configs are ~tens of KB; refuse anything that
@@ -74,19 +74,25 @@ extension Defaults {
         
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
-            if let shortcut = importedShortcut?.toMASSHortcut() {
+            if let importedShortcut, importedShortcut.keyCode >= 0 {
+                let shortcut = importedShortcut.toMASSHortcut()
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
                 UserDefaults.standard.setValue(dictValue, forKey: action.name)
+            } else {
+                UserDefaults.standard.removeObject(forKey: action.name)
             }
         }
         for defaultsKey in TodoManager.defaultsKeys {
-            if let shortcut = config.shortcuts[defaultsKey]?.toMASSHortcut() {
+            if let importedShortcut = config.shortcuts[defaultsKey], importedShortcut.keyCode >= 0 {
+                let shortcut = importedShortcut.toMASSHortcut()
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
                 UserDefaults.standard.setValue(dictValue, forKey: defaultsKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: defaultsKey)
             }
         }
         
-        Notification.Name.configImported.post()
+        Notification.Name.configImported.post(center: notificationCenter)
     }
     
     static func loadFromSupportDir() {
