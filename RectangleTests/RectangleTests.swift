@@ -219,9 +219,10 @@ class DefaultsExportTests: XCTestCase {
         XCTAssertTrue(keys.contains("stackBadge"), "stackBadge missing from Defaults.array")
     }
 
-    func testPresetsInExportArray() {
+    func testPresetsAreNotAnIndividualExportedSetting() {
         let keys = Defaults.array.map { $0.key }
-        XCTAssertTrue(keys.contains("presets"), "presets missing from Defaults.array")
+        XCTAssertFalse(keys.contains("presets"),
+                       "presets ride along in Config.presets, not as an escaped string among the settings")
     }
 
     func testPresetScopeExcludesOnlyRealDefaultsKeys() {
@@ -4062,5 +4063,35 @@ class PresetTests: XCTestCase {
         let two = makePreset()
         let store = PresetStore(presets: [one, two], activePresetId: one.id)
         XCTAssertNil(PresetMutation.removing(id: UUID(), from: store))
+    }
+
+    func testConfigCarriesPresetsThroughARoundTrip() throws {
+        let preset = makePreset(shortcuts: ["leftHalf": Shortcut(1572864, 123)],
+                                cleared: ["rightHalf"])
+        let config = Config(bundleId: "com.knollsoft.Rectangle",
+                            version: "104",
+                            shortcuts: ["leftHalf": Shortcut(1572864, 123)],
+                            defaults: ["gapSize": CodableDefault(float: 4)],
+                            presets: PresetStore(presets: [preset], activePresetId: preset.id))
+
+        let data = try JSONEncoder().encode(config)
+        let decoded = try JSONDecoder().decode(Config.self, from: data)
+
+        XCTAssertEqual(decoded.presets?.presets.count, 1)
+        XCTAssertEqual(decoded.presets?.activePresetId, preset.id)
+        XCTAssertEqual(decoded.presets?.presets[0].clearedShortcuts, ["rightHalf"])
+    }
+
+    func testConfigExportedBeforePresetsExistedStillDecodes() throws {
+        let json = """
+        {"bundleId":"com.knollsoft.Rectangle","version":"100",\
+        "shortcuts":{"leftHalf":{"keyCode":123,"modifierFlags":1572864}},\
+        "defaults":{"gapSize":{"float":4}}}
+        """
+        let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+
+        XCTAssertNil(config.presets, "a config without the field must decode, leaving presets untouched on import")
+        XCTAssertEqual(config.shortcuts["leftHalf"]?.keyCode, 123)
+        XCTAssertEqual(config.defaults["gapSize"]?.float, 4)
     }
 }

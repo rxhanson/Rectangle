@@ -105,6 +105,8 @@ class Defaults {
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
+    /// Deliberately not in `array`: presets are exported through `Config.presets`
+    /// rather than as an escaped JSON string among the individual settings.
     static let presets = JSONDefault<PresetStore>(key: "presets")
     static var array: [Default] = [
         launchOnLogin,
@@ -201,8 +203,7 @@ class Defaults {
         cyclingOverlapMaxCascade,
         stackBadge,
         moveFixedSizeToEdge,
-        greenButtonOverride,
-        presets
+        greenButtonOverride
     ]
 }
 

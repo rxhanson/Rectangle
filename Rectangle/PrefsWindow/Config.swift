@@ -32,7 +32,8 @@ extension Defaults {
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: version,
                             shortcuts: shortcuts,
-                            defaults: codableDefaults)
+                            defaults: codableDefaults,
+                            presets: Defaults.presets.typedValue)
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -77,6 +78,10 @@ extension Defaults {
               let config = convert(jsonString: jsonString) else { return }
 
         apply(defaults: config.defaults)
+
+        if let presets = config.presets {
+            Defaults.presets.typedValue = presets
+        }
 
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
@@ -184,4 +189,20 @@ struct Config: Codable {
     let version: String
     let shortcuts: [String: Shortcut]
     let defaults: [String: CodableDefault]
+
+    /// Absent in configs exported before presets existed. Decoding tolerates both
+    /// its absence here and its presence in older builds, which ignore unknown keys.
+    let presets: PresetStore?
+
+    init(bundleId: String,
+         version: String,
+         shortcuts: [String: Shortcut],
+         defaults: [String: CodableDefault],
+         presets: PresetStore? = nil) {
+        self.bundleId = bundleId
+        self.version = version
+        self.shortcuts = shortcuts
+        self.defaults = defaults
+        self.presets = presets
+    }
 }

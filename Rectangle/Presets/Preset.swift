@@ -35,9 +35,11 @@ enum PresetScope {
 
     /// Keys that describe the app itself rather than window behavior. They stay
     /// global: switching presets must not change how the app launches, updates or
-    /// which apps are excluded, and must not overwrite the preset store itself.
+    /// which apps are excluded.
+    ///
+    /// The preset store itself needs no entry here — it is not in `Defaults.array`,
+    /// so it can never reach a snapshot.
     static let excludedDefaultKeys: Set<String> = [
-        "presets",
         "launchOnLogin",
         "hideMenubarIcon",
         "relaunchOpensMenu",
