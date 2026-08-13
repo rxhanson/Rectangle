@@ -96,6 +96,7 @@
 		F1AC0DE000000000000000A2 /* StackBadgeGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AC0DE000000000000000A1 /* StackBadgeGeometry.swift */; };
 		F1AC0DE000000000000000A4 /* StackBadgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AC0DE000000000000000A3 /* StackBadgeManager.swift */; };
 		F1AC0DE000000000000000B2 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AC0DE000000000000000B1 /* Preset.swift */; };
+		F1AC0DE000000000000000B4 /* PresetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1AC0DE000000000000000B3 /* PresetManager.swift */; };
 		983DD04028A844BE00BF1EEE /* SnapAreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */; };
 		983DD04428B0639E00BF1EEE /* SnapAreaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */; };
 		984EDB0F29A42ED200D119D2 /* LaunchOnLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */; };
@@ -325,6 +326,7 @@
 		F1AC0DE000000000000000A1 /* StackBadgeGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackBadgeGeometry.swift; sourceTree = "<group>"; };
 		F1AC0DE000000000000000A3 /* StackBadgeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackBadgeManager.swift; sourceTree = "<group>"; };
 		F1AC0DE000000000000000B1 /* Preset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preset.swift; sourceTree = "<group>"; };
+		F1AC0DE000000000000000B3 /* PresetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresetManager.swift; sourceTree = "<group>"; };
 		983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaViewController.swift; sourceTree = "<group>"; };
 		983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaModel.swift; sourceTree = "<group>"; };
 		984EDB0E29A42ED200D119D2 /* LaunchOnLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOnLogin.swift; sourceTree = "<group>"; };
@@ -810,6 +812,7 @@
 			isa = PBXGroup;
 			children = (
 				F1AC0DE000000000000000B1 /* Preset.swift */,
+				F1AC0DE000000000000000B3 /* PresetManager.swift */,
 			);
 			path = Presets;
 			sourceTree = "<group>";
@@ -1112,6 +1115,7 @@
 				F1AC0DE000000000000000A2 /* StackBadgeGeometry.swift in Sources */,
 				F1AC0DE000000000000000A4 /* StackBadgeManager.swift in Sources */,
 				F1AC0DE000000000000000B2 /* Preset.swift in Sources */,
+				F1AC0DE000000000000000B4 /* PresetManager.swift in Sources */,
 				988D067F22EB4EDE004EABD7 /* MoveLeftRightCalculation.swift in Sources */,
 				AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */,
 				98C6DEF023CE191700CC0C1E /* GapCalculation.swift in Sources */,
