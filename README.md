@@ -145,6 +145,14 @@ There are buttons for importing and exporting the config as a JSON file in the s
 
 Upon launch, Rectangle will load a config file at `~/Library/Application Support/Rectangle/RectangleConfig.json` if it is present and will rename that file with a time/date stamp so that it isn't read on subsequent launches.
 
+## Presets
+
+Presets are named configurations that you can switch between from the top right of the Shortcuts tab. They are useful when you move between keyboards: shortcuts that live on a numeric keypad are unusable on a tenkeyless or built-in keyboard, and a preset lets you swap the whole set in one step instead of re-recording shortcuts.
+
+A preset holds every shortcut plus the settings that describe window behavior — gaps, snap areas, size steps, cycling, and so on. Settings that describe the app itself, such as launching at login, checking for updates, and per-app exclusions, stay global and are not affected by switching.
+
+The active preset always mirrors your current settings, so anything you change is kept in it automatically. New presets can be created from Rectangle's built-in defaults or by duplicating the one you are using.
+
 ## Preferences Storage
 
 The configuration for Rectangle is stored using NSUserDefaults, meaning it is stored in the following location:
