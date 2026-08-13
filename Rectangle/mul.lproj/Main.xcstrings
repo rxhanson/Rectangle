@@ -13671,6 +13671,9 @@
         }
       }
     },
+    "Default" : {
+
+    },
     "Default Shortcuts" : {
       "localizations" : {
         "ar" : {
@@ -14202,6 +14205,15 @@
           }
         }
       }
+    },
+    "Delete" : {
+
+    },
+    "Delete Preset" : {
+
+    },
+    "Delete this preset?" : {
+
     },
     "Disable in macOS" : {
       "extractionState" : "manual",
@@ -16170,6 +16182,9 @@
           }
         }
       }
+    },
+    "Duplicate Preset…" : {
+
     },
     "Eighths" : {
       "localizations" : {
@@ -31122,6 +31137,18 @@
         }
       }
     },
+    "Name the duplicated preset" : {
+
+    },
+    "Name the new preset" : {
+
+    },
+    "New Preset" : {
+
+    },
+    "New Preset from Defaults…" : {
+
+    },
     "Ninths" : {
       "localizations" : {
         "ko" : {
@@ -33154,6 +33181,9 @@
           }
         }
       }
+    },
+    "OK" : {
+
     },
     "Open System Settings" : {
       "localizations" : {
@@ -37492,6 +37522,12 @@
           }
         }
       }
+    },
+    "Rename Preset…" : {
+
+    },
+    "Rename this preset" : {
+
     },
     "Resize adjacent windows when cycling side or corner shortcuts" : {
 
