@@ -3903,3 +3903,151 @@ final class NextPrevDisplayMappingTests: XCTestCase {
         )
     }
 }
+
+class PresetTests: XCTestCase {
+
+    private func makePreset(shortcuts: [String: Shortcut] = [:],
+                            cleared: [String] = [],
+                            defaults: [String: CodableDefault] = [:]) -> Preset {
+        Preset(id: UUID(),
+               name: "Test",
+               version: "1",
+               shortcuts: shortcuts,
+               clearedShortcuts: cleared,
+               defaults: defaults)
+    }
+
+    func testAbsentKeysAreNeitherAssignedNorCleared() {
+        let states = PresetSnapshot.shortcutStates(in: [:], keys: ["leftHalf", "rightHalf"])
+        XCTAssertTrue(states.assigned.isEmpty, "an absent key means the built-in default applies")
+        XCTAssertTrue(states.cleared.isEmpty)
+    }
+
+    func testEmptyDictionaryIsReadAsCleared() {
+        let domain: [String: Any] = ["leftHalf": [String: Any]()]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: ["leftHalf"])
+        XCTAssertTrue(states.assigned.isEmpty)
+        XCTAssertEqual(states.cleared, ["leftHalf"], "MASShortcut stores an empty dictionary for 'explicitly none'")
+    }
+
+    func testAssignedShortcutIsRead() {
+        let domain: [String: Any] = ["leftHalf": ["keyCode": 123, "modifierFlags": 1572864]]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: ["leftHalf"])
+        XCTAssertEqual(states.assigned["leftHalf"]?.keyCode, 123)
+        XCTAssertEqual(states.assigned["leftHalf"]?.modifierFlags, 1572864)
+        XCTAssertTrue(states.cleared.isEmpty)
+    }
+
+    func testKeysOutsideTheRequestedListAreIgnored() {
+        let domain: [String: Any] = ["gapSize": 4, "leftHalf": ["keyCode": 1, "modifierFlags": 2]]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: ["leftHalf"])
+        XCTAssertEqual(states.assigned.count, 1)
+    }
+
+    func testAllThreeShortcutStatesSurviveARoundTrip() {
+        let domain: [String: Any] = [
+            "leftHalf": ["keyCode": 123, "modifierFlags": 1572864],
+            "rightHalf": [String: Any]()
+        ]
+        let keys = ["leftHalf", "rightHalf", "maximize"]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: keys)
+        let preset = makePreset(shortcuts: states.assigned, cleared: states.cleared)
+
+        let writes = PresetSnapshot.shortcutWrites(for: preset, keys: keys)
+
+        XCTAssertEqual(writes["leftHalf"], .set(["keyCode": 123, "modifierFlags": 1572864]))
+        XCTAssertEqual(writes["rightHalf"], .set([:]), "a cleared shortcut must be written back as an empty dictionary")
+        XCTAssertEqual(writes["maximize"], .remove, "an unset shortcut must have its key removed so the default applies")
+    }
+
+    func testWritesCoverEveryRequestedKey() {
+        let keys = ["leftHalf", "rightHalf", "maximize"]
+        let writes = PresetSnapshot.shortcutWrites(for: makePreset(), keys: keys)
+        XCTAssertEqual(Set(writes.keys), Set(keys))
+    }
+
+    func testPresetEncodesAndDecodes() throws {
+        let preset = makePreset(shortcuts: ["leftHalf": Shortcut(1572864, 123)],
+                                cleared: ["rightHalf"],
+                                defaults: ["gapSize": CodableDefault(float: 4)])
+        let data = try JSONEncoder().encode(PresetStore(presets: [preset], activePresetId: preset.id))
+        let decoded = try JSONDecoder().decode(PresetStore.self, from: data)
+
+        XCTAssertEqual(decoded.presets.count, 1)
+        XCTAssertEqual(decoded.activePresetId, preset.id)
+        XCTAssertEqual(decoded.presets[0].shortcuts["leftHalf"]?.keyCode, 123)
+        XCTAssertEqual(decoded.presets[0].clearedShortcuts, ["rightHalf"])
+        XCTAssertEqual(decoded.presets[0].defaults["gapSize"]?.float, 4)
+    }
+
+    func testScopeExcludesAppLevelDefaults() {
+        let keys = PresetScope.defaults.map { $0.key }
+        XCTAssertFalse(keys.contains("launchOnLogin"))
+        XCTAssertFalse(keys.contains("hideMenubarIcon"))
+        XCTAssertFalse(keys.contains("disabledApps"))
+        XCTAssertTrue(keys.contains("gapSize"), "window behavior settings stay in scope")
+        XCTAssertTrue(keys.contains("alternateDefaultShortcuts"), "the default shortcut set is part of a preset")
+    }
+
+    func testShortcutKeysCoverEveryActionAndTodo() {
+        let keys = PresetScope.shortcutKeys
+        XCTAssertEqual(keys.count, WindowAction.active.count + TodoManager.defaultsKeys.count)
+        XCTAssertTrue(keys.contains("leftHalf"))
+        XCTAssertTrue(keys.contains("toggleTodo"))
+    }
+
+    func testBuiltInDefaultsSnapshotCoversEveryScopedKey() {
+        let snapshot = PresetSnapshot.builtInDefaultsSnapshot(from: PresetScope.defaults)
+        XCTAssertEqual(Set(snapshot.keys), Set(PresetScope.defaults.map { $0.key }))
+    }
+
+    func testUniqueNameAppendsACounter() {
+        XCTAssertEqual(PresetNaming.unique("TKL", existing: []), "TKL")
+        XCTAssertEqual(PresetNaming.unique("TKL", existing: ["TKL"]), "TKL 2")
+        XCTAssertEqual(PresetNaming.unique("TKL", existing: ["TKL", "TKL 2"]), "TKL 3")
+    }
+
+    func testSanitizedTrimsAndRejectsBlankNames() {
+        XCTAssertNil(PresetNaming.sanitized("   "))
+        XCTAssertNil(PresetNaming.sanitized(""))
+        XCTAssertEqual(PresetNaming.sanitized("  TKL  "), "TKL")
+    }
+
+    func testTheLastPresetCannotBeRemoved() {
+        let only = makePreset()
+        let store = PresetStore(presets: [only], activePresetId: only.id)
+        XCTAssertNil(PresetMutation.removing(id: only.id, from: store))
+    }
+
+    func testRemovingAnInactivePresetKeepsTheActiveOne() throws {
+        let active = makePreset()
+        let other = makePreset()
+        let store = PresetStore(presets: [active, other], activePresetId: active.id)
+
+        let result = try XCTUnwrap(PresetMutation.removing(id: other.id, from: store))
+
+        XCTAssertEqual(result.store.presets.map { $0.id }, [active.id])
+        XCTAssertEqual(result.store.activePresetId, active.id)
+        XCTAssertNil(result.activates, "nothing needs to be applied when the active preset survives")
+    }
+
+    func testRemovingTheActivePresetHandsOverToTheFirstRemaining() throws {
+        let active = makePreset()
+        let second = makePreset()
+        let third = makePreset()
+        let store = PresetStore(presets: [active, second, third], activePresetId: active.id)
+
+        let result = try XCTUnwrap(PresetMutation.removing(id: active.id, from: store))
+
+        XCTAssertEqual(result.store.presets.map { $0.id }, [second.id, third.id])
+        XCTAssertEqual(result.store.activePresetId, second.id)
+        XCTAssertEqual(result.activates?.id, second.id, "the new active preset must be applied to the live settings")
+    }
+
+    func testRemovingAnUnknownPresetIsRefused() {
+        let one = makePreset()
+        let two = makePreset()
+        let store = PresetStore(presets: [one, two], activePresetId: one.id)
+        XCTAssertNil(PresetMutation.removing(id: UUID(), from: store))
+    }
+}
