@@ -134,6 +134,12 @@ class PrefsViewController: NSViewController {
         subscribeToAllowAnyShortcutToggle()
 
         additionalShortcutsStackView.isHidden = true
+    }
+
+    /// awakeFromNib can run more than once for a storyboard scene, so anything that
+    /// inserts a view or registers an observer belongs here instead.
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
         initializePresetPicker()
         subscribeToConfigImported()
@@ -146,7 +152,9 @@ class PrefsViewController: NSViewController {
     }
 
     private func initializePresetPicker() {
-        guard let mainStack = additionalShortcutsStackView.superview as? NSStackView else { return }
+        guard presetPopUpButton == nil,
+              let mainStack = additionalShortcutsStackView.superview as? NSStackView
+        else { return }
 
         let popUpButton = NSPopUpButton(frame: .zero, pullsDown: false)
         popUpButton.translatesAutoresizingMaskIntoConstraints = false
