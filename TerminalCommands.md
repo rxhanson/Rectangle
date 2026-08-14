@@ -25,6 +25,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Make Smaller/Make Larger "curtain resize" with gaps](#make-smallermake-larger-curtain-resize-with-gaps)
 - [Make Smaller/Make Larger width only](#make-smallermake-larger-width-only)
 - [Make Smaller/Make Larger height only](#make-smallermake-larger-height-only)
+- [Make Smaller shrink the height of full-height windows](#make-smaller-shrink-the-height-of-full-height-windows)
 - [Disabling window restore when moving windows](#disabling-window-restore-when-moving-windows)
 - [Changing the margin for the snap areas](#changing-the-margin-for-the-snap-areas)
 - [Setting gaps at the screen edges](#setting-gaps-at-the-screen-edges)
@@ -364,6 +365,14 @@ For example, if you want to assign `ctrl option shift ]` to _largerHeight_ and `
 ```bash
 defaults write com.knollsoft.Rectangle largerHeight -dict-add keyCode -float 30 modifierFlags -float 917504
 defaults write com.knollsoft.Rectangle smallerHeight -dict-add keyCode -float 33 modifierFlags -float 917504
+```
+
+## Make Smaller shrink the height of full-height windows
+
+By default, "Make Smaller" keeps the height of a window that spans the full height of the screen (for example after "Half" or "Maximize Height") and only shrinks its width. Enable this to shrink the height as well:
+
+```bash
+defaults write com.knollsoft.Rectangle smallerShrinksMaximizedHeight -bool true
 ```
 
 ## Disabling window restore when moving windows
