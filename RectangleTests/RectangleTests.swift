@@ -146,6 +146,107 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+class ConfigImportTests: XCTestCase {
+
+    private static let shortcutKeys = WindowAction.active.map(\.name) + TodoManager.defaultsKeys
+    private var storedValues = [String: Any]()
+    private var absentKeys = Set<String>()
+
+    override func setUp() {
+        super.setUp()
+        for key in Self.shortcutKeys {
+            if let value = UserDefaults.standard.object(forKey: key) {
+                storedValues[key] = value
+            } else {
+                absentKeys.insert(key)
+            }
+        }
+    }
+
+    override func tearDown() {
+        for key in Self.shortcutKeys {
+            if let value = storedValues[key] {
+                UserDefaults.standard.set(value, forKey: key)
+            } else if absentKeys.contains(key) {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+        }
+        storedValues.removeAll()
+        absentKeys.removeAll()
+        super.tearDown()
+    }
+
+    func testImportClearsOmittedActiveShortcut() throws {
+        let action = WindowAction.almostMaximize
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 10), forKey: action.name)
+
+        try loadConfig(shortcuts: [:])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: action.name))
+    }
+
+    func testImportClearsOmittedTodoShortcut() throws {
+        let defaultsKey = TodoManager.toggleDefaultsKey
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 11), forKey: defaultsKey)
+
+        try loadConfig(shortcuts: [:])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: defaultsKey))
+    }
+
+    func testImportAppliesSuppliedActiveShortcut() throws {
+        let action = WindowAction.almostMaximize
+        let importedShortcut = Shortcut(NSEvent.ModifierFlags.command.rawValue, 12)
+
+        try loadConfig(shortcuts: [action.name: importedShortcut])
+
+        let storedShortcut = try XCTUnwrap(ShortcutCycle.shortcut(for: action))
+        XCTAssertEqual(storedShortcut.keyCode, importedShortcut.keyCode)
+        XCTAssertEqual(storedShortcut.modifierFlags.rawValue, importedShortcut.modifierFlags)
+    }
+
+    func testImportUsesActiveShortcutAlias() throws {
+        let action = WindowAction.leftHalf
+        let alias = try XCTUnwrap(action.aliasName)
+        let importedShortcut = Shortcut(NSEvent.ModifierFlags.command.rawValue, 13)
+
+        try loadConfig(shortcuts: [alias: importedShortcut])
+
+        let storedShortcut = try XCTUnwrap(ShortcutCycle.shortcut(for: action))
+        XCTAssertEqual(storedShortcut.keyCode, importedShortcut.keyCode)
+        XCTAssertEqual(storedShortcut.modifierFlags.rawValue, importedShortcut.modifierFlags)
+    }
+
+    func testImportClearsInvalidActiveShortcut() throws {
+        let action = WindowAction.almostMaximize
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 14), forKey: action.name)
+
+        try loadConfig(shortcuts: [action.name: Shortcut(NSEvent.ModifierFlags.command.rawValue, -1)])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: action.name))
+    }
+
+    private func store(_ shortcut: Shortcut, forKey key: String) {
+        let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        let value = transformer.reverseTransformedValue(shortcut.toMASSHortcut())
+        UserDefaults.standard.set(value, forKey: key)
+    }
+
+    private func loadConfig(shortcuts: [String: Shortcut]) throws {
+        let config = Config(bundleId: "com.knollsoft.Rectangle",
+                            version: "ConfigImportTests",
+                            shortcuts: shortcuts,
+                            defaults: [:])
+        let data = try JSONEncoder().encode(config)
+        let fileURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ConfigImportTests-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+        try data.write(to: fileURL, options: .atomic)
+
+        Defaults.load(fileUrl: fileURL, notificationCenter: NotificationCenter())
+    }
+}
+
 class StackBadgeGeometryTests: XCTestCase {
 
     private let laptopFrame = CGRect(x: 0, y: 0, width: 2336, height: 1510)
@@ -284,6 +385,7 @@ class ChangeSizeCalculationTests: XCTestCase {
     private var sizeOffset: Float = 0
     private var gapSize: Float = 0
     private var curtainChangeSize: Bool?
+    private var smallerShrinksMaximizedHeight = false
     private var storedMinimumWindowWidth: Any?
     private var storedMinimumWindowHeight: Any?
 
@@ -295,6 +397,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         sizeOffset = Defaults.sizeOffset.value
         gapSize = Defaults.gapSize.value
         curtainChangeSize = Defaults.curtainChangeSize.enabled
+        smallerShrinksMaximizedHeight = Defaults.smallerShrinksMaximizedHeight.enabled
         storedMinimumWindowWidth = UserDefaults.standard.object(forKey: Defaults.minimumWindowWidth.key)
         storedMinimumWindowHeight = UserDefaults.standard.object(forKey: Defaults.minimumWindowHeight.key)
 
@@ -303,6 +406,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         Defaults.sizeOffset.value = 30
         Defaults.gapSize.value = 0
         Defaults.curtainChangeSize.enabled = true
+        Defaults.smallerShrinksMaximizedHeight.enabled = false
     }
 
     override func tearDown() {
@@ -313,6 +417,7 @@ class ChangeSizeCalculationTests: XCTestCase {
         Defaults.sizeOffset.value = sizeOffset
         Defaults.gapSize.value = gapSize
         Defaults.curtainChangeSize.enabled = curtainChangeSize
+        Defaults.smallerShrinksMaximizedHeight.enabled = smallerShrinksMaximizedHeight
 
         super.tearDown()
     }
@@ -387,6 +492,29 @@ class ChangeSizeCalculationTests: XCTestCase {
         Defaults.minimumWindowWidth.value = 0.25
 
         XCTAssertEqual(smallerResult(for: issueWindowRect), issueWindowRect)
+    }
+
+    func testSmallerKeepsHeightOfFullHeightWindowByDefault() {
+        // Default behavior (see #1737): the combined `.smaller` command only shrinks the width of
+        // a window pinned to the top and bottom screen edges. The height shrinks only under the
+        // height-only `.smallerHeight` command (b97a353, fixes #1645) or when the
+        // smallerShrinksMaximizedHeight terminal command config is enabled.
+        let fullHeightHalf = CGRect(x: 0, y: 0, width: 1280, height: 1415)
+
+        XCTAssertEqual(smallerResult(for: fullHeightHalf),
+                       CGRect(x: 0, y: 0, width: 1250, height: 1415))
+    }
+
+    func testSmallerShrinksHeightOfFullHeightWindow() {
+        // Regression for #1737, opt-in via the terminal command config: a vertically-maximized
+        // (Half / full-height) window shrinks in BOTH dimensions under the combined `.smaller`
+        // command. Mirrors the `.smallerHeight` exception added in b97a353 (fixes #1645),
+        // extended to `.smaller`.
+        Defaults.smallerShrinksMaximizedHeight.enabled = true
+        let fullHeightHalf = CGRect(x: 0, y: 0, width: 1280, height: 1415)
+
+        XCTAssertEqual(smallerResult(for: fullHeightHalf),
+                       CGRect(x: 0, y: 15, width: 1250, height: 1385))
     }
 
     func testSmallConfiguredScreenFractionAllowsIssueRegressionStep() {
@@ -3632,5 +3760,72 @@ class PortraitEighthAbutmentTests: XCTestCase {
         XCTAssertEqual(origins[0], origins[1] + cellHeight, accuracy: 0.001)
         XCTAssertEqual(origins[1], origins[2] + cellHeight, accuracy: 0.001)
         XCTAssertEqual(origins[2], origins[3] + cellHeight, accuracy: 0.001)
+    }
+}
+      
+final class NextPrevDisplayMappingTests: XCTestCase {
+    // The opt-in is NOT needed to test the pure helper; setUp/tearDown still save & restore it
+    // so the wiring tests below are isolated from host state.
+    private var savedOptIn: Bool?
+
+    override func setUp() {
+        super.setUp()
+        savedOptIn = Defaults.attemptMatchOnNextPrevDisplay.enabled
+        Defaults.attemptMatchOnNextPrevDisplay.enabled = true
+    }
+
+    override func tearDown() {
+        Defaults.attemptMatchOnNextPrevDisplay.enabled = savedOptIn
+        super.tearDown()
+    }
+
+    // --- Helper-level: RED until relativePositionedRect exists, then GREEN ---
+
+    func testRelativePositionedRectMapsRightThirdToRightThird() {
+        // Issue #1723 repro geometry: a window pinned to the right third (full height) of a
+        // 3000x2000 source must land at the right third of a 1500x1000 destination.
+        let source      = CGRect(x: 0,    y: 0,    width: 3000, height: 2000)
+        let window      = CGRect(x: 2000, y: 0,    width: 1000, height: 2000)
+        let destination = CGRect(x: 0,    y: 0,    width: 1500, height: 1000)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: source, destination: destination),
+            CGRect(x: 1000, y: 0, width: 500, height: 1000)
+        )
+    }
+
+    func testRelativePositionedRectPreservesCenteredQuarter() {
+        // A centered-quarter window stays a centered quarter after the cross-display map.
+        let source      = CGRect(x: 0,   y: 0,   width: 2560, height: 1440)
+        let window      = CGRect(x: 960, y: 360, width: 640,  height: 720)   // centered quarter
+        let destination = CGRect(x: 0,   y: 0,   width: 1280, height: 720)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: source, destination: destination),
+            CGRect(x: 480, y: 180, width: 320, height: 360)
+        )
+    }
+
+    func testRelativePositionedRectClampsOverflowIntoDestination() {
+        // Window occupies 60% width starting at the 50% mark on a 1000x1000 source.
+        // Mapped onto a 500x500 destination: width 300 @ x 250 -> maxX 550 > 500 -> clamp to x 200.
+        let source      = CGRect(x: 0,   y: 0, width: 1000, height: 1000)
+        let window      = CGRect(x: 500, y: 0, width: 600,  height: 1000)
+        let destination = CGRect(x: 0,   y: 0, width: 500,  height: 500)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: source, destination: destination),
+            CGRect(x: 200, y: 0, width: 300, height: 500)
+        )
+    }
+
+    func testRelativePositionedRectIsIdentityWhenSourceEqualsDestination() {
+        let frame = CGRect(x: 0,   y: 0,   width: 2000, height: 1000)
+        let window = CGRect(x: 300, y: 200, width: 500, height: 600)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: frame, destination: frame),
+            window
+        )
     }
 }

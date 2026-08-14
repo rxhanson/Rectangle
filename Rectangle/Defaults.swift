@@ -35,6 +35,7 @@ class Defaults {
     static let unsnapRestore = OptionalBoolDefault(key: "unsnapRestore")
     static let unsnapRestoreFromSizeChange = OptionalBoolDefault(key: "unsnapRestoreFromSizeChange")
     static let curtainChangeSize = OptionalBoolDefault(key: "curtainChangeSize")
+    static let smallerShrinksMaximizedHeight = BoolDefault(key: "smallerShrinksMaximizedHeight")
     static let relaunchOpensMenu = BoolDefault(key: "relaunchOpensMenu")
     static let obtainWindowOnClick = OptionalBoolDefault(key: "obtainWindowOnClick")
     static let screenEdgeGapTop = FloatDefault(key: "screenEdgeGapTop", defaultValue: 0)
@@ -134,6 +135,7 @@ class Defaults {
         widthStepSize,
         unsnapRestore,
         curtainChangeSize,
+        smallerShrinksMaximizedHeight,
         relaunchOpensMenu,
         obtainWindowOnClick,
         screenEdgeGapTop,
@@ -455,10 +457,11 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     init(key: String, defaultValue: T) {
+        super.init(key: key)
+        loadFromJSON()
         if typedValue == nil {
             typedValue = defaultValue
         }
-        super.init(key: key)
     }
     
     override func load(from codable: CodableDefault) {

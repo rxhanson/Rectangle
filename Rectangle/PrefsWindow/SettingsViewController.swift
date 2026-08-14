@@ -252,12 +252,10 @@ class SettingsViewController: NSViewController {
         if response == .alertThirdButtonReturn { return }
 
         //  Restore default shortcuts
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
         let rectangleDefaults = response == .alertFirstButtonReturn
-        if rectangleDefaults != Defaults.alternateDefaultShortcuts.enabled {
-            Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
-            Notification.Name.changeDefaults.post()
-        }
+        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
+        Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
+        Notification.Name.changeDefaults.post()
         
         // Restore snap areas
         Defaults.portraitSnapAreas.typedValue = nil
