@@ -3688,6 +3688,81 @@ class DerivedWindowIdTests: XCTestCase {
     }
 }
 
+// Portrait eighth snapping tiles the screen into four rows. On a display whose
+// visible-frame height is not divisible by 4, the row origins must be expressed
+// as cell-height multiples (floor(height / 4)) so adjacent rows abut exactly
+// instead of drifting apart by the raw height fraction's sub-pixel remainder.
+class PortraitEighthAbutmentTests: XCTestCase {
+
+    // Portrait frame whose height is NOT divisible by 4 (1002 % 4 == 2): the case
+    // that used to leave 1-2px gaps between rows.
+    private static let nonDivisibleFrame = CGRect(x: 0, y: 0, width: 800, height: 1002)
+    // Portrait frame whose height IS divisible by 4: rows already tile seamlessly.
+    private static let divisibleFrame = CGRect(x: 0, y: 0, width: 800, height: 1000)
+
+    private func portraitEighths(_ frame: CGRect) -> [CGRect] {
+        return [
+            TopLeftEighthCalculation().portraitRect(frame).rect,
+            TopCenterLeftEighthCalculation().portraitRect(frame).rect,
+            TopCenterRightEighthCalculation().portraitRect(frame).rect,
+            TopRightEighthCalculation().portraitRect(frame).rect,
+            BottomLeftEighthCalculation().portraitRect(frame).rect,
+            BottomCenterLeftEighthCalculation().portraitRect(frame).rect,
+            BottomCenterRightEighthCalculation().portraitRect(frame).rect,
+            BottomRightEighthCalculation().portraitRect(frame).rect,
+        ]
+    }
+
+    private func rowOrigins(_ frame: CGRect) -> [CGFloat] {
+        return Set(portraitEighths(frame).map { $0.origin.y }).sorted(by: >)
+    }
+
+    func testAllPortraitEighthsAreOneCellTall() {
+        let cellHeight = floor(Self.nonDivisibleFrame.height / 4.0)
+        for rect in portraitEighths(Self.nonDivisibleFrame) {
+            XCTAssertEqual(rect.height, cellHeight, accuracy: 0.001)
+        }
+    }
+
+    func testPortraitEighthRowsAlignToCellHeightGridOnNonDivisibleHeight() {
+        let frame = Self.nonDivisibleFrame
+        let cellHeight = floor(frame.height / 4.0)
+        let origins = rowOrigins(frame)
+
+        XCTAssertEqual(origins.count, 4)
+        XCTAssertEqual(origins[0], frame.maxY - cellHeight, accuracy: 0.001)
+        XCTAssertEqual(origins[1], frame.maxY - cellHeight * 2.0, accuracy: 0.001)
+        XCTAssertEqual(origins[2], frame.maxY - cellHeight * 3.0, accuracy: 0.001)
+        XCTAssertEqual(origins[3], frame.minY, accuracy: 0.001)
+    }
+
+    func testPortraitEighthRowsAbutExactlyOnNonDivisibleHeight() {
+        // Before the fix, rows 2 and 3 used raw height fractions (height / 2 and
+        // height * 0.75), so rows 1-2 and 2-3 each drifted ~1px apart. The top
+        // three rows must abut exactly now: each row's minY equals the row
+        // above's maxY. (The height % 4 residual sits at the row3-row4 boundary
+        // and is zero only when height is divisible by 4 — see the divisible test.)
+        let frame = Self.nonDivisibleFrame
+        let cellHeight = floor(frame.height / 4.0)
+        let origins = rowOrigins(frame)
+
+        XCTAssertEqual(origins[0], origins[1] + cellHeight, accuracy: 0.001)
+        XCTAssertEqual(origins[1], origins[2] + cellHeight, accuracy: 0.001)
+    }
+
+    func testPortraitEighthRowsTileFullyWhenHeightDivisibleByFour() {
+        // When height % 4 == 0 the rounding residual is zero, so every row boundary
+        // abuts. Guards against regressing the already-seamless divisible case.
+        let frame = Self.divisibleFrame
+        let cellHeight = frame.height / 4.0
+        let origins = rowOrigins(frame)
+
+        XCTAssertEqual(origins[0], origins[1] + cellHeight, accuracy: 0.001)
+        XCTAssertEqual(origins[1], origins[2] + cellHeight, accuracy: 0.001)
+        XCTAssertEqual(origins[2], origins[3] + cellHeight, accuracy: 0.001)
+    }
+}
+      
 final class NextPrevDisplayMappingTests: XCTestCase {
     // The opt-in is NOT needed to test the pure helper; setUp/tearDown still save & restore it
     // so the wiring tests below are isolated from host state.
