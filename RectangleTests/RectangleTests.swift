@@ -3687,3 +3687,70 @@ class DerivedWindowIdTests: XCTestCase {
         XCTAssertEqual(Set(ids).count, ids.count)
     }
 }
+
+final class NextPrevDisplayMappingTests: XCTestCase {
+    // The opt-in is NOT needed to test the pure helper; setUp/tearDown still save & restore it
+    // so the wiring tests below are isolated from host state.
+    private var savedOptIn: Bool?
+
+    override func setUp() {
+        super.setUp()
+        savedOptIn = Defaults.attemptMatchOnNextPrevDisplay.enabled
+        Defaults.attemptMatchOnNextPrevDisplay.enabled = true
+    }
+
+    override func tearDown() {
+        Defaults.attemptMatchOnNextPrevDisplay.enabled = savedOptIn
+        super.tearDown()
+    }
+
+    // --- Helper-level: RED until relativePositionedRect exists, then GREEN ---
+
+    func testRelativePositionedRectMapsRightThirdToRightThird() {
+        // Issue #1723 repro geometry: a window pinned to the right third (full height) of a
+        // 3000x2000 source must land at the right third of a 1500x1000 destination.
+        let source      = CGRect(x: 0,    y: 0,    width: 3000, height: 2000)
+        let window      = CGRect(x: 2000, y: 0,    width: 1000, height: 2000)
+        let destination = CGRect(x: 0,    y: 0,    width: 1500, height: 1000)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: source, destination: destination),
+            CGRect(x: 1000, y: 0, width: 500, height: 1000)
+        )
+    }
+
+    func testRelativePositionedRectPreservesCenteredQuarter() {
+        // A centered-quarter window stays a centered quarter after the cross-display map.
+        let source      = CGRect(x: 0,   y: 0,   width: 2560, height: 1440)
+        let window      = CGRect(x: 960, y: 360, width: 640,  height: 720)   // centered quarter
+        let destination = CGRect(x: 0,   y: 0,   width: 1280, height: 720)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: source, destination: destination),
+            CGRect(x: 480, y: 180, width: 320, height: 360)
+        )
+    }
+
+    func testRelativePositionedRectClampsOverflowIntoDestination() {
+        // Window occupies 60% width starting at the 50% mark on a 1000x1000 source.
+        // Mapped onto a 500x500 destination: width 300 @ x 250 -> maxX 550 > 500 -> clamp to x 200.
+        let source      = CGRect(x: 0,   y: 0, width: 1000, height: 1000)
+        let window      = CGRect(x: 500, y: 0, width: 600,  height: 1000)
+        let destination = CGRect(x: 0,   y: 0, width: 500,  height: 500)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: source, destination: destination),
+            CGRect(x: 200, y: 0, width: 300, height: 500)
+        )
+    }
+
+    func testRelativePositionedRectIsIdentityWhenSourceEqualsDestination() {
+        let frame = CGRect(x: 0,   y: 0,   width: 2000, height: 1000)
+        let window = CGRect(x: 300, y: 200, width: 500, height: 600)
+
+        XCTAssertEqual(
+            NextPrevDisplayCalculation.relativePositionedRect(window: window, source: frame, destination: frame),
+            window
+        )
+    }
+}
