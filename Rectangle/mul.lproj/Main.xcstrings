@@ -16348,30 +16348,30 @@
       }
     },
     "Ext-Set-Cel.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"⋯\"; ObjectID = \"Ext-Set-Cel\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Extras\"; ObjectID = \"Ext-Set-Cel\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "⋯"
+            "value" : "Extras"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "⋯"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "⋯"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "⋯"
           }
         }
