@@ -804,6 +804,7 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(bottomVerticalThirdRow)
             mainStackView.addArrangedSubview(topVerticalTwoThirdsRow)
             mainStackView.addArrangedSubview(bottomVerticalTwoThirdsRow)
+            mainStackView.setCustomSpacing(10, after: bottomVerticalTwoThirdsRow)
             // Grid Positions - cycling shortcuts for larger grids
             let showAdditionalSizesCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Show additional sizes in menu", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleShowAdditionalSizesInMenu(_:)))
             showAdditionalSizesCheckbox.state = Defaults.showAdditionalSizesInMenu.userEnabled ? .on : .off
@@ -811,7 +812,6 @@ class SettingsViewController: NSViewController {
             showAdditionalSizesCheckbox.alignment = .left
             showAdditionalSizesCheckbox.imageHugsTitle = true
 
-            //
             let gridHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Grid Positions", tableName: "Main", value: "", comment: ""))
             gridHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
             gridHeaderLabel.alignment = .center
@@ -916,10 +916,6 @@ class SettingsViewController: NSViewController {
 
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
-            mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
-            mainStackView.addArrangedSubview(overlapOffsetCheckbox)
-            mainStackView.addArrangedSubview(stackBadgeCheckbox)
-            mainStackView.setCustomSpacing(8, after: stackBadgeCheckbox)
             mainStackView.addArrangedSubview(cyclingHintLabel)
             mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
             mainStackView.addArrangedSubview(topLeftEighthRow)
@@ -933,6 +929,10 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(ninthsCyclingRow)
             mainStackView.addArrangedSubview(twelfthsCyclingRow)
             mainStackView.addArrangedSubview(sixteenthsCyclingRow)
+            mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
+            mainStackView.addArrangedSubview(overlapOffsetCheckbox)
+            mainStackView.addArrangedSubview(stackBadgeCheckbox)
+            mainStackView.setCustomSpacing(8, after: stackBadgeCheckbox)
 
 
             mainStackView.addArrangedSubview(splitRatioHeaderLabel)
