@@ -70,6 +70,47 @@ enum StackBadgeGeometry {
         return best
     }
 
+    /// Indices of the cascade stack when some candidates cover the screen.
+    ///
+    /// A window covering the screen shares its top-left corner with every
+    /// left/right half and corner placement, so it can't be treated as an
+    /// ordinary stack member: a maximized window plus one tiled window would
+    /// read as a stack of two on an everyday layout. It therefore JOINS a
+    /// stack the tiled windows already form, but never forms one with a
+    /// single tiled window. Several covering windows are a stack in their own
+    /// right - a pile of maximized windows, where nothing else reveals what's
+    /// underneath.
+    static func stackIndices(among origins: [CGPoint],
+                             coversScreen: [Bool],
+                             cascadeRange: CGFloat,
+                             tolerance: CGFloat) -> [Int] {
+        guard coversScreen.count == origins.count else { return [] }
+
+        func near(_ a: CGPoint, _ b: CGPoint) -> Bool {
+            let dx = a.x - b.x, dy = a.y - b.y
+            return dx >= -tolerance && dx <= cascadeRange
+                && dy >= -cascadeRange && dy <= cascadeRange
+        }
+
+        func stack(of indices: [Int]) -> [Int] {
+            stackIndices(among: indices.map { origins[$0] },
+                         cascadeRange: cascadeRange,
+                         tolerance: tolerance)
+                .map { indices[$0] }
+        }
+
+        let tiled = stack(of: origins.indices.filter { !coversScreen[$0] })
+        if tiled.count >= 2 {
+            let joining = origins.indices.filter { index in
+                coversScreen[index] && tiled.contains { near(origins[index], origins[$0]) }
+            }
+            return (tiled + joining).sorted()
+        }
+
+        let covering = stack(of: origins.indices.filter { coversScreen[$0] })
+        return covering.count >= 2 ? covering : []
+    }
+
     /// The corner whose hover zone contains the point, or nil. The zone is a
     /// square extending right and down from the corner (down in AppKit means
     /// minus y), covering where gap-shifted windows and their title bars sit
