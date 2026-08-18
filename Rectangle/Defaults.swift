@@ -482,7 +482,8 @@ class JSONDefault<T: Codable>: StringDefault {
     
     private func saveToJSON(_ obj: T?) {
         let encoder = JSONEncoder()
-        
+        encoder.outputFormatting = .sortedKeys
+
         if let jsonData = try? encoder.encode(obj) {
             let jsonString = String(data: jsonData, encoding: .utf8)
             if jsonString != value {
