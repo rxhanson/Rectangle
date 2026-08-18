@@ -147,7 +147,7 @@ Upon launch, Rectangle will load a config file at `~/Library/Application Support
 
 ## Presets
 
-Presets are named configurations that you can switch between from the top right of the Shortcuts tab. They are useful when you move between keyboards: shortcuts that live on a numeric keypad are unusable on a tenkeyless or built-in keyboard, and a preset lets you swap the whole set in one step instead of re-recording shortcuts.
+Presets are named configurations that you can switch between from the Extras popover, reached from the “⋯” button at the bottom of the General tab. They are useful when you move between keyboards: shortcuts that live on a numeric keypad are unusable on a tenkeyless or built-in keyboard, and a preset lets you swap the whole set in one step instead of re-recording shortcuts.
 
 A preset holds every shortcut plus the settings that describe window behavior — gaps, snap areas, size steps, cycling, and so on. Settings that describe the app itself, such as launching at login, checking for updates, and per-app exclusions, stay global and are not affected by switching.
 
