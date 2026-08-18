@@ -15,36 +15,17 @@ class ApplicationToggle: NSObject {
         self.shortcutManager = shortcutManager
         super.init()
         registerFrontAppChangeNote()
-        if let disabledApps = getDisabledApps() {
+        if let disabledApps = Defaults.disabledApps.typedValue {
             self.disabledApps = disabledApps
         }
     }
     
     public func reloadFromDefaults() {
-        if let disabledApps = getDisabledApps() {
+        if let disabledApps = Defaults.disabledApps.typedValue {
             self.disabledApps = disabledApps
         } else {
             disabledApps.removeAll()
         }
-    }
-    
-    private func saveDisabledApps() {
-        let encoder = JSONEncoder()
-        if let jsonDisabledApps = try? encoder.encode(disabledApps) {
-            if let jsonString = String(data: jsonDisabledApps, encoding: .utf8) {
-                Defaults.disabledApps.value = jsonString
-            }
-        }
-    }
-    
-    private func getDisabledApps() ->  Set<String>? {
-        guard let jsonDisabledAppsString = Defaults.disabledApps.value else { return nil }
-        
-        let decoder = JSONDecoder()
-        guard let jsonDisabledApps = jsonDisabledAppsString.data(using: .utf8) else { return nil }
-        guard let disabledApps = try? decoder.decode(Set<String>.self, from: jsonDisabledApps) else { return nil }
-        
-        return disabledApps
     }
 
     private func disableShortcuts() {
@@ -70,7 +51,7 @@ class ApplicationToggle: NSObject {
     public func disableApp(appBundleId: String? = frontAppId) {
         if let appBundleId {
             disabledApps.insert(appBundleId)
-            saveDisabledApps()
+            Defaults.disabledApps.typedValue = disabledApps
             disableShortcuts()
         }
     }
@@ -78,7 +59,7 @@ class ApplicationToggle: NSObject {
     public func enableApp(appBundleId: String? = frontAppId) {
         if let appBundleId {
             disabledApps.remove(appBundleId)
-            saveDisabledApps()
+            Defaults.disabledApps.typedValue = disabledApps
             enableShortcuts()
         }
     }
