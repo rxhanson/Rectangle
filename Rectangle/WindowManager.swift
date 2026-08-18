@@ -2,8 +2,73 @@
 
 import Cocoa
 
+/// Pure geometry for the overlap offset: where a window lands when it arrives
+/// on a position other windows already occupy. Kept free of accessibility and
+/// screen lookups so the cascade math can be tested directly - every bug this
+/// feature has had lived here.
+enum OverlapOffsetGeometry {
+
+    /// Windows are matched by their top-left corner, so that a small window
+    /// landing on a larger one at the same corner still counts as an overlap.
+    static func topLeft(of rect: CGRect) -> CGPoint {
+        CGPoint(x: rect.minX, y: rect.maxY)
+    }
+
+    /// Whether a frame is large enough to count as covering the screen.
+    static func coversScreen(_ rect: CGRect, screenFrame: CGRect) -> Bool {
+        rect.width > screenFrame.width * 0.9 && rect.height > screenFrame.height * 0.9
+    }
+
+    /// How far the window can shift on each axis without crossing the far
+    /// edge of the visible frame. Zero on an axis that has no room: shifting
+    /// there anyway would push the window flush against that edge, which both
+    /// hides the window underneath again and eats any gap on that side.
+    static func offsetStep(for rect: CGRect, in screenFrame: CGRect, by offset: CGFloat) -> CGVector {
+        CGVector(dx: rect.maxX + offset <= screenFrame.maxX ? offset : 0,
+                 dy: rect.maxY + offset <= screenFrame.maxY ? offset : 0)
+    }
+
+    /// Whether the window has room to shift at all. A window sized to the
+    /// whole visible frame (a maximized window with no gaps) does not, so the
+    /// caller can skip scanning for overlaps entirely.
+    static func canOffset(_ rect: CGRect, in screenFrame: CGRect, by offset: CGFloat) -> Bool {
+        let step = offsetStep(for: rect, in: screenFrame, by: offset)
+        return step.dx != 0 || step.dy != 0
+    }
+
+    /// The rect to place, shifted clear of any window already at its top-left
+    /// corner, up to `maxCascade` times. Returns the rect unchanged when it
+    /// overlaps nothing or has nowhere left to go.
+    static func cascadedRect(_ rect: CGRect,
+                             occupiedTopLefts: [CGPoint],
+                             screenFrame: CGRect,
+                             offset: CGFloat,
+                             maxCascade: Int,
+                             tolerance: CGFloat = 4) -> CGRect {
+        guard offset > 0 else { return rect }
+        var candidate = rect
+        for _ in 0..<max(0, maxCascade) {
+            let corner = topLeft(of: candidate)
+            let overlaps = occupiedTopLefts.contains { occupied in
+                abs(occupied.x - corner.x) < tolerance && abs(occupied.y - corner.y) < tolerance
+            }
+            guard overlaps else { break }
+
+            let step = offsetStep(for: candidate, in: screenFrame, by: offset)
+            guard step.dx != 0 || step.dy != 0 else { break }
+            candidate.origin.x += step.dx
+            candidate.origin.y += step.dy
+        }
+        return candidate
+    }
+}
+
 class WindowManager {
-    
+
+    /// Bounds how long a hung app can stall the overlap scan's accessibility
+    /// calls. Matches the badge's timeout for the same reason.
+    static let axScanTimeout: Float = 0.25
+
     private let screenDetection = ScreenDetection()
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
@@ -135,7 +200,7 @@ class WindowManager {
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
         }
 
-        if Defaults.cyclingOverlapOffset.userEnabled, action.positionCycles {
+        if Defaults.cyclingOverlapOffset.userEnabled, action.overlapOffsetApplies {
             calcResult.rect = applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
         }
 
@@ -276,61 +341,70 @@ class WindowManager {
         // overlap scan, so skip the offset rather than cascade against itself.
         guard let windowId else { return rect }
 
-        let screenFrameAX = screen.adjustedVisibleFrame().screenFlipped
-        let tolerance: CGFloat = 4
-        let maxCascade = min(5, max(1, Defaults.cyclingOverlapMaxCascade.value))
+        let screenFrameNormalized = screen.adjustedVisibleFrame()
 
-        let otherWindows = AccessibilityElement.getAllWindowElements().filter { element in
+        // Nothing to do if the window can't move on either axis - a window
+        // sized to the whole visible frame has nowhere to shift. Checked
+        // before the scan below, which is far more expensive than this.
+        guard OverlapOffsetGeometry.canOffset(rect, in: screenFrameNormalized, by: overlapOffset) else {
+            return rect
+        }
+
+        // This scan enumerates every window over the accessibility API on the
+        // main thread. A hung or (under heavy system load) sluggish app can
+        // otherwise block that for the full default AX timeout - seconds -
+        // freezing the UI on each window move. Cap messaging system-wide for
+        // the scan and restore the process default immediately after; an app
+        // that can't answer in time is simply skipped (no offset), which is
+        // harmless.
+        //
+        // The cap is per request, not per scan, so this bounds what any one
+        // unresponsive app costs rather than the total: several hung apps
+        // still add up. That is a large improvement on the default and not a
+        // guarantee of a fixed ceiling.
+        AXUIElementSetMessagingTimeout(AXUIElement.systemWide, Self.axScanTimeout)
+        defer { AXUIElementSetMessagingTimeout(AXUIElement.systemWide, 0) }
+
+        let screenFrameAX = screenFrameNormalized.screenFlipped
+        let maxCascade = min(5, max(1, Defaults.cyclingOverlapMaxCascade.value))
+        let placedCoversScreen = OverlapOffsetGeometry.coversScreen(rect, screenFrame: screenFrameNormalized)
+
+        // Each element.frame is a pair of accessibility round-trips, so the
+        // frames are read once here rather than on every cascade iteration.
+        let occupiedTopLefts: [CGPoint] = AccessibilityElement.getAllWindowElements().compactMap { element in
             guard element.getWindowId() != windowId,
                   element.isWindow == true,
                   element.isMinimized != true,
                   element.isHidden != true,
                   element.isSheet != true
-            else { return false }
+            else { return nil }
 
-            let frame = element.frame
-            return !frame.isNull && screenFrameAX.intersects(frame)
+            let frameAX = element.frame
+            guard !frameAX.isNull, screenFrameAX.intersects(frameAX) else { return nil }
+
+            // A window covering the screen shares its origin with every
+            // left/right half and corner placement, so matching one would
+            // offset all of them (#1766) - it's ignored. That only holds while
+            // the window being placed is smaller than it: when this window
+            // covers the screen too, a shared origin is a genuine stack of
+            // maximized windows, which is what the offset exists to reveal.
+            let frame = frameAX.screenFlipped
+            guard placedCoversScreen
+                    || !OverlapOffsetGeometry.coversScreen(frame, screenFrame: screenFrameNormalized)
+            else { return nil }
+
+            return OverlapOffsetGeometry.topLeft(of: frame)
         }
 
-        let screenFrameNormalized = screen.adjustedVisibleFrame()
-        var candidate = rect
-        var cascadeLevel = 0
-
-        while cascadeLevel < maxCascade {
-            let candidateAX = candidate.screenFlipped
-            let hasOverlap = otherWindows.contains { element in
-                let otherFrame = element.frame
-                let originsMatch = abs(otherFrame.origin.x - candidateAX.origin.x) < tolerance
-                    && abs(otherFrame.origin.y - candidateAX.origin.y) < tolerance
-                let otherCoversScreen = otherFrame.width > screenFrameAX.width * 0.9
-                    && otherFrame.height > screenFrameAX.height * 0.9
-                return originsMatch && !otherCoversScreen
-            }
-
-            guard hasOverlap else { break }
-
-            candidate.origin.x += overlapOffset
-            candidate.origin.y += overlapOffset
-            cascadeLevel += 1
-
-            if candidate.origin.x + candidate.width > screenFrameNormalized.maxX {
-                candidate.origin.x = screenFrameNormalized.maxX - candidate.width
-            }
-            if candidate.origin.y + candidate.height > screenFrameNormalized.maxY {
-                candidate.origin.y = screenFrameNormalized.maxY - candidate.height
-            }
-            if candidate.origin.x < screenFrameNormalized.origin.x {
-                candidate.origin.x = screenFrameNormalized.origin.x
-            }
-            if candidate.origin.y < screenFrameNormalized.origin.y {
-                candidate.origin.y = screenFrameNormalized.origin.y
-            }
+        let offsetRect = OverlapOffsetGeometry.cascadedRect(rect,
+                                                           occupiedTopLefts: occupiedTopLefts,
+                                                           screenFrame: screenFrameNormalized,
+                                                           offset: overlapOffset,
+                                                           maxCascade: maxCascade)
+        if offsetRect != rect {
+            Logger.log("Overlap detected, offset window to \(offsetRect.origin.debugDescription)")
         }
-
-        if cascadeLevel > 0 {
-            Logger.log("Cycling overlap detected, applied \(cascadeLevel) x \(overlapOffset)pt cascade offset")
-        }
-        return candidate
+        return offsetRect
     }
 
     func postProcess(result: ResultParameters, resultingRect: CGRect) {
