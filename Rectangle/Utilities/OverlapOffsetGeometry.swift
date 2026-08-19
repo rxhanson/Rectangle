@@ -66,12 +66,12 @@ enum OverlapOffsetGeometry {
 
     /// Windows are matched by their top-left corner, so that a small window
     /// landing on a larger one at the same corner still counts as an overlap.
-    private static func topLeft(of rect: CGRect) -> CGPoint {
+    static func topLeft(of rect: CGRect) -> CGPoint {
         CGPoint(x: rect.minX, y: rect.maxY)
     }
 
     /// Whether a frame is large enough to count as covering the screen.
-    private static func coversScreen(_ rect: CGRect, screenFrame: CGRect) -> Bool {
+    static func coversScreen(_ rect: CGRect, screenFrame: CGRect) -> Bool {
         rect.width > screenFrame.width * 0.9 && rect.height > screenFrame.height * 0.9
     }
 
@@ -79,7 +79,7 @@ enum OverlapOffsetGeometry {
     /// edge of the visible frame. Zero on an axis that has no room: shifting
     /// there anyway would push the window flush against that edge, which both
     /// hides the window underneath again and eats any gap on that side.
-    private static func offsetStep(for rect: CGRect, in screenFrame: CGRect, by offset: CGFloat) -> CGVector {
+    static func offsetStep(for rect: CGRect, in screenFrame: CGRect, by offset: CGFloat) -> CGVector {
         CGVector(dx: rect.maxX + offset <= screenFrame.maxX ? offset : 0,
                  dy: rect.maxY + offset <= screenFrame.maxY ? offset : 0)
     }
@@ -87,7 +87,7 @@ enum OverlapOffsetGeometry {
     /// Whether the window has room to shift at all. A window sized to the
     /// whole visible frame (a maximized window with no gaps) does not, so the
     /// caller can skip scanning for overlaps entirely.
-    private static func canOffset(_ rect: CGRect, in screenFrame: CGRect, by offset: CGFloat) -> Bool {
+    static func canOffset(_ rect: CGRect, in screenFrame: CGRect, by offset: CGFloat) -> Bool {
         let step = offsetStep(for: rect, in: screenFrame, by: offset)
         return step.dx != 0 || step.dy != 0
     }
@@ -95,7 +95,7 @@ enum OverlapOffsetGeometry {
     /// The rect to place, shifted clear of any window already at its top-left
     /// corner, up to `maxCascade` times. Returns the rect unchanged when it
     /// overlaps nothing or has nowhere left to go.
-    private static func cascadedRect(_ rect: CGRect,
+    static func cascadedRect(_ rect: CGRect,
                              occupiedTopLefts: [CGPoint],
                              screenFrame: CGRect,
                              offset: CGFloat,

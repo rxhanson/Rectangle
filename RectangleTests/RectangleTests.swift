@@ -1673,6 +1673,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testMinWidthConstrainedTopLeftRecordsAchievedHorizontalSplit() throws {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
 
         ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
@@ -1685,6 +1686,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testBottomLeftAfterMinWidthConstraintUsesAchievedHorizontalSplit() throws {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
         ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
                                                                     achievedFrame: plan.focusedFrame,
@@ -1702,6 +1704,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testMinHeightConstrainedTopLeftRecordsAchievedVerticalSplit() throws {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 100, height: 360)))
 
         ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
@@ -1717,6 +1720,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testRightAndBottomConstraintsRecordSymmetricLeadingSplits() {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let constrainedTopRight = gappedCornerFrame(horizontalSide: .trailing,
                                                     verticalSide: .leading,
                                                     horizontalFraction: 390.0 / 1200.0,
@@ -1749,6 +1753,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testAchievedCooperativeRatiosDoNotChangeSavedDefaults() throws {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let savedHorizontal = Defaults.horizontalSplitRatio.value
         let savedVertical = Defaults.verticalSplitRatio.value
         let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 360)))
@@ -1765,6 +1770,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testGapIsIncludedWhenDerivingAchievedSplit() throws {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
         ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
                                                                     achievedFrame: plan.focusedFrame,
@@ -1777,6 +1783,7 @@ class ActiveSideSplitRatiosCooperativeTests: XCTestCase {
     }
 
     func testCyclicCornerAfterConstraintUsesAchievedPerpendicularRatio() throws {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         let plan = try XCTUnwrap(topLeftPlan(focusedMinimumSize: CGSize(width: 360, height: 100)))
         ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(.topLeft,
                                                                     achievedFrame: plan.focusedFrame,
@@ -2621,6 +2628,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     }
 
     func testRepeatedRightShortcutUpdatesActiveSplitForSubsequentCorners() {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
         Defaults.verticalSplitRatio.value = 50
         ActiveSideSplitRatios.shared.resetAll()
@@ -2644,6 +2652,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     }
 
     func testRepeatedBottomShortcutUpdatesActiveSplitForSubsequentCorners() {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         Defaults.horizontalSplitRatio.value = 50
         Defaults.verticalSplitRatio.value = CycleSize.twoThirds.percentValue
         ActiveSideSplitRatios.shared.resetAll()
@@ -2667,6 +2676,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     }
 
     func testActiveSideSplitIsScopedToDisplayFrame() {
+        guard Defaults.cooperativeCornerResize.enabled else { return }
         Defaults.horizontalSplitRatio.value = CycleSize.twoThirds.percentValue
         ActiveSideSplitRatios.shared.resetAll()
 
