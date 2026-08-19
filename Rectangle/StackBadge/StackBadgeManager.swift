@@ -24,27 +24,12 @@ class StackBadgeManager {
     private var listWindow: StackBadgeListPanel?
     private var visibleUIFrames = [CGRect]()
 
-    private var keyMonitor: ActiveEventMonitor?
-    private let keyClaim = KeyClaimState()
-    private var lastListInteraction: TimeInterval = 0
-
-    /// An open list holds the arrow keys, so it must not be able to stay open
-    /// indefinitely: a cursor left resting on a stack would otherwise keep
-    /// taking them from whatever the user is typing into. Any interaction with
-    /// the list resets this.
-    private static let listIdleTimeout: TimeInterval = 5
-
-    /// Whether the list is claiming keys. Written on the main thread and read
-    /// from the event tap's own thread, so the two are serialized.
-    final class KeyClaimState {
-        private let lock = NSLock()
-        private var claiming = false
-
-        var isClaiming: Bool {
-            get { lock.lock(); defer { lock.unlock() }; return claiming }
-            set { lock.lock(); claiming = newValue; lock.unlock() }
-        }
-    }
+    /// What the badge would open, kept from the dwell that showed it. The list
+    /// is not built until the cursor reaches the badge, so a stack passed over
+    /// on the way somewhere else costs a pill rather than a popup - and the
+    /// keyboard is only taken from the frontmost app once someone has aimed at
+    /// the badge on purpose.
+    private var pendingStack: (windows: [StackBadgeStackedWindow], corner: CGPoint, screenFrame: CGRect)?
 
     enum NavigationKey {
         case up, down, commit, escape
@@ -179,9 +164,8 @@ class StackBadgeManager {
                 self?.tick()
             }
             timer.tolerance = 0.05
-            // .common keeps the tick - and with it the idle expiry that
-            // reclaims the arrow keys - running during menu and event
-            // tracking, where default-mode timers pause but the tap does not.
+            // .common keeps mouse-leave and hidden-window detection running
+            // during menu and event tracking, where default-mode timers pause.
             RunLoop.main.add(timer, forMode: .common)
             self.timer = timer
         } else {
@@ -202,27 +186,23 @@ class StackBadgeManager {
             dwellFired = false
             generation += 1
             if !visibleUIFrames.isEmpty {
-                if isInsideVisibleUI(location) {
-                    lastListInteraction = lastMoveTime
-                } else {
+                if !isInsideVisibleUI(location) {
                     dismiss()
+                } else if listWindow == nil, let badge = badgeWindow,
+                          badge.frame.insetBy(dx: -4, dy: -4).contains(location) {
+                    openList()
                 }
             }
             return
         }
 
-        // The open list holds the arrow keys, so it can't be allowed to sit
-        // there unattended: a cursor resting on a stack would keep taking them
-        // from whatever the user is typing into. The same expiry covers a
-        // badge shown without a list, which would otherwise have no exit at
-        // all while the cursor rests. The UI also goes away if macOS hid it
-        // out from under us, which a Space change does without any
-        // notification the manager would otherwise see.
+        // The UI goes away if macOS hid it out from under us, which a Space
+        // change can do without a notification the manager would otherwise
+        // see.
         if badgeWindow != nil {
-            let idle = ProcessInfo.processInfo.systemUptime - lastListInteraction
             let uiHidden = badgeWindow?.isVisible != true
                 || (listWindow != nil && listWindow?.isVisible != true)
-            if idle > Self.listIdleTimeout || uiHidden {
+            if uiHidden {
                 dismiss()
                 return
             }
@@ -312,33 +292,40 @@ class StackBadgeManager {
         badge.orderFrontRegardless()
         badgeWindow = badge
 
-        let listTop = CGPoint(x: anchor.x + 12, y: badge.frame.minY - 6)
+        pendingStack = (windows, corner, screenFrame)
+
+        // The badge alone still needs a way out, so the cursor's route from
+        // where it dwelled to the badge counts as staying inside the UI.
+        let corridor = CGRect(x: badge.frame.minX, y: badge.frame.maxY,
+                              width: badge.frame.width,
+                              height: max(0, corner.y - badge.frame.maxY))
+        visibleUIFrames = [badge.frame, corridor]
+    }
+
+    /// Opens the list under the badge. Called when the cursor reaches the
+    /// badge, not when the stack is first detected.
+    private func openList() {
+        guard listWindow == nil,
+              let badge = badgeWindow,
+              let (windows, corner, screenFrame) = pendingStack
+        else { return }
+
+        let listTop = CGPoint(x: badge.frame.minX + 12, y: badge.frame.minY - 6)
 
         // Only build the rows that fit above the screen bottom. Building them
         // all and letting the panel clip would leave the arrow keys able to
         // select - and Return able to raise - a window with no visible row.
         // The badge still reports the true size of the stack.
         let listed = Array(windows.prefix(StackBadgeListPanel.rowsThatFit(below: listTop.y, above: screenFrame.minY)))
-        lastListInteraction = ProcessInfo.processInfo.systemUptime
-        guard !listed.isEmpty else {
-            // No room for even one row - a stack at the bottom of the grid.
-            // The badge alone still needs the exits the full UI gets (mouse
-            // moving away, the idle expiry in tick()), or it would float
-            // there with no path that ever dismisses it.
-            let corridor = CGRect(x: badge.frame.minX, y: badge.frame.maxY,
-                                  width: badge.frame.width,
-                                  height: max(0, corner.y - badge.frame.maxY))
-            visibleUIFrames = [badge.frame, corridor]
-            return
-        }
+        guard !listed.isEmpty else { return }
 
         let list = StackBadgeListPanel(
             windows: listed, listTop: listTop, screenFrame: screenFrame,
-            onSelect: { [weak self] window in self?.focus(window) })
+            onSelect: { [weak self] window in self?.focus(window) },
+            onDismiss: { [weak self] in self?.dismiss() })
 
-        list.orderFrontRegardless()
+        list.makeKeyAndOrderFront(nil)
         listWindow = list
-        startKeyMonitor()
 
         visibleUIFrames = list.visibleUIFrames(with: badge, triggerCorner: corner,
                                                cursor: NSEvent.mouseLocation)
@@ -348,83 +335,29 @@ class StackBadgeManager {
         // Invalidate any in-flight title fetch so a stale result can't
         // resurrect the UI after a dismissal.
         generation += 1
-        stopKeyMonitor()
         badgeWindow?.orderOut(nil)
         badgeWindow = nil
         listWindow?.orderOut(nil)
         listWindow = nil
+        pendingStack = nil
         visibleUIFrames = []
-    }
-
-    /// Arrow keys move the highlight, Return raises the selected window
-    /// (leaving the list up so the stack can be walked), Escape closes. The
-    /// keys are consumed so they don't reach the window underneath.
-    private func startKeyMonitor() {
-        guard keyMonitor == nil else { return }
-
-        // VoiceOver's Quick Nav uses the bare arrow keys, and taking those
-        // would break navigating the very windows this list describes. Leave
-        // the list mouse-driven instead.
-        guard !NSWorkspace.shared.isVoiceOverEnabled else { return }
-
-        let claim = keyClaim
-        claim.isClaiming = true
-        let monitor = ActiveEventMonitor(
-            mask: .keyDown,
-            filterer: { event in
-                claim.isClaiming
-                    && Self.navigationKey(forKeyCode: event.keyCode, modifiers: event.modifierFlags) != nil
-            },
-            handler: { [weak self] event in
-                guard let self, self.listWindow != nil,
-                      let key = Self.navigationKey(forKeyCode: event.keyCode, modifiers: event.modifierFlags)
-                else { return }
-                self.lastListInteraction = ProcessInfo.processInfo.systemUptime
-                switch key {
-                case .up: self.moveSelection(by: -1)
-                case .down: self.moveSelection(by: 1)
-                case .commit: self.commitSelection()
-                case .escape: self.dismiss()
-                }
-            })
-        monitor.start()
-        keyMonitor = monitor
-    }
-
-    private func stopKeyMonitor() {
-        // Stop claiming before tearing the tap down, so a keystroke already in
-        // the filterer passes through rather than being swallowed on the way out.
-        keyClaim.isClaiming = false
-        keyMonitor?.stop()
-        keyMonitor = nil
-    }
-
-    private func moveSelection(by delta: Int) {
-        listWindow?.moveSelection(by: delta)
-    }
-
-    /// Return (or a click): bring the selected window forward. The list stays
-    /// open so you can keep flipping through the stack.
-    private func commitSelection() {
-        guard let selectedWindow = listWindow?.selectedWindow else { return }
-        focus(selectedWindow)
     }
 
     /// Resolves the window by pid directly (no shared window-list cache off
     /// the main thread), with AX timeouts so an unresponsive app can't hang
     /// the focus attempt.
     ///
-    /// The list is deliberately NOT dismissed here, so you can click through
-    /// several windows in the stack in a row without re-opening it. It
-    /// dismisses when the cursor leaves the overlay (see tick()). Clicks keep
-    /// working even though another app is now frontmost because the rows opt
-    /// into first-mouse and the panel is non-activating.
+    /// The list deliberately stays open: walking a stack means raising one
+    /// window, looking, and moving on, so Return is "show me this one" rather
+    /// than "I am done". Raising activates the window's app and makes it key,
+    /// so the panel takes the keyboard back afterwards - otherwise the list
+    /// would still be on screen while the arrow keys drove the window that
+    /// just came forward.
     private func focus(_ window: StackBadgeStackedWindow) {
-        // A click is list interaction just as much as a key press; without
-        // this, clicking right before the idle expiry raises the window and
-        // then watches the list vanish mid-walk.
-        lastListInteraction = ProcessInfo.processInfo.systemUptime
-        window.focus(axTimeout: Self.axTimeout)
+        window.focus(axTimeout: Self.axTimeout) { [weak self] in
+            guard let self, let list = self.listWindow, list.isVisible else { return }
+            list.makeKeyAndOrderFront(nil)
+        }
     }
 
 }

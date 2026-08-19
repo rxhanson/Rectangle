@@ -36,7 +36,11 @@ struct StackBadgeStackedWindow {
         }
     }
 
-    func focus(axTimeout: Float) {
+    /// `raised` runs on the main thread once the window has been brought
+    /// forward, so the caller can take the keyboard back: activating the
+    /// window's app makes it key, which would otherwise leave an open list
+    /// visible but no longer answering the arrow keys.
+    func focus(axTimeout: Float, raised: (() -> Void)? = nil) {
         let pid = self.pid
         let windowId = self.windowId
         DispatchQueue.global(qos: .userInitiated).async {
@@ -57,6 +61,7 @@ struct StackBadgeStackedWindow {
             // activation is AppKit and hops over.
             DispatchQueue.main.async {
                 NSRunningApplication(processIdentifier: pid)?.activate(options: .activateIgnoringOtherApps)
+                raised?()
             }
         }
     }
@@ -82,8 +87,12 @@ final class StackBadgeListPanel: NSPanel {
     private static let rowHeight: CGFloat = 22
     private static let listPadding: CGFloat = 4
     private let windows: [StackBadgeStackedWindow]
+    private let onSelect: (StackBadgeStackedWindow) -> Void
+    private let onDismiss: () -> Void
     private var rows: [StackBadgeRowView] = []
     private var selectedIndex = 0
+
+    override var canBecomeKey: Bool { true }
 
     var selectedWindow: StackBadgeStackedWindow? {
         guard windows.indices.contains(selectedIndex) else { return nil }
@@ -98,8 +107,11 @@ final class StackBadgeListPanel: NSPanel {
     init(windows: [StackBadgeStackedWindow],
          listTop: CGPoint,
          screenFrame: CGRect,
-         onSelect: @escaping (StackBadgeStackedWindow) -> Void) {
+         onSelect: @escaping (StackBadgeStackedWindow) -> Void,
+         onDismiss: @escaping () -> Void) {
         self.windows = windows
+        self.onSelect = onSelect
+        self.onDismiss = onDismiss
         let width: CGFloat = 260
         let padding = Self.listPadding
         let height = CGFloat(windows.count) * Self.rowHeight + padding * 2
@@ -155,6 +167,29 @@ final class StackBadgeListPanel: NSPanel {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func keyDown(with event: NSEvent) {
+        guard let key = StackBadgeManager.navigationKey(
+            forKeyCode: event.keyCode,
+            modifiers: event.modifierFlags
+        ) else {
+            onDismiss()
+            return
+        }
+
+        switch key {
+        case .up:
+            moveSelection(by: -1)
+        case .down:
+            moveSelection(by: 1)
+        case .commit:
+            if let selectedWindow {
+                onSelect(selectedWindow)
+            }
+        case .escape:
+            onDismiss()
+        }
     }
 
     func select(index: Int) {
