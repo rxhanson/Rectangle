@@ -105,6 +105,9 @@ class Defaults {
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
+    /// Deliberately not in `array`: presets are exported through `Config.presets`
+    /// rather than as an escaped JSON string among the individual settings.
+    static let presets = JSONDefault<PresetStore>(key: "presets")
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -224,6 +227,10 @@ protocol Default {
     var key: String { get }
     func load(from codable: CodableDefault)
     func toCodable() -> CodableDefault
+
+    /// The value this setting has when the user has never touched it. Used to build
+    /// a preset from Rectangle's built-in defaults without mutating live settings.
+    func defaultCodable() -> CodableDefault
 }
 
 class BoolDefault: Default {
@@ -252,6 +259,10 @@ class BoolDefault: Default {
     
     func toCodable() -> CodableDefault {
         return CodableDefault(bool: enabled)
+    }
+
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(bool: false)
     }
 }
 
@@ -304,6 +315,10 @@ class OptionalBoolDefault: Default {
         let intValue = enabled ? 1 : 2
         return CodableDefault(int: intValue)
     }
+
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(int: 0)
+    }
 }
 
 class StringDefault: Default {
@@ -331,12 +346,17 @@ class StringDefault: Default {
     func toCodable() -> CodableDefault {
         return CodableDefault(string: value)
     }
+
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(string: nil)
+    }
 }
 
 class FloatDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+    private let defaultValue: Float
+
     var value: Float {
         didSet {
             if initialized {
@@ -344,26 +364,31 @@ class FloatDefault: Default {
             }
         }
     }
-    
+
     var cgFloat: CGFloat { CGFloat(value) }
 
     init(key: String, defaultValue: Float = 0) {
         self.key = key
+        self.defaultValue = defaultValue
         value = UserDefaults.standard.float(forKey: key)
         if(defaultValue != 0 && value == 0) {
             value = defaultValue
         }
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         if let float = codable.float {
             value = float
         }
     }
-    
+
     func toCodable() -> CodableDefault {
         return CodableDefault(float: value)
+    }
+
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(float: defaultValue)
     }
 }
 
@@ -404,12 +429,17 @@ class DoubleDefault: Default {
     func toCodable() -> CodableDefault {
         CodableDefault(double: value)
     }
+
+    func defaultCodable() -> CodableDefault {
+        CodableDefault(double: defaultValue)
+    }
 }
 
 class IntDefault: Default {
     public private(set) var key: String
     private var initialized = false
-    
+    private let defaultValue: Int
+
     var value: Int {
         didSet {
             if initialized {
@@ -417,24 +447,29 @@ class IntDefault: Default {
             }
         }
     }
-    
+
     init(key: String, defaultValue: Int = 0) {
         self.key = key
+        self.defaultValue = defaultValue
         value = UserDefaults.standard.integer(forKey: key)
         if(defaultValue != 0 && value == 0) {
             value = defaultValue
         }
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         if let int = codable.int {
             value = int
         }
     }
-    
+
     func toCodable() -> CodableDefault {
         return CodableDefault(int: value)
+    }
+
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(int: defaultValue)
     }
 }
 
@@ -474,9 +509,13 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     private func loadFromJSON() {
-        guard let jsonString = value else { return }
+        guard let jsonString = value,
+              let jsonData = jsonString.data(using: .utf8)
+        else {
+            typedValue = nil
+            return
+        }
         let decoder = JSONDecoder()
-        guard let jsonData = jsonString.data(using: .utf8) else { return }
         typedValue = try? decoder.decode(T.self, from: jsonData)
     }
     
@@ -524,6 +563,10 @@ class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
     
     func toCodable() -> CodableDefault {
         CodableDefault(int: value.rawValue)
+    }
+
+    func defaultCodable() -> CodableDefault {
+        CodableDefault(int: defaultValue.rawValue)
     }
 }
 

@@ -63,7 +63,8 @@ class PrefsViewController: NSViewController {
     
     @IBOutlet weak var showMoreButton: NSButton!
     @IBOutlet weak var additionalShortcutsStackView: NSStackView!
-    
+
+
     // Settings
     override func awakeFromNib() {
         
@@ -122,8 +123,16 @@ class PrefsViewController: NSViewController {
         }
         
         subscribeToAllowAnyShortcutToggle()
-        
+
         additionalShortcutsStackView.isHidden = true
+    }
+
+    /// awakeFromNib can run more than once for a storyboard scene, so registering an
+    /// observer belongs here instead.
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        subscribeToConfigImported()
     }
     
     @IBAction func toggleShowMore(_ sender: NSButton) {
@@ -131,7 +140,21 @@ class PrefsViewController: NSViewController {
         showMoreButton.title = additionalShortcutsStackView.isHidden
             ? "▶︎ ⋯" : "▼"
     }
-    
+
+    private func subscribeToConfigImported() {
+        Notification.Name.configImported.onPost { [weak self] _ in
+            guard let self = self else { return }
+
+            // Rebind every recorder so the tab reflects the newly applied keys.
+            // setAssociatedUserDefaultsKey does not break the previous binding on
+            // its own, so pass nil first to unbind.
+            for (action, view) in self.actionsToViews {
+                view.setAssociatedUserDefaultsKey(nil, withTransformerName: MASDictionaryTransformerName)
+                view.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
+            }
+        }
+    }
+
     private func subscribeToAllowAnyShortcutToggle() {
         Notification.Name.allowAnyShortcut.onPost { notification in
             guard let enabled = notification.object as? Bool else { return }

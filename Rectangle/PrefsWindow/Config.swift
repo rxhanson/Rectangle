@@ -32,7 +32,8 @@ extension Defaults {
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: version,
                             shortcuts: shortcuts,
-                            defaults: codableDefaults)
+                            defaults: codableDefaults,
+                            presets: Defaults.presets.typedValue)
         
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -49,7 +50,17 @@ extension Defaults {
         let decoder = JSONDecoder()
         return try? decoder.decode(Config.self, from: jsonData)
     }
-    
+
+    /// Applies coded settings to the live defaults. Keys that are absent are left
+    /// alone. Shared by JSON import and by preset switching.
+    static func apply(defaults codableDefaults: [String: CodableDefault]) {
+        for availableDefault in Defaults.array {
+            if let codedDefault = codableDefaults[availableDefault.key] {
+                availableDefault.load(from: codedDefault)
+            }
+        }
+    }
+
     static func load(fileUrl: URL, notificationCenter: NotificationCenter = .default) {
         guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
         
@@ -63,12 +74,12 @@ extension Defaults {
         guard let jsonString = try? String(contentsOf: fileUrl, encoding: .utf8),
               let config = convert(jsonString: jsonString) else { return }
 
-        for availableDefault in Defaults.array {
-            if let codedDefault = config.defaults[availableDefault.key] {
-                availableDefault.load(from: codedDefault)
-            }
+        apply(defaults: config.defaults)
+
+        if let presets = config.presets {
+            Defaults.presets.typedValue = presets
         }
-        
+
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }
             if let importedShortcut, importedShortcut.keyCode >= 0 {
@@ -175,4 +186,20 @@ struct Config: Codable {
     let version: String
     let shortcuts: [String: Shortcut]
     let defaults: [String: CodableDefault]
+
+    /// Absent in configs exported before presets existed. Decoding tolerates both
+    /// its absence here and its presence in older builds, which ignore unknown keys.
+    let presets: PresetStore?
+
+    init(bundleId: String,
+         version: String,
+         shortcuts: [String: Shortcut],
+         defaults: [String: CodableDefault],
+         presets: PresetStore? = nil) {
+        self.bundleId = bundleId
+        self.version = version
+        self.shortcuts = shortcuts
+        self.defaults = defaults
+        self.presets = presets
+    }
 }

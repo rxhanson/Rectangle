@@ -33,4 +33,25 @@ class AlertUtil {
         alert.addButton(withTitle: buttonThreeText)
         return alert.runModal()
     }
+
+    static func textInputAlert(question: String,
+                               text: String,
+                               defaultValue: String,
+                               confirmText: String = "OK",
+                               cancelText: String = "Cancel") -> String? {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: confirmText)
+        alert.addButton(withTitle: cancelText)
+
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 240, height: 24))
+        field.stringValue = defaultValue
+        alert.accessoryView = field
+        alert.window.initialFirstResponder = field
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return nil }
+        return field.stringValue
+    }
 }

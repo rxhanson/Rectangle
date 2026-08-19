@@ -134,6 +134,80 @@ class ScreenFlippedTests: XCTestCase {
     }
 }
 
+class DefaultCodableTests: XCTestCase {
+
+    private let scratchKeys = [
+        "testDefaultCodableBool",
+        "testDefaultCodableOptionalBool",
+        "testDefaultCodableString",
+        "testDefaultCodableFloat",
+        "testDefaultCodableInt",
+        "testDefaultCodableDouble",
+        "testDefaultCodableIntEnum",
+        "testDefaultCodableJSON"
+    ]
+
+    override func tearDown() {
+        scratchKeys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+        super.tearDown()
+    }
+
+    func testBoolDefaultReportsFalse() {
+        let sut = BoolDefault(key: "testDefaultCodableBool")
+        XCTAssertEqual(sut.defaultCodable().bool, false, "a BoolDefault is off unless the user turns it on")
+    }
+
+    func testOptionalBoolDefaultReportsNotSet() {
+        let sut = OptionalBoolDefault(key: "testDefaultCodableOptionalBool")
+        XCTAssertEqual(sut.defaultCodable().int, 0, "0 is the notSet encoding for OptionalBoolDefault")
+    }
+
+    func testStringDefaultReportsNil() {
+        let sut = StringDefault(key: "testDefaultCodableString")
+        XCTAssertNil(sut.defaultCodable().string)
+    }
+
+    func testFloatDefaultReportsDeclaredDefaultValue() {
+        let sut = FloatDefault(key: "testDefaultCodableFloat", defaultValue: 30)
+        XCTAssertEqual(sut.defaultCodable().float, 30)
+    }
+
+    func testIntDefaultReportsDeclaredDefaultValue() {
+        let sut = IntDefault(key: "testDefaultCodableInt", defaultValue: 250)
+        XCTAssertEqual(sut.defaultCodable().int, 250)
+    }
+
+    func testDoubleDefaultReportsDeclaredDefaultValue() {
+        let sut = DoubleDefault(key: "testDefaultCodableDouble", defaultValue: 0.25)
+        XCTAssertEqual(sut.defaultCodable().double, 0.25)
+    }
+
+    func testIntEnumDefaultReportsDeclaredDefaultValue() {
+        let sut = IntEnumDefault<EdgeAlignment>(key: "testDefaultCodableIntEnum", defaultValue: .edgesAndCorners)
+        XCTAssertEqual(sut.defaultCodable().int, EdgeAlignment.edgesAndCorners.rawValue)
+    }
+
+    func testJSONDefaultClearsTypedValueWhenLoadingNilString() {
+        let sut = JSONDefault<[String]>(key: "testDefaultCodableJSON")
+        sut.typedValue = ["a", "b"]
+        XCTAssertNotNil(sut.typedValue, "precondition: the typed value was stored")
+
+        sut.load(from: CodableDefault(string: nil))
+
+        XCTAssertNil(sut.typedValue, "a nil string must clear the decoded value, not leave the previous one")
+    }
+
+    func testRealDefaultsReportTheirDeclaredValues() {
+        XCTAssertEqual(Defaults.gapSize.defaultCodable().float, 0, "gapSize declares no default")
+        XCTAssertEqual(Defaults.widthStepSize.defaultCodable().float, 30)
+        XCTAssertEqual(Defaults.minimumWindowWidth.defaultCodable().double, 0.25)
+        XCTAssertEqual(Defaults.cyclingOverlapMaxCascade.defaultCodable().int, 1)
+        XCTAssertEqual(Defaults.moveFixedSizeToEdge.defaultCodable().int, EdgeAlignment.edgesAndCorners.rawValue)
+        XCTAssertEqual(Defaults.subsequentExecutionMode.defaultCodable().int, SubsequentExecutionMode.resize.rawValue)
+        XCTAssertEqual(Defaults.selectedCycleSizes.defaultCodable().int, 0)
+    }
+}
+
 class DefaultsExportTests: XCTestCase {
 
     func testOverlapDefaultsInExportArray() {
@@ -143,6 +217,20 @@ class DefaultsExportTests: XCTestCase {
         XCTAssertTrue(keys.contains("cyclingOverlapMaxCascade"), "cyclingOverlapMaxCascade missing from Defaults.array")
         XCTAssertTrue(keys.contains("cooperativeCornerResize"), "cooperativeCornerResize missing from Defaults.array")
         XCTAssertTrue(keys.contains("stackBadge"), "stackBadge missing from Defaults.array")
+    }
+
+    func testPresetsAreNotAnIndividualExportedSetting() {
+        let keys = Defaults.array.map { $0.key }
+        XCTAssertFalse(keys.contains("presets"),
+                       "presets ride along in Config.presets, not as an escaped string among the settings")
+    }
+
+    func testPresetScopeExcludesOnlyRealDefaultsKeys() {
+        let keys = Set(Defaults.array.map { $0.key })
+        for excluded in PresetScope.excludedDefaultKeys {
+            XCTAssertTrue(keys.contains(excluded),
+                          "\(excluded) is excluded from presets but is not a Defaults key — it was renamed or misspelled")
+        }
     }
 }
 
@@ -3946,5 +4034,183 @@ final class NextPrevDisplayMappingTests: XCTestCase {
             NextPrevDisplayCalculation.relativePositionedRect(window: window, source: frame, destination: frame),
             window
         )
+    }
+}
+
+class PresetTests: XCTestCase {
+
+    private func makePreset(shortcuts: [String: Shortcut] = [:],
+                            cleared: [String] = [],
+                            defaults: [String: CodableDefault] = [:]) -> Preset {
+        Preset(id: UUID(),
+               name: "Test",
+               version: "1",
+               shortcuts: shortcuts,
+               clearedShortcuts: cleared,
+               defaults: defaults)
+    }
+
+    func testAbsentKeysAreNeitherAssignedNorCleared() {
+        let states = PresetSnapshot.shortcutStates(in: [:], keys: ["leftHalf", "rightHalf"])
+        XCTAssertTrue(states.assigned.isEmpty, "an absent key means the built-in default applies")
+        XCTAssertTrue(states.cleared.isEmpty)
+    }
+
+    func testEmptyDictionaryIsReadAsCleared() {
+        let domain: [String: Any] = ["leftHalf": [String: Any]()]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: ["leftHalf"])
+        XCTAssertTrue(states.assigned.isEmpty)
+        XCTAssertEqual(states.cleared, ["leftHalf"], "MASShortcut stores an empty dictionary for 'explicitly none'")
+    }
+
+    func testAssignedShortcutIsRead() {
+        let domain: [String: Any] = ["leftHalf": ["keyCode": 123, "modifierFlags": 1572864]]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: ["leftHalf"])
+        XCTAssertEqual(states.assigned["leftHalf"]?.keyCode, 123)
+        XCTAssertEqual(states.assigned["leftHalf"]?.modifierFlags, 1572864)
+        XCTAssertTrue(states.cleared.isEmpty)
+    }
+
+    func testKeysOutsideTheRequestedListAreIgnored() {
+        let domain: [String: Any] = ["gapSize": 4, "leftHalf": ["keyCode": 1, "modifierFlags": 2]]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: ["leftHalf"])
+        XCTAssertEqual(states.assigned.count, 1)
+    }
+
+    func testAllThreeShortcutStatesSurviveARoundTrip() {
+        let domain: [String: Any] = [
+            "leftHalf": ["keyCode": 123, "modifierFlags": 1572864],
+            "rightHalf": [String: Any]()
+        ]
+        let keys = ["leftHalf", "rightHalf", "maximize"]
+        let states = PresetSnapshot.shortcutStates(in: domain, keys: keys)
+        let preset = makePreset(shortcuts: states.assigned, cleared: states.cleared)
+
+        let writes = PresetSnapshot.shortcutWrites(for: preset, keys: keys)
+
+        XCTAssertEqual(writes["leftHalf"], .set(["keyCode": 123, "modifierFlags": 1572864]))
+        XCTAssertEqual(writes["rightHalf"], .set([:]), "a cleared shortcut must be written back as an empty dictionary")
+        XCTAssertEqual(writes["maximize"], .remove, "an unset shortcut must have its key removed so the default applies")
+    }
+
+    func testWritesCoverEveryRequestedKey() {
+        let keys = ["leftHalf", "rightHalf", "maximize"]
+        let writes = PresetSnapshot.shortcutWrites(for: makePreset(), keys: keys)
+        XCTAssertEqual(Set(writes.keys), Set(keys))
+    }
+
+    func testPresetEncodesAndDecodes() throws {
+        let preset = makePreset(shortcuts: ["leftHalf": Shortcut(1572864, 123)],
+                                cleared: ["rightHalf"],
+                                defaults: ["gapSize": CodableDefault(float: 4)])
+        let data = try JSONEncoder().encode(PresetStore(presets: [preset], activePresetId: preset.id))
+        let decoded = try JSONDecoder().decode(PresetStore.self, from: data)
+
+        XCTAssertEqual(decoded.presets.count, 1)
+        XCTAssertEqual(decoded.activePresetId, preset.id)
+        XCTAssertEqual(decoded.presets[0].shortcuts["leftHalf"]?.keyCode, 123)
+        XCTAssertEqual(decoded.presets[0].clearedShortcuts, ["rightHalf"])
+        XCTAssertEqual(decoded.presets[0].defaults["gapSize"]?.float, 4)
+    }
+
+    func testScopeExcludesAppLevelDefaults() {
+        let keys = PresetScope.defaults.map { $0.key }
+        XCTAssertFalse(keys.contains("launchOnLogin"))
+        XCTAssertFalse(keys.contains("hideMenubarIcon"))
+        XCTAssertFalse(keys.contains("disabledApps"))
+        XCTAssertTrue(keys.contains("gapSize"), "window behavior settings stay in scope")
+        XCTAssertTrue(keys.contains("alternateDefaultShortcuts"), "the default shortcut set is part of a preset")
+    }
+
+    func testShortcutKeysCoverEveryActionAndTodo() {
+        let keys = PresetScope.shortcutKeys
+        XCTAssertEqual(keys.count, WindowAction.active.count + TodoManager.defaultsKeys.count)
+        XCTAssertTrue(keys.contains("leftHalf"))
+        XCTAssertTrue(keys.contains("toggleTodo"))
+    }
+
+    func testBuiltInDefaultsSnapshotCoversEveryScopedKey() {
+        let snapshot = PresetSnapshot.builtInDefaultsSnapshot(from: PresetScope.defaults)
+        XCTAssertEqual(Set(snapshot.keys), Set(PresetScope.defaults.map { $0.key }))
+    }
+
+    func testUniqueNameAppendsACounter() {
+        XCTAssertEqual(PresetNaming.unique("TKL", existing: []), "TKL")
+        XCTAssertEqual(PresetNaming.unique("TKL", existing: ["TKL"]), "TKL 2")
+        XCTAssertEqual(PresetNaming.unique("TKL", existing: ["TKL", "TKL 2"]), "TKL 3")
+    }
+
+    func testSanitizedTrimsAndRejectsBlankNames() {
+        XCTAssertNil(PresetNaming.sanitized("   "))
+        XCTAssertNil(PresetNaming.sanitized(""))
+        XCTAssertEqual(PresetNaming.sanitized("  TKL  "), "TKL")
+    }
+
+    func testTheLastPresetCannotBeRemoved() {
+        let only = makePreset()
+        let store = PresetStore(presets: [only], activePresetId: only.id)
+        XCTAssertNil(PresetMutation.removing(id: only.id, from: store))
+    }
+
+    func testRemovingAnInactivePresetKeepsTheActiveOne() throws {
+        let active = makePreset()
+        let other = makePreset()
+        let store = PresetStore(presets: [active, other], activePresetId: active.id)
+
+        let result = try XCTUnwrap(PresetMutation.removing(id: other.id, from: store))
+
+        XCTAssertEqual(result.store.presets.map { $0.id }, [active.id])
+        XCTAssertEqual(result.store.activePresetId, active.id)
+        XCTAssertNil(result.activates, "nothing needs to be applied when the active preset survives")
+    }
+
+    func testRemovingTheActivePresetHandsOverToTheFirstRemaining() throws {
+        let active = makePreset()
+        let second = makePreset()
+        let third = makePreset()
+        let store = PresetStore(presets: [active, second, third], activePresetId: active.id)
+
+        let result = try XCTUnwrap(PresetMutation.removing(id: active.id, from: store))
+
+        XCTAssertEqual(result.store.presets.map { $0.id }, [second.id, third.id])
+        XCTAssertEqual(result.store.activePresetId, second.id)
+        XCTAssertEqual(result.activates?.id, second.id, "the new active preset must be applied to the live settings")
+    }
+
+    func testRemovingAnUnknownPresetIsRefused() {
+        let one = makePreset()
+        let two = makePreset()
+        let store = PresetStore(presets: [one, two], activePresetId: one.id)
+        XCTAssertNil(PresetMutation.removing(id: UUID(), from: store))
+    }
+
+    func testConfigCarriesPresetsThroughARoundTrip() throws {
+        let preset = makePreset(shortcuts: ["leftHalf": Shortcut(1572864, 123)],
+                                cleared: ["rightHalf"])
+        let config = Config(bundleId: "com.knollsoft.Rectangle",
+                            version: "104",
+                            shortcuts: ["leftHalf": Shortcut(1572864, 123)],
+                            defaults: ["gapSize": CodableDefault(float: 4)],
+                            presets: PresetStore(presets: [preset], activePresetId: preset.id))
+
+        let data = try JSONEncoder().encode(config)
+        let decoded = try JSONDecoder().decode(Config.self, from: data)
+
+        XCTAssertEqual(decoded.presets?.presets.count, 1)
+        XCTAssertEqual(decoded.presets?.activePresetId, preset.id)
+        XCTAssertEqual(decoded.presets?.presets[0].clearedShortcuts, ["rightHalf"])
+    }
+
+    func testConfigExportedBeforePresetsExistedStillDecodes() throws {
+        let json = """
+        {"bundleId":"com.knollsoft.Rectangle","version":"100",\
+        "shortcuts":{"leftHalf":{"keyCode":123,"modifierFlags":1572864}},\
+        "defaults":{"gapSize":{"float":4}}}
+        """
+        let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+
+        XCTAssertNil(config.presets, "a config without the field must decode, leaving presets untouched on import")
+        XCTAssertEqual(config.shortcuts["leftHalf"]?.keyCode, 123)
+        XCTAssertEqual(config.defaults["gapSize"]?.float, 4)
     }
 }

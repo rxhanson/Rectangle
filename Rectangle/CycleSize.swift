@@ -131,4 +131,8 @@ class CycleSizesDefault: Default {
         return CodableDefault(int: value.toBits())
     }
 
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(int: 0)
+    }
+
 }

@@ -61,4 +61,8 @@ class SubsequentExecutionDefault: Default {
         return CodableDefault(int: value.rawValue)
     }
 
+    func defaultCodable() -> CodableDefault {
+        return CodableDefault(int: SubsequentExecutionMode.resize.rawValue)
+    }
+
 }

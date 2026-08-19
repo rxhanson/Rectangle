@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
     var updaterController: SPUStandardUpdaterController!
+    var presetManager: PresetManager!
     var hasPendingUpdate = false {
         didSet {
             Notification.Name.updateAvailability.post()
@@ -55,7 +56,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
-        
+        presetManager = PresetManager()
+
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
             self.showWelcomeWindow()
             self.checkForConflictingApps()
@@ -99,7 +101,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.prevActiveApp = change.oldValue ?? nil
         }
     }
-    
+
+    func applicationWillTerminate(_ notification: Notification) {
+        presetManager?.syncActivePreset()
+    }
+
     func checkVersion() {
         let currentVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         if let lastVersion = Defaults.lastVersion.value,
