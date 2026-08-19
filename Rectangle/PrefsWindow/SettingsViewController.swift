@@ -91,6 +91,7 @@ class SettingsViewController: NSViewController {
             if event.type == .leftMouseUp || event.type == .keyDown {
                 if Float(sender.intValue) != Defaults.gapSize.value {
                     Defaults.gapSize.value = Float(sender.intValue)
+                    skipGapTopEdgeCheckbox.isHidden = Defaults.gapSize.value == 0
                 }
             }
         }
@@ -1135,6 +1136,7 @@ class SettingsViewController: NSViewController {
         gapLabel.stringValue = "\(gapSlider.intValue) px"
         gapSlider.isContinuous = true
         skipGapTopEdgeCheckbox.state = Defaults.skipGapTopEdge.enabled ? .on : .off
+        skipGapTopEdgeCheckbox.isHidden = Defaults.gapSize.value == 0
         
         cursorAcrossCheckbox.state = Defaults.moveCursorAcrossDisplays.userEnabled ? .on : .off
 
