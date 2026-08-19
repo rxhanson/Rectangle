@@ -31,14 +31,16 @@ enum OverlapOffsetGeometry {
         let maxCascade = min(5, max(1, Defaults.cyclingOverlapMaxCascade.value))
         let placedCoversScreen = coversScreen(rect, screenFrame: screenFrameNormalized)
 
-        // Each element.frame is a pair of accessibility round-trips, so the
-        // frames are read once here rather than on every cascade iteration.
+        let footprintWindowIds: [CGWindowID] = NSApp.windows.compactMap { $0 is FootprintWindow ?  CGWindowID($0.windowNumber) : nil }
+        
         let occupiedTopLefts: [CGPoint] = AccessibilityElement.getAllWindowElements().compactMap { element in
-            guard element.getWindowId() != windowId,
+            guard let elementWindowId = element.getWindowId(),
+                  elementWindowId != windowId,
                   element.isWindow == true,
                   element.isMinimized != true,
                   element.isHidden != true,
-                  element.isSheet != true
+                  element.isSheet != true,
+                  !footprintWindowIds.contains(elementWindowId)
             else { return nil }
 
             let frameAX = element.frame
@@ -54,10 +56,10 @@ enum OverlapOffsetGeometry {
         }
 
         let offsetRect = cascadedRect(rect,
-                                                           occupiedTopLefts: occupiedTopLefts,
-                                                           screenFrame: screenFrameNormalized,
-                                                           offset: overlapOffset,
-                                                           maxCascade: maxCascade)
+                                      occupiedTopLefts: occupiedTopLefts,
+                                      screenFrame: screenFrameNormalized,
+                                      offset: overlapOffset,
+                                      maxCascade: maxCascade)
         if offsetRect != rect {
             Logger.log("Overlap detected, offset window to \(offsetRect.origin.debugDescription)")
         }
