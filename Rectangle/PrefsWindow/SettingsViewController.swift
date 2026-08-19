@@ -918,7 +918,11 @@ class SettingsViewController: NSViewController {
             stackBadgeCheckbox.alignment = .left
 
             let stackBadgeToggleLabel = NSTextField(labelWithString: NSLocalizedString("Toggle stacked window badge", tableName: "Main", value: "", comment: ""))
+            stackBadgeToggleLabel.alignment = .right
             stackBadgeToggleLabel.translatesAutoresizingMaskIntoConstraints = false
+            // The label yields rather than pushing the recorder out of the
+            // column it shares with the rows above.
+            stackBadgeToggleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             let stackBadgeToggleShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             stackBadgeToggleShortcutView.setAssociatedUserDefaultsKey(StackBadgeManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
             stackBadgeToggleShortcutView.translatesAutoresizingMaskIntoConstraints = false
@@ -981,6 +985,8 @@ class SettingsViewController: NSViewController {
                 ninthsCyclingLabel.widthAnchor.constraint(equalTo: twelfthsCyclingLabel.widthAnchor),
                 twelfthsCyclingLabel.widthAnchor.constraint(equalTo: sixteenthsCyclingLabel.widthAnchor),
                 sixteenthsCyclingLabel.widthAnchor.constraint(equalTo: hSplitLabel.widthAnchor),
+                stackBadgeToggleShortcutView.leadingAnchor.constraint(equalTo: sixteenthsCyclingShortcutView.leadingAnchor),
+                stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
