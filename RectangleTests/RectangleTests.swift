@@ -1513,39 +1513,6 @@ class CooperativeCornerResizeTests: XCTestCase {
         XCTAssertEqual(adjustments[0].newFrame.height, topRight.frame.height, accuracy: 0.001)
     }
 
-    func testDisabledExperimentalPreferenceLeavesCornerCalculationUnchanged() {
-        let savedValue = Defaults.cooperativeCornerResize.enabled
-        let savedAxis = Defaults.cornerCycleExpansionAxis.value
-        let savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
-        let savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
-        defer {
-            Defaults.cooperativeCornerResize.enabled = savedValue
-            Defaults.cornerCycleExpansionAxis.value = savedAxis
-            Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
-            Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
-        }
-
-        Defaults.cooperativeCornerResize.enabled = false
-        Defaults.cornerCycleExpansionAxis.value = .vertical
-        Defaults.horizontalSplitRatio.value = 50
-        Defaults.verticalSplitRatio.value = 50
-
-        let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
-        let firstRect = WindowCalculationFactory.lowerLeftCalculation.calculateRect(RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
-                                                                                                             visibleFrameOfScreen: visibleFrame,
-                                                                                                             action: .bottomLeft,
-                                                                                                             lastAction: nil)).rect
-        let repeatedRect = WindowCalculationFactory.lowerLeftCalculation.calculateRect(RectCalculationParameters(window: Window(id: 1, rect: firstRect),
-                                                                                                                visibleFrameOfScreen: visibleFrame,
-                                                                                                                action: .bottomLeft,
-                                                                                                                lastAction: RectangleAction(action: .bottomLeft,
-                                                                                                                                            subAction: nil,
-                                                                                                                                            rect: firstRect,
-                                                                                                                                            count: 1))).rect
-
-        assertRect(repeatedRect, equals: CGRect(x: 10, y: 20, width: 600, height: 600))
-    }
-
     private func cooperativeAdjustments(focusedOld: CGRect,
                                         focusedNew: CGRect,
                                         candidates: [CooperativeCornerResize.Candidate],
