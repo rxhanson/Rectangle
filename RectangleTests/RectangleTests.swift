@@ -625,6 +625,16 @@ class StackBadgeCoveringWindowTests: XCTestCase {
         XCTAssertTrue(stack([corner], covering: [true]).isEmpty)
     }
 
+    /// Reported from ordinary use: two Rectangle-maximized terminals and one
+    /// half-width browser at the same corner listed only the terminals. The
+    /// browser is the window the covering ones are hiding, so dropping it is
+    /// the worst thing this list can do - and it did so silently, with a
+    /// plausible count.
+    func testTiledWindowJoinsAStackOfMaximizedWindows() {
+        let indices = stack([corner, cascaded, corner], covering: [true, true, false])
+        XCTAssertEqual(indices.sorted(), [0, 1, 2])
+    }
+
     func testMismatchedCoveringFlagsIsEmpty() {
         XCTAssertTrue(stack([corner], covering: []).isEmpty)
     }

@@ -108,7 +108,15 @@ enum StackBadgeGeometry {
         }
 
         let covering = stack(of: origins.indices.filter { coversScreen[$0] })
-        return covering.count >= 2 ? covering : []
+        guard covering.count >= 2 else { return [] }
+
+        // Windows covering the screen hide whatever is tiled beneath them, so
+        // a tiled window at the same corner is the one most worth listing -
+        // it is the one there is otherwise no way to see.
+        let joiningTiled = origins.indices.filter { index in
+            !coversScreen[index] && covering.contains { near(origins[index], origins[$0]) }
+        }
+        return (covering + joiningTiled).sorted()
     }
 
     /// The corner whose hover zone contains the point, or nil. The zone is a
