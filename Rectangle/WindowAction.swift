@@ -931,6 +931,14 @@ enum WindowAction: Int, Codable {
         }
     }
 
+    /// Whether landing on another window in this position should be offset so
+    /// the covered window stays visible. Cycling positions qualify, and so
+    /// does maximize: it doesn't cycle, but two maximized windows still land
+    /// exactly on top of each other.
+    var overlapOffsetApplies: Bool {
+        positionCycles || self == .maximize
+    }
+
     var category: WindowActionCategory? { // used to specify a submenu
         switch self {
         case .firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds: return .thirds

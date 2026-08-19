@@ -2815,6 +2815,125 @@ class HalfSplitCornerCalculationTests: XCTestCase {
     }
 }
 
+
+/// The cascade math itself. Asserting the resulting rect matters: an earlier
+/// version of this feature was certified by a test that only checked an
+/// eligibility flag, while the offset it enabled was a no-op for anyone
+/// running the default of no gaps.
+class OverlapOffsetGeometryTests: XCTestCase {
+
+    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
+    private let offset: CGFloat = 11
+
+    private func cascade(_ rect: CGRect, occupied: [CGPoint], maxCascade: Int = 1) -> CGRect {
+        OverlapOffsetGeometry.cascadedRect(rect,
+                                           occupiedTopLefts: occupied,
+                                           screenFrame: screen,
+                                           offset: offset,
+                                           maxCascade: maxCascade)
+    }
+
+    /// A maximized window with no gaps fills the visible frame, so there is
+    /// nowhere to shift it - and the caller skips the window scan entirely.
+    func testMaximizedWithoutGapsCannotOffset() {
+        let maximized = screen
+        XCTAssertFalse(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
+        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
+                       maximized)
+    }
+
+    /// Gaps larger than the offset leave room, so maximized windows cascade.
+    func testMaximizedWithGapsOffsets() {
+        let maximized = CGRect(x: 22, y: 22, width: 956, height: 756)
+        XCTAssertTrue(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
+        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
+                       CGRect(x: 33, y: 33, width: 956, height: 756))
+    }
+
+    /// Gaps smaller than the offset must not shift the window part way: it
+    /// would end up flush against the far edges, deleting the gaps there.
+    func testGapsSmallerThanOffsetDoNotOffset() {
+        let maximized = CGRect(x: 5, y: 5, width: 990, height: 790)
+        XCTAssertFalse(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
+        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
+                       maximized)
+    }
+
+    /// A half with no gaps has room across but not up, and still offsets on
+    /// the axis that fits - the behavior shipped in v0.96.
+    func testHalfOffsetsOnTheAxisWithRoom() {
+        let leftHalf = CGRect(x: 0, y: 0, width: 500, height: 800)
+        XCTAssertEqual(cascade(leftHalf, occupied: [OverlapOffsetGeometry.topLeft(of: leftHalf)]),
+                       CGRect(x: 11, y: 0, width: 500, height: 800))
+    }
+
+    func testNoOverlapLeavesTheRectAlone() {
+        let leftHalf = CGRect(x: 0, y: 0, width: 500, height: 800)
+        XCTAssertEqual(cascade(leftHalf, occupied: [CGPoint(x: 500, y: 800)]), leftHalf)
+    }
+
+    func testCascadeStopsAtMaxCascade() {
+        let quarter = CGRect(x: 0, y: 0, width: 400, height: 400)
+        let occupied = [CGPoint(x: 0, y: 400), CGPoint(x: 11, y: 411), CGPoint(x: 22, y: 422)]
+        XCTAssertEqual(cascade(quarter, occupied: occupied, maxCascade: 1).origin,
+                       CGPoint(x: 11, y: 11))
+        XCTAssertEqual(cascade(quarter, occupied: occupied, maxCascade: 3).origin,
+                       CGPoint(x: 33, y: 33))
+    }
+
+    /// Matching is by top-left corner, so a smaller window landing on a larger
+    /// one at the same corner counts as an overlap - an eighth arriving on a
+    /// quarter. Both sit against the top of the screen here, so the window
+    /// offsets across but not up.
+    func testMatchesMixedSizesAtTheSameCorner() {
+        let eighth = CGRect(x: 0, y: 600, width: 250, height: 200)
+        let quarterTopLeft = OverlapOffsetGeometry.topLeft(of: CGRect(x: 0, y: 400, width: 500, height: 400))
+        XCTAssertEqual(quarterTopLeft, OverlapOffsetGeometry.topLeft(of: eighth))
+        XCTAssertEqual(cascade(eighth, occupied: [quarterTopLeft]),
+                       CGRect(x: 11, y: 600, width: 250, height: 200))
+    }
+
+    func testCoversScreen() {
+        XCTAssertTrue(OverlapOffsetGeometry.coversScreen(screen, screenFrame: screen))
+        XCTAssertTrue(OverlapOffsetGeometry.coversScreen(CGRect(x: 22, y: 22, width: 956, height: 756),
+                                                         screenFrame: screen))
+        XCTAssertFalse(OverlapOffsetGeometry.coversScreen(CGRect(x: 0, y: 0, width: 500, height: 800),
+                                                          screenFrame: screen))
+    }
+}
+
+/// Which actions are eligible for the overlap offset. `positionCycles` alone
+/// excluded maximize, so two maximized windows landed exactly on top of each
+/// other. Eligibility is only half of it - whether an eligible window actually
+/// moves is covered by OverlapOffsetGeometryTests.
+class OverlapOffsetEligibilityTests: XCTestCase {
+
+    func testMaximizeGetsTheOffset() {
+        XCTAssertTrue(WindowAction.maximize.overlapOffsetApplies)
+    }
+
+    func testGridPositionsGetTheOffset() {
+        for action in [WindowAction.leftHalf, .topLeft, .topLeftSixth,
+                       .topLeftNinth, .topLeftEighth, .topLeftTwelfth, .topLeftSixteenth] {
+            XCTAssertTrue(action.overlapOffsetApplies, "\(action) should get the overlap offset")
+        }
+    }
+
+    /// Actions that move or resize in place have no "landed on top of
+    /// something" notion, so offsetting them would just displace the window.
+    func testMovesAndResizesDoNotGetTheOffset() {
+        for action in [WindowAction.center, .restore, .moveLeft, .moveRight, .moveUp, .moveDown,
+                       .larger, .smaller, .nextDisplay, .previousDisplay,
+                       .almostMaximize, .maximizeHeight, .tileAll, .cascadeAll] {
+            XCTAssertFalse(action.overlapOffsetApplies, "\(action) should not get the overlap offset")
+        }
+    }
+}
+
+/// The stacked-window list is driven by an event tap, so it decides which
+/// keystrokes to take from the app underneath. Taking the wrong ones would
+/// break typing system-wide while the list is open.
+
 class OverlapOffsetGuardsTests: XCTestCase {
 
     func testMaxCascadeClampedToMinOne() {
