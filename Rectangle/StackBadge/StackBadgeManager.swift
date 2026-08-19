@@ -208,6 +208,16 @@ class StackBadgeManager {
             }
         }
 
+        // Raising a window activates its app, and activation is asynchronous -
+        // it completes after the call returns, so key status can be taken from
+        // the list a moment later. Rather than guess at that timing, take it
+        // back whenever the list is up and no longer holds it: an open list
+        // that cannot answer the arrow keys is the failure this exists to
+        // prevent.
+        if let list = listWindow, list.isVisible, !list.isKeyWindow {
+            list.makeKeyAndOrderFront(nil)
+        }
+
         guard !dwellFired,
               ProcessInfo.processInfo.systemUptime - lastMoveTime >= Self.dwellInterval
         else { return }
