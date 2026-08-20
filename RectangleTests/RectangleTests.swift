@@ -3859,6 +3859,127 @@ class PortraitEighthAbutmentTests: XCTestCase {
     }
 }
       
+final class CrossDisplayResizeTests: XCTestCase {
+    func testDisplayCycleRetriesWidthUntilWindowFillsRightHalf() {
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.cycleMonitor.rawValue)),
+            (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
+            (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
+            (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
+            (Defaults.gapSize, CodableDefault(float: 0)),
+            (Defaults.stageSize, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapLeft, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapRight, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapTop, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapBottom, CodableDefault(float: 0)),
+            (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
+            (Defaults.todo, CodableDefault(int: 2))
+        ]
+        let savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        defer {
+            savedDefaults.forEach { $0.0.load(from: $0.1) }
+            ActiveSideSplitRatios.shared.resetAll()
+        }
+        settings.forEach { $0.0.load(from: $0.1) }
+
+        let laptop = TestScreen(frame: CGRect(x: 0, y: 0, width: 2056, height: 1329))
+        let monitor = TestScreen(frame: CGRect(x: -702, y: 1329, width: 3440, height: 1440))
+        let target = CGRect(x: 1018, y: 1329, width: 1720, height: 1440).screenFlipped
+        let window = ClampingWindow(target: target)
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: laptop))
+        let finished = expectation(description: "Display-cycle resize completed")
+        var completedFrames: [CGRect] = []
+        manager.didFinish = { result, frame in
+            XCTAssertTrue(result.usableScreens.currentScreen === laptop)
+            completedFrames.append(frame)
+            finished.fulfill()
+        }
+
+        // Repeated shortcuts pass the destination explicitly. Simulate macOS accepting
+        // the height but clamping the width on the initial move and immediate retry.
+        manager.execute(ExecutionParameters(.rightHalf, screen: monitor, windowElement: window))
+
+        XCTAssertEqual(window.resizeAttempts, 2)
+        XCTAssertEqual(window.frame.maxX, target.maxX)
+        XCTAssertEqual(window.frame.minX, target.minX + 400)
+        XCTAssertTrue(completedFrames.isEmpty)
+
+        wait(for: [finished], timeout: 1)
+        XCTAssertEqual(window.resizeAttempts, 3)
+        XCTAssertEqual(window.frame, target)
+        XCTAssertEqual(completedFrames, [target])
+    }
+
+    private final class TestScreen: NSScreen {
+        private let testFrame: CGRect
+
+        init(frame: CGRect) {
+            testFrame = frame
+            super.init()
+        }
+
+        override var frame: NSRect { testFrame }
+        override var visibleFrame: NSRect { testFrame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+
+        // AppKit's equality implementation requires a real display ID.
+        override func isEqual(_ object: Any?) -> Bool {
+            (object as AnyObject?) === self
+        }
+    }
+
+    private final class TestScreenDetection: ScreenDetection {
+        let source: NSScreen
+
+        init(source: NSScreen) {
+            self.source = source
+        }
+
+        override func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
+            UsableScreens(currentScreen: source, numScreens: 2)
+        }
+    }
+
+    private final class ClampingWindow: AccessibilityElement {
+        private var currentFrame = CGRect(x: 1028, y: 0, width: 1028, height: 645).screenFlipped
+        private let target: CGRect
+        private(set) var resizeAttempts = 0
+
+        init(target: CGRect) {
+            self.target = target
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { currentFrame }
+        override var isSheet: Bool? { false }
+        override var isSystemDialog: Bool? { false }
+        override var minimumSize: CGSize? { nil }
+        override func getWindowId() -> CGWindowID? { nil }
+        override func isResizable() -> Bool { true }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+            currentFrame = frame
+            if frame.size == target.size {
+                resizeAttempts += 1
+                if resizeAttempts <= 2 {
+                    currentFrame.size.width -= 400
+                }
+            }
+        }
+    }
+
+    private final class TestWindowManager: WindowManager {
+        var didFinish: ((ResultParameters, CGRect) -> Void)?
+
+        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {}
+
+        override func postProcess(result: ResultParameters, resultingRect: CGRect) {
+            didFinish?(result, resultingRect)
+        }
+    }
+}
+
 final class NextPrevDisplayMappingTests: XCTestCase {
     // The opt-in is NOT needed to test the pure helper; setUp/tearDown still save & restore it
     // so the wiring tests below are isolated from host state.
