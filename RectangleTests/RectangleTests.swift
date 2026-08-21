@@ -134,6 +134,222 @@ class ScreenFlippedTests: XCTestCase {
     }
 }
 
+final class DockVisibleFrameTests: XCTestCase {
+    private let screen = CGRect(x: 0, y: 0, width: 1440, height: 900)
+    private let visibleWithoutDock = CGRect(x: 0, y: 0, width: 1440, height: 875)
+
+    func testAddsMissingBottomDockInset() {
+        let dock = CGRect(x: 400, y: 8, width: 640, height: 62)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: visibleWithoutDock, dockFrame: dock),
+            CGRect(x: 0, y: 70, width: 1440, height: 805)
+        )
+    }
+
+    func testAddsMissingLeftDockInset() {
+        let dock = CGRect(x: 8, y: 180, width: 62, height: 540)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: visibleWithoutDock, dockFrame: dock),
+            CGRect(x: 70, y: 0, width: 1370, height: 875)
+        )
+    }
+
+    func testAddsMissingRightDockInset() {
+        let dock = CGRect(x: 1370, y: 180, width: 62, height: 540)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: visibleWithoutDock, dockFrame: dock),
+            CGRect(x: 0, y: 0, width: 1370, height: 875)
+        )
+    }
+
+    func testPreservesAccurateAppKitInsetWhenDockFrameDiffersSlightly() {
+        let reportedVisibleFrame = CGRect(x: 0, y: 60, width: 1440, height: 815)
+        let dock = CGRect(x: 30, y: 10, width: 1380, height: 53)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: reportedVisibleFrame, dockFrame: dock),
+            reportedVisibleFrame
+        )
+    }
+
+    func testPreservesPlausibleAppKitInsetWhenAXDiffersMaterially() {
+        let reportedVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+        let dock = CGRect(x: 400, y: 8, width: 640, height: 32)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: reportedVisibleFrame, dockFrame: dock),
+            reportedVisibleFrame
+        )
+    }
+
+    func testReclaimsPhantomInsetAfterDockMovesToAnotherDisplay() {
+        let externalScreen = CGRect(x: 1440, y: 0, width: 1920, height: 1080)
+        let dock = CGRect(x: 1740, y: 8, width: 1320, height: 62)
+        let staleVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+
+        XCTAssertEqual(
+            corrected(
+                visibleFrame: staleVisibleFrame,
+                screenFrames: [screen, externalScreen],
+                dockFrame: dock
+            ),
+            visibleWithoutDock
+        )
+    }
+
+    func testCorrectsNewDockDisplayAfterMove() {
+        let externalScreen = CGRect(x: 1440, y: 0, width: 1920, height: 1080)
+        let externalVisibleFrame = CGRect(x: 1440, y: 0, width: 1920, height: 1055)
+        let dock = CGRect(x: 1740, y: 8, width: 1320, height: 62)
+
+        XCTAssertEqual(
+            DockUtil.correctedVisibleFrame(
+                screenFrame: externalScreen,
+                visibleFrame: externalVisibleFrame,
+                screenFrames: [screen, externalScreen],
+                dockFrame: dock,
+                dockAutoHideEnabled: false
+            ),
+            CGRect(x: 1440, y: 70, width: 1920, height: 985)
+        )
+    }
+
+    func testAutoHideReclaimsStaleInsetAndPreservesSmallRevealBoundary() {
+        let reportedVisibleFrame = CGRect(x: 70, y: 4, width: 1370, height: 871)
+
+        XCTAssertEqual(
+            corrected(
+                visibleFrame: reportedVisibleFrame,
+                dockFrame: nil,
+                dockAutoHideEnabled: true
+            ),
+            CGRect(x: 0, y: 4, width: 1440, height: 871)
+        )
+    }
+
+    func testAutoHideReclaimsStaleBottomInset() {
+        let reportedVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+
+        XCTAssertEqual(
+            corrected(
+                visibleFrame: reportedVisibleFrame,
+                dockFrame: nil,
+                dockAutoHideEnabled: true
+            ),
+            visibleWithoutDock
+        )
+    }
+
+    func testLiveDockClearsStaleWrongEdgeInset() {
+        let staleLeftDockFrame = CGRect(x: 4, y: 0, width: 1436, height: 875)
+        let currentBottomDock = CGRect(x: 400, y: 8, width: 640, height: 62)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: staleLeftDockFrame, dockFrame: currentBottomDock),
+            CGRect(x: 0, y: 70, width: 1440, height: 805)
+        )
+    }
+
+    func testUnreadableDockKeepsReportedFrame() {
+        let reportedVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: reportedVisibleFrame, dockFrame: nil),
+            reportedVisibleFrame
+        )
+    }
+
+    func testCenteredDockFrameIsIgnored() {
+        let reportedVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+        let invalidDock = CGRect(x: 400, y: 300, width: 640, height: 62)
+
+        XCTAssertEqual(
+            corrected(visibleFrame: reportedVisibleFrame, dockFrame: invalidDock),
+            reportedVisibleFrame
+        )
+    }
+
+    func testOversizedDockFrameIsIgnoredBeforeReclaimingAnotherDisplay() {
+        let externalScreen = CGRect(x: 1440, y: 0, width: 1920, height: 1080)
+        let invalidDock = CGRect(x: 1440, y: 0, width: 1920, height: 500)
+        let reportedVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+
+        XCTAssertEqual(
+            corrected(
+                visibleFrame: reportedVisibleFrame,
+                screenFrames: [screen, externalScreen],
+                dockFrame: invalidDock
+            ),
+            reportedVisibleFrame
+        )
+    }
+
+    func testCorrectsDockOnNegativeOriginDisplay() {
+        let externalScreen = CGRect(x: -1920, y: 0, width: 1920, height: 1080)
+        let externalVisibleFrame = CGRect(x: -1920, y: 0, width: 1920, height: 1055)
+        let dock = CGRect(x: -1912, y: 240, width: 62, height: 600)
+
+        XCTAssertEqual(
+            DockUtil.correctedVisibleFrame(
+                screenFrame: externalScreen,
+                visibleFrame: externalVisibleFrame,
+                screenFrames: [externalScreen, screen],
+                dockFrame: dock,
+                dockAutoHideEnabled: false
+            ),
+            CGRect(x: -1850, y: 0, width: 1850, height: 1055)
+        )
+    }
+
+    func testAmbiguousDockHostIsIgnored() {
+        let upperScreen = CGRect(x: 0, y: 900, width: 1440, height: 900)
+        let ambiguousDock = CGRect(x: 400, y: 870, width: 640, height: 60)
+        let reportedVisibleFrame = CGRect(x: 0, y: 75, width: 1440, height: 800)
+
+        XCTAssertEqual(
+            corrected(
+                visibleFrame: reportedVisibleFrame,
+                screenFrames: [screen, upperScreen],
+                dockFrame: ambiguousDock
+            ),
+            reportedVisibleFrame
+        )
+    }
+
+    func testCombinedDisplayFrameRetainsOuterBottomDockInset() {
+        let combinedScreen = CGRect(x: 0, y: 0, width: 3360, height: 1080)
+        let combinedVisibleFrame = CGRect(x: 0, y: 0, width: 3360, height: 1055)
+        let dock = CGRect(x: 400, y: 8, width: 640, height: 62)
+
+        XCTAssertEqual(
+            DockUtil.correctedVisibleFrame(
+                screenFrame: combinedScreen,
+                visibleFrame: combinedVisibleFrame,
+                screenFrames: [combinedScreen],
+                dockFrame: dock,
+                dockAutoHideEnabled: false
+            ),
+            CGRect(x: 0, y: 70, width: 3360, height: 985)
+        )
+    }
+
+    private func corrected(visibleFrame: CGRect,
+                           screenFrames: [CGRect]? = nil,
+                           dockFrame: CGRect?,
+                           dockAutoHideEnabled: Bool = false) -> CGRect {
+        DockUtil.correctedVisibleFrame(
+            screenFrame: screen,
+            visibleFrame: visibleFrame,
+            screenFrames: screenFrames ?? [screen],
+            dockFrame: dockFrame,
+            dockAutoHideEnabled: dockAutoHideEnabled
+        )
+    }
+}
+
 class DefaultsExportTests: XCTestCase {
 
     func testOverlapDefaultsInExportArray() {
