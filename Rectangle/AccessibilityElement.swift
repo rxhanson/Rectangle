@@ -133,26 +133,26 @@ class AccessibilityElement {
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
         let appElement = applicationElement
-        var enhancedUI: Bool? = nil
-
-        if let appElement = appElement {
-            enhancedUI = appElement.enhancedUserInterface
-            if enhancedUI == true {
-                Logger.log("AXEnhancedUserInterface was enabled, will disable before resizing")
-                appElement.enhancedUserInterface = false
+        let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
+            || NSWorkspace.shared.isSwitchControlEnabled
+        Defaults.enhancedUI.value.performWindowAdjustment(
+            bundleIdentifier: appElement?.bundleIdentifier,
+            builtInAssistiveTechnologyEnabled: builtInAssistiveTechnologyEnabled,
+            readEnhancedUI: { appElement?.enhancedUserInterface },
+            writeEnhancedUI: { enabled in
+                if !enabled {
+                    Logger.log("AXEnhancedUserInterface was enabled, will disable before resizing")
+                }
+                appElement?.enhancedUserInterface = enabled
+            },
+            adjustment: {
+                if adjustSizeFirst {
+                    size = frame.size
+                }
+                position = frame.origin
+                size = frame.size
             }
-        }
-
-        if adjustSizeFirst {
-            size = frame.size
-        }
-        position = frame.origin
-        size = frame.size
-
-        // If "enhanced user interface" was originally enabled for the app, turn it back on
-        if Defaults.enhancedUI.value == .disableEnable, let appElement = appElement, enhancedUI == true {
-            appElement.enhancedUserInterface = true
-        }
+        )
     }
     
     private var childElements: [AccessibilityElement]? {
@@ -230,6 +230,11 @@ class AccessibilityElement {
     
     var pid: pid_t? {
         wrappedElement.getPid()
+    }
+
+    var bundleIdentifier: String? {
+        guard let pid else { return nil }
+        return NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
     }
     
     var windowElement: AccessibilityElement? {
@@ -469,7 +474,88 @@ class StageWindowAccessibilityElement: AccessibilityElement {
 }
 
 enum EnhancedUI: Int {
-    case disableEnable = 1 /// The default behavior - disable Enhanced UI on every window move/resize
-    case disableOnly = 2 /// Don't re-enable enhanced UI after it gets disabled
-    case frontmostDisable = 3 /// Disable enhanced UI every time the frontmost app gets changed
+    case disableEnable = 1 /// Always restore Enhanced UI after moving/resizing when it was previously enabled
+    case disableOnly = 2 /// Don't re-enable Enhanced UI after it gets disabled
+    case frontmostDisable = 3 /// Disable Enhanced UI every time the frontmost app changes
+    case automatic = 4 /// Avoid re-enabling Chromium accessibility while preserving Enhanced UI for other apps
+
+    private static let chromiumBrowserBundleIdentifierFamilies = [
+        "com.google.Chrome",
+        "org.chromium.Chromium",
+        "com.microsoft.edgemac",
+        "com.brave.Browser",
+        "com.vivaldi.Vivaldi",
+        "com.operasoftware.Opera",
+        "com.operasoftware.OperaNext",
+        "com.operasoftware.OperaDeveloper",
+        "com.operasoftware.OperaNightly",
+        "com.operasoftware.OperaGX",
+        "com.operasoftware.OperaGXNext",
+        "com.operasoftware.OperaGXDeveloper",
+        "com.operasoftware.OperaGXNightly",
+        "company.thebrowser.Browser",
+        "company.thebrowser.dia",
+        "ai.perplexity.comet",
+        "com.openai.atlas"
+    ]
+
+    static func isKnownChromiumBrowser(bundleIdentifier: String?) -> Bool {
+        guard let bundleIdentifier else { return false }
+        return chromiumBrowserBundleIdentifierFamilies.contains {
+            bundleIdentifier == $0 || bundleIdentifier.hasPrefix("\($0).")
+        }
+    }
+
+    private func restoresEnhancedUI(
+        bundleIdentifier: String?,
+        builtInAssistiveTechnologyEnabled: Bool
+    ) -> Bool {
+        switch self {
+        case .disableEnable:
+            return true
+        case .disableOnly, .frontmostDisable:
+            return false
+        case .automatic:
+            return builtInAssistiveTechnologyEnabled
+                || !Self.isKnownChromiumBrowser(bundleIdentifier: bundleIdentifier)
+        }
+    }
+
+    func disablesEnhancedUIOnApplicationActivation(
+        bundleIdentifier: String?,
+        builtInAssistiveTechnologyEnabled: Bool
+    ) -> Bool {
+        switch self {
+        case .frontmostDisable:
+            return true
+        case .automatic:
+            return !builtInAssistiveTechnologyEnabled
+                && Self.isKnownChromiumBrowser(bundleIdentifier: bundleIdentifier)
+        case .disableEnable, .disableOnly:
+            return false
+        }
+    }
+
+    func performWindowAdjustment(
+        bundleIdentifier: String?,
+        builtInAssistiveTechnologyEnabled: Bool,
+        readEnhancedUI: () -> Bool?,
+        writeEnhancedUI: (Bool) -> Void,
+        adjustment: () -> Void
+    ) {
+        let enhancedUIWasEnabled = readEnhancedUI()
+        if enhancedUIWasEnabled == true {
+            writeEnhancedUI(false)
+        }
+
+        adjustment()
+
+        if enhancedUIWasEnabled == true,
+           restoresEnhancedUI(
+               bundleIdentifier: bundleIdentifier,
+               builtInAssistiveTechnologyEnabled: builtInAssistiveTechnologyEnabled
+           ) {
+            writeEnhancedUI(true)
+        }
+    }
 }

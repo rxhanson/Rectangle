@@ -33,6 +33,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Disabling gaps when maximizing](#disabling-gaps-when-maximizing)
 - [Enabling snap areas for sixths](#enabling-snap-areas-for-sixths)
 - [Move cursor with window](#move-cursor-with-window)
+- [Control Enhanced UI handling](#control-enhanced-ui-handling)
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
@@ -480,6 +481,27 @@ There's an option in the UI for moving the cursor with the window when going acr
 ```bash
 defaults write com.knollsoft.Rectangle moveCursor -int 1
 ```
+
+## Control Enhanced UI handling
+
+Some apps enable the macOS `AXEnhancedUserInterface` accessibility mode. Rectangle disables this mode while moving or resizing a window because its animated window updates can otherwise produce incorrect frames. Chromium browsers can also enable expensive web accessibility processing when the mode is restored.
+
+Rectangle uses automatic handling by default: it restores Enhanced UI for other apps, but leaves it disabled after Rectangle window actions, when known Chromium browser families activate, and when one is already frontmost as Rectangle starts. VoiceOver and Switch Control keep the prior restore behavior. The behavior can be overridden with:
+
+```bash
+defaults write com.knollsoft.Rectangle enhancedUI -int <MODE>
+```
+
+`enhancedUI` accepts the following values:
+
+| Mode | Behavior |
+|------|----------|
+| `1` | Always restore Enhanced UI after a Rectangle window action if it was enabled beforehand. Use this when assistive software depends on the mode. |
+| `2` | Disable Enhanced UI when encountered and do not restore it. |
+| `3` | Behave like mode 2 and also disable Enhanced UI whenever the frontmost app changes. |
+| `4` | Automatic handling (default). |
+
+Automatic handling can still interfere with third-party assistive software that enables Enhanced UI inside a Chromium browser; use mode 1 when that software depends on the mode. Modes 2 and 3 apply the same risk to every app. Legacy mode `0` is treated as mode 1.
 
 ## Prevent a window that is quickly dragged above the menu bar from going into Mission Control
 
