@@ -548,6 +548,208 @@ class ChangeSizeCalculationTests: XCTestCase {
     }
 }
 
+class EnhancedUITests: XCTestCase {
+    private func adjustmentEvents(
+        mode: EnhancedUI,
+        bundleIdentifier: String? = "com.google.Chrome",
+        builtInAssistiveTechnologyEnabled: Bool = false,
+        initialEnhancedUI: Bool?
+    ) -> [String] {
+        var events = [String]()
+        mode.performWindowAdjustment(
+            bundleIdentifier: bundleIdentifier,
+            builtInAssistiveTechnologyEnabled: builtInAssistiveTechnologyEnabled,
+            readEnhancedUI: {
+                events.append("read")
+                return initialEnhancedUI
+            },
+            writeEnhancedUI: { events.append("write:\($0)") },
+            adjustment: { events.append("adjust") }
+        )
+        return events
+    }
+
+    func testAutomaticModeLeavesEnhancedUIDisabledForChromium() {
+        XCTAssertEqual(
+            adjustmentEvents(mode: .automatic, initialEnhancedUI: true),
+            ["read", "write:false", "adjust"]
+        )
+    }
+
+    func testAutomaticModeRestoresEnhancedUIForOtherApps() {
+        XCTAssertEqual(
+            adjustmentEvents(
+                mode: .automatic,
+                bundleIdentifier: "com.apple.Safari",
+                initialEnhancedUI: true
+            ),
+            ["read", "write:false", "adjust", "write:true"]
+        )
+        XCTAssertEqual(
+            adjustmentEvents(
+                mode: .automatic,
+                bundleIdentifier: nil,
+                initialEnhancedUI: true
+            ),
+            ["read", "write:false", "adjust", "write:true"]
+        )
+    }
+
+    func testAutomaticModeRestoresEnhancedUIForBuiltInAssistiveTechnology() {
+        XCTAssertEqual(
+            adjustmentEvents(
+                mode: .automatic,
+                builtInAssistiveTechnologyEnabled: true,
+                initialEnhancedUI: true
+            ),
+            ["read", "write:false", "adjust", "write:true"]
+        )
+    }
+
+    func testExplicitModesKeepTheirExistingRestoreBehavior() {
+        XCTAssertEqual(
+            adjustmentEvents(mode: .disableEnable, initialEnhancedUI: true),
+            ["read", "write:false", "adjust", "write:true"]
+        )
+        XCTAssertEqual(
+            adjustmentEvents(mode: .disableOnly, initialEnhancedUI: true),
+            ["read", "write:false", "adjust"]
+        )
+        XCTAssertEqual(
+            adjustmentEvents(mode: .frontmostDisable, initialEnhancedUI: true),
+            ["read", "write:false", "adjust"]
+        )
+    }
+
+    func testDisabledOrUnavailableEnhancedUIDoesNotWrite() {
+        XCTAssertEqual(
+            adjustmentEvents(mode: .automatic, initialEnhancedUI: false),
+            ["read", "adjust"]
+        )
+        XCTAssertEqual(
+            adjustmentEvents(mode: .automatic, initialEnhancedUI: nil),
+            ["read", "adjust"]
+        )
+    }
+
+    func testApplicationActivationPolicy() {
+        XCTAssertTrue(
+            EnhancedUI.automatic.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: "com.google.Chrome",
+                builtInAssistiveTechnologyEnabled: false
+            )
+        )
+        XCTAssertFalse(
+            EnhancedUI.automatic.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: "com.google.Chrome",
+                builtInAssistiveTechnologyEnabled: true
+            )
+        )
+        XCTAssertFalse(
+            EnhancedUI.automatic.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: "com.apple.Safari",
+                builtInAssistiveTechnologyEnabled: false
+            )
+        )
+        XCTAssertFalse(
+            EnhancedUI.automatic.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: nil,
+                builtInAssistiveTechnologyEnabled: false
+            )
+        )
+        XCTAssertTrue(
+            EnhancedUI.frontmostDisable.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: "com.apple.Safari",
+                builtInAssistiveTechnologyEnabled: true
+            )
+        )
+        XCTAssertFalse(
+            EnhancedUI.disableEnable.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: "com.google.Chrome",
+                builtInAssistiveTechnologyEnabled: false
+            )
+        )
+        XCTAssertFalse(
+            EnhancedUI.disableOnly.disablesEnhancedUIOnApplicationActivation(
+                bundleIdentifier: "com.google.Chrome",
+                builtInAssistiveTechnologyEnabled: false
+            )
+        )
+    }
+
+    func testKnownChromiumBrowserBundleIdentifiers() {
+        let matchingBundleIdentifiers = [
+            "com.google.Chrome",
+            "com.google.Chrome.canary",
+            "org.chromium.Chromium",
+            "com.microsoft.edgemac",
+            "com.microsoft.edgemac.Beta",
+            "com.brave.Browser",
+            "com.brave.Browser.nightly",
+            "com.vivaldi.Vivaldi",
+            "com.operasoftware.Opera",
+            "com.operasoftware.OperaNext",
+            "com.operasoftware.OperaDeveloper",
+            "com.operasoftware.OperaNightly",
+            "com.operasoftware.OperaGX",
+            "com.operasoftware.OperaGXNext",
+            "com.operasoftware.OperaGXDeveloper",
+            "com.operasoftware.OperaGXNightly",
+            "company.thebrowser.Browser",
+            "company.thebrowser.dia",
+            "ai.perplexity.comet",
+            "com.openai.atlas"
+        ]
+        let nonmatchingBundleIdentifiers: [String?] = [
+            nil,
+            "com.apple.Safari",
+            "com.google.Chromecast",
+            "com.google.ChromeHelper",
+            "com.brave.BrowserHelper"
+        ]
+
+        for bundleIdentifier in matchingBundleIdentifiers {
+            XCTAssertTrue(EnhancedUI.isKnownChromiumBrowser(bundleIdentifier: bundleIdentifier))
+        }
+        for bundleIdentifier in nonmatchingBundleIdentifiers {
+            XCTAssertFalse(EnhancedUI.isKnownChromiumBrowser(bundleIdentifier: bundleIdentifier))
+        }
+    }
+
+    func testEnhancedUIPreferenceMigrationAndRawValues() {
+        let key = "RectangleTests.enhancedUI.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+
+        let absentPreference = IntEnumDefault<EnhancedUI>(
+            key: key,
+            defaultValue: .automatic,
+            invalidValueFallback: .disableEnable
+        )
+        XCTAssertEqual(absentPreference.value.rawValue, 4)
+
+        UserDefaults.standard.set(0, forKey: key)
+        let legacyZeroPreference = IntEnumDefault<EnhancedUI>(
+            key: key,
+            defaultValue: .automatic,
+            invalidValueFallback: .disableEnable
+        )
+        XCTAssertEqual(legacyZeroPreference.value.rawValue, 1)
+
+        for rawValue in 1...4 {
+            UserDefaults.standard.set(rawValue, forKey: key)
+            let preference = IntEnumDefault<EnhancedUI>(
+                key: key,
+                defaultValue: .automatic,
+                invalidValueFallback: .disableEnable
+            )
+            XCTAssertEqual(preference.value.rawValue, rawValue)
+        }
+
+        legacyZeroPreference.load(from: CodableDefault(int: 0))
+        XCTAssertEqual(legacyZeroPreference.value.rawValue, 1)
+    }
+}
+
 class CooperativeCornerResizeTests: XCTestCase {
     private let screenFrame = CGRect(x: 0, y: 0, width: 1200, height: 900)
     private let minimumSize = CGSize(width: 100, height: 100)

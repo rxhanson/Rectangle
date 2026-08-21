@@ -18,6 +18,7 @@ class ApplicationToggle: NSObject {
         if let disabledApps = Defaults.disabledApps.typedValue {
             self.disabledApps = disabledApps
         }
+        applyEnhancedUIActivationPolicy(to: NSWorkspace.shared.frontmostApplication)
     }
     
     public func reloadFromDefaults() {
@@ -71,6 +72,25 @@ class ApplicationToggle: NSObject {
     private func registerFrontAppChangeNote() {
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(self.receiveFrontAppChangeNote(_:)), name: NSWorkspace.didActivateApplicationNotification, object: nil)
     }
+
+    private func applyEnhancedUIActivationPolicy(to application: NSRunningApplication?) {
+        guard let application else { return }
+        let enhancedUI = Defaults.enhancedUI.value
+        let bundleIdentifier = application.bundleIdentifier
+        let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
+            || NSWorkspace.shared.isSwitchControlEnabled
+        guard enhancedUI.disablesEnhancedUIOnApplicationActivation(
+            bundleIdentifier: bundleIdentifier,
+            builtInAssistiveTechnologyEnabled: builtInAssistiveTechnologyEnabled
+        ) else { return }
+
+        let activatedApplicationPid = application.processIdentifier
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
+            guard let activatedApplication = NSRunningApplication(processIdentifier: activatedApplicationPid),
+                  activatedApplication.bundleIdentifier == bundleIdentifier else { return }
+            AccessibilityElement(activatedApplicationPid).enhancedUserInterface = false
+        }
+    }
     
     @objc func receiveFrontAppChangeNote(_ notification: Notification) {
         if let application = notification.userInfo?["NSWorkspaceApplicationKey"] as? NSRunningApplication {
@@ -86,11 +106,7 @@ class ApplicationToggle: NSObject {
             } else {
                 enableShortcuts()
             }
-            if Defaults.enhancedUI.value == .frontmostDisable {
-                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
-                    AccessibilityElement.getFrontApplicationElement()?.enhancedUserInterface = false
-                }
-            }
+            applyEnhancedUIActivationPolicy(to: application)
         }
     }
 }

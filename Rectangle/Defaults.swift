@@ -89,7 +89,11 @@ class Defaults {
     static let landscapeSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "landscapeSnapAreas")
     static let portraitSnapAreas = JSONDefault<[Directional:SnapAreaConfig]>(key: "portraitSnapAreas")
     static let missionControlDragging = OptionalBoolDefault(key: "missionControlDragging")
-    static let enhancedUI = IntEnumDefault<EnhancedUI>(key: "enhancedUI", defaultValue: .disableEnable)
+    static let enhancedUI = IntEnumDefault<EnhancedUI>(
+        key: "enhancedUI",
+        defaultValue: .automatic,
+        invalidValueFallback: .disableEnable
+    )
     static let footprintAnimationDurationMultiplier = FloatDefault(key: "footprintAnimationDurationMultiplier", defaultValue: 0)
     static let hapticFeedbackOnSnap = OptionalBoolDefault(key: "hapticFeedbackOnSnap")
     static let missionControlDraggingAllowedOffscreenDistance = FloatDefault(key: "missionControlDraggingAllowedOffscreenDistance", defaultValue: 25)
@@ -495,7 +499,7 @@ class JSONDefault<T: Codable>: StringDefault {
 
 class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
     public private(set) var key: String
-    private let defaultValue: E
+    private let invalidValueFallback: E
 
     var _value: E
     var value: E {
@@ -508,16 +512,21 @@ class IntEnumDefault<E: RawRepresentable>: Default where E.RawValue == Int {
         get { _value }
     }
 
-    init(key: String, defaultValue: E) {
+    init(key: String, defaultValue: E, invalidValueFallback: E? = nil) {
         self.key = key
-        self.defaultValue = defaultValue
-        let intValue = UserDefaults.standard.integer(forKey: key)
-        _value = E(rawValue: intValue) ?? defaultValue
+        let invalidValueFallback = invalidValueFallback ?? defaultValue
+        self.invalidValueFallback = invalidValueFallback
+        if UserDefaults.standard.object(forKey: key) == nil {
+            _value = defaultValue
+        } else {
+            let intValue = UserDefaults.standard.integer(forKey: key)
+            _value = E(rawValue: intValue) ?? invalidValueFallback
+        }
     }
 
     func load(from codable: CodableDefault) {
         if let intValue = codable.int, _value.rawValue != intValue {
-            _value = E(rawValue: intValue) ?? defaultValue
+            _value = E(rawValue: intValue) ?? invalidValueFallback
             UserDefaults.standard.set(_value.rawValue, forKey: key)
         }
     }
