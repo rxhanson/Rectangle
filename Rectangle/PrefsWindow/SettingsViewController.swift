@@ -49,6 +49,7 @@ class SettingsViewController: NSViewController {
     private var combinedDisplayModeCheckbox: NSButton?
     private var greenButtonOverrideCheckbox: NSButton?
     private var autoMaximizeCheckbox: NSButton?
+    private var halvesPreserveOtherAxisSizeCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -185,6 +186,10 @@ class SettingsViewController: NSViewController {
 
     @objc func toggleAutoMaximize(_ sender: NSButton) {
         Defaults.autoMaximize.enabled = sender.state == .on
+    }
+
+    @objc func toggleHalvesPreserveOtherAxisSize(_ sender: NSButton) {
+        Defaults.halvesPreserveOtherAxisSize.enabled = sender.state == .on
     }
 
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -941,6 +946,16 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(hSplitRow)
             mainStackView.addArrangedSubview(vSplitRow)
 
+            let halvesCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Half actions preserve the window's size on the other axis", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleHalvesPreserveOtherAxisSize(_:)))
+            halvesCheckbox.state = Defaults.halvesPreserveOtherAxisSize.enabled ? .on : .off
+            halvesCheckbox.toolTip = NSLocalizedString("Left Half then Top Half moves the window to the top left quarter; the action for the opposite edge expands it back.", tableName: "Main", value: "", comment: "")
+            halvesCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            halvesCheckbox.alignment = .left
+
+            mainStackView.setCustomSpacing(8, after: vSplitRow)
+            mainStackView.addArrangedSubview(halvesCheckbox)
+            halvesPreserveOtherAxisSizeCheckbox = halvesCheckbox
+
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 splitRatioHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
@@ -1150,6 +1165,8 @@ class SettingsViewController: NSViewController {
         greenButtonOverrideCheckbox?.state = Defaults.greenButtonOverride.enabled ? .on : .off
 
         autoMaximizeCheckbox?.state = Defaults.autoMaximize.userDisabled ? .off : .on
+
+        halvesPreserveOtherAxisSizeCheckbox?.state = Defaults.halvesPreserveOtherAxisSize.enabled ? .on : .off
 
         if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)
