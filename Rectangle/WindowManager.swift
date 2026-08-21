@@ -4,11 +4,12 @@ import Cocoa
 
 class WindowManager {
 
-    private let screenDetection = ScreenDetection()
+    private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     
-    init() {
+    init(screenDetection: ScreenDetection = ScreenDetection()) {
+        self.screenDetection = screenDetection
         standardWindowMoverChain = [
             StandardWindowMover(),
             EdgeAlignmentWindowMover(),
@@ -69,16 +70,19 @@ class WindowManager {
             return
         }
         
+        // An explicit screen (display cycling) or the cursor screen controls the
+        // calculation, but neither necessarily contains the window before it moves.
+        let sourceScreens = screenDetection.detectScreens(using: frontmostWindowElement)
         var screens: UsableScreens?
         if let screen = parameters.screen {
             screens = UsableScreens(currentScreen: screen, numScreens: 1)
         } else {
             screens = Defaults.useCursorScreenDetection.enabled
             ? screenDetection.detectScreensAtCursor()
-            : screenDetection.detectScreens(using: frontmostWindowElement)
+            : sourceScreens
         }
         
-        guard let usableScreens = screens else {
+        guard let usableScreens = screens, let sourceScreens else {
             NSSound.beep()
             Logger.log("Unable to obtain usable screens")
             return
@@ -141,6 +145,7 @@ class WindowManager {
 
         let isFixedSize = (!frontmostWindowElement.isResizable() && action.resizes) || frontmostWindowElement.isSystemDialog == true
         let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
+        let isMovedAcrossDisplays = sourceScreens.currentScreen != calcResult.screen
         let cooperativeCornerPlan = cooperativeCornerResizePlan(focusedWindowId: windowId,
                                                                 focusedWindowIsFixedSize: isFixedSize,
                                                                 focusedWindowMinimumSize: frontmostWindowElement.minimumSize,
@@ -149,7 +154,7 @@ class WindowManager {
                                                                 oldFocusedFrame: currentNormalizedRect,
                                                                 newFocusedFrame: calcResult.rect,
                                                                 screenFrame: visibleFrameOfDestinationScreen,
-                                                                destinationScreenIsCurrentScreen: usableScreens.currentScreen == calcResult.screen,
+                                                                destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
                                                                 lastRectangleAction: lastRectangleAction)
         if let cooperativeCornerPlan {
             calcResult.rect = cooperativeCornerPlan.focusedFrame
@@ -186,7 +191,7 @@ class WindowManager {
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
                                                 calcResult: calcResult,
-                                                usableScreens: usableScreens,
+                                                usableScreens: sourceScreens,
                                                 visibleFrameOfScreen: visibleFrameOfDestinationScreen,
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
@@ -207,13 +212,12 @@ class WindowManager {
                                                                         gapSize: cooperativeCornerPlan.gapSize)
         }
         
-        let isMovedAcrossDisplays = usableScreens.currentScreen != calcResult.screen
         if isMovedAcrossDisplays {
-            if calcResult.rect.height != resultingRect.height {
+            if calcResult.rect.size != resultingRect.size {
                 Logger.log("Window size wasn't applied perfectly across displays. Trying again.")
                 resultingRect = apply(result: resultParameters)
                 
-                if calcResult.rect.height != resultingRect.height {
+                if calcResult.rect.size != resultingRect.size {
                     Logger.log("Final attempt to adjust across displays.")
                     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
                         guard let self else { return }
@@ -232,7 +236,7 @@ class WindowManager {
                                                   source: parameters.source,
                                                   oldFocusedFrame: currentNormalizedRect,
                                                   newFocusedFrame: resultingRect.screenFlipped,
-                                                  screenFrame: usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
+                                                  screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                                   currentAction: action,
                                                   lastRectangleAction: lastRectangleAction)
             resultingRect = frontmostWindowElement.frame
