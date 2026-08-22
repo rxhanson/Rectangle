@@ -113,8 +113,14 @@ enum StackBadgeGeometry {
         // Windows covering the screen hide whatever is tiled beneath them, so
         // a tiled window at the same corner is the one most worth listing -
         // it is the one there is otherwise no way to see.
+        //
+        // The covering window is the one that may have been offset, so it is
+        // measured forward from the tiled window rather than the other way
+        // round. near() allows a full cascade forward but only a hair
+        // backward, so asking in the wrong direction rejects every window the
+        // offset has moved.
         let joiningTiled = origins.indices.filter { index in
-            !coversScreen[index] && covering.contains { near(origins[index], origins[$0]) }
+            !coversScreen[index] && covering.contains { near(origins[$0], origins[index]) }
         }
         return (covering + joiningTiled).sorted()
     }

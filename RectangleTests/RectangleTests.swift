@@ -635,6 +635,17 @@ class StackBadgeCoveringWindowTests: XCTestCase {
         XCTAssertEqual(indices.sorted(), [0, 1, 2])
     }
 
+    /// The real geometry, taken from a logged failure: the maximized windows
+    /// carry the overlap offset and sit one cascade step forward, while the
+    /// tiled window underneath is still at its un-offset position. An earlier
+    /// version of this test put every window on the same origin, which passed
+    /// whichever direction the proximity test was applied in - and the shipped
+    /// code was applying it backwards.
+    func testTiledWindowJoinsMaximizedStackThatHasBeenOffset() {
+        let indices = stack([cascaded, cascaded, corner], covering: [true, true, false])
+        XCTAssertEqual(indices.sorted(), [0, 1, 2])
+    }
+
     func testMismatchedCoveringFlagsIsEmpty() {
         XCTAssertTrue(stack([corner], covering: []).isEmpty)
     }
