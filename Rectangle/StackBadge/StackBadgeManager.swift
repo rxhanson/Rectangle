@@ -258,17 +258,14 @@ class StackBadgeManager {
                 && dy >= -candidateRange && dy <= candidateRange
         }
 
-        // ...and the stack is the densest cascade cluster among them, so
-        // the widened box doesn't count unrelated neighbors and an
-        // unrelated leftmost window doesn't mask a real stack. A window
-        // covering the screen joins a stack the tiled windows already form,
-        // but never makes one on its own - see stackIndices.
-        let coversScreen = candidates.map {
-            OverlapOffsetGeometry.coversScreen($0.frame, screenFrame: screenFrameAX)
-        }
+        // ...and the stack is the densest cascade cluster among them, so the
+        // widened box doesn't count unrelated neighbors and an unrelated
+        // leftmost window doesn't mask a real stack. Size plays no part: a
+        // window sharing the corner is in the stack whether it is maximized
+        // or a sixteenth, and a maximized window covering a smaller one is
+        // exactly the case where the smaller one cannot be seen any other way.
         let stacked = StackBadgeGeometry
             .stackIndices(among: candidates.map { $0.frame.origin },
-                          coversScreen: coversScreen,
                           cascadeRange: cascadeRange,
                           tolerance: tolerance)
             .map { candidates[$0] }

@@ -591,63 +591,53 @@ class StackBadgeKeyHandlingTests: XCTestCase {
 /// screen shares its corner with every half and corner placement, so it can
 /// only join a stack, never create one - otherwise an everyday layout (one
 /// maximized window, one tiled to the left half) reads as a stack of two.
-class StackBadgeCoveringWindowTests: XCTestCase {
+/// Size plays no part in stack membership. A window pegged to the corner is in
+/// the stack whether it is maximized or a sixteenth - and a maximized window
+/// sitting on a smaller one is the case where the smaller window cannot be
+/// seen any other way, which is what the badge exists to reveal.
+///
+/// The badge briefly excluded screen-covering windows, borrowed from the
+/// overlap offset where the exclusion is necessary (a maximized window shares
+/// its origin with every placement and would otherwise shift them all, #1766).
+/// The badge moves nothing, so it never needed it, and the exclusion made a
+/// maximized window over a half-screen window show no badge at all.
+class StackBadgeSizeAgnosticTests: XCTestCase {
 
     private let corner = CGPoint(x: 0, y: 0)
     private let cascaded = CGPoint(x: 11, y: -11)
 
-    private func stack(_ origins: [CGPoint], covering: [Bool]) -> [Int] {
-        StackBadgeGeometry.stackIndices(among: origins, coversScreen: covering,
-                                        cascadeRange: 15, tolerance: 4)
+    private func stack(_ origins: [CGPoint]) -> [Int] {
+        StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
     }
 
-    func testMaximizedWindowJoinsATiledStack() {
-        let indices = stack([corner, cascaded, corner], covering: [false, false, true])
-        XCTAssertEqual(indices.sorted(), [0, 1, 2])
+    /// The reported case: one maximized window over one half-screen window,
+    /// both pegged to the same corner, showed nothing at all.
+    func testMaximizedOverTiledIsAStack() {
+        XCTAssertEqual(stack([corner, corner]).sorted(), [0, 1])
     }
 
-    func testMaximizedWindowDoesNotFormAStackWithOneTiledWindow() {
-        XCTAssertTrue(stack([corner, corner], covering: [false, true]).isEmpty)
+    /// The maximized windows carry the overlap offset, so they sit a cascade
+    /// step forward of the tiled window they hide.
+    func testOffsetMaximizedWindowsStillIncludeTheTiledOneBeneath() {
+        XCTAssertEqual(stack([cascaded, cascaded, corner]).sorted(), [0, 1, 2])
     }
 
     func testSeveralMaximizedWindowsAreAStack() {
-        let indices = stack([corner, cascaded], covering: [true, true])
-        XCTAssertEqual(indices.count, 2)
+        XCTAssertEqual(stack([corner, cascaded]).count, 2)
     }
 
     func testTiledStackIsUnaffected() {
-        let indices = stack([corner, cascaded], covering: [false, false])
-        XCTAssertEqual(indices.count, 2)
+        XCTAssertEqual(stack([corner, cascaded]).count, 2)
     }
 
-    func testLoneWindowIsNotAStack() {
-        XCTAssertTrue(stack([corner], covering: [false]).isEmpty)
-        XCTAssertTrue(stack([corner], covering: [true]).isEmpty)
+    /// This returns the densest cluster, which for a single window is that
+    /// window; the caller is what requires two before showing anything.
+    func testLoneWindowIsItsOwnClusterAndTheCallerRejectsIt() {
+        XCTAssertEqual(stack([corner]), [0])
     }
 
-    /// Reported from ordinary use: two Rectangle-maximized terminals and one
-    /// half-width browser at the same corner listed only the terminals. The
-    /// browser is the window the covering ones are hiding, so dropping it is
-    /// the worst thing this list can do - and it did so silently, with a
-    /// plausible count.
-    func testTiledWindowJoinsAStackOfMaximizedWindows() {
-        let indices = stack([corner, cascaded, corner], covering: [true, true, false])
-        XCTAssertEqual(indices.sorted(), [0, 1, 2])
-    }
-
-    /// The real geometry, taken from a logged failure: the maximized windows
-    /// carry the overlap offset and sit one cascade step forward, while the
-    /// tiled window underneath is still at its un-offset position. An earlier
-    /// version of this test put every window on the same origin, which passed
-    /// whichever direction the proximity test was applied in - and the shipped
-    /// code was applying it backwards.
-    func testTiledWindowJoinsMaximizedStackThatHasBeenOffset() {
-        let indices = stack([cascaded, cascaded, corner], covering: [true, true, false])
-        XCTAssertEqual(indices.sorted(), [0, 1, 2])
-    }
-
-    func testMismatchedCoveringFlagsIsEmpty() {
-        XCTAssertTrue(stack([corner], covering: []).isEmpty)
+    func testWindowAtAnotherCornerIsNotInTheCluster() {
+        XCTAssertEqual(stack([corner, CGPoint(x: 900, y: 0)]).count, 1)
     }
 }
 
