@@ -21207,6 +21207,9 @@
         }
       }
     },
+    "Half actions preserve the window's size on the other axis" : {
+
+    },
     "heT-W6-Fyf.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Double-click window title bar to maximize/restore\"; ObjectID = \"heT-W6-Fyf\";",
       "extractionState" : "extracted_with_value",
@@ -27761,6 +27764,9 @@
           }
         }
       }
+    },
+    "Left Half then Top Half moves the window to the top left quarter; the action for the opposite edge expands it back." : {
+
     },
     "Left or right side" : {
       "localizations" : {

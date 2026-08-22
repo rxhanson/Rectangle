@@ -6,6 +6,10 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcul
 
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
+        if Defaults.halvesPreserveOtherAxisSize.enabled, let tiledRect = HalvesPreserveOtherAxisSize.rect(for: params) {
+            return tiledRect
+        }
+
         if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes {
             return calculateFirstRect(params)
         }

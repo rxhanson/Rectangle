@@ -7,6 +7,13 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
     override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         
         let usableScreens = params.usableScreens
+
+        if Defaults.halvesPreserveOtherAxisSize.enabled, let tiledRect = HalvesPreserveOtherAxisSize.rect(for: params.asRectParams()) {
+            return WindowCalculationResult(rect: tiledRect.rect,
+                                           screen: usableScreens.currentScreen,
+                                           resultingAction: tiledRect.resultingAction ?? params.action,
+                                           resultingSubAction: tiledRect.subAction)
+        }
         
         switch Defaults.subsequentExecutionMode.value {
             

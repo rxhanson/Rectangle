@@ -4046,3 +4046,288 @@ final class NextPrevDisplayMappingTests: XCTestCase {
         )
     }
 }
+
+class HalvesPreserveOtherAxisSizeTests: XCTestCase {
+
+    private var savedHalvesPreserveOtherAxisSize = false
+    private var savedGapSize: Float = 0
+    private var savedSkipGapTopEdge = false
+    private var savedHorizontalSplitRatio: Float = 50
+    private var savedVerticalSplitRatio: Float = 50
+    private var savedSubsequentExecutionMode: SubsequentExecutionMode = .resize
+    private var savedCycleSizesIsChanged = false
+    private var savedCooperativeCornerResize = false
+
+    private let visibleFrame = CGRect(x: 10, y: 20, width: 1200, height: 900)
+    // Ungapped rects that the half and quarter actions produce on `visibleFrame` at the default 50% split.
+    private let leftHalf = CGRect(x: 10, y: 20, width: 600, height: 900)
+    private let rightHalf = CGRect(x: 610, y: 20, width: 600, height: 900)
+    private let topHalf = CGRect(x: 10, y: 470, width: 1200, height: 450)
+    private let bottomHalf = CGRect(x: 10, y: 20, width: 1200, height: 450)
+    private let topLeftQuarter = CGRect(x: 10, y: 470, width: 600, height: 450)
+    private let topRightQuarter = CGRect(x: 610, y: 470, width: 600, height: 450)
+    private let bottomLeftQuarter = CGRect(x: 10, y: 20, width: 600, height: 450)
+    private let bottomRightQuarter = CGRect(x: 610, y: 20, width: 600, height: 450)
+
+    override func setUp() {
+        super.setUp()
+        savedHalvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
+        savedGapSize = Defaults.gapSize.value
+        savedSkipGapTopEdge = Defaults.skipGapTopEdge.enabled
+        savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
+        savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
+        savedSubsequentExecutionMode = Defaults.subsequentExecutionMode.value
+        savedCycleSizesIsChanged = Defaults.cycleSizesIsChanged.enabled
+        savedCooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+        Defaults.halvesPreserveOtherAxisSize.enabled = true
+        Defaults.gapSize.value = 0
+        Defaults.skipGapTopEdge.enabled = false
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = 50
+        Defaults.subsequentExecutionMode.value = .resize
+        Defaults.cycleSizesIsChanged.enabled = false
+        Defaults.cooperativeCornerResize.enabled = false
+        ActiveSideSplitRatios.shared.resetAll()
+    }
+
+    override func tearDown() {
+        Defaults.halvesPreserveOtherAxisSize.enabled = savedHalvesPreserveOtherAxisSize
+        Defaults.gapSize.value = savedGapSize
+        Defaults.skipGapTopEdge.enabled = savedSkipGapTopEdge
+        Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
+        Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
+        Defaults.subsequentExecutionMode.value = savedSubsequentExecutionMode
+        Defaults.cycleSizesIsChanged.enabled = savedCycleSizesIsChanged
+        Defaults.cooperativeCornerResize.enabled = savedCooperativeCornerResize
+        ActiveSideSplitRatios.shared.resetAll()
+        super.tearDown()
+    }
+
+    // MARK: A half action keeps the other axis: Left + Top = top left quarter, in either order
+
+    func testTopHalfKeepsLeftHalfColumn() {
+        assertTiled(.topHalf, from: leftHalf, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testLeftHalfKeepsTopHalfRow() {
+        assertTiled(.leftHalf, from: topHalf, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testBottomHalfKeepsRightHalfColumn() {
+        assertTiled(.bottomHalf, from: rightHalf, gives: bottomRightQuarter, as: .bottomRight, subAction: .bottomRightQuarter)
+    }
+
+    func testRightHalfKeepsBottomHalfRow() {
+        assertTiled(.rightHalf, from: bottomHalf, gives: bottomRightQuarter, as: .bottomRight, subAction: .bottomRightQuarter)
+    }
+
+    func testTopHalfKeepsRightHalfColumn() {
+        assertTiled(.topHalf, from: rightHalf, gives: topRightQuarter, as: .topRight, subAction: .topRightQuarter)
+    }
+
+    func testBottomHalfKeepsLeftHalfColumn() {
+        assertTiled(.bottomHalf, from: leftHalf, gives: bottomLeftQuarter, as: .bottomLeft, subAction: .bottomLeftQuarter)
+    }
+
+    // MARK: The action for the opposite edge expands the window along that axis
+
+    func testBottomHalfExpandsTopLeftQuarterToLeftHalf() {
+        assertTiled(.bottomHalf, from: topLeftQuarter, gives: leftHalf, as: .leftHalf)
+    }
+
+    func testTopHalfExpandsBottomLeftQuarterToLeftHalf() {
+        assertTiled(.topHalf, from: bottomLeftQuarter, gives: leftHalf, as: .leftHalf)
+    }
+
+    func testRightHalfExpandsTopLeftQuarterToTopHalf() {
+        assertTiled(.rightHalf, from: topLeftQuarter, gives: topHalf, as: .topHalf)
+    }
+
+    func testLeftHalfExpandsBottomRightQuarterToBottomHalf() {
+        assertTiled(.leftHalf, from: bottomRightQuarter, gives: bottomHalf, as: .bottomHalf)
+    }
+
+    func testLeftHalfExpandsRightHalfToFullScreen() {
+        assertTiled(.leftHalf, from: rightHalf, gives: visibleFrame, as: .maximize)
+    }
+
+    func testTopHalfExpandsBottomHalfToFullScreen() {
+        assertTiled(.topHalf, from: bottomHalf, gives: visibleFrame, as: .maximize)
+    }
+
+    // MARK: The action for the edge a quarter is docked to does nothing
+
+    func testTopHalfLeavesTopLeftQuarterAlone() {
+        assertTiled(.topHalf, from: topLeftQuarter, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testLeftHalfLeavesTopLeftQuarterAlone() {
+        assertTiled(.leftHalf, from: topLeftQuarter, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testRightHalfLeavesBottomRightQuarterAlone() {
+        assertTiled(.rightHalf, from: bottomRightQuarter, gives: bottomRightQuarter, as: .bottomRight, subAction: .bottomRightQuarter)
+    }
+
+    func testRepeatedTopHalfInsideQuarterDoesNotCycleHeight() {
+        let params = params(for: .topHalf, windowRect: topLeftQuarter,
+                            lastAction: RectangleAction(action: .topHalf, subAction: .topLeftQuarter, rect: topLeftQuarter, count: 1))
+
+        let result = WindowCalculationFactory.topHalfCalculation.calculateRect(params)
+
+        XCTAssertEqual(result.rect, topLeftQuarter)
+        XCTAssertEqual(result.subAction, .topLeftQuarter)
+    }
+
+    // MARK: Plain halves and windows that are not tiled behave as without the feature
+
+    func testPlainHalvesRepeatAsUsual() {
+        XCTAssertNil(tiled(.leftHalf, from: leftHalf))
+        XCTAssertNil(tiled(.rightHalf, from: rightHalf))
+        XCTAssertNil(tiled(.topHalf, from: topHalf))
+        XCTAssertNil(tiled(.bottomHalf, from: bottomHalf))
+    }
+
+    func testRepeatedPlainTopHalfStillCyclesHeight() {
+        let params = params(for: .topHalf, windowRect: topHalf,
+                            lastAction: RectangleAction(action: .topHalf, subAction: nil, rect: topHalf, count: 1))
+
+        let result = WindowCalculationFactory.topHalfCalculation.calculateRect(params)
+
+        XCTAssertEqual(result.rect, CGRect(x: 10, y: 320, width: 1200, height: 600))
+    }
+
+    func testUntiledWindowsAreNotAffected() {
+        let floating = CGRect(x: 300, y: 100, width: 700, height: 500)
+        let centeredColumn = CGRect(x: 310, y: 20, width: 600, height: 900)
+
+        for action in [WindowAction.leftHalf, .rightHalf, .topHalf, .bottomHalf] {
+            XCTAssertNil(tiled(action, from: floating), "\(action)")
+            XCTAssertNil(tiled(action, from: visibleFrame), "\(action)")
+        }
+        XCTAssertNil(tiled(.topHalf, from: centeredColumn))
+    }
+
+    func testTopHalfCalculationFallsBackToDefaultBehaviorForUntiledWindows() {
+        let result = WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf, windowRect: CGRect(x: 300, y: 100, width: 700, height: 500)))
+
+        XCTAssertEqual(result.rect, topHalf)
+        XCTAssertNil(result.resultingAction)
+        XCTAssertNil(result.subAction)
+    }
+
+    func testTopHalfCalculationTilesWhenEnabled() {
+        let result = WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf, windowRect: leftHalf))
+
+        XCTAssertEqual(result.rect, topLeftQuarter)
+        XCTAssertEqual(result.resultingAction, .topLeft)
+        XCTAssertEqual(result.subAction, .topLeftQuarter)
+    }
+
+    func testBottomHalfCalculationTilesWhenEnabled() {
+        let result = WindowCalculationFactory.bottomHalfCalculation.calculateRect(params(for: .bottomHalf, windowRect: topLeftQuarter))
+
+        XCTAssertEqual(result.rect, leftHalf)
+        XCTAssertEqual(result.resultingAction, .leftHalf)
+    }
+
+    func testDisabledFeatureKeepsFullWidthTopHalf() {
+        Defaults.halvesPreserveOtherAxisSize.enabled = false
+
+        let result = WindowCalculationFactory.topHalfCalculation.calculateRect(params(for: .topHalf, windowRect: leftHalf))
+
+        XCTAssertEqual(result.rect, topHalf)
+        XCTAssertNil(result.resultingAction)
+        XCTAssertNil(result.subAction)
+    }
+
+    // MARK: Columns and rows other than exactly one half
+
+    func testTopHalfKeepsCycledTwoThirdsColumn() {
+        assertTiled(.topHalf, from: CGRect(x: 10, y: 20, width: 800, height: 900),
+                    gives: CGRect(x: 10, y: 470, width: 800, height: 450), as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testBottomHalfExpandsTwoThirdsWideTopLeftQuarterToTwoThirdsColumn() {
+        assertTiled(.bottomHalf, from: CGRect(x: 10, y: 470, width: 800, height: 450),
+                    gives: CGRect(x: 10, y: 20, width: 800, height: 900), as: .leftHalf)
+    }
+
+    func testLeftHalfKeepsCycledTopThirdRow() {
+        assertTiled(.leftHalf, from: CGRect(x: 10, y: 620, width: 1200, height: 300),
+                    gives: CGRect(x: 10, y: 620, width: 600, height: 300), as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testTopHalfKeepsRightThirdColumn() {
+        assertTiled(.topHalf, from: CGRect(x: 810, y: 20, width: 400, height: 900),
+                    gives: CGRect(x: 810, y: 470, width: 400, height: 450), as: .topRight, subAction: .topRightQuarter)
+    }
+
+    func testCustomSplitRatioIsUsedForRecognitionAndResults() {
+        Defaults.horizontalSplitRatio.value = 60
+
+        assertTiled(.topHalf, from: CGRect(x: 10, y: 20, width: 720, height: 900),
+                    gives: CGRect(x: 10, y: 470, width: 720, height: 450), as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.topHalf, from: CGRect(x: 730, y: 20, width: 480, height: 900),
+                    gives: CGRect(x: 730, y: 470, width: 480, height: 450), as: .topRight, subAction: .topRightQuarter)
+        assertTiled(.leftHalf, from: topHalf,
+                    gives: CGRect(x: 10, y: 470, width: 720, height: 450), as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    // MARK: Gaps and tolerance
+
+    func testRecognizesGappedColumnAndReturnsUngappedRect() {
+        Defaults.gapSize.value = 20
+        // Left half with gaps applied by WindowManager: inset 20 on each side, half a gap back on the shared right edge.
+        let gappedLeftHalf = CGRect(x: 30, y: 40, width: 570, height: 860)
+
+        assertTiled(.topHalf, from: gappedLeftHalf, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testRecognizesGappedRowWithSkippedTopGap() {
+        Defaults.gapSize.value = 20
+        Defaults.skipGapTopEdge.enabled = true
+        let gappedTopHalf = GapCalculation.applyGaps(topHalf, dimension: .both, sharedEdges: .bottom, gapSize: 20, skipTopGap: true)
+
+        assertTiled(.leftHalf, from: gappedTopHalf, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testToleratesWindowsThatCannotTakeTheExactSize() {
+        assertTiled(.topHalf, from: CGRect(x: 10, y: 20, width: 594, height: 900),
+                    gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testDoesNotMatchWindowsFarFromAnyColumn() {
+        XCTAssertNil(tiled(.topHalf, from: CGRect(x: 10, y: 20, width: 560, height: 900)))
+    }
+
+    // MARK: Helpers
+
+    private func tiled(_ action: WindowAction, from windowRect: CGRect) -> RectResult? {
+        HalvesPreserveOtherAxisSize.rect(for: params(for: action, windowRect: windowRect))
+    }
+
+    private func assertTiled(_ action: WindowAction,
+                             from windowRect: CGRect,
+                             gives expectedRect: CGRect,
+                             as expectedAction: WindowAction,
+                             subAction expectedSubAction: SubWindowAction? = nil,
+                             file: StaticString = #filePath,
+                             line: UInt = #line) {
+        guard let result = tiled(action, from: windowRect) else {
+            XCTFail("\(action) from \(windowRect) fell back to the default behavior", file: file, line: line)
+            return
+        }
+        XCTAssertEqual(result.rect, expectedRect, file: file, line: line)
+        XCTAssertEqual(result.resultingAction, expectedAction, file: file, line: line)
+        XCTAssertEqual(result.subAction, expectedSubAction, file: file, line: line)
+    }
+
+    private func params(for action: WindowAction, windowRect: CGRect, lastAction: RectangleAction? = nil) -> RectCalculationParameters {
+        RectCalculationParameters(window: Window(id: 1, rect: windowRect),
+                                  visibleFrameOfScreen: visibleFrame,
+                                  action: action,
+                                  lastAction: lastAction)
+    }
+}
+

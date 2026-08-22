@@ -19,7 +19,7 @@ class WindowCalculation: Calculation {
             return nil
         }
         
-        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: params.action, resultingSubAction: rectResult.subAction)
+        return WindowCalculationResult(rect: rectResult.rect, screen: params.usableScreens.currentScreen, resultingAction: rectResult.resultingAction ?? params.action, resultingSubAction: rectResult.subAction)
     }
 
     func calculateRect(_ params: RectCalculationParameters) -> RectResult {
