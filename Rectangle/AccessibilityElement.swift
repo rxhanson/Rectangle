@@ -237,7 +237,7 @@ class AccessibilityElement {
         return getElementValue(.window)
     }
     
-    private var isMainWindow: Bool? {
+    var isMainWindow: Bool? {
         get {
             windowElement?.wrappedElement.getValue(.main) as? Bool
         }

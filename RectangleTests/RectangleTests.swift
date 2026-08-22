@@ -1,5 +1,6 @@
 /// RectangleTests.swift
 
+import Carbon.HIToolbox
 import MASShortcut
 import XCTest
 @testable import Rectangle
@@ -148,7 +149,7 @@ class DefaultsExportTests: XCTestCase {
 
 class ConfigImportTests: XCTestCase {
 
-    private static let shortcutKeys = WindowAction.active.map(\.name) + TodoManager.defaultsKeys
+    private static let shortcutKeys = WindowAction.active.map(\.name) + TodoManager.defaultsKeys + StackBadgeManager.defaultsKeys
     private var storedValues = [String: Any]()
     private var absentKeys = Set<String>()
 
@@ -188,6 +189,15 @@ class ConfigImportTests: XCTestCase {
     func testImportClearsOmittedTodoShortcut() throws {
         let defaultsKey = TodoManager.toggleDefaultsKey
         store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 11), forKey: defaultsKey)
+
+        try loadConfig(shortcuts: [:])
+
+        XCTAssertNil(UserDefaults.standard.object(forKey: defaultsKey))
+    }
+
+    func testImportClearsOmittedStackBadgeShortcut() throws {
+        let defaultsKey = StackBadgeManager.toggleDefaultsKey
+        store(Shortcut(NSEvent.ModifierFlags.command.rawValue, 14), forKey: defaultsKey)
 
         try loadConfig(shortcuts: [:])
 
@@ -359,6 +369,10 @@ class StackBadgeGeometryTests: XCTestCase {
         XCTAssertTrue(StackBadgeGeometry.stackIndices(among: [], cascadeRange: 15, tolerance: 4).isEmpty)
     }
 
+
+
+
+
     // Regression (review finding): an unrelated window that happens to be the
     // leftmost candidate in the gap-widened box must not mask the real stack.
     func testStackClusterLeftOutlierDoesNotMaskStack() {
@@ -374,6 +388,256 @@ class StackBadgeGeometryTests: XCTestCase {
     func testTodoSidebarWidthUnitInExportArray() {
         let keys = Defaults.array.map { $0.key }
         XCTAssertTrue(keys.contains("todoSidebarWidthUnit"), "todoSidebarWidthUnit missing from Defaults.array")
+    }
+}
+
+/// The cascade math itself. Asserting the resulting rect matters: an earlier
+/// version of this feature was certified by a test that only checked an
+/// eligibility flag, while the offset it enabled was a no-op for anyone
+/// running the default of no gaps.
+class OverlapOffsetGeometryTests: XCTestCase {
+
+    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
+    private let offset: CGFloat = 11
+
+    private func cascade(_ rect: CGRect, occupied: [CGPoint], maxCascade: Int = 1) -> CGRect {
+        OverlapOffsetGeometry.cascadedRect(rect,
+                                           occupiedTopLefts: occupied,
+                                           screenFrame: screen,
+                                           offset: offset,
+                                           maxCascade: maxCascade)
+    }
+
+    /// A maximized window with no gaps fills the visible frame, so there is
+    /// nowhere to shift it - and the caller skips the window scan entirely.
+    func testMaximizedWithoutGapsCannotOffset() {
+        let maximized = screen
+        XCTAssertFalse(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
+        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
+                       maximized)
+    }
+
+    /// Gaps larger than the offset leave room, so maximized windows cascade.
+    func testMaximizedWithGapsOffsets() {
+        let maximized = CGRect(x: 22, y: 22, width: 956, height: 756)
+        XCTAssertTrue(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
+        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
+                       CGRect(x: 33, y: 33, width: 956, height: 756))
+    }
+
+    /// Gaps smaller than the offset must not shift the window part way: it
+    /// would end up flush against the far edges, deleting the gaps there.
+    func testGapsSmallerThanOffsetDoNotOffset() {
+        let maximized = CGRect(x: 5, y: 5, width: 990, height: 790)
+        XCTAssertFalse(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
+        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
+                       maximized)
+    }
+
+    /// A half with no gaps has room across but not up, and still offsets on
+    /// the axis that fits - the behavior shipped in v0.96.
+    func testHalfOffsetsOnTheAxisWithRoom() {
+        let leftHalf = CGRect(x: 0, y: 0, width: 500, height: 800)
+        XCTAssertEqual(cascade(leftHalf, occupied: [OverlapOffsetGeometry.topLeft(of: leftHalf)]),
+                       CGRect(x: 11, y: 0, width: 500, height: 800))
+    }
+
+    func testNoOverlapLeavesTheRectAlone() {
+        let leftHalf = CGRect(x: 0, y: 0, width: 500, height: 800)
+        XCTAssertEqual(cascade(leftHalf, occupied: [CGPoint(x: 500, y: 800)]), leftHalf)
+    }
+
+    func testCascadeStopsAtMaxCascade() {
+        let quarter = CGRect(x: 0, y: 0, width: 400, height: 400)
+        let occupied = [CGPoint(x: 0, y: 400), CGPoint(x: 11, y: 411), CGPoint(x: 22, y: 422)]
+        XCTAssertEqual(cascade(quarter, occupied: occupied, maxCascade: 1).origin,
+                       CGPoint(x: 11, y: 11))
+        XCTAssertEqual(cascade(quarter, occupied: occupied, maxCascade: 3).origin,
+                       CGPoint(x: 33, y: 33))
+    }
+
+    /// Matching is by top-left corner, so a smaller window landing on a larger
+    /// one at the same corner counts as an overlap - an eighth arriving on a
+    /// quarter. Both sit against the top of the screen here, so the window
+    /// offsets across but not up.
+    func testMatchesMixedSizesAtTheSameCorner() {
+        let eighth = CGRect(x: 0, y: 600, width: 250, height: 200)
+        let quarterTopLeft = OverlapOffsetGeometry.topLeft(of: CGRect(x: 0, y: 400, width: 500, height: 400))
+        XCTAssertEqual(quarterTopLeft, OverlapOffsetGeometry.topLeft(of: eighth))
+        XCTAssertEqual(cascade(eighth, occupied: [quarterTopLeft]),
+                       CGRect(x: 11, y: 600, width: 250, height: 200))
+    }
+
+    func testCoversScreen() {
+        XCTAssertTrue(OverlapOffsetGeometry.coversScreen(screen, screenFrame: screen))
+        XCTAssertTrue(OverlapOffsetGeometry.coversScreen(CGRect(x: 22, y: 22, width: 956, height: 756),
+                                                         screenFrame: screen))
+        XCTAssertFalse(OverlapOffsetGeometry.coversScreen(CGRect(x: 0, y: 0, width: 500, height: 800),
+                                                          screenFrame: screen))
+    }
+}
+
+/// Which actions are eligible for the overlap offset. `positionCycles` alone
+/// excluded maximize, so two maximized windows landed exactly on top of each
+/// other. Eligibility is only half of it - whether an eligible window actually
+/// moves is covered by OverlapOffsetGeometryTests.
+class OverlapOffsetEligibilityTests: XCTestCase {
+
+    func testMaximizeGetsTheOffset() {
+        XCTAssertTrue(WindowAction.maximize.overlapOffsetApplies)
+    }
+
+    func testGridPositionsGetTheOffset() {
+        for action in [WindowAction.leftHalf, .topLeft, .topLeftSixth,
+                       .topLeftNinth, .topLeftEighth, .topLeftTwelfth, .topLeftSixteenth] {
+            XCTAssertTrue(action.overlapOffsetApplies, "\(action) should get the overlap offset")
+        }
+    }
+
+    /// Actions that move or resize in place have no "landed on top of
+    /// something" notion, so offsetting them would just displace the window.
+    func testMovesAndResizesDoNotGetTheOffset() {
+        for action in [WindowAction.center, .restore, .moveLeft, .moveRight, .moveUp, .moveDown,
+                       .larger, .smaller, .nextDisplay, .previousDisplay,
+                       .almostMaximize, .maximizeHeight, .tileAll, .cascadeAll] {
+            XCTAssertFalse(action.overlapOffsetApplies, "\(action) should not get the overlap offset")
+        }
+    }
+}
+
+/// The stacked-window list is driven by an event tap, so it decides which
+/// keystrokes to take from the app underneath. Taking the wrong ones would
+/// break typing system-wide while the list is open.
+class StackBadgeKeyHandlingTests: XCTestCase {
+
+    /// The flags macOS actually puts on an arrow keystroke. Every arrow event
+    /// carries them, so a test that passes an empty modifier set is asserting
+    /// against an event the system never delivers - which is exactly how a
+    /// guard that rejected .function shipped with the suite green.
+    private static let arrowFlags: NSEvent.ModifierFlags = [.function, .numericPad]
+
+    private func key(_ code: UInt16, _ modifiers: NSEvent.ModifierFlags = []) -> StackBadgeManager.NavigationKey? {
+        StackBadgeManager.navigationKey(forKeyCode: code, modifiers: modifiers)
+    }
+
+    func testNavigationKeysAreClaimed() {
+        XCTAssertEqual(key(UInt16(kVK_UpArrow), Self.arrowFlags), .up)
+        XCTAssertEqual(key(UInt16(kVK_DownArrow), Self.arrowFlags), .down)
+        XCTAssertEqual(key(UInt16(kVK_Return)), .commit)
+        XCTAssertEqual(key(UInt16(kVK_ANSI_KeypadEnter), .numericPad), .commit)
+        XCTAssertEqual(key(UInt16(kVK_Escape)), .escape)
+    }
+
+    /// Caps lock is not something the user is holding for this keystroke, and
+    /// a window list that stops navigating because caps lock is on would be
+    /// its own bug report.
+    func testCapsLockStillNavigates() {
+        XCTAssertEqual(key(UInt16(kVK_UpArrow), Self.arrowFlags.union(.capsLock)), .up)
+    }
+
+    func testOrdinaryKeysArePassedThrough() {
+        for code in [kVK_ANSI_A, kVK_ANSI_Q, kVK_Tab, kVK_Space, kVK_Delete, kVK_PageUp, kVK_Home] {
+            XCTAssertNil(key(UInt16(code)), "keyCode \(code) must reach the app underneath")
+        }
+        for code in [kVK_LeftArrow, kVK_RightArrow] {
+            XCTAssertNil(key(UInt16(code), Self.arrowFlags),
+                         "keyCode \(code) must reach the app underneath")
+        }
+    }
+
+    /// A held modifier means the keystroke belongs to the frontmost app. Shift
+    /// is included deliberately: shift-return inserts a newline in chat apps
+    /// and shift-arrow extends a selection, so claiming those would break
+    /// ordinary typing whenever the list happened to be open. The arrow cases
+    /// carry the flags macOS sends, so the modifier under test is the only
+    /// difference from a keystroke that must be claimed.
+    func testModifiedKeysArePassedThrough() {
+        for modifier in [NSEvent.ModifierFlags.command, .option, .control, .shift] {
+            for code in [kVK_UpArrow, kVK_DownArrow] {
+                XCTAssertNil(key(UInt16(code), Self.arrowFlags.union(modifier)),
+                             "arrow \(code) with \(modifier) must reach the app underneath")
+            }
+            for code in [kVK_Return, kVK_Escape] {
+                XCTAssertNil(key(UInt16(code), modifier),
+                             "keyCode \(code) with \(modifier) must reach the app underneath")
+            }
+        }
+        XCTAssertNil(key(UInt16(kVK_UpArrow), Self.arrowFlags.union([.command, .option])))
+        XCTAssertNil(key(UInt16(kVK_Return), [.shift]))
+    }
+
+    func testSelectionClampsAtBothEnds() {
+        XCTAssertEqual(StackBadgeManager.selection(from: 0, movedBy: -1, count: 4), 0)
+        XCTAssertEqual(StackBadgeManager.selection(from: 3, movedBy: 1, count: 4), 3)
+        XCTAssertEqual(StackBadgeManager.selection(from: 1, movedBy: 1, count: 4), 2)
+        XCTAssertEqual(StackBadgeManager.selection(from: 1, movedBy: -1, count: 4), 0)
+    }
+
+    func testSelectionWithNoRowsIsNil() {
+        XCTAssertNil(StackBadgeManager.selection(from: 0, movedBy: 1, count: 0))
+    }
+
+    /// Rows that would be clipped are never built, so the arrow keys can't
+    /// select - and Return can't raise - a window with no visible row.
+    func testRowsThatFitIsBoundedByTheScreenBottom() {
+        XCTAssertEqual(StackBadgeManager.rowsThatFit(below: 500, above: 0), 22)
+        XCTAssertEqual(StackBadgeManager.rowsThatFit(below: 60, above: 0), 2)
+        XCTAssertEqual(StackBadgeManager.rowsThatFit(below: 10, above: 0), 0)
+        XCTAssertEqual(StackBadgeManager.rowsThatFit(below: 0, above: 100), 0)
+    }
+}
+
+/// Which windows at a shared corner count as one stack. A window covering the
+/// screen shares its corner with every half and corner placement, so it can
+/// only join a stack, never create one - otherwise an everyday layout (one
+/// maximized window, one tiled to the left half) reads as a stack of two.
+/// Size plays no part in stack membership. A window pegged to the corner is in
+/// the stack whether it is maximized or a sixteenth - and a maximized window
+/// sitting on a smaller one is the case where the smaller window cannot be
+/// seen any other way, which is what the badge exists to reveal.
+///
+/// The badge briefly excluded screen-covering windows, borrowed from the
+/// overlap offset where the exclusion is necessary (a maximized window shares
+/// its origin with every placement and would otherwise shift them all, #1766).
+/// The badge moves nothing, so it never needed it, and the exclusion made a
+/// maximized window over a half-screen window show no badge at all.
+class StackBadgeSizeAgnosticTests: XCTestCase {
+
+    private let corner = CGPoint(x: 0, y: 0)
+    private let cascaded = CGPoint(x: 11, y: -11)
+
+    private func stack(_ origins: [CGPoint]) -> [Int] {
+        StackBadgeGeometry.stackIndices(among: origins, cascadeRange: 15, tolerance: 4)
+    }
+
+    /// The reported case: one maximized window over one half-screen window,
+    /// both pegged to the same corner, showed nothing at all.
+    func testMaximizedOverTiledIsAStack() {
+        XCTAssertEqual(stack([corner, corner]).sorted(), [0, 1])
+    }
+
+    /// The maximized windows carry the overlap offset, so they sit a cascade
+    /// step forward of the tiled window they hide.
+    func testOffsetMaximizedWindowsStillIncludeTheTiledOneBeneath() {
+        XCTAssertEqual(stack([cascaded, cascaded, corner]).sorted(), [0, 1, 2])
+    }
+
+    func testSeveralMaximizedWindowsAreAStack() {
+        XCTAssertEqual(stack([corner, cascaded]).count, 2)
+    }
+
+    func testTiledStackIsUnaffected() {
+        XCTAssertEqual(stack([corner, cascaded]).count, 2)
+    }
+
+    /// This returns the densest cluster, which for a single window is that
+    /// window; the caller is what requires two before showing anything.
+    func testLoneWindowIsItsOwnClusterAndTheCallerRejectsIt() {
+        XCTAssertEqual(stack([corner]), [0])
+    }
+
+    func testWindowAtAnotherCornerIsNotInTheCluster() {
+        XCTAssertEqual(stack([corner, CGPoint(x: 900, y: 0)]).count, 1)
     }
 }
 
@@ -2791,125 +3055,6 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         XCTAssertEqual(rect.height, expected.height, accuracy: 0.001, file: file, line: line)
     }
 }
-
-
-/// The cascade math itself. Asserting the resulting rect matters: an earlier
-/// version of this feature was certified by a test that only checked an
-/// eligibility flag, while the offset it enabled was a no-op for anyone
-/// running the default of no gaps.
-class OverlapOffsetGeometryTests: XCTestCase {
-
-    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
-    private let offset: CGFloat = 11
-
-    private func cascade(_ rect: CGRect, occupied: [CGPoint], maxCascade: Int = 1) -> CGRect {
-        OverlapOffsetGeometry.cascadedRect(rect,
-                                           occupiedTopLefts: occupied,
-                                           screenFrame: screen,
-                                           offset: offset,
-                                           maxCascade: maxCascade)
-    }
-
-    /// A maximized window with no gaps fills the visible frame, so there is
-    /// nowhere to shift it - and the caller skips the window scan entirely.
-    func testMaximizedWithoutGapsCannotOffset() {
-        let maximized = screen
-        XCTAssertFalse(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
-        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
-                       maximized)
-    }
-
-    /// Gaps larger than the offset leave room, so maximized windows cascade.
-    func testMaximizedWithGapsOffsets() {
-        let maximized = CGRect(x: 22, y: 22, width: 956, height: 756)
-        XCTAssertTrue(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
-        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
-                       CGRect(x: 33, y: 33, width: 956, height: 756))
-    }
-
-    /// Gaps smaller than the offset must not shift the window part way: it
-    /// would end up flush against the far edges, deleting the gaps there.
-    func testGapsSmallerThanOffsetDoNotOffset() {
-        let maximized = CGRect(x: 5, y: 5, width: 990, height: 790)
-        XCTAssertFalse(OverlapOffsetGeometry.canOffset(maximized, in: screen, by: offset))
-        XCTAssertEqual(cascade(maximized, occupied: [OverlapOffsetGeometry.topLeft(of: maximized)]),
-                       maximized)
-    }
-
-    /// A half with no gaps has room across but not up, and still offsets on
-    /// the axis that fits - the behavior shipped in v0.96.
-    func testHalfOffsetsOnTheAxisWithRoom() {
-        let leftHalf = CGRect(x: 0, y: 0, width: 500, height: 800)
-        XCTAssertEqual(cascade(leftHalf, occupied: [OverlapOffsetGeometry.topLeft(of: leftHalf)]),
-                       CGRect(x: 11, y: 0, width: 500, height: 800))
-    }
-
-    func testNoOverlapLeavesTheRectAlone() {
-        let leftHalf = CGRect(x: 0, y: 0, width: 500, height: 800)
-        XCTAssertEqual(cascade(leftHalf, occupied: [CGPoint(x: 500, y: 800)]), leftHalf)
-    }
-
-    func testCascadeStopsAtMaxCascade() {
-        let quarter = CGRect(x: 0, y: 0, width: 400, height: 400)
-        let occupied = [CGPoint(x: 0, y: 400), CGPoint(x: 11, y: 411), CGPoint(x: 22, y: 422)]
-        XCTAssertEqual(cascade(quarter, occupied: occupied, maxCascade: 1).origin,
-                       CGPoint(x: 11, y: 11))
-        XCTAssertEqual(cascade(quarter, occupied: occupied, maxCascade: 3).origin,
-                       CGPoint(x: 33, y: 33))
-    }
-
-    /// Matching is by top-left corner, so a smaller window landing on a larger
-    /// one at the same corner counts as an overlap - an eighth arriving on a
-    /// quarter. Both sit against the top of the screen here, so the window
-    /// offsets across but not up.
-    func testMatchesMixedSizesAtTheSameCorner() {
-        let eighth = CGRect(x: 0, y: 600, width: 250, height: 200)
-        let quarterTopLeft = OverlapOffsetGeometry.topLeft(of: CGRect(x: 0, y: 400, width: 500, height: 400))
-        XCTAssertEqual(quarterTopLeft, OverlapOffsetGeometry.topLeft(of: eighth))
-        XCTAssertEqual(cascade(eighth, occupied: [quarterTopLeft]),
-                       CGRect(x: 11, y: 600, width: 250, height: 200))
-    }
-
-    func testCoversScreen() {
-        XCTAssertTrue(OverlapOffsetGeometry.coversScreen(screen, screenFrame: screen))
-        XCTAssertTrue(OverlapOffsetGeometry.coversScreen(CGRect(x: 22, y: 22, width: 956, height: 756),
-                                                         screenFrame: screen))
-        XCTAssertFalse(OverlapOffsetGeometry.coversScreen(CGRect(x: 0, y: 0, width: 500, height: 800),
-                                                          screenFrame: screen))
-    }
-}
-
-/// Which actions are eligible for the overlap offset. `positionCycles` alone
-/// excluded maximize, so two maximized windows landed exactly on top of each
-/// other. Eligibility is only half of it - whether an eligible window actually
-/// moves is covered by OverlapOffsetGeometryTests.
-class OverlapOffsetEligibilityTests: XCTestCase {
-
-    func testMaximizeGetsTheOffset() {
-        XCTAssertTrue(WindowAction.maximize.overlapOffsetApplies)
-    }
-
-    func testGridPositionsGetTheOffset() {
-        for action in [WindowAction.leftHalf, .topLeft, .topLeftSixth,
-                       .topLeftNinth, .topLeftEighth, .topLeftTwelfth, .topLeftSixteenth] {
-            XCTAssertTrue(action.overlapOffsetApplies, "\(action) should get the overlap offset")
-        }
-    }
-
-    /// Actions that move or resize in place have no "landed on top of
-    /// something" notion, so offsetting them would just displace the window.
-    func testMovesAndResizesDoNotGetTheOffset() {
-        for action in [WindowAction.center, .restore, .moveLeft, .moveRight, .moveUp, .moveDown,
-                       .larger, .smaller, .nextDisplay, .previousDisplay,
-                       .almostMaximize, .maximizeHeight, .tileAll, .cascadeAll] {
-            XCTAssertFalse(action.overlapOffsetApplies, "\(action) should not get the overlap offset")
-        }
-    }
-}
-
-/// The stacked-window list is driven by an event tap, so it decides which
-/// keystrokes to take from the app underneath. Taking the wrong ones would
-/// break typing system-wide while the list is open.
 
 class OverlapOffsetGuardsTests: XCTestCase {
 

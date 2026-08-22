@@ -38903,6 +38903,9 @@
     "Show stacked window badge on hover" : {
 
     },
+    "Toggle stacked window badge" : {
+
+    },
     "Side Split Ratio" : {
       "localizations" : {
         "ko" : {

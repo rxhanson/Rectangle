@@ -46,6 +46,7 @@ class SettingsViewController: NSViewController {
     private var cycleSizeCheckboxes = [NSButton]()
     private var cornerCycleExpansionAxisButtons = [NSButton]()
     private var cooperativeCornerResizeCheckbox: NSButton?
+    private var stackBadgeCheckbox: NSButton?
     private var combinedDisplayModeCheckbox: NSButton?
     private var greenButtonOverrideCheckbox: NSButton?
     private var autoMaximizeCheckbox: NSButton?
@@ -911,9 +912,28 @@ class SettingsViewController: NSViewController {
             overlapOffsetCheckbox.alignment = .left
 
             let stackBadgeCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Show stacked window badge on hover", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleStackBadge(_:)))
+            self.stackBadgeCheckbox = stackBadgeCheckbox
             stackBadgeCheckbox.state = Defaults.stackBadge.userEnabled ? .on : .off
             stackBadgeCheckbox.translatesAutoresizingMaskIntoConstraints = false
             stackBadgeCheckbox.alignment = .left
+
+            let stackBadgeToggleLabel = NSTextField(labelWithString: NSLocalizedString("Toggle stacked window badge", tableName: "Main", value: "", comment: ""))
+            stackBadgeToggleLabel.alignment = .right
+            stackBadgeToggleLabel.translatesAutoresizingMaskIntoConstraints = false
+            // The label yields rather than pushing the recorder out of the
+            // column it shares with the rows above.
+            stackBadgeToggleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            let stackBadgeToggleShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            stackBadgeToggleShortcutView.setAssociatedUserDefaultsKey(StackBadgeManager.toggleDefaultsKey, withTransformerName: MASDictionaryTransformerName)
+            stackBadgeToggleShortcutView.translatesAutoresizingMaskIntoConstraints = false
+            stackBadgeToggleShortcutView.shortcutValidator = AppShortcutValidator(defaultsKey: StackBadgeManager.toggleDefaultsKey)
+            shortcutRecordingObserver.observe([stackBadgeToggleShortcutView])
+            let stackBadgeToggleRow = NSStackView()
+            stackBadgeToggleRow.orientation = .horizontal
+            stackBadgeToggleRow.alignment = .centerY
+            stackBadgeToggleRow.spacing = 18
+            stackBadgeToggleRow.addArrangedSubview(stackBadgeToggleLabel)
+            stackBadgeToggleRow.addArrangedSubview(stackBadgeToggleShortcutView)
 
             mainStackView.addArrangedSubview(gridHeaderLabel)
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
@@ -933,7 +953,9 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
             mainStackView.addArrangedSubview(overlapOffsetCheckbox)
             mainStackView.addArrangedSubview(stackBadgeCheckbox)
-            mainStackView.setCustomSpacing(8, after: stackBadgeCheckbox)
+            mainStackView.setCustomSpacing(6, after: stackBadgeCheckbox)
+            mainStackView.addArrangedSubview(stackBadgeToggleRow)
+            mainStackView.setCustomSpacing(8, after: stackBadgeToggleRow)
 
 
             mainStackView.addArrangedSubview(splitRatioHeaderLabel)
@@ -963,6 +985,8 @@ class SettingsViewController: NSViewController {
                 ninthsCyclingLabel.widthAnchor.constraint(equalTo: twelfthsCyclingLabel.widthAnchor),
                 twelfthsCyclingLabel.widthAnchor.constraint(equalTo: sixteenthsCyclingLabel.widthAnchor),
                 sixteenthsCyclingLabel.widthAnchor.constraint(equalTo: hSplitLabel.widthAnchor),
+                stackBadgeToggleShortcutView.leadingAnchor.constraint(equalTo: sixteenthsCyclingShortcutView.leadingAnchor),
+                stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
@@ -994,6 +1018,8 @@ class SettingsViewController: NSViewController {
                 showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 stackBadgeCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                stackBadgeToggleRow.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 topVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 middleVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
@@ -1036,6 +1062,10 @@ class SettingsViewController: NSViewController {
     
     override func awakeFromNib() {
         initializeToggles()
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(stackBadgeChanged),
+                                               name: .stackBadgeChanged,
+                                               object: nil)
 
         checkForUpdatesAutomaticallyCheckbox.bind(.value, to: AppDelegate.instance.updaterController.updater, withKeyPath: "automaticallyChecksForUpdates", options: nil)
         
@@ -1426,6 +1456,10 @@ class SettingsViewController: NSViewController {
 
     private func setToggleStateForCooperativeCornerResizeCheckbox() {
         cooperativeCornerResizeCheckbox?.state = Defaults.cooperativeCornerResize.enabled ? .on : .off
+    }
+
+    @objc private func stackBadgeChanged() {
+        stackBadgeCheckbox?.state = Defaults.stackBadge.userEnabled ? .on : .off
     }
 
 }

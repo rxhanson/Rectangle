@@ -13,7 +13,7 @@ extension Defaults {
                 shortcuts[action.name] = Shortcut(masShortcut: masShortcut)
             }
         }
-        for defaultsKey in TodoManager.defaultsKeys {
+        for defaultsKey in TodoManager.defaultsKeys + StackBadgeManager.defaultsKeys {
             guard
                 let shortcutDict = UserDefaults.standard.dictionary(forKey: defaultsKey),
                 let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)),
@@ -79,7 +79,7 @@ extension Defaults {
                 UserDefaults.standard.removeObject(forKey: action.name)
             }
         }
-        for defaultsKey in TodoManager.defaultsKeys {
+        for defaultsKey in TodoManager.defaultsKeys + StackBadgeManager.defaultsKeys {
             if let importedShortcut = config.shortcuts[defaultsKey], importedShortcut.keyCode >= 0 {
                 let shortcut = importedShortcut.toMASSHortcut()
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)

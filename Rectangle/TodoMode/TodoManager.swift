@@ -110,7 +110,7 @@ class TodoManager {
 
     private static func isTodoShortcutBindable(_ defaultsKey: String) -> Bool {
         guard let shortcut = shortcut(for: defaultsKey) else { return true }
-        return TodoShortcutConflict.conflict(for: shortcut, ignoringTodoDefaultsKey: defaultsKey) == nil
+        return AppShortcutConflict.conflict(for: shortcut, ignoringDefaultsKey: defaultsKey) == nil
     }
 
     private static func shortcut(for defaultsKey: String, userDefaults: UserDefaults = .standard) -> MASShortcut? {
@@ -299,13 +299,13 @@ class TodoManager {
     }
 }
 
-struct TodoShortcutConflict {
+struct AppShortcutConflict {
 
     let shortcutName: String
 
     static func conflict(for shortcut: MASShortcut,
-                         ignoringTodoDefaultsKey ignoredDefaultsKey: String,
-                         userDefaults: UserDefaults = .standard) -> TodoShortcutConflict? {
+                         ignoringDefaultsKey ignoredDefaultsKey: String,
+                         userDefaults: UserDefaults = .standard) -> AppShortcutConflict? {
         let identity = ShortcutCycle.ShortcutIdentity(shortcut)
 
         for action in WindowAction.active {
@@ -313,33 +313,36 @@ struct TodoShortcutConflict {
                   ShortcutCycle.ShortcutIdentity(actionShortcut) == identity
             else { continue }
 
-            return TodoShortcutConflict(shortcutName: action.displayName ?? action.name)
+            return AppShortcutConflict(shortcutName: action.displayName ?? action.name)
         }
 
-        for defaultsKey in TodoManager.defaultsKeys where defaultsKey != ignoredDefaultsKey {
-            guard let todoShortcut = ShortcutCycle.shortcut(forDefaultsKey: defaultsKey, userDefaults: userDefaults),
-                  ShortcutCycle.ShortcutIdentity(todoShortcut) == identity
+        let appShortcutDefaultsKeys = TodoManager.defaultsKeys + StackBadgeManager.defaultsKeys
+        for defaultsKey in appShortcutDefaultsKeys where defaultsKey != ignoredDefaultsKey {
+            guard let appShortcut = ShortcutCycle.shortcut(forDefaultsKey: defaultsKey, userDefaults: userDefaults),
+                  ShortcutCycle.ShortcutIdentity(appShortcut) == identity
             else { continue }
 
-            return TodoShortcutConflict(shortcutName: displayName(forTodoDefaultsKey: defaultsKey))
+            return AppShortcutConflict(shortcutName: displayName(forDefaultsKey: defaultsKey))
         }
 
         return nil
     }
 
-    private static func displayName(forTodoDefaultsKey defaultsKey: String) -> String {
+    private static func displayName(forDefaultsKey defaultsKey: String) -> String {
         switch defaultsKey {
         case TodoManager.toggleDefaultsKey:
             return NSLocalizedString("Toggle Todo", tableName: "Main", value: "Toggle Todo", comment: "")
         case TodoManager.reflowDefaultsKey:
             return NSLocalizedString("Reflow Todo", tableName: "Main", value: "Reflow Todo", comment: "")
+        case StackBadgeManager.toggleDefaultsKey:
+            return NSLocalizedString("Toggle stacked window badge", tableName: "Main", value: "Toggle stacked window badge", comment: "")
         default:
             return defaultsKey
         }
     }
 }
 
-class TodoShortcutValidator: MASShortcutValidator {
+class AppShortcutValidator: MASShortcutValidator {
 
     private let defaultsKey: String
     private let userDefaults: UserDefaults
@@ -355,9 +358,9 @@ class TodoShortcutValidator: MASShortcutValidator {
 
         // Preserve previous behavior by rejecting Rectangle-internal conflicts quietly,
         // without routing them through MASShortcut's "already used" alert.
-        return TodoShortcutConflict.conflict(for: shortcut,
-                                             ignoringTodoDefaultsKey: defaultsKey,
-                                             userDefaults: userDefaults) == nil
+        return AppShortcutConflict.conflict(for: shortcut,
+                                            ignoringDefaultsKey: defaultsKey,
+                                            userDefaults: userDefaults) == nil
     }
 
     override func isShortcutAlreadyTaken(bySystem shortcut: MASShortcut!,
@@ -365,6 +368,9 @@ class TodoShortcutValidator: MASShortcutValidator {
         return super.isShortcutAlreadyTaken(bySystem: shortcut, explanation: explanation)
     }
 }
+
+typealias TodoShortcutConflict = AppShortcutConflict
+typealias TodoShortcutValidator = AppShortcutValidator
 
 enum TodoSidebarSide: Int {
     case right = 1
