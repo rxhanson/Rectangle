@@ -4965,3 +4965,166 @@ class HalvesPreserveOtherAxisSizeTests: XCTestCase {
     }
 }
 
+class RepeatedMaximizeRestoreTests: XCTestCase {
+
+    private var savedRepeatedMaximizeRestoresPrevious = false
+
+    private let windowId = CGWindowID(24_680)
+    private let screen = RepeatedMaximizeTestScreen(frame: CGRect(x: 0, y: 0, width: 1440, height: 900))
+    private let previousFrame = CGRect(x: 100, y: 100, width: 800, height: 600)
+    private let maximizedFrame = CGRect(x: 0, y: 25, width: 1440, height: 875)
+    private let almostMaximizedFrame = CGRect(x: 72, y: 69, width: 1296, height: 788)
+
+    override func setUp() {
+        super.setUp()
+        savedRepeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
+        Defaults.repeatedMaximizeRestoresPrevious.enabled = true
+    }
+
+    override func tearDown() {
+        Defaults.repeatedMaximizeRestoresPrevious.enabled = savedRepeatedMaximizeRestoresPrevious
+        AppDelegate.windowHistory.preMaximizeRects.removeValue(forKey: windowId)
+        AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        super.tearDown()
+    }
+
+    func testAppliesToMaximizeAndAlmostMaximizeOnly() {
+        XCTAssertTrue(RepeatedMaximizeRestore.applies(to: .maximize))
+        XCTAssertTrue(RepeatedMaximizeRestore.applies(to: .almostMaximize))
+        XCTAssertFalse(RepeatedMaximizeRestore.applies(to: .maximizeHeight))
+        XCTAssertFalse(RepeatedMaximizeRestore.applies(to: .leftHalf))
+        XCTAssertFalse(RepeatedMaximizeRestore.applies(to: .restore))
+    }
+
+    func testRepeatedMaximizeRestoresThePreviousFrame() {
+        XCTAssertEqual(restoreRect(.maximize, window: maximizedFrame, last: .maximize, lastRect: maximizedFrame), previousFrame)
+        XCTAssertEqual(restoreRect(.almostMaximize, window: almostMaximizedFrame, last: .almostMaximize, lastRect: almostMaximizedFrame), previousFrame)
+    }
+
+    func testDoesNothingWhenDisabled() {
+        Defaults.repeatedMaximizeRestoresPrevious.enabled = false
+        XCTAssertNil(restoreRect(.maximize, window: maximizedFrame, last: .maximize, lastRect: maximizedFrame))
+    }
+
+    func testDoesNothingWhenTheLastActionWasAnotherOne() {
+        XCTAssertNil(restoreRect(.maximize, window: almostMaximizedFrame, last: .almostMaximize, lastRect: almostMaximizedFrame))
+        XCTAssertNil(restoreRect(.almostMaximize, window: maximizedFrame, last: .maximize, lastRect: maximizedFrame))
+        XCTAssertNil(restoreRect(.maximize, window: maximizedFrame, last: .leftHalf, lastRect: maximizedFrame))
+    }
+
+    func testDoesNothingWithoutHistory() {
+        XCTAssertNil(restoreRect(.maximize, window: maximizedFrame, last: nil, lastRect: nil))
+        XCTAssertNil(restoreRect(.maximize, window: maximizedFrame, last: .maximize, lastRect: maximizedFrame, previous: nil))
+    }
+
+    func testDoesNothingWhenTheWindowMovedSinceTheLastAction() {
+        let moved = maximizedFrame.offsetBy(dx: 0, dy: 10)
+        XCTAssertNil(restoreRect(.maximize, window: moved, last: .maximize, lastRect: maximizedFrame))
+    }
+
+    func testIgnoresOtherActions() {
+        XCTAssertNil(restoreRect(.maximizeHeight, window: maximizedFrame, last: .maximizeHeight, lastRect: maximizedFrame))
+    }
+
+    // MARK: - Calculation entry point
+
+    func testRecordsThePreviousFrameAndFallsThroughWhenMaximizing() {
+        let params = calculationParams(.maximize, window: previousFrame, last: nil)
+
+        XCTAssertNil(RepeatedMaximizeRestore.calculate(params))
+        XCTAssertEqual(AppDelegate.windowHistory.preMaximizeRects[windowId], previousFrame.screenFlipped)
+    }
+
+    func testRestoresAsTheRestoreAction() {
+        AppDelegate.windowHistory.preMaximizeRects[windowId] = previousFrame.screenFlipped
+        let params = calculationParams(.maximize, window: maximizedFrame, last: .maximize, lastRect: maximizedFrame)
+
+        let result = RepeatedMaximizeRestore.calculate(params)
+
+        XCTAssertEqual(result?.rect, previousFrame.screenFlipped)
+        XCTAssertEqual(result?.resultingAction, .restore)
+    }
+
+    func testAlmostMaximizeRestoresTheSameWay() {
+        AppDelegate.windowHistory.preMaximizeRects[windowId] = previousFrame.screenFlipped
+        let params = calculationParams(.almostMaximize, window: almostMaximizedFrame, last: .almostMaximize, lastRect: almostMaximizedFrame)
+
+        let result = RepeatedMaximizeRestore.calculate(params)
+
+        XCTAssertEqual(result?.rect, previousFrame.screenFlipped)
+        XCTAssertEqual(result?.resultingAction, .restore)
+    }
+
+    func testMaximizesAgainAfterARestore() {
+        AppDelegate.windowHistory.preMaximizeRects[windowId] = maximizedFrame.screenFlipped
+        // The restore reported .restore, so the window's last action is no longer the maximize.
+        let params = calculationParams(.maximize, window: previousFrame, last: .restore, lastRect: previousFrame)
+
+        XCTAssertNil(RepeatedMaximizeRestore.calculate(params))
+        XCTAssertEqual(AppDelegate.windowHistory.preMaximizeRects[windowId], previousFrame.screenFlipped)
+    }
+
+    func testRecordsNothingWhenDisabled() {
+        Defaults.repeatedMaximizeRestoresPrevious.enabled = false
+        let params = calculationParams(.maximize, window: previousFrame, last: nil)
+
+        XCTAssertNil(RepeatedMaximizeRestore.calculate(params))
+        XCTAssertNil(AppDelegate.windowHistory.preMaximizeRects[windowId])
+    }
+
+    func testMaximizeCalculationRestoresThroughTheHelper() {
+        AppDelegate.windowHistory.preMaximizeRects[windowId] = previousFrame.screenFlipped
+        let params = calculationParams(.maximize, window: maximizedFrame, last: .maximize, lastRect: maximizedFrame)
+
+        let result = WindowCalculationFactory.maximizeCalculation.calculate(params)
+
+        XCTAssertEqual(result?.rect, previousFrame.screenFlipped)
+        XCTAssertEqual(result?.resultingAction, .restore)
+    }
+
+    // MARK: - Helpers
+
+    private func restoreRect(_ action: WindowAction,
+                             window: CGRect,
+                             last: WindowAction?,
+                             lastRect: CGRect?,
+                             previous: CGRect? = CGRect(x: 100, y: 100, width: 800, height: 600)) -> CGRect? {
+        RepeatedMaximizeRestore.restoreRect(for: action,
+                                            windowRect: window.screenFlipped,
+                                            lastAction: rectangleAction(last, lastRect),
+                                            preMaximizeRect: previous)
+    }
+
+    private func calculationParams(_ action: WindowAction,
+                                   window: CGRect,
+                                   last: WindowAction?,
+                                   lastRect: CGRect? = nil) -> WindowCalculationParameters {
+        WindowCalculationParameters(window: Window(id: windowId, rect: window.screenFlipped),
+                                    usableScreens: UsableScreens(currentScreen: screen, numScreens: 1),
+                                    action: action,
+                                    lastAction: rectangleAction(last, lastRect),
+                                    ignoreTodo: false)
+    }
+
+    private func rectangleAction(_ action: WindowAction?, _ rect: CGRect?) -> RectangleAction? {
+        action.map { RectangleAction(action: $0, subAction: nil, rect: rect ?? .null, count: 1) }
+    }
+}
+
+private final class RepeatedMaximizeTestScreen: NSScreen {
+    private let testFrame: CGRect
+
+    init(frame: CGRect) {
+        testFrame = frame
+        super.init()
+    }
+
+    override var frame: NSRect { testFrame }
+    override var visibleFrame: NSRect { testFrame }
+    override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+    override var hash: Int { ObjectIdentifier(self).hashValue }
+
+    override func isEqual(_ object: Any?) -> Bool {
+        (object as AnyObject?) === self
+    }
+}

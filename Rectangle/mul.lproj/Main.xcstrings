@@ -8533,6 +8533,9 @@
         }
       }
     },
+    "After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position." : {
+
+    },
     "agt-UL-0e3.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Use Default\"; ObjectID = \"agt-UL-0e3\";",
       "extractionState" : "manual",
@@ -37498,6 +37501,9 @@
           }
         }
       }
+    },
+    "Repeated Maximize restores the previous size and position" : {
+
     },
     "Resize adjacent windows when cycling side or corner shortcuts" : {
 
