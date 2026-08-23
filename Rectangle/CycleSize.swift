@@ -38,6 +38,14 @@ enum CycleSize: Int, CaseIterable {
         
         return [firstSize] + greaterThanFistSizes + lessThanFistSizes
     }()
+
+    /// The sizes repeated executions cycle through, in cycling order.
+    static func sortedSelectedSizes() -> [CycleSize] {
+        let useDefaultPositions = !Defaults.cycleSizesIsChanged.enabled
+        let positions = useDefaultPositions ? defaultSizes : Defaults.selectedCycleSizes.value
+
+        return sortedSizes.filter { positions.contains($0) }
+    }
 }
 
 enum CornerCycleExpansionAxis: Int {

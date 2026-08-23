@@ -94,7 +94,8 @@ defaults write com.knollsoft.Rectangle resizeOnDirectionalMove -bool true
 By default, Left Half, Right Half, Top Half and Bottom Half always give the window the full height or width of the screen. Enable this to have each of them only change its own axis and keep the other one, like the Win + arrow keys on Windows or keyboard tiling on KDE:
 
 - Left Half followed by Top Half puts the window in the top left quarter (so does Top Half followed by Left Half).
-- Inside a quarter, the action for the edge the window is docked to does nothing, and the action for the opposite edge expands the window along that axis: Bottom Half takes a top left quarter back to Left Half, Right Half takes it to Top Half.
+- Inside a quarter, the action for the opposite edge expands the window along that axis: Bottom Half takes a top left quarter back to Left Half, Right Half takes it to Top Half.
+- Inside a quarter, the action for the edge the window is docked to cycles the window through the cycle sizes along that axis and keeps the other one: Left Half takes a top left quarter to two thirds wide, then one third wide, while Top Half does the same to its height. This follows the setting for repeated commands; when it does not resize, the window stays as it is.
 - The same goes for halves: Right Half followed by Left Half fills the screen.
 - Windows that are not tiled, and halves that get their own action again, behave as usual (repeated executions still cycle sizes or move across displays, depending on the setting for repeated commands).
 

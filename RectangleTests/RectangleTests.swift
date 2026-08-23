@@ -4155,27 +4155,91 @@ class HalvesPreserveOtherAxisSizeTests: XCTestCase {
         assertTiled(.topHalf, from: bottomHalf, gives: visibleFrame, as: .maximize)
     }
 
-    // MARK: The action for the edge a quarter is docked to does nothing
+    // MARK: The action for the edge a quarter is docked to cycles sizes along its own axis
 
-    func testTopHalfLeavesTopLeftQuarterAlone() {
-        assertTiled(.topHalf, from: topLeftQuarter, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    func testLeftHalfCyclesWidthOfTopLeftQuarter() {
+        let twoThirdsWide = CGRect(x: 10, y: 470, width: 800, height: 450)
+        let oneThirdWide = CGRect(x: 10, y: 470, width: 400, height: 450)
+
+        assertTiled(.leftHalf, from: topLeftQuarter, gives: twoThirdsWide, as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.leftHalf, from: twoThirdsWide, gives: oneThirdWide, as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.leftHalf, from: oneThirdWide, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
     }
 
-    func testLeftHalfLeavesTopLeftQuarterAlone() {
+    func testRightHalfCyclesWidthOfBottomRightQuarterFromItsEdge() {
+        assertTiled(.rightHalf, from: bottomRightQuarter,
+                    gives: CGRect(x: 410, y: 20, width: 800, height: 450), as: .bottomRight, subAction: .bottomRightQuarter)
+    }
+
+    func testTopHalfCyclesHeightOfTopLeftQuarter() {
+        let twoThirdsHigh = CGRect(x: 10, y: 320, width: 600, height: 600)
+        let oneThirdHigh = CGRect(x: 10, y: 620, width: 600, height: 300)
+
+        assertTiled(.topHalf, from: topLeftQuarter, gives: twoThirdsHigh, as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.topHalf, from: twoThirdsHigh, gives: oneThirdHigh, as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.topHalf, from: oneThirdHigh, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testBottomHalfCyclesHeightOfBottomRightQuarterFromItsEdge() {
+        assertTiled(.bottomHalf, from: bottomRightQuarter,
+                    gives: CGRect(x: 610, y: 20, width: 600, height: 600), as: .bottomRight, subAction: .bottomRightQuarter)
+    }
+
+    func testCyclingInsideQuarterUsesSelectedCycleSizes() {
+        let savedSelectedCycleSizes = Defaults.selectedCycleSizes.value
+        defer { Defaults.selectedCycleSizes.value = savedSelectedCycleSizes }
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = [.twoThirds, .oneQuarter]
+
+        let twoThirdsWide = CGRect(x: 10, y: 470, width: 800, height: 450)
+        let oneQuarterWide = CGRect(x: 10, y: 470, width: 300, height: 450)
+
+        // One half is not selected: the cycle starts at the first selected size and never returns to one half.
+        assertTiled(.leftHalf, from: topLeftQuarter, gives: twoThirdsWide, as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.leftHalf, from: twoThirdsWide, gives: oneQuarterWide, as: .topLeft, subAction: .topLeftQuarter)
+        assertTiled(.leftHalf, from: oneQuarterWide, gives: twoThirdsWide, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testCyclingInsideQuarterStartsOverFromCustomSplitRatio() {
+        Defaults.horizontalSplitRatio.value = 60
+        let sixtyPercentWide = CGRect(x: 10, y: 470, width: 720, height: 450)
+
+        assertTiled(.leftHalf, from: sixtyPercentWide, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testCyclingInsideQuarterRecognizesGappedWindow() {
+        Defaults.gapSize.value = 20
+        let gappedTopLeftQuarter = GapCalculation.applyGaps(topLeftQuarter, dimension: .both, sharedEdges: [.right, .bottom], gapSize: 20, skipTopGap: false)
+
+        assertTiled(.leftHalf, from: gappedTopLeftQuarter,
+                    gives: CGRect(x: 10, y: 470, width: 800, height: 450), as: .topLeft, subAction: .topLeftQuarter)
+    }
+
+    func testQuarterStaysPutWhenRepeatedCommandsDoNotResize() {
+        for mode in [SubsequentExecutionMode.none, .acrossMonitor, .cycleMonitor] {
+            Defaults.subsequentExecutionMode.value = mode
+            assertTiled(.leftHalf, from: topLeftQuarter, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+            assertTiled(.topHalf, from: topLeftQuarter, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
+        }
+    }
+
+    func testQuarterStaysPutWhenNoCycleSizesAreSelected() {
+        let savedSelectedCycleSizes = Defaults.selectedCycleSizes.value
+        defer { Defaults.selectedCycleSizes.value = savedSelectedCycleSizes }
+        Defaults.cycleSizesIsChanged.enabled = true
+        Defaults.selectedCycleSizes.value = []
+
         assertTiled(.leftHalf, from: topLeftQuarter, gives: topLeftQuarter, as: .topLeft, subAction: .topLeftQuarter)
     }
 
-    func testRightHalfLeavesBottomRightQuarterAlone() {
-        assertTiled(.rightHalf, from: bottomRightQuarter, gives: bottomRightQuarter, as: .bottomRight, subAction: .bottomRightQuarter)
-    }
-
-    func testRepeatedTopHalfInsideQuarterDoesNotCycleHeight() {
+    func testRepeatedTopHalfInsideQuarterCyclesHeightWithoutHistory() {
         let params = params(for: .topHalf, windowRect: topLeftQuarter,
-                            lastAction: RectangleAction(action: .topHalf, subAction: .topLeftQuarter, rect: topLeftQuarter, count: 1))
+                            lastAction: RectangleAction(action: .topLeft, subAction: .topLeftQuarter, rect: topLeftQuarter, count: 5))
 
         let result = WindowCalculationFactory.topHalfCalculation.calculateRect(params)
 
-        XCTAssertEqual(result.rect, topLeftQuarter)
+        XCTAssertEqual(result.rect, CGRect(x: 10, y: 320, width: 600, height: 600))
+        XCTAssertEqual(result.resultingAction, .topLeft)
         XCTAssertEqual(result.subAction, .topLeftQuarter)
     }
 

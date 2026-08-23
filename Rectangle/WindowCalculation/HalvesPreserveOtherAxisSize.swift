@@ -9,10 +9,11 @@ import Foundation
 /// back to Left Half.
 ///
 /// Along its own axis an action docks the window to its edge when the window spans the whole axis,
-/// expands the window to the whole axis when it is docked to the opposite edge, and leaves it alone
-/// when it is already docked to that edge inside a quarter. Windows that are not tiled at all, and
-/// plain halves that get the same action again, behave exactly as without the feature (including
-/// cycling sizes or moving across displays on repeated executions).
+/// expands the window to the whole axis when it is docked to the opposite edge, and cycles the window
+/// through the cycle sizes along that axis when it is already docked to that edge inside a quarter
+/// (if repeated commands resize; otherwise it leaves the window alone). Windows that are not tiled at
+/// all, and plain halves that get the same action again, behave exactly as without the feature
+/// (including cycling sizes or moving across displays on repeated executions).
 ///
 /// Opt-in via the `halvesPreserveOtherAxisSize` default.
 enum HalvesPreserveOtherAxisSize {
@@ -51,11 +52,16 @@ enum HalvesPreserveOtherAxisSize {
             // (then the plain half is exactly what the action does anyway).
             guard other != .full else { return nil }
             newOwn = .docked(side, dockedRect(along: axis, side: side, in: visibleFrame))
-        case .docked(let dockedSide, _) where dockedSide == side:
+        case .docked(let dockedSide, let currentRect) where dockedSide == side:
             // Already docked to this edge: a plain half repeats as usual (cycle sizes, move across
-            // displays); inside a quarter there is nothing to do.
+            // displays); inside a quarter the window cycles sizes along this axis if repeated commands
+            // resize, and stays as it is otherwise.
             guard other != .full else { return nil }
-            newOwn = own
+            if Defaults.subsequentExecutionMode.resizes, let next = nextCycleSize(after: currentRect, along: axis, side: side, in: visibleFrame) {
+                newOwn = .docked(side, dockedRect(along: axis, side: side, fraction: next.fraction, in: visibleFrame))
+            } else {
+                newOwn = own
+            }
         case .docked:
             // Docked to the opposite edge: expand along this axis.
             newOwn = .full
@@ -105,6 +111,20 @@ enum HalvesPreserveOtherAxisSize {
         }
 
         return .full
+    }
+
+    /// The cycle size that follows `currentRect` in the cycling order: the one after the size the rect
+    /// has, or the first one when the rect has a size that is not selected for cycling (e.g. a custom
+    /// split ratio). Nil when no cycle sizes are selected.
+    private static func nextCycleSize(after currentRect: CGRect, along axis: Axis, side: HalfSplitSide, in visibleFrame: CGRect) -> CycleSize? {
+        let sizes = CycleSize.sortedSelectedSizes()
+        guard !sizes.isEmpty else { return nil }
+
+        let currentIndex = sizes.firstIndex { size in
+            matches(currentRect, dockedRect(along: axis, side: side, fraction: size.fraction, in: visibleFrame), along: axis)
+        }
+        guard let currentIndex else { return sizes[0] }
+        return sizes[(currentIndex + 1) % sizes.count]
     }
 
     private static func compose(horizontal: AxisState, vertical: AxisState, in visibleFrame: CGRect) -> RectResult {

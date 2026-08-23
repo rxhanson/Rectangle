@@ -13,11 +13,7 @@ protocol RepeatedExecutionsCalculation {
 extension RepeatedExecutionsCalculation {
     
     func sortedCycleSizes() -> [CycleSize] {
-        let useDefaultPositions = !Defaults.cycleSizesIsChanged.enabled
-        let positions = useDefaultPositions ? CycleSize.defaultSizes : Defaults.selectedCycleSizes.value
-        
-        return CycleSize.sortedSizes
-            .filter { positions.contains($0) }
+        CycleSize.sortedSelectedSizes()
     }
     
     func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
