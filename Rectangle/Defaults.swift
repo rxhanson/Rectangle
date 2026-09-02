@@ -42,8 +42,9 @@ class Defaults {
     static let screenEdgeGapTop = FloatDefault(key: "screenEdgeGapTop", defaultValue: 0)
     static let screenEdgeGapBottom = FloatDefault(key: "screenEdgeGapBottom", defaultValue: 0)
     static let screenEdgeGapLeft = FloatDefault(key: "screenEdgeGapLeft", defaultValue: 0)
-    static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 0)
-    static let screenEdgeGapsOnMainScreenOnly = BoolDefault(key: "screenEdgeGapsOnMainScreenOnly")
+    static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 370)
+    static let screenEdgeGapRightEnabled = BoolDefault(key: "screenEdgeGapRightEnabled")
+    static let screenEdgeGapsOnMainScreenOnly = BoolDefault(key: "screenEdgeGapsOnMainScreenOnly", defaultValue: true)
     static let screenEdgeGapTopNotch = FloatDefault(key: "screenEdgeGapTopNotch", defaultValue: 0)
     static let lastVersion = StringDefault(key: "lastVersion")
     static let installVersion = StringDefault(key: "installVersion")
@@ -148,6 +149,7 @@ class Defaults {
         screenEdgeGapBottom,
         screenEdgeGapLeft,
         screenEdgeGapRight,
+        screenEdgeGapRightEnabled,
         screenEdgeGapsOnMainScreenOnly,
         screenEdgeGapTopNotch,
         showAllActionsInMenu,
@@ -244,9 +246,13 @@ class BoolDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Bool = false) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        if UserDefaults.standard.object(forKey: key) == nil {
+            enabled = defaultValue
+        } else {
+            enabled = UserDefaults.standard.bool(forKey: key)
+        }
         initialized = true
     }
     

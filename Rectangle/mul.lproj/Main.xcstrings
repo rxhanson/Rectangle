@@ -19030,6 +19030,9 @@
         }
       }
     },
+    "Gap width (px)" : {
+
+    },
     "GB9-OM-e27.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Bold\"; ObjectID = \"GB9-OM-e27\";",
       "extractionState" : "manual",
@@ -27765,6 +27768,9 @@
         }
       }
     },
+    "Leaves space along the right side of the usable screen area for notifications or other overlays." : {
+
+    },
     "Left Half then Top Half moves the window to the top left quarter; the action for the opposite edge expands it back." : {
 
     },
@@ -33161,6 +33167,9 @@
         }
       }
     },
+    "Only use on main display" : {
+
+    },
     "Open System Settings" : {
       "localizations" : {
         "ar" : {
@@ -37499,6 +37508,9 @@
         }
       }
     },
+    "Reserve space along the right side before Rectangle calculates window sizes. This can e.g. keep notification banners visible." : {
+
+    },
     "Resize adjacent windows when cycling side or corner shortcuts" : {
 
     },
@@ -37825,6 +37837,9 @@
           }
         }
       }
+    },
+    "Right edge gap" : {
+
     },
     "Right side, top/bottom near corners" : {
 
@@ -43585,6 +43600,9 @@
         }
       }
     },
+    "Use right edge gap" : {
+
+    },
     "uw2-9W-2jq.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"Shortcuts\"; ObjectID = \"uw2-9W-2jq\";",
       "extractionState" : "extracted_with_value",
@@ -46555,6 +46573,9 @@
           }
         }
       }
+    },
+    "When enabled, screen edge gaps are ignored on secondary displays." : {
+
     },
     "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
 

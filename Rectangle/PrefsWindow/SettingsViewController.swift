@@ -5,6 +5,10 @@ import ServiceManagement
 import Sparkle
 import MASShortcut
 
+private class FlippedView: NSView {
+    override var isFlipped: Bool { true }
+}
+
 class SettingsViewController: NSViewController {
         
     @IBOutlet weak var launchOnLoginCheckbox: NSButton!
@@ -51,6 +55,7 @@ class SettingsViewController: NSViewController {
     private var greenButtonOverrideCheckbox: NSButton?
     private var autoMaximizeCheckbox: NSButton?
     private var halvesPreserveOtherAxisSizeCheckbox: NSButton?
+    private var rightScreenEdgeGapField: AutoSaveFloatField?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -128,6 +133,17 @@ class SettingsViewController: NSViewController {
 
     @objc func toggleCyclingOverlapOffset(_ sender: NSButton) {
         Defaults.cyclingOverlapOffset.enabled = sender.state == .on
+    }
+
+    @objc func toggleScreenEdgeGapRight(_ sender: NSButton) {
+        let enabled = sender.state == .on
+        Defaults.screenEdgeGapRightEnabled.enabled = enabled
+        rightScreenEdgeGapField?.isEnabled = enabled
+        rightScreenEdgeGapField?.isEditable = enabled
+    }
+
+    @objc func toggleScreenEdgeGapsOnMainScreenOnly(_ sender: NSButton) {
+        Defaults.screenEdgeGapsOnMainScreenOnly.enabled = sender.state == .on
     }
 
     @objc func setCornerCycleExpansionAxis(_ sender: NSButton) {
@@ -323,6 +339,17 @@ class SettingsViewController: NSViewController {
             smallerWidthLabel.alignment = .right
             let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
             widthStepLabel.alignment = .right
+            let screenEdgeGapsHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Right edge gap", tableName: "Main", value: "", comment: ""))
+            screenEdgeGapsHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            screenEdgeGapsHeaderLabel.alignment = .center
+            screenEdgeGapsHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+            let screenEdgeGapsHintLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Reserve space along the right side before Rectangle calculates window sizes. This can e.g. keep notification banners visible.", tableName: "Main", value: "", comment: ""))
+            screenEdgeGapsHintLabel.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+            screenEdgeGapsHintLabel.textColor = .secondaryLabelColor
+            screenEdgeGapsHintLabel.alignment = .center
+            screenEdgeGapsHintLabel.translatesAutoresizingMaskIntoConstraints = false
+            let rightScreenEdgeGapLabel = NSTextField(labelWithString: NSLocalizedString("Gap width (px)", tableName: "Main", value: "", comment: ""))
+            rightScreenEdgeGapLabel.alignment = .right
             
             let topVerticalThirdLabel = NSTextField(labelWithString: NSLocalizedString("Top Third", tableName: "Main", value: "", comment: ""))
             topVerticalThirdLabel.alignment = .right
@@ -355,6 +382,7 @@ class SettingsViewController: NSViewController {
             largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
             widthStepLabel.translatesAutoresizingMaskIntoConstraints = false
+            rightScreenEdgeGapLabel.translatesAutoresizingMaskIntoConstraints = false
             topVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
             middleVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
             bottomVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -399,6 +427,30 @@ class SettingsViewController: NSViewController {
             integerFormatter.allowsFloats = false
             integerFormatter.minimum = 1
             widthStepField.formatter = integerFormatter
+
+            let screenEdgeGapFormatter = NumberFormatter()
+            screenEdgeGapFormatter.allowsFloats = false
+            screenEdgeGapFormatter.minimum = 0
+
+            let rightScreenEdgeGapField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            rightScreenEdgeGapField.stringValue = String(Int(Defaults.screenEdgeGapRight.value))
+            rightScreenEdgeGapField.delegate = self
+            rightScreenEdgeGapField.defaults = Defaults.screenEdgeGapRight
+            rightScreenEdgeGapField.fallbackValue = 370
+            rightScreenEdgeGapField.translatesAutoresizingMaskIntoConstraints = false
+            rightScreenEdgeGapField.refusesFirstResponder = true
+            rightScreenEdgeGapField.alignment = .right
+            rightScreenEdgeGapField.formatter = screenEdgeGapFormatter
+            rightScreenEdgeGapField.isEnabled = Defaults.screenEdgeGapRightEnabled.enabled
+            rightScreenEdgeGapField.isEditable = Defaults.screenEdgeGapRightEnabled.enabled
+            rightScreenEdgeGapField.toolTip = NSLocalizedString("Leaves space along the right side of the usable screen area for notifications or other overlays.", tableName: "Main", value: "", comment: "")
+            self.rightScreenEdgeGapField = rightScreenEdgeGapField
+
+            let rightScreenEdgeGapCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Use right edge gap", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleScreenEdgeGapRight(_:)))
+            rightScreenEdgeGapCheckbox.state = Defaults.screenEdgeGapRightEnabled.enabled ? .on : .off
+            rightScreenEdgeGapCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            rightScreenEdgeGapCheckbox.alignment = .left
+            rightScreenEdgeGapCheckbox.imageHugsTitle = true
 
             let splitRatioHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""))
             splitRatioHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
@@ -683,6 +735,13 @@ class SettingsViewController: NSViewController {
             widthStepRow.spacing = 18
             widthStepRow.addArrangedSubview(widthStepLabel)
             widthStepRow.addArrangedSubview(widthStepField)
+
+            let rightScreenEdgeGapRow = NSStackView()
+            rightScreenEdgeGapRow.orientation = .horizontal
+            rightScreenEdgeGapRow.alignment = .centerY
+            rightScreenEdgeGapRow.spacing = 18
+            rightScreenEdgeGapRow.addArrangedSubview(rightScreenEdgeGapLabel)
+            rightScreenEdgeGapRow.addArrangedSubview(rightScreenEdgeGapField)
 
             let hSplitRow = NSStackView()
             hSplitRow.orientation = .horizontal
@@ -974,13 +1033,29 @@ class SettingsViewController: NSViewController {
             halvesCheckbox.translatesAutoresizingMaskIntoConstraints = false
             halvesCheckbox.alignment = .left
 
+            let screenEdgeGapsOnMainScreenOnlyCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Only use on main display", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleScreenEdgeGapsOnMainScreenOnly(_:)))
+            screenEdgeGapsOnMainScreenOnlyCheckbox.state = Defaults.screenEdgeGapsOnMainScreenOnly.enabled ? .on : .off
+            screenEdgeGapsOnMainScreenOnlyCheckbox.toolTip = NSLocalizedString("When enabled, screen edge gaps are ignored on secondary displays.", tableName: "Main", value: "", comment: "")
+            screenEdgeGapsOnMainScreenOnlyCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            screenEdgeGapsOnMainScreenOnlyCheckbox.alignment = .left
+
             mainStackView.setCustomSpacing(8, after: vSplitRow)
             mainStackView.addArrangedSubview(halvesCheckbox)
             halvesPreserveOtherAxisSizeCheckbox = halvesCheckbox
+            mainStackView.setCustomSpacing(12, after: halvesCheckbox)
+            mainStackView.addArrangedSubview(screenEdgeGapsHeaderLabel)
+            mainStackView.setCustomSpacing(4, after: screenEdgeGapsHeaderLabel)
+            mainStackView.addArrangedSubview(screenEdgeGapsHintLabel)
+            mainStackView.setCustomSpacing(8, after: screenEdgeGapsHintLabel)
+            mainStackView.addArrangedSubview(rightScreenEdgeGapCheckbox)
+            mainStackView.addArrangedSubview(screenEdgeGapsOnMainScreenOnlyCheckbox)
+            mainStackView.addArrangedSubview(rightScreenEdgeGapRow)
 
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 splitRatioHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                screenEdgeGapsHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                screenEdgeGapsHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
                 largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
                 smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
                 widthStepLabel.widthAnchor.constraint(equalTo: topVerticalThirdLabel.widthAnchor),
@@ -1003,10 +1078,12 @@ class SettingsViewController: NSViewController {
                 stackBadgeToggleShortcutView.leadingAnchor.constraint(equalTo: sixteenthsCyclingShortcutView.leadingAnchor),
                 stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
+                vSplitLabel.widthAnchor.constraint(equalTo: rightScreenEdgeGapLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.widthAnchor.constraint(equalToConstant: 160),
+                rightScreenEdgeGapField.widthAnchor.constraint(equalToConstant: 160),
                 hSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
                 vSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
                 hSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
@@ -1035,6 +1112,8 @@ class SettingsViewController: NSViewController {
                 stackBadgeCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 stackBadgeToggleRow.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                rightScreenEdgeGapCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                screenEdgeGapsOnMainScreenOnlyCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 topVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 middleVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
@@ -1054,18 +1133,35 @@ class SettingsViewController: NSViewController {
                 sixteenthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 gridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 cyclingHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
+                rightScreenEdgeGapField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 hSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
                 vSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
             ])
 
-            let containerView = NSView()
-            containerView.addSubview(mainStackView)
+            let documentSize = NSSize(width: mainStackView.fittingSize.width + 30, height: mainStackView.fittingSize.height + 20)
+            let containerView = NSView(frame: NSRect(origin: .zero, size: documentSize))
+            let scrollView = NSScrollView(frame: containerView.bounds)
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            scrollView.hasVerticalScroller = true
+            scrollView.hasHorizontalScroller = false
+            scrollView.autohidesScrollers = false
+            scrollView.drawsBackground = false
+            scrollView.borderType = .noBorder
+
+            let documentView = FlippedView(frame: NSRect(origin: .zero, size: documentSize))
+            documentView.addSubview(mainStackView)
+            scrollView.documentView = documentView
+            containerView.addSubview(scrollView)
 
             NSLayoutConstraint.activate([
-                mainStackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
-                mainStackView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
-                mainStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 15),
-                mainStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -15)
+                scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
+                scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+                scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                mainStackView.topAnchor.constraint(equalTo: documentView.topAnchor, constant: 10),
+                mainStackView.bottomAnchor.constraint(equalTo: documentView.bottomAnchor, constant: -10),
+                mainStackView.leadingAnchor.constraint(equalTo: documentView.leadingAnchor, constant: 15),
+                mainStackView.trailingAnchor.constraint(equalTo: documentView.trailingAnchor, constant: -15)
             ])
 
             viewController.view = containerView

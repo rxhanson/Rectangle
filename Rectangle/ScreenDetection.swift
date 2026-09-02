@@ -429,7 +429,8 @@ extension NSScreen {
 
         newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
         newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
-        newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
+        let screenEdgeGapRight = Defaults.screenEdgeGapRightEnabled.enabled ? Defaults.screenEdgeGapRight.cgFloat : 0
+        newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + screenEdgeGapRight)
         
         if #available(macOS 12.0, *), self.safeAreaInsets.top != 0, Defaults.screenEdgeGapTopNotch.value != 0 {
             newFrame.size.height -= (Defaults.screenEdgeGapTopNotch.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
