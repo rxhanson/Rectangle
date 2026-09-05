@@ -48732,6 +48732,30 @@
         }
       }
     },
+    "windowSizeWarningMessage": {
+      "comment": "Explains that an app can prevent a window from shrinking to the requested layout",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This app couldn’t make the window small enough to fit. Windows may overlap."
+          }
+        }
+      }
+    },
+    "windowSizeWarningTitle": {
+      "comment": "Title of the on-screen message when a window cannot fit its requested size",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Window size limited"
+          }
+        }
+      }
+    },
     "wpr-3q-Mcd.title": {
       "comment": "Class = \"NSMenuItem\"; title = \"Help\"; ObjectID = \"wpr-3q-Mcd\";",
       "extractionState": "extracted_with_value",

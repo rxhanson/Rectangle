@@ -82,6 +82,10 @@ See [TerminalCommands.md](TerminalCommands.md)
 
 Apple never released a public API for doing this. Rectangle Pro has next/prev Space actions, but there are no plans to add those into Rectangle at this time.
 
+### Windows overlap when using thirds or other small layouts
+
+Some apps enforce a minimum window size that is larger than the requested layout. For example, a window with a minimum width of 600 points cannot fit a 504-point third of a display. Rectangle keeps the window on screen and briefly shows a “Window size limited” message when the app leaves it larger than the requested size. Use a larger layout, such as halves, or reduce the adjacent window manually. Rectangle cannot override an app's minimum window size.
+
 ### Window resizing is off slightly for iTerm2
 
 By default iTerm2 will only resize in increments of character widths. There might be a setting inside iTerm2 to disable this, but you can change it with the following command.

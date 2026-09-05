@@ -7,6 +7,8 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
+    private var windowSizeWarning: WindowSizeWarning?
+    private var executionID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection()) {
         self.screenDetection = screenDetection
@@ -45,6 +47,10 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        executionID &+= 1
+        let currentExecutionID = executionID
+        hideSizeConstraintWarning()
+
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
             NSSound.beep()
@@ -220,7 +226,7 @@ class WindowManager {
                 if calcResult.rect.size != resultingRect.size {
                     Logger.log("Final attempt to adjust across displays.")
                     DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
-                        guard let self else { return }
+                        guard let self, self.executionID == currentExecutionID else { return }
                         let finalRect = self.apply(result: resultParameters)
                         self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
                         self.postProcess(result: resultParameters, resultingRect: finalRect)
@@ -274,6 +280,10 @@ class WindowManager {
 
     func postProcess(result: ResultParameters, resultingRect: CGRect) {
         let calcResult = result.calcResult
+
+        if WindowSizeConstraint.isExceeded(requested: calcResult.rect, actual: resultingRect, action: result.action) {
+            showSizeConstraintWarning(on: calcResult.screen)
+        }
         
         if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
             CGWarpMouseCursorPosition(resultingRect.centerPoint)
@@ -293,6 +303,17 @@ class WindowManager {
             }
             Logger.log(logItems.joined(separator: ", "))
         }
+    }
+
+    func showSizeConstraintWarning(on screen: NSScreen) {
+        if windowSizeWarning == nil {
+            windowSizeWarning = WindowSizeWarning()
+        }
+        windowSizeWarning?.show(on: screen)
+    }
+
+    func hideSizeConstraintWarning() {
+        windowSizeWarning?.hide()
     }
 }
 
