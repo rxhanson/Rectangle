@@ -38,8 +38,12 @@ final class WindowFrameAnimation {
             finish()
             return
         }
-        // Smoothstep has zero velocity at both ends and does not overshoot.
-        let eased = CGFloat(progress * progress * (3 - 2 * progress))
+        // A critically damped response starts at rest, moves quickly, then has a
+        // longer settling tail. Normalize the finite interval to reach the exact
+        // destination without overshoot or a visible final correction.
+        let response = 7.0
+        let eased = CGFloat((1 - (1 + response * progress) * exp(-response * progress))
+            / (1 - (1 + response) * exp(-response)))
         let delta = offset()
         let frame = CGRect(x: origin.minX + (destination.minX - origin.minX) * eased + delta.x,
                            y: origin.minY + (destination.minY - origin.minY) * eased + delta.y,
@@ -104,7 +108,7 @@ final class WindowAnimator {
     }
 
     func animate(_ element: AccessibilityElement, to destination: CGRect,
-                 duration: TimeInterval = 0.25,
+                 duration: TimeInterval = 0.3,
                  offset: @escaping () -> CGPoint = { .zero },
                  completion: @escaping (CGRect) -> Void) {
         if window == element {

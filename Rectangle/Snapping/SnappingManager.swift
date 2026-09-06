@@ -341,7 +341,7 @@ class SnappingManager {
                     }
                     var cursorOffset = CGPoint.zero
                     let initialCursor = NSEvent.mouseLocation.screenFlipped
-                    WindowAnimator.shared.animate(windowElement, to: newRect, duration: 0.16, offset: {
+                    WindowAnimator.shared.animate(windowElement, to: newRect, duration: 0.18, offset: {
                         // Follow the drag during restoration, but do not follow
                         // unrelated cursor movement after the button is released.
                         if NSEvent.pressedMouseButtons & 1 != 0 {

@@ -18,7 +18,10 @@ final class WindowFrameAnimationTests: XCTestCase {
                                              cleanup: { cleanupCount += 1 },
                                              completion: { completed.append($0) })
         animation.tick(at: 10.125)
-        XCTAssertEqual(writes, [CGRect(x: 50, y: 65, width: 750, height: 600)])
+        XCTAssertEqual(writes.count, 1)
+        // Most of the distance is covered early, leaving time to settle.
+        XCTAssertGreaterThan(writes[0].width, 750)
+        XCTAssertLessThan(writes[0].width, target.width)
         animation.tick(at: 12)
         animation.tick(at: 13)
         animation.finish()
@@ -73,8 +76,8 @@ final class WindowFrameAnimationTests: XCTestCase {
                                              offset: { delta },
                                              write: { writes.append($0); return true },
                                              cleanup: {}, completion: { final = $0 })
-        animation.tick(at: 0.5)
-        XCTAssertEqual(writes.last, CGRect(x: 60, y: 85, width: 750, height: 600))
+        animation.tick(at: 0)
+        XCTAssertEqual(writes.last, start.offsetBy(dx: 10, dy: 20))
         delta = CGPoint(x: 80, y: -10)
         animation.finish()
         XCTAssertEqual(final, target.offsetBy(dx: 80, dy: -10))
@@ -87,6 +90,22 @@ final class WindowFrameAnimationTests: XCTestCase {
                                              cleanup: {}, completion: { final = $0 })
         animation.tick(at: 0)
         XCTAssertEqual(final, target)
+    }
+
+    func testSpringResponseIsMonotonicAndNeverOvershoots() {
+        var frames: [CGRect] = []
+        let animation = WindowFrameAnimation(from: start, to: target, startTime: 0, duration: 1,
+                                             write: { frames.append($0); return true },
+                                             cleanup: {}, completion: { frames.append($0) })
+        for tick in 0...100 { animation.tick(at: Double(tick) / 100) }
+        XCTAssertEqual(frames.first, start)
+        XCTAssertEqual(frames.last, target)
+        for (previous, current) in zip(frames, frames.dropFirst()) {
+            XCTAssertGreaterThanOrEqual(current.width, previous.width)
+            XCTAssertLessThanOrEqual(current.width, target.width)
+            XCTAssertLessThanOrEqual(current.minX, previous.minX)
+            XCTAssertGreaterThanOrEqual(current.minX, target.minX)
+        }
     }
 
     func testAnimationPreferenceIsIncludedInConfigurationExport() {
