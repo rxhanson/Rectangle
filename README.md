@@ -35,6 +35,12 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
+### Experimental window animations
+
+In the snap-area preferences, **Animate windows (experimental)** enables a short transition for window actions and restoring a snapped window's size, including dragging it away from an edge. It is off by default and is separate from **Animate footprint**, which only affects the snap preview.
+
+This experiment uses Accessibility position and size updates. Results depend on how quickly the target app resizes and on its minimum window size. Rectangle still checks and corrects the final position. Reduce Motion, VoiceOver, and Switch Control bypass the animation. Cross-display actions, fixed-size window actions, and actions with cooperative corner resizing enabled use the existing immediate behavior; bulk tiling and cascading are also unchanged.
+
 ### Ignore an app
 
 Ignoring an app means that when the app is frontmost, keyboard shortcuts are un-registered from macOS. When the app is no longer frontmost, keyboard shortcuts are re-registered with macOS. This is useful for apps that have the same shortcuts like Rectangle and you do not want to change them.

@@ -3970,6 +3970,16 @@ DQ
                                                                     <action selector="toggleAnimateFootprint:" target="t2d-Q7-RLy" id="qo7-sw-gbY"/>
                                                                 </connections>
                                                             </button>
+                                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ani-win-opt">
+                                                                <rect key="frame" x="0.0" y="0.0" width="278" height="16"/>
+                                                                <buttonCell key="cell" type="check" title="Animate windows (experimental)" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ani-win-cell">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <action selector="toggleExperimentalWindowAnimations:" target="t2d-Q7-RLy" id="ani-win-action"/>
+                                                                </connections>
+                                                            </button>
                                                         </subviews>
                                                         <visibilityPriorities>
                                                             <integer value="1000"/>
@@ -4498,6 +4508,7 @@ DQ
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="experimentalWindowAnimationsCheckbox" destination="ani-win-opt" id="ani-win-outlet"/>
                         <outlet property="animateFootprintCheckbox" destination="cbx-fa-jJh" id="KmN-pe-s68"/>
                         <outlet property="bottomLandscapeSelect" destination="3c6-3h-J52" id="1a0-LW-wrh"/>
                         <outlet property="bottomLeftLandscapeSelect" destination="bVZ-3z-DYF" id="1Ql-jU-1fz"/>

@@ -7,6 +7,7 @@ class SnapAreaViewController: NSViewController {
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var unsnapRestoreButton: NSButton!
     @IBOutlet weak var animateFootprintCheckbox: NSButton!
+    @IBOutlet weak var experimentalWindowAnimationsCheckbox: NSButton!
     @IBOutlet weak var hapticFeedbackCheckbox: NSButton!
     @IBOutlet weak var missionControlDraggingCheckbox: NSButton!
 
@@ -48,6 +49,11 @@ class SnapAreaViewController: NSViewController {
         let newSetting: Float = sender.state == .on ? 0.75 : 0
         Defaults.footprintAnimationDurationMultiplier.value = newSetting
     }
+
+    @IBAction func toggleExperimentalWindowAnimations(_ sender: NSButton) {
+        Defaults.experimentalWindowAnimations.enabled = sender.state == .on
+        if sender.state == .off { WindowAnimator.shared.finish() }
+    }
     
     @IBAction func toggleHapticFeedback(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -84,6 +90,7 @@ class SnapAreaViewController: NSViewController {
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
+        experimentalWindowAnimationsCheckbox.state = Defaults.experimentalWindowAnimations.enabled ? .on : .off
         hapticFeedbackCheckbox.state = Defaults.hapticFeedbackOnSnap.userEnabled ? .on : .off
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userDisabled
@@ -113,6 +120,7 @@ class SnapAreaViewController: NSViewController {
     // Only load the selects when the view appears, to fix a performance issue where switching to this tab was taking a long time to load
     var selectsLoaded = false
     override func viewWillAppear() {
+        experimentalWindowAnimationsCheckbox.state = Defaults.experimentalWindowAnimations.enabled ? .on : .off
         if !selectsLoaded {
             loadSnapAreas()
             selectsLoaded = true

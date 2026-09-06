@@ -5,6 +5,195 @@ import MASShortcut
 import XCTest
 @testable import Rectangle
 
+final class WindowFrameAnimationTests: XCTestCase {
+    private let start = CGRect(x: 100, y: 100, width: 600, height: 400)
+    private let target = CGRect(x: 0, y: 30, width: 900, height: 800)
+
+    func testDelayedTickSkipsToCompletionAndSettlesExactlyOnce() {
+        var writes: [CGRect] = []
+        var completed: [CGRect] = []
+        var cleanupCount = 0
+        let animation = WindowFrameAnimation(from: start, to: target, startTime: 10, duration: 0.25,
+                                             write: { writes.append($0); return true },
+                                             cleanup: { cleanupCount += 1 },
+                                             completion: { completed.append($0) })
+        animation.tick(at: 10.125)
+        XCTAssertEqual(writes, [CGRect(x: 50, y: 65, width: 750, height: 600)])
+        animation.tick(at: 12)
+        animation.tick(at: 13)
+        animation.finish()
+        animation.cancel()
+        XCTAssertEqual(writes.count, 1)
+        XCTAssertEqual(completed, [target])
+        XCTAssertEqual(cleanupCount, 1)
+    }
+
+    func testCancellationDoesNotSettleAnObsoleteDestination() {
+        var visible = start
+        var completed: [CGRect] = []
+        var cleanupCount = 0
+        let first = WindowFrameAnimation(from: visible, to: target, startTime: 0, duration: 1,
+                                         write: { visible = $0; return true },
+                                         cleanup: { cleanupCount += 1 },
+                                         completion: { completed.append($0) })
+        first.tick(at: 0.5)
+        first.cancel()
+        let interrupted = visible
+        let second = WindowFrameAnimation(from: visible, to: start, startTime: 0.5, duration: 1,
+                                          write: { visible = $0; return true },
+                                          cleanup: { cleanupCount += 1 },
+                                          completion: { completed.append($0) })
+        first.tick(at: 1)
+        second.tick(at: 0.5)
+        XCTAssertEqual(visible, interrupted)
+        second.tick(at: 2)
+        XCTAssertEqual(completed, [start])
+        XCTAssertEqual(cleanupCount, 2)
+    }
+
+    func testRefusedWriteStopsFurtherRequestsAndRunsFallbackAfterCleanup() {
+        var events: [String] = []
+        let animation = WindowFrameAnimation(from: start, to: target, startTime: 0, duration: 1,
+                                             write: { _ in events.append("write"); return false },
+                                             cleanup: { events.append("cleanup") },
+                                             completion: { frame in
+            XCTAssertEqual(frame, self.target)
+            events.append("settle")
+        })
+        animation.tick(at: 0.2)
+        animation.tick(at: 0.4)
+        XCTAssertEqual(events, ["write", "cleanup", "settle"])
+    }
+
+    func testDragTranslationAppliesToIntermediateAndFinalFrames() {
+        var delta = CGPoint(x: 10, y: 20)
+        var writes: [CGRect] = []
+        var final: CGRect?
+        let animation = WindowFrameAnimation(from: start, to: target, startTime: 0, duration: 1,
+                                             offset: { delta },
+                                             write: { writes.append($0); return true },
+                                             cleanup: {}, completion: { final = $0 })
+        animation.tick(at: 0.5)
+        XCTAssertEqual(writes.last, CGRect(x: 60, y: 85, width: 750, height: 600))
+        delta = CGPoint(x: 80, y: -10)
+        animation.finish()
+        XCTAssertEqual(final, target.offsetBy(dx: 80, dy: -10))
+    }
+
+    func testZeroDurationCompletesWithoutIntermediateWrites() {
+        var final: CGRect?
+        let animation = WindowFrameAnimation(from: start, to: target, startTime: 0, duration: 0,
+                                             write: { _ in XCTFail("Unexpected intermediate write"); return true },
+                                             cleanup: {}, completion: { final = $0 })
+        animation.tick(at: 0)
+        XCTAssertEqual(final, target)
+    }
+
+    func testAnimationPreferenceIsIncludedInConfigurationExport() {
+        XCTAssertTrue(Defaults.array.contains { $0.key == "experimentalWindowAnimations" })
+    }
+
+    func testEnhancedUIIsRestoredAfterTheWholeAdjustment() {
+        var writes: [Bool] = []
+        let restore = EnhancedUI.automatic.beginWindowAdjustment(
+            bundleIdentifier: "com.apple.TextEdit", builtInAssistiveTechnologyEnabled: false,
+            readEnhancedUI: { true }, writeEnhancedUI: { writes.append($0) })
+        XCTAssertEqual(writes, [false])
+        restore()
+        XCTAssertEqual(writes, [false, true])
+    }
+}
+
+final class AnimatedWindowHistoryTests: XCTestCase {
+    func testRetargetingPreservesRestoreFrameAndCountsEachShortcutOnce() throws {
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.experimentalWindowAnimations, CodableDefault(bool: true)),
+            (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
+            (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
+            (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.resize.rawValue)),
+            (Defaults.moveCursor, CodableDefault(int: 2)),
+            (Defaults.todo, CodableDefault(int: 2))
+        ]
+        let saved = settings.map { ($0.0, $0.0.toCodable()) }
+        let id: CGWindowID = 0x7fff0123
+        let oldRestore = AppDelegate.windowHistory.restoreRects[id]
+        let oldAction = AppDelegate.windowHistory.lastRectangleActions[id]
+        defer {
+            WindowAnimator.shared.finish()
+            saved.forEach { $0.0.load(from: $0.1) }
+            AppDelegate.windowHistory.restoreRects[id] = oldRestore
+            AppDelegate.windowHistory.lastRectangleActions[id] = oldAction
+            ActiveSideSplitRatios.shared.resetAll()
+        }
+        settings.forEach { $0.0.load(from: $0.1) }
+        try XCTSkipUnless(WindowAnimator.enabled, "System accessibility settings bypass animation")
+        AppDelegate.windowHistory.restoreRects[id] = nil
+        AppDelegate.windowHistory.lastRectangleActions[id] = nil
+        let screen = AnimationScreen()
+        let window = AnimationWindow()
+        let original = window.frame
+        let manager = WindowManager(screenDetection: AnimationScreens(screen: screen))
+        func execute(_ action: WindowAction) {
+            manager.execute(ExecutionParameters(action, screen: screen, windowElement: window, windowId: id))
+        }
+        execute(.leftHalf)
+        XCTAssertNotNil(WindowAnimator.shared.destination(for: window))
+        // Simulate a partially presented frame before the next keyboard event.
+        _ = window.setAnimationFrame(original.offsetBy(dx: 10, dy: 0))
+        execute(.rightHalf)
+        execute(.rightHalf)
+        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[id], original)
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[id]?.count, 2)
+        WindowAnimator.shared.finish()
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[id]?.rect, window.frame)
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[id]?.count, 2)
+        execute(.restore)
+        WindowAnimator.shared.finish()
+        XCTAssertEqual(window.frame, original)
+        XCTAssertNil(AppDelegate.windowHistory.lastRectangleActions[id])
+        XCTAssertEqual(window.openAdjustments, 0)
+    }
+
+    private final class AnimationScreen: NSScreen {
+        override var frame: NSRect { CGRect(x: 0, y: 0, width: 1600, height: 1000) }
+        override var visibleFrame: NSRect { frame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private final class AnimationScreens: ScreenDetection {
+        let screen: NSScreen
+        init(screen: NSScreen) { self.screen = screen }
+        override func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
+            UsableScreens(currentScreen: screen, numScreens: 1)
+        }
+    }
+
+    private final class AnimationWindow: AccessibilityElement {
+        var currentFrame = CGRect(x: 100, y: 100, width: 600, height: 400).screenFlipped
+        var openAdjustments = 0
+        init() { super.init(AXUIElementCreateSystemWide()) }
+        override var frame: CGRect { currentFrame }
+        override var isSheet: Bool? { false }
+        override var isSystemDialog: Bool? { false }
+        override var minimumSize: CGSize? { nil }
+        override func isResizable() -> Bool { true }
+        override func beginAnimatedAdjustment() -> () -> Void {
+            openAdjustments += 1
+            return { self.openAdjustments -= 1 }
+        }
+        override func setAnimationFrame(_ frame: CGRect) -> Bool {
+            currentFrame = frame
+            return true
+        }
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+            WindowAnimator.shared.cancel(for: self)
+            currentFrame = frame
+        }
+    }
+}
+
 class RectangleTests: XCTestCase {
 
     override func setUp() {
@@ -4544,7 +4733,7 @@ final class CrossDisplayResizeTests: XCTestCase {
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {}
 
-        override func postProcess(result: ResultParameters, resultingRect: CGRect) {
+        override func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
             didFinish?(result, resultingRect)
         }
     }
@@ -4964,4 +5153,3 @@ class HalvesPreserveOtherAxisSizeTests: XCTestCase {
                                   lastAction: lastAction)
     }
 }
-

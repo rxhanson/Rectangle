@@ -132,6 +132,7 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+        WindowAnimator.shared.cancel(for: self)
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
             || NSWorkspace.shared.isSwitchControlEnabled
@@ -153,6 +154,38 @@ class AccessibilityElement {
                 size = frame.size
             }
         )
+    }
+
+    /// Keep the existing Enhanced UI policy active for the whole transition,
+    /// instead of toggling application accessibility on every timer tick.
+    func beginAnimatedAdjustment() -> () -> Void {
+        let appElement = applicationElement
+        let restore = Defaults.enhancedUI.value.beginWindowAdjustment(
+            bundleIdentifier: appElement?.bundleIdentifier,
+            builtInAssistiveTechnologyEnabled: NSWorkspace.shared.isVoiceOverEnabled
+                || NSWorkspace.shared.isSwitchControlEnabled,
+            readEnhancedUI: { appElement?.enhancedUserInterface },
+            writeEnhancedUI: { appElement?.enhancedUserInterface = $0 }
+        )
+        // Avoid a long stream of blocking requests to an unresponsive app.
+        setMessagingTimeout(0.05)
+        return { [self] in
+            setMessagingTimeout(0)
+            restore()
+        }
+    }
+
+    /// No per-frame readbacks or logging. The normal mover checks the achieved
+    /// geometry once the transition ends and applies any necessary corrections.
+    func setAnimationFrame(_ frame: CGRect) -> Bool {
+        var size = frame.size
+        var position = frame.origin
+        guard let sizeValue = AXValueCreate(.cgSize, &size),
+              let positionValue = AXValueCreate(.cgPoint, &position) else { return false }
+        guard AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success,
+              AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success
+        else { return false }
+        return true
     }
     
     private var childElements: [AccessibilityElement]? {
@@ -540,22 +573,34 @@ enum EnhancedUI: Int {
         bundleIdentifier: String?,
         builtInAssistiveTechnologyEnabled: Bool,
         readEnhancedUI: () -> Bool?,
-        writeEnhancedUI: (Bool) -> Void,
+        writeEnhancedUI: @escaping (Bool) -> Void,
         adjustment: () -> Void
     ) {
+        let restore = beginWindowAdjustment(bundleIdentifier: bundleIdentifier,
+                                            builtInAssistiveTechnologyEnabled: builtInAssistiveTechnologyEnabled,
+                                            readEnhancedUI: readEnhancedUI,
+                                            writeEnhancedUI: writeEnhancedUI)
+        adjustment()
+        restore()
+    }
+
+    func beginWindowAdjustment(
+        bundleIdentifier: String?,
+        builtInAssistiveTechnologyEnabled: Bool,
+        readEnhancedUI: () -> Bool?,
+        writeEnhancedUI: @escaping (Bool) -> Void
+    ) -> () -> Void {
         let enhancedUIWasEnabled = readEnhancedUI()
         if enhancedUIWasEnabled == true {
             writeEnhancedUI(false)
         }
 
-        adjustment()
-
-        if enhancedUIWasEnabled == true,
-           restoresEnhancedUI(
+        let shouldRestore = enhancedUIWasEnabled == true && restoresEnhancedUI(
                bundleIdentifier: bundleIdentifier,
                builtInAssistiveTechnologyEnabled: builtInAssistiveTechnologyEnabled
-           ) {
-            writeEnhancedUI(true)
+           )
+        return {
+            if shouldRestore { writeEnhancedUI(true) }
         }
     }
 }
