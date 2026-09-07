@@ -290,21 +290,9 @@ class SnappingManager {
                         if box == nil {
                             box = FootprintWindow()
                         }
-                        if Defaults.footprintAnimationDurationMultiplier.value > 0 {
-                            if !box!.realIsVisible, let origin = getFootprintAnimationOrigin(snapArea, newBoxRect) {
-                                let frame = CGRect(origin: origin, size: .zero)
-                                box!.setFrame(frame, display: false)
-                            }
-                        } else {
-                            box!.setFrame(newBoxRect, display: true)
-                        }
-                        box!.orderFront(nil)
-                        if Defaults.footprintAnimationDurationMultiplier.value > 0 {
-                            NSAnimationContext.runAnimationGroup { changes in
-                                changes.duration = getFootprintAnimationDuration(box!, newBoxRect)
-                                box!.animator().setFrame(newBoxRect, display: true)
-                            }
-                        }
+                        box?.showPreview(in: newBoxRect,
+                                         from: getFootprintAnimationOrigin(snapArea, newBoxRect),
+                                         duration: getFootprintAnimationDuration())
                     }
                     
                     currentSnapArea = snapArea
@@ -378,8 +366,10 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
-    func getFootprintAnimationDuration(_ box: FootprintWindow, _ boxRect: CGRect) -> Double {
-        return box.animationResizeTime(boxRect) * Double(Defaults.footprintAnimationDurationMultiplier.value)
+    func getFootprintAnimationDuration() -> Double {
+        // The checkbox's standard multiplier uses the same duration as window
+        // snapping; retain the hidden preference as a proportional adjustment.
+        return WindowAnimationCurve.duration * Double(Defaults.footprintAnimationDurationMultiplier.value) / 0.75
     }
     
     func getFootprintAnimationOrigin(_ snapArea: SnapArea, _ boxRect: CGRect) -> CGPoint? {
