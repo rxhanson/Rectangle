@@ -4429,6 +4429,294 @@ class PortraitEighthAbutmentTests: XCTestCase {
     }
 }
       
+final class WindowSizeConstraintTests: XCTestCase {
+    private let requested = CGRect(x: 0, y: 0, width: 504, height: 900)
+
+    func testMinimumWidthAndHeightAreDetectedIndependently() {
+        XCTAssertTrue(WindowSizeConstraint.isExceeded(requested: requested,
+                                                      actual: CGRect(x: 0, y: 0, width: 600, height: 900),
+                                                      action: .firstThird))
+        XCTAssertTrue(WindowSizeConstraint.isExceeded(requested: requested,
+                                                      actual: CGRect(x: 0, y: 0, width: 504, height: 950),
+                                                      action: .firstThird))
+    }
+
+    func testRoundingUpToOnePointDoesNotWarn() {
+        for difference: CGFloat in [0, 0.5, 1] {
+            let actual = CGRect(x: 30, y: -20, width: requested.width + difference,
+                                height: requested.height + difference)
+            XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: requested, actual: actual,
+                                                           action: .firstThird))
+        }
+        XCTAssertTrue(WindowSizeConstraint.isExceeded(requested: requested,
+                                                      actual: CGRect(x: 0, y: 0, width: 505.5, height: 900),
+                                                      action: .firstThird))
+    }
+
+    func testMaximumSizeOrAspectRatioConstraintsDoNotWarn() {
+        for size in [CGSize(width: 400, height: 900), CGSize(width: 504, height: 600),
+                     CGSize(width: 400, height: 600)] {
+            XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: requested,
+                                                           actual: CGRect(origin: .zero, size: size),
+                                                           action: .maximize))
+        }
+    }
+
+    func testMoveOnlyActionsDoNotWarn() {
+        let actual = CGRect(x: 20, y: 20, width: 600, height: 950)
+        for action: WindowAction in [.center, .centerProminently, .nextDisplay] {
+            XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: requested, actual: actual,
+                                                           action: action))
+        }
+    }
+
+    func testInvalidRequestedAndActualFramesDoNotWarn() {
+        let invalidFrames: [CGRect] = [
+            .null, .infinite, .zero,
+            CGRect(x: 0, y: 0, width: 0, height: 900),
+            CGRect(x: 0, y: 0, width: 504, height: 0),
+            CGRect(x: 0, y: 0, width: -504, height: 900),
+            CGRect(x: 0, y: 0, width: 504, height: -900),
+            CGRect(x: CGFloat.nan, y: 0, width: 504, height: 900),
+            CGRect(x: 0, y: CGFloat.infinity, width: 504, height: 900),
+            CGRect(x: 0, y: 0, width: CGFloat.infinity, height: 900),
+            CGRect(x: 0, y: 0, width: 504, height: CGFloat.nan)
+        ]
+        let larger = CGRect(x: 0, y: 0, width: 600, height: 950)
+        for invalid in invalidFrames {
+            XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: invalid, actual: larger,
+                                                           action: .firstThird))
+            XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: requested, actual: invalid,
+                                                           action: .firstThird))
+        }
+    }
+}
+
+final class WindowSizeConstraintExecutionTests: XCTestCase {
+    private let windowId: CGWindowID = 522_001
+    private var savedDefaults: [(Default, CodableDefault)] = []
+    private var savedRestoreRects: [CGWindowID: CGRect] = [:]
+    private var savedActions: [CGWindowID: RectangleAction] = [:]
+    private var savedLogging = false
+
+    override func setUp() {
+        super.setUp()
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.none.rawValue)),
+            (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
+            (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
+            (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
+            (Defaults.gapSize, CodableDefault(float: 0)),
+            (Defaults.stageSize, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapLeft, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapRight, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapTop, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapBottom, CodableDefault(float: 0)),
+            (Defaults.cyclingOverlapOffset, CodableDefault(int: 2)),
+            (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
+            (Defaults.todo, CodableDefault(int: 2))
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+        savedRestoreRects = AppDelegate.windowHistory.restoreRects
+        savedActions = AppDelegate.windowHistory.lastRectangleActions
+        AppDelegate.windowHistory.restoreRects.removeValue(forKey: windowId)
+        AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        savedLogging = Logger.logging
+        Logger.logging = false
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        AppDelegate.windowHistory.restoreRects = savedRestoreRects
+        AppDelegate.windowHistory.lastRectangleActions = savedActions
+        Logger.logging = savedLogging
+        super.tearDown()
+    }
+
+    func testClampedFirstAndLastThirdsWarnAndPreserveAchievedGeometry() {
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        for action: WindowAction in [.firstThird, .lastThird] {
+            let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
+            let originalFrame = window.frame
+            let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+
+            manager.execute(ExecutionParameters(action, screen: screen, windowElement: window,
+                                                windowId: windowId, source: .menuItem))
+
+            XCTAssertEqual(window.resizeAttempts, 1)
+            XCTAssertEqual(window.frame.width, 600)
+            XCTAssertEqual(window.frame.height, 900)
+            XCTAssertEqual(window.frame.minX, action == .firstThird ? 0 : 912)
+            XCTAssertEqual(manager.warningScreens.count, 1)
+            XCTAssertTrue(manager.warningScreens.first === screen)
+            XCTAssertEqual(manager.hideCount, 1)
+            XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect, window.frame)
+            XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.action, action)
+            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[windowId], originalFrame)
+        }
+    }
+
+    func testSuccessfulTwoThirdsClearEarlierWarning() {
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+        manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+        XCTAssertTrue(manager.warningVisible)
+
+        manager.execute(ExecutionParameters(.firstTwoThirds, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+
+        XCTAssertEqual(window.frame.size, CGSize(width: 1008, height: 900))
+        XCTAssertEqual(manager.warningScreens.count, 1)
+        XCTAssertEqual(manager.hideCount, 2)
+        XCTAssertFalse(manager.warningVisible)
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect, window.frame)
+    }
+
+    func testSuccessfulFinalCrossDisplayRetryDoesNotWarn() {
+        assertCrossDisplayWarning(clampedAttempts: 2, expectsWarning: false)
+    }
+
+    func testPersistentlyClampedCrossDisplayRetryWarnsOnceOnDestination() {
+        assertCrossDisplayWarning(clampedAttempts: nil, expectsWarning: true)
+    }
+
+    func testNewerActionCancelsPendingCrossDisplayRetryAndWarning() {
+        let source = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        let destination = TestScreen(frame: CGRect(x: 1512, y: 0, width: 1512, height: 900))
+        let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: source))
+        manager.execute(ExecutionParameters(.lastThird, screen: destination, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+        XCTAssertEqual(window.resizeAttempts, 2)
+        XCTAssertTrue(manager.warningScreens.isEmpty)
+
+        manager.execute(ExecutionParameters(.firstTwoThirds, screen: source, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+        let newerFrame = window.frame
+        XCTAssertEqual(newerFrame.size, CGSize(width: 1008, height: 900))
+        let staleCompletion = expectation(description: "Superseded resize must not complete")
+        staleCompletion.isInverted = true
+        manager.didFinish = { staleCompletion.fulfill() }
+
+        wait(for: [staleCompletion], timeout: 0.1)
+
+        XCTAssertEqual(window.resizeAttempts, 2)
+        XCTAssertEqual(window.frame, newerFrame)
+        XCTAssertTrue(manager.warningScreens.isEmpty)
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect, newerFrame)
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.action, .firstTwoThirds)
+    }
+
+    private func assertCrossDisplayWarning(clampedAttempts: Int?, expectsWarning: Bool) {
+        let source = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        let destination = TestScreen(frame: CGRect(x: 1512, y: 0, width: 1512, height: 900))
+        let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900),
+                                    clampedAttempts: clampedAttempts)
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: source))
+        let finished = expectation(description: "Final cross-display resize processed")
+        manager.didFinish = { finished.fulfill() }
+
+        manager.execute(ExecutionParameters(.lastThird, screen: destination, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+
+        XCTAssertEqual(window.resizeAttempts, 2)
+        XCTAssertTrue(manager.warningScreens.isEmpty)
+        XCTAssertNil(AppDelegate.windowHistory.lastRectangleActions[windowId])
+
+        wait(for: [finished], timeout: 1)
+        XCTAssertEqual(window.resizeAttempts, 3)
+        XCTAssertEqual(window.frame.width, expectsWarning ? 600 : 504)
+        XCTAssertEqual(window.frame.maxX, destination.frame.maxX)
+        XCTAssertEqual(manager.warningScreens.count, expectsWarning ? 1 : 0)
+        if expectsWarning {
+            XCTAssertTrue(manager.warningScreens.first === destination)
+        }
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.rect, window.frame)
+    }
+
+    private final class TestScreen: NSScreen {
+        private let testFrame: CGRect
+
+        init(frame: CGRect) {
+            testFrame = frame
+            super.init()
+        }
+
+        override var frame: NSRect { testFrame }
+        override var visibleFrame: NSRect { testFrame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private final class TestScreenDetection: ScreenDetection {
+        let source: NSScreen
+
+        init(source: NSScreen) { self.source = source }
+
+        override func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
+            UsableScreens(currentScreen: source, numScreens: 2)
+        }
+    }
+
+    private final class ClampingWindow: AccessibilityElement {
+        private var currentFrame = CGRect(x: 100, y: 100, width: 900, height: 500).screenFlipped
+        private let targetSize: CGSize
+        private let clampedAttempts: Int?
+        private(set) var resizeAttempts = 0
+
+        init(targetSize: CGSize, clampedAttempts: Int? = nil) {
+            self.targetSize = targetSize
+            self.clampedAttempts = clampedAttempts
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { currentFrame }
+        override var isSheet: Bool? { false }
+        override var isSystemDialog: Bool? { false }
+        override var minimumSize: CGSize? { nil }
+        override func getWindowId() -> CGWindowID? { nil }
+        override func isResizable() -> Bool { true }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+            currentFrame = frame
+            if frame.size == targetSize {
+                resizeAttempts += 1
+                if clampedAttempts.map({ resizeAttempts <= $0 }) ?? true {
+                    currentFrame.size.width = max(frame.width, 600)
+                }
+            }
+        }
+    }
+
+    private final class TestWindowManager: WindowManager {
+        private(set) var warningScreens: [NSScreen] = []
+        private(set) var hideCount = 0
+        private(set) var warningVisible = false
+        var didFinish: (() -> Void)?
+
+        override func showSizeConstraintWarning(on screen: NSScreen) {
+            warningScreens.append(screen)
+            warningVisible = true
+        }
+
+        override func hideSizeConstraintWarning() {
+            hideCount += 1
+            warningVisible = false
+        }
+
+        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {}
+
+        override func postProcess(result: ResultParameters, resultingRect: CGRect) {
+            super.postProcess(result: result, resultingRect: resultingRect)
+            didFinish?()
+        }
+    }
+}
+
 final class CrossDisplayResizeTests: XCTestCase {
     func testDisplayCycleRetriesWidthUntilWindowFillsRightHalf() {
         let settings: [(Default, CodableDefault)] = [

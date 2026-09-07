@@ -41501,10 +41501,10 @@
     "Toggle stacked window badge" : {
 
     },
-    "Toggle stacked window list" : {
+    "Toggle Todo" : {
 
     },
-    "Toggle Todo" : {
+    "Toggle window list" : {
 
     },
     "Top Center Left Eighth" : {
@@ -46590,6 +46590,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bước chiều rộng (px)"
+          }
+        }
+      }
+    },
+    "windowSizeWarningMessage" : {
+      "comment" : "Explains that an app can prevent a window from shrinking to the requested layout",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to resize window smaller. Windows may overlap."
+          }
+        }
+      }
+    },
+    "windowSizeWarningTitle" : {
+      "comment" : "Title of the on-screen message when a window cannot fit its requested size",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum window size reached"
           }
         }
       }

@@ -87,6 +87,7 @@
 		9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703C22B13C7E0037B409 /* AccessibilityElement.swift */; };
 		9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703E22B13FBC0037B409 /* ScreenDetection.swift */; };
 		9824704122B186D00037B409 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704022B186D00037B409 /* WindowManager.swift */; };
+		F05220000000000000000002 /* WindowSizeWarning.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05220000000000000000001 /* WindowSizeWarning.swift */; };
 		982470432EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982470422EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift */; };
 		9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704622B189240037B409 /* StandardWindowMover.swift */; };
 		9824704C22B189250037B409 /* WindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704722B189240037B409 /* WindowMover.swift */; };
@@ -319,6 +320,7 @@
 		9824703C22B13C7E0037B409 /* AccessibilityElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityElement.swift; sourceTree = "<group>"; };
 		9824703E22B13FBC0037B409 /* ScreenDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenDetection.swift; sourceTree = "<group>"; };
 		9824704022B186D00037B409 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
+		F05220000000000000000001 /* WindowSizeWarning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSizeWarning.swift; sourceTree = "<group>"; };
 		982470422EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowManager+CooperativeCornerResize.swift"; sourceTree = "<group>"; };
 		9824704622B189240037B409 /* StandardWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardWindowMover.swift; sourceTree = "<group>"; };
 		9824704722B189240037B409 /* WindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WindowMover.swift; sourceTree = "<group>"; };
@@ -720,6 +722,7 @@
 				98C275662322E2DA009B9292 /* WindowHistory.swift */,
 				7B4C0A202F1B000100C0FFEE /* RepeatedMaximizeRestore.swift */,
 				9824704022B186D00037B409 /* WindowManager.swift */,
+				F05220000000000000000001 /* WindowSizeWarning.swift */,
 				982470422EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift */,
 				AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */,
 				AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */,
@@ -1096,6 +1099,7 @@
 				7BE578F32EFE11010083DAE3 /* ActiveSideSplitRatios.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
+				F05220000000000000000002 /* WindowSizeWarning.swift in Sources */,
 				982470432EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift in Sources */,
 				D0423D8327A8D31D008A4894 /* HorizontalThirdsRepeated.swift in Sources */,
 				98C97FFD25893B040061F01F /* Config.swift in Sources */,
