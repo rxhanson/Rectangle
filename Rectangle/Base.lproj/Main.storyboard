@@ -3912,6 +3912,19 @@ DQ
                                                                     <action selector="toggleUnsnapRestore:" target="t2d-Q7-RLy" id="3vt-Lw-NJs"/>
                                                                 </connections>
                                                             </button>
+                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="idz-Fq-8Qx">
+                                                                <rect key="frame" x="0.0" y="24" width="121" height="16"/>
+                                                                <buttonCell key="cell" type="check" title="Haptic feedback" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="16" id="f8W-Fl-K4a"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="toggleHapticFeedback:" target="t2d-Q7-RLy" id="fYe-DO-EgM"/>
+                                                                </connections>
+                                                            </button>
                                                             <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="vrs-iM-XVL" userLabel="Mission Control Dragging Checkbox">
                                                                 <rect key="frame" x="0.0" y="0.0" width="265" height="16"/>
                                                                 <buttonCell key="cell" type="check" title="Disable fast dragging to Mission Control" bezelStyle="regularSquare" imagePosition="left" inset="2" id="3hZ-Cs-EZ6">
@@ -3927,8 +3940,10 @@ DQ
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
+                                                            <integer value="1000"/>
                                                         </visibilityPriorities>
                                                         <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
@@ -3937,22 +3952,9 @@ DQ
                                                     <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rWQ-Uf-U5w">
                                                         <rect key="frame" x="285" y="0.0" width="165" height="68"/>
                                                     </stackView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GxY-ZJ-2qa">
+                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GxY-ZJ-2qa">
                                                         <rect key="frame" x="470" y="28" width="165" height="40"/>
                                                         <subviews>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="idz-Fq-8Qx">
-                                                                <rect key="frame" x="0.0" y="24" width="121" height="16"/>
-                                                                <buttonCell key="cell" type="check" title="Haptic feedback" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="16" id="f8W-Fl-K4a"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="toggleHapticFeedback:" target="t2d-Q7-RLy" id="fYe-DO-EgM"/>
-                                                                </connections>
-                                                            </button>
                                                             <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="cbx-fa-jJh">
                                                                 <rect key="frame" x="0.0" y="0.0" width="127" height="16"/>
                                                                 <buttonCell key="cell" type="check" title="Animate footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="kx2-tZ-lk8">
@@ -3966,12 +3968,40 @@ DQ
                                                                     <action selector="toggleAnimateFootprint:" target="t2d-Q7-RLy" id="qo7-sw-gbY"/>
                                                                 </connections>
                                                             </button>
+                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ani-win-opt">
+                                                                <rect key="frame" x="0.0" y="0.0" width="278" height="16"/>
+                                                                <buttonCell key="cell" type="check" title="Animate windows (experimental)" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ani-win-cell">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="16" id="ani-win-height"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="toggleExperimentalWindowAnimations:" target="t2d-Q7-RLy" id="ani-win-action"/>
+                                                                </connections>
+                                                            </button>
+                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="blur-preview-opt">
+                                                                <rect key="frame" x="0.0" y="0.0" width="150" height="16"/>
+                                                                <buttonCell key="cell" type="check" title="Blur footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="blur-preview-cell">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="16" id="blur-preview-height"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="toggleBlurFootprint:" target="t2d-Q7-RLy" id="blur-preview-action"/>
+                                                                </connections>
+                                                            </button>
                                                         </subviews>
                                                         <visibilityPriorities>
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
+                                                            <integer value="1000"/>
                                                         </visibilityPriorities>
                                                         <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                         </customSpacing>
@@ -4494,6 +4524,8 @@ DQ
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="experimentalWindowAnimationsCheckbox" destination="ani-win-opt" id="ani-win-outlet"/>
+                        <outlet property="blurFootprintCheckbox" destination="blur-preview-opt" id="blur-preview-outlet"/>
                         <outlet property="animateFootprintCheckbox" destination="cbx-fa-jJh" id="KmN-pe-s68"/>
                         <outlet property="bottomLandscapeSelect" destination="3c6-3h-J52" id="1a0-LW-wrh"/>
                         <outlet property="bottomLeftLandscapeSelect" destination="bVZ-3z-DYF" id="1Ql-jU-1fz"/>

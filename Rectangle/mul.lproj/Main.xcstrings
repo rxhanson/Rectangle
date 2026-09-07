@@ -1,6 +1,66 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "blur-preview-cell.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Blur footprint\"; ObjectID = \"blur-preview-cell\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blur footprint"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模糊预览背景"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模糊預覽背景"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プレビューの背景をぼかす"
+          }
+        }
+      }
+    },
+    "ani-win-cell.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Animate windows (experimental)\"; ObjectID = \"ani-win-cell\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animate windows (experimental)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口动画（实验性）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "視窗動畫（實驗性）"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウをアニメーション表示（実験的）"
+          }
+        }
+      }
+    },
     "0Ak-33-SM7.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Right\"; ObjectID = \"0Ak-33-SM7\";",
       "extractionState" : "extracted_with_value",
