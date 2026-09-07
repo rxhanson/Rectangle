@@ -203,7 +203,10 @@ class SnappingManager {
                 initialWindowRect = windowElement?.frame
             }
         case .leftMouseUp:
-            WindowAnimator.shared.finish()
+            // Only a drag release should settle drag restoration. A title-bar
+            // double-click can start maximize/restore on this same mouse-up;
+            // another event monitor must not immediately finish that animation.
+            if windowMoving { WindowAnimator.shared.finish() }
             if let currentSnapArea = self.currentSnapArea {
                 box?.orderOut(nil)
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
