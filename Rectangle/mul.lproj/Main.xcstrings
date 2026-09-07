@@ -46601,7 +46601,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This app couldn’t make the window small enough to fit. Windows may overlap."
+            "value" : "Unable to resize window smaller. Windows may overlap."
           }
         }
       }
@@ -46613,7 +46613,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Window size limited"
+            "value" : "Minimum window size reached"
           }
         }
       }

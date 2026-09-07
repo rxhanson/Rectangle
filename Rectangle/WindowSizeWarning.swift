@@ -50,13 +50,13 @@ final class WindowSizeWarning: NSPanel {
         container.layer?.masksToBounds = true
 
         let title = NSTextField(wrappingLabelWithString: NSLocalizedString(
-            "windowSizeWarningTitle", tableName: "Main", value: "Window size limited",
+            "windowSizeWarningTitle", tableName: "Main", value: "Minimum window size reached",
             comment: "Title of the on-screen message when a window cannot fit its requested size"))
         title.font = .boldSystemFont(ofSize: NSFont.systemFontSize)
 
         let message = NSTextField(wrappingLabelWithString: NSLocalizedString(
             "windowSizeWarningMessage", tableName: "Main",
-            value: "This app couldn’t make the window small enough to fit. Windows may overlap.",
+            value: "Unable to resize window smaller. Windows may overlap.",
             comment: "Explains that an app can prevent a window from shrinking to the requested layout"))
         message.font = .systemFont(ofSize: NSFont.systemFontSize)
 
