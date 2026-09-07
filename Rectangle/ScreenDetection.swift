@@ -382,11 +382,21 @@ enum DockUtil {
 extension NSScreen {
 
     func adjustedVisibleFrame(_ ignoreTodo: Bool = false, _ ignoreStage: Bool = false) -> CGRect {
+        adjustedVisibleFrame(ignoreTodo: ignoreTodo, ignoreStage: ignoreStage,
+                             useCombinedDisplay: true)
+    }
+
+    func singleDisplayTilingFrame() -> CGRect {
+        adjustedVisibleFrame(ignoreTodo: true, ignoreStage: false,
+                             useCombinedDisplay: false)
+    }
+
+    private func adjustedVisibleFrame(ignoreTodo: Bool, ignoreStage: Bool, useCombinedDisplay: Bool) -> CGRect {
         let screens = NSScreen.screens
         let dockSnapshot = DockUtil.snapshot(for: screens)
         var newFrame: CGRect
 
-        if !NSScreen.screensHaveSeparateSpaces && Defaults.combinedDisplayMode.userEnabled {
+        if useCombinedDisplay && !NSScreen.screensHaveSeparateSpaces && Defaults.combinedDisplayMode.userEnabled {
             let combinedScreenFrame = dockSnapshot.screenFrames.reduce(CGRect.null) { $0.union($1) }
             let combinedVisibleFrame = screens.reduce(CGRect.null) {
                 $0.union(DockUtil.correctedVisibleFrame(for: $1, snapshot: dockSnapshot))
@@ -415,28 +425,25 @@ extension NSScreen {
             }
         }
         
-        if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self, TodoManager.hasTodoWindow() {
-            let sidebarWidth = TodoManager.getSidebarWidth(visibleFrameWidth: newFrame.width)
-            newFrame.size.width -= sidebarWidth
-            if Defaults.todoSidebarSide.value == .left {
-                newFrame.origin.x += sidebarWidth
+        if !Defaults.screenEdgeGapsOnMainScreenOnly.enabled || self == NSScreen.screens.first {
+            newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
+            newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
+            newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
+
+            if #available(macOS 12.0, *), self.safeAreaInsets.top != 0, Defaults.screenEdgeGapTopNotch.value != 0 {
+                newFrame.size.height -= (Defaults.screenEdgeGapTopNotch.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
+            } else {
+                newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
             }
         }
 
-        if Defaults.screenEdgeGapsOnMainScreenOnly.enabled, self != NSScreen.screens.first {
-            return newFrame
+        if !ignoreTodo, Defaults.todo.userEnabled, Defaults.todoMode.enabled, TodoManager.todoScreen == self,
+           let sidebarWidth = TodoManager.pinnedSidebarWidth(on: self, visibleFrame: newFrame) {
+            newFrame = TodoManager.workAreaForPinnedSidebar(visibleFrame: newFrame,
+                                                            sidebarWidth: sidebarWidth,
+                                                            isRightSide: Defaults.todoSidebarSide.value == .right)
         }
 
-        newFrame.origin.x += Defaults.screenEdgeGapLeft.cgFloat
-        newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
-        newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
-        
-        if #available(macOS 12.0, *), self.safeAreaInsets.top != 0, Defaults.screenEdgeGapTopNotch.value != 0 {
-            newFrame.size.height -= (Defaults.screenEdgeGapTopNotch.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
-        } else {
-            newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
-        }
-        
         return newFrame
     }
 

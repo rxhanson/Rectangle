@@ -334,6 +334,10 @@ extension AccessibilityElement {
         guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
         return AccessibilityElement(app.processIdentifier)
     }
+
+    static func getFocusedWindowElement() -> AccessibilityElement? {
+        getFrontApplicationElement()?.focusedWindowElement
+    }
     
     static func getFrontWindowElement() -> AccessibilityElement? {
         guard let appElement = getFrontApplicationElement() else {
@@ -432,8 +436,8 @@ extension AccessibilityElement {
     
     private static let excludedProcessNames: Set<String> = ["Dock", "WindowManager", "Notification Center"]
 
-    static func getAllWindowElements() -> [AccessibilityElement] {
-        return WindowUtil.getWindowList()
+    static func getAllWindowElements(from onScreen: [WindowInfo]? = nil) -> [AccessibilityElement] {
+        return (onScreen ?? WindowUtil.getWindowList())
             .filter { !excludedProcessNames.contains($0.processName ?? "") }
             .uniqueMap { $0.pid }
             .compactMap { AccessibilityElement($0).windowElements }

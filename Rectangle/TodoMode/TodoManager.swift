@@ -152,10 +152,6 @@ class TodoManager {
         return nil
     }
     
-    static func hasTodoWindow() -> Bool {
-        return getTodoWindowElement() != nil
-    }
-    
     static func isTodoWindowFront() -> Bool {
         guard let windowElement = AccessibilityElement.getFrontWindowElement() else { return false }
         return isTodoWindow(windowElement)
@@ -168,6 +164,59 @@ class TodoManager {
     
     static func isTodoWindow(_ windowId: CGWindowID) -> Bool {
         return getTodoWindowElement()?.windowId == windowId
+    }
+
+    private static func sidebarLayout(visibleFrame: CGRect) -> (workArea: CGRect, windowFrame: CGRect, width: CGFloat) {
+        let sidebarWidth = getSidebarWidth(visibleFrameWidth: visibleFrame.width)
+        let isRightSide = Defaults.todoSidebarSide.value == .right
+
+        let workArea = workAreaForPinnedSidebar(visibleFrame: visibleFrame,
+                                                sidebarWidth: sidebarWidth,
+                                                isRightSide: isRightSide)
+
+        var windowFrame = visibleFrame
+        windowFrame.size.width = sidebarWidth
+        if isRightSide {
+            windowFrame.origin.x = visibleFrame.maxX - sidebarWidth
+        }
+        windowFrame = windowFrame.screenFlipped
+        if Defaults.gapSize.value > 0 {
+            windowFrame = GapCalculation.applyGaps(windowFrame,
+                                                    sharedEdges: isRightSide ? .left : .right,
+                                                    gapSize: Defaults.gapSize.value)
+        }
+        return (workArea, windowFrame, sidebarWidth)
+    }
+
+    static func workAreaForPinnedSidebar(visibleFrame: CGRect, sidebarWidth: CGFloat, isRightSide: Bool) -> CGRect {
+        var workArea = visibleFrame
+        workArea.size.width -= sidebarWidth
+        if !isRightSide {
+            workArea.origin.x += sidebarWidth
+        }
+        return workArea
+    }
+
+    static func isPinnedSidebarFrame(_ actual: CGRect, expected: CGRect, backingScale: CGFloat) -> Bool {
+        let tolerance = 1 / max(1, backingScale)
+        return !actual.isNull
+            && abs(actual.minX - expected.minX) <= tolerance
+            && abs(actual.minY - expected.minY) <= tolerance
+            && abs(actual.maxX - expected.maxX) <= tolerance
+            && abs(actual.maxY - expected.maxY) <= tolerance
+    }
+
+    static func pinnedSidebarWidth(on screen: NSScreen, visibleFrame: CGRect) -> CGFloat? {
+        guard let todoWindow = getTodoWindowElement(),
+              todoWindow.isMinimized != true,
+              todoWindow.isHidden != true,
+              let windowId = todoWindow.windowId else { return nil }
+        let layout = sidebarLayout(visibleFrame: visibleFrame)
+        guard isPinnedSidebarFrame(todoWindow.frame,
+                                   expected: layout.windowFrame,
+                                   backingScale: screen.backingScaleFactor) else { return nil }
+        return WindowUtil.getWindowList(forceRefresh: true).contains { $0.id == windowId }
+            ? layout.width : nil
     }
     
     static func resetTodoWindow() {
@@ -185,36 +234,16 @@ class TodoManager {
         if let todoWindow = getTodoWindowElement() {
             if let screen = TodoManager.todoScreen {
                 let sd = ScreenDetection()
-                var adjustedVisibleFrame = screen.adjustedVisibleFrame()
+                let layout = sidebarLayout(visibleFrame: screen.adjustedVisibleFrame(true))
                 // Clear all windows from the todo app sidebar
                 for w in windows {
                     let wScreen = sd.detectScreens(using: w)?.currentScreen
                     if w.getWindowId() != todoWindow.getWindowId() &&
                         wScreen == TodoManager.todoScreen {
-                        shiftWindowOffSidebar(w, screenVisibleFrame: adjustedVisibleFrame)
+                        shiftWindowOffSidebar(w, screenVisibleFrame: layout.workArea)
                     }
                 }
-
-                adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
-                let sidebarWidth = getSidebarWidth(visibleFrameWidth: adjustedVisibleFrame.width)
-
-                var sharedEdge: Edge
-                var rect = adjustedVisibleFrame
-                let isRightSide = Defaults.todoSidebarSide.value == .right
-
-                sharedEdge = isRightSide ? .left : .right
-
-                if isRightSide {
-                    rect.origin.x = adjustedVisibleFrame.maxX - sidebarWidth
-                }
-                rect.size.width = sidebarWidth
-
-                rect = rect.screenFlipped
-                
-                if Defaults.gapSize.value > 0 {
-                    rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
-                }
-                todoWindow.setFrame(rect)
+                todoWindow.setFrame(layout.windowFrame)
             }
 
             if bringToFront {

@@ -2428,10 +2428,10 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="18" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Qa-C8-rbw">
-                                                                <rect key="frame" x="84" y="28" width="261" height="19"/>
+                                                                <rect key="frame" x="55" y="28" width="290" height="19"/>
                                                                 <subviews>
                                                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GJ7-ha-Hpw">
-                                                                        <rect key="frame" x="0.0" y="2" width="83" height="16"/>
+                                                                        <rect key="frame" x="0.0" y="2" width="112" height="16"/>
                                                                         <subviews>
                                                                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5eO-XA-d6k">
                                                                                 <rect key="frame" x="-2" y="0.0" width="58" height="16"/>
@@ -2513,6 +2513,104 @@
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="160" id="EoF-fh-9EU"/>
                                                                             <constraint firstAttribute="height" constant="19" id="gwb-Yb-c8M"/>
+                                                                        </constraints>
+                                                                    </customView>
+                                                                </subviews>
+                                                                <visibilityPriorities>
+                                                                    <integer value="1000"/>
+                                                                    <integer value="1000"/>
+                                                                </visibilityPriorities>
+                                                                <customSpacing>
+                                                                    <real value="3.4028234663852886e+38"/>
+                                                                    <real value="3.4028234663852886e+38"/>
+                                                                </customSpacing>
+                                                            </stackView>
+                                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TR0-001-UI0">
+                                                                <rect key="frame" x="22" y="28" width="323" height="19"/>
+                                                                <subviews>
+                                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TR0-002-UI0">
+                                                                        <rect key="frame" x="0.0" y="2" width="165" height="16"/>
+                                                                        <subviews>
+                                                                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TR0-003-UI0">
+                                                                                <rect key="frame" x="-2" y="0.0" width="140" height="16"/>
+                                                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Tile Windows in Rows" id="TR0-004-UI0">
+                                                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                                </textFieldCell>
+                                                                            </textField>
+                                                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TR0-005-UI0">
+                                                                                <rect key="frame" x="144" y="1" width="21" height="14"/>
+                                                                                <constraints>
+                                                                                    <constraint firstAttribute="height" constant="14" id="TR0-006-UI0"/>
+                                                                                    <constraint firstAttribute="width" constant="21" id="TR0-007-UI0"/>
+                                                                                </constraints>
+                                                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="tileRowsTemplate" id="TR0-008-UI0"/>
+                                                                            </imageView>
+                                                                        </subviews>
+                                                                        <visibilityPriorities>
+                                                                            <integer value="1000"/>
+                                                                            <integer value="1000"/>
+                                                                        </visibilityPriorities>
+                                                                        <customSpacing>
+                                                                            <real value="3.4028234663852886e+38"/>
+                                                                            <real value="3.4028234663852886e+38"/>
+                                                                        </customSpacing>
+                                                                    </stackView>
+                                                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="TR0-009-UI0" customClass="MASShortcutView">
+                                                                        <rect key="frame" x="177" y="0.0" width="146" height="19"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="146" id="TR0-010-UI0"/>
+                                                                            <constraint firstAttribute="height" constant="19" id="TR0-011-UI0"/>
+                                                                        </constraints>
+                                                                    </customView>
+                                                                </subviews>
+                                                                <visibilityPriorities>
+                                                                    <integer value="1000"/>
+                                                                    <integer value="1000"/>
+                                                                </visibilityPriorities>
+                                                                <customSpacing>
+                                                                    <real value="3.4028234663852886e+38"/>
+                                                                    <real value="3.4028234663852886e+38"/>
+                                                                </customSpacing>
+                                                            </stackView>
+                                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TC0-001-UI0">
+                                                                <rect key="frame" x="6" y="0.0" width="339" height="19"/>
+                                                                <subviews>
+                                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TC0-002-UI0">
+                                                                        <rect key="frame" x="0.0" y="2" width="181" height="16"/>
+                                                                        <subviews>
+                                                                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TC0-003-UI0">
+                                                                                <rect key="frame" x="-2" y="0.0" width="156" height="16"/>
+                                                                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Tile Windows in Columns" id="TC0-004-UI0">
+                                                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                                </textFieldCell>
+                                                                            </textField>
+                                                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TC0-005-UI0">
+                                                                                <rect key="frame" x="160" y="1" width="21" height="14"/>
+                                                                                <constraints>
+                                                                                    <constraint firstAttribute="height" constant="14" id="TC0-006-UI0"/>
+                                                                                    <constraint firstAttribute="width" constant="21" id="TC0-007-UI0"/>
+                                                                                </constraints>
+                                                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="tileColumnsTemplate" id="TC0-008-UI0"/>
+                                                                            </imageView>
+                                                                        </subviews>
+                                                                        <visibilityPriorities>
+                                                                            <integer value="1000"/>
+                                                                            <integer value="1000"/>
+                                                                        </visibilityPriorities>
+                                                                        <customSpacing>
+                                                                            <real value="3.4028234663852886e+38"/>
+                                                                            <real value="3.4028234663852886e+38"/>
+                                                                        </customSpacing>
+                                                                    </stackView>
+                                                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="TC0-009-UI0" customClass="MASShortcutView">
+                                                                        <rect key="frame" x="193" y="0.0" width="146" height="19"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" constant="146" id="TC0-010-UI0"/>
+                                                                            <constraint firstAttribute="height" constant="19" id="TC0-011-UI0"/>
                                                                         </constraints>
                                                                     </customView>
                                                                 </subviews>
@@ -2643,6 +2741,8 @@
                         <outlet property="showMoreButton" destination="WPl-J4-Y8A" id="d55-iL-5P6"/>
                         <outlet property="thirdFourthShortcutView" destination="OmC-pU-vQt" id="ZLp-Im-PIE"/>
                         <outlet property="topCenterSixthShortcutView" destination="qlu-3c-eH6" id="JCd-zG-D9X"/>
+                        <outlet property="tileColumnsShortcutView" destination="TC0-009-UI0" id="TC0-101-UI0"/>
+                        <outlet property="tileRowsShortcutView" destination="TR0-009-UI0" id="TR0-101-UI0"/>
                         <outlet property="topHalfShortcutView" destination="ppH-ve-v6N" id="JE4-GU-6w0"/>
                         <outlet property="topLeftShortcutView" destination="XIn-7Q-Fuy" id="5oj-Fa-48o"/>
                         <outlet property="topLeftSixthShortcutView" destination="lMl-Xc-93q" id="TKu-H9-gxR"/>
@@ -4579,5 +4679,7 @@ DQ
         <image name="topRightTemplate" width="30" height="20"/>
         <image name="wallpaperTiger" width="400" height="250"/>
         <image name="wallpaperTigerVertical" width="250" height="400"/>
+        <image name="tileRowsTemplate" width="30" height="20"/>
+        <image name="tileColumnsTemplate" width="30" height="20"/>
     </resources>
 </document>

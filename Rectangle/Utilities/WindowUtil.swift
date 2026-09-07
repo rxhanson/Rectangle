@@ -5,8 +5,8 @@ import Foundation
 class WindowUtil {
     private static var windowListCache = TimeoutCache<[CGWindowID]?, [WindowInfo]>(timeout: 100)
     
-    static func getWindowList(ids: [CGWindowID]? = nil, all: Bool = false) -> [WindowInfo] {
-        if let infos = windowListCache[ids] {
+    static func getWindowList(ids: [CGWindowID]? = nil, all: Bool = false, forceRefresh: Bool = false) -> [WindowInfo] {
+        if !forceRefresh, let infos = windowListCache[ids] {
             return infos
         }
         var infos = [WindowInfo]()
