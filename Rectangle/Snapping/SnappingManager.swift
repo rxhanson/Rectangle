@@ -195,12 +195,15 @@ class SnappingManager {
     func handle(event: NSEvent) {
         switch event.type {
         case .leftMouseDown:
+            // A manual grab owns the window from this point onward.
+            WindowAnimator.shared.finish()
             if !Defaults.obtainWindowOnClick.userDisabled {
                 windowElement = AccessibilityElement.getWindowElementUnderCursor()
                 windowId = windowElement?.getWindowId()
                 initialWindowRect = windowElement?.frame
             }
         case .leftMouseUp:
+            WindowAnimator.shared.finish()
             if let currentSnapArea = self.currentSnapArea {
                 box?.orderOut(nil)
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
@@ -317,7 +320,7 @@ class SnappingManager {
         }
     }
     
-    private func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
+    func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
         guard !Defaults.unsnapRestore.userDisabled else { return }
         
         // if window was put there by rectangle, restore size
@@ -336,7 +339,22 @@ class SnappingManager {
                             }
                         }
                     }
-                    windowElement.setFrame(newRect, adjustSizeFirst: false)
+                    // Let native dragging own position whenever restoring the
+                    // width does not require moving the window under the cursor.
+                    let resizeOnly = WindowAnimator.enabled && newRect.origin == currentRect.origin
+                    var cursorOffset = CGPoint.zero
+                    let initialCursor = NSEvent.mouseLocation.screenFlipped
+                    WindowAnimator.shared.animate(windowElement, to: newRect, duration: 0.18, resizeOnly: resizeOnly, offset: {
+                        // Follow the drag during restoration, but do not follow
+                        // unrelated cursor movement after the button is released.
+                        if NSEvent.pressedMouseButtons & 1 != 0 {
+                            let cursor = NSEvent.mouseLocation.screenFlipped
+                            cursorOffset = CGPoint(x: cursor.x - initialCursor.x, y: cursor.y - initialCursor.y)
+                        }
+                        return cursorOffset
+                    }, curve: WindowAnimationCurve.unsnapValue) { frame in
+                        windowElement.setFrame(frame, adjustSizeFirst: false, adjustPosition: !resizeOnly)
+                    }
                 } else {
                     windowElement.size = restoreRect.size
                 }

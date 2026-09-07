@@ -5261,6 +5261,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         let settings: [(Default, CodableDefault)] = [
             (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.none.rawValue)),
             (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
+            (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
             (Defaults.gapSize, CodableDefault(float: 0)),
@@ -5438,7 +5439,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
 
-        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = frame
             if frame.size == targetSize {
                 resizeAttempts += 1
@@ -5467,8 +5468,8 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {}
 
-        override func postProcess(result: ResultParameters, resultingRect: CGRect) {
-            super.postProcess(result: result, resultingRect: resultingRect)
+        override func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
+            super.postProcess(result: result, resultingRect: resultingRect, incrementCount: incrementCount)
             didFinish?()
         }
     }
@@ -5573,8 +5574,8 @@ final class CrossDisplayResizeTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
 
-        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
-            currentFrame = frame
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            currentFrame = CGRect(origin: adjustPosition ? frame.origin : currentFrame.origin, size: frame.size)
             if frame.size == target.size {
                 resizeAttempts += 1
                 if resizeAttempts <= 2 {
@@ -5589,7 +5590,7 @@ final class CrossDisplayResizeTests: XCTestCase {
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {}
 
-        override func postProcess(result: ResultParameters, resultingRect: CGRect) {
+        override func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
             didFinish?(result, resultingRect)
         }
     }
