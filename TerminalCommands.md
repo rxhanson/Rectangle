@@ -305,13 +305,13 @@ defaults write com.knollsoft.Rectangle cascadeActiveApp -dict-add keyCode -float
 
 ## Modify the "footprint" displayed for drag to snap area
 
-Adjust the alpha (transparency). Default is 0.3.
+Adjust the alpha (transparency). Default is 0.3, or 0 for the blurred preview, where it controls tint opacity.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintAlpha -float <VALUE_BETWEEN_0_&_1>
 ```
 
-Change the border width. Default is 2 (used to be 1).
+Change the border width. Default is 2 (used to be 1), or 1 for the blurred preview. A custom value overrides either default.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintBorderWidth -float <NUM_PIXELS>
@@ -323,13 +323,13 @@ Disable the fade.
 defaults write com.knollsoft.Rectangle footprintFade -int 2
 ```
 
-Change the color.
+Change the color. With blur enabled, this sets the tint color. Delete `footprintColor` to restore the automatic light/dark tint color.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintColor -string "{\"red\":0,\"blue\":0.5,\"green\":0.5}"
 ```
 
-Change the animation duration. The value is a multiplier. Default is 0 (no animation).
+Change the animation duration. The value is a multiplier. Default is 0 (no movement animation).
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintAnimationDurationMultiplier -float <MULTIPLIER>
