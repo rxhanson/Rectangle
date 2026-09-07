@@ -13,6 +13,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Enable Todo Mode](#enable-todo-mode)
 - [Only allow drag-to-snap when modifier keys are pressed](#only-allow-drag-to-snap-when-modifier-keys-are-pressed)
 - [Almost Maximize](#almost-maximize)
+- [Repeated Maximize restores the previous size and position](#repeated-maximize-restores-the-previous-size-and-position)
 - [Add an extra centering command with custom size](#add-an-extra-centering-command-with-custom-size)
 - [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
@@ -154,6 +155,16 @@ defaults write com.knollsoft.Rectangle almostMaximizeHeight -float <VALUE_BETWEE
 
 ```bash
 defaults write com.knollsoft.Rectangle almostMaximizeWidth -float <VALUE_BETWEEN_0_&_1>
+```
+
+## Repeated Maximize restores the previous size and position
+
+By default, executing "Maximize" or "Almost Maximize" on a window that is already in that state does nothing. With this enabled, executing the same action again on a window that Rectangle has just maximized (or almost maximized) moves the window back to the size and position it had right before, so the shortcut toggles between the two. A window that was moved or resized by other means in between is maximized as usual.
+
+This can also be toggled with the "Repeated Maximize restores the previous size and position" checkbox at the bottom of the "Extras" popover in the General tab of the Settings window.
+
+```bash
+defaults write com.knollsoft.Rectangle repeatedMaximizeRestoresPrevious -bool true
 ```
 
 ## Add an extra centering command with custom size

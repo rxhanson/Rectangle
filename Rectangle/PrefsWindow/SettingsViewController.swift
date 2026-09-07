@@ -51,6 +51,7 @@ class SettingsViewController: NSViewController {
     private var greenButtonOverrideCheckbox: NSButton?
     private var autoMaximizeCheckbox: NSButton?
     private var halvesPreserveOtherAxisSizeCheckbox: NSButton?
+    private var repeatedMaximizeRestoresPreviousCheckbox: NSButton?
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
@@ -191,6 +192,10 @@ class SettingsViewController: NSViewController {
 
     @objc func toggleHalvesPreserveOtherAxisSize(_ sender: NSButton) {
         Defaults.halvesPreserveOtherAxisSize.enabled = sender.state == .on
+    }
+
+    @objc func toggleRepeatedMaximizeRestoresPrevious(_ sender: NSButton) {
+        Defaults.repeatedMaximizeRestoresPrevious.enabled = sender.state == .on
     }
 
     @IBAction func toggleTodoMode(_ sender: NSButton) {
@@ -975,6 +980,15 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(halvesCheckbox)
             halvesPreserveOtherAxisSizeCheckbox = halvesCheckbox
 
+            let repeatedMaximizeCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleRepeatedMaximizeRestoresPrevious(_:)))
+            repeatedMaximizeCheckbox.state = Defaults.repeatedMaximizeRestoresPrevious.enabled ? .on : .off
+            repeatedMaximizeCheckbox.toolTip = NSLocalizedString("After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position.", tableName: "Main", value: "", comment: "")
+            repeatedMaximizeCheckbox.translatesAutoresizingMaskIntoConstraints = false
+            repeatedMaximizeCheckbox.alignment = .left
+
+            mainStackView.addArrangedSubview(repeatedMaximizeCheckbox)
+            repeatedMaximizeRestoresPreviousCheckbox = repeatedMaximizeCheckbox
+
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 splitRatioHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
@@ -1192,6 +1206,7 @@ class SettingsViewController: NSViewController {
         autoMaximizeCheckbox?.state = Defaults.autoMaximize.userDisabled ? .off : .on
 
         halvesPreserveOtherAxisSizeCheckbox?.state = Defaults.halvesPreserveOtherAxisSize.enabled ? .on : .off
+        repeatedMaximizeRestoresPreviousCheckbox?.state = Defaults.repeatedMaximizeRestoresPrevious.enabled ? .on : .off
 
         if StageUtil.stageCapable {
             stageSlider.intValue = Int32(Defaults.stageSize.value)
