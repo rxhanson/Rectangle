@@ -24,13 +24,21 @@ class AccessibilityViewController: NSViewController {
     @IBOutlet weak var padlockField: NSTextField!
     
     override func viewDidLoad() {
-        if #available(OSX 13, *) {
-            sysPrefsPathField.stringValue =  NSLocalizedString(
+        super.viewDidLoad()
+        if #available(macOS 27, *) {
+            sysPrefsPathField.stringValue = NSLocalizedString(
+                "Go to System Settings → Privacy & Security → Device Control and Data Access", tableName: "Main", value: "", comment: "")
+        } else if #available(macOS 13, *) {
+            sysPrefsPathField.stringValue = NSLocalizedString(
                 "Go to System Settings → Privacy & Security → Accessibility", tableName: "Main", value: "", comment: "")
+        }
+        if #available(macOS 13, *) {
             openSysPrefsButton.title = NSLocalizedString(
                 "Open System Settings", tableName: "Main", value: "", comment: "")
             padlockField.isHidden = true
         }
+        sysPrefsPathField.preferredMaxLayoutWidth = 250
+        sysPrefsPathField.maximumNumberOfLines = 0
     }
     
     @IBAction func openSystemPrefs(_ sender: Any) {

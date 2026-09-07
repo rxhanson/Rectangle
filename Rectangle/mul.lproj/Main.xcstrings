@@ -20041,6 +20041,35 @@
         }
       }
     },
+    "Go to System Settings → Privacy & Security → Device Control and Data Access" : {
+      "comment" : "macOS 27 and later permission pane name.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to System Settings → Privacy & Security → Device Control and Data Access"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往 系统设置 → 隐私与安全性 → 设备控制和数据访问"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往 系統設定 → 隱私權與安全性 → 裝置控制和資料取用"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システム設定→プライバシーとセキュリティ→デバイスの制御とデータへのアクセスを選択します"
+          }
+        }
+      }
+    },
     "Go to System Settings → Privacy & Security → Accessibility" : {
       "localizations" : {
         "ar" : {
