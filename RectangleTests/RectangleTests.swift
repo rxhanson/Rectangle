@@ -732,6 +732,95 @@ class BandTilingTests: XCTestCase {
 
 }
 
+final class FootprintAlphaDefaultsTests: XCTestCase {
+    private var savedAlpha: Double = 0
+    private var savedBlur = false
+    private var storedAlpha: Any?
+    private var storedBlur: Any?
+
+    override func setUp() {
+        super.setUp()
+        savedAlpha = Defaults.footprintAlpha.value
+        savedBlur = Defaults.footprintBlur.enabled
+        storedAlpha = UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key)
+        storedBlur = UserDefaults.standard.object(forKey: Defaults.footprintBlur.key)
+        UserDefaults.standard.removeObject(forKey: Defaults.footprintAlpha.key)
+    }
+
+    override func tearDown() {
+        Defaults.footprintAlpha.value = savedAlpha
+        Defaults.footprintBlur.enabled = savedBlur
+        UserDefaults.standard.set(storedAlpha, forKey: Defaults.footprintAlpha.key)
+        UserDefaults.standard.set(storedBlur, forKey: Defaults.footprintBlur.key)
+        super.tearDown()
+    }
+
+    func testUnsetAlphaFollowsPreviewStyleWithoutSavingAValue() {
+        let window = FootprintWindow(accessibility: {
+            FootprintAccessibility(reduceMotion: false, reduceTransparency: false)
+        })
+        defer { window.close() }
+
+        for blurred in [false, true, false] {
+            Defaults.footprintBlur.enabled = blurred
+            XCTAssertEqual(Defaults.effectiveFootprintAlpha, blurred ? 0 : 0.3)
+            XCTAssertEqual(window.presentation.alpha, blurred ? 1 : 0.3)
+            XCTAssertEqual(window.presentation.usesBlur, blurred)
+            XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key))
+        }
+    }
+
+    func testExplicitZeroSurvivesStyleChangesReloadAndConfigRoundTrip() throws {
+        Defaults.footprintAlpha.value = 0
+        for blurred in [false, true] {
+            Defaults.footprintBlur.enabled = blurred
+            XCTAssertEqual(Defaults.effectiveFootprintAlpha, 0)
+            XCTAssertEqual(DoubleDefault(key: Defaults.footprintAlpha.key).value, 0)
+
+            let exported = try exportedAlpha()
+            XCTAssertEqual(exported.double, 0)
+            XCTAssertNil(exported.float)
+            Defaults.footprintAlpha.value = 0.8
+            Defaults.footprintAlpha.load(from: exported)
+            XCTAssertEqual(Defaults.effectiveFootprintAlpha, 0)
+        }
+    }
+
+    func testLegacyFloatValuesAndDoublePrecisionArePreserved() throws {
+        for json in [#"{"float":0}"#, #"{"float":0.4}"#, #"{"double":0.123456789012345}"#] {
+            let imported = try JSONDecoder().decode(CodableDefault.self, from: Data(json.utf8))
+            let expected = imported.double ?? Double(imported.float!)
+            Defaults.footprintAlpha.load(from: imported)
+            for blurred in [false, true] {
+                Defaults.footprintBlur.enabled = blurred
+                XCTAssertEqual(Defaults.effectiveFootprintAlpha, expected)
+                XCTAssertEqual(DoubleDefault(key: Defaults.footprintAlpha.key).value, expected)
+                XCTAssertEqual(try exportedAlpha().double, expected)
+            }
+        }
+    }
+
+    func testExportUsesTheEffectiveUnsetAlpha() throws {
+        for blurred in [false, true] {
+            UserDefaults.standard.removeObject(forKey: Defaults.footprintAlpha.key)
+            Defaults.footprintBlur.enabled = blurred
+            let exported = try exportedAlpha()
+            XCTAssertEqual(exported.double, blurred ? 0 : 0.3)
+            XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key))
+
+            Defaults.footprintAlpha.value = 0.8
+            Defaults.footprintAlpha.load(from: exported)
+            XCTAssertEqual(Defaults.effectiveFootprintAlpha, blurred ? 0 : 0.3)
+        }
+    }
+
+    private func exportedAlpha() throws -> CodableDefault {
+        let json = try XCTUnwrap(Defaults.encoded())
+        let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+        return try XCTUnwrap(config.defaults[Defaults.footprintAlpha.key])
+    }
+}
+
 class PositionCyclesTests: XCTestCase {
 
     func testSixthsReturnTrue() {

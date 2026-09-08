@@ -125,7 +125,7 @@ class FootprintWindow: NSWindow {
 
     var presentation: FootprintPresentation {
         FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
-                              alpha: Defaults.footprintAlpha.cgFloat,
+                              alpha: CGFloat(Defaults.effectiveFootprintAlpha),
                               fadeRequested: !Defaults.footprintFade.userDisabled,
                               animationRequested: Defaults.footprintAnimationDurationMultiplier.value > 0,
                               accessibility: accessibility())
@@ -261,7 +261,7 @@ class FootprintWindow: NSWindow {
             boxView.fillColor = color.withAlphaComponent(1)
         } else if style.usesBlur {
             // Alpha controls the tint while the native blur remains fully applied.
-            let tintAlpha = min(1, max(0, Defaults.footprintAlpha.cgFloat))
+            let tintAlpha = min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha)))
             boxView.fillColor = color.withAlphaComponent(tintAlpha)
         } else {
             boxView.fillColor = color
