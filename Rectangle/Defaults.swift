@@ -52,7 +52,13 @@ class Defaults {
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static let showAdditionalSizesInMenu = OptionalBoolDefault(key: "showAdditionalSizesInMenu")
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
-    static let footprintAlpha = FootprintAlphaDefault()
+    static let footprintAlpha = DoubleDefault(key: "footprintAlpha")
+    static var effectiveFootprintAlpha: Double {
+        if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
+            return footprintBlur.enabled ? 0 : 0.3
+        }
+        return footprintAlpha.value
+    }
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
@@ -342,29 +348,6 @@ class StringDefault: Default {
     
     func toCodable() -> CodableDefault {
         return CodableDefault(string: value)
-    }
-}
-
-class FootprintAlphaDefault: Default {
-    let key = "footprintAlpha"
-
-    var value: Float {
-        get {
-            // Preserve an explicit zero and resolve the unset default by style.
-            (UserDefaults.standard.object(forKey: key) as? NSNumber)?.floatValue
-                ?? (Defaults.footprintBlur.enabled ? 0 : 0.3)
-        }
-        set { UserDefaults.standard.set(newValue, forKey: key) }
-    }
-
-    var cgFloat: CGFloat { CGFloat(value) }
-
-    func load(from codable: CodableDefault) {
-        if let float = codable.float { value = float }
-    }
-
-    func toCodable() -> CodableDefault {
-        CodableDefault(float: value)
     }
 }
 
