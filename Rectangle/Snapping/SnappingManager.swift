@@ -195,7 +195,6 @@ class SnappingManager {
     func handle(event: NSEvent) {
         switch event.type {
         case .leftMouseDown:
-            // A manual grab owns the window from this point onward.
             WindowAnimator.shared.finish()
             if !Defaults.obtainWindowOnClick.userDisabled {
                 windowElement = AccessibilityElement.getWindowElementUnderCursor()
@@ -203,9 +202,8 @@ class SnappingManager {
                 initialWindowRect = windowElement?.frame
             }
         case .leftMouseUp:
-            // Only a drag release should settle drag restoration. A title-bar
-            // double-click can start maximize/restore on this same mouse-up;
-            // another event monitor must not immediately finish that animation.
+            // A title-bar double-click can start an animation on this same mouse-up.
+            // Finish only drag restoration here.
             if windowMoving { WindowAnimator.shared.finish() }
             if let currentSnapArea = self.currentSnapArea {
                 box?.orderOut(nil)
@@ -330,14 +328,12 @@ class SnappingManager {
                             }
                         }
                     }
-                    // Let native dragging own position whenever restoring the
-                    // width does not require moving the window under the cursor.
+                    // Preserve native drag positioning unless restoration requires a new origin.
                     let resizeOnly = WindowAnimator.enabled && newRect.origin == currentRect.origin
                     var cursorOffset = CGPoint.zero
                     let initialCursor = NSEvent.mouseLocation.screenFlipped
                     WindowAnimator.shared.animate(windowElement, to: newRect, duration: 0.18, resizeOnly: resizeOnly, offset: {
-                        // Follow the drag during restoration, but do not follow
-                        // unrelated cursor movement after the button is released.
+                        // Freeze the drag offset when the mouse button is released.
                         if NSEvent.pressedMouseButtons & 1 != 0 {
                             let cursor = NSEvent.mouseLocation.screenFlipped
                             cursorOffset = CGPoint(x: cursor.x - initialCursor.x, y: cursor.y - initialCursor.y)
@@ -370,8 +366,7 @@ class SnappingManager {
     }
     
     func getFootprintAnimationDuration() -> Double {
-        // The checkbox's standard multiplier uses the same duration as window
-        // snapping; retain the hidden preference as a proportional adjustment.
+        // The checkbox uses 0.75; normalize it to the window animation duration.
         return WindowAnimationCurve.duration * Double(Defaults.footprintAnimationDurationMultiplier.value) / 0.75
     }
     

@@ -156,8 +156,7 @@ class AccessibilityElement {
         )
     }
 
-    /// Keep the existing Enhanced UI policy active for the whole transition,
-    /// instead of toggling application accessibility on every timer tick.
+    /// Holds the Enhanced UI policy for the transition; returns its cleanup closure.
     func beginAnimatedAdjustment() -> () -> Void {
         let appElement = applicationElement
         let restore = Defaults.enhancedUI.value.beginWindowAdjustment(
@@ -167,7 +166,7 @@ class AccessibilityElement {
             readEnhancedUI: { appElement?.enhancedUserInterface },
             writeEnhancedUI: { appElement?.enhancedUserInterface = $0 }
         )
-        // Avoid a long stream of blocking requests to an unresponsive app.
+        // Bound AX calls so an unresponsive app cannot stall the animation.
         setMessagingTimeout(0.05)
         return { [self] in
             setMessagingTimeout(0)
@@ -175,16 +174,14 @@ class AccessibilityElement {
         }
     }
 
-    /// No per-frame readbacks or logging. The normal mover checks the achieved
-    /// geometry once the transition ends and applies any necessary corrections.
+    /// Writes one frame without readback; completion handles the final placement.
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool {
         var size = frame.size
         var position = frame.origin
         guard let sizeValue = AXValueCreate(.cgSize, &size),
               let positionValue = AXValueCreate(.cgPoint, &position) else { return false }
         guard AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success else { return false }
-        // During a native drag, even a correct position can already be stale
-        // by the time resizing finishes. Avoid competing position writes.
+        // Native dragging owns position during size restoration.
         if !resizeOnly {
             guard AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return false }
         }

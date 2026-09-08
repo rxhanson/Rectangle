@@ -21,8 +21,7 @@ struct FootprintPresentation {
     init(blurRequested: Bool, alpha: CGFloat, fadeRequested: Bool,
          animationRequested: Bool, accessibility: FootprintAccessibility) {
         usesBlur = blurRequested && !accessibility.reduceTransparency
-        // A visual-effect view must remain at full window opacity for AppKit to
-        // composite its material correctly. The configured alpha tints its fill.
+        // AppKit blur needs full window opacity; configured alpha controls its tint.
         self.alpha = usesBlur || accessibility.reduceTransparency ? 1 : min(1, max(0, alpha))
         fades = fadeRequested && !accessibility.reduceMotion && !accessibility.reduceTransparency
         animates = animationRequested && !accessibility.reduceMotion
@@ -75,8 +74,7 @@ private final class FootprintShadowWindow: NSWindow {
     }
 
     override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
-        // Shadow padding must extend offscreen without shifting the cutout
-        // away from the preview when it reaches the top edge.
+        // Allow shadow padding beyond screen edges without shifting the preview.
         frameRect
     }
 
@@ -96,7 +94,7 @@ private final class FootprintShadowWindow: NSWindow {
         shadowLayer.shadowPath = outline
         shadowLayer.shadowOpacity = isDark ? 0.65 : 0.42
         cutoutLayer.frame = bounds
-        // Remove the entire panel from the shadow, even behind transparent blur.
+        // Exclude the transparent preview interior from the shadow.
         cutoutLayer.path = cutout
         CATransaction.commit()
     }
@@ -169,7 +167,6 @@ class FootprintWindow: NSWindow {
         container.layer?.cornerRadius = radius
         container.layer?.masksToBounds = true
         effectView.material = .fullScreenUI
-        // Inherit the system appearance so AppKit selects its light/dark material.
         effectView.blendingMode = .behindWindow
         effectView.state = .active
         effectView.autoresizingMask = [.width, .height]
@@ -179,8 +176,7 @@ class FootprintWindow: NSWindow {
         boxView.wantsLayer = true
         boxView.autoresizingMask = [.width, .height]
         container.addSubview(boxView)
-        // Keep the authored preview layers in SDR. NSVisualEffectView supplies
-        // blur without Liquid Glass.
+        // Keep custom preview layers in SDR.
         for view in [container, effectView, boxView] {
             view.wantsLayer = true
             view.layer?.contentsFormat = .RGBA8Uint
@@ -230,8 +226,7 @@ class FootprintWindow: NSWindow {
         contentView?.layer?.cornerRadius = radius
         boxView.cornerRadius = radius
         if style.usesBlur, blurMaskRadius != radius {
-            // Mask the material itself as well as the tint, so the compositor
-            // cannot leave bright material outside the rounded surface.
+            // Clip the material itself to prevent bright corners outside the tint mask.
             let mask = NSImage(size: NSSize(width: radius * 2 + 1, height: radius * 2 + 1), flipped: false) { rect in
                 NSColor(srgbRed: 1, green: 1, blue: 1, alpha: 1).setFill()
                 NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
@@ -248,7 +243,6 @@ class FootprintWindow: NSWindow {
             ? NSColor(srgbRed: outlineGray, green: outlineGray, blue: outlineGray, alpha: 0.35)
             : .lightGray
         boxView.borderWidth = CGFloat(Defaults.footprintBorderWidth.value)
-        // Keep the native material fully applied.
         effectView.alphaValue = 1
         if style.usesBlur {
             boxView.borderWidth = UserDefaults.standard.object(forKey: Defaults.footprintBorderWidth.key) == nil
@@ -260,7 +254,6 @@ class FootprintWindow: NSWindow {
         if accessibility().reduceTransparency {
             boxView.fillColor = color.withAlphaComponent(1)
         } else if style.usesBlur {
-            // Alpha controls the tint while the native blur remains fully applied.
             let tintAlpha = min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha)))
             boxView.fillColor = color.withAlphaComponent(tintAlpha)
         } else {
@@ -309,8 +302,7 @@ class FootprintWindow: NSWindow {
     func refreshAccessibility() {
         updateAppearance()
         if !presentation.animates { frameAnimation?.finish() }
-        // System display changes take effect immediately, including a fade that
-        // was already running when Reduce Motion/Transparency was enabled.
+        // Apply accessibility changes immediately, including during an active fade.
         fade = nil
         alphaValue = showing ? presentation.alpha : 0
         if !showing { hidePreview() }
