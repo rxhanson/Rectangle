@@ -4367,6 +4367,207 @@ class OverlapOffsetGuardsTests: XCTestCase {
     }
 }
 
+final class WindowDragGeometryTests: XCTestCase {
+    private let initial = CGRect(x: -1983, y: -964, width: 1920, height: 1016)
+
+    func testDetectsMovementWhileAccessibilityStillReportsTheInitialFrame() throws {
+        let moved = initial.offsetBy(dx: 0, dy: 2)
+        var accessibilityReads = 0
+        let geometry = try XCTUnwrap(WindowDragGeometry(initialFrame: initial, initialServerFrame: initial,
+                                                        serverFrame: moved, accessibilityFrame: {
+            accessibilityReads += 1
+            return self.initial
+        }))
+        XCTAssertTrue(geometry.isMoving)
+        XCTAssertTrue(geometry.movedWithoutResizing)
+        XCTAssertEqual(geometry.currentFrame, moved)
+        XCTAssertEqual(accessibilityReads, 0)
+    }
+
+    func testDifferentCoordinateSourcesDoNotCreateFalseMovement() throws {
+        let accessibility = initial.offsetBy(dx: 1, dy: 1)
+        let geometry = try XCTUnwrap(WindowDragGeometry(initialFrame: accessibility, initialServerFrame: initial,
+                                                        serverFrame: initial, accessibilityFrame: { accessibility }))
+        XCTAssertFalse(geometry.isMoving)
+        XCTAssertFalse(geometry.isResizing)
+    }
+
+    func testUnavailableServerFrameFallsBackToAccessibilityBaseline() throws {
+        let accessibility = initial.offsetBy(dx: 1, dy: 1)
+        for unavailable in [nil, CGRect.null, CGRect.zero] as [CGRect?] {
+            let geometry = try XCTUnwrap(WindowDragGeometry(initialFrame: accessibility, initialServerFrame: initial,
+                                                            serverFrame: unavailable, accessibilityFrame: { accessibility }))
+            XCTAssertFalse(geometry.isMoving)
+            XCTAssertEqual(geometry.currentFrame, accessibility)
+        }
+    }
+
+    func testServerFrameWithoutServerBaselineUsesAccessibility() throws {
+        let geometry = try XCTUnwrap(WindowDragGeometry(initialFrame: initial, initialServerFrame: nil,
+                                                        serverFrame: initial.offsetBy(dx: 20, dy: 20),
+                                                        accessibilityFrame: { self.initial }))
+        XCTAssertFalse(geometry.isMoving)
+    }
+
+    func testResizingFromEitherCornerDoesNotTriggerRestore() throws {
+        let frames = [CGRect(x: initial.minX, y: initial.minY, width: 1800, height: 900),
+                      CGRect(x: initial.minX + 120, y: initial.minY + 100, width: 1800, height: 916)]
+        for frame in frames {
+            let geometry = try XCTUnwrap(WindowDragGeometry(initialFrame: initial, initialServerFrame: initial,
+                                                            serverFrame: frame, accessibilityFrame: { nil }))
+            XCTAssertTrue(geometry.isResizing)
+            XCTAssertFalse(geometry.isMoving)
+            XCTAssertFalse(geometry.movedWithoutResizing)
+        }
+    }
+
+    func testMovingAndChangingSizeAcrossDisplaysStillCountsAsMovement() throws {
+        let geometry = try XCTUnwrap(WindowDragGeometry(initialFrame: initial, initialServerFrame: initial,
+                                                        serverFrame: CGRect(x: 20, y: 30, width: 1400, height: 800),
+                                                        accessibilityFrame: { nil }))
+        XCTAssertTrue(geometry.isMoving)
+        XCTAssertFalse(geometry.movedWithoutResizing)
+    }
+
+    func testMissingGeometryDoesNotCreateADrag() {
+        XCTAssertNil(WindowDragGeometry(initialFrame: initial, initialServerFrame: nil,
+                                        serverFrame: nil, accessibilityFrame: { nil }))
+        XCTAssertNil(WindowDragGeometry(initialFrame: initial, initialServerFrame: nil,
+                                        serverFrame: nil, accessibilityFrame: { .null }))
+    }
+}
+
+final class DragRestorePlacementTests: XCTestCase {
+    private let current = CGRect(x: -1983, y: -950, width: 1920, height: 1016)
+    private let size = CGSize(width: 1100, height: 650)
+
+    func testDisplayedFrameUsesTheOriginalGrabOffsetInsteadOfANewerMouseSample() {
+        let initial = CGRect(x: -1983, y: -964, width: 1920, height: 1016)
+        let displayed = initial.offsetBy(dx: 0, dy: 38)
+        let reference = DragRestorePlacement.referenceCursor(current: displayed, initial: initial,
+                                                              mouseDown: CGPoint(x: -255, y: -934),
+                                                              fallback: CGPoint(x: -255, y: -858))
+        XCTAssertEqual(reference, CGPoint(x: -255, y: -896))
+        XCTAssertEqual(reference.y - displayed.minY, 30)
+    }
+
+    func testMissingMouseDownUsesTheAvailableCursorSample() {
+        let cursor = CGPoint(x: -561, y: -920)
+        XCTAssertEqual(DragRestorePlacement.referenceCursor(current: current, initial: current,
+                                                            mouseDown: nil, fallback: cursor), cursor)
+    }
+
+    func testLeftGrabKeepsNativePosition() {
+        let restored = DragRestorePlacement.frame(from: current, size: size, cursor: CGPoint(x: -1600, y: -920))
+        XCTAssertEqual(restored.origin, current.origin)
+        XCTAssertEqual(restored.size, size)
+    }
+
+    func testRightGrabMovesOnlyEnoughToKeepThePointerInside() {
+        let cursor = CGPoint(x: -561, y: -920)
+        let restored = DragRestorePlacement.frame(from: current, size: size, cursor: cursor)
+        XCTAssertEqual(restored.minX, -1629)
+        XCTAssertEqual(restored.maxX - cursor.x, 32)
+        XCTAssertTrue(restored.contains(cursor))
+        XCTAssertLessThan(restored.maxX, current.maxX)
+    }
+
+    func testNearbyGrabPointsDoNotSwitchToTheFarRightEdge() {
+        let cutoff = current.minX + size.width - 32
+        let left = DragRestorePlacement.frame(from: current, size: size, cursor: CGPoint(x: cutoff - 1, y: -920))
+        let right = DragRestorePlacement.frame(from: current, size: size, cursor: CGPoint(x: cutoff + 1, y: -920))
+        XCTAssertEqual(left.minX, current.minX)
+        XCTAssertEqual(right.minX - left.minX, 1)
+    }
+
+    func testGrabAtTheFarRightDoesNotPushPastTheOriginalEdge() {
+        let restored = DragRestorePlacement.frame(from: current, size: size,
+                                                  cursor: CGPoint(x: current.maxX - 1, y: -920))
+        XCTAssertEqual(restored.maxX, current.maxX)
+    }
+
+    func testGrowingFromAHalfScreenDoesNotReposition() {
+        let half = CGRect(x: 400, y: 100, width: 800, height: 900)
+        let restored = DragRestorePlacement.frame(from: half, size: size, cursor: CGPoint(x: 1190, y: 130))
+        XCTAssertEqual(restored.origin, half.origin)
+    }
+
+    func testPlacementIsTheSameRelativeToEitherDisplay() {
+        let cursor = CGPoint(x: -561, y: -920)
+        let external = DragRestorePlacement.frame(from: current, size: size, cursor: cursor)
+        let local = DragRestorePlacement.frame(from: current.offsetBy(dx: 2000, dy: 1000), size: size,
+                                               cursor: CGPoint(x: cursor.x + 2000, y: cursor.y + 1000))
+        XCTAssertEqual(local, external.offsetBy(dx: 2000, dy: 1000))
+        XCTAssertEqual(DragRestorePlacement.frame(from: current, size: size, cursor: nil).origin, current.origin)
+    }
+}
+
+final class DragRestoreReleaseTests: XCTestCase {
+    private final class WindowElement: AccessibilityElement {
+        override var frame: CGRect { CGRect(x: 120, y: 120, width: 800, height: 600) }
+        override func beginAnimatedAdjustment() -> () -> Void { {} }
+        override func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool { true }
+    }
+
+    private final class Manager: SnappingManager {
+        var restores = 0
+        override func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
+            restores += 1
+        }
+        override func snapAreaContainingCursor(priorSnapArea: SnapArea?) -> SnapArea? { nil }
+    }
+
+    private func release(dragAlreadyDetected: Bool) throws -> Manager {
+        let saved = Defaults.windowSnapping.enabled
+        Defaults.windowSnapping.enabled = false
+        defer { Defaults.windowSnapping.enabled = saved }
+        let manager = Manager()
+        manager.windowElement = WindowElement(AXUIElementCreateSystemWide())
+        manager.windowId = .max
+        manager.initialWindowRect = CGRect(x: 100, y: 100, width: 800, height: 600)
+        manager.windowMoving = dragAlreadyDetected
+        let event = try XCTUnwrap(NSEvent.mouseEvent(with: .leftMouseUp, location: .zero, modifierFlags: [],
+                                                   timestamp: 1, windowNumber: 0, context: nil,
+                                                   eventNumber: 1, clickCount: 1, pressure: 0))
+        manager.handle(event: event)
+        return manager
+    }
+
+    func testMouseUpDoesNotRestoreAgainWhenDisplayedSizeHasNotCaughtUp() throws {
+        let manager = try release(dragAlreadyDetected: true)
+        XCTAssertEqual(manager.restores, 0)
+        XCTAssertFalse(manager.windowMoving)
+        XCTAssertNil(manager.windowId)
+        XCTAssertNil(manager.windowElement)
+    }
+
+    func testMouseUpStillRestoresAQuickDragThatHadNotBeenDetected() throws {
+        let manager = try release(dragAlreadyDetected: false)
+        XCTAssertEqual(manager.restores, 1)
+        XCTAssertFalse(manager.windowMoving)
+        XCTAssertNil(manager.initialWindowRect)
+    }
+
+    func testQuickReleaseKeepsTheRemainingAnimationInsteadOfJumpingToItsDestination() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer {
+            WindowAnimator.shared.finish()
+            Defaults.experimentalWindowAnimations.enabled = saved
+        }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+        let window = WindowElement(AXUIElementCreateSystemWide())
+        let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
+        var completions = 0
+        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { _ in completions += 1 }
+
+        _ = try release(dragAlreadyDetected: true)
+
+        XCTAssertEqual(completions, 0)
+        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
+    }
+}
+
 class SnappingManagerSessionTests: XCTestCase {
 
     private var savedSnappingEnabled: Bool?

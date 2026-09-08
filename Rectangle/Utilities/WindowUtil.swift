@@ -4,6 +4,16 @@ import Foundation
 
 class WindowUtil {
     private static var windowListCache = TimeoutCache<[CGWindowID]?, [WindowInfo]>(timeout: 100)
+
+    /// Drag tracking needs current geometry rather than the window list's 100 ms cache.
+    static func getWindowFrame(id: CGWindowID) -> CGRect? {
+        guard let infos = CGWindowListCopyWindowInfo(.optionIncludingWindow, id) as? [[String: Any]],
+              let info = infos.first(where: { ($0[kCGWindowNumber as String] as? NSNumber)?.uint32Value == id }),
+              let bounds = info[kCGWindowBounds as String] as? [String: Any],
+              let frame = CGRect(dictionaryRepresentation: bounds as CFDictionary),
+              !frame.isNull, !frame.isEmpty else { return nil }
+        return frame
+    }
     
     static func getWindowList(ids: [CGWindowID]? = nil, all: Bool = false, forceRefresh: Bool = false) -> [WindowInfo] {
         if !forceRefresh, let infos = windowListCache[ids] {
