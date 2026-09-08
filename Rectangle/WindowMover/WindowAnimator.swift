@@ -146,7 +146,7 @@ final class WindowAnimator {
         animation?.finish()
     }
 
-    func animate(_ element: AccessibilityElement, to destination: CGRect,
+    func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
                  duration: TimeInterval = WindowAnimationCurve.duration,
                  resizeOnly: Bool = false,
                  placement: WindowAnimationPlacement? = nil,
@@ -158,7 +158,7 @@ final class WindowAnimator {
         } else {
             animation?.finish()
         }
-        let origin = element.frame
+        let origin = startingFrame ?? element.frame
         guard Self.enabled, !origin.isNull, !destination.isNull,
               !origin.isEmpty, !destination.isEmpty, origin != destination else {
             completion(placement == nil ? destination : .null)

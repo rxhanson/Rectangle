@@ -8,6 +8,58 @@ struct SnapArea: Equatable {
     let action: WindowAction
 }
 
+struct WindowDragGeometry {
+    let initialFrame: CGRect?
+    let currentFrame: CGRect
+
+    init?(initialFrame: CGRect?, initialServerFrame: CGRect?, serverFrame: CGRect?, accessibilityFrame: () -> CGRect?) {
+        // Compare frames from the same source; AX and WindowServer can disagree during a drag.
+        if let initialServerFrame, !initialServerFrame.isNull, !initialServerFrame.isEmpty,
+           let serverFrame, !serverFrame.isNull, !serverFrame.isEmpty {
+            self.initialFrame = initialServerFrame
+            currentFrame = serverFrame
+        } else {
+            guard let frame = accessibilityFrame(), !frame.isNull else { return nil }
+            self.initialFrame = initialFrame
+            currentFrame = frame
+        }
+    }
+
+    var isResizing: Bool {
+        guard let initialFrame else { return true }
+        return currentFrame.size != initialFrame.size && currentFrame.numSharedEdges(withRect: initialFrame) >= 2
+    }
+
+    var isMoving: Bool {
+        guard let initialFrame else { return false }
+        return !isResizing && currentFrame.origin != initialFrame.origin
+    }
+
+    var movedWithoutResizing: Bool {
+        initialFrame?.size == currentFrame.size && initialFrame?.origin != currentFrame.origin
+    }
+}
+
+enum DragRestorePlacement {
+    static func referenceCursor(current: CGRect, initial: CGRect?, mouseDown: CGPoint?, fallback: CGPoint) -> CGPoint {
+        guard let initial, let mouseDown else { return fallback }
+        return CGPoint(x: current.minX + mouseDown.x - initial.minX,
+                       y: current.minY + mouseDown.y - initial.minY)
+    }
+
+    static func frame(from current: CGRect, size: CGSize, cursor: CGPoint?) -> CGRect {
+        var restored = CGRect(origin: current.origin, size: size)
+        if let cursor {
+            // Move only as far as the grab point needs. Keeping the old right edge would
+            // abruptly shift by the entire width difference when the cursor crosses the cutoff.
+            let inset = min(32, size.width / 2)
+            let neededShift = cursor.x - current.minX - (size.width - inset)
+            restored.origin.x += min(max(0, neededShift), max(0, current.width - size.width))
+        }
+        return restored
+    }
+}
+
 class SnappingManager {
     
     private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", 
@@ -26,6 +78,9 @@ class SnappingManager {
     var isFullScreen: Bool = false
     var allowListening: Bool = true
     var initialWindowRect: CGRect?
+    private var initialWindowServerRect: CGRect?
+    private var initialCursorLocation: CGPoint?
+    private var releaseDragRestore: ((CGPoint?) -> Void)?
     var currentSnapArea: SnapArea?
     var dragPrevY: Double?
     var dragRestrictionExpirationTimestamp: UInt64 = 0
@@ -196,15 +251,20 @@ class SnappingManager {
         switch event.type {
         case .leftMouseDown:
             WindowAnimator.shared.finish()
+            releaseDragRestore = nil
+            initialCursorLocation = event.cgEvent?.location
             if !Defaults.obtainWindowOnClick.userDisabled {
                 windowElement = AccessibilityElement.getWindowElementUnderCursor()
                 windowId = windowElement?.getWindowId()
                 initialWindowRect = windowElement?.frame
+                initialWindowServerRect = windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
             }
         case .leftMouseUp:
-            // A title-bar double-click can start an animation on this same mouse-up.
-            // Finish only drag restoration here.
-            if windowMoving { WindowAnimator.shared.finish() }
+            releaseDragRestore?(event.cgEvent?.location)
+            releaseDragRestore = nil
+            // A quick release must not jump to the end of drag restoration.
+            // Its cursor offset freezes on release, so the remaining frames can settle normally.
+            if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
             if let currentSnapArea = self.currentSnapArea {
                 box?.orderOut(nil)
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
@@ -213,12 +273,11 @@ class SnappingManager {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
                 // this typically only happens if the user is dragging and dropping windows really quickly
                 // in this scenario, the footprint doesn't display but the snap will still occur, as long as the window position is updated as of mouse up.
-                if let currentRect = windowElement?.frame,
-                   currentRect.size == initialWindowRect?.size,
-                   currentRect.origin != initialWindowRect?.origin {
+                if let geometry = dragGeometry(), geometry.movedWithoutResizing {
   
-                    if let windowId {
-                        unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
+                    // Displayed bounds may still have the old size just after finish().
+                    if !windowMoving, let windowId {
+                        unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
@@ -234,6 +293,8 @@ class SnappingManager {
             windowId = nil
             windowMoving = false
             initialWindowRect = nil
+            initialWindowServerRect = nil
+            initialCursorLocation = nil
             windowIdAttempt = 0
             lastWindowIdAttempt = nil
         case .leftMouseDragged:
@@ -248,22 +309,21 @@ class SnappingManager {
                 }
                 windowId = windowElement?.getWindowId()
                 initialWindowRect = windowElement?.frame
+                initialWindowServerRect = windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
                 windowIdAttempt += 1
                 lastWindowIdAttempt = event.timestamp
             }
-            guard let currentRect = windowElement?.frame
-            else { return }
-            
+            var currentRect: CGRect?
             if !windowMoving {
-                if let initialWindowRect, (currentRect.size == initialWindowRect.size || currentRect.numSharedEdges(withRect: initialWindowRect) < 2) {
-                    if currentRect.origin != initialWindowRect.origin {
-                        windowMoving = true
-                        if let windowId {
-                            unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
-                        }
+                guard let geometry = dragGeometry() else { return }
+                currentRect = geometry.currentFrame
+                if geometry.isMoving {
+                    windowMoving = true
+                    if let windowId {
+                        unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
-                else if let windowId {
+                else if geometry.isResizing, let windowId {
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -280,6 +340,8 @@ class SnappingManager {
                     if snapArea == currentSnapArea {
                         return
                     }
+
+                    guard let currentRect = currentRect ?? dragGeometry()?.currentFrame else { return }
                     
                     if Defaults.hapticFeedbackOnSnap.userEnabled {
                         NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
@@ -309,6 +371,12 @@ class SnappingManager {
         }
     }
     
+    private func dragGeometry() -> WindowDragGeometry? {
+        WindowDragGeometry(initialFrame: initialWindowRect, initialServerFrame: initialWindowServerRect,
+                           serverFrame: windowId.flatMap { WindowUtil.getWindowFrame(id: $0) },
+                           accessibilityFrame: { windowElement?.frame })
+    }
+
     func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
         guard !Defaults.unsnapRestore.userDisabled else { return }
         
@@ -317,24 +385,24 @@ class SnappingManager {
             
             if let windowElement = windowElement {
                 if #available(macOS 12, *) { // earlier versions of macOS would stutter the reposition when dragging the window
-                    var newRect = currentRect
-                    newRect.size = restoreRect.size
-                    if let cursorLoc = cursorLoc {
-                        if !newRect.contains(cursorLoc) { // keep the same maxX if possible
-                            newRect.origin = CGPoint(x: currentRect.maxX - newRect.width, y: newRect.minY)
-                            
-                            if !newRect.contains(cursorLoc) { // still doesn't contain cursor
-                                newRect.origin = CGPoint(x: cursorLoc.x - (newRect.width / 2), y: newRect.minY)
-                            }
-                        }
-                    }
+                    // Pair the displayed frame with its native grab point, not a newer mouse sample.
+                    let initialCursor = DragRestorePlacement.referenceCursor(current: currentRect, initial: initialWindowRect,
+                                                                              mouseDown: initialCursorLocation,
+                                                                              fallback: cursorLoc ?? NSEvent.mouseLocation.screenFlipped)
+                    let newRect = DragRestorePlacement.frame(from: currentRect, size: restoreRect.size, cursor: initialCursor)
                     // Preserve native drag positioning unless restoration requires a new origin.
                     let resizeOnly = WindowAnimator.enabled && newRect.origin == currentRect.origin
                     var cursorOffset = CGPoint.zero
-                    let initialCursor = NSEvent.mouseLocation.screenFlipped
-                    WindowAnimator.shared.animate(windowElement, to: newRect, duration: 0.18, resizeOnly: resizeOnly, offset: {
+                    var released = false
+                    releaseDragRestore = { cursor in
+                        if let cursor {
+                            cursorOffset = CGPoint(x: cursor.x - initialCursor.x, y: cursor.y - initialCursor.y)
+                        }
+                        released = true
+                    }
+                    WindowAnimator.shared.animate(windowElement, from: currentRect, to: newRect, duration: 0.18, resizeOnly: resizeOnly, offset: {
                         // Freeze the drag offset when the mouse button is released.
-                        if NSEvent.pressedMouseButtons & 1 != 0 {
+                        if !released, NSEvent.pressedMouseButtons & 1 != 0 {
                             let cursor = NSEvent.mouseLocation.screenFlipped
                             cursorOffset = CGPoint(x: cursor.x - initialCursor.x, y: cursor.y - initialCursor.y)
                         }
