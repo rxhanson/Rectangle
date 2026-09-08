@@ -102,8 +102,6 @@ class WindowManager {
             return
         }
         
-        // Use the pending destination for shortcut cycling and restore history;
-        // the next transition still starts from the actual on-screen frame.
         let currentWindowRect = WindowAnimator.shared.destination(for: frontmostWindowElement)
             ?? frontmostWindowElement.frame
         
@@ -213,9 +211,7 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
         
-        // The initial experiment only interpolates single-window, same-display
-        // resizes. Cooperative changes and display transfers retain their settling
-        // order, and non-resizable windows retain the fixed-size mover chain.
+        // Cross-display and cooperative moves need the normal settling sequence.
         let animated = WindowAnimator.enabled && !isFixedSize && !isMovedAcrossDisplays
             && !Defaults.cooperativeCornerResize.enabled
         let completeMove = { [self] in
@@ -268,8 +264,7 @@ class WindowManager {
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
         }
         if animated {
-            // Record the logical destination now so a repeated shortcut can cycle
-            // without treating an intermediate animation frame as a manual move.
+            // Record the destination before animation for repeated-shortcut cycling.
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
             WindowAnimator.shared.animate(frontmostWindowElement, to: calcResult.rect.screenFlipped) { _ in

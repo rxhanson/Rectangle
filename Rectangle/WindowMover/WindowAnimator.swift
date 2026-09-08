@@ -7,24 +7,18 @@ enum WindowAnimationCurve {
 
     static func unsnapValue(at progress: Double) -> CGFloat {
         let t = min(1, max(0, progress))
-        // Spread drag restoration evenly instead of concentrating the resize
-        // near the start. Velocity and acceleration are zero at both ends.
+        // Quintic smoothstep: zero velocity and acceleration at both endpoints.
         return CGFloat(t * t * t * (10 + t * (-15 + 6 * t)))
     }
 
     static func value(at progress: Double) -> CGFloat {
         let progress = min(1, max(0, progress))
-        // Integrate a positive velocity profile proportional to t * (1-t)^5.
-        // Movement gathers pace early, then settles gently without overshoot.
-        // Both endpoints have zero velocity, so the final frame never cuts off
-        // a moving spring; the same curve also drives the preview and its fade.
+        // Integral of t * (1 - t)^5, normalized to [0, 1].
         return CGFloat(1 - pow(1 - progress, 6) * (1 + 6 * progress))
     }
 }
 
-/// A time-based transition. Missed timer ticks are skipped, never queued up.
-/// Window I/O and the clock are supplied separately so cancellation and failures
-/// can be tested without moving a user's windows.
+/// Advances by elapsed time, skipping missed frames.
 final class WindowFrameAnimation {
     let destination: CGRect
     private let origin: CGRect
@@ -68,8 +62,7 @@ final class WindowFrameAnimation {
                            width: origin.width + (destination.width - origin.width) * eased,
                            height: origin.height + (destination.height - origin.height) * eased)
         if !write(frame) {
-            // A refused AX write ends interpolation; the ordinary mover settles
-            // the destination using the application's existing size constraints.
+            // Let the normal mover settle the destination after a refused AX write.
             finish()
         }
     }
@@ -89,8 +82,7 @@ final class WindowFrameAnimation {
     }
 }
 
-/// Main-run-loop ownership serializes AX adjustments and history updates. Only
-/// one window animates at a time, including when two windows belong to one app.
+/// Coordinates one window animation at a time on the main run loop.
 final class WindowAnimator {
     static let shared = WindowAnimator()
     private var window: AccessibilityElement?
@@ -168,8 +160,7 @@ final class WindowAnimator {
             }
         }
         self.timer = timer
-        // Keyboard animations must also yield to a manual grab when drag-to-snap
-        // is disabled and SnappingManager is not listening for mouse events.
+        // Manual grabs must interrupt animation even when drag-to-snap is disabled.
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
             self?.finish()
         }
