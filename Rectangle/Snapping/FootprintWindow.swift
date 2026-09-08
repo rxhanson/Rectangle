@@ -337,7 +337,7 @@ class FootprintWindow: NSWindow {
             return
         }
         frameAnimation = WindowFrameAnimation(from: frame, to: rect, startTime: clock(), duration: duration,
-                                             write: { [weak self] frame in
+                                             write: { [weak self] frame, _ in
             self?.setFrame(frame, display: true)
             return true
         }, cleanup: { [weak self] in

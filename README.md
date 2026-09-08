@@ -35,7 +35,7 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
-In **Snap Areas**, enable **Animate windows (experimental)** for smooth window resizing or **Blur footprint** for a blurred snap preview. Both are off by default. Title-bar double-click maximize/restore follows the same animation setting and timing as snapping. Window animation has been tested in known scenarios, but remains experimental because repeatedly updating the window's size and position during the transition may cause issues in some edge cases.
+In **Snap Areas**, enable **Animate windows (experimental)** for smooth window resizing or **Blur footprint** for a blurred snap preview. Both are off by default. Animated snapping keeps the selected edge or center aligned when an app limits its window size or aspect ratio. Title-bar double-click maximize/restore follows the same animation setting and timing as snapping. Window animation has been tested in known scenarios, but remains experimental because repeatedly updating the window's size and position during the transition may cause issues in some edge cases.
 
 ### Tile windows in rows or columns
 

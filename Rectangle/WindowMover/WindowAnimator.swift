@@ -18,6 +18,30 @@ enum WindowAnimationCurve {
     }
 }
 
+struct WindowAnimationPlacement {
+    let screenFrame: CGRect
+    let sharedEdges: Edge?
+    let constrainToScreen: Bool
+    let gap: CGFloat
+
+    func frame(for requested: CGRect, actualSize: CGSize, origin: CGRect, progress: CGFloat) -> CGRect {
+        var frame = CGRect(origin: requested.origin, size: actualSize)
+        if let sharedEdges {
+            frame = ClampedWindowAligner.aligned(window: frame, inZone: requested, sharedEdges: sharedEdges)
+        }
+        guard constrainToScreen else { return frame }
+
+        // Bring an initially out-of-bounds window back gradually instead of clipping its first frame.
+        let initialBounds = screenFrame.union(origin)
+        let progress = min(1, max(0, progress))
+        let bounds = CGRect(x: initialBounds.minX + (screenFrame.minX - initialBounds.minX) * progress,
+                            y: initialBounds.minY + (screenFrame.minY - initialBounds.minY) * progress,
+                            width: initialBounds.width + (screenFrame.width - initialBounds.width) * progress,
+                            height: initialBounds.height + (screenFrame.height - initialBounds.height) * progress)
+        return WindowFrameBounds.constrained(frame, to: bounds, gap: gap)
+    }
+}
+
 /// Advances by elapsed time, skipping missed frames.
 final class WindowFrameAnimation {
     let destination: CGRect
@@ -26,7 +50,8 @@ final class WindowFrameAnimation {
     private let duration: TimeInterval
     private let offset: () -> CGPoint
     private let curve: (Double) -> CGFloat
-    private let write: (CGRect) -> Bool
+    private let write: (CGRect, CGFloat) -> Bool
+    private let finalize: ((CGRect) -> Void)?
     private let cleanup: () -> Void
     private let completion: (CGRect) -> Void
     private(set) var isFinished = false
@@ -34,7 +59,8 @@ final class WindowFrameAnimation {
     init(from: CGRect, to: CGRect, startTime: TimeInterval, duration: TimeInterval,
          offset: @escaping () -> CGPoint = { .zero },
          curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
-         write: @escaping (CGRect) -> Bool,
+         write: @escaping (CGRect, CGFloat) -> Bool,
+         finalize: ((CGRect) -> Void)? = nil,
          cleanup: @escaping () -> Void,
          completion: @escaping (CGRect) -> Void) {
         origin = from
@@ -44,6 +70,7 @@ final class WindowFrameAnimation {
         self.offset = offset
         self.curve = curve
         self.write = write
+        self.finalize = finalize
         self.cleanup = cleanup
         self.completion = completion
     }
@@ -61,7 +88,7 @@ final class WindowFrameAnimation {
                            y: origin.minY + (destination.minY - origin.minY) * eased + delta.y,
                            width: origin.width + (destination.width - origin.width) * eased,
                            height: origin.height + (destination.height - origin.height) * eased)
-        if !write(frame) {
+        if !write(frame, eased) {
             // Let the normal mover settle the destination after a refused AX write.
             finish()
         }
@@ -71,8 +98,10 @@ final class WindowFrameAnimation {
         guard !isFinished else { return }
         let delta = offset()
         isFinished = true
+        let finalFrame = destination.offsetBy(dx: delta.x, dy: delta.y)
+        finalize?(finalFrame)
         cleanup()
-        completion(destination.offsetBy(dx: delta.x, dy: delta.y))
+        completion(finalFrame)
     }
 
     func cancel() {
@@ -120,6 +149,7 @@ final class WindowAnimator {
     func animate(_ element: AccessibilityElement, to destination: CGRect,
                  duration: TimeInterval = WindowAnimationCurve.duration,
                  resizeOnly: Bool = false,
+                 placement: WindowAnimationPlacement? = nil,
                  offset: @escaping () -> CGPoint = { .zero },
                  curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
                  completion: @escaping (CGRect) -> Void) {
@@ -131,15 +161,29 @@ final class WindowAnimator {
         let origin = element.frame
         guard Self.enabled, !origin.isNull, !destination.isNull,
               !origin.isEmpty, !destination.isEmpty, origin != destination else {
-            completion(destination)
+            completion(placement == nil ? destination : .null)
             return
         }
         let restoreAccessibility = element.beginAnimatedAdjustment()
+        var finalFrame: CGRect?
+        let finalize: ((CGRect) -> Void)? = placement.map { placement in
+            { frame in
+                finalFrame = element.setConstrainedAnimationFrame(frame, placement: placement,
+                                                                 origin: origin, progress: 1)
+            }
+        }
         window = element
         animation = WindowFrameAnimation(from: origin, to: destination,
                                          startTime: ProcessInfo.processInfo.systemUptime,
                                          duration: duration, offset: offset, curve: curve,
-                                         write: { element.setAnimationFrame($0, resizeOnly: resizeOnly) },
+                                         write: { frame, progress in
+            if let placement {
+                // Retry transient AX failures on the next tick without cutting the transition short.
+                _ = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin, progress: progress)
+                return true
+            }
+            return element.setAnimationFrame(frame, resizeOnly: resizeOnly)
+        }, finalize: finalize,
                                          cleanup: { [weak self] in
             self?.timer?.invalidate()
             self?.timer = nil
@@ -150,7 +194,9 @@ final class WindowAnimator {
             self?.animation = nil
             self?.window = nil
             restoreAccessibility()
-        }, completion: completion)
+        }, completion: { frame in
+            completion(placement == nil ? frame : finalFrame ?? .null)
+        })
         let timer = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
             guard let self else { return }
             if !Self.enabled {

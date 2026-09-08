@@ -214,11 +214,13 @@ class WindowManager {
         // Cross-display and cooperative moves need the normal settling sequence.
         let animated = WindowAnimator.enabled && !isFixedSize && !isMovedAcrossDisplays
             && !Defaults.cooperativeCornerResize.enabled
-        let completeMove = { [self] in
+        let completeMove = { [self] (animationHandledPlacement: Bool) in
             var resultingRect: CGRect
             if let cooperativeCornerPlan {
                 resultingRect = applyCooperativeCornerResize(result: resultParameters,
                                                              plan: cooperativeCornerPlan)
+            } else if animationHandledPlacement {
+                resultingRect = frontmostWindowElement.frame
             } else {
                 resultingRect = apply(result: resultParameters)
             }
@@ -267,11 +269,18 @@ class WindowManager {
             // Record the destination before animation for repeated-shortcut cycling.
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-            WindowAnimator.shared.animate(frontmostWindowElement, to: calcResult.rect.screenFlipped) { _ in
-                completeMove()
+            let placement = WindowAnimationPlacement(
+                screenFrame: visibleFrameOfDestinationScreen.screenFlipped,
+                sharedEdges: action.resizes ? Defaults.moveFixedSizeToEdge.value.alignmentEdges(
+                    for: calcResult.initialRect.screenFlipped, in: visibleFrameOfDestinationScreen.screenFlipped) : nil,
+                constrainToScreen: !(action.allowedToExtendOutsideCurrentScreenArea && !NSScreen.screensHaveSeparateSpaces),
+                gap: CGFloat(Defaults.gapSize.value))
+            WindowAnimator.shared.animate(frontmostWindowElement, to: calcResult.rect.screenFlipped,
+                                          placement: placement) { frame in
+                completeMove(!frame.isNull)
             }
         } else {
-            completeMove()
+            completeMove(false)
         }
     }
     
