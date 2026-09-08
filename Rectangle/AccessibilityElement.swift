@@ -187,6 +187,23 @@ class AccessibilityElement {
         }
         return true
     }
+
+    func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
+                                      origin: CGRect, progress: CGFloat) -> CGRect? {
+        var requestedSize = frame.size
+        guard let sizeValue = AXValueCreate(.cgSize, &requestedSize),
+              AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success,
+              let actualSize = size,
+              actualSize.width.isFinite, actualSize.height.isFinite,
+              actualSize.width > 0, actualSize.height > 0 else { return nil }
+
+        // An accepted AX write can still be clamped by the app; position using the achieved size.
+        let resolved = placement.frame(for: frame, actualSize: actualSize, origin: origin, progress: progress)
+        var position = resolved.origin
+        guard let positionValue = AXValueCreate(.cgPoint, &position),
+              AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return nil }
+        return resolved
+    }
     
     private var childElements: [AccessibilityElement]? {
         getElementsValue(.children)

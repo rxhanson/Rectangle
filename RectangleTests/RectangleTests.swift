@@ -5035,6 +5035,124 @@ class TodoShortcutValidatorTests: XCTestCase {
     }
 }
 
+class WindowAnimationPlacementTests: XCTestCase {
+    private let screen = CGRect(x: 0, y: 29, width: 1403, height: 869)
+
+    private func placement(for zone: CGRect, screen: CGRect? = nil) -> WindowAnimationPlacement {
+        let screen = screen ?? self.screen
+        return WindowAnimationPlacement(screenFrame: screen, sharedEdges: zone.sharedEdges(withRect: screen),
+                                        constrainToScreen: true, gap: 0)
+    }
+
+    func testMinimumSizeKeepsEverySelectedEdgeAndCorner() {
+        let cases: [(CGRect, CGSize, CGPoint)] = [
+            (CGRect(x: 702, y: 29, width: 701, height: 869), CGSize(width: 913, height: 869), CGPoint(x: 490, y: 29)),
+            (CGRect(x: 0, y: 29, width: 701, height: 869), CGSize(width: 913, height: 869), CGPoint(x: 0, y: 29)),
+            (CGRect(x: 0, y: 29, width: 1403, height: 434), CGSize(width: 1403, height: 600), CGPoint(x: 0, y: 29)),
+            (CGRect(x: 0, y: 464, width: 1403, height: 434), CGSize(width: 1403, height: 600), CGPoint(x: 0, y: 298)),
+            (CGRect(x: 0, y: 29, width: 701, height: 434), CGSize(width: 913, height: 600), CGPoint(x: 0, y: 29)),
+            (CGRect(x: 702, y: 29, width: 701, height: 434), CGSize(width: 913, height: 600), CGPoint(x: 490, y: 29)),
+            (CGRect(x: 0, y: 464, width: 701, height: 434), CGSize(width: 913, height: 600), CGPoint(x: 0, y: 298)),
+            (CGRect(x: 702, y: 464, width: 701, height: 434), CGSize(width: 913, height: 600), CGPoint(x: 490, y: 298))
+        ]
+        for (zone, size, expected) in cases {
+            let result = placement(for: zone).frame(for: zone, actualSize: size, origin: screen, progress: 1)
+            XCTAssertEqual(result.origin, expected)
+            XCTAssertEqual(result.size, size)
+        }
+    }
+
+    func testWidthLimitDoesNotReverseMotionOrJumpAtTheEnd() {
+        let origin = CGRect(x: 100, y: 100, width: 1100, height: 650)
+        let target = CGRect(x: 702, y: 29, width: 701, height: 869)
+        let placement = placement(for: target)
+        var previous = origin
+        for step in 1...100 {
+            let t = CGFloat(step) / 100
+            let requested = CGRect(x: origin.minX + (target.minX - origin.minX) * t,
+                                   y: origin.minY + (target.minY - origin.minY) * t,
+                                   width: origin.width + (target.width - origin.width) * t,
+                                   height: origin.height + (target.height - origin.height) * t)
+            let result = placement.frame(for: requested, actualSize: CGSize(width: max(913, requested.width), height: requested.height),
+                                         origin: origin, progress: t)
+            XCTAssertGreaterThanOrEqual(result.minX, previous.minX - 0.001)
+            XCTAssertLessThan(abs(result.minX - previous.minX), 7)
+            previous = result
+        }
+        XCTAssertEqual(previous.minX, 490, accuracy: 0.001)
+    }
+
+    func testMaximumAndAspectRatioSizesKeepTheRightEdgeAndVerticalCenter() {
+        let target = CGRect(x: 702, y: 29, width: 701, height: 869)
+        for size in [CGSize(width: 600, height: 400), CGSize(width: 600, height: 450)] {
+            let result = placement(for: target).frame(for: target, actualSize: size, origin: screen, progress: 1)
+            XCTAssertEqual(result.maxX, screen.maxX)
+            XCTAssertEqual(result.midY, screen.midY, accuracy: 0.5)
+            XCTAssertEqual(result.size, size)
+        }
+    }
+
+    func testCenteredLayoutCentersBothConstrainedDimensions() {
+        let target = CGRect(x: 351, y: 129, width: 702, height: 669)
+        let result = placement(for: target).frame(for: target, actualSize: CGSize(width: 913, height: 400), origin: screen, progress: 1)
+        XCTAssertEqual(result.midX, target.midX, accuracy: 0.5)
+        XCTAssertEqual(result.midY, target.midY, accuracy: 0.5)
+    }
+
+    func testDockInsetsAndNegativeDisplayCoordinatesUseTheProvidedWorkArea() {
+        let screens = [CGRect(x: 45, y: 29, width: 1395, height: 869), screen,
+                       CGRect(x: 0, y: 29, width: 1440, height: 831),
+                       CGRect(x: -1600, y: -870, width: 1600, height: 900)]
+        for screen in screens {
+            let target = CGRect(x: screen.midX, y: screen.minY, width: screen.width / 2, height: screen.height)
+            let result = placement(for: target, screen: screen).frame(for: target, actualSize: CGSize(width: 913, height: 600), origin: screen, progress: 1)
+            XCTAssertEqual(result.maxX, screen.maxX)
+            XCTAssertEqual(result.midY, screen.midY, accuracy: 0.5)
+        }
+    }
+
+    func testInitiallyOutOfBoundsWindowIsNotClippedOnItsFirstFrame() {
+        let origin = CGRect(x: 600, y: 29, width: 913, height: 700)
+        let target = CGRect(x: 702, y: 29, width: 701, height: 869)
+        let placement = placement(for: target)
+        XCTAssertEqual(placement.frame(for: origin, actualSize: origin.size, origin: origin, progress: 0), origin)
+        let final = placement.frame(for: target, actualSize: CGSize(width: 913, height: 869), origin: origin, progress: 1)
+        XCTAssertEqual(final.maxX, screen.maxX)
+    }
+
+    func testGapCorrectionMatchesNormalWindowBounds() {
+        let result = WindowFrameBounds.constrained(CGRect(x: 1000, y: 0, width: 600, height: 500), to: screen, gap: 10)
+        XCTAssertEqual(result.origin, CGPoint(x: 793, y: 39))
+        XCTAssertTrue(WindowFrameBounds.constrained(.null, to: screen, gap: 10).isNull)
+    }
+
+    func testFinalFrameIsAppliedBeforeCleanupAndOnlyOnce() {
+        var events: [String] = []
+        let destination = CGRect(x: 700, y: 29, width: 700, height: 869)
+        let animation = WindowFrameAnimation(from: .zero, to: destination, startTime: 0, duration: 0.34,
+                                             write: { _, _ in events.append("tick"); return true },
+                                             finalize: { frame in XCTAssertEqual(frame, destination); events.append("final") },
+                                             cleanup: { events.append("cleanup") },
+                                             completion: { _ in events.append("completion") })
+        animation.tick(at: 0.1)
+        animation.tick(at: 0.5)
+        animation.finish()
+        XCTAssertEqual(events, ["tick", "final", "cleanup", "completion"])
+    }
+
+    func testCancellationDoesNotWriteTheDestination() {
+        var events: [String] = []
+        let animation = WindowFrameAnimation(from: .zero, to: screen, startTime: 0, duration: 0.34,
+                                             write: { _, _ in true },
+                                             finalize: { _ in events.append("final") },
+                                             cleanup: { events.append("cleanup") },
+                                             completion: { _ in events.append("completion") })
+        animation.cancel()
+        animation.finish()
+        XCTAssertEqual(events, ["cleanup"])
+    }
+}
+
 class ClampedWindowAlignerTests: XCTestCase {
 
     // Screen 2000x1200 at origin. Coordinates are already screen-flipped (window space):
