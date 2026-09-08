@@ -46795,7 +46795,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unable to resize window smaller. Windows may overlap."
+            "value" : "Unable to resize window smaller.\nWindows may overlap."
           }
         }
       }
