@@ -273,6 +273,32 @@ class BandTilingTests: XCTestCase {
                                                          frameTolerance: 0.5).map(testLabel), [4])
     }
 
+    func testIdlessSelectionAppliesRoundingToleranceToEachFrameComponent() {
+        let frame = CGRect(x: -300, y: -20, width: 200, height: 100)
+        let window = candidate(TestElement(), frame: frame, identity: 1)
+        let roundedFrames = [
+            CGRect(x: -299.5, y: -19.5, width: 200.5, height: 100.5),
+            CGRect(x: -300.5, y: -20.5, width: 199.5, height: 99.5)
+        ]
+        for rounded in roundedFrames {
+            XCTAssertEqual(Manager.selectCurrentSpaceWindows([window],
+                visibleWindowInfo: [visible(101, frame: rounded)], frameTolerance: 0.5).map(testLabel), [1])
+        }
+
+        // No single component may exceed the tolerance, even if changes to
+        // position and size cancel out at the far edge.
+        let differentFrames = [
+            CGRect(x: -299.25, y: -20, width: 199.25, height: 100),
+            CGRect(x: -300, y: -19.25, width: 200, height: 99.25),
+            CGRect(x: -300.5, y: -20, width: 200.75, height: 100),
+            CGRect(x: -300, y: -20.5, width: 200, height: 100.75)
+        ]
+        for different in differentFrames {
+            XCTAssertTrue(Manager.selectCurrentSpaceWindows([window],
+                visibleWindowInfo: [visible(101, frame: different)], frameTolerance: 0.5).isEmpty)
+        }
+    }
+
     func testSelectionIncludesDistinctMatchesAcrossOverlappingTolerance() {
         let frames = [CGFloat(0), 0.5, 1].map {
             CGRect(x: $0, y: 20, width: 100, height: 100)

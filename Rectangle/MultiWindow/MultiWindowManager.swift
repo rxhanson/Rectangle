@@ -382,10 +382,12 @@ class MultiWindowManager {
 
     private static func framesMatch(_ first: CGRect, _ second: CGRect, tolerance: CGFloat) -> Bool {
         let tolerance = max(0, tolerance)
+        // AX and CG can round position and size independently. Comparing far
+        // edges would add those errors and reject an otherwise matching frame.
         return abs(first.minX - second.minX) <= tolerance
             && abs(first.minY - second.minY) <= tolerance
-            && abs(first.maxX - second.maxX) <= tolerance
-            && abs(first.maxY - second.maxY) <= tolerance
+            && abs(first.width - second.width) <= tolerance
+            && abs(first.height - second.height) <= tolerance
     }
 
     static func orderForBandTiling(_ windows: [TilingWindow], direction: BandDirection) -> [TilingWindow] {
