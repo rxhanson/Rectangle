@@ -75,7 +75,7 @@ class MultiWindowManager {
             ReverseAllManager.reverseAll(windowElement: parameters.windowElement)
             return true
         case .tileAll:
-            tileAllWindowsOnScreen(windowElement: parameters.windowElement)
+            tileAllWindowsOnScreen()
             return true
         case .tileRows:
             tileWindowsInBands(.rows)
@@ -145,38 +145,52 @@ class MultiWindowManager {
         return (screens, actualWindows)
     }
 
-    private static func tileWindowsInBands(_ direction: BandDirection) {
-        let screenDetection = ScreenDetection()
-        guard let focusedWindow = AccessibilityElement.getFocusedWindowElement(),
+    static func tilingContext(focusedWindow: AccessibilityElement?,
+                              screenDetection: ScreenDetection) -> (focusedWindow: AccessibilityElement?, screens: UsableScreens)? {
+        let eligibleFocus: AccessibilityElement?
+        if let focusedWindow,
               focusedWindow.isWindow == true,
               focusedWindow.isSheet != true,
               focusedWindow.isMinimized != true,
               focusedWindow.isHidden != true,
               focusedWindow.isSystemDialog != true,
-              !focusedWindow.frame.isNull
-        else { return }
+              !focusedWindow.frame.isNull {
+            eligibleFocus = focusedWindow
+        } else {
+            eligibleFocus = nil
+        }
+
+        let screens: UsableScreens?
+        if let eligibleFocus {
+            screens = screenDetection.detectScreens(using: eligibleFocus)
+        } else {
+            screens = screenDetection.detectScreensAtCursor()
+        }
+
+        return screens.map { (eligibleFocus, $0) }
+    }
+
+    private static func tileWindowsInBands(_ direction: BandDirection) {
+        let screenDetection = ScreenDetection()
+        guard let context = tilingContext(focusedWindow: AccessibilityElement.getFocusedWindowElement(),
+                                          screenDetection: screenDetection) else { return }
 
         // Reuse this new on-screen snapshot for AX app discovery and for Space
         // membership, even when another tiling action just moved windows.
         let visibleInfo = WindowUtil.getWindowList(forceRefresh: true)
-        guard let screens = screenDetection.detectScreens(using: focusedWindow) else {
-            NSSound.beep()
-            Logger.log("Can't detect screen for multiple windows")
-            return
-        }
-        let windows = windowsOnScreen(screens: screens,
+        let windows = windowsOnScreen(screens: context.screens,
                                       windows: AccessibilityElement.getAllWindowElements(from: visibleInfo),
                                       includeTodoWindow: true,
                                       screenFor: { screenDetection.detectScreens(using: $0)?.currentScreen }).windows
 
-        tileWindowsInBands(direction, focusedWindow: focusedWindow, windows: windows,
-                           visibleWindowInfo: visibleInfo, screen: screens.currentScreen)
+        tileWindowsInBands(direction, focusedWindow: context.focusedWindow, windows: windows,
+                           visibleWindowInfo: visibleInfo, screen: context.screens.currentScreen)
     }
 
-    static func tileWindowsInBands(_ direction: BandDirection, focusedWindow: AccessibilityElement,
+    static func tileWindowsInBands(_ direction: BandDirection, focusedWindow: AccessibilityElement?,
                                    windows: [AccessibilityElement], visibleWindowInfo: [WindowInfo],
                                    screen: NSScreen) {
-        guard focusedWindow.frame.screenFlipped.intersects(screen.frame) else { return }
+        guard focusedWindow?.frame.screenFlipped.intersects(screen.frame) != false else { return }
 
         var snapshots = windows.compactMap { window -> TilingWindow? in
             let frame = window.frame
@@ -190,7 +204,7 @@ class MultiWindowManager {
 
         // App discovery starts with CG's on-screen process list. The focused
         // AX window is independently known to be present even if CG omits it.
-        if !snapshots.contains(where: \.isFocused) {
+        if let focusedWindow, !snapshots.contains(where: \.isFocused) {
             snapshots.append(TilingWindow(element: focusedWindow,
                                           frame: focusedWindow.frame,
                                           windowId: focusedWindow.windowId,
@@ -437,12 +451,21 @@ class MultiWindowManager {
         return (lengths, true)
     }
 
-    static func tileAllWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
-        guard let (screens, windows) = allWindowsOnScreen(windowElement: windowElement, sortByPID: true) else {
-            return
-        }
+    static func tileAllWindowsOnScreen() {
+        let screenDetection = ScreenDetection()
+        guard let context = tilingContext(focusedWindow: AccessibilityElement.getFocusedWindowElement(),
+                                          screenDetection: screenDetection) else { return }
+        let windows = windowsOnScreen(screens: context.screens,
+                                      windows: AccessibilityElement.getAllWindowElements(),
+                                      sortByPID: true,
+                                      screenFor: { screenDetection.detectScreens(using: $0)?.currentScreen }).windows
+        tileAllWindowsOnScreen(windows: windows, screen: context.screens.currentScreen)
+    }
 
-        let screenFrame = screens.currentScreen.adjustedVisibleFrame().screenFlipped
+    static func tileAllWindowsOnScreen(windows: [AccessibilityElement], screen: NSScreen) {
+        guard !windows.isEmpty else { return }
+
+        let screenFrame = screen.adjustedVisibleFrame().screenFlipped
         let count = windows.count
 
         let columns = Int(ceil(sqrt(CGFloat(count))))

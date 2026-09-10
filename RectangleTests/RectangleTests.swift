@@ -28,11 +28,12 @@ class BandTilingTests: XCTestCase {
         var testIdentity: CFHashCode
         let reportedMinimumSize: CGSize?
         let canResize: Bool
+        let ordinaryWindow: Bool
 
         init(frame: CGRect = .zero, minimumHeight: CGFloat = 0, maximumWidth: CGFloat = .greatestFiniteMagnitude,
              minimumHeightAtOrigin: @escaping (CGFloat) -> CGFloat = { _ in 0 },
              windowId: CGWindowID? = nil, identity: CFHashCode = 0,
-             reportedMinimumSize: CGSize? = .zero, canResize: Bool = true) {
+             reportedMinimumSize: CGSize? = .zero, canResize: Bool = true, ordinaryWindow: Bool = true) {
             acceptedFrame = frame
             self.minimumHeight = minimumHeight
             self.maximumWidth = maximumWidth
@@ -41,6 +42,7 @@ class BandTilingTests: XCTestCase {
             testIdentity = identity
             self.reportedMinimumSize = reportedMinimumSize
             self.canResize = canResize
+            self.ordinaryWindow = ordinaryWindow
             super.init(identity == 0 ? AXUIElementCreateSystemWide()
                                      : AXUIElementCreateApplication(pid_t(10_000 + identity)))
         }
@@ -50,7 +52,7 @@ class BandTilingTests: XCTestCase {
         override var pid: pid_t? { 42 }
         override var minimumSize: CGSize? { reportedMinimumSize }
         override func isResizable() -> Bool { canResize }
-        override var isWindow: Bool? { true }
+        override var isWindow: Bool? { ordinaryWindow }
         override var isSheet: Bool? { false }
         override var isMinimized: Bool? { false }
         override var isHidden: Bool? { false }
@@ -82,6 +84,128 @@ class BandTilingTests: XCTestCase {
     private func scaled(_ rect: CGRect, by scale: CGFloat) -> CGRect {
         CGRect(x: rect.minX * scale, y: rect.minY * scale,
                width: rect.width * scale, height: rect.height * scale)
+    }
+
+    private final class TestScreen: NSScreen {
+        private let testFrame: CGRect
+
+        init(frame: CGRect) {
+            testFrame = frame
+            super.init()
+        }
+
+        override var frame: NSRect { testFrame }
+        override var visibleFrame: NSRect { testFrame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var backingScaleFactor: CGFloat { 1 }
+        override func convertRectToBacking(_ rect: NSRect) -> NSRect { rect }
+        override func convertRectFromBacking(_ rect: NSRect) -> NSRect { rect }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private final class TestScreenDetection: ScreenDetection {
+        let screens: [NSScreen]
+        let cursorScreen: NSScreen
+        private(set) var cursorDetections = 0
+
+        init(screens: [NSScreen], cursorScreen: NSScreen) {
+            self.screens = screens
+            self.cursorScreen = cursorScreen
+        }
+
+        override func detectScreens(using window: AccessibilityElement?) -> UsableScreens? {
+            window.flatMap { screenContaining($0.frame, screens: screens) }.map {
+                UsableScreens(currentScreen: $0, numScreens: screens.count)
+            }
+        }
+
+        override func detectScreensAtCursor() -> UsableScreens? {
+            cursorDetections += 1
+            return UsableScreens(currentScreen: cursorScreen, numScreens: screens.count)
+        }
+    }
+
+    func testTilingUsesFocusedDisplayOrPointerFallback() throws {
+        let left = TestScreen(frame: CGRect(x: -900, y: 0, width: 900, height: 600))
+        let right = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+
+        for cursorScreen in [left, right] {
+            let otherScreen = cursorScreen === left ? right : left
+            for hasFocus in [true, false] {
+                for action in [WindowAction.tileAll, .tileRows, .tileColumns] {
+                    let focused = TestElement(frame: otherScreen.frame.insetBy(dx: 100, dy: 100).screenFlipped,
+                                              windowId: 101, identity: 1)
+                    let underPointer = TestElement(frame: cursorScreen.frame.insetBy(dx: 100, dy: 100).screenFlipped,
+                                                   windowId: 102, identity: 2)
+                    let detection = TestScreenDetection(screens: [left, right], cursorScreen: cursorScreen)
+                    let context = try XCTUnwrap(Manager.tilingContext(focusedWindow: hasFocus ? focused : nil,
+                                                                      screenDetection: detection))
+                    let expectedScreen = hasFocus ? otherScreen : cursorScreen
+                    XCTAssertTrue(context.screens.currentScreen === expectedScreen)
+                    XCTAssertEqual(detection.cursorDetections, hasFocus ? 0 : 1)
+                    let windows = Manager.windowsOnScreen(screens: context.screens,
+                                                          windows: [focused, underPointer],
+                                                          includeTodoWindow: true,
+                                                          screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
+                    let visibleInfo = [visible(101, frame: focused.frame), visible(102, frame: underPointer.frame)]
+                    switch action {
+                    case .tileRows, .tileColumns:
+                        Manager.tileWindowsInBands(action == .tileRows ? .rows : .columns,
+                                                   focusedWindow: context.focusedWindow, windows: windows,
+                                                   visibleWindowInfo: visibleInfo, screen: context.screens.currentScreen)
+                    case .tileAll:
+                        Manager.tileAllWindowsOnScreen(windows: windows, screen: context.screens.currentScreen)
+                    default:
+                        XCTFail("Unexpected tiling action")
+                    }
+                    XCTAssertGreaterThan((hasFocus ? focused : underPointer).setFrameCalls, 0)
+                    XCTAssertEqual((hasFocus ? underPointer : focused).setFrameCalls, 0)
+                }
+            }
+        }
+    }
+
+    func testNonWindowFocusUsesPointerDisplay() throws {
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+        let desktop = TestElement(frame: screen.frame, ordinaryWindow: false)
+        let detection = TestScreenDetection(screens: [screen], cursorScreen: screen)
+        let context = try XCTUnwrap(Manager.tilingContext(focusedWindow: desktop, screenDetection: detection))
+        XCTAssertNil(context.focusedWindow)
+        XCTAssertTrue(context.screens.currentScreen === screen)
+        XCTAssertEqual(detection.cursorDetections, 1)
+        XCTAssertEqual(desktop.setFrameCalls, 0)
+    }
+
+    func testBandTilingWithoutFocusStillRequiresCurrentSpaceEvidence() {
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+        let frame = screen.frame.insetBy(dx: 100, dy: 100).screenFlipped
+        for direction in [Manager.BandDirection.rows, .columns] {
+            let currentSpace = TestElement(frame: frame, windowId: 101, identity: 1)
+            let otherSpace = TestElement(frame: frame, windowId: 999, identity: 2)
+            Manager.tileWindowsInBands(direction, focusedWindow: nil, windows: [currentSpace, otherSpace],
+                                       visibleWindowInfo: [visible(101, frame: frame)], screen: screen)
+            XCTAssertGreaterThan(currentSpace.setFrameCalls, 0)
+            XCTAssertEqual(otherSpace.setFrameCalls, 0)
+        }
+    }
+
+    func testEmptyPointerDisplayDoesNotMoveWindowsOnAnotherDisplay() throws {
+        let emptyScreen = TestScreen(frame: CGRect(x: -900, y: 0, width: 900, height: 600))
+        let occupiedScreen = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+        let window = TestElement(frame: occupiedScreen.frame.insetBy(dx: 100, dy: 100).screenFlipped,
+                                 windowId: 101, identity: 1)
+        let detection = TestScreenDetection(screens: [emptyScreen, occupiedScreen], cursorScreen: emptyScreen)
+        let context = try XCTUnwrap(Manager.tilingContext(focusedWindow: nil, screenDetection: detection))
+        let windows = Manager.windowsOnScreen(screens: context.screens, windows: [window], includeTodoWindow: true,
+                                              screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
+        XCTAssertTrue(windows.isEmpty)
+        for direction in [Manager.BandDirection.rows, .columns] {
+            Manager.tileWindowsInBands(direction, focusedWindow: nil, windows: windows,
+                                       visibleWindowInfo: [visible(101, frame: window.frame)], screen: emptyScreen)
+        }
+        Manager.tileAllWindowsOnScreen(windows: windows, screen: emptyScreen)
+        XCTAssertEqual(window.setFrameCalls, 0)
     }
 
     func testSelectionKeepsCoveredWindowsAndIdenticalOnScreenTwinsWithoutOtherSpaceWindows() {
@@ -193,7 +317,7 @@ class BandTilingTests: XCTestCase {
         let available = screen.singleDisplayTilingFrame().screenFlipped
         let bounds = Manager.BackingPixelBounds(screen.convertRectToBacking(screen.singleDisplayTilingFrame()))
         let screens = UsableScreens(currentScreen: screen, numScreens: NSScreen.screens.count)
-        let otherScreen = NSScreen()
+        let otherScreen = TestScreen(frame: screen.frame.offsetBy(dx: screen.frame.width, dy: 0))
         XCTAssertNotEqual(otherScreen, screen)
         let upperLeft = CGRect(x: available.minX + 10, y: available.minY + 10, width: 100, height: 100)
         let lowerRight = CGRect(x: available.minX + 60, y: available.minY + 60, width: 100, height: 100)
