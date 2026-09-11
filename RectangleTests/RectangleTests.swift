@@ -146,14 +146,14 @@ class BandTilingTests: XCTestCase {
                     XCTAssertEqual(detection.cursorDetections, hasFocus ? 0 : 1)
                     let windows = Manager.windowsOnScreen(screens: context.screens,
                                                           windows: [focused, underPointer],
-                                                          includeTodoWindow: true,
                                                           screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
                     let visibleInfo = [visible(101, frame: focused.frame), visible(102, frame: underPointer.frame)]
                     switch action {
                     case .tileRows, .tileColumns:
                         Manager.tileWindowsInBands(action == .tileRows ? .rows : .columns,
                                                    focusedWindow: context.focusedWindow, windows: windows,
-                                                   visibleWindowInfo: visibleInfo, screen: context.screens.currentScreen)
+                                                   visibleWindowInfo: visibleInfo, screen: context.screens.currentScreen,
+                                                   visibleFrame: context.screens.currentScreen.frame)
                     case .tileAll:
                         Manager.tileAllWindowsOnScreen(windows: windows, screen: context.screens.currentScreen)
                     default:
@@ -184,7 +184,8 @@ class BandTilingTests: XCTestCase {
             let currentSpace = TestElement(frame: frame, windowId: 101, identity: 1)
             let otherSpace = TestElement(frame: frame, windowId: 999, identity: 2)
             Manager.tileWindowsInBands(direction, focusedWindow: nil, windows: [currentSpace, otherSpace],
-                                       visibleWindowInfo: [visible(101, frame: frame)], screen: screen)
+                                       visibleWindowInfo: [visible(101, frame: frame)], screen: screen,
+                                       visibleFrame: screen.frame)
             XCTAssertGreaterThan(currentSpace.setFrameCalls, 0)
             XCTAssertEqual(otherSpace.setFrameCalls, 0)
         }
@@ -197,12 +198,13 @@ class BandTilingTests: XCTestCase {
                                  windowId: 101, identity: 1)
         let detection = TestScreenDetection(screens: [emptyScreen, occupiedScreen], cursorScreen: emptyScreen)
         let context = try XCTUnwrap(Manager.tilingContext(focusedWindow: nil, screenDetection: detection))
-        let windows = Manager.windowsOnScreen(screens: context.screens, windows: [window], includeTodoWindow: true,
+        let windows = Manager.windowsOnScreen(screens: context.screens, windows: [window],
                                               screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
         XCTAssertTrue(windows.isEmpty)
         for direction in [Manager.BandDirection.rows, .columns] {
             Manager.tileWindowsInBands(direction, focusedWindow: nil, windows: windows,
-                                       visibleWindowInfo: [visible(101, frame: window.frame)], screen: emptyScreen)
+                                       visibleWindowInfo: [visible(101, frame: window.frame)], screen: emptyScreen,
+                                       visibleFrame: emptyScreen.frame)
         }
         Manager.tileAllWindowsOnScreen(windows: windows, screen: emptyScreen)
         XCTAssertEqual(window.setFrameCalls, 0)
@@ -339,10 +341,10 @@ class BandTilingTests: XCTestCase {
     }
 
     func testBandActionComposesCurrentSpaceSelectionOrderingAndPlacement() throws {
-        guard let screen = NSScreen.screens.first else { throw XCTSkip("No macOS display available") }
-        let available = screen.singleDisplayTilingFrame().screenFlipped
-        let bounds = Manager.BackingPixelBounds(screen.convertRectToBacking(screen.singleDisplayTilingFrame()))
-        let screens = UsableScreens(currentScreen: screen, numScreens: NSScreen.screens.count)
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+        let available = screen.frame.screenFlipped
+        let bounds = Manager.BackingPixelBounds(screen.frame)
+        let screens = UsableScreens(currentScreen: screen, numScreens: 2)
         let otherScreen = TestScreen(frame: screen.frame.offsetBy(dx: screen.frame.width, dy: 0))
         XCTAssertNotEqual(otherScreen, screen)
         let upperLeft = CGRect(x: available.minX + 10, y: available.minY + 10, width: 100, height: 100)
@@ -354,15 +356,14 @@ class BandTilingTests: XCTestCase {
             let otherSpace = TestElement(frame: lowerRight, windowId: 999, identity: 3)
             let otherDisplay = TestElement(frame: lowerRight, windowId: 103, identity: 4)
             let windows = Manager.windowsOnScreen(screens: screens,
-                                                  windows: [focused, covered, otherSpace, otherDisplay],
-                                                  includeTodoWindow: true,
+                                                  windows: [covered, otherSpace, otherDisplay],
+                                                  focusedWindow: focused,
                                                   screenFor: { $0 === otherDisplay ? otherScreen : screen }).windows
             Manager.tileWindowsInBands(direction, focusedWindow: focused,
                                        windows: windows,
-                                       visibleWindowInfo: [visible(101, frame: upperLeft),
-                                                           visible(102, frame: lowerRight),
+                                       visibleWindowInfo: [visible(102, frame: lowerRight),
                                                            visible(103, frame: otherDisplay.frame)],
-                                       screen: screen)
+                                       screen: screen, visibleFrame: screen.frame)
 
             XCTAssertGreaterThan(focused.setFrameCalls, 0)
             XCTAssertGreaterThan(covered.setFrameCalls, 0)
@@ -389,37 +390,85 @@ class BandTilingTests: XCTestCase {
         }
     }
 
-    func testBandFilterIncludesTodoCandidate() throws {
-        guard let screen = NSScreen.screens.first else { throw XCTSkip("No macOS display available") }
-        let available = screen.singleDisplayTilingFrame().screenFlipped
-        let frame = CGRect(x: available.minX + 10, y: available.minY + 10, width: 100, height: 100)
-        let screens = UsableScreens(currentScreen: screen, numScreens: NSScreen.screens.count)
+    func testBandTilingExcludesTodoEvenWhenFocused() {
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
+        let screens = UsableScreens(currentScreen: screen, numScreens: 1)
+        let workArea = CGRect(x: 0, y: 0, width: 800, height: 600)
+        let sidebar = CGRect(x: 800, y: 0, width: 200, height: 600).screenFlipped
 
         for direction in [Manager.BandDirection.rows, .columns] {
-            let focused = TestElement(frame: frame, windowId: 701, identity: 1)
-            let todo = TestElement(frame: frame.offsetBy(dx: 30, dy: 30), windowId: 702, identity: 2)
-            let withoutTodo = Manager.windowsOnScreen(screens: screens, windows: [focused, todo],
-                                                       isActiveTodoWindow: { $0 === todo },
-                                                       screenFor: { _ in screen }).windows
-            XCTAssertEqual(withoutTodo.map(\.windowId), [701])
-            let withTodo = Manager.windowsOnScreen(screens: screens, windows: [focused, todo],
-                                                    includeTodoWindow: true,
-                                                    isActiveTodoWindow: { $0 === todo },
-                                                    screenFor: { _ in screen }).windows
-            XCTAssertEqual(withTodo.map(\.windowId), [701, 702])
-            Manager.tileWindowsInBands(direction, focusedWindow: focused, windows: withTodo,
-                                       visibleWindowInfo: [visible(701, frame: focused.frame),
-                                                           visible(702, frame: todo.frame)],
-                                       screen: screen)
+            for todoIsFocused in [false, true] {
+                let ordinary = TestElement(frame: workArea.insetBy(dx: 100, dy: 100).screenFlipped,
+                                           windowId: 701, identity: 1)
+                let todo = TestElement(frame: sidebar, windowId: 702, identity: 2)
+                let focused = todoIsFocused ? todo : ordinary
+                // Focus recovery must not reintroduce Todo after the exclusion.
+                let windows = Manager.windowsOnScreen(screens: screens,
+                                                      windows: todoIsFocused ? [ordinary] : [ordinary, todo],
+                                                      focusedWindow: focused,
+                                                      isActiveTodoWindow: { $0 === todo },
+                                                      screenFor: { _ in screen }).windows
+                XCTAssertEqual(windows.map(\.windowId), [701])
+                Manager.tileWindowsInBands(direction, focusedWindow: focused, windows: windows,
+                                           visibleWindowInfo: [visible(701, frame: ordinary.frame),
+                                                               visible(702, frame: todo.frame)],
+                                           screen: screen, visibleFrame: workArea)
 
-            XCTAssertGreaterThan(todo.setFrameCalls, 0)
+                XCTAssertGreaterThan(ordinary.setFrameCalls, 0)
+                XCTAssertEqual(ordinary.frame, workArea.screenFlipped)
+                XCTAssertEqual(todo.setFrameCalls, 0)
+                XCTAssertEqual(todo.frame, sidebar)
+            }
+        }
+    }
+
+    func testBandTilingHonorsCombinedDisplayBoundsAndSpaceSelection() {
+        let left = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+        let right = TestScreen(frame: CGRect(x: 900, y: 0, width: 900, height: 600))
+        let screens = UsableScreens(currentScreen: left, numScreens: 2)
+
+        for combineScreens in [false, true] {
+            for direction in [Manager.BandDirection.rows, .columns] {
+                let focused = TestElement(frame: left.frame.insetBy(dx: 100, dy: 100).screenFlipped,
+                                          windowId: 901, identity: 1)
+                let onRight = TestElement(frame: right.frame.insetBy(dx: 100, dy: 100).screenFlipped,
+                                          windowId: 902, identity: 2)
+                let otherSpace = TestElement(frame: onRight.frame, windowId: 999, identity: 3)
+                let originalRightFrame = onRight.frame
+                let windows = Manager.windowsOnScreen(screens: screens, windows: [focused, onRight, otherSpace],
+                                                      focusedWindow: focused, combineScreens: combineScreens,
+                                                      screenFor: { $0 === focused ? left : right }).windows
+                let workArea = combineScreens ? left.frame.union(right.frame) : left.frame
+                Manager.tileWindowsInBands(direction, focusedWindow: focused, windows: windows,
+                                           visibleWindowInfo: [visible(901, frame: focused.frame),
+                                                               visible(902, frame: onRight.frame)],
+                                           screen: left, visibleFrame: workArea)
+
+                XCTAssertEqual(otherSpace.setFrameCalls, 0)
+                XCTAssertEqual(otherSpace.frame, originalRightFrame)
+                if combineScreens {
+                    let first = direction == .rows
+                        ? CGRect(x: 0, y: 300, width: 1800, height: 300)
+                        : CGRect(x: 0, y: 0, width: 900, height: 600)
+                    let second = direction == .rows
+                        ? CGRect(x: 0, y: 0, width: 1800, height: 300)
+                        : CGRect(x: 900, y: 0, width: 900, height: 600)
+                    XCTAssertEqual(focused.frame, first.screenFlipped)
+                    XCTAssertEqual(onRight.frame, second.screenFlipped)
+                    XCTAssertGreaterThan(onRight.setFrameCalls, 0)
+                } else {
+                    XCTAssertEqual(focused.frame, left.frame.screenFlipped)
+                    XCTAssertEqual(onRight.frame, originalRightFrame)
+                    XCTAssertEqual(onRight.setFrameCalls, 0)
+                }
+            }
         }
     }
 
     func testBandActionDerivesFixedAndReportedMinimumConstraints() throws {
-        guard let screen = NSScreen.screens.first else { throw XCTSkip("No macOS display available") }
-        let available = screen.singleDisplayTilingFrame().screenFlipped
-        let bounds = Manager.BackingPixelBounds(screen.convertRectToBacking(screen.singleDisplayTilingFrame()))
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 900, height: 600))
+        let available = screen.frame.screenFlipped
+        let bounds = Manager.BackingPixelBounds(screen.frame)
 
         for direction in [Manager.BandDirection.rows, .columns] {
             let extent = bounds.extent(direction)
@@ -445,7 +494,7 @@ class BandTilingTests: XCTestCase {
                                        visibleWindowInfo: [visible(501, frame: fixed.frame),
                                                            visible(502, frame: minimum.frame),
                                                            visible(503, frame: flexible.frame)],
-                                       screen: screen)
+                                       screen: screen, visibleFrame: screen.frame)
 
             let lengths = elements.map { element in
                 let size = screen.convertRectToBacking(element.frame.screenFlipped).size
@@ -640,21 +689,6 @@ class BandTilingTests: XCTestCase {
         XCTAssertEqual(elements.map { $0.frame.minY }, [400, 200, 0])
     }
 
-    func testTodoReservationRequiresTheWindowToOccupyThePinnedStrip() {
-        let visible = CGRect(x: 0, y: 0, width: 1000, height: 900)
-        let expected = CGRect(x: 800, y: 0, width: 200, height: 900)
-        XCTAssertTrue(TodoManager.isPinnedSidebarFrame(expected, expected: expected, backingScale: 2))
-        XCTAssertTrue(TodoManager.isPinnedSidebarFrame(expected.offsetBy(dx: 0.5, dy: 0),
-                                                        expected: expected, backingScale: 2))
-        XCTAssertFalse(TodoManager.isPinnedSidebarFrame(CGRect(x: 0, y: 0, width: 1000, height: 450),
-                                                         expected: expected, backingScale: 2))
-        XCTAssertEqual(TodoManager.workAreaForPinnedSidebar(visibleFrame: visible,
-                                                             sidebarWidth: 200, isRightSide: true),
-                       CGRect(x: 0, y: 0, width: 800, height: 900))
-        XCTAssertEqual(TodoManager.workAreaForPinnedSidebar(visibleFrame: visible,
-                                                             sidebarWidth: 200, isRightSide: false),
-                       CGRect(x: 200, y: 0, width: 800, height: 900))
-    }
 }
 
 class PositionCyclesTests: XCTestCase {

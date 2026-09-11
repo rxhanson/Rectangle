@@ -35,13 +35,13 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
-### Tile windows on one display
+### Tile windows in rows or columns
 
-In Settings > General, click **Extras** to assign separate keys to **Tile Windows in Rows** and **Tile Windows in Columns**. Each action arranges ordinary windows in the current Space on the display containing the focused window, including windows covered by others. When no ordinary window is focused, the display under the mouse pointer is used instead. **Tile All** uses the same display-selection rule. Windows on another display stay in place, and an empty target display does nothing. Rows run from top to bottom; columns run from left to right. Within either direction, Rectangle uses the windows' upper-left positions before moving them to choose their order.
+In Settings > General, click **Extras** to assign separate keys to **Tile Windows in Rows** and **Tile Windows in Columns**. Each action arranges ordinary windows in the current Space on the display containing the focused window, including windows covered by others. When no ordinary window is focused, the display under the mouse pointer is used instead. **Tile All** uses the same display-selection rule. Normally, windows on another display stay in place, and an empty target display does nothing. When Rectangle's combined-display mode is enabled and macOS "Displays have separate Spaces" is disabled, Rows and Columns instead tile across the combined display area. Rows run from top to bottom; columns run from left to right. Within either direction, Rectangle uses the windows' upper-left positions before moving them to choose their order.
 
-The bands fill the selected display's area inside macOS reservations (such as the menu bar and Dock) and Rectangle's configured screen-edge gaps when the apps allow it. For example, three unconstrained windows in 900 available display pixels receive 300 pixels each; if one needs at least 500, the other two receive 200 each. If an app refuses a full-width row or full-height column, Rectangle still attempts the layout, which may leave a gap or overlap. If an app does not respond in time, the layout may remain partial.
+The bands fill the selected work area inside macOS reservations (such as the menu bar and Dock) and Rectangle's configured screen-edge gaps when the apps allow it. For example, three unconstrained windows in 900 available display pixels receive 300 pixels each; if one needs at least 500, the other two receive 200 each. If an app refuses a full-width row or full-height column, Rectangle still attempts the layout, which may leave a gap or overlap. If an app does not respond in time, the layout may remain partial.
 
-When Todo Mode is active, its window participates in tiling. Moving it out of its pinned sidebar lets later ordinary actions use the full work area. An explicit Todo reflow restores the sidebar; the saved Todo Mode setting stays enabled.
+The Todo window is excluded using the same rules as Rectangle's other multi-window actions. The bands respect the existing Todo sidebar reservation. For example, with 1000 pixels available and a 200-pixel sidebar reservation, the other windows tile within the remaining 800 pixels while Todo stays in place.
 
 ### Ignore an app
 
