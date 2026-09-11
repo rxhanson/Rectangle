@@ -14,6 +14,43 @@ class RectangleTests: XCTestCase {
     }
 }
 
+class WindowActionMenuTests: XCTestCase {
+
+    func testRowsAndColumnsShareOptionalSubmenu() throws {
+        for showAdditional in [false, true] {
+            let menu = makeMenu(showAdditional: showAdditional, showAllActions: false)
+            let tilingItems = menu.items.filter { item in
+                item.submenu?.items.contains { $0.representedObject as? WindowAction == .tileRows } == true
+            }
+            XCTAssertEqual(tilingItems.count, 1)
+            let tilingItem = try XCTUnwrap(tilingItems.first)
+            XCTAssertEqual(tilingItem.submenu?.items.compactMap { $0.representedObject as? WindowAction },
+                           [.tileRows, .tileColumns])
+            XCTAssertEqual(tilingItem.isHidden, !showAdditional)
+            let topLevelActions = menu.items.compactMap { $0.representedObject as? WindowAction }
+            XCTAssertFalse(topLevelActions.contains(.tileRows))
+            XCTAssertFalse(topLevelActions.contains(.tileColumns))
+            XCTAssertTrue(topLevelActions.contains(.maximize))
+        }
+    }
+
+    func testShowAllActionsKeepsRowsAndColumnsFlat() {
+        let menu = makeMenu(showAdditional: false, showAllActions: true)
+        let visibleActions = menu.items.filter { !$0.isHidden }.compactMap { $0.representedObject as? WindowAction }
+        XCTAssertTrue(visibleActions.contains(.tileRows))
+        XCTAssertTrue(visibleActions.contains(.tileColumns))
+        XCTAssertFalse(menu.items.contains { $0.submenu != nil })
+    }
+
+    private func makeMenu(showAdditional: Bool, showAllActions: Bool) -> NSMenu {
+        let menu = NSMenu()
+        let delegate = AppDelegate()
+        delegate.mainStatusMenu = menu
+        delegate.addWindowActionMenuItems(showAdditional: showAdditional, showAllActions: showAllActions)
+        return menu
+    }
+}
+
 class BandTilingTests: XCTestCase {
 
     private typealias Manager = MultiWindowManager

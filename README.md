@@ -37,6 +37,8 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 
 ### Tile windows in rows or columns
 
+Enable **Show additional sizes in menu** to include Rows and Columns in the **Tiling** submenu. Their keyboard shortcuts remain available when the submenu is hidden.
+
 In Settings > General, click **Extras** to assign separate keys to **Tile Windows in Rows** and **Tile Windows in Columns**. Each action arranges ordinary windows in the current Space on the display containing the focused window, including windows covered by others. When no ordinary window is focused, the display under the mouse pointer is used instead. **Tile All** uses the same display-selection rule. Normally, windows on another display stay in place, and an empty target display does nothing. When Rectangle's combined-display mode is enabled and macOS "Displays have separate Spaces" is disabled, Rows and Columns instead tile across the combined display area. Rows run from top to bottom; columns run from left to right. Within either direction, Rectangle uses the windows' upper-left positions before moving them to choose their order.
 
 The bands fill the selected work area inside macOS reservations (such as the menu bar and Dock) and Rectangle's configured screen-edge gaps when the apps allow it. For example, three unconstrained windows in 900 available display pixels receive 300 pixels each; if one needs at least 500, the other two receive 200 each. If an app refuses a full-width row or full-height column, Rectangle still attempts the layout, which may leave a gap or overlap. If an app does not respond in time, the layout may remain partial.

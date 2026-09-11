@@ -41160,6 +41160,17 @@
         }
       }
     },
+    "Tiling" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiling"
+          }
+        }
+      }
+    },
     "Tiling in macOS has been disabled" : {
       "extractionState" : "manual",
       "localizations" : {
