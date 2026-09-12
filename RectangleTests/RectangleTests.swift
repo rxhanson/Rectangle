@@ -4282,6 +4282,45 @@ class ClampedWindowAlignerTests: XCTestCase {
         XCTAssertTrue(result.equalTo(window))
     }
 
+    // A maximize against a Dock on the right comes back a point narrow (see #1852). Centering
+    // that shortfall would put the window at x=1 and leave a visible gap on the left edge.
+
+    func testMaximizeOnePointNarrowStaysPut() {
+        let zone = CGRect(x: 0, y: 0, width: 1679, height: 1079)
+        let window = CGRect(x: 0, y: 0, width: 1678, height: 1079)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.left, .right, .top, .bottom])
+        XCTAssertTrue(result.equalTo(window))
+    }
+
+    func testRightHalfOnePointNarrowStaysPut() {
+        let zone = CGRect(x: 840, y: 0, width: 839, height: 1079)
+        let window = CGRect(x: 840, y: 0, width: 838, height: 1079)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertTrue(result.equalTo(window))
+    }
+
+    func testOnePointShortHeightStaysPut() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 1000, y: 0, width: 1000, height: 1199)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertTrue(result.equalTo(window))
+    }
+
+    func testShortfallJustOverToleranceStillAligns() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 1000, y: 0, width: 998.5, height: 1200)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertEqual(result.origin.x, 1001.5, accuracy: 0.001) // zone.maxX - width = 2000 - 998.5
+    }
+
+    func testOnePointNarrowLeavesOtherAxisAlignmentIntact() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 1000, y: 0, width: 999, height: 800) // a point narrow, genuinely short
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        XCTAssertEqual(result.origin.x, 1000, accuracy: 0.001) // width within tolerance, left alone
+        XCTAssertEqual(result.origin.y, 200, accuracy: 0.001)  // height still centered: (1200-800)/2
+    }
+
     func testEdgesAndCornersAlignmentKeepsHalfEdges() {
         let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
         let rightHalf = CGRect(x: 1000, y: 0, width: 1000, height: 1200)

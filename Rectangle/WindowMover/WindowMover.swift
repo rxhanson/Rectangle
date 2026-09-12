@@ -14,10 +14,16 @@ protocol WindowMover {
 /// `.top` edge corresponds to maxY and `.bottom` to minY (matching the rest of Rectangle).
 enum ClampedWindowAligner {
 
+    /// A window may come back a hair smaller than its zone without being clamped in any
+    /// meaningful sense: macOS shortens an AX size change that grows a window onto the Dock
+    /// edge by a point. Realigning that shortfall moves the gap off the Dock edge, where it
+    /// was invisible, onto an opposite edge where it is not, so leave the axis alone instead.
+    static let alignmentTolerance: CGFloat = 1.0
+
     static func aligned(window: CGRect, inZone zone: CGRect, sharedEdges: Edge) -> CGRect {
         var result = window
 
-        if window.width != zone.width {
+        if abs(window.width - zone.width) > alignmentTolerance {
             if sharedEdges.contains(.left), !sharedEdges.contains(.right) {
                 result.origin.x = zone.minX
             } else if sharedEdges.contains(.right), !sharedEdges.contains(.left) {
@@ -27,7 +33,7 @@ enum ClampedWindowAligner {
             }
         }
 
-        if window.height != zone.height {
+        if abs(window.height - zone.height) > alignmentTolerance {
             if sharedEdges.contains(.top), !sharedEdges.contains(.bottom) {
                 result.origin.y = zone.maxY - window.height
             } else if sharedEdges.contains(.bottom), !sharedEdges.contains(.top) {
