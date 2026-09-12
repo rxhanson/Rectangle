@@ -2428,10 +2428,10 @@
                                                                 </customSpacing>
                                                             </stackView>
                                                             <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="18" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Qa-C8-rbw">
-                                                                <rect key="frame" x="84" y="28" width="261" height="19"/>
+                                                                <rect key="frame" x="55" y="28" width="290" height="19"/>
                                                                 <subviews>
                                                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GJ7-ha-Hpw">
-                                                                        <rect key="frame" x="0.0" y="2" width="83" height="16"/>
+                                                                        <rect key="frame" x="0.0" y="2" width="112" height="16"/>
                                                                         <subviews>
                                                                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5eO-XA-d6k">
                                                                                 <rect key="frame" x="-2" y="0.0" width="58" height="16"/>
@@ -2537,12 +2537,8 @@
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
                                                             <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
                                                         </visibilityPriorities>
                                                         <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
                                                             <real value="3.4028234663852886e+38"/>
@@ -4579,5 +4575,7 @@ DQ
         <image name="topRightTemplate" width="30" height="20"/>
         <image name="wallpaperTiger" width="400" height="250"/>
         <image name="wallpaperTigerVertical" width="250" height="400"/>
+        <image name="tileRowsTemplate" width="30" height="20"/>
+        <image name="tileColumnsTemplate" width="30" height="20"/>
     </resources>
 </document>

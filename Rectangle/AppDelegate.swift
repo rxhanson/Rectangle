@@ -396,10 +396,10 @@ extension AppDelegate: NSMenuDelegate {
         windowAction.postMenu()
     }
     
-    func addWindowActionMenuItems() {
-        let additionalSizeCategories: Set<WindowActionCategory> = [.eighths, .ninths, .twelfths, .sixteenths]
+    func addWindowActionMenuItems(showAdditional: Bool = Defaults.showAdditionalSizesInMenu.userEnabled,
+                                  showAllActions: Bool = Defaults.showAllActionsInMenu.userEnabled) {
+        let additionalSizeCategories: Set<WindowActionCategory> = [.eighths, .ninths, .twelfths, .sixteenths, .tiling]
         let submenuOnlyWhenAdditional: Set<WindowActionCategory> = [.thirds, .size]
-        let showAdditional = Defaults.showAdditionalSizesInMenu.userEnabled
         var menuIndex = 0
         var categoryMenus: [CategoryMenu] = []
         for action in WindowAction.active {
@@ -407,7 +407,7 @@ extension AppDelegate: NSMenuDelegate {
             let newMenuItem = NSMenuItem(title: displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
             newMenuItem.representedObject = action
 
-            if !Defaults.showAllActionsInMenu.userEnabled, let category = action.category {
+            if !showAllActions, let category = action.category {
                 // When additional sizes are off, keep Thirds and Size as flat items
                 if submenuOnlyWhenAdditional.contains(category) && !showAdditional {
                     // Fall through to flat item handling below
@@ -441,7 +441,7 @@ extension AppDelegate: NSMenuDelegate {
                 categoryMenu.menu.delegate = self
                 let menuMenuItem = NSMenuItem(title: categoryMenu.category.displayName, action: nil, keyEquivalent: "")
                 if additionalSizeCategories.contains(categoryMenu.category) {
-                    menuMenuItem.isHidden = !Defaults.showAdditionalSizesInMenu.userEnabled
+                    menuMenuItem.isHidden = !showAdditional
                     additionalSizeMenuItems.append(menuMenuItem)
                 }
                 mainStatusMenu.insertItem(menuMenuItem, at: menuIndex)

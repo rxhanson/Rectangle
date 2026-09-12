@@ -42,6 +42,7 @@ class SettingsViewController: NSViewController {
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
+    private var tilingShortcutViews = [MASShortcutView]()
     
     private var cycleSizeCheckboxes = [NSButton]()
     private var cornerCycleExpansionAxisButtons = [NSButton]()
@@ -114,6 +115,8 @@ class SettingsViewController: NSViewController {
         let newSetting: Bool = sender.state == .on
         Defaults.allowAnyShortcut.enabled = newSetting
         Notification.Name.allowAnyShortcut.post(object: newSetting)
+        let validator = newSetting ? PassthroughShortcutValidator() : MASShortcutValidator()
+        tilingShortcutViews.forEach { $0.shortcutValidator = validator }
     }
     
     @objc func toggleShowAdditionalSizesInMenu(_ sender: NSButton) {
@@ -322,6 +325,17 @@ class SettingsViewController: NSViewController {
             headerLabel.alignment = .center
             headerLabel.translatesAutoresizingMaskIntoConstraints = false
 
+            let tileRowsLabel = NSTextField(labelWithString: NSLocalizedString("tileRows.title", tableName: "Main", value: "Tile Windows in Rows", comment: ""))
+            tileRowsLabel.alignment = .right
+            tileRowsLabel.translatesAutoresizingMaskIntoConstraints = false
+            let tileColumnsLabel = NSTextField(labelWithString: NSLocalizedString("tileColumns.title", tableName: "Main", value: "Tile Windows in Columns", comment: ""))
+            tileColumnsLabel.alignment = .right
+            tileColumnsLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let tileRowsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            let tileColumnsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+            tilingShortcutViews = [tileRowsShortcutView, tileColumnsShortcutView]
+
             let largerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Larger Width", tableName: "Main", value: "", comment: ""))
             largerWidthLabel.alignment = .right
             let smallerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Smaller Width", tableName: "Main", value: "", comment: ""))
@@ -466,6 +480,9 @@ class SettingsViewController: NSViewController {
                 vSplitPopUpButton?.selectCurrentValue()
             }
 
+            tileRowsShortcutView.setAssociatedUserDefaultsKey(WindowAction.tileRows.name, withTransformerName: MASDictionaryTransformerName)
+            tileColumnsShortcutView.setAssociatedUserDefaultsKey(WindowAction.tileColumns.name, withTransformerName: MASDictionaryTransformerName)
+
             largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
             smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
             
@@ -486,6 +503,8 @@ class SettingsViewController: NSViewController {
 
             if Defaults.allowAnyShortcut.enabled {
                 let passThroughValidator = PassthroughShortcutValidator()
+                tileRowsShortcutView.shortcutValidator = passThroughValidator
+                tileColumnsShortcutView.shortcutValidator = passThroughValidator
                 largerWidthShortcutView.shortcutValidator = passThroughValidator
                 smallerWidthShortcutView.shortcutValidator = passThroughValidator
                 topVerticalThirdShortcutView.shortcutValidator = passThroughValidator
@@ -502,6 +521,14 @@ class SettingsViewController: NSViewController {
                 bottomCenterRightEighthShortcutView.shortcutValidator = passThroughValidator
                 bottomRightEighthShortcutView.shortcutValidator = passThroughValidator
             }
+
+            let tileRowsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            tileRowsIcon.image = WindowAction.tileRows.image
+            tileRowsIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let tileColumnsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
+            tileColumnsIcon.image = WindowAction.tileColumns.image
+            tileColumnsIcon.image?.size = NSSize(width: 21, height: 14)
 
             let largerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             largerWidthIcon.image = WindowAction.largerWidth.image
@@ -562,6 +589,20 @@ class SettingsViewController: NSViewController {
             let bottomRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             bottomRightEighthIcon.image = WindowAction.bottomRightEighth.image
             bottomRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
+
+            let tileRowsLabelStack = NSStackView()
+            tileRowsLabelStack.orientation = .horizontal
+            tileRowsLabelStack.alignment = .centerY
+            tileRowsLabelStack.spacing = 8
+            tileRowsLabelStack.addArrangedSubview(tileRowsLabel)
+            tileRowsLabelStack.addArrangedSubview(tileRowsIcon)
+
+            let tileColumnsLabelStack = NSStackView()
+            tileColumnsLabelStack.orientation = .horizontal
+            tileColumnsLabelStack.alignment = .centerY
+            tileColumnsLabelStack.spacing = 8
+            tileColumnsLabelStack.addArrangedSubview(tileColumnsLabel)
+            tileColumnsLabelStack.addArrangedSubview(tileColumnsIcon)
 
             let largerWidthLabelStack = NSStackView()
             largerWidthLabelStack.orientation = .horizontal
@@ -667,6 +708,20 @@ class SettingsViewController: NSViewController {
             bottomRightEighthLabelStack.spacing = 8
             bottomRightEighthLabelStack.addArrangedSubview(bottomRightEighthLabel)
             bottomRightEighthLabelStack.addArrangedSubview(bottomRightEighthIcon)
+
+            let tileRowsRow = NSStackView()
+            tileRowsRow.orientation = .horizontal
+            tileRowsRow.alignment = .centerY
+            tileRowsRow.spacing = 18
+            tileRowsRow.addArrangedSubview(tileRowsLabelStack)
+            tileRowsRow.addArrangedSubview(tileRowsShortcutView)
+
+            let tileColumnsRow = NSStackView()
+            tileColumnsRow.orientation = .horizontal
+            tileColumnsRow.alignment = .centerY
+            tileColumnsRow.spacing = 18
+            tileColumnsRow.addArrangedSubview(tileColumnsLabelStack)
+            tileColumnsRow.addArrangedSubview(tileColumnsShortcutView)
 
             let largerWidthRow = NSStackView()
             largerWidthRow.orientation = .horizontal
@@ -808,6 +863,9 @@ class SettingsViewController: NSViewController {
 
             mainStackView.addArrangedSubview(headerLabel)
             mainStackView.setCustomSpacing(10, after: headerLabel)
+            mainStackView.addArrangedSubview(tileRowsRow)
+            mainStackView.addArrangedSubview(tileColumnsRow)
+            mainStackView.setCustomSpacing(10, after: tileColumnsRow)
             mainStackView.addArrangedSubview(largerWidthRow)
             mainStackView.addArrangedSubview(smallerWidthRow)
             mainStackView.addArrangedSubview(widthStepRow)
@@ -896,6 +954,8 @@ class SettingsViewController: NSViewController {
                 sixteenthsCyclingShortcutView.shortcutValidator = passThroughValidator
             }
             shortcutRecordingObserver.observe([
+                tileRowsShortcutView,
+                tileColumnsShortcutView,
                 largerWidthShortcutView,
                 smallerWidthShortcutView,
                 topVerticalThirdShortcutView,
@@ -992,6 +1052,8 @@ class SettingsViewController: NSViewController {
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 splitRatioHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                tileRowsLabel.widthAnchor.constraint(equalTo: tileColumnsLabel.widthAnchor),
+                tileColumnsLabel.widthAnchor.constraint(equalTo: largerWidthLabel.widthAnchor),
                 largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
                 smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
                 widthStepLabel.widthAnchor.constraint(equalTo: topVerticalThirdLabel.widthAnchor),
@@ -1015,6 +1077,8 @@ class SettingsViewController: NSViewController {
                 stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
                 largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
+                tileRowsShortcutView.widthAnchor.constraint(equalToConstant: 160),
+                tileColumnsShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.widthAnchor.constraint(equalToConstant: 160),
@@ -1041,6 +1105,8 @@ class SettingsViewController: NSViewController {
                 twelfthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 sixteenthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
                 widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
+                tileRowsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
+                tileColumnsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
                 stackBadgeCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
