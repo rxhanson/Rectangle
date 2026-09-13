@@ -11,6 +11,8 @@ class SnapAreaViewController: NSViewController {
     @IBOutlet weak var experimentalWindowAnimationsCheckbox: NSButton!
     @IBOutlet weak var hapticFeedbackCheckbox: NSButton!
     @IBOutlet weak var missionControlDraggingCheckbox: NSButton!
+    private let blurAppearanceSelect = NSPopUpButton(frame: .zero, pullsDown: false)
+    private let windowAnimationStyleSelect = NSPopUpButton(frame: .zero, pullsDown: false)
 
     @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
     @IBOutlet weak var topLandscapeSelect: NSPopUpButton!
@@ -53,11 +55,75 @@ class SnapAreaViewController: NSViewController {
 
     @IBAction func toggleBlurFootprint(_ sender: NSButton) {
         Defaults.footprintBlur.enabled = sender.state == .on
+        refreshWindowAnimationPreferences()
     }
 
     @IBAction func toggleExperimentalWindowAnimations(_ sender: NSButton) {
         Defaults.experimentalWindowAnimations.enabled = sender.state == .on
-        if sender.state == .off { WindowAnimator.shared.finish() }
+        refreshWindowAnimationPreferences()
+        Notification.Name.windowAnimationPreferencesChanged.post()
+    }
+
+    private func refreshWindowAnimationPreferences() {
+        Defaults.normalizeWindowAnimationPreferences()
+        blurFootprintCheckbox.state = Defaults.footprintBlur.enabled ? .on : .off
+        blurFootprintCheckbox.isEnabled = !(Defaults.experimentalWindowAnimations.enabled && Defaults.windowAnimationStyle.value == .frosted)
+        experimentalWindowAnimationsCheckbox.state = Defaults.experimentalWindowAnimations.enabled ? .on : .off
+        windowAnimationStyleSelect.selectItem(withTag: Defaults.windowAnimationStyle.value.rawValue)
+        windowAnimationStyleSelect.isEnabled = Defaults.experimentalWindowAnimations.enabled
+        blurAppearanceSelect.selectItem(withTag: Defaults.blurAppearance.value.rawValue)
+        blurAppearanceSelect.isEnabled = Defaults.footprintBlur.enabled
+    }
+
+    private func configureWindowAnimationStyle() {
+        guard let stack = experimentalWindowAnimationsCheckbox.superview as? NSStackView,
+              let index = stack.arrangedSubviews.firstIndex(of: experimentalWindowAnimationsCheckbox) else { return }
+        let label = NSTextField(labelWithString: NSLocalizedString("Animation style", tableName: "Main", comment: "Window animation style setting"))
+        for (style, title) in [(WindowAnimationStyle.frosted, NSLocalizedString("Blue preview", tableName: "Main", comment: "Window animation style using a blue preview")),
+                               (.direct, NSLocalizedString("Direct resize", tableName: "Main", comment: "Animate the actual window's position and size"))] {
+            windowAnimationStyleSelect.addItem(withTitle: title)
+            windowAnimationStyleSelect.lastItem?.tag = style.rawValue
+        }
+        windowAnimationStyleSelect.setAccessibilityLabel(label.stringValue)
+        windowAnimationStyleSelect.target = self
+        windowAnimationStyleSelect.action = #selector(setWindowAnimationStyle(_:))
+        let row = NSStackView(views: [label, windowAnimationStyleSelect])
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 8
+        stack.insertArrangedSubview(row, at: index + 1)
+    }
+
+    @objc private func setWindowAnimationStyle(_ sender: NSPopUpButton) {
+        guard let style = WindowAnimationStyle(rawValue: sender.selectedTag()) else { return }
+        Defaults.windowAnimationStyle.value = style
+        refreshWindowAnimationPreferences()
+        Notification.Name.windowAnimationPreferencesChanged.post()
+    }
+
+    private func configureBlurAppearance() {
+        guard let stack = blurFootprintCheckbox.superview as? NSStackView else { return }
+        let label = NSTextField(labelWithString: NSLocalizedString("Blur appearance", tableName: "Main", comment: "Preview blur appearance setting"))
+        let titles = [NSLocalizedString("Follow System", tableName: "Main", comment: "Use the system appearance"),
+                      NSLocalizedString("Light", tableName: "Main", comment: "Light preview blur"),
+                      NSLocalizedString("Dark", tableName: "Main", comment: "Dark preview blur")]
+        for (mode, title) in zip(BlurAppearance.allCases, titles) {
+            blurAppearanceSelect.addItem(withTitle: title)
+            blurAppearanceSelect.lastItem?.tag = mode.rawValue
+        }
+        blurAppearanceSelect.setAccessibilityLabel(label.stringValue)
+        blurAppearanceSelect.target = self
+        blurAppearanceSelect.action = #selector(setBlurAppearance(_:))
+        let row = NSStackView(views: [label, blurAppearanceSelect])
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 8
+        stack.addArrangedSubview(row)
+    }
+
+    @objc private func setBlurAppearance(_ sender: NSPopUpButton) {
+        guard let appearance = BlurAppearance(rawValue: sender.selectedTag()) else { return }
+        Defaults.blurAppearance.value = appearance
     }
     
     @IBAction func toggleHapticFeedback(_ sender: NSButton) {
@@ -92,17 +158,19 @@ class SnapAreaViewController: NSViewController {
     }
     
     override func viewDidLoad() {
+        configureWindowAnimationStyle()
+        configureBlurAppearance()
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
         animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
-        blurFootprintCheckbox.state = Defaults.footprintBlur.enabled ? .on : .off
-        experimentalWindowAnimationsCheckbox.state = Defaults.experimentalWindowAnimations.enabled ? .on : .off
+        refreshWindowAnimationPreferences()
         hapticFeedbackCheckbox.state = Defaults.hapticFeedbackOnSnap.userEnabled ? .on : .off
         missionControlDraggingCheckbox.state = Defaults.missionControlDragging.userDisabled ? .on : .off
         missionControlDraggingCheckbox.isHidden = !Defaults.missionControlDragging.userDisabled
         showHidePortrait()
         
         Notification.Name.configImported.onPost(using: { [weak self] _ in
+            self?.refreshWindowAnimationPreferences()
             self?.loadSnapAreas()
         })
         Notification.Name.defaultSnapAreas.onPost(using: { [weak self] _ in
@@ -126,9 +194,8 @@ class SnapAreaViewController: NSViewController {
     // Only load the selects when the view appears, to fix a performance issue where switching to this tab was taking a long time to load
     var selectsLoaded = false
     override func viewWillAppear() {
-        blurFootprintCheckbox.state = Defaults.footprintBlur.enabled ? .on : .off
+        refreshWindowAnimationPreferences()
         animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
-        experimentalWindowAnimationsCheckbox.state = Defaults.experimentalWindowAnimations.enabled ? .on : .off
         if !selectsLoaded {
             loadSnapAreas()
             selectsLoaded = true

@@ -40,6 +40,7 @@ class TitleBarManager {
             return
         }
         lastEventNumber = event.eventNumber
+        let isTitleBarSpacer = element.isTitleBarSpacer(in: titleBarFrame)
         
         var bundleIdentifier: String?
         if let pid = element.pid {
@@ -57,7 +58,7 @@ class TitleBarManager {
         }
         guard
             titleBarFrame.contains(location),
-            element.isWindow == true || element.isToolbar == true || element.isGroup == true || element.isTabGroup == true || element.isStaticText == true
+            element.isWindow == true || element.isToolbar == true || element.isGroup == true || element.isTabGroup == true || element.isStaticText == true || isTitleBarSpacer
         else {
             return
         }
@@ -66,17 +67,24 @@ class TitleBarManager {
             ignoredApps.contains(bundleIdentifier) {
             return
         }
-        if Defaults.doubleClickTitleBarRestore.enabled != false,
-           let windowId = windowElement.windowId,
-           case let windowFrame = windowElement.frame,
-           windowFrame != .null,
-           let historyAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
-           historyAction.action == action,
-           historyAction.rect == windowFrame {
-            WindowAction.restore.postTitleBar(windowElement: windowElement)
-            return
-        }
-        action.postTitleBar(windowElement: windowElement)
+        let historyAction = windowElement.windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
+        let resolvedAction = Self.resolveAction(action,
+            restoreEnabled: Defaults.doubleClickTitleBarRestore.enabled != false,
+            windowFrame: windowElement.frame,
+            pendingFrame: WindowAnimator.shared.logicalFrame(for: windowElement),
+            lastAction: historyAction)
+        resolvedAction.postTitleBar(windowElement: windowElement)
+    }
+
+    static func resolveAction(_ action: WindowAction, restoreEnabled: Bool,
+                              windowFrame: CGRect, pendingFrame: CGRect?,
+                              lastAction: RectangleAction?) -> WindowAction {
+        // During an animation the real window may be parked away from its target.
+        let frame = pendingFrame ?? windowFrame
+        guard restoreEnabled, frame != .null,
+              let lastAction, lastAction.action == action, lastAction.rect == frame
+        else { return action }
+        return .restore
     }
 }
 

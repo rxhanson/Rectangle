@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200030000000000000002 /* WindowAnimationCurves.swift */; };
+		AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200010000000000000002 /* DirectWindowAnimator.swift */; };
+		FA0909000000000000000001 /* WindowFrostBackdrop.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0909000000000000000002 /* WindowFrostBackdrop.m */; };
+		8C26A1AFDD10F55B30A01396 /* WindowParkingPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493D7C3A9A0862208AB1FF2F /* WindowParkingPlan.swift */; };
+		902C1FD6E980891330D82EB0 /* WindowRecovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEAB1823232F501367106AD1 /* WindowRecovery.swift */; };
+		6327CF99951E05F7DFD51E3F /* WindowFrostOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C146B1DBD4423BAAA1D006F7 /* WindowFrostOverlay.swift */; };
+		1B0BB35D9283429E87054ACB /* WindowFrostTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54507951B9124315A9C77D40 /* WindowFrostTiming.swift */; };
+		17C6C52D1BD8FE2F2F432665 /* WindowFrostTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E84630744879E2D387C9DDC /* WindowFrostTransition.swift */; };
+		BA1E805F112BA25BDB051EE9 /* FrostedRestoreDragController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B756AFBC1AECB3D048CCA08E /* FrostedRestoreDragController.swift */; };
+		301EBED2C882862F3AA47AEC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD07D8B7F1D22EDE5226841 /* main.swift */; };
 		AC0100010000000000000001 /* WindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0100010000000000000002 /* WindowAnimator.swift */; };
 		01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = de0950b8b00f40308934a523 /* JSONDefaultTests.swift */; };
 		05DBEA44B55E6F8C5FC3D6E0 /* MiddleLeftTwelfthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEABF10E66D648DDB37DABBA /* MiddleLeftTwelfthCalculation.swift */; };
@@ -231,6 +241,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AC0200030000000000000002 /* WindowAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurves.swift; sourceTree = "<group>"; };
+		AC0200010000000000000002 /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
+		FA0909000000000000000002 /* WindowFrostBackdrop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowFrostBackdrop.m; sourceTree = "<group>"; };
+		FA0909000000000000000003 /* WindowFrostBackdrop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowFrostBackdrop.h; sourceTree = "<group>"; };
+		493D7C3A9A0862208AB1FF2F /* WindowParkingPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowParkingPlan.swift; sourceTree = "<group>"; };
+		DEAB1823232F501367106AD1 /* WindowRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowRecovery.swift; sourceTree = "<group>"; };
+		C146B1DBD4423BAAA1D006F7 /* WindowFrostOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrostOverlay.swift; sourceTree = "<group>"; };
+		54507951B9124315A9C77D40 /* WindowFrostTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrostTiming.swift; sourceTree = "<group>"; };
+		0E84630744879E2D387C9DDC /* WindowFrostTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrostTransition.swift; sourceTree = "<group>"; };
+		B756AFBC1AECB3D048CCA08E /* FrostedRestoreDragController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrostedRestoreDragController.swift; sourceTree = "<group>"; };
+		0AD07D8B7F1D22EDE5226841 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		AC0100010000000000000002 /* WindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimator.swift; sourceTree = "<group>"; };
 		16B4044DB4809116039F96EB /* SixteenthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SixteenthsRepeated.swift; sourceTree = "<group>"; };
 		246168B345ECE6C375ACEEB7 /* BottomLeftTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftTwelfthCalculation.swift; sourceTree = "<group>"; };
@@ -631,9 +652,19 @@
 		982140EA22B7DB0400ABFB3F /* WindowMover */ = {
 			isa = PBXGroup;
 			children = (
+				493D7C3A9A0862208AB1FF2F /* WindowParkingPlan.swift */,
+				DEAB1823232F501367106AD1 /* WindowRecovery.swift */,
+				C146B1DBD4423BAAA1D006F7 /* WindowFrostOverlay.swift */,
+				54507951B9124315A9C77D40 /* WindowFrostTiming.swift */,
+				FA0909000000000000000002 /* WindowFrostBackdrop.m */,
+				FA0909000000000000000003 /* WindowFrostBackdrop.h */,
+				0E84630744879E2D387C9DDC /* WindowFrostTransition.swift */,
+				B756AFBC1AECB3D048CCA08E /* FrostedRestoreDragController.swift */,
 				9824704A22B189250037B409 /* BestEffortWindowMover.swift */,
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
 				AC0100010000000000000002 /* WindowAnimator.swift */,
+				AC0200010000000000000002 /* DirectWindowAnimator.swift */,
+				AC0200030000000000000002 /* WindowAnimationCurves.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
 				98B3559723CE025700E410E0 /* FixedSizeWindowMover.swift */,
 			);
@@ -699,6 +730,7 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
+				0AD07D8B7F1D22EDE5226841 /* main.swift */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
@@ -1066,6 +1098,16 @@
 				9818E01428B5A4FD004AA524 /* SixthsCompoundCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
 				AC0100010000000000000001 /* WindowAnimator.swift in Sources */,
+				AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */,
+				AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */,
+				8C26A1AFDD10F55B30A01396 /* WindowParkingPlan.swift in Sources */,
+				902C1FD6E980891330D82EB0 /* WindowRecovery.swift in Sources */,
+				6327CF99951E05F7DFD51E3F /* WindowFrostOverlay.swift in Sources */,
+				1B0BB35D9283429E87054ACB /* WindowFrostTiming.swift in Sources */,
+				FA0909000000000000000001 /* WindowFrostBackdrop.m in Sources */,
+				17C6C52D1BD8FE2F2F432665 /* WindowFrostTransition.swift in Sources */,
+				BA1E805F112BA25BDB051EE9 /* FrostedRestoreDragController.swift in Sources */,
+				301EBED2C882862F3AA47AEC /* main.swift in Sources */,
 				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
 				6490B39927BF97BB0056C220 /* TopCenterRightEighthCalculation.swift in Sources */,
 				98B3559823CE025700E410E0 /* FixedSizeWindowMover.swift in Sources */,

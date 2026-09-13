@@ -72,6 +72,28 @@ class AccessibilityElement {
         guard let role = role else { return nil }
         return role == .staticText
     }
+
+    func isTitleBarSpacer(in titleBar: CGRect) -> Bool {
+        guard role == .splitter else { return false }
+        var settable: DarwinBoolean = false
+        let status = AXUIElementIsAttributeSettable(wrappedElement, kAXValueAttribute as CFString, &settable)
+        let value = wrappedElement.getValue(.value)
+        return Self.isTitleBarSpacer(role: role, parentRole: getElementValue(.parent)?.role,
+            frame: frame, titleBar: titleBar, childCount: childElements?.count,
+            hasValue: value != nil && (value as? String) != "",
+            hasOrientation: wrappedElement.getValue(.orientation) != nil,
+            valueSettable: status == .success ? settable.boolValue : nil)
+    }
+
+    /// Some toolkits expose empty titlebar spacing as a splitter. A real
+    /// adjustable divider, or spacing below the titlebar, keeps its own clicks.
+    static func isTitleBarSpacer(role: NSAccessibility.Role?, parentRole: NSAccessibility.Role?,
+                                 frame: CGRect, titleBar: CGRect, childCount: Int?,
+                                 hasValue: Bool, hasOrientation: Bool, valueSettable: Bool?) -> Bool {
+        role == .splitter && parentRole == .toolbar && childCount == 0
+            && !hasValue && !hasOrientation && valueSettable == false
+            && !frame.isEmpty && !frame.isInfinite && titleBar.contains(frame)
+    }
     
     private var subrole: NSAccessibility.Subrole? {
         guard let value = wrappedElement.getValue(.subrole) as? String else { return nil }
@@ -113,6 +135,7 @@ class AccessibilityElement {
         }
         set {
             guard let newValue = newValue else { return }
+            if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in self.size = newValue }) { return }
             wrappedElement.setValue(.size, newValue)
             Logger.log("AX sizing proposed: \(newValue.debugDescription), result: \(size?.debugDescription ?? "N/A")")
         }
@@ -132,7 +155,9 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
-        WindowAnimator.shared.cancel(for: self)
+        if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
+            setFrame(frame, adjustSizeFirst: adjustSizeFirst, adjustPosition: adjustPosition)
+        }) { return }
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
             || NSWorkspace.shared.isSwitchControlEnabled
@@ -175,7 +200,22 @@ class AccessibilityElement {
     }
 
     /// Writes one frame without readback; completion handles the final placement.
+    /// The coordinator has already released recovery but still owns this drag.
+    func setOwnedOrdinaryDragFrame(_ frame: CGRect, token: UUID) {
+        guard WindowAnimator.shared.ownsOrdinaryDrag(element: self, token: token) else { return }
+        // setFrame/size treat callers as external requests and cancel an active
+        // transition. This token-checked path is the transition's own movement.
+        // Its Enhanced UI adjustment remains held until the drag completes.
+        wrappedElement.setValue(.size, frame.size)
+        wrappedElement.setValue(.position, frame.origin)
+        wrappedElement.setValue(.size, frame.size)
+    }
+
+    /// Writes one frame without readback; completion handles the final placement.
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool {
+        if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
+            setFrame(frame, adjustSizeFirst: false, adjustPosition: !resizeOnly)
+        }) { return false }
         var size = frame.size
         var position = frame.origin
         guard let sizeValue = AXValueCreate(.cgSize, &size),
@@ -190,19 +230,38 @@ class AccessibilityElement {
 
     func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
                                       origin: CGRect, progress: CGFloat) -> CGRect? {
-        var requestedSize = frame.size
-        guard let sizeValue = AXValueCreate(.cgSize, &requestedSize),
-              AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success,
-              let actualSize = size,
+        if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
+            setFrame(frame)
+        }) { return nil }
+        // Advance position even when the following resize/readback is delayed by
+        // native drag settlement. A size-first chain could skip every position
+        // write during a cross-display animation and only move at completion.
+        let provisional = placement.frame(for: frame, actualSize: frame.size, origin: origin, progress: progress)
+        guard writeAnimationPosition(provisional.origin) == .success,
+              writeAnimationSize(frame.size) == .success else { return nil }
+        // Chromium can report a stale size after accepting a resize. Intermediate
+        // frames must not align again using that old size while native updates
+        // are still being applied. Only the final frame reports achieved geometry.
+        guard progress >= 1, let actualSize = size,
               actualSize.width.isFinite, actualSize.height.isFinite,
               actualSize.width > 0, actualSize.height > 0 else { return nil }
 
         // An accepted AX write can still be clamped by the app; position using the achieved size.
         let resolved = placement.frame(for: frame, actualSize: actualSize, origin: origin, progress: progress)
-        var position = resolved.origin
-        guard let positionValue = AXValueCreate(.cgPoint, &position),
-              AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return nil }
+        guard writeAnimationPosition(resolved.origin) == .success else { return nil }
         return resolved
+    }
+
+    func writeAnimationPosition(_ position: CGPoint) -> AXError {
+        var position = position
+        guard let value = AXValueCreate(.cgPoint, &position) else { return .failure }
+        return AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, value)
+    }
+
+    func writeAnimationSize(_ size: CGSize) -> AXError {
+        var size = size
+        guard let value = AXValueCreate(.cgSize, &size) else { return .failure }
+        return AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, value)
     }
     
     private var childElements: [AccessibilityElement]? {
@@ -404,16 +463,36 @@ extension AccessibilityElement {
         return nil
     }
     
-    private static func getWindowInfo(_ location: CGPoint) -> WindowInfo? {
-        WindowUtil.getWindowList().first(where: {windowInfo in
+    private static func getWindowInfo(_ location: CGPoint, eventWindowID: CGWindowID? = nil) -> WindowInfo? {
+        // Reused frost surfaces stay ordered at alpha zero. WindowServer still
+        // lists them above the dragged app, even though they ignore mouse input.
+        let ignoredWindows = Set(NSApp.windows.compactMap { window in
+            window.ignoresMouseEvents ? CGWindowID(exactly: window.windowNumber) : nil
+        })
+        // A new click can follow a focus change or reveal within the list's
+        // 100 ms cache lifetime. Select from the current stacking order.
+        return windowInfoUnderCursor(at: location, windows: WindowUtil.getWindowList(ids: eventWindowID.map { [$0] }, forceRefresh: true),
+                                     eventWindowID: eventWindowID, ignoring: ignoredWindows,
+                                     frostSurfaces: WindowFrostRendererConnection.shared.inputTransparentSurfaces)
+    }
+
+    static func windowInfoUnderCursor(at location: CGPoint, windows: [WindowInfo],
+                                     eventWindowID: CGWindowID? = nil,
+                                     ignoring ignoredWindows: Set<CGWindowID> = [],
+                                     frostSurfaces: [CGWindowID: pid_t] = [:]) -> WindowInfo? {
+        windows.first(where: { windowInfo in
             windowInfo.level < 21 // 21 is the level of the Notification Center
+            && windowInfo.alpha > 0
+            && !ignoredWindows.contains(windowInfo.id)
+            && !FrostedRestoreDragRules.isInputTransparentFrostSurface(windowID: windowInfo.id,
+                ownerPID: windowInfo.pid, level: Int(windowInfo.level), registered: frostSurfaces)
             && !["Dock", "WindowManager"].contains(windowInfo.processName)
-            && windowInfo.frame.contains(location)
+            && (eventWindowID.map { windowInfo.id == $0 } ?? windowInfo.frame.contains(location))
         })
     }
 
-    static func getWindowElementUnderCursor() -> AccessibilityElement? {
-        let position = NSEvent.mouseLocation.screenFlipped
+    static func getWindowElementUnderCursor(at mouseDown: CGPoint? = nil, eventWindowID: CGWindowID? = nil) -> AccessibilityElement? {
+        let position = mouseDown ?? NSEvent.mouseLocation.screenFlipped
         
         var systemWideFirst = Defaults.systemWideMouseDown.userEnabled
         if Defaults.systemWideMouseDown.notSet, let frontAppId = ApplicationToggle.frontAppId {
@@ -422,11 +501,12 @@ extension AccessibilityElement {
         
         if systemWideFirst,
             let element = AccessibilityElement(position),
-            let windowElement = element.windowElement {
+            let windowElement = element.windowElement,
+            eventWindowID == nil || windowElement.windowId == eventWindowID {
                 return windowElement
         }
 
-        if let info = getWindowInfo(position) {
+        if let info = getWindowInfo(position, eventWindowID: eventWindowID) {
             if !Defaults.dragFromStage.userDisabled {
                 if StageUtil.stageCapable && StageUtil.stageEnabled,
                    let group = StageUtil.getStageStripWindowGroup(info.id),
@@ -440,7 +520,7 @@ extension AccessibilityElement {
                 if let windowElement = (windowElements.first { $0.windowId == info.id }) {
                     return windowElement
                 }
-                if let windowElement = (windowElements.first { $0.frame == info.frame }) {
+                if eventWindowID == nil, let windowElement = (windowElements.first { $0.frame == info.frame }) {
                     return windowElement
                 }
             }
@@ -448,7 +528,8 @@ extension AccessibilityElement {
         
         if !systemWideFirst,
            let element = AccessibilityElement(position),
-           let windowElement = element.windowElement {
+           let windowElement = element.windowElement,
+           eventWindowID == nil || windowElement.windowId == eventWindowID {
             
             if Logger.logging, let pid = windowElement.pid {
                 let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
@@ -461,6 +542,9 @@ extension AccessibilityElement {
         // the frontmost app's own accessibility windows don't depend on it.
         if let frontAppElement = getFrontApplicationElement(),
            let windowElements = frontAppElement.windowElements {
+            if let eventWindowID {
+                return windowElements.first { $0.windowId == eventWindowID }
+            }
             let windowElement = windowElements
                 .map { (element: $0, frame: $0.frame) }
                 .filter { !$0.frame.isNull && $0.frame.contains(position) }
