@@ -324,6 +324,63 @@ class AccessibilityElement {
         return element
     }
     
+    /// Inspect every overlapping branch, not just the smallest hit-test child.
+    /// No header cache survives a click, so closed/reordered tabs cannot leave
+    /// stale control rectangles behind.
+    func isTitleBarPointPassive(_ point: CGPoint, titleBar: CGRect) -> Bool {
+        let deadline = ProcessInfo.processInfo.systemUptime + 0.060
+        return Self.isTitleBarPointPassive(root: self, point: point, read: { element in
+            var values: CFArray?
+            let attributes = [kAXPositionAttribute, kAXSizeAttribute, kAXRoleAttribute, kAXChildrenAttribute] as CFArray
+            // Bound individual IPC as well as total traversal. This applies only
+            // to this AX element, not the system-wide accessibility client.
+            AXUIElementSetMessagingTimeout(element.wrappedElement, 0.020)
+            defer { AXUIElementSetMessagingTimeout(element.wrappedElement, 0) }
+            guard AXUIElementCopyMultipleAttributeValues(element.wrappedElement, attributes, [], &values) == .success,
+                  let values = values as? [AnyObject], values.count == 4 else { return nil }
+            var frame = CGRect.null
+            if CFGetTypeID(values[0]) == AXValueGetTypeID(), CFGetTypeID(values[1]) == AXValueGetTypeID(),
+               AXValueGetType(values[0] as! AXValue) == .cgPoint,
+               AXValueGetType(values[1] as! AXValue) == .cgSize,
+               let position: CGPoint = (values[0] as! AXValue).toValue(),
+               let size: CGSize = (values[1] as! AXValue).toValue() {
+                frame = CGRect(origin: position, size: size)
+            }
+            let role = (values[2] as? String).map { NSAccessibility.Role(rawValue: $0) }
+            let children = (values[3] as? [AXUIElement])?.map { AccessibilityElement($0) }
+            let passive = role == .window || role == .toolbar || role == .group
+                || role == .tabGroup || role == .staticText || role == .splitGroup
+                || (role == .splitter && element.isTitleBarSpacer(in: titleBar))
+            return TitleBarHitNode(frame: frame, passive: passive, children: children)
+        }, withinBudget: { ProcessInfo.processInfo.systemUptime < deadline })
+    }
+
+    struct TitleBarHitNode<Node> {
+        let frame: CGRect
+        let passive: Bool
+        let children: [Node]?
+    }
+
+    static func isTitleBarPointPassive<Node: Hashable>(root: Node, point: CGPoint,
+            read: (Node) -> TitleBarHitNode<Node>?, withinBudget: () -> Bool = { true },
+            maximumNodes: Int = 128) -> Bool {
+        var pending = [root]
+        var visited = Set<Node>()
+        while let element = pending.popLast() {
+            guard withinBudget(), visited.count < maximumNodes else { return false }
+            guard visited.insert(element).inserted else { continue }
+            guard let node = read(element), withinBudget() else { return false }
+            let hasFrame = !node.frame.isNull && !node.frame.isInfinite
+            if hasFrame && !node.frame.contains(point) { continue }
+            guard node.passive else { return false }
+            // Missing geometry on a wrapper must not hide its descendants.
+            guard let children = node.children else { return false }
+            if !hasFrame && children.isEmpty { return false }
+            pending.append(contentsOf: children)
+        }
+        return true
+    }
+
     var windowId: CGWindowID? {
         wrappedElement.getWindowId()
     }
