@@ -109,6 +109,12 @@ class SnappingManager {
     private var latestNativeDragEvent: CGEvent?
     private var nativeGesture = NativeSnapGesture()
     private var pendingReleasedRestore: UUID?
+    private struct NativeSizeRestore {
+        let windowID: CGWindowID
+        let size: CGSize
+        var lastAttemptOrigin: CGPoint
+    }
+    private var nativeSizeRestore: NativeSizeRestore?
     private lazy var restoreDragController = FrostedRestoreDragController(owner: self)
     private final class PreviewDrag {
         let token: UUID
@@ -359,6 +365,7 @@ class SnappingManager {
                 if currentSnapArea == nil { box?.orderOut(nil) }
             }
             if let currentSnapArea = self.currentSnapArea {
+                nativeSizeRestore = nil
                 dismissSnapPreviewForCommit()
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
                 self.currentSnapArea = nil
@@ -382,6 +389,7 @@ class SnappingManager {
                     }
                 }
             }
+            finishNativeSizeRestore()
             windowElement = nil
             windowId = nil
             windowMoving = false
@@ -434,6 +442,7 @@ class SnappingManager {
                 }
             }
             if windowMoving {
+                retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
                         box?.orderOut(nil)
@@ -615,6 +624,17 @@ class SnappingManager {
                     // Frosted drags use their separate owned handoff before this fallback.
                     windowElement.setFrame(newRect, adjustSizeFirst: false,
                                            adjustPosition: newRect.origin != currentRect.origin)
+                    // AX can report success while the Dock limits only the width.
+                    // Keep the unachieved size after consuming snap history so the
+                    // native drag can make room for it on a later event.
+                    let achieved = windowElement.frame
+                    if needsNativeSizeRestore(achieved.size, to: restoreRect.size) {
+                        nativeSizeRestore = NativeSizeRestore(windowID: windowId, size: restoreRect.size,
+                                                              lastAttemptOrigin: currentRect.origin)
+                    }
+                    WindowFrostDiagnostics.event("native-size-restore", fields: ["windowID": windowId,
+                        "requested": [restoreRect.width, restoreRect.height],
+                        "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
                 } else {
                     windowElement.size = restoreRect.size
                 }
@@ -623,6 +643,69 @@ class SnappingManager {
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
         } else {
             AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
+        }
+    }
+
+    private func needsNativeSizeRestore(_ actual: CGSize, to requested: CGSize) -> Bool {
+        actual.width < requested.width - 1 || actual.height < requested.height - 1
+    }
+
+    private func retryNativeSizeRestore(cursor: CGPoint?) {
+        guard var pending = nativeSizeRestore, pending.windowID == windowId,
+              let windowElement, !Defaults.unsnapRestore.userDisabled else { return }
+        let current = windowElement.frame
+        guard WindowRecoveryGeometry.valid(current) else { return }
+        guard needsNativeSizeRestore(current.size, to: pending.size) else {
+            nativeSizeRestore = nil
+            return
+        }
+        guard current.origin != pending.lastAttemptOrigin else { return }
+        let point = cursor ?? current.centerPoint
+        if let screen = NSScreen.screens.first(where: { $0.frame.screenFlipped.contains(point) }) {
+            let bounds = screen.visibleFrame.screenFlipped
+            // Do not repeatedly ask for growth that still cannot fit at the
+            // native drag's current origin. Position remains owned by the app.
+            if current.width < pending.size.width - 1 && current.minX + pending.size.width > bounds.maxX { return }
+            if current.height < pending.size.height - 1 && current.minY + pending.size.height > bounds.maxY { return }
+        }
+        pending.lastAttemptOrigin = current.origin
+        nativeSizeRestore = pending
+        windowElement.setFrame(CGRect(origin: current.origin, size: pending.size),
+                               adjustSizeFirst: false, adjustPosition: false)
+        let achieved = windowElement.frame
+        if !needsNativeSizeRestore(achieved.size, to: pending.size) { nativeSizeRestore = nil }
+        WindowFrostDiagnostics.event("native-size-restore-retry", fields: ["windowID": pending.windowID,
+            "requested": [pending.size.width, pending.size.height],
+            "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
+    }
+
+    private func finishNativeSizeRestore() {
+        guard let pending = nativeSizeRestore, let element = windowElement,
+              AppDelegate.windowHistory.lastRectangleActions[pending.windowID] == nil else {
+            nativeSizeRestore = nil
+            return
+        }
+        nativeSizeRestore = nil
+        let operation = UUID()
+        pendingReleasedRestore = operation
+        // Wait until mouse-up has left native tracking before moving a short
+        // release far enough inside its display to accept the full saved size.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.pendingReleasedRestore == operation, !self.nativeGesture.held,
+                  !Defaults.unsnapRestore.userDisabled,
+                  AppDelegate.windowHistory.lastRectangleActions[pending.windowID] == nil else { return }
+            self.pendingReleasedRestore = nil
+            let current = element.frame
+            guard WindowRecoveryGeometry.valid(current), self.needsNativeSizeRestore(current.size, to: pending.size) else { return }
+            var target = CGRect(origin: current.origin, size: pending.size)
+            if let screen = NSScreen.screens.first(where: { $0.frame.screenFlipped.contains(current.origin) }) {
+                target = WindowFrameBounds.constrained(target, to: screen.visibleFrame.screenFlipped, gap: 0)
+            }
+            element.setFrame(target, adjustSizeFirst: false)
+            let achieved = element.frame
+            WindowFrostDiagnostics.event("native-size-restore-released", fields: ["windowID": pending.windowID,
+                "requested": [pending.size.width, pending.size.height],
+                "achieved": [achieved.width, achieved.height]])
         }
     }
 
@@ -805,6 +888,7 @@ class SnappingManager {
     }
 
     private func resetNativeDragState() {
+        nativeSizeRestore = nil
         WindowAnimator.shared.cancelDeferredNativeRestore()
         if box?.realIsVisible == true { box?.orderOut(nil) }
         currentSnapArea = nil

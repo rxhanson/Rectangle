@@ -229,26 +229,44 @@ class AccessibilityElement {
     }
 
     func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
-                                      origin: CGRect, progress: CGFloat) -> CGRect? {
+                                      origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil) -> CGRect? {
         if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
             setFrame(frame)
         }) { return nil }
-        // Advance position even when the following resize/readback is delayed by
-        // native drag settlement. A size-first chain could skip every position
-        // write during a cross-display animation and only move at completion.
-        let provisional = placement.frame(for: frame, actualSize: frame.size, origin: origin, progress: progress)
-        guard writeAnimationPosition(provisional.origin) == .success,
-              writeAnimationSize(frame.size) == .success else { return nil }
-        // Chromium can report a stale size after accepting a resize. Intermediate
-        // frames must not align again using that old size while native updates
-        // are still being applied. Only the final frame reports achieved geometry.
-        guard progress >= 1, let actualSize = size,
-              actualSize.width.isFinite, actualSize.height.isFinite,
-              actualSize.width > 0, actualSize.height > 0 else { return nil }
-
-        // An accepted AX write can still be clamped by the app; position using the achieved size.
-        let resolved = placement.frame(for: frame, actualSize: actualSize, origin: origin, progress: progress)
-        guard writeAnimationPosition(resolved.origin) == .success else { return nil }
+        var preparedPosition: CGPoint?
+        if let previousFrame,
+           let position = placement.positionBeforeGrowing(from: previousFrame, to: frame),
+           writeAnimationPosition(position) == .success {
+            preparedPosition = position
+        }
+        // Resize before moving on shrinking axes: a refused shrink must not carry the wider window
+        // to the narrower frame's origin and leave it behind the Dock until completion.
+        let resized = writeAnimationSize(frame.size) == .success
+        let actualSize = size.flatMap { size -> CGSize? in
+            guard size.width.isFinite, size.height.isFinite,
+                  size.width > 0, size.height > 0 else { return nil }
+            return size
+        }
+        // Finish positioning with the size the app reports. Shrinking axes must
+        // not move to the requested origin and then move back after a delayed
+        // Chromium readback. Continue moving even if resizing failed;
+        // native display settlement must not stall every intermediate position.
+        var resolved = placement.frame(for: frame, actualSize: actualSize ?? frame.size,
+                                       origin: origin, progress: progress)
+        if let preparedPosition, let previousFrame, let actualSize {
+            // A delayed growth readback must not align the still-smaller size
+            // back past the position just prepared for that same resize.
+            if preparedPosition.x < previousFrame.minX, actualSize.width < frame.width {
+                resolved.origin.x = min(resolved.minX, preparedPosition.x)
+            }
+            if preparedPosition.y < previousFrame.minY, actualSize.height < frame.height {
+                resolved.origin.y = min(resolved.minY, preparedPosition.y)
+            }
+        }
+        if preparedPosition != resolved.origin {
+            guard writeAnimationPosition(resolved.origin) == .success else { return nil }
+        }
+        guard resized, actualSize != nil else { return nil }
         return resolved
     }
 
