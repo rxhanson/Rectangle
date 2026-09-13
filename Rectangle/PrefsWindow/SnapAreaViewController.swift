@@ -79,7 +79,7 @@ class SnapAreaViewController: NSViewController {
         guard let stack = experimentalWindowAnimationsCheckbox.superview as? NSStackView,
               let index = stack.arrangedSubviews.firstIndex(of: experimentalWindowAnimationsCheckbox) else { return }
         let label = NSTextField(labelWithString: NSLocalizedString("Animation style", tableName: "Main", comment: "Window animation style setting"))
-        for (style, title) in [(WindowAnimationStyle.frosted, NSLocalizedString("Blue preview", tableName: "Main", comment: "Window animation style using a blue preview")),
+        for (style, title) in [(WindowAnimationStyle.frosted, NSLocalizedString("Blur preview", tableName: "Main", comment: "Window animation style using a blurred preview")),
                                (.direct, NSLocalizedString("Direct resize", tableName: "Main", comment: "Animate the actual window's position and size"))] {
             windowAnimationStyleSelect.addItem(withTitle: title)
             windowAnimationStyleSelect.lastItem?.tag = style.rawValue

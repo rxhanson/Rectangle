@@ -2,10 +2,10 @@
 
 Snap Areas keeps the **Animate windows (experimental)** checkbox and adds an **Animation style** selector:
 
-- **Blue preview** uses the frosted animation path. A frosted cover animates while recovery manages the real window's hidden placement.
+- **Blur preview** uses the frosted animation path. A frosted cover animates while recovery manages the real window's hidden placement.
 - **Direct resize** is the default when no style is saved. It animates the real window's position and size through Accessibility, using the direct implementation preserved at `fe06e88`. The application's contents remain visible and resize throughout the transition.
 
-Direct resize uses the original full `NSVisualEffectView` blur preview with a 12 pt corner radius and exterior shadow. Blue preview retains its glow outline. Preview geometry keeps the shared 260 ms deceleration curve in both modes; the real direct resize keeps its original 340 ms curve. Direct drag restore applies the saved size immediately; command and title-bar restores animate.
+Direct resize uses the original full `NSVisualEffectView` blur preview with a 12 pt corner radius and exterior shadow. Blur preview retains its glow outline. Preview geometry keeps the shared 260 ms deceleration curve in both modes; the real direct resize keeps its original 340 ms curve. Direct drag restore applies the saved size immediately; command and title-bar restores animate.
 
 The preference is `windowAnimationStyle`: `0` for frosted, `1` for direct. It participates in configuration export/import; missing or invalid values default to direct; saved selections are preserved. Disabling animation retains the selected style. Only the frosted style requires Blur footprint; the direct style leaves that independent preview preference editable.
 
