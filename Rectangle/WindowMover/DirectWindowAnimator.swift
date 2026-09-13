@@ -145,6 +145,7 @@ final class DirectWindowAnimator {
               origin != destination else { completion(.null); return }
         let restoreAccessibility = element.beginAnimatedAdjustment()
         var finalFrame: CGRect?
+        var previousFrame = origin
         var finalized = false
         lastEnvironmentCheck = clock()
         window = element
@@ -155,14 +156,18 @@ final class DirectWindowAnimator {
         animation = WindowFrameAnimation(from: origin, to: destination, startTime: clock(), duration: duration,
                                          offset: offset, curve: curve, write: { frame, progress in
             if let placement {
-                _ = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin, progress: progress)
+                if let achieved = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin,
+                                                                      progress: progress, previousFrame: previousFrame) {
+                    previousFrame = achieved
+                }
                 return true
             }
             return element.setAnimationFrame(frame, resizeOnly: resizeOnly)
         }, finalize: { frame in
             finalized = true
             if let placement {
-                finalFrame = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin, progress: 1)
+                finalFrame = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin,
+                                                                  progress: 1, previousFrame: previousFrame)
             }
         }, cleanup: { [weak self] in
             self?.stopDriving()

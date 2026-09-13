@@ -9,6 +9,25 @@ struct WindowAnimationPlacement {
     let gap: CGFloat
     var displayCommand = false
 
+    func positionBeforeGrowing(from previous: CGRect, to requested: CGRect) -> CGPoint? {
+        guard constrainToScreen else { return nil }
+        var position = previous.origin
+        // Make room on an expanding axis before asking AX to resize. Otherwise
+        // macOS can clip the new size at the old origin even though the next
+        // animation frame fits, producing a stop/start edge during the resize.
+        if requested.width > previous.width + 1,
+           previous.minX + requested.width > screenFrame.maxX + 1,
+           requested.minX < previous.minX {
+            position.x = requested.minX
+        }
+        if requested.height > previous.height + 1,
+           previous.minY + requested.height > screenFrame.maxY + 1,
+           requested.minY < previous.minY {
+            position.y = requested.minY
+        }
+        return position == previous.origin ? nil : position
+    }
+
     func frame(for requested: CGRect, actualSize: CGSize, origin: CGRect, progress: CGFloat) -> CGRect {
         var frame = CGRect(origin: requested.origin, size: actualSize)
         if let sharedEdges {
