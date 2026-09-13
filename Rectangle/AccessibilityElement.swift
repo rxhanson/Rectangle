@@ -253,9 +253,11 @@ class AccessibilityElement {
         // native display settlement must not stall every intermediate position.
         var resolved = placement.frame(for: frame, actualSize: actualSize ?? frame.size,
                                        origin: origin, progress: progress)
-        if let preparedPosition, let previousFrame, let actualSize {
+        if progress < 1, let preparedPosition, let previousFrame, let actualSize {
             // A delayed growth readback must not align the still-smaller size
             // back past the position just prepared for that same resize.
+            // At completion, align the achieved size even when the app keeps
+            // an aspect ratio and cannot grow to the requested dimensions.
             if preparedPosition.x < previousFrame.minX, actualSize.width < frame.width {
                 resolved.origin.x = min(resolved.minX, preparedPosition.x)
             }

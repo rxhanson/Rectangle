@@ -143,6 +143,10 @@ final class DirectWindowAnimator {
               [origin.minX, origin.minY, origin.width, origin.height,
                destination.minX, destination.minY, destination.width, destination.height].allSatisfy(\.isFinite),
               origin != destination else { completion(.null); return }
+        // IINA applies its aspect ratio asynchronously. Resize once, then align
+        // the settled size at completion without triggering another size change.
+        let nativeResize = origin.size != destination.size && element.bundleIdentifier == "com.colliderli.iina"
+        var nativeResizeAccepted = false
         let restoreAccessibility = element.beginAnimatedAdjustment()
         var finalFrame: CGRect?
         var previousFrame = origin
@@ -152,9 +156,10 @@ final class DirectWindowAnimator {
         WindowFrostDiagnostics.event("direct-animation-start", fields: ["windowID": element.windowId ?? 0,
             "source": [origin.minX, origin.minY, origin.width, origin.height],
             "destination": [destination.minX, destination.minY, destination.width, destination.height],
-            "resizeOnly": resizeOnly, "duration": duration])
+            "resizeOnly": resizeOnly, "duration": duration, "nativeResize": nativeResize])
         animation = WindowFrameAnimation(from: origin, to: destination, startTime: clock(), duration: duration,
                                          offset: offset, curve: curve, write: { frame, progress in
+            if nativeResize { return true }
             if let placement {
                 if let achieved = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin,
                                                                       progress: progress, previousFrame: previousFrame) {
@@ -165,7 +170,26 @@ final class DirectWindowAnimator {
             return element.setAnimationFrame(frame, resizeOnly: resizeOnly)
         }, finalize: { frame in
             finalized = true
-            if let placement {
+            if nativeResize {
+                guard nativeResizeAccepted else { return }
+                let actual = element.frame
+                guard WindowRecoveryGeometry.valid(actual) else { return }
+                // Restore requests carry a previously achieved size. If IINA
+                // rejected that growth, let the ordinary mover retry it.
+                if placement?.sharedEdges == nil,
+                   abs(actual.width - frame.width) > 1 || abs(actual.height - frame.height) > 1 { return }
+                let aligned = placement?.frame(for: frame, actualSize: actual.size, origin: origin, progress: 1)
+                    ?? CGRect(origin: resizeOnly ? actual.origin : frame.origin, size: actual.size)
+                if aligned.origin != actual.origin {
+                    guard element.writeAnimationPosition(aligned.origin) == .success else { return }
+                }
+                let achieved = element.frame
+                if WindowRecoveryGeometry.valid(achieved),
+                   abs(achieved.minX - aligned.minX) <= 1, abs(achieved.minY - aligned.minY) <= 1,
+                   abs(achieved.width - aligned.width) <= 1, abs(achieved.height - aligned.height) <= 1 {
+                    finalFrame = achieved
+                }
+            } else if let placement {
                 finalFrame = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin,
                                                                   progress: 1, previousFrame: previousFrame)
             }
@@ -176,7 +200,7 @@ final class DirectWindowAnimator {
             restoreAccessibility()
             if !finalized { WindowFrostDiagnostics.event("direct-animation-cancel", fields: ["windowID": element.windowId ?? 0]) }
         }, completion: { requested in
-            if placement == nil {
+            if placement == nil && !nativeResize {
                 // Restore the normal AX timeout before settling native display adjustments.
                 element.setFrame(requested, adjustSizeFirst: false, adjustPosition: !resizeOnly)
                 let achieved = element.frame
@@ -191,6 +215,16 @@ final class DirectWindowAnimator {
                 "placed": !frame.isNull])
             completion(frame)
         })
+        if nativeResize {
+            if let placement {
+                nativeResizeAccepted = element.setConstrainedAnimationFrame(destination, placement: placement,
+                    origin: origin, progress: 1, previousFrame: origin) != nil
+            } else {
+                nativeResizeAccepted = element.setAnimationFrame(destination, resizeOnly: resizeOnly)
+            }
+            WindowFrostDiagnostics.event("direct-native-resize-settlement", fields: [
+                "windowID": element.windowId ?? 0, "accepted": nativeResizeAccepted])
+        }
         startDriving()
     }
 

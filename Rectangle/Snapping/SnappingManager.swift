@@ -648,7 +648,9 @@ class SnappingManager {
     }
 
     private func needsNativeSizeRestore(_ actual: CGSize, to requested: CGSize) -> Bool {
-        actual.width < requested.width - 1 || actual.height < requested.height - 1
+        // Native tracking can return a size larger as well as smaller than the
+        // saved frame. Keep either mismatch pending for the existing retry path.
+        abs(actual.width - requested.width) > 1 || abs(actual.height - requested.height) > 1
     }
 
     private func retryNativeSizeRestore(cursor: CGPoint?) {
