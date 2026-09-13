@@ -50981,31 +50981,31 @@
         }
       }
     },
-    "Blue preview" : {
+    "Blur preview" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blue preview"
+            "value" : "Blur preview"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "蓝色预览"
+            "value" : "模糊预览"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "藍色預覽"
+            "value" : "模糊預覽"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ブループレビュー"
+            "value" : "ぼかしプレビュー"
           }
         }
       }
