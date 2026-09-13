@@ -30250,6 +30250,134 @@
         }
       }
     },
+    "Fifth Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fifth Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 5 欄）"
+          }
+        }
+      }
+    },
+    "First Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 1 欄）"
+          }
+        }
+      }
+    },
+    "Fourth Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fourth Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 4 欄）"
+          }
+        }
+      }
+    },
+    "Last Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 8 欄）"
+          }
+        }
+      }
+    },
+    "Second Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 2 欄）"
+          }
+        }
+      }
+    },
+    "Seventh Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seventh Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 7 欄）"
+          }
+        }
+      }
+    },
+    "Sixth Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sixth Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 6 欄）"
+          }
+        }
+      }
+    },
+    "Third Vertical Eighth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Third Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 3 欄）"
+          }
+        }
+      }
+    },
     "Top Left 8th" : {
       "localizations" : {
         "en" : {
