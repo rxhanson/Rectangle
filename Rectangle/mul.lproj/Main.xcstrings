@@ -17735,6 +17735,42 @@
         }
       }
     },
+    "fifthVerticalEighth.title" : {
+      "comment" : "Full-height column 5 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fifth Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 5 欄）"
+          }
+        }
+      }
+    },
+    "firstVerticalEighth.title" : {
+      "comment" : "Full-height column 1 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 1 欄）"
+          }
+        }
+      }
+    },
     "FKE-Sm-Kum.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Rectangle Help\"; ObjectID = \"FKE-Sm-Kum\";",
       "extractionState" : "extracted_with_value",
@@ -18843,6 +18879,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "四等分直欄"
+          }
+        }
+      }
+    },
+    "fourthVerticalEighth.title" : {
+      "comment" : "Full-height column 4 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fourth Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 4 欄）"
           }
         }
       }
@@ -27488,6 +27542,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiều rộng lớn hơn"
+          }
+        }
+      }
+    },
+    "lastVerticalEighth.title" : {
+      "comment" : "Full-height column 8 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 8 欄）"
           }
         }
       }
@@ -38896,6 +38968,42 @@
         }
       }
     },
+    "secondVerticalEighth.title" : {
+      "comment" : "Full-height column 2 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 2 欄）"
+          }
+        }
+      }
+    },
+    "seventhVerticalEighth.title" : {
+      "comment" : "Full-height column 7 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seventh Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 7 欄）"
+          }
+        }
+      }
+    },
     "Show additional sizes in menu" : {
       "localizations" : {
         "ko" : {
@@ -39303,6 +39411,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "六等分"
+          }
+        }
+      }
+    },
+    "sixthVerticalEighth.title" : {
+      "comment" : "Full-height column 6 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sixth Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 6 欄）"
           }
         }
       }
@@ -41062,6 +41188,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "⅓；靠近角落則上半／下半"
+          }
+        }
+      }
+    },
+    "thirdVerticalEighth.title" : {
+      "comment" : "Full-height column 3 of 8, from left to right.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Third Vertical Eighth"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向八分之一（第 3 欄）"
           }
         }
       }

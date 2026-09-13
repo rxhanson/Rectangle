@@ -14,6 +14,242 @@ class RectangleTests: XCTestCase {
     }
 }
 
+class VerticalEighthCalculationTests: XCTestCase {
+
+    private let actionNames = [
+        "firstVerticalEighth", "secondVerticalEighth", "thirdVerticalEighth", "fourthVerticalEighth",
+        "fifthVerticalEighth", "sixthVerticalEighth", "seventhVerticalEighth", "lastVerticalEighth"
+    ]
+
+    func testActionsTileUsableFrameIntoEightFullHeightColumns() throws {
+        let frame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = [
+            CGRect(x: 0, y: 40, width: 480, height: 1000),
+            CGRect(x: 480, y: 40, width: 480, height: 1000),
+            CGRect(x: 960, y: 40, width: 480, height: 1000),
+            CGRect(x: 1440, y: 40, width: 480, height: 1000),
+            CGRect(x: 1920, y: 40, width: 480, height: 1000),
+            CGRect(x: 2400, y: 40, width: 480, height: 1000),
+            CGRect(x: 2880, y: 40, width: 480, height: 1000),
+            CGRect(x: 3360, y: 40, width: 480, height: 1000)
+        ]
+
+        XCTAssertEqual(try rectangles(in: frame), expected)
+    }
+
+    func testGapsUseHalfInsetsAtSharedColumnEdges() throws {
+        let frame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let rects = try rectangles(in: frame)
+        let gapped = try zip(actions(), rects).map { action, rect in
+            GapCalculation.applyGaps(rect, dimension: action.gapsApplicable,
+                                     sharedEdges: action.gapSharedEdge, gapSize: 10)
+        }
+
+        XCTAssertEqual(gapped, [
+            CGRect(x: 10, y: 50, width: 465, height: 980),
+            CGRect(x: 485, y: 50, width: 470, height: 980),
+            CGRect(x: 965, y: 50, width: 470, height: 980),
+            CGRect(x: 1445, y: 50, width: 470, height: 980),
+            CGRect(x: 1925, y: 50, width: 470, height: 980),
+            CGRect(x: 2405, y: 50, width: 470, height: 980),
+            CGRect(x: 2885, y: 50, width: 470, height: 980),
+            CGRect(x: 3365, y: 50, width: 465, height: 980)
+        ])
+    }
+
+    func testActionsHaveMenuMetadataAndStableIdentifiers() throws {
+        let actions = try actions()
+        XCTAssertEqual(WindowAction.active.filter { actionNames.contains($0.name) }, actions)
+        XCTAssertEqual(actions.map { $0.rawValue }, [129, 130, 131, 132, 133, 134, 135, 136])
+        XCTAssertEqual(try JSONDecoder().decode([WindowAction].self, from: JSONEncoder().encode(actions)), actions)
+        for action in actions {
+            XCTAssertEqual(action.category, .eighths)
+            XCTAssertFalse(try XCTUnwrap(action.displayName).isEmpty)
+            XCTAssertTrue(action.image.isValid)
+            XCTAssertTrue(action.image.isTemplate)
+            XCTAssertNil(action.spectacleDefault)
+            XCTAssertNil(action.alternateDefault)
+        }
+    }
+
+    func testActionsAreAvailableInShortcutPreferences() throws {
+        let storyboard = NSStoryboard(name: "Main", bundle: Bundle(for: PrefsViewController.self))
+        let windowController = try XCTUnwrap(storyboard.instantiateController(withIdentifier: "PrefsWindowController") as? NSWindowController)
+        defer { windowController.close() }
+        let tabController = try XCTUnwrap(windowController.contentViewController as? NSTabViewController)
+        let controller = try XCTUnwrap(tabController.children.compactMap { $0 as? PrefsViewController }.first)
+        _ = controller.view
+
+        func shortcutViews(in view: NSView) -> [MASShortcutView] {
+            if let shortcutView = view as? MASShortcutView { return [shortcutView] }
+            return view.subviews.flatMap { shortcutViews(in: $0) }
+        }
+
+        let originalViews = controller.actionsToViews
+        let expectedActions = try actions()
+        for _ in 0..<2 {
+            controller.toggleShowMore(controller.showMoreButton)
+            let visibleShortcuts = shortcutViews(in: controller.additionalShortcutsStackView)
+            let verticalShortcuts = visibleShortcuts.filter { actionNames.contains($0.associatedUserDefaultsKey ?? "") }
+            XCTAssertEqual(verticalShortcuts.count, 8)
+            for action in expectedActions {
+                let shortcutView = try XCTUnwrap(controller.actionsToViews[action], "Missing shortcut: \(action.name)")
+                XCTAssertEqual(visibleShortcuts.filter { $0.associatedUserDefaultsKey == action.name }.count, 1, action.name)
+                XCTAssertEqual(shortcutView.associatedUserDefaultsKey, action.name)
+                XCTAssertTrue(shortcutView.isDescendant(of: controller.additionalShortcutsStackView))
+                XCTAssertTrue(shortcutView === originalViews[action])
+                let row = try XCTUnwrap(shortcutView.superview as? NSStackView)
+                let labelStack = try XCTUnwrap(row.arrangedSubviews.first as? NSStackView)
+                let label = try XCTUnwrap(labelStack.arrangedSubviews.first as? NSTextField)
+                XCTAssertEqual(label.stringValue, action.displayName)
+            }
+            for (action, shortcutView) in originalViews where !actionNames.contains(action.name) {
+                XCTAssertTrue(controller.actionsToViews[action] === shortcutView)
+                XCTAssertEqual(shortcutViews(in: controller.view).filter { $0.associatedUserDefaultsKey == action.name }.count, 1, action.name)
+            }
+            controller.toggleShowMore(controller.showMoreButton)
+            controller.awakeFromNib()
+        }
+    }
+
+    func testVerticalEighthNamesHaveEnglishAndTraditionalChineseLocalizations() throws {
+        let expectedNames: [(language: String, titles: [String])] = [
+            ("en", ["First Vertical Eighth", "Second Vertical Eighth", "Third Vertical Eighth", "Fourth Vertical Eighth",
+                    "Fifth Vertical Eighth", "Sixth Vertical Eighth", "Seventh Vertical Eighth", "Last Vertical Eighth"]),
+            ("zh-Hant", ["直向八分之一（第 1 欄）", "直向八分之一（第 2 欄）", "直向八分之一（第 3 欄）", "直向八分之一（第 4 欄）",
+                         "直向八分之一（第 5 欄）", "直向八分之一（第 6 欄）", "直向八分之一（第 7 欄）", "直向八分之一（第 8 欄）"])
+        ]
+        let appBundle = Bundle(for: PrefsViewController.self)
+        for expected in expectedNames {
+            let path = try XCTUnwrap(appBundle.path(forResource: expected.language, ofType: "lproj"))
+            let localizedBundle = try XCTUnwrap(Bundle(path: path))
+            for (action, title) in try zip(actions(), expected.titles) {
+                XCTAssertEqual(localizedBundle.localizedString(forKey: action.name + ".title", value: nil, table: "Main"), title)
+                if appBundle.preferredLocalizations.first == expected.language {
+                    XCTAssertEqual(action.displayName, title)
+                }
+            }
+        }
+    }
+
+    func testNonDivisibleWidthTilesWithoutGapsOrOverlap() throws {
+        let rects = try rectangles(in: CGRect(x: -1923, y: 37, width: 1923, height: 1041))
+        XCTAssertEqual(rects.map { $0.minX }, [-1923, -1683, -1443, -1202, -962, -722, -481, -241])
+        XCTAssertEqual(rects.map { $0.width }, [240, 240, 241, 240, 240, 241, 240, 241])
+        XCTAssertEqual(rects.last?.maxX, 0)
+        for (left, right) in zip(rects, rects.dropFirst()) {
+            XCTAssertEqual(left.maxX, right.minX)
+        }
+    }
+
+    func testOtherResolutionsAndPortraitDisplaysKeepFullHeightColumns() throws {
+        let fixtures: [(frame: CGRect, width: CGFloat, origins: [CGFloat])] = [
+            (CGRect(x: 10, y: 30, width: 2560, height: 1400), 320,
+             [10, 330, 650, 970, 1290, 1610, 1930, 2250]),
+            (CGRect(x: -5120, y: -1440, width: 5120, height: 1440), 640,
+             [-5120, -4480, -3840, -3200, -2560, -1920, -1280, -640]),
+            (CGRect(x: 2560, y: -1000, width: 800, height: 1200), 100,
+             [2560, 2660, 2760, 2860, 2960, 3060, 3160, 3260])
+        ]
+        for fixture in fixtures {
+            let rects = try rectangles(in: fixture.frame)
+            XCTAssertEqual(rects.map { $0.minX }, fixture.origins)
+            XCTAssertEqual(rects.map { $0.width }, Array(repeating: fixture.width, count: 8))
+            XCTAssertEqual(rects.map { $0.minY }, Array(repeating: fixture.frame.minY, count: 8))
+            XCTAssertEqual(rects.map { $0.height }, Array(repeating: fixture.frame.height, count: 8))
+            XCTAssertEqual(rects.last?.maxX, fixture.frame.maxX)
+        }
+    }
+
+    func testRepeatedActionsKeepTheirOwnColumns() throws {
+        let frame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = try rectangles(in: frame)
+        for (action, rect) in try zip(actions(), expected) {
+            let calculation = try XCTUnwrap(WindowCalculationFactory.calculationsByAction[action])
+            let result = calculation.calculateRect(RectCalculationParameters(
+                window: Window(id: 1, rect: rect),
+                visibleFrameOfScreen: frame,
+                action: action,
+                lastAction: RectangleAction(action: action, subAction: nil, rect: rect.screenFlipped, count: 1)
+            ))
+            XCTAssertEqual(result.rect, rect)
+        }
+    }
+
+    func testSkipTopGapKeepsColumnsAtUsableTopEdge() throws {
+        let rects = try rectangles(in: CGRect(x: 0, y: 40, width: 3840, height: 1000))
+        for (action, rect) in try zip(actions(), rects) {
+            let gapped = GapCalculation.applyGaps(rect, dimension: action.gapsApplicable,
+                                                  sharedEdges: action.gapSharedEdge, gapSize: 10, skipTopGap: true)
+            XCTAssertEqual(gapped.minY, 50)
+            XCTAssertEqual(gapped.height, 990)
+            XCTAssertEqual(gapped.maxY, 1040)
+        }
+    }
+
+    func testCalculationUsesTheSelectedScreensAdjustedVisibleFrame() throws {
+        let screen = RepeatedMaximizeTestScreen(frame: CGRect(x: -2560, y: 1440, width: 2560, height: 1440))
+        let calculation = try XCTUnwrap(WindowCalculationFactory.calculationsByAction[.firstVerticalEighth])
+        let result = try XCTUnwrap(calculation.calculate(WindowCalculationParameters(
+            window: Window(id: nil, rect: CGRect(x: 100, y: 100, width: 600, height: 400)),
+            usableScreens: UsableScreens(currentScreen: screen, numScreens: 2),
+            action: .firstVerticalEighth,
+            lastAction: nil,
+            ignoreTodo: true
+        )))
+        let visibleFrame = screen.adjustedVisibleFrame(true)
+        XCTAssertTrue(result.screen === screen)
+        XCTAssertEqual(result.resultingAction, .firstVerticalEighth)
+        XCTAssertEqual(result.rect.minX, visibleFrame.minX)
+        XCTAssertEqual(result.rect.minY, visibleFrame.minY)
+        XCTAssertEqual(result.rect.height, visibleFrame.height)
+    }
+
+    func testExistingEighthsKeepTheirFourByTwoGeometryAndIdentifiers() throws {
+        let actions: [WindowAction] = [.topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth,
+                                       .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth]
+        XCTAssertEqual(actions.map { $0.rawValue }, [58, 59, 60, 61, 62, 63, 64, 65])
+        let expected = [
+            CGRect(x: 0, y: 540, width: 960, height: 500),
+            CGRect(x: 960, y: 540, width: 960, height: 500),
+            CGRect(x: 1920, y: 540, width: 960, height: 500),
+            CGRect(x: 2880, y: 540, width: 960, height: 500),
+            CGRect(x: 0, y: 40, width: 960, height: 500),
+            CGRect(x: 960, y: 40, width: 960, height: 500),
+            CGRect(x: 1920, y: 40, width: 960, height: 500),
+            CGRect(x: 2880, y: 40, width: 960, height: 500)
+        ]
+        for (action, rect) in zip(actions, expected) {
+            let calculation = try XCTUnwrap(WindowCalculationFactory.calculationsByAction[action])
+            let result = calculation.calculateRect(RectCalculationParameters(
+                window: Window(id: 1, rect: .zero),
+                visibleFrameOfScreen: CGRect(x: 0, y: 40, width: 3840, height: 1000),
+                action: action,
+                lastAction: nil
+            ))
+            XCTAssertEqual(result.rect, rect)
+        }
+    }
+
+    private func actions() throws -> [WindowAction] {
+        try actionNames.map { name in
+            try XCTUnwrap(WindowAction.active.first { $0.name == name }, "Missing action: \(name)")
+        }
+    }
+
+    private func rectangles(in frame: CGRect) throws -> [CGRect] {
+        try actions().map { action in
+            let calculation = try XCTUnwrap(WindowCalculationFactory.calculationsByAction[action])
+            return calculation.calculateRect(RectCalculationParameters(
+                window: Window(id: 1, rect: CGRect(x: 100, y: 100, width: 600, height: 400)),
+                visibleFrameOfScreen: frame,
+                action: action,
+                lastAction: nil
+            )).rect
+        }
+    }
+}
+
 class PositionCyclesTests: XCTestCase {
 
     func testSixthsReturnTrue() {

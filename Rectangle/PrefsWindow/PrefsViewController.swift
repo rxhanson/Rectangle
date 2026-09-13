@@ -66,7 +66,9 @@ class PrefsViewController: NSViewController {
     
     // Settings
     override func awakeFromNib() {
-        
+        // Storyboard loading can awaken this controller more than once.
+        guard actionsToViews.isEmpty else { return }
+
         actionsToViews = [
             .leftHalf: leftHalfShortcutView,
             .rightHalf: rightHalfShortcutView,
@@ -111,6 +113,8 @@ class PrefsViewController: NSViewController {
             .bottomRightSixth: bottomRightSixthShortcutView
         ]
         
+        addVerticalEighthShortcutViews()
+
         for (action, view) in actionsToViews {
             view.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
         }
@@ -126,6 +130,42 @@ class PrefsViewController: NSViewController {
         additionalShortcutsStackView.isHidden = true
     }
     
+    private func addVerticalEighthShortcutViews() {
+        let actionColumns: [[WindowAction]] = [
+            [.firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth],
+            [.fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth]
+        ]
+
+        for (view, actions) in zip(additionalShortcutsStackView.arrangedSubviews, actionColumns) {
+            guard let column = view as? NSStackView else { continue }
+            for action in actions {
+                guard let title = action.displayName else { continue }
+                let label = NSTextField(labelWithString: title)
+                label.alignment = .right
+                let icon = NSImageView(image: action.image)
+                let labelStack = NSStackView(views: [label, icon])
+                labelStack.orientation = .horizontal
+                labelStack.alignment = .centerY
+                labelStack.spacing = 8
+
+                let shortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
+                shortcutView.translatesAutoresizingMaskIntoConstraints = false
+                let row = NSStackView(views: [labelStack, shortcutView])
+                row.orientation = .horizontal
+                row.alignment = .centerY
+                row.spacing = 18
+                column.addArrangedSubview(row)
+                NSLayoutConstraint.activate([
+                    icon.widthAnchor.constraint(equalToConstant: 21),
+                    icon.heightAnchor.constraint(equalToConstant: 14),
+                    shortcutView.widthAnchor.constraint(equalToConstant: 160),
+                    shortcutView.heightAnchor.constraint(equalToConstant: 19)
+                ])
+                actionsToViews[action] = shortcutView
+            }
+        }
+    }
+
     @IBAction func toggleShowMore(_ sender: NSButton) {
         additionalShortcutsStackView.isHidden = !additionalShortcutsStackView.isHidden
         showMoreButton.title = additionalShortcutsStackView.isHidden
