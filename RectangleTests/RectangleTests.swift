@@ -4495,6 +4495,69 @@ class SnappingManagerSessionTests: XCTestCase {
     }
 }
 
+class SnappingManagerUnsnapRestoreTests: XCTestCase {
+
+    private let windowId = CGWindowID(918_273)
+    private var savedSnappingEnabled: Bool?
+    private var savedUnsnapRestore: Bool?
+    private var savedUnsnapRestoreFromSizeChange: Bool?
+    private var savedRestoreRects = [CGWindowID: CGRect]()
+    private var savedActions = [CGWindowID: RectangleAction]()
+
+    override func setUp() {
+        super.setUp()
+        savedSnappingEnabled = Defaults.windowSnapping.enabled
+        savedUnsnapRestore = Defaults.unsnapRestore.enabled
+        savedUnsnapRestoreFromSizeChange = Defaults.unsnapRestoreFromSizeChange.enabled
+        savedRestoreRects = AppDelegate.windowHistory.restoreRects
+        savedActions = AppDelegate.windowHistory.lastRectangleActions
+        Defaults.windowSnapping.enabled = false
+        Defaults.unsnapRestore.enabled = true
+        AppDelegate.windowHistory.restoreRects.removeValue(forKey: windowId)
+        AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+    }
+
+    override func tearDown() {
+        Defaults.windowSnapping.enabled = savedSnappingEnabled
+        Defaults.unsnapRestore.enabled = savedUnsnapRestore
+        Defaults.unsnapRestoreFromSizeChange.enabled = savedUnsnapRestoreFromSizeChange
+        AppDelegate.windowHistory.restoreRects = savedRestoreRects
+        AppDelegate.windowHistory.lastRectangleActions = savedActions
+        super.tearDown()
+    }
+
+    func testSuppressedSizeChangeRestoreKeepsTheUserPositionedRect() {
+        Defaults.unsnapRestoreFromSizeChange.enabled = false
+        let userRect = CGRect(x: 164, y: 73, width: 1414, height: 861)
+        let smallerRect = CGRect(x: 179, y: 88, width: 1354, height: 801)
+        AppDelegate.windowHistory.restoreRects[windowId] = userRect
+        AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(action: .smaller,
+                                                                                   subAction: nil,
+                                                                                   rect: smallerRect,
+                                                                                   count: 2)
+        let snappingManager = SnappingManager()
+        snappingManager.initialWindowRect = smallerRect
+
+        snappingManager.unsnapRestore(windowId: windowId,
+                                      currentRect: smallerRect.offsetBy(dx: 40, dy: 0),
+                                      cursorLoc: nil)
+
+        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[windowId], userRect)
+    }
+
+    func testDraggingAWindowRectangleDidNotPlaceRecordsTheRestoreRect() {
+        let draggedFrom = CGRect(x: 100, y: 100, width: 800, height: 600)
+        let snappingManager = SnappingManager()
+        snappingManager.initialWindowRect = draggedFrom
+
+        snappingManager.unsnapRestore(windowId: windowId,
+                                      currentRect: draggedFrom.offsetBy(dx: 40, dy: 0),
+                                      cursorLoc: nil)
+
+        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[windowId], draggedFrom)
+    }
+}
+
 class ShortcutManagerSessionTests: XCTestCase {
 
     private final class ValueBox<Value> {

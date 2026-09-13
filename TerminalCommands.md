@@ -409,6 +409,14 @@ defaults write com.knollsoft.Rectangle smallerShrinksMaximizedHeight -bool true
 defaults write com.knollsoft.Rectangle unsnapRestore -int 2
 ```
 
+## Disabling window restore when moving windows sized by "Make Smaller" or "Make Larger"
+
+Keeps the window restore behavior above for everything else:
+
+```bash
+defaults write com.knollsoft.Rectangle unsnapRestoreFromSizeChange -int 2
+```
+
 ## Changing the margin for the snap areas
 
 Each margin is configured separately, and has a default value of 5
