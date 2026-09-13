@@ -645,4 +645,13 @@ Some windows can't be resized to fill a snap area — either because they're a f
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 1  # align edges and corners (default)
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 2  # align corners only, center halves/sides
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 3  # center within the snap area
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 4  # keep the requested snap area's top-left origin
+```
+
+Mode `4` preserves the size accepted by the application and places it at the requested snap area's top-left origin, including any configured gaps. For an aspect-ratio-constrained window that accepts the requested width (for example, IINA), Left Half and Right Half stay top-aligned through the `1/2 → 2/3 → 1/3` width cycle. If the window also constrains its width, it starts at the snap area's left edge rather than aligning to its right edge. This applies to both resizable and fixed-size windows; Rectangle's final screen-containment adjustment still applies if the window would extend offscreen.
+
+Restart Rectangle after changing this preference. To restore the default:
+
+```bash
+defaults delete com.knollsoft.Rectangle moveFixedSizeToEdge
 ```
