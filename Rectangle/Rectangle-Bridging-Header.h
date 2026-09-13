@@ -3,5 +3,6 @@
 //
 
 #import <AppKit/AppKit.h>
+#import "WindowMover/WindowFrostBackdrop.h"
 
 AXError _AXUIElementGetWindow(AXUIElementRef element, uint32_t *identifier);

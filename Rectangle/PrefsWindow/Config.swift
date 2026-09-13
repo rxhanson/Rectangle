@@ -28,6 +28,7 @@ extension Defaults {
         for exportableDefault in Defaults.array {
             codableDefaults[exportableDefault.key] = exportableDefault.toCodable()
         }
+        codableDefaults[footprintAlpha.key] = CodableDefault(double: effectiveFootprintAlpha)
                 
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: version,
@@ -68,6 +69,7 @@ extension Defaults {
                 availableDefault.load(from: codedDefault)
             }
         }
+        Defaults.normalizeWindowAnimationPreferences()
         
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }

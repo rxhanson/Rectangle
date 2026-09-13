@@ -34,6 +34,7 @@ typealias ShortcutRebindScheduler = (@escaping () -> Void) -> Void
 class ShortcutManager {
 
     let windowManager: WindowManager
+    private let screenDetection: ScreenDetection
     private let bindingStore: ShortcutBindingStore
     private let notificationCenter: NotificationCenter
     private let workspaceNotificationCenter: NotificationCenter
@@ -51,6 +52,7 @@ class ShortcutManager {
 
     init(
         windowManager: WindowManager,
+        screenDetection: ScreenDetection = ScreenDetection(),
         bindingStore: ShortcutBindingStore = MASShortcutBindingStore(),
         notificationCenter: NotificationCenter = .default,
         workspaceNotificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter,
@@ -69,6 +71,7 @@ class ShortcutManager {
         }
     ) {
         self.windowManager = windowManager
+        self.screenDetection = screenDetection
         self.bindingStore = bindingStore
         self.notificationCenter = notificationCenter
         self.workspaceNotificationCenter = workspaceNotificationCenter
@@ -213,6 +216,7 @@ class ShortcutManager {
 
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
+           parameters.source != .titleBar,
            parameters.action.classification != .size,
            parameters.action.classification != .display {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
@@ -224,7 +228,7 @@ class ShortcutManager {
 
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
                RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowElement.frame) == nil {
-                if let screen = ScreenDetection().detectScreens(using: windowElement)?.adjacentScreens?.next{
+                if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId)
                     // Bypass any other subsequent action by removing the last action
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
@@ -306,7 +310,7 @@ class ShortcutManager {
     private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
 
         if parameters.action == .maximize {
-            if ScreenDetection().detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.frame.size {
+            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.frame.size {
                 return true
             }
         }
