@@ -8,10 +8,8 @@ protocol WindowMover {
 
 /// Repositions a window that may not fill its snap zone. Pure geometry, no side effects.
 ///
-/// Leading-corner alignment keeps the requested origin. Other modes anchor to selected
-/// screen edges or center on unfilled axes. Edge names follow `CGRect.sharedEdges`:
-/// `.top` means maxY and `.bottom` means minY, even in AX space where Y grows downward.
-/// All frames must use the same (screen-flipped / AX) coordinate space.
+/// All frames must use screen-flipped (AX) coordinates. `CGRect.sharedEdges` names
+/// maxY `.top` and minY `.bottom`, even though Y grows downward.
 enum ClampedWindowAligner {
 
     /// A window may come back a hair smaller than its zone without being clamped in any
@@ -61,9 +59,8 @@ enum ClampedWindowAligner {
     }
 }
 
-/// Repositions the app-accepted frame after `StandardWindowMover` requests a resize.
-/// Leading-corner mode retains the requested origin rather than centering or edge-aligning
-/// within unused space. The app-accepted size is preserved in every mode.
+/// Repositions windows after `StandardWindowMover` requests a resize,
+/// keeping the size the app allows.
 class EdgeAlignmentWindowMover: WindowMover {
 
     func moveWindow(toRect rect: CGRect, resultParameters: ResultParameters) {
