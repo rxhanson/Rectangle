@@ -95,9 +95,11 @@ class BandTilingTests: XCTestCase {
         override var isHidden: Bool? { false }
         override var isSystemDialog: Bool? { false }
 
-        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             setFrameCalls += 1
+            let originalOrigin = acceptedFrame.origin
             acceptedFrame = frame
+            if !adjustPosition { acceptedFrame.origin = originalOrigin }
             acceptedFrame.size.height = max(frame.height, minimumHeight, minimumHeightAtOrigin(frame.minY))
             acceptedFrame.size.width = min(frame.width, maximumWidth)
         }
@@ -4504,9 +4506,16 @@ final class DragRestorePlacementTests: XCTestCase {
 
 final class DragRestoreReleaseTests: XCTestCase {
     private final class WindowElement: AccessibilityElement {
-        override var frame: CGRect { CGRect(x: 120, y: 120, width: 800, height: 600) }
+        var currentFrame = CGRect(x: 120, y: 120, width: 800, height: 600)
+        var writes: [CGRect] = []
+        override var frame: CGRect { currentFrame }
         override func beginAnimatedAdjustment() -> () -> Void { {} }
         override func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool { true }
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            currentFrame.size = frame.size
+            if adjustPosition { currentFrame.origin = frame.origin }
+            writes.append(currentFrame)
+        }
     }
 
     private final class Manager: SnappingManager {
@@ -4514,7 +4523,7 @@ final class DragRestoreReleaseTests: XCTestCase {
         override func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
             restores += 1
         }
-        override func snapAreaContainingCursor(priorSnapArea: SnapArea?) -> SnapArea? { nil }
+        override func snapAreaContainingCursor(priorSnapArea: SnapArea?, at loc: CGPoint) -> SnapArea? { nil }
     }
 
     private func release(dragAlreadyDetected: Bool) throws -> Manager {
@@ -4548,7 +4557,7 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(manager.initialWindowRect)
     }
 
-    func testQuickReleaseKeepsTheRemainingAnimationInsteadOfJumpingToItsDestination() throws {
+    func testWindowWithoutServerIdentityFallsBackOnceAndMouseUpDoesNotRepeatIt() throws {
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
@@ -4557,14 +4566,19 @@ final class DragRestoreReleaseTests: XCTestCase {
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
         let window = WindowElement(AXUIElementCreateSystemWide())
+        XCTAssertNil(window.windowId, "This fixture cannot acquire a recovery lease for a real window")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
-        var completions = 0
-        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { _ in completions += 1 }
+        var completedFrames: [CGRect] = []
+        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
 
-        _ = try release(dragAlreadyDetected: true)
+        XCTAssertEqual(completedFrames, [.null], "Missing server identity must request ordinary placement of the destination immediately")
+        XCTAssertNil(WindowAnimator.shared.destination(for: window))
 
-        XCTAssertEqual(completions, 0)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
+        let manager = try release(dragAlreadyDetected: true)
+
+        XCTAssertEqual(completedFrames, [.null], "A later native release must not repeat the ordinary placement request")
+        XCTAssertEqual(manager.restores, 0)
+        XCTAssertNil(WindowAnimator.shared.destination(for: window))
     }
 }
 

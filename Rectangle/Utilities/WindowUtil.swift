@@ -23,6 +23,7 @@ class WindowUtil {
         var rawInfos: CFArray?
         if let ids {
             let values = UnsafeMutablePointer<UnsafeRawPointer?>.allocate(capacity: ids.count)
+            defer { values.deallocate() }
             for (i, id) in ids.enumerated() {
                 values[i] = UnsafeRawPointer(bitPattern: UInt(id))
             }
@@ -50,7 +51,8 @@ class WindowUtil {
                 if let rawProcessName {
                     processName = String(rawProcessName)
                 }
-                let info = WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: processName)
+                let alpha = (rawInfo.getValue(kCGWindowAlpha) as CFNumber?).map { CGFloat(truncating: $0) } ?? 1
+                let info = WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: processName, alpha: alpha)
                 infos.append(info)
             }
         }
@@ -65,4 +67,5 @@ struct WindowInfo {
     let frame: CGRect
     let pid: pid_t
     let processName: String?
+    var alpha: CGFloat = 1
 }

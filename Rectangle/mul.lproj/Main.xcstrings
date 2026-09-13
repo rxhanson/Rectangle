@@ -1,6 +1,122 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Blur appearance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blur appearance"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模糊外观"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模糊外觀"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ぼかしの外観"
+          }
+        }
+      }
+    },
+    "Follow System" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow System"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随系统"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨系統"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムに合わせる"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "浅色"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "淺色"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ライト"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深色"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "深色"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ダーク"
+          }
+        }
+      }
+    },
     "blur-preview-cell.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Blur footprint\"; ObjectID = \"blur-preview-cell\";",
       "extractionState" : "extracted_with_value",
@@ -8593,9 +8709,7 @@
         }
       }
     },
-    "After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position." : {
-
-    },
+    "After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position." : {},
     "agt-UL-0e3.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Use Default\"; ObjectID = \"agt-UL-0e3\";",
       "extractionState" : "manual",
@@ -13083,9 +13197,7 @@
         }
       }
     },
-    "Cyclic corner shortcuts expand:" : {
-
-    },
+    "Cyclic corner shortcuts expand:" : {},
     "d7y-s8-7GE.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top\"; ObjectID = \"d7y-s8-7GE\";",
       "extractionState" : "extracted_with_value",
@@ -20248,9 +20360,7 @@
         }
       }
     },
-    "Green stoplight button maximizes instead of Full Screen" : {
-
-    },
+    "Green stoplight button maximizes instead of Full Screen" : {},
     "Grid Positions" : {
       "localizations" : {
         "ko" : {
@@ -21299,9 +21409,7 @@
         }
       }
     },
-    "Half actions preserve the window's size on the other axis" : {
-
-    },
+    "Half actions preserve the window's size on the other axis" : {},
     "heT-W6-Fyf.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Double-click window title bar to maximize/restore\"; ObjectID = \"heT-W6-Fyf\";",
       "extractionState" : "extracted_with_value",
@@ -21956,9 +22064,7 @@
         }
       }
     },
-    "Hold any modifier key or use the window menu for default macOS behavior" : {
-
-    },
+    "Hold any modifier key or use the window menu for default macOS behavior" : {},
     "HOm-BV-2jc.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Up\"; ObjectID = \"HOm-BV-2jc\";",
       "extractionState" : "extracted_with_value",
@@ -22347,9 +22453,7 @@
         }
       }
     },
-    "horizontally" : {
-
-    },
+    "horizontally" : {},
     "hQb-2v-fYv.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Smart Quotes\"; ObjectID = \"hQb-2v-fYv\";",
       "extractionState" : "manual",
@@ -27857,9 +27961,7 @@
         }
       }
     },
-    "Left Half then Top Half moves the window to the top left quarter; the action for the opposite edge expands it back." : {
-
-    },
+    "Left Half then Top Half moves the window to the top left quarter; the action for the opposite edge expands it back." : {},
     "Left or right side" : {
       "localizations" : {
         "ar" : {
@@ -28038,9 +28140,7 @@
         }
       }
     },
-    "Left side, top/bottom near corners" : {
-
-    },
+    "Left side, top/bottom near corners" : {},
     "Left side, top/bottom side near corners" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -32926,9 +33026,7 @@
         }
       }
     },
-    "Offset window position on overlap" : {
-
-    },
+    "Offset window position on overlap" : {},
     "ogc-rX-tC1.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Loosen\"; ObjectID = \"ogc-rX-tC1\";",
       "extractionState" : "manual",
@@ -34658,9 +34756,7 @@
         }
       }
     },
-    "Preserve maximize state when moving across displays" : {
-
-    },
+    "Preserve maximize state when moving across displays" : {},
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
       "localizations" : {
         "ko" : {
@@ -37591,12 +37687,8 @@
         }
       }
     },
-    "Repeated Maximize restores the previous size and position" : {
-
-    },
-    "Resize adjacent windows when cycling side or corner shortcuts" : {
-
-    },
+    "Repeated Maximize restores the previous size and position" : {},
+    "Resize adjacent windows when cycling side or corner shortcuts" : {},
     "rgM-f4-ycn.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Smart Dashes\"; ObjectID = \"rgM-f4-ycn\";",
       "extractionState" : "manual",
@@ -37921,9 +38013,7 @@
         }
       }
     },
-    "Right side, top/bottom near corners" : {
-
-    },
+    "Right side, top/bottom near corners" : {},
     "Right side, top/bottom side near corners" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -39001,9 +39091,7 @@
         }
       }
     },
-    "Show stacked window list on hover" : {
-
-    },
+    "Show stacked window list on hover" : {},
     "Side Split Ratio" : {
       "localizations" : {
         "ko" : {
@@ -40973,9 +41061,7 @@
         }
       }
     },
-    "Thirds, top/bottom near corners" : {
-
-    },
+    "Thirds, top/bottom near corners" : {},
     "Thirds, top/bottom side near corners" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -41692,15 +41778,9 @@
         }
       }
     },
-    "Toggle stacked window badge" : {
-
-    },
-    "Toggle Todo" : {
-
-    },
-    "Toggle window list" : {
-
-    },
+    "Toggle stacked window badge" : {},
+    "Toggle Todo" : {},
+    "Toggle window list" : {},
     "Top Center Left Eighth" : {
       "localizations" : {
         "ko" : {
@@ -42031,12 +42111,8 @@
         }
       }
     },
-    "Top/bottoms" : {
-
-    },
-    "Treat multiple displays as one" : {
-
-    },
+    "Top/bottoms" : {},
+    "Treat multiple displays as one" : {},
     "Treat multiple monitors as one" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -44545,9 +44621,7 @@
         }
       }
     },
-    "vertically" : {
-
-    },
+    "vertically" : {},
     "Vfd-fe-hCe.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"ⓘ\"; ObjectID = \"Vfd-fe-hCe\";",
       "extractionState" : "extracted_with_value",
@@ -46756,9 +46830,7 @@
         }
       }
     },
-    "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
-
-    },
+    "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {},
     "Width Step (px)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -50876,6 +50948,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "段落"
+          }
+        }
+      }
+    },
+    "Animation style" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animation style"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "动画样式"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動畫樣式"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アニメーションの種類"
+          }
+        }
+      }
+    },
+    "Blue preview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue preview"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "蓝色预览"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "藍色預覽"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ブループレビュー"
+          }
+        }
+      }
+    },
+    "Direct resize" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direct resize"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接缩放窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接縮放視窗"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを直接リサイズ"
           }
         }
       }
