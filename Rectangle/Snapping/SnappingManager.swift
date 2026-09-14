@@ -317,8 +317,9 @@ class SnappingManager {
         }
     }
     
-    private func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
+    func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
         guard !Defaults.unsnapRestore.userDisabled else { return }
+        guard !isRestoreSuppressedBySizeChange(windowId: windowId) else { return }
         
         // if window was put there by rectangle, restore size
         if let restoreRect = getRestoreRect(windowId: windowId) {
@@ -348,14 +349,19 @@ class SnappingManager {
         }
     }
     
+    private func isRestoreSuppressedBySizeChange(windowId: CGWindowID) -> Bool {
+        guard Defaults.unsnapRestoreFromSizeChange.userDisabled,
+              let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
+              lastAction.rect == initialWindowRect
+        else { return false }
+        
+        return lastAction.action.category == .size
+    }
+    
     private func getRestoreRect(windowId: CGWindowID) -> CGRect? {
         guard let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
               lastAction.rect == initialWindowRect
         else { return nil }
-        
-        if lastAction.action.category == .size && Defaults.unsnapRestoreFromSizeChange.userDisabled {
-            return nil
-        }
         
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
