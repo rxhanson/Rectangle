@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF09A0000000000000000001 /* GridTiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000002 /* GridTiling.swift */; };
+		AF09A0000000000000000003 /* GridTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000004 /* GridTilingTests.swift */; };
 		01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = de0950b8b00f40308934a523 /* JSONDefaultTests.swift */; };
 		05DBEA44B55E6F8C5FC3D6E0 /* MiddleLeftTwelfthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEABF10E66D648DDB37DABBA /* MiddleLeftTwelfthCalculation.swift */; };
 		0F29956694B5BB31EBDAE445 /* UpperMiddleRightSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B5B09465C38F8B766B3C3C /* UpperMiddleRightSixteenthCalculation.swift */; };
@@ -230,6 +232,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AF09A0000000000000000002 /* GridTiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTiling.swift; sourceTree = "<group>"; };
+		AF09A0000000000000000004 /* GridTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTilingTests.swift; sourceTree = "<group>"; };
 		16B4044DB4809116039F96EB /* SixteenthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SixteenthsRepeated.swift; sourceTree = "<group>"; };
 		246168B345ECE6C375ACEEB7 /* BottomLeftTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftTwelfthCalculation.swift; sourceTree = "<group>"; };
 		30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecifiedCalculation.swift; sourceTree = "<group>"; };
@@ -485,6 +489,7 @@
 			children = (
 				98192DDD2717201000015E66 /* ReverseAllManager.swift */,
 				FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */,
+				AF09A0000000000000000002 /* GridTiling.swift */,
 			);
 			path = MultiWindow;
 			sourceTree = "<group>";
@@ -746,6 +751,7 @@
 			isa = PBXGroup;
 			children = (
 				9824701F22AF9B7E0037B409 /* RectangleTests.swift */,
+				AF09A0000000000000000004 /* GridTilingTests.swift */,
 				944F25D02CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift */,
 				de0950b8b00f40308934a523 /* JSONDefaultTests.swift */,
 				9824702122AF9B7E0037B409 /* Info.plist */,
@@ -1057,6 +1063,7 @@
 				D0CFE33527A8CD16004DA47B /* BottomLeftThirdCalculation.swift in Sources */,
 				D0CFE33127A8CAED004DA47B /* TopLeftThirdCalculation.swift in Sources */,
 				FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */,
+				AF09A0000000000000000001 /* GridTiling.swift in Sources */,
 				98192DDA270F606C00015E66 /* Debounce.swift in Sources */,
 				D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
@@ -1208,6 +1215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */,
+				AF09A0000000000000000003 /* GridTilingTests.swift in Sources */,
 				944F25D12CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift in Sources */,
 				01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */,
 			);

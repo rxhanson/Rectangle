@@ -43,6 +43,7 @@ class SettingsViewController: NSViewController {
     private var extraSettingsPopover: NSPopover?
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     private var tilingShortcutViews = [MASShortcutView]()
+    private var tileGridLimitRows = [TileGridLimitRow]()
     
     private var cycleSizeCheckboxes = [NSButton]()
     private var cornerCycleExpansionAxisButtons = [NSButton]()
@@ -866,6 +867,24 @@ class SettingsViewController: NSViewController {
             mainStackView.addArrangedSubview(tileRowsRow)
             mainStackView.addArrangedSubview(tileColumnsRow)
             mainStackView.setCustomSpacing(10, after: tileColumnsRow)
+
+            let tileGridHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Tile Windows in Rows/Columns", tableName: "Main", value: "", comment: "General settings group for multi-window grid limits"))
+            tileGridHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+            tileGridHeaderLabel.alignment = .center
+            tileGridHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+
+            let columnsLimitRow = TileGridLimitRow(
+                title: NSLocalizedString("Maximum windows per column", tableName: "Main", value: "", comment: "Maximum windows stacked in each tiled column"),
+                defaults: Defaults.tileColumnsMaxWindows)
+            let rowsLimitRow = TileGridLimitRow(
+                title: NSLocalizedString("Maximum windows per row", tableName: "Main", value: "", comment: "Maximum windows placed side by side in each tiled row"),
+                defaults: Defaults.tileRowsMaxWindows)
+            tileGridLimitRows = [columnsLimitRow, rowsLimitRow]
+            mainStackView.addArrangedSubview(tileGridHeaderLabel)
+            mainStackView.addArrangedSubview(columnsLimitRow)
+            mainStackView.addArrangedSubview(rowsLimitRow)
+            mainStackView.setCustomSpacing(10, after: rowsLimitRow)
+
             mainStackView.addArrangedSubview(largerWidthRow)
             mainStackView.addArrangedSubview(smallerWidthRow)
             mainStackView.addArrangedSubview(widthStepRow)
@@ -1051,6 +1070,9 @@ class SettingsViewController: NSViewController {
 
             NSLayoutConstraint.activate([
                 headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                tileGridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                columnsLimitRow.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
+                rowsLimitRow.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 splitRatioHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
                 tileRowsLabel.widthAnchor.constraint(equalTo: tileColumnsLabel.widthAnchor),
                 tileColumnsLabel.widthAnchor.constraint(equalTo: largerWidthLabel.widthAnchor),
@@ -1147,6 +1169,7 @@ class SettingsViewController: NSViewController {
             popover.contentViewController = viewController
             extraSettingsPopover = popover
         }
+        tileGridLimitRows.forEach { $0.reload() }
         extraSettingsPopover?.show(relativeTo: sender.bounds, of: sender, preferredEdge: .maxY)
     }
     
@@ -1249,6 +1272,7 @@ class SettingsViewController: NSViewController {
         hideMenuBarIconCheckbox.state = Defaults.hideMenuBarIcon.enabled ? .on : .off
         
         subsequentExecutionPopUpButton.selectItem(withTag: Defaults.subsequentExecutionMode.value.rawValue)
+        tileGridLimitRows.forEach { $0.reload() }
         
         allowAnyShortcutCheckbox.state = Defaults.allowAnyShortcut.enabled ? .on : .off
                 
@@ -1601,6 +1625,78 @@ extension SettingsViewController: NSTextFieldDelegate {
         }
 
         ActiveSideSplitRatios.shared.resetAll()
+    }
+}
+
+private class TileGridLimitRow: NSStackView, NSTextFieldDelegate {
+    private let defaults: PositiveIntDefault
+    private let field = NSTextField()
+    private let stepper = NSStepper()
+
+    init(title: String, defaults: PositiveIntDefault) {
+        self.defaults = defaults
+        super.init(frame: .zero)
+        orientation = .horizontal
+        alignment = .centerY
+        spacing = 8
+        translatesAutoresizingMaskIntoConstraints = false
+
+        let label = NSTextField(labelWithString: title)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+        let formatter = NumberFormatter()
+        formatter.allowsFloats = false
+        formatter.minimum = 1
+        formatter.maximum = NSNumber(value: Int.max)
+        field.formatter = formatter
+        field.delegate = self
+        field.alignment = .right
+        field.refusesFirstResponder = false
+        field.setAccessibilityLabel(title)
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.widthAnchor.constraint(equalToConstant: 72).isActive = true
+
+        stepper.minValue = 1
+        stepper.maxValue = Double(Int.max)
+        stepper.increment = 1
+        stepper.valueWraps = false
+        stepper.target = self
+        stepper.action = #selector(stepLimit(_:))
+        stepper.setAccessibilityLabel(title)
+
+        let controls: [NSControl] = [label, field, stepper]
+        controls.forEach { control in
+            control.setContentCompressionResistancePriority(.required, for: .vertical)
+            control.setContentHuggingPriority(.defaultHigh, for: .vertical)
+            addArrangedSubview(control)
+        }
+        reload()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("TileGridLimitRow is created programmatically")
+    }
+
+    func reload() {
+        field.stringValue = String(defaults.value)
+        stepper.doubleValue = Double(defaults.value)
+    }
+
+    @objc private func stepLimit(_ sender: NSStepper) {
+        defaults.value = Int(exactly: sender.doubleValue) ?? Int.max
+        reload()
+    }
+
+    func controlTextDidChange(_ obj: Notification) {
+        if let value = Int(field.stringValue), value > 0 {
+            defaults.value = value
+            stepper.doubleValue = Double(defaults.value)
+        }
+    }
+
+    func controlTextDidEndEditing(_ obj: Notification) {
+        reload()
     }
 }
 
