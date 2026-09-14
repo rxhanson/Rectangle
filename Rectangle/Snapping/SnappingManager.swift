@@ -912,11 +912,13 @@ class SnappingManager {
               let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
               lastAction.rect == initialWindowRect
         else { return false }
-        
+
         return lastAction.action.category == .size
     }
-    
+
     private func getRestoreRect(windowId: CGWindowID) -> CGRect? {
+        // Frosted restore paths also use this lookup before the native fallback.
+        guard !isRestoreSuppressedBySizeChange(windowId: windowId) else { return nil }
         guard let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
               lastAction.rect == initialWindowRect
         else { return nil }
