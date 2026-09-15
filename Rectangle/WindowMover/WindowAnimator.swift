@@ -2,7 +2,7 @@
 
 import Cocoa
 
-struct WindowAnimationPlacement {
+struct WindowAnimationPlacement: Equatable {
     let screenFrame: CGRect
     let sharedEdges: Edge?
     let constrainToScreen: Bool
@@ -133,9 +133,11 @@ struct WindowAnimationSettlement {
     private var stableSince: TimeInterval?
     private var retriedSize = false
     private var retriedNearDestination = false
+    private let alignmentTolerance: CGFloat
 
-    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil) {
+    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil, alignmentTolerance: CGFloat = 1) {
         self.startedAt = startedAt
+        self.alignmentTolerance = alignmentTolerance
         if let verifiedFrame {
             previous = verifiedFrame
             stableSince = startedAt
@@ -191,7 +193,7 @@ struct WindowAnimationSettlement {
             return .retrySize
         }
         let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-        if WindowAnimationGeometry.near(ax, aligned, tolerance: 1) { return .complete(ax) }
+        if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) { return .complete(ax) }
         resetObservation()
         return .align(aligned)
     }
@@ -412,11 +414,12 @@ final class WindowAnimator {
                  duration: TimeInterval = WindowAnimationCurve.duration,
                  resizeOnly: Bool = false, releasedSnap: Bool = false,
                  placement: WindowAnimationPlacement? = nil,
+                 profile: WindowAnimationProfile = .standard,
                  offset: @escaping () -> CGPoint = { .zero },
                  curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
                  completion: @escaping (CGRect) -> Void) {
         direct.animate(element, from: startingFrame, to: destination, duration: duration,
-                       resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement,
+                       resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement, profile: profile,
                        offset: offset, curve: curve, completion: completion)
     }
 

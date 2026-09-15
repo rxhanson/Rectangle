@@ -30,6 +30,10 @@ class WindowManager {
         ]
     }
     
+    func logicalFrame(for element: AccessibilityElement) -> CGRect {
+        animationDestination(element) ?? element.frame
+    }
+
     func recordAction(windowId: CGWindowID?,
                       resultingRect: CGRect,
                       action: WindowAction,
@@ -78,12 +82,13 @@ class WindowManager {
                 executionID &+= 1
                 let currentExecutionID = executionID
                 if animationsEnabled(), frontmostWindowElement.isResizable() {
-                    animateWindow(frontmostWindowElement, to: restoreRect) { [weak self] frame in
+                    animateWindow(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
                     }
                 } else {
+                    WindowAnimator.shared.cancel(for: frontmostWindowElement)
                     frontmostWindowElement.setFrame(restoreRect)
                 }
             }
@@ -300,10 +305,12 @@ class WindowManager {
                 gap: CGFloat(Defaults.gapSize.value))
             animateWindow(frontmostWindowElement, to: calcResult.rect.screenFlipped,
                           placement: placement,
-                          releasedSnap: parameters.source == .dragToSnap) { frame in
+                          releasedSnap: parameters.source == .dragToSnap,
+                          profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
                 completeMove(!frame.isNull)
             }
         } else {
+            WindowAnimator.shared.cancel(for: frontmostWindowElement)
             completeMove(false)
         }
     }
@@ -312,8 +319,8 @@ class WindowManager {
 
     func animateWindow(_ element: AccessibilityElement, to destination: CGRect,
                        placement: WindowAnimationPlacement? = nil, releasedSnap: Bool = false,
-                       completion: @escaping (CGRect) -> Void) {
-        WindowAnimator.shared.animate(element, to: destination, releasedSnap: releasedSnap, placement: placement, completion: completion)
+                       profile: WindowAnimationProfile = .standard, completion: @escaping (CGRect) -> Void) {
+        WindowAnimator.shared.animate(element, to: destination, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
     }
     
     /// Move/resize a window based on the calculation results.
