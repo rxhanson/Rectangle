@@ -11,9 +11,19 @@ final class DirectWindowAnimator {
         let fallback: () -> Void
     }
 
+    private struct PendingSettlement {
+        let destination: CGRect
+        let origin: CGRect
+        let placement: WindowAnimationPlacement
+        var stability: WindowAnimationSettlement
+        let cleanup: () -> Void
+        let completion: (CGRect) -> Void
+    }
+
     private var window: AccessibilityElement?
     private var animation: WindowFrameAnimation?
     private var pendingRelease: PendingRelease?
+    private var pendingSettlement: PendingSettlement?
     private var timer: Timer?
     private var mouseMonitor: Any?
     private var intent = UUID()
@@ -42,7 +52,7 @@ final class DirectWindowAnimator {
     }
 
     func destination(for element: AccessibilityElement) -> CGRect? {
-        window == element ? (pendingRelease?.destination ?? animation?.destination) : nil
+        window == element ? (pendingRelease?.destination ?? pendingSettlement?.destination ?? animation?.destination) : nil
     }
 
     func cancel(for element: AccessibilityElement) {
@@ -51,6 +61,7 @@ final class DirectWindowAnimator {
 
     func cancel() {
         if pendingRelease != nil { clearPendingRelease() }
+        if pendingSettlement != nil { clearSettlement() }
         animation?.cancel()
     }
     func cancelIfTargetDiffers(from pid: pid_t?) {
@@ -60,12 +71,19 @@ final class DirectWindowAnimator {
         if let pending = pendingRelease {
             clearPendingRelease()
             pending.fallback()
-        } else { animation?.finish() }
+        } else if pendingSettlement != nil {
+            completeSettlement(.null)
+        } else {
+            animation?.finish()
+            // An explicit finish must not leave a newly created settlement
+            // attached to the next window's animation.
+            if pendingSettlement != nil { completeSettlement(.null) }
+        }
     }
 
     func mouseDown() {
         // A new grab supersedes a released snap that has not started writing.
-        if pendingRelease != nil { cancel() }
+        if pendingRelease != nil || pendingSettlement != nil { cancel() }
         else { finish() }
     }
 
@@ -75,6 +93,21 @@ final class DirectWindowAnimator {
             guard environmentIsSafe() else { cancel(); return }
         }
         guard enabled() else { finish(); return }
+        if var pending = pendingSettlement, let window {
+            let decision = pending.stability.observe(ax: window.frame, server: serverFrame(window),
+                destination: pending.destination, placement: pending.placement, origin: pending.origin, at: clock())
+            pendingSettlement = pending
+            switch decision {
+            case .waiting: break
+            case .retrySize:
+                if window.writeAnimationSize(pending.destination.size) != .success { completeSettlement(.null) }
+            case .align(let frame):
+                if window.writeAnimationPosition(frame.origin) != .success { completeSettlement(.null) }
+            case .complete(let frame): completeSettlement(frame)
+            case .failed: completeSettlement(.null)
+            }
+            return
+        }
         if var pending = pendingRelease, let window {
             let ax = window.frame
             let server = serverFrame(window)
@@ -151,6 +184,8 @@ final class DirectWindowAnimator {
         var finalFrame: CGRect?
         var previousFrame = origin
         var finalized = false
+        let needsSettlement = placement != nil && !nativeResize
+        var finalResizeAccepted = false
         lastEnvironmentCheck = clock()
         window = element
         WindowAnimationDiagnostics.event("direct-animation-start", fields: ["windowID": element.windowId ?? 0,
@@ -189,17 +224,31 @@ final class DirectWindowAnimator {
                    abs(achieved.width - aligned.width) <= 1, abs(achieved.height - aligned.height) <= 1 {
                     finalFrame = achieved
                 }
-            } else if let placement {
-                finalFrame = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin,
-                                                                  progress: 1, previousFrame: previousFrame)
+            } else if placement != nil {
+                // Do not align a possibly stale size and immediately report success.
+                // The settlement phase verifies the achieved frame on later ticks.
+                finalResizeAccepted = element.writeAnimationSize(frame.size) == .success
             }
         }, cleanup: { [weak self] in
             self?.stopDriving()
             self?.animation = nil
             self?.window = nil
-            restoreAccessibility()
+            if !finalized || !needsSettlement { restoreAccessibility() }
             if !finalized { WindowAnimationDiagnostics.event("direct-animation-cancel", fields: ["windowID": element.windowId ?? 0]) }
-        }, completion: { requested in
+        }, completion: { [weak self] requested in
+            if needsSettlement, let placement {
+                guard let self, finalResizeAccepted else {
+                    restoreAccessibility()
+                    completion(.null)
+                    return
+                }
+                self.window = element
+                self.pendingSettlement = PendingSettlement(destination: requested, origin: origin,
+                    placement: placement, stability: WindowAnimationSettlement(startedAt: self.clock()),
+                    cleanup: restoreAccessibility, completion: completion)
+                self.startDriving()
+                return
+            }
             if placement == nil && !nativeResize {
                 // Restore the normal AX timeout before settling native display adjustments.
                 element.setFrame(requested, adjustSizeFirst: false, adjustPosition: !resizeOnly)
@@ -232,6 +281,23 @@ final class DirectWindowAnimator {
         pendingRelease = nil
         window = nil
         stopDriving()
+    }
+
+    private func clearSettlement() {
+        let pending = pendingSettlement
+        pendingSettlement = nil
+        window = nil
+        stopDriving()
+        pending?.cleanup()
+    }
+
+    private func completeSettlement(_ frame: CGRect) {
+        guard let pending = pendingSettlement else { return }
+        WindowAnimationDiagnostics.event("direct-animation-complete", fields: [
+            "windowID": window?.windowId ?? 0, "placed": !frame.isNull,
+            "settlementMilliseconds": (clock() - pending.stability.startedAt) * 1000])
+        clearSettlement()
+        pending.completion(frame)
     }
 
     private func stopDriving() {
