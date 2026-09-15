@@ -58,16 +58,18 @@ struct WindowAnimationPlacement {
 }
 
 /// Waits for AX and WindowServer to agree before accepting a constrained size.
-/// A final resize gets one retry; a new drag cancels this state in the driver.
+/// Retries a stalled resize with a small position change before moving fully in bounds.
+/// A new drag cancels this state in the driver.
 struct WindowAnimationSettlement {
     enum Decision {
-        case waiting, retrySize, align(CGRect), complete(CGRect), failed
+        case waiting, retrySize, retrySizeAt(CGPoint), align(CGRect), complete(CGRect), failed
     }
 
     let startedAt: TimeInterval
     private var previous: CGRect?
     private var stableSince: TimeInterval?
     private var retriedSize = false
+    private var retriedNearDestination = false
 
     init(startedAt: TimeInterval) { self.startedAt = startedAt }
 
@@ -87,6 +89,34 @@ struct WindowAnimationSettlement {
         }
         guard let stableSince, now - stableSince >= 1.0 / 30 else { return .waiting }
         if !retriedSize, abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1 {
+            if placement.constrainToScreen {
+                // A shrink can stop while returning from off screen even when AX
+                // reports success. Moving the entire oversized frame in bounds can
+                // expose a backwards step after it has already reached its target.
+                var retryFrame = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+                if let position = placement.positionBeforeGrowing(from: retryFrame, to: destination) {
+                    retryFrame.origin = position
+                }
+                if !WindowRecoveryGeometry.near(ax, retryFrame, tolerance: 1) {
+                    if !retriedNearDestination,
+                       abs(ax.minX - destination.minX) <= 1, abs(ax.minY - destination.minY) <= 1,
+                       ax.width >= destination.width, ax.height >= destination.height {
+                        // A one-point move can unblock the resize without exposing
+                        // the full correction. Verify it before using the in-bounds
+                        // retry; genuine minimum sizes still take the normal path.
+                        retriedNearDestination = true
+                        func step(_ current: CGFloat, toward target: CGFloat) -> CGFloat {
+                            current + min(1, abs(target - current)) * (target < current ? -1 : 1)
+                        }
+                        resetObservation()
+                        return .retrySizeAt(CGPoint(x: step(ax.minX, toward: retryFrame.minX),
+                                                    y: step(ax.minY, toward: retryFrame.minY)))
+                    }
+                    retriedSize = true
+                    resetObservation()
+                    return .retrySizeAt(retryFrame.origin)
+                }
+            }
             retriedSize = true
             resetObservation()
             return .retrySize

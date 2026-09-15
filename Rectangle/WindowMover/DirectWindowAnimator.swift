@@ -101,6 +101,15 @@ final class DirectWindowAnimator {
             case .waiting: break
             case .retrySize:
                 if window.writeAnimationSize(pending.destination.size) != .success { completeSettlement(.null) }
+            case .retrySizeAt(let position):
+                // Keep the retry position, size and final alignment in one turn.
+                // Waiting between them exposes the temporary position at the edge.
+                guard window.writeAnimationPosition(position) == .success,
+                      window.setConstrainedAnimationFrame(pending.destination, placement: pending.placement,
+                          origin: pending.origin, progress: 1) != nil else {
+                    completeSettlement(.null)
+                    return
+                }
             case .align(let frame):
                 if window.writeAnimationPosition(frame.origin) != .success { completeSettlement(.null) }
             case .complete(let frame): completeSettlement(frame)
