@@ -2,17 +2,6 @@
 
 import Cocoa
 
-enum WindowAnimationStyle: Int, CaseIterable {
-    case frosted = 0
-    case direct = 1
-
-    func isEnabled(animations: Bool, reduceMotion: Bool, reduceTransparency: Bool,
-                   voiceOver: Bool, switchControl: Bool) -> Bool {
-        animations && !reduceMotion && !voiceOver && !switchControl
-            && (self == .direct || !reduceTransparency)
-    }
-}
-
 enum BlurAppearance: Int, CaseIterable {
     case system = 0
     case light = 1
@@ -38,7 +27,6 @@ class Defaults {
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
-    static let windowAnimationStyle = IntEnumDefault<WindowAnimationStyle>(key: "windowAnimationStyle", defaultValue: .direct)
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
@@ -90,14 +78,6 @@ class Defaults {
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
     static let footprintBlur = BoolDefault(key: "footprintBlur")
     static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
-
-    /// Frosted window transitions share the existing preview blur preference.
-    /// Turning animations off deliberately leaves the chosen blur treatment enabled.
-    static func normalizeWindowAnimationPreferences() {
-        if experimentalWindowAnimations.enabled && windowAnimationStyle.value == .frosted && !footprintBlur.enabled {
-            footprintBlur.enabled = true
-        }
-    }
 
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let todo = OptionalBoolDefault(key: "todo")
@@ -166,7 +146,6 @@ class Defaults {
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
         experimentalWindowAnimations,
-        windowAnimationStyle,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,

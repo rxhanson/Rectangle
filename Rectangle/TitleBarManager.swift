@@ -79,7 +79,7 @@ class TitleBarManager {
     static func resolveAction(_ action: WindowAction, restoreEnabled: Bool,
                               windowFrame: CGRect, pendingFrame: CGRect?,
                               lastAction: RectangleAction?) -> WindowAction {
-        // During an animation the real window may be parked away from its target.
+        // During an animation the real window may not have reached its target.
         let frame = pendingFrame ?? windowFrame
         guard restoreEnabled, frame != .null,
               let lastAction, lastAction.action == action, lastAction.rect == frame

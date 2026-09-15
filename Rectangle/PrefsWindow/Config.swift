@@ -69,7 +69,6 @@ extension Defaults {
                 availableDefault.load(from: codedDefault)
             }
         }
-        Defaults.normalizeWindowAnimationPreferences()
         
         for action in WindowAction.active {
             let importedShortcut = config.shortcuts[action.name] ?? action.aliasName.flatMap { config.shortcuts[$0] }

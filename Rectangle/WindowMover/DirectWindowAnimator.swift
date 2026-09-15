@@ -25,10 +25,10 @@ final class DirectWindowAnimator {
     private let crossesDisplays: (CGRect, CGRect) -> Bool
     private var lastEnvironmentCheck: TimeInterval = 0
 
-    init(enabled: @escaping () -> Bool = { WindowAnimator.enabled && Defaults.windowAnimationStyle.value == .direct },
+    init(enabled: @escaping () -> Bool = { WindowAnimator.enabled },
          clock: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
          automaticallyAdvances: Bool = true,
-         environmentIsSafe: @escaping () -> Bool = { !WindowFrostInterruptionPolicy.missionControlActive },
+         environmentIsSafe: @escaping () -> Bool = { !WindowAnimationInterruptionPolicy.missionControlActive },
          serverFrame: @escaping (AccessibilityElement) -> CGRect? = { element in
              element.windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
          },
@@ -84,7 +84,7 @@ final class DirectWindowAnimator {
                 return
             }
             clearPendingRelease()
-            WindowFrostDiagnostics.event("direct-released-snap-settled", fields: ["windowID": window.windowId ?? 0,
+            WindowAnimationDiagnostics.event("direct-released-snap-settled", fields: ["windowID": window.windowId ?? 0,
                 "ready": decision == .ready, "milliseconds": (time - pending.stability.startedAt) * 1000])
             if decision == .ready { pending.start(ax) }
             else { pending.fallback() }
@@ -113,7 +113,7 @@ final class DirectWindowAnimator {
                     // direct motion. Let the caller place a cross-display snap
                     // normally, without issuing intermediate animation frames.
                     if self.crossesDisplays(origin, destination) {
-                        WindowFrostDiagnostics.event("direct-cross-display-snap-immediate", fields: [
+                        WindowAnimationDiagnostics.event("direct-cross-display-snap-immediate", fields: [
                             "windowID": element.windowId ?? 0,
                             "source": [origin.minX, origin.minY, origin.width, origin.height],
                             "destination": [destination.minX, destination.minY, destination.width, destination.height]])
@@ -124,7 +124,7 @@ final class DirectWindowAnimator {
                                         resizeOnly: resizeOnly, placement: placement, offset: offset,
                                         curve: curve, completion: completion)
                 }, fallback: { completion(.null) })
-            WindowFrostDiagnostics.event("direct-released-snap-wait", fields: ["windowID": element.windowId ?? 0])
+            WindowAnimationDiagnostics.event("direct-released-snap-wait", fields: ["windowID": element.windowId ?? 0])
             startDriving()
             advance(at: clock())
             return
@@ -153,7 +153,7 @@ final class DirectWindowAnimator {
         var finalized = false
         lastEnvironmentCheck = clock()
         window = element
-        WindowFrostDiagnostics.event("direct-animation-start", fields: ["windowID": element.windowId ?? 0,
+        WindowAnimationDiagnostics.event("direct-animation-start", fields: ["windowID": element.windowId ?? 0,
             "source": [origin.minX, origin.minY, origin.width, origin.height],
             "destination": [destination.minX, destination.minY, destination.width, destination.height],
             "resizeOnly": resizeOnly, "duration": duration, "nativeResize": nativeResize])
@@ -173,7 +173,7 @@ final class DirectWindowAnimator {
             if nativeResize {
                 guard nativeResizeAccepted else { return }
                 let actual = element.frame
-                guard WindowRecoveryGeometry.valid(actual) else { return }
+                guard WindowAnimationGeometry.valid(actual) else { return }
                 // Restore requests carry a previously achieved size. If IINA
                 // rejected that growth, let the ordinary mover retry it.
                 if placement?.sharedEdges == nil,
@@ -184,7 +184,7 @@ final class DirectWindowAnimator {
                     guard element.writeAnimationPosition(aligned.origin) == .success else { return }
                 }
                 let achieved = element.frame
-                if WindowRecoveryGeometry.valid(achieved),
+                if WindowAnimationGeometry.valid(achieved),
                    abs(achieved.minX - aligned.minX) <= 1, abs(achieved.minY - aligned.minY) <= 1,
                    abs(achieved.width - aligned.width) <= 1, abs(achieved.height - aligned.height) <= 1 {
                     finalFrame = achieved
@@ -198,7 +198,7 @@ final class DirectWindowAnimator {
             self?.animation = nil
             self?.window = nil
             restoreAccessibility()
-            if !finalized { WindowFrostDiagnostics.event("direct-animation-cancel", fields: ["windowID": element.windowId ?? 0]) }
+            if !finalized { WindowAnimationDiagnostics.event("direct-animation-cancel", fields: ["windowID": element.windowId ?? 0]) }
         }, completion: { requested in
             if placement == nil && !nativeResize {
                 // Restore the normal AX timeout before settling native display adjustments.
@@ -211,7 +211,7 @@ final class DirectWindowAnimator {
                 if !achieved.isNull, sizeMatches, positionMatches { finalFrame = achieved }
             }
             let frame = finalFrame ?? .null
-            WindowFrostDiagnostics.event("direct-animation-complete", fields: ["windowID": element.windowId ?? 0,
+            WindowAnimationDiagnostics.event("direct-animation-complete", fields: ["windowID": element.windowId ?? 0,
                 "placed": !frame.isNull])
             completion(frame)
         })
@@ -222,7 +222,7 @@ final class DirectWindowAnimator {
             } else {
                 nativeResizeAccepted = element.setAnimationFrame(destination, resizeOnly: resizeOnly)
             }
-            WindowFrostDiagnostics.event("direct-native-resize-settlement", fields: [
+            WindowAnimationDiagnostics.event("direct-native-resize-settlement", fields: [
                 "windowID": element.windowId ?? 0, "accepted": nativeResizeAccepted])
         }
         startDriving()

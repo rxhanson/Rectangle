@@ -12,7 +12,6 @@ class SnapAreaViewController: NSViewController {
     @IBOutlet weak var hapticFeedbackCheckbox: NSButton!
     @IBOutlet weak var missionControlDraggingCheckbox: NSButton!
     private let blurAppearanceSelect = NSPopUpButton(frame: .zero, pullsDown: false)
-    private let windowAnimationStyleSelect = NSPopUpButton(frame: .zero, pullsDown: false)
 
     @IBOutlet weak var topLeftLandscapeSelect: NSPopUpButton!
     @IBOutlet weak var topLandscapeSelect: NSPopUpButton!
@@ -65,40 +64,10 @@ class SnapAreaViewController: NSViewController {
     }
 
     private func refreshWindowAnimationPreferences() {
-        Defaults.normalizeWindowAnimationPreferences()
         blurFootprintCheckbox.state = Defaults.footprintBlur.enabled ? .on : .off
-        blurFootprintCheckbox.isEnabled = !(Defaults.experimentalWindowAnimations.enabled && Defaults.windowAnimationStyle.value == .frosted)
         experimentalWindowAnimationsCheckbox.state = Defaults.experimentalWindowAnimations.enabled ? .on : .off
-        windowAnimationStyleSelect.selectItem(withTag: Defaults.windowAnimationStyle.value.rawValue)
-        windowAnimationStyleSelect.isEnabled = Defaults.experimentalWindowAnimations.enabled
         blurAppearanceSelect.selectItem(withTag: Defaults.blurAppearance.value.rawValue)
         blurAppearanceSelect.isEnabled = Defaults.footprintBlur.enabled
-    }
-
-    private func configureWindowAnimationStyle() {
-        guard let stack = experimentalWindowAnimationsCheckbox.superview as? NSStackView,
-              let index = stack.arrangedSubviews.firstIndex(of: experimentalWindowAnimationsCheckbox) else { return }
-        let label = NSTextField(labelWithString: NSLocalizedString("Animation style", tableName: "Main", comment: "Window animation style setting"))
-        for (style, title) in [(WindowAnimationStyle.frosted, NSLocalizedString("Blur preview", tableName: "Main", comment: "Window animation style using a blurred preview")),
-                               (.direct, NSLocalizedString("Direct resize", tableName: "Main", comment: "Animate the actual window's position and size"))] {
-            windowAnimationStyleSelect.addItem(withTitle: title)
-            windowAnimationStyleSelect.lastItem?.tag = style.rawValue
-        }
-        windowAnimationStyleSelect.setAccessibilityLabel(label.stringValue)
-        windowAnimationStyleSelect.target = self
-        windowAnimationStyleSelect.action = #selector(setWindowAnimationStyle(_:))
-        let row = NSStackView(views: [label, windowAnimationStyleSelect])
-        row.orientation = .horizontal
-        row.alignment = .centerY
-        row.spacing = 8
-        stack.insertArrangedSubview(row, at: index + 1)
-    }
-
-    @objc private func setWindowAnimationStyle(_ sender: NSPopUpButton) {
-        guard let style = WindowAnimationStyle(rawValue: sender.selectedTag()) else { return }
-        Defaults.windowAnimationStyle.value = style
-        refreshWindowAnimationPreferences()
-        Notification.Name.windowAnimationPreferencesChanged.post()
     }
 
     private func configureBlurAppearance() {
@@ -158,7 +127,6 @@ class SnapAreaViewController: NSViewController {
     }
     
     override func viewDidLoad() {
-        configureWindowAnimationStyle()
         configureBlurAppearance()
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
