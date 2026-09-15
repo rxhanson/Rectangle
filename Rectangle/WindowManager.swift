@@ -31,6 +31,10 @@ class WindowManager {
         ]
     }
     
+    func logicalFrame(for element: AccessibilityElement) -> CGRect {
+        animationDestination(element) ?? element.frame
+    }
+
     func recordAction(windowId: CGWindowID?,
                       resultingRect: CGRect,
                       action: WindowAction,
@@ -99,7 +103,7 @@ class WindowManager {
                 // The animation planner accepts reachable, partly offscreen targets
                 // and falls back when it cannot prepare a safe local transition.
                 if animationsEnabled(), frontmostWindowElement.isResizable() {
-                    animateWindow(frontmostWindowElement, to: restoreRect, restoring: true) { [weak self] frame in
+                    animateWindow(frontmostWindowElement, to: restoreRect, restoring: true, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A successful frosted transition has already verified and placed
                         // the real window. Only the ordinary fallback needs another write.
@@ -108,6 +112,7 @@ class WindowManager {
                 } else {
                     let restore = { [weak self] in
                         guard let self, self.executionID == currentExecutionID else { return }
+                        WindowAnimator.shared.cancel(for: frontmostWindowElement)
                         frontmostWindowElement.setFrame(restoreRect)
                     }
                     if !WindowAnimator.shared.deferUntilReleased(element: frontmostWindowElement, action: restore) {
@@ -334,11 +339,13 @@ class WindowManager {
             animateWindow(frontmostWindowElement, to: calcResult.rect.screenFlipped,
                           placement: placement,
                           restoring: Defaults.windowAnimationStyle.value == .direct && calcResult.resultingAction == .restore,
-                          releasedSnap: parameters.source == .dragToSnap) { frame in
+                          releasedSnap: parameters.source == .dragToSnap,
+                          profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
                 completeMove(!frame.isNull)
             }
         } else {
             let complete = {
+                WindowAnimator.shared.cancel(for: frontmostWindowElement)
                 completeMove(false)
             }
             if !WindowAnimator.shared.deferUntilReleased(element: frontmostWindowElement, action: complete) {
@@ -354,8 +361,8 @@ class WindowManager {
 
     func animateWindow(_ element: AccessibilityElement, to destination: CGRect,
                        placement: WindowAnimationPlacement? = nil, restoring: Bool = false, releasedSnap: Bool = false,
-                       completion: @escaping (CGRect) -> Void) {
-        WindowAnimator.shared.animate(element, to: destination, restoring: restoring, releasedSnap: releasedSnap, placement: placement, completion: completion)
+                       profile: WindowAnimationProfile = .standard, completion: @escaping (CGRect) -> Void) {
+        WindowAnimator.shared.animate(element, to: destination, restoring: restoring, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
     }
     
     /// Move/resize a window based on the calculation results.

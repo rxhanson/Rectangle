@@ -2,7 +2,7 @@
 
 import Cocoa
 
-struct WindowAnimationPlacement {
+struct WindowAnimationPlacement: Equatable {
     let screenFrame: CGRect
     let sharedEdges: Edge?
     let constrainToScreen: Bool
@@ -134,9 +134,11 @@ struct WindowAnimationSettlement {
     private var stableSince: TimeInterval?
     private var retriedSize = false
     private var retriedNearDestination = false
+    private let alignmentTolerance: CGFloat
 
-    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil) {
+    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil, alignmentTolerance: CGFloat = 1) {
         self.startedAt = startedAt
+        self.alignmentTolerance = alignmentTolerance
         if let verifiedFrame {
             previous = verifiedFrame
             stableSince = startedAt
@@ -192,7 +194,7 @@ struct WindowAnimationSettlement {
             return .retrySize
         }
         let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-        if WindowRecoveryGeometry.near(ax, aligned, tolerance: 1) { return .complete(ax) }
+        if WindowRecoveryGeometry.near(ax, aligned, tolerance: alignmentTolerance) { return .complete(ax) }
         resetObservation()
         return .align(aligned)
     }
@@ -526,7 +528,7 @@ final class WindowAnimator {
     func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
                  duration: TimeInterval = WindowAnimationCurve.duration,
                  resizeOnly: Bool = false, restoring: Bool = false, releasedSnap: Bool = false,
-                 placement: WindowAnimationPlacement? = nil,
+                 placement: WindowAnimationPlacement? = nil, profile: WindowAnimationProfile = .standard,
                  offset: @escaping () -> CGPoint = { .zero },
                  curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
                  completion: @escaping (CGRect) -> Void) {
@@ -534,7 +536,7 @@ final class WindowAnimator {
             let animateDirect = { [weak self] in
                 guard let self else { return }
                 self.direct.animate(element, from: startingFrame, to: destination, duration: duration,
-                                    resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement, offset: offset,
+                                    resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement, profile: profile, offset: offset,
                                     curve: curve, completion: completion)
             }
             // A style change must never write through an outstanding frosted lease.

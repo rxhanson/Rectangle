@@ -227,9 +227,9 @@ class ShortcutManager {
             }
 
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
-               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowElement.frame) == nil {
+               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowManager.logicalFrame(for: windowElement)) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
-                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId)
+                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source)
                     // Bypass any other subsequent action by removing the last action
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
@@ -247,15 +247,16 @@ class ShortcutManager {
             return
         }
 
+        let logicalFrame = windowManager.logicalFrame(for: windowElement)
         let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
-        if ShortcutCycle.isStale(lastAction: lastAction, currentWindowRect: windowElement.frame) {
+        if ShortcutCycle.isStale(lastAction: lastAction, currentWindowRect: logicalFrame) {
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
         }
 
         let selectedAction = ShortcutCycle.action(
             in: group,
             lastAction: AppDelegate.windowHistory.lastRectangleActions[windowId],
-            currentWindowRect: windowElement.frame
+            currentWindowRect: logicalFrame
         )
         execute(ExecutionParameters(selectedAction, windowElement: windowElement, windowId: windowId))
     }
@@ -310,7 +311,7 @@ class ShortcutManager {
     private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
 
         if parameters.action == .maximize {
-            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.frame.size {
+            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowManager.logicalFrame(for: windowElement).size {
                 return true
             }
         }

@@ -18,9 +18,33 @@ final class DirectWindowAnimator {
         let placement: WindowAnimationPlacement
         var stability: WindowAnimationSettlement
         let cleanup: () -> Void
-        let completion: (CGRect) -> Void
+        var completion: (CGRect) -> Void
     }
 
+    private final class KeyboardSession {
+        var motion: WindowKeyboardMotion
+        var placement: WindowAnimationPlacement
+        var completion: (CGRect) -> Void
+        let cleanup: () -> Void
+        var previousFrame: CGRect
+        var lastSampledFrame: CGRect?
+        var lastWriteTime: TimeInterval
+        var sizeFeedback = WindowAnimationSizeFeedback()
+        var recentWrites: [(time: TimeInterval, values: [CGFloat], velocity: [CGFloat])] = []
+
+        init(origin: CGRect, destination: CGRect, placement: WindowAnimationPlacement, at time: TimeInterval,
+             cleanup: @escaping () -> Void, completion: @escaping (CGRect) -> Void) {
+            motion = WindowKeyboardMotion(from: origin, to: destination, at: time)
+            self.placement = placement
+            self.cleanup = cleanup
+            self.completion = completion
+            previousFrame = origin
+            lastWriteTime = time
+        }
+    }
+
+    private var keyboardSession: KeyboardSession?
+    private var settlementIsKeyboard = false
     private var window: AccessibilityElement?
     private var animation: WindowFrameAnimation?
     private var pendingRelease: PendingRelease?
@@ -58,7 +82,7 @@ final class DirectWindowAnimator {
     }
 
     func destination(for element: AccessibilityElement) -> CGRect? {
-        window == element ? (pendingRelease?.destination ?? pendingSettlement?.destination ?? animation?.destination) : nil
+        window == element ? (pendingRelease?.destination ?? pendingSettlement?.destination ?? keyboardSession?.motion.destination ?? animation?.destination) : nil
     }
 
     func cancel(for element: AccessibilityElement) {
@@ -66,6 +90,12 @@ final class DirectWindowAnimator {
     }
 
     func cancel() {
+        if let session = keyboardSession {
+            keyboardSession = nil
+            window = nil
+            stopDriving()
+            session.cleanup()
+        }
         if pendingRelease != nil { clearPendingRelease() }
         if pendingSettlement != nil { clearSettlement() }
         animation?.cancel()
@@ -74,6 +104,11 @@ final class DirectWindowAnimator {
         if let pid, let targetPID = window?.pid, pid != targetPID { cancel() }
     }
     func finish() {
+        if keyboardSession != nil {
+            finishKeyboard()
+            if pendingSettlement != nil { completeSettlement(.null) }
+            return
+        }
         if let pending = pendingRelease {
             clearPendingRelease()
             pending.fallback()
@@ -89,7 +124,7 @@ final class DirectWindowAnimator {
 
     func mouseDown() {
         // A new grab supersedes a released snap that has not started writing.
-        if pendingRelease != nil || pendingSettlement != nil { cancel() }
+        if keyboardSession != nil || pendingRelease != nil || pendingSettlement != nil { cancel() }
         else { finish() }
     }
 
@@ -141,16 +176,22 @@ final class DirectWindowAnimator {
             else { pending.fallback() }
             return
         }
-        animation?.tick(at: time)
+        if keyboardSession != nil { advanceKeyboard(at: time) }
+        else { animation?.tick(at: time) }
     }
 
     func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
                  duration: TimeInterval = WindowAnimationCurve.duration, resizeOnly: Bool,
                  releasedSnap: Bool = false,
-                 placement: WindowAnimationPlacement?, offset: @escaping () -> CGPoint,
+                 placement: WindowAnimationPlacement?, profile: WindowAnimationProfile = .standard,
+                 offset: @escaping () -> CGPoint,
                  curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value, completion: @escaping (CGRect) -> Void) {
         let generation = UUID()
         intent = generation
+        if profile == .keyboard, !releasedSnap, !resizeOnly, element.bundleIdentifier != "com.colliderli.iina" {
+            animateKeyboard(element, to: destination, placement: placement, generation: generation, completion: completion)
+            return
+        }
         if window == element { cancel() } else { finish() }
         // Finishing the previous window can synchronously submit a newer request.
         guard intent == generation else { return }
@@ -182,6 +223,169 @@ final class DirectWindowAnimator {
         }
         startAnimation(element, from: startingFrame, to: destination, duration: duration,
                        resizeOnly: resizeOnly, placement: placement, offset: offset, curve: curve, completion: completion)
+    }
+
+    private func animateKeyboard(_ element: AccessibilityElement, to destination: CGRect,
+                                 placement: WindowAnimationPlacement?, generation: UUID,
+                                 completion: @escaping (CGRect) -> Void) {
+        guard enabled(), environmentIsSafe(), element.isFullScreen != true,
+              WindowRecoveryGeometry.valid(destination) else { completion(.null); return }
+        let placement = placement ?? WindowAnimationPlacement(screenFrame: .zero, sharedEdges: nil,
+                                                               constrainToScreen: false, gap: 0)
+        let now = clock()
+        if window == element, let session = keyboardSession {
+            session.completion = completion
+            if session.motion.destination == destination, session.placement == placement { return }
+            let ax = element.frame
+            let visible = serverFrame(element).flatMap { WindowRecoveryGeometry.valid($0) ? $0 : nil }
+            // Continue after the latest acknowledged write; replaying a delayed
+            // compositor frame would move the window back along the old path.
+            let actual = WindowRecoveryGeometry.valid(ax) ? ax : (visible ?? ax)
+            guard WindowRecoveryGeometry.valid(actual) else { cancel(); completion(.null); return }
+            let observed = [actual.minX, actual.minY, actual.width, actual.height]
+            let corroborating = visible ?? actual
+            let accessible = [corroborating.minX, corroborating.minY, corroborating.width, corroborating.height]
+            // WindowServer may still show an earlier successful AX write. Match
+            // recent geometry before treating that delay as an external change.
+            let recent = session.recentWrites.filter { now - $0.time <= 0.06 }
+            var velocity = [CGFloat](repeating: 0, count: 4)
+            for index in velocity.indices {
+                if recent.contains(where: { abs($0.values[index] - accessible[index]) <= 2 }),
+                   let write = recent.last(where: { abs($0.values[index] - observed[index]) <= 2 }) {
+                    velocity[index] = write.velocity[index]
+                }
+            }
+            var driftLimits: [CGFloat] = [2, 2, 2, 2]
+            if placement.constrainToScreen {
+                let bounds = placement.screenFrame.insetBy(dx: placement.gap, dy: placement.gap)
+                driftLimits[0] = min(2, max(0, velocity[0] > 0 ? bounds.maxX - actual.maxX : actual.minX - bounds.minX))
+                driftLimits[1] = min(2, max(0, velocity[1] > 0 ? bounds.maxY - actual.maxY : actual.minY - bounds.minY))
+                if velocity[2] > 0 { driftLimits[2] = min(2, max(0, bounds.maxX - actual.maxX)) }
+                if velocity[3] > 0 { driftLimits[3] = min(2, max(0, bounds.maxY - actual.maxY)) }
+            }
+            let screenChanged = session.placement.screenFrame != placement.screenFrame
+            session.motion = WindowKeyboardMotion(from: actual, to: destination, velocity: velocity, at: now, driftLimits: driftLimits)
+            session.placement = placement
+            session.previousFrame = actual
+            session.lastSampledFrame = nil
+            session.lastWriteTime = now
+            session.sizeFeedback = WindowAnimationSizeFeedback()
+            session.recentWrites.removeAll(keepingCapacity: true)
+            if screenChanged { startDriving() }
+            WindowFrostDiagnostics.event("keyboard-animation-retarget", fields: ["windowID": element.windowId ?? 0,
+                "source": [actual.minX, actual.minY, actual.width, actual.height],
+                "destination": [destination.minX, destination.minY, destination.width, destination.height], "velocity": velocity])
+            return
+        }
+
+        var restoreAccessibility: (() -> Void)?
+        var rebindDriver = true
+        if window == element, settlementIsKeyboard, var pending = pendingSettlement {
+            if pending.destination == destination, pending.placement == placement {
+                pending.completion = completion
+                pendingSettlement = pending
+                return
+            }
+            restoreAccessibility = pending.cleanup
+            rebindDriver = pending.placement.screenFrame != placement.screenFrame
+            pendingSettlement = nil
+            settlementIsKeyboard = false
+        } else {
+            if window == element { cancel() } else { finish() }
+        }
+        guard intent == generation else { restoreAccessibility?(); return }
+        let ax = element.frame
+        let origin = serverFrame(element).flatMap { WindowRecoveryGeometry.valid($0) ? $0 : nil } ?? ax
+        guard WindowRecoveryGeometry.valid(origin) else {
+            restoreAccessibility?()
+            window = nil
+            stopDriving()
+            completion(.null)
+            return
+        }
+        let cleanup = restoreAccessibility ?? element.beginAnimatedAdjustment()
+        keyboardSession = KeyboardSession(origin: origin, destination: destination, placement: placement,
+                                          at: now, cleanup: cleanup, completion: completion)
+        window = element
+        lastEnvironmentCheck = now
+        if rebindDriver { startDriving() }
+        WindowFrostDiagnostics.event("keyboard-animation-start", fields: ["windowID": element.windowId ?? 0,
+            "source": [origin.minX, origin.minY, origin.width, origin.height],
+            "destination": [destination.minX, destination.minY, destination.width, destination.height]])
+    }
+
+    private func advanceKeyboard(at time: TimeInterval) {
+        guard let session = keyboardSession, let window else { return }
+        let sample = session.motion.sample(at: time)
+        if sample.progress >= 1 { finishKeyboard(); return }
+        let frame = sample.frame
+        let sampled = CGRect(x: frame.minX.rounded(), y: frame.minY.rounded(),
+                             width: frame.width.rounded(), height: frame.height.rounded())
+        if sampled != session.lastSampledFrame || session.previousFrame.size != sampled.size {
+            var requested = sampled
+            let predicted = session.sizeFeedback.size(for: sampled.size)
+            if predicted != sampled.size {
+                requested = session.placement.frame(for: sampled, actualSize: predicted,
+                    origin: session.motion.origin, progress: sample.progress)
+            }
+            let correction = min(1, CGFloat(max(0, time - session.lastWriteTime)) * 60)
+            if let achieved = window.setConstrainedAnimationFrame(requested, placement: session.placement,
+                origin: session.motion.origin, progress: sample.progress, previousFrame: session.previousFrame,
+                maximumCorrection: correction) {
+                let values = [achieved.minX, achieved.minY, achieved.width, achieved.height]
+                let requestedValues = [sampled.minX, sampled.minY, sampled.width, sampled.height]
+                let velocity = sample.velocity.enumerated().map { index, value in
+                    abs(values[index] - requestedValues[index]) <= 2 ? value : 0
+                }
+                session.recentWrites.removeAll { time - $0.time > 0.06 }
+                session.recentWrites.append((time, values, velocity))
+                session.previousFrame = achieved
+                session.lastSampledFrame = sampled
+                session.lastWriteTime = time
+                if achieved.width < sampled.width - 1 || achieved.height < sampled.height - 1 {
+                    session.sizeFeedback.observe(requested: sampled.size, actual: window.frame, server: serverFrame(window), at: time)
+                } else {
+                    session.sizeFeedback = WindowAnimationSizeFeedback()
+                }
+            }
+        }
+        if sampled == session.motion.destination,
+           WindowRecoveryGeometry.near(window.frame, sampled, tolerance: 0.001),
+           serverFrame(window).map({ WindowRecoveryGeometry.near($0, sampled, tolerance: 0.001) }) == true {
+            finishKeyboard()
+        }
+    }
+
+    private func finishKeyboard() {
+        guard let session = keyboardSession, let window else { return }
+        keyboardSession = nil
+        let destination = session.motion.destination
+        let actual = window.frame
+        guard (WindowRecoveryGeometry.valid(actual) && actual.size == destination.size)
+                || window.writeAnimationSize(destination.size) == .success else {
+            self.window = nil
+            stopDriving()
+            session.cleanup()
+            session.completion(.null)
+            return
+        }
+        let resized = window.frame
+        if WindowRecoveryGeometry.valid(resized), resized.size == destination.size, resized.origin != destination.origin {
+            guard window.writeAnimationPosition(destination.origin) == .success else {
+                self.window = nil
+                stopDriving()
+                session.cleanup()
+                session.completion(.null)
+                return
+            }
+        }
+        let placed = window.frame
+        let verified = WindowRecoveryGeometry.near(placed, destination, tolerance: 0.001)
+            && serverFrame(window).map { WindowRecoveryGeometry.near($0, destination, tolerance: 0.001) } == true
+        pendingSettlement = PendingSettlement(destination: destination, origin: session.motion.origin,
+            placement: session.placement, stability: WindowAnimationSettlement(startedAt: clock(), verifiedFrame: verified ? placed : nil, alignmentTolerance: 0.001),
+            cleanup: session.cleanup, completion: session.completion)
+        settlementIsKeyboard = true
     }
 
     private func startAnimation(_ element: AccessibilityElement, from startingFrame: CGRect?, to destination: CGRect,
@@ -347,6 +551,7 @@ final class DirectWindowAnimator {
     private func clearSettlement() {
         let pending = pendingSettlement
         pendingSettlement = nil
+        settlementIsKeyboard = false
         window = nil
         stopDriving()
         pending?.cleanup()
@@ -383,7 +588,7 @@ final class DirectWindowAnimator {
     private func startDriving() {
         guard automaticallyAdvances else { return }
         stopDriving()
-        let destination = pendingRelease?.destination ?? pendingSettlement?.destination ?? animation?.destination
+        let destination = pendingRelease?.destination ?? pendingSettlement?.destination ?? keyboardSession?.motion.destination ?? animation?.destination
         let screen = NSScreen.screens.max { first, second in
             func area(_ screen: NSScreen) -> CGFloat {
                 guard let destination else { return 0 }
