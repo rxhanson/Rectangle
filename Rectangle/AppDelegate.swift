@@ -5,7 +5,6 @@ import Sparkle
 import ServiceManagement
 import os.log
 
-@NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     static let launcherAppId = "com.knollsoft.RectangleLauncher"
@@ -49,6 +48,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         Defaults.loadFromSupportDir()
+        Defaults.normalizeWindowAnimationPreferences()
+        WindowRecoverySession.resumePendingRecovery()
         migrateShowEighthsInMenu()
 
         checkVersion()
@@ -160,6 +161,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.initializeTodo()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
+        WindowRecoverySession.prewarm()
+        WindowFrostRendererConnection.shared.prewarm()
     }
     
     func checkForConflictingApps() {

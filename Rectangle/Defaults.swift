@@ -2,6 +2,31 @@
 
 import Cocoa
 
+enum WindowAnimationStyle: Int, CaseIterable {
+    case frosted = 0
+    case direct = 1
+
+    func isEnabled(animations: Bool, reduceMotion: Bool, reduceTransparency: Bool,
+                   voiceOver: Bool, switchControl: Bool) -> Bool {
+        animations && !reduceMotion && !voiceOver && !switchControl
+            && (self == .direct || !reduceTransparency)
+    }
+}
+
+enum BlurAppearance: Int, CaseIterable {
+    case system = 0
+    case light = 1
+    case dark = 2
+
+    var appearance: NSAppearance? {
+        switch self {
+        case .system: return nil
+        case .light: return NSAppearance(named: .aqua)
+        case .dark: return NSAppearance(named: .darkAqua)
+        }
+    }
+}
+
 class Defaults {
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
     static let disabledApps = JSONDefault<Set<String>>(key: "disabledApps")
@@ -12,6 +37,8 @@ class Defaults {
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
+    static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
+    static let windowAnimationStyle = IntEnumDefault<WindowAnimationStyle>(key: "windowAnimationStyle", defaultValue: .direct)
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
@@ -51,10 +78,27 @@ class Defaults {
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static let showAdditionalSizesInMenu = OptionalBoolDefault(key: "showAdditionalSizesInMenu")
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
-    static let footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
+    static let footprintAlpha = DoubleDefault(key: "footprintAlpha")
+    static var effectiveFootprintAlpha: Double {
+        if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
+            return footprintBlur.enabled ? 0 : 0.3
+        }
+        return footprintAlpha.value
+    }
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
+    static let footprintBlur = BoolDefault(key: "footprintBlur")
+    static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
+
+    /// Frosted window transitions share the existing preview blur preference.
+    /// Turning animations off deliberately leaves the chosen blur treatment enabled.
+    static func normalizeWindowAnimationPreferences() {
+        if experimentalWindowAnimations.enabled && windowAnimationStyle.value == .frosted && !footprintBlur.enabled {
+            footprintBlur.enabled = true
+        }
+    }
+
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let todo = OptionalBoolDefault(key: "todo")
     static let todoMode = BoolDefault(key: "todoMode")
@@ -121,6 +165,8 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        experimentalWindowAnimations,
+        windowAnimationStyle,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,
@@ -158,6 +204,8 @@ class Defaults {
         footprintBorderWidth,
         footprintFade,
         footprintColor,
+        footprintBlur,
+        blurAppearance,
         SUEnableAutomaticChecks,
         todo,
         todoMode,
