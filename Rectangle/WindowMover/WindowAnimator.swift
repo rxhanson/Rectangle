@@ -46,13 +46,77 @@ struct WindowAnimationPlacement {
 
     /// A transient resize response must not send an intermediate position past
     /// its requested trajectory and then back when the size catches up.
-    func intermediateFrame(_ resolved: CGRect, requested: CGRect, previous: CGRect) -> CGRect {
+    func intermediateFrame(_ resolved: CGRect, requested: CGRect, previous: CGRect, maximumCorrection: CGFloat = 0) -> CGRect {
         var result = resolved
         result.origin.x = min(max(resolved.minX, min(previous.minX, requested.minX)),
                               max(previous.minX, requested.minX))
         result.origin.y = min(max(resolved.minY, min(previous.minY, requested.minY)),
                               max(previous.minY, requested.minY))
+        // Consume constraint changes gradually, including necessary movement
+        // against the nominal trajectory near a screen edge.
+        let limit = max(0, maximumCorrection)
+        result.origin.x += min(limit, max(-limit, resolved.minX - result.minX))
+        result.origin.y += min(limit, max(-limit, resolved.minY - result.minY))
         return result
+    }
+}
+
+/// Geometry evidence is scoped to one animation. Oversized shrink responses
+/// remain eligible for retry rather than becoming inferred minimum sizes.
+struct WindowAnimationSizeFeedback {
+    private struct Observation {
+        let requested: CGSize
+        let actual: CGSize
+        let time: TimeInterval
+    }
+    private var observations: [Observation] = []
+    private(set) var fixedWidth: CGFloat?
+    private(set) var fixedHeight: CGFloat?
+    private(set) var aspectRatio: CGFloat?
+
+    mutating func observe(requested: CGSize, actual: CGRect, server: CGRect?, at time: TimeInterval) {
+        guard let server, WindowAnimationGeometry.valid(actual),
+              WindowAnimationGeometry.near(actual, server, tolerance: 1),
+              actual.width <= requested.width + 1, actual.height <= requested.height + 1 else {
+            reset()
+            return
+        }
+        guard abs(actual.width - requested.width) > 1 || abs(actual.height - requested.height) > 1 else {
+            reset()
+            return
+        }
+        if let last = observations.last,
+           abs(last.requested.width - requested.width) <= 1,
+           abs(last.requested.height - requested.height) <= 1 { return }
+        observations.append(Observation(requested: requested, actual: actual.size, time: time))
+        if observations.count > 6 { observations.removeFirst() }
+        guard observations.count >= 3, let first = observations.first,
+              time - first.time >= 1.0 / 30 else { return }
+        fixedWidth = abs(first.requested.width - requested.width) > 2
+            && observations.allSatisfy { abs($0.actual.width - actual.width) <= 1 } ? actual.width : nil
+        fixedHeight = abs(first.requested.height - requested.height) > 2
+            && observations.allSatisfy { abs($0.actual.height - actual.height) <= 1 } ? actual.height : nil
+        let ratio = actual.width / actual.height
+        aspectRatio = fixedWidth == nil && fixedHeight == nil
+            && abs(first.actual.width - actual.width) > 2 && abs(first.actual.height - actual.height) > 2
+            && observations.allSatisfy { abs($0.actual.width / $0.actual.height - ratio) <= ratio * 0.005 }
+            ? ratio : nil
+    }
+
+    func size(for requested: CGSize) -> CGSize {
+        var result = CGSize(width: fixedWidth ?? requested.width, height: fixedHeight ?? requested.height)
+        if let ratio = aspectRatio {
+            result.width = min(result.width, result.height * ratio)
+            result.height = result.width / ratio
+        }
+        return result
+    }
+
+    private mutating func reset() {
+        observations.removeAll(keepingCapacity: true)
+        fixedWidth = nil
+        fixedHeight = nil
+        aspectRatio = nil
     }
 }
 
@@ -70,7 +134,13 @@ struct WindowAnimationSettlement {
     private var retriedSize = false
     private var retriedNearDestination = false
 
-    init(startedAt: TimeInterval) { self.startedAt = startedAt }
+    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil) {
+        self.startedAt = startedAt
+        if let verifiedFrame {
+            previous = verifiedFrame
+            stableSince = startedAt
+        }
+    }
 
     mutating func observe(ax: CGRect, server: CGRect?, destination: CGRect,
                           placement: WindowAnimationPlacement, origin: CGRect,
@@ -141,6 +211,7 @@ final class WindowFrameAnimation {
     private let offset: () -> CGPoint
     private let curve: (Double) -> CGFloat
     private let write: (CGRect, CGFloat) -> Bool
+    private let finishedEarly: () -> Bool
     private let finalize: ((CGRect) -> Void)?
     private let cleanup: () -> Void
     private let completion: (CGRect) -> Void
@@ -150,6 +221,7 @@ final class WindowFrameAnimation {
          offset: @escaping () -> CGPoint = { .zero },
          curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
          write: @escaping (CGRect, CGFloat) -> Bool,
+         finishedEarly: @escaping () -> Bool = { false },
          finalize: ((CGRect) -> Void)? = nil,
          cleanup: @escaping () -> Void,
          completion: @escaping (CGRect) -> Void) {
@@ -160,6 +232,7 @@ final class WindowFrameAnimation {
         self.offset = offset
         self.curve = curve
         self.write = write
+        self.finishedEarly = finishedEarly
         self.finalize = finalize
         self.cleanup = cleanup
         self.completion = completion
@@ -178,7 +251,7 @@ final class WindowFrameAnimation {
                            y: origin.minY + (destination.minY - origin.minY) * eased + delta.y,
                            width: origin.width + (destination.width - origin.width) * eased,
                            height: origin.height + (destination.height - origin.height) * eased)
-        if !write(frame, eased) {
+        if !write(frame, eased) || finishedEarly() {
             // Let the normal mover settle the destination after a refused AX write.
             finish()
         }

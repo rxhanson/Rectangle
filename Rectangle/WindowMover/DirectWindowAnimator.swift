@@ -1,6 +1,7 @@
 /// DirectWindowAnimator.swift
 
 import Cocoa
+import QuartzCore
 
 /// Animates the actual window through Accessibility frame writes.
 final class DirectWindowAnimator {
@@ -25,6 +26,11 @@ final class DirectWindowAnimator {
     private var pendingRelease: PendingRelease?
     private var pendingSettlement: PendingSettlement?
     private var timer: Timer?
+    private var displayLinkCleanup: (() -> Void)?
+    private var screenObserver: NSObjectProtocol?
+    private var lastDrivenAt: TimeInterval?
+    private var drivingInterval: TimeInterval = 1.0 / 60
+    private var advancing = false
     private var mouseMonitor: Any?
     private var intent = UUID()
     private let enabled: () -> Bool
@@ -88,6 +94,9 @@ final class DirectWindowAnimator {
     }
 
     func advance(at time: TimeInterval) {
+        guard !advancing else { return }
+        advancing = true
+        defer { advancing = false }
         if time - lastEnvironmentCheck >= 0.1 {
             lastEnvironmentCheck = time
             guard environmentIsSafe() else { cancel(); return }
@@ -192,6 +201,13 @@ final class DirectWindowAnimator {
         let restoreAccessibility = element.beginAnimatedAdjustment()
         var finalFrame: CGRect?
         var previousFrame = origin
+        var lastSampledFrame: CGRect?
+        var sizeFeedback = WindowAnimationSizeFeedback()
+        var lastWriteTime = clock()
+        var reachedDestination = false
+        var verifiedFinalFrame: CGRect?
+        let readServer = serverFrame
+        let animationClock = clock
         var finalized = false
         let needsSettlement = placement != nil && !nativeResize
         var finalResizeAccepted = false
@@ -205,14 +221,41 @@ final class DirectWindowAnimator {
                                          offset: offset, curve: curve, write: { frame, progress in
             if nativeResize { return true }
             if let placement {
-                if let achieved = element.setConstrainedAnimationFrame(frame, placement: placement, origin: origin,
-                                                                      progress: progress, previousFrame: previousFrame) {
-                    previousFrame = achieved
+                // Intermediate AX frames use whole points. Once motion rounds to
+                // the same frame, leave it alone until the next distinct sample.
+                // Final placement still uses the exact destination below.
+                let sampledFrame = CGRect(x: frame.minX.rounded(), y: frame.minY.rounded(),
+                                          width: frame.width.rounded(), height: frame.height.rounded())
+                let now = animationClock()
+                if sampledFrame != lastSampledFrame || previousFrame.size != sampledFrame.size {
+                    var requested = sampledFrame
+                    let predictedSize = sizeFeedback.size(for: sampledFrame.size)
+                    if predictedSize != sampledFrame.size {
+                        requested = placement.frame(for: sampledFrame, actualSize: predictedSize, origin: origin, progress: progress)
+                    }
+                    let correction = min(1, CGFloat(max(0, now - lastWriteTime)) * 60)
+                    if let achieved = element.setConstrainedAnimationFrame(requested, placement: placement, origin: origin,
+                        progress: progress, previousFrame: previousFrame, maximumCorrection: correction) {
+                        previousFrame = achieved
+                        lastSampledFrame = sampledFrame
+                        lastWriteTime = now
+                        if achieved.width < sampledFrame.width - 1 || achieved.height < sampledFrame.height - 1 {
+                            sizeFeedback.observe(requested: sampledFrame.size, actual: element.frame,
+                                                 server: readServer(element), at: now)
+                        } else {
+                            sizeFeedback.observe(requested: sampledFrame.size, actual: achieved, server: achieved, at: now)
+                        }
+                    }
+                }
+                if sampledFrame == destination {
+                    let actual = element.frame
+                    reachedDestination = WindowAnimationGeometry.near(actual, destination, tolerance: 0.001)
+                        && readServer(element).map { WindowAnimationGeometry.near($0, destination, tolerance: 0.001) } == true
                 }
                 return true
             }
             return element.setAnimationFrame(frame, resizeOnly: resizeOnly)
-        }, finalize: { frame in
+        }, finishedEarly: { reachedDestination }, finalize: { frame in
             finalized = true
             if nativeResize {
                 guard nativeResizeAccepted else { return }
@@ -236,7 +279,16 @@ final class DirectWindowAnimator {
             } else if placement != nil {
                 // Do not align a possibly stale size and immediately report success.
                 // The settlement phase verifies the achieved frame on later ticks.
-                finalResizeAccepted = element.writeAnimationSize(frame.size) == .success
+                let actual = element.frame
+                finalResizeAccepted = (WindowAnimationGeometry.valid(actual) && actual.size == frame.size)
+                    || element.writeAnimationSize(frame.size) == .success
+                if finalResizeAccepted {
+                    let placed = element.frame
+                    if WindowAnimationGeometry.near(placed, frame, tolerance: 0.001),
+                       readServer(element).map({ WindowAnimationGeometry.near($0, frame, tolerance: 0.001) }) == true {
+                        verifiedFinalFrame = placed
+                    }
+                }
             }
         }, cleanup: { [weak self] in
             self?.stopDriving()
@@ -253,7 +305,7 @@ final class DirectWindowAnimator {
                 }
                 self.window = element
                 self.pendingSettlement = PendingSettlement(destination: requested, origin: origin,
-                    placement: placement, stability: WindowAnimationSettlement(startedAt: self.clock()),
+                    placement: placement, stability: WindowAnimationSettlement(startedAt: self.clock(), verifiedFrame: verifiedFinalFrame),
                     cleanup: restoreAccessibility, completion: completion)
                 self.startDriving()
                 return
@@ -310,20 +362,61 @@ final class DirectWindowAnimator {
     }
 
     private func stopDriving() {
+        displayLinkCleanup?()
+        displayLinkCleanup = nil
+        if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
+        screenObserver = nil
+        lastDrivenAt = nil
         timer?.invalidate()
         timer = nil
         if let mouseMonitor { NSEvent.removeMonitor(mouseMonitor) }
         mouseMonitor = nil
     }
 
+    private func drive() {
+        let now = clock()
+        if let lastDrivenAt, now - lastDrivenAt < drivingInterval * 0.9 { return }
+        lastDrivenAt = now
+        advance(at: now)
+    }
+
     private func startDriving() {
         guard automaticallyAdvances else { return }
-        let timer = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            self.advance(at: self.clock())
+        stopDriving()
+        let destination = pendingRelease?.destination ?? pendingSettlement?.destination ?? animation?.destination
+        let screen = NSScreen.screens.max { first, second in
+            func area(_ screen: NSScreen) -> CGFloat {
+                guard let destination else { return 0 }
+                let intersection = screen.frame.screenFlipped.intersection(destination)
+                return intersection.isNull ? 0 : intersection.width * intersection.height
+            }
+            return area(first) < area(second)
         }
-        self.timer = timer
+        var frameRate = 60
+        if #available(macOS 12.0, *), let screen, screen.maximumFramesPerSecond > 0 {
+            frameRate = min(120, screen.maximumFramesPerSecond)
+        }
+        drivingInterval = 1.0 / Double(frameRate)
+        if #available(macOS 14.0, *), let screen {
+            let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.drive() }
+            let link = screen.displayLink(target: target, selector: #selector(WindowAnimationDisplayLinkTarget.tick(_:)))
+            link.preferredFrameRateRange = CAFrameRateRange(minimum: Float(frameRate), maximum: Float(frameRate), preferred: Float(frameRate))
+            link.add(to: .main, forMode: .common)
+            displayLinkCleanup = { link.invalidate(); _ = target }
+        } else {
+            let timer = Timer(timeInterval: drivingInterval, repeats: true) { [weak self] _ in self?.drive() }
+            self.timer = timer
+            RunLoop.main.add(timer, forMode: .common)
+        }
+        screenObserver = NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
+            object: nil, queue: .main) { [weak self] _ in self?.finish() }
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in self?.mouseDown() }
-        RunLoop.main.add(timer, forMode: .common)
     }
+}
+
+@available(macOS 14.0, *)
+private final class WindowAnimationDisplayLinkTarget: NSObject {
+    private let onFrame: () -> Void
+    init(onFrame: @escaping () -> Void) { self.onFrame = onFrame }
+    @objc func tick(_ link: CADisplayLink) { onFrame() }
 }

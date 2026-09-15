@@ -37,9 +37,9 @@ enum WindowPreviewDeceleration {
 
 }
 
-/// Original direct-resize and preview easing from fe06e88.
+/// Timing for direct resizing and drag restoration.
 enum WindowAnimationCurve {
-    static let duration: TimeInterval = 0.34
+    static let duration: TimeInterval = 0.3
     static let unsnapPlaybackRate: Double = 1.2
     static let unsnapDuration: TimeInterval = 0.18 / unsnapPlaybackRate
 
@@ -50,8 +50,8 @@ enum WindowAnimationCurve {
     }
 
     static func value(at progress: Double) -> CGFloat {
-        let progress = min(1, max(0, progress))
-        // Integral of t * (1 - t)^5, normalized to [0, 1].
-        return CGFloat(1 - pow(1 - progress, 6) * (1 + 6 * progress))
+        let t = min(1, max(0, progress))
+        // Cubic deceleration reaches rest without an extended near-stationary tail.
+        return CGFloat(t * (3 + t * (t - 3)))
     }
 }
