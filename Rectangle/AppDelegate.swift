@@ -48,6 +48,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         Defaults.loadFromSupportDir()
+        Defaults.normalizeWindowAnimationPreferences()
+        WindowRecoverySession.resumePendingRecovery()
         migrateShowEighthsInMenu()
 
         checkVersion()
@@ -159,6 +161,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.initializeTodo()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
+        WindowRecoverySession.prewarm()
+        WindowFrostRendererConnection.shared.prewarm()
     }
     
     func checkForConflictingApps() {

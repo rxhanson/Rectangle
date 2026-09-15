@@ -4557,7 +4557,7 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(manager.initialWindowRect)
     }
 
-    func testDirectAnimationWithoutServerIdentityCompletesOnceAndMouseUpDoesNotRepeatIt() throws {
+    func testWindowWithoutServerIdentityFallsBackOnceAndMouseUpDoesNotRepeatIt() throws {
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
@@ -4566,20 +4566,17 @@ final class DragRestoreReleaseTests: XCTestCase {
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
         let window = WindowElement(AXUIElementCreateSystemWide())
-        XCTAssertNil(window.windowId, "Direct animation does not require a WindowServer identity")
+        XCTAssertNil(window.windowId, "This fixture cannot acquire a recovery lease for a real window")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
         var completedFrames: [CGRect] = []
         WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
 
-        XCTAssertTrue(completedFrames.isEmpty)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
-        WindowAnimator.shared.finish()
-        XCTAssertEqual(completedFrames, [destination])
+        XCTAssertEqual(completedFrames, [.null], "Missing server identity must request ordinary placement of the destination immediately")
         XCTAssertNil(WindowAnimator.shared.destination(for: window))
 
         let manager = try release(dragAlreadyDetected: true)
 
-        XCTAssertEqual(completedFrames, [destination], "A later native release must not repeat the completed animation")
+        XCTAssertEqual(completedFrames, [.null], "A later native release must not repeat the ordinary placement request")
         XCTAssertEqual(manager.restores, 0)
         XCTAssertNil(WindowAnimator.shared.destination(for: window))
     }
