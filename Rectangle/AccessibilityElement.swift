@@ -253,17 +253,9 @@ class AccessibilityElement {
         // native display settlement must not stall every intermediate position.
         var resolved = placement.frame(for: frame, actualSize: actualSize ?? frame.size,
                                        origin: origin, progress: progress)
-        if progress < 1, let preparedPosition, let previousFrame, let actualSize {
-            // A delayed growth readback must not align the still-smaller size
-            // back past the position just prepared for that same resize.
-            // At completion, align the achieved size even when the app keeps
-            // an aspect ratio and cannot grow to the requested dimensions.
-            if preparedPosition.x < previousFrame.minX, actualSize.width < frame.width {
-                resolved.origin.x = min(resolved.minX, preparedPosition.x)
-            }
-            if preparedPosition.y < previousFrame.minY, actualSize.height < frame.height {
-                resolved.origin.y = min(resolved.minY, preparedPosition.y)
-            }
+        if progress < 1, let previousFrame {
+            let previous = CGRect(origin: preparedPosition ?? previousFrame.origin, size: previousFrame.size)
+            resolved = placement.intermediateFrame(resolved, requested: frame, previous: previous)
         }
         if preparedPosition != resolved.origin {
             guard writeAnimationPosition(resolved.origin) == .success else { return nil }

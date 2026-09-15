@@ -44,6 +44,63 @@ struct WindowAnimationPlacement {
                             height: initialBounds.height + (screenFrame.height - initialBounds.height) * progress)
         return WindowFrameBounds.constrained(frame, to: bounds, gap: gap)
     }
+
+    /// A transient resize response must not send an intermediate position past
+    /// its requested trajectory and then back when the size catches up.
+    func intermediateFrame(_ resolved: CGRect, requested: CGRect, previous: CGRect) -> CGRect {
+        var result = resolved
+        result.origin.x = min(max(resolved.minX, min(previous.minX, requested.minX)),
+                              max(previous.minX, requested.minX))
+        result.origin.y = min(max(resolved.minY, min(previous.minY, requested.minY)),
+                              max(previous.minY, requested.minY))
+        return result
+    }
+}
+
+/// Waits for AX and WindowServer to agree before accepting a constrained size.
+/// A final resize gets one retry; a new drag cancels this state in the driver.
+struct WindowAnimationSettlement {
+    enum Decision {
+        case waiting, retrySize, align(CGRect), complete(CGRect), failed
+    }
+
+    let startedAt: TimeInterval
+    private var previous: CGRect?
+    private var stableSince: TimeInterval?
+    private var retriedSize = false
+
+    init(startedAt: TimeInterval) { self.startedAt = startedAt }
+
+    mutating func observe(ax: CGRect, server: CGRect?, destination: CGRect,
+                          placement: WindowAnimationPlacement, origin: CGRect,
+                          at now: TimeInterval) -> Decision {
+        guard now - startedAt < 0.3 else { return .failed }
+        guard let server, WindowRecoveryGeometry.valid(ax), WindowRecoveryGeometry.valid(server),
+              WindowRecoveryGeometry.near(ax, server, tolerance: 1) else {
+            resetObservation()
+            return .waiting
+        }
+        guard let previous, WindowRecoveryGeometry.near(previous, ax, tolerance: 1) else {
+            self.previous = ax
+            stableSince = now
+            return .waiting
+        }
+        guard let stableSince, now - stableSince >= 1.0 / 30 else { return .waiting }
+        if !retriedSize, abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1 {
+            retriedSize = true
+            resetObservation()
+            return .retrySize
+        }
+        let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+        if WindowRecoveryGeometry.near(ax, aligned, tolerance: 1) { return .complete(ax) }
+        resetObservation()
+        return .align(aligned)
+    }
+
+    private mutating func resetObservation() {
+        previous = nil
+        stableSince = nil
+    }
 }
 
 /// Advances by elapsed time, skipping missed frames.
