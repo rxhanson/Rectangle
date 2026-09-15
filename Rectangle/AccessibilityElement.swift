@@ -229,7 +229,8 @@ class AccessibilityElement {
     }
 
     func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
-                                      origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil) -> CGRect? {
+                                      origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil,
+                                      maximumCorrection: CGFloat = 0) -> CGRect? {
         if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
             setFrame(frame)
         }) { return nil }
@@ -241,7 +242,8 @@ class AccessibilityElement {
         }
         // Resize before moving on shrinking axes: a refused shrink must not carry the wider window
         // to the narrower frame's origin and leave it behind the Dock until completion.
-        let resized = writeAnimationSize(frame.size) == .success
+        let sizeUnchanged = progress < 1 && previousFrame?.size == frame.size
+        let resized = sizeUnchanged || writeAnimationSize(frame.size) == .success
         let actualSize = size.flatMap { size -> CGSize? in
             guard size.width.isFinite, size.height.isFinite,
                   size.width > 0, size.height > 0 else { return nil }
@@ -255,9 +257,9 @@ class AccessibilityElement {
                                        origin: origin, progress: progress)
         if progress < 1, let previousFrame {
             let previous = CGRect(origin: preparedPosition ?? previousFrame.origin, size: previousFrame.size)
-            resolved = placement.intermediateFrame(resolved, requested: frame, previous: previous)
+            resolved = placement.intermediateFrame(resolved, requested: frame, previous: previous, maximumCorrection: maximumCorrection)
         }
-        if preparedPosition != resolved.origin {
+        if (preparedPosition ?? previousFrame?.origin) != resolved.origin {
             guard writeAnimationPosition(resolved.origin) == .success else { return nil }
         }
         guard resized, actualSize != nil else { return nil }
