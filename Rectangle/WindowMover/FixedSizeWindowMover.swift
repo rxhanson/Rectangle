@@ -10,14 +10,13 @@ class FixedSizeWindowMover: WindowMover {
         let currentWindowRect: CGRect = windowElement.frame
         if currentWindowRect.isNull { return }
 
-        let sharedEdges = Defaults.moveFixedSizeToEdge.value.alignmentEdges(
-            for: resultParameters.calcResult.initialRect.screenFlipped,
-            in: resultParameters.visibleFrameOfScreen.screenFlipped
+        let adjusted = ClampedWindowAligner.aligned(
+            window: currentWindowRect,
+            inZone: rect.screenFlipped,
+            initialRect: resultParameters.calcResult.initialRect.screenFlipped,
+            screenFrame: resultParameters.visibleFrameOfScreen.screenFlipped,
+            alignment: Defaults.moveFixedSizeToEdge.value
         )
-
-        let adjusted = ClampedWindowAligner.aligned(window: currentWindowRect,
-                                                    inZone: rect.screenFlipped,
-                                                    sharedEdges: sharedEdges)
 
         if !adjusted.equalTo(currentWindowRect) {
             windowElement.setFrame(adjusted)
