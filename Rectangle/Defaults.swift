@@ -8,6 +8,8 @@ class Defaults {
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
     static let alternateDefaultShortcuts = BoolDefault(key: "alternateDefaultShortcuts") // switch to magnet defaults
     static let subsequentExecutionMode = SubsequentExecutionDefault()
+    static let tileColumnsMaxWindows = PositiveIntDefault(key: "tileColumnsMaxWindows", defaultValue: 3)
+    static let tileRowsMaxWindows = PositiveIntDefault(key: "tileRowsMaxWindows", defaultValue: 3)
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
@@ -128,6 +130,8 @@ class Defaults {
         hideMenuBarIcon,
         alternateDefaultShortcuts,
         subsequentExecutionMode,
+        tileColumnsMaxWindows,
+        tileRowsMaxWindows,
         selectedCycleSizes,
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
@@ -426,6 +430,41 @@ class DoubleDefault: Default {
 
     func toCodable() -> CodableDefault {
         CodableDefault(double: value)
+    }
+}
+
+class PositiveIntDefault: Default {
+    let key: String
+    private let userDefaults: UserDefaults
+    private var storedValue: Int
+
+    var value: Int {
+        get { storedValue }
+        set {
+            storedValue = max(1, newValue)
+            userDefaults.set(storedValue, forKey: key)
+        }
+    }
+
+    init(key: String, defaultValue: Int, userDefaults: UserDefaults = .standard) {
+        precondition(defaultValue > 0)
+        self.key = key
+        self.userDefaults = userDefaults
+        if let savedValue = userDefaults.object(forKey: key) {
+            storedValue = max(1, savedValue as? Int ?? 1)
+        } else {
+            storedValue = defaultValue
+        }
+    }
+
+    func load(from codable: CodableDefault) {
+        if let int = codable.int {
+            value = int
+        }
+    }
+
+    func toCodable() -> CodableDefault {
+        CodableDefault(int: value)
     }
 }
 

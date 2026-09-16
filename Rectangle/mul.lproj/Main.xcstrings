@@ -29554,6 +29554,12 @@
         }
       }
     },
+    "Maximum windows per column" : {
+      "comment" : "Maximum windows stacked in each tiled column"
+    },
+    "Maximum windows per row" : {
+      "comment" : "Maximum windows placed side by side in each tiled row"
+    },
     "MDd-Sm-sUx.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"About Todo Mode\"; ObjectID = \"MDd-Sm-sUx\";",
       "extractionState" : "extracted_with_value",
@@ -41240,6 +41246,9 @@
           }
         }
       }
+    },
+    "Tile Windows in Rows/Columns" : {
+      "comment" : "General settings group for multi-window grid limits"
     },
     "tileColumns.title" : {
       "extractionState" : "manual",

@@ -51,9 +51,61 @@ class WindowActionMenuTests: XCTestCase {
     }
 }
 
+class GridLimitDefaultsTests: XCTestCase {
+    // Separate limits round-trip without replacing explicitly saved values or
+    // writing an absent default into the user's preferences.
+    func testIndependentDefaultsAndConfigRoundTripPreserveExplicitValues() {
+        let suiteName = "RectangleGridDefaults-\(UUID().uuidString)"
+        let preferences = UserDefaults(suiteName: suiteName)!
+        defer { preferences.removePersistentDomain(forName: suiteName) }
+        let columns = PositiveIntDefault(key: "columns", defaultValue: 3, userDefaults: preferences)
+        let rows = PositiveIntDefault(key: "rows", defaultValue: 3, userDefaults: preferences)
+        XCTAssertEqual(columns.value, 3)
+        XCTAssertEqual(rows.value, 3)
+        XCTAssertNil(preferences.object(forKey: "columns"))
+        columns.value = 1
+        rows.load(from: CodableDefault(int: 2))
+        XCTAssertEqual(columns.toCodable().int, 1)
+        XCTAssertEqual(rows.toCodable().int, 2)
+        XCTAssertEqual(PositiveIntDefault(key: "columns", defaultValue: 3, userDefaults: preferences).value, 1)
+        XCTAssertEqual(PositiveIntDefault(key: "rows", defaultValue: 3, userDefaults: preferences).value, 2)
+        columns.load(from: CodableDefault())
+        XCTAssertEqual(columns.value, 1)
+    }
+
+    func testInvalidSavedLimitsNormalizeWithoutWritingOnRead() {
+        let suiteName = "RectangleGridDefaults-\(UUID().uuidString)"
+        let preferences = UserDefaults(suiteName: suiteName)!
+        defer { preferences.removePersistentDomain(forName: suiteName) }
+        preferences.set("invalid", forKey: "limit")
+        let limit = PositiveIntDefault(key: "limit", defaultValue: 3, userDefaults: preferences)
+        XCTAssertEqual(limit.value, 1)
+        XCTAssertEqual(preferences.string(forKey: "limit"), "invalid")
+        limit.load(from: CodableDefault(int: 0))
+        XCTAssertEqual(limit.value, 1)
+        XCTAssertEqual(preferences.integer(forKey: "limit"), 1)
+    }
+}
+
 class BandTilingTests: XCTestCase {
 
     private typealias Manager = MultiWindowManager
+
+    private func applyBandTiling(_ windows: [Manager.TilingWindow], bounds: Manager.BackingPixelBounds,
+                                direction: Manager.BandDirection, constraints: [Manager.BandConstraint],
+                                pointFrame: (CGRect) -> CGRect, backingFrame: (CGRect) -> CGRect) {
+        let cross = GridTiling.Constraint.resizable(minimum: 0, maximum: bounds.extent(direction.cross))
+        let sizes = constraints.map { primary in
+            direction == .rows
+                ? GridTiling.WindowConstraints(width: cross, height: primary)
+                : GridTiling.WindowConstraints(width: primary, height: cross)
+        }
+        _ = GridTiling.apply(observedFrames: windows.map { backingFrame($0.element.frame) }, bounds: bounds,
+                             direction: direction, subdivision: 1, constraints: sizes) { index, frame in
+            windows[index].element.setFrame(pointFrame(frame))
+            return backingFrame(windows[index].element.frame)
+        }
+    }
 
     private final class TestElement: AccessibilityElement {
         private var acceptedFrame: CGRect
@@ -572,7 +624,7 @@ class BandTilingTests: XCTestCase {
         let constraints: [Manager.BandConstraint] = [5, 5, 1, 1, 1].map {
             .resizable(minimum: $0, maximum: 17)
         }
-        let result = Manager.balancedBandLengths(totalPixels: 17, constraints: constraints)
+        let result = GridTiling.balancedBandLengths(totalPixels: 17, constraints: constraints)
         XCTAssertTrue(result.feasible)
         XCTAssertEqual(result.lengths, [5, 5, 3, 2, 2])
     }
@@ -586,7 +638,7 @@ class BandTilingTests: XCTestCase {
                           identity: CFHashCode(index + 1))
             }
             let constraints = Array(repeating: Manager.BandConstraint.resizable(minimum: 0, maximum: 901), count: 3)
-            Manager.applyBandTiling(windows, bounds: bounds, direction: .rows, constraints: constraints,
+            applyBandTiling(windows, bounds: bounds, direction: .rows, constraints: constraints,
                                     pointFrame: { self.scaled($0, by: 1 / scale) },
                                     backingFrame: { self.scaled($0, by: scale) })
             let achieved = elements.map { scaled($0.frame, by: scale) }
@@ -607,7 +659,7 @@ class BandTilingTests: XCTestCase {
                       identity: CFHashCode(index + 1))
         }
         let constraints = Array(repeating: Manager.BandConstraint.resizable(minimum: 0, maximum: 901), count: 3)
-        Manager.applyBandTiling(windows, bounds: bounds, direction: .columns, constraints: constraints,
+        applyBandTiling(windows, bounds: bounds, direction: .columns, constraints: constraints,
                                 pointFrame: { self.scaled($0, by: 0.5) },
                                 backingFrame: { self.scaled($0, by: 2) })
         let achieved = elements.map { scaled($0.frame, by: 2) }
@@ -619,7 +671,7 @@ class BandTilingTests: XCTestCase {
         XCTAssertEqual(achieved.last?.maxX, 911)
 
         let single = TestElement()
-        Manager.applyBandTiling([candidate(single, frame: .zero, identity: 4)],
+        applyBandTiling([candidate(single, frame: .zero, identity: 4)],
                                 bounds: bounds, direction: .rows,
                                 constraints: [.resizable(minimum: 0, maximum: 1200)],
                                 pointFrame: { $0 }, backingFrame: { $0 })
@@ -632,7 +684,7 @@ class BandTilingTests: XCTestCase {
         let flexible = TestElement()
         let fixedWindows = [candidate(fixed, frame: CGRect(x: 0, y: 0, width: 600, height: 100), identity: 1),
                             candidate(flexible, frame: CGRect(x: 0, y: 100, width: 600, height: 100), identity: 2)]
-        Manager.applyBandTiling(fixedWindows, bounds: bounds, direction: .rows,
+        applyBandTiling(fixedWindows, bounds: bounds, direction: .rows,
                                 constraints: [.fixed(100), .resizable(minimum: 0, maximum: 900)],
                                 pointFrame: { $0 }, backingFrame: { $0 })
         XCTAssertEqual([fixed.frame.height, flexible.frame.height], [100, 800])
@@ -646,7 +698,7 @@ class BandTilingTests: XCTestCase {
             candidate(element, frame: CGRect(x: 0, y: CGFloat(index * 100), width: 600, height: 100),
                       identity: CFHashCode(index + 1))
         }
-        Manager.applyBandTiling(windows, bounds: bounds, direction: .rows,
+        applyBandTiling(windows, bounds: bounds, direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 900), count: 3),
                                 pointFrame: { $0 }, backingFrame: { $0 })
         XCTAssertEqual(elements.map { $0.frame.height }, [500, 200, 200])
@@ -662,7 +714,7 @@ class BandTilingTests: XCTestCase {
         let flexible = TestElement()
         let windows = [candidate(capped, frame: CGRect(x: 0, y: 0, width: 100, height: 600), identity: 1),
                        candidate(flexible, frame: CGRect(x: 100, y: 0, width: 100, height: 600), identity: 2)]
-        Manager.applyBandTiling(windows, bounds: bounds, direction: .columns,
+        applyBandTiling(windows, bounds: bounds, direction: .columns,
                                 constraints: [.resizable(minimum: 0, maximum: 900), .resizable(minimum: 0, maximum: 900)],
                                 pointFrame: { $0 }, backingFrame: { $0 })
         XCTAssertEqual([capped.frame.width, flexible.frame.width], [200, 700])
@@ -677,7 +729,7 @@ class BandTilingTests: XCTestCase {
             candidate(element, frame: CGRect(x: 0, y: CGFloat(index * 100), width: 600, height: 100),
                       identity: CFHashCode(index + 1))
         }
-        Manager.applyBandTiling(windows,
+        applyBandTiling(windows,
                                 bounds: Manager.BackingPixelBounds(CGRect(x: 0, y: 0, width: 600, height: 4000)),
                                 direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 4000), count: 4),
@@ -694,7 +746,7 @@ class BandTilingTests: XCTestCase {
                                  identity: 1),
                        candidate(flexible, frame: CGRect(x: 0, y: 100, width: 600, height: 100),
                                  identity: 2)]
-        Manager.applyBandTiling(windows,
+        applyBandTiling(windows,
                                 bounds: Manager.BackingPixelBounds(CGRect(x: 0, y: 0, width: 600, height: 900)),
                                 direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 900), count: 2),
@@ -712,7 +764,7 @@ class BandTilingTests: XCTestCase {
             .resizable(minimum: 500, maximum: 900),
             .resizable(minimum: 0, maximum: 900)
         ]
-        let result = Manager.balancedBandLengths(totalPixels: 900, constraints: constraints)
+        let result = GridTiling.balancedBandLengths(totalPixels: 900, constraints: constraints)
         XCTAssertFalse(result.feasible)
         XCTAssertEqual(result.lengths, [300, 300, 300])
 
@@ -723,7 +775,7 @@ class BandTilingTests: XCTestCase {
             candidate(element, frame: CGRect(x: 0, y: CGFloat(index * 100), width: 600, height: 100),
                       identity: CFHashCode(index + 1))
         }
-        Manager.applyBandTiling(windows,
+        applyBandTiling(windows,
                                 bounds: Manager.BackingPixelBounds(CGRect(x: 0, y: 0, width: 600, height: 900)),
                                 direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 900), count: 3),
