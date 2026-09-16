@@ -1,7 +1,5 @@
 # Rectangle
 
-[![Build](https://github.com/rxhanson/Rectangle/actions/workflows/build.yml/badge.svg)](https://github.com/rxhanson/Rectangle/actions/workflows/build.yml)
-
 Rectangle is a window management app for macOS based on Spectacle.
 
 <img width="962" height="886" alt="image" src="https://github.com/user-attachments/assets/e8d88e5f-7d4f-43bc-a82e-146c42f92d68" />
