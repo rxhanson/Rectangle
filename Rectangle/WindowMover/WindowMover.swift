@@ -18,21 +18,7 @@ enum ClampedWindowAligner {
     /// was invisible, onto an opposite edge where it is not, so leave the axis alone instead.
     static let alignmentTolerance: CGFloat = 1.0
 
-    static func aligned(window: CGRect, inZone zone: CGRect, initialRect: CGRect,
-                        screenFrame: CGRect, alignment: EdgeAlignment) -> CGRect {
-        let sharedEdges: Edge
-        switch alignment {
-        case .edgesAndCorners:
-            sharedEdges = initialRect.sharedEdges(withRect: screenFrame)
-        case .corners:
-            let edges = initialRect.sharedEdges(withRect: screenFrame)
-            sharedEdges = edges.isCorner ? edges : .none
-        case .leadingCorner:
-            return CGRect(origin: zone.origin, size: window.size)
-        case .centered:
-            sharedEdges = .none
-        }
-
+    static func aligned(window: CGRect, inZone zone: CGRect, sharedEdges: Edge) -> CGRect {
         var result = window
 
         if abs(window.width - zone.width) > alignmentTolerance {
@@ -56,6 +42,24 @@ enum ClampedWindowAligner {
         }
 
         return result
+    }
+    
+    static func aligned(window: CGRect, inZone zone: CGRect, initialRect: CGRect,
+                        screenFrame: CGRect, alignment: EdgeAlignment) -> CGRect {
+        let sharedEdges: Edge
+        switch alignment {
+        case .edgesAndCorners:
+            sharedEdges = initialRect.sharedEdges(withRect: screenFrame)
+        case .corners:
+            let edges = initialRect.sharedEdges(withRect: screenFrame)
+            sharedEdges = edges.isCorner ? edges : .none
+        case .leadingCorner:
+            return CGRect(origin: zone.origin, size: window.size)
+        case .centered:
+            sharedEdges = .none
+        }
+
+        return aligned(window: window, inZone: zone, sharedEdges: sharedEdges)
     }
 }
 
@@ -89,4 +93,19 @@ enum EdgeAlignment: Int {
     case corners = 2
     case centered = 3
     case leadingCorner = 4
+    
+    func alignmentEdges(for rect: CGRect, in screenFrame: CGRect) -> Edge? {
+        let sharedEdges = rect.sharedEdges(withRect: screenFrame)
+
+        switch self {
+        case .edgesAndCorners:
+            return sharedEdges
+        case .corners:
+            return sharedEdges.isCorner ? sharedEdges : .none
+        case .centered:
+            return Edge.none
+        case .leadingCorner:
+            return nil
+        }
+    }
 }
