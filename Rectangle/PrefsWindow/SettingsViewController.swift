@@ -1,7 +1,6 @@
 /// SettingsViewController.swift
 
 import Cocoa
-import ServiceManagement
 import Sparkle
 import MASShortcut
 
@@ -57,15 +56,7 @@ class SettingsViewController: NSViewController {
     
     @IBAction func toggleLaunchOnLogin(_ sender: NSButton) {
         let newSetting: Bool = sender.state == .on
-        if #available(macOS 13, *) {
-            LaunchOnLogin.isEnabled = newSetting
-        } else {
-            let smLoginSuccess = SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
-            if !smLoginSuccess {
-                Logger.log("Unable to set launch at login preference. Attempting one more time.")
-                SMLoginItemSetEnabled(AppDelegate.launcherAppId as CFString, newSetting)
-            }
-        }
+        LaunchOnLogin.isEnabled = newSetting
         Defaults.launchOnLogin.enabled = newSetting
     }
     
@@ -159,10 +150,8 @@ class SettingsViewController: NSViewController {
             
             var openSystemSettingsButtonName = NSLocalizedString("iWV-c2-BJD.title", tableName: "Main", value: "Open System Preferences", comment: "")
             
-            if #available(macOS 13, *) {
-                openSystemSettingsButtonName = NSLocalizedString(
-                    "Open System Settings", tableName: "Main", value: "", comment: "")
-            }
+            openSystemSettingsButtonName = NSLocalizedString(
+                "Open System Settings", tableName: "Main", value: "", comment: "")
 
             let conflictTitleText = NSLocalizedString(
                 "Conflict with system setting", tableName: "Main", value: "", comment: "")
@@ -282,7 +271,7 @@ class SettingsViewController: NSViewController {
     @IBAction func exportConfig(_ sender: NSButton) {
         Notification.Name.windowSnapping.post(object: false)
         let savePanel = NSSavePanel()
-        savePanel.allowedFileTypes = ["json"]
+        savePanel.allowedContentTypes = [.json]
         savePanel.nameFieldStringValue = "RectangleConfig"
         let response = savePanel.runModal()
         if response == .OK, let url = savePanel.url {
@@ -301,7 +290,7 @@ class SettingsViewController: NSViewController {
     @IBAction func importConfig(_ sender: NSButton) {
         Notification.Name.windowSnapping.post(object: false)
         let openPanel = NSOpenPanel()
-        openPanel.allowedFileTypes = ["json"]
+        openPanel.allowedContentTypes = [.json]
         let response = openPanel.runModal()
         if response == .OK, let url = openPanel.url {
             Defaults.load(fileUrl: url)

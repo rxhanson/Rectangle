@@ -604,11 +604,11 @@ final class DirectWindowAnimator {
             return area(first) < area(second)
         }
         var frameRate = 60
-        if #available(macOS 12.0, *), let screen, screen.maximumFramesPerSecond > 0 {
+        if let screen, screen.maximumFramesPerSecond > 0 {
             frameRate = min(120, screen.maximumFramesPerSecond)
         }
         drivingInterval = 1.0 / Double(frameRate)
-        if #available(macOS 14.0, *), let screen {
+        if let screen {
             let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.drive() }
             let link = screen.displayLink(target: target, selector: #selector(WindowAnimationDisplayLinkTarget.tick(_:)))
             link.preferredFrameRateRange = CAFrameRateRange(minimum: Float(frameRate), maximum: Float(frameRate), preferred: Float(frameRate))

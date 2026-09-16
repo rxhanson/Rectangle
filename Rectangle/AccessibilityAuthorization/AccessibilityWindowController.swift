@@ -28,15 +28,13 @@ class AccessibilityViewController: NSViewController {
         if #available(macOS 27, *) {
             sysPrefsPathField.stringValue = NSLocalizedString(
                 "Go to System Settings → Privacy & Security → Device Control and Data Access", tableName: "Main", value: "", comment: "")
-        } else if #available(macOS 13, *) {
+        } else {
             sysPrefsPathField.stringValue = NSLocalizedString(
                 "Go to System Settings → Privacy & Security → Accessibility", tableName: "Main", value: "", comment: "")
         }
-        if #available(macOS 13, *) {
-            openSysPrefsButton.title = NSLocalizedString(
-                "Open System Settings", tableName: "Main", value: "", comment: "")
-            padlockField.isHidden = true
-        }
+        openSysPrefsButton.title = NSLocalizedString(
+            "Open System Settings", tableName: "Main", value: "", comment: "")
+        padlockField.isHidden = true
         sysPrefsPathField.preferredMaxLayoutWidth = 250
         sysPrefsPathField.maximumNumberOfLines = 0
     }
