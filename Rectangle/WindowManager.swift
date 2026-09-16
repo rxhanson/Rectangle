@@ -7,17 +7,15 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
-    private let animationsEnabled: () -> Bool
-    private let animationDestination: (AccessibilityElement) -> CGRect?
+    private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
-         animationsEnabled: @escaping () -> Bool = { WindowAnimator.enabled },
-         animationDestination: @escaping (AccessibilityElement) -> CGRect? = { WindowAnimator.shared.destination(for: $0) }) {
+         windowAnimator: WindowAnimator = WindowAnimator.shared) {
+        
         self.screenDetection = screenDetection
-        self.animationsEnabled = animationsEnabled
-        self.animationDestination = animationDestination
+        self.windowAnimator = windowAnimator
         standardWindowMoverChain = [
             StandardWindowMover(),
             EdgeAlignmentWindowMover(),
@@ -31,7 +29,7 @@ class WindowManager {
     }
     
     func logicalFrame(for element: AccessibilityElement) -> CGRect {
-        animationDestination(element) ?? element.frame
+        windowAnimator.destination(for: element) ?? element.frame
     }
 
     func recordAction(windowId: CGWindowID?,
@@ -81,7 +79,7 @@ class WindowManager {
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 executionID &+= 1
                 let currentExecutionID = executionID
-                if animationsEnabled(), frontmostWindowElement.isResizable() {
+                if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
                     animateWindow(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
@@ -114,7 +112,7 @@ class WindowManager {
             return
         }
         
-        let pendingDestination = animationDestination(frontmostWindowElement)
+        let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
         let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
         
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
@@ -229,12 +227,12 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
         
-        let animated = animationsEnabled() && !isFixedSize
+        let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
             && !Defaults.cooperativeCornerResize.enabled
         WindowAnimationDiagnostics.event("window-action-animation-decision", fields: [
             "windowID": windowId ?? 0, "source": String(describing: parameters.source),
-            "animated": animated, "enabled": animationsEnabled(), "fixedSize": isFixedSize,
+            "animated": animated, "enabled": WindowAnimator.enabled, "fixedSize": isFixedSize,
             "crossDisplay": isMovedAcrossDisplays, "cooperative": Defaults.cooperativeCornerResize.enabled,
             "sourceDisplayFrame": [sourceScreens.currentScreen.frame.minX, sourceScreens.currentScreen.frame.minY,
                                    sourceScreens.currentScreen.frame.width, sourceScreens.currentScreen.frame.height],

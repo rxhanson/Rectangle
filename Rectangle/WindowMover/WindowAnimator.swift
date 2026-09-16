@@ -340,6 +340,8 @@ enum WindowAnimationGeometry {
 }
 
 /// Opt-in local timing evidence. Normal app launches do no tracing or filesystem work.
+/// Example Terminal command to launch Rectangle with this enabled:
+/// open -a Rectangle --env RECTANGLE_ANIMATION_TRACE_PATH="/tmp/trace.json"
 enum WindowAnimationDiagnostics {
     private static let path = ProcessInfo.processInfo.environment["RECTANGLE_ANIMATION_TRACE_PATH"]
     static var enabled: Bool { !(path ?? "").isEmpty }
