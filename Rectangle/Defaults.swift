@@ -2,20 +2,6 @@
 
 import Cocoa
 
-enum BlurAppearance: Int, CaseIterable {
-    case system = 0
-    case light = 1
-    case dark = 2
-
-    var appearance: NSAppearance? {
-        switch self {
-        case .system: return nil
-        case .light: return NSAppearance(named: .aqua)
-        case .dark: return NSAppearance(named: .darkAqua)
-        }
-    }
-}
-
 class Defaults {
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
     static let disabledApps = JSONDefault<Set<String>>(key: "disabledApps")
@@ -584,3 +570,18 @@ struct CodableColor : Codable {
         self.alpha = nsColor.alphaComponent
     }
 }
+
+enum BlurAppearance: Int, CaseIterable {
+    case system = 0
+    case light = 1
+    case dark = 2
+
+    var appearance: NSAppearance? {
+        switch self {
+        case .system: return nil
+        case .light: return NSAppearance(named: .aqua)
+        case .dark: return NSAppearance(named: .darkAqua)
+        }
+    }
+}
+
