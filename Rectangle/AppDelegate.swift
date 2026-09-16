@@ -5,7 +5,7 @@ import Sparkle
 import ServiceManagement
 import os.log
 
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     static let launcherAppId = "com.knollsoft.RectangleLauncher"

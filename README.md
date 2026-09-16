@@ -35,6 +35,8 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
+In **Snap Areas**, enable **Animate windows (experimental)** for smooth window resizing or **Blur footprint** for a blurred snap preview. Both are off by default. Animated snapping keeps the selected edge or center aligned when an app limits its window size or aspect ratio. Dragging a snapped window starts restoring its previous size as the window begins moving, and a quick release lets the remaining restore animation continue. Far-right title-bar grabs can still show visible jumps. Title-bar double-click maximize/restore follows the same animation setting and timing as snapping. Window animation has been tested in known scenarios, but remains experimental because repeatedly updating the window's size and position during the transition may cause issues in some edge cases.
+
 ### Tile windows in rows or columns
 
 Enable **Show additional sizes in menu** to include Rows and Columns in the **Tiling** submenu. Their keyboard shortcuts remain available when the submenu is hidden.
@@ -94,7 +96,7 @@ Apple never released a public API for doing this. Rectangle Pro has next/prev Sp
 
 ### Windows overlap when using thirds or other small layouts
 
-Some apps enforce a minimum window size that is larger than the requested layout. For example, a window with a minimum width of 600 points cannot fit a 504-point third of a display. Rectangle keeps the window on screen and briefly shows a “Window size limited” message when the app leaves it larger than the requested size. Use a larger layout, such as halves, or reduce the adjacent window manually. Rectangle cannot override an app's minimum window size.
+Some apps enforce a minimum window size that is larger than the requested layout. For example, a window with a minimum width of 600 points cannot fit a 504-point third of a display. Rectangle keeps the window on screen and briefly shows a “Minimum window size reached” HUD with a window icon when the app leaves it larger than the requested size. Use a larger layout, such as halves, or reduce the adjacent window manually. Rectangle cannot override an app's minimum window size.
 
 ### Window resizing is off slightly for iTerm2
 

@@ -12,6 +12,7 @@ class Defaults {
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
+    static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
@@ -51,10 +52,19 @@ class Defaults {
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static let showAdditionalSizesInMenu = OptionalBoolDefault(key: "showAdditionalSizesInMenu")
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
-    static let footprintAlpha = FloatDefault(key: "footprintAlpha", defaultValue: 0.3)
+    static let footprintAlpha = DoubleDefault(key: "footprintAlpha")
+    static var effectiveFootprintAlpha: Double {
+        if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
+            return footprintBlur.enabled ? 0 : 0.3
+        }
+        return footprintAlpha.value
+    }
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
+    static let footprintBlur = BoolDefault(key: "footprintBlur")
+    static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
+
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let todo = OptionalBoolDefault(key: "todo")
     static let todoMode = BoolDefault(key: "todoMode")
@@ -121,6 +131,7 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        experimentalWindowAnimations,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,
@@ -158,6 +169,8 @@ class Defaults {
         footprintBorderWidth,
         footprintFade,
         footprintColor,
+        footprintBlur,
+        blurAppearance,
         SUEnableAutomaticChecks,
         todo,
         todoMode,
@@ -557,3 +570,18 @@ struct CodableColor : Codable {
         self.alpha = nsColor.alphaComponent
     }
 }
+
+enum BlurAppearance: Int, CaseIterable {
+    case system = 0
+    case light = 1
+    case dark = 2
+
+    var appearance: NSAppearance? {
+        switch self {
+        case .system: return nil
+        case .light: return NSAppearance(named: .aqua)
+        case .dark: return NSAppearance(named: .darkAqua)
+        }
+    }
+}
+

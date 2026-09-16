@@ -7,11 +7,17 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
+    private let animationsEnabled: () -> Bool
+    private let animationDestination: (AccessibilityElement) -> CGRect?
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
     
-    init(screenDetection: ScreenDetection = ScreenDetection()) {
+    init(screenDetection: ScreenDetection = ScreenDetection(),
+         animationsEnabled: @escaping () -> Bool = { WindowAnimator.enabled },
+         animationDestination: @escaping (AccessibilityElement) -> CGRect? = { WindowAnimator.shared.destination(for: $0) }) {
         self.screenDetection = screenDetection
+        self.animationsEnabled = animationsEnabled
+        self.animationDestination = animationDestination
         standardWindowMoverChain = [
             StandardWindowMover(),
             EdgeAlignmentWindowMover(),
@@ -24,6 +30,10 @@ class WindowManager {
         ]
     }
     
+    func logicalFrame(for element: AccessibilityElement) -> CGRect {
+        animationDestination(element) ?? element.frame
+    }
+
     func recordAction(windowId: CGWindowID?,
                       resultingRect: CGRect,
                       action: WindowAction,
@@ -47,8 +57,7 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
-        executionID &+= 1
-        let currentExecutionID = executionID
+        WindowAnimationDiagnostics.event("window-action", fields: ["action": parameters.action.name])
         hideSizeConstraintWarning()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
@@ -56,7 +65,7 @@ class WindowManager {
             NSSound.beep()
             return
         }
-        
+
         // The window id can be unavailable when macOS stops vending window info
         // after a session transition (#640). Actions still execute; only
         // window-id-keyed history is skipped.
@@ -70,7 +79,18 @@ class WindowManager {
                 return
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
-                frontmostWindowElement.setFrame(restoreRect)
+                executionID &+= 1
+                let currentExecutionID = executionID
+                if animationsEnabled(), frontmostWindowElement.isResizable() {
+                    animateWindow(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                        guard let self, self.executionID == currentExecutionID else { return }
+                        // A completed animation has already placed the real window.
+                        if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                    }
+                } else {
+                    WindowAnimator.shared.cancel(for: frontmostWindowElement)
+                    frontmostWindowElement.setFrame(restoreRect)
+                }
             }
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             return
@@ -94,7 +114,8 @@ class WindowManager {
             return
         }
         
-        let currentWindowRect: CGRect = frontmostWindowElement.frame
+        let pendingDestination = animationDestination(frontmostWindowElement)
+        let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
         
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
         
@@ -176,7 +197,7 @@ class WindowManager {
         }
 
         if let cooperativeCornerPlan {
-            if !cooperativeCornerPlan.needsApplication(focusedCurrentFrame: currentNormalizedRect) {
+            if pendingDestination == nil && !cooperativeCornerPlan.needsApplication(focusedCurrentFrame: currentNormalizedRect) {
                 ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
                                                                             achievedFrame: currentNormalizedRect,
                                                                             screenFrame: cooperativeCornerPlan.screenFrame,
@@ -185,13 +206,19 @@ class WindowManager {
                 recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
                 return
             }
-        } else if currentNormalizedRect.equalTo(calcResult.rect) {
+        } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
 
             return
         }
+
+        // Only an accepted move supersedes the prior completion. A rejected or
+        // already-achieved request must not discard an animation's needed fallback.
+        // A matching logical target is still pending, so it continues through here.
+        executionID &+= 1
+        let currentExecutionID = executionID
 
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
@@ -202,53 +229,98 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
         
-        var resultingRect: CGRect
-        if let cooperativeCornerPlan {
-            resultingRect = applyCooperativeCornerResize(result: resultParameters,
-                                                         plan: cooperativeCornerPlan)
-        } else {
-            resultingRect = apply(result: resultParameters)
-        }
-
-        if let cooperativeCornerPlan {
-            // AX can enforce a minimum size that was not reported before the settling pass.
-            ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
-                                                                        achievedFrame: resultingRect.screenFlipped,
-                                                                        screenFrame: cooperativeCornerPlan.screenFrame,
-                                                                        gapSize: cooperativeCornerPlan.gapSize)
-        }
-        
-        if isMovedAcrossDisplays {
-            if calcResult.rect.size != resultingRect.size {
-                Logger.log("Window size wasn't applied perfectly across displays. Trying again.")
+        let animated = animationsEnabled() && !isFixedSize
+            && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
+            && !Defaults.cooperativeCornerResize.enabled
+        WindowAnimationDiagnostics.event("window-action-animation-decision", fields: [
+            "windowID": windowId ?? 0, "source": String(describing: parameters.source),
+            "animated": animated, "enabled": animationsEnabled(), "fixedSize": isFixedSize,
+            "crossDisplay": isMovedAcrossDisplays, "cooperative": Defaults.cooperativeCornerResize.enabled,
+            "sourceDisplayFrame": [sourceScreens.currentScreen.frame.minX, sourceScreens.currentScreen.frame.minY,
+                                   sourceScreens.currentScreen.frame.width, sourceScreens.currentScreen.frame.height],
+            "destinationDisplayFrame": [calcResult.screen.frame.minX, calcResult.screen.frame.minY,
+                                        calcResult.screen.frame.width, calcResult.screen.frame.height],
+            "actual": [currentWindowRect.minX, currentWindowRect.minY, currentWindowRect.width, currentWindowRect.height]])
+        let completeMove = { [self] (animationHandledPlacement: Bool) in
+            guard executionID == currentExecutionID else { return }
+            var resultingRect: CGRect
+            if let cooperativeCornerPlan {
+                resultingRect = applyCooperativeCornerResize(result: resultParameters,
+                                                             plan: cooperativeCornerPlan)
+            } else if animationHandledPlacement {
+                resultingRect = frontmostWindowElement.frame
+            } else {
                 resultingRect = apply(result: resultParameters)
-                
-                if calcResult.rect.size != resultingRect.size {
-                    Logger.log("Final attempt to adjust across displays.")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
-                        guard let self, self.executionID == currentExecutionID else { return }
-                        let finalRect = self.apply(result: resultParameters)
-                        self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
-                        self.postProcess(result: resultParameters, resultingRect: finalRect)
-                    }
-                    return
-                }
             }
-            windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect)
-        }
 
-        if !isMovedAcrossDisplays {
-            applyCooperativeCornerCleanupIfNeeded(focusedWindowId: windowId,
-                                                  source: parameters.source,
-                                                  oldFocusedFrame: currentNormalizedRect,
-                                                  newFocusedFrame: resultingRect.screenFlipped,
-                                                  screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
-                                                  currentAction: action,
-                                                  lastRectangleAction: lastRectangleAction)
-            resultingRect = frontmostWindowElement.frame
+            if let cooperativeCornerPlan {
+                // AX can enforce a minimum size that was not reported before the settling pass.
+                ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
+                                                                            achievedFrame: resultingRect.screenFlipped,
+                                                                            screenFrame: cooperativeCornerPlan.screenFrame,
+                                                                            gapSize: cooperativeCornerPlan.gapSize)
+            }
+
+            if isMovedAcrossDisplays {
+                if calcResult.rect.size != resultingRect.size {
+                    Logger.log("Window size wasn't applied perfectly across displays. Trying again.")
+                    resultingRect = apply(result: resultParameters)
+
+                    if calcResult.rect.size != resultingRect.size {
+                        Logger.log("Final attempt to adjust across displays.")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
+                            guard let self, self.executionID == currentExecutionID else { return }
+                            let finalRect = self.apply(result: resultParameters)
+                            self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
+                            self.postProcess(result: resultParameters, resultingRect: finalRect, incrementCount: !animated)
+                        }
+                        return
+                    }
+                }
+                windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect)
+            }
+
+            if !isMovedAcrossDisplays {
+                applyCooperativeCornerCleanupIfNeeded(focusedWindowId: windowId,
+                                                      source: parameters.source,
+                                                      oldFocusedFrame: currentNormalizedRect,
+                                                      newFocusedFrame: resultingRect.screenFlipped,
+                                                      screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
+                                                      currentAction: action,
+                                                      lastRectangleAction: lastRectangleAction)
+                resultingRect = frontmostWindowElement.frame
+            }
+
+            postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
         }
-        
-        postProcess(result: resultParameters, resultingRect: resultingRect)
+        if animated {
+            // Record the destination before animation for repeated-shortcut cycling.
+            recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
+                         action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+            let placement = WindowAnimationPlacement(
+                screenFrame: visibleFrameOfDestinationScreen.screenFlipped,
+                sharedEdges: action.resizes ? Defaults.moveFixedSizeToEdge.value.alignmentEdges(
+                    for: calcResult.initialRect.screenFlipped, in: visibleFrameOfDestinationScreen.screenFlipped) : nil,
+                constrainToScreen: !(action.allowedToExtendOutsideCurrentScreenArea && !NSScreen.screensHaveSeparateSpaces),
+                gap: CGFloat(Defaults.gapSize.value))
+            animateWindow(frontmostWindowElement, to: calcResult.rect.screenFlipped,
+                          placement: placement,
+                          releasedSnap: parameters.source == .dragToSnap,
+                          profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
+                completeMove(!frame.isNull)
+            }
+        } else {
+            WindowAnimator.shared.cancel(for: frontmostWindowElement)
+            completeMove(false)
+        }
+    }
+
+
+
+    func animateWindow(_ element: AccessibilityElement, to destination: CGRect,
+                       placement: WindowAnimationPlacement? = nil, releasedSnap: Bool = false,
+                       profile: WindowAnimationProfile = .standard, completion: @escaping (CGRect) -> Void) {
+        WindowAnimator.shared.animate(element, to: destination, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
     }
     
     /// Move/resize a window based on the calculation results.
@@ -278,7 +350,7 @@ class WindowManager {
         }
     }
 
-    func postProcess(result: ResultParameters, resultingRect: CGRect) {
+    func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
         let calcResult = result.calcResult
 
         if WindowSizeConstraint.isExceeded(requested: calcResult.rect, actual: resultingRect, action: result.action) {
@@ -289,7 +361,20 @@ class WindowManager {
             CGWarpMouseCursorPosition(resultingRect.centerPoint)
         }
         
-        recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+        recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
+
+        let requestedRect = calcResult.rect.screenFlipped
+        var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
+                                      "achieved": [resultingRect.minX, resultingRect.minY, resultingRect.width, resultingRect.height],
+                                      "requested": [requestedRect.minX, requestedRect.minY, requestedRect.width, requestedRect.height]]
+        if let windowId = result.windowId {
+            evidence["windowID"] = windowId
+            if let restore = AppDelegate.windowHistory.restoreRects[windowId] {
+                evidence["restore"] = [restore.minX, restore.minY, restore.width, restore.height]
+            }
+        }
+        WindowAnimationDiagnostics.event("window-action-achieved", fields: evidence)
+        Notification.Name.windowActionCompleted.post()
         
         if Logger.logging {
             var logItems = ["\(result.action.name)",
