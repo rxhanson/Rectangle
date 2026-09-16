@@ -55,7 +55,6 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
-        WindowAnimationDiagnostics.event("window-action", fields: ["action": parameters.action.name])
         hideSizeConstraintWarning()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
@@ -80,7 +79,7 @@ class WindowManager {
                 executionID &+= 1
                 let currentExecutionID = executionID
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    animateWindow(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
@@ -230,15 +229,7 @@ class WindowManager {
         let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
             && !Defaults.cooperativeCornerResize.enabled
-        WindowAnimationDiagnostics.event("window-action-animation-decision", fields: [
-            "windowID": windowId ?? 0, "source": String(describing: parameters.source),
-            "animated": animated, "enabled": WindowAnimator.enabled, "fixedSize": isFixedSize,
-            "crossDisplay": isMovedAcrossDisplays, "cooperative": Defaults.cooperativeCornerResize.enabled,
-            "sourceDisplayFrame": [sourceScreens.currentScreen.frame.minX, sourceScreens.currentScreen.frame.minY,
-                                   sourceScreens.currentScreen.frame.width, sourceScreens.currentScreen.frame.height],
-            "destinationDisplayFrame": [calcResult.screen.frame.minX, calcResult.screen.frame.minY,
-                                        calcResult.screen.frame.width, calcResult.screen.frame.height],
-            "actual": [currentWindowRect.minX, currentWindowRect.minY, currentWindowRect.width, currentWindowRect.height]])
+        
         let completeMove = { [self] (animationHandledPlacement: Bool) in
             guard executionID == currentExecutionID else { return }
             var resultingRect: CGRect
@@ -291,8 +282,8 @@ class WindowManager {
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
         }
+        
         if animated {
-            // Record the destination before animation for repeated-shortcut cycling.
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
             let placement = WindowAnimationPlacement(
@@ -301,24 +292,16 @@ class WindowManager {
                     for: calcResult.initialRect.screenFlipped, in: visibleFrameOfDestinationScreen.screenFlipped) : nil,
                 constrainToScreen: !(action.allowedToExtendOutsideCurrentScreenArea && !NSScreen.screensHaveSeparateSpaces),
                 gap: CGFloat(Defaults.gapSize.value))
-            animateWindow(frontmostWindowElement, to: calcResult.rect.screenFlipped,
-                          placement: placement,
-                          releasedSnap: parameters.source == .dragToSnap,
-                          profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
+            windowAnimator.animate(frontmostWindowElement,
+                                   to: calcResult.rect.screenFlipped,
+                                   releasedSnap: parameters.source == .dragToSnap, placement: placement,
+                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
                 completeMove(!frame.isNull)
             }
         } else {
-            WindowAnimator.shared.cancel(for: frontmostWindowElement)
+            windowAnimator.cancel(for: frontmostWindowElement)
             completeMove(false)
         }
-    }
-
-
-
-    func animateWindow(_ element: AccessibilityElement, to destination: CGRect,
-                       placement: WindowAnimationPlacement? = nil, releasedSnap: Bool = false,
-                       profile: WindowAnimationProfile = .standard, completion: @escaping (CGRect) -> Void) {
-        WindowAnimator.shared.animate(element, to: destination, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
     }
     
     /// Move/resize a window based on the calculation results.
