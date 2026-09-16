@@ -5,6 +5,8 @@ import Cocoa
 extension Notification.Name {
   
     static let configImported = Notification.Name("configImported")
+    static let windowAnimationPreferencesChanged = Notification.Name("windowAnimationPreferencesChanged")
+    static let windowActionCompleted = Notification.Name("windowActionCompleted")
     static let windowSnapping = Notification.Name("windowSnapping")
     static let frontAppChanged = Notification.Name("frontAppChanged")
     static let allowAnyShortcut = Notification.Name("allowAnyShortcutToggle")

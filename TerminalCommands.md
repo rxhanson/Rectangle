@@ -43,6 +43,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Attempt to preserve window position when moving to another display](#attempt-to-preserve-window-position-when-moving-to-another-display)
 - [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
 - [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
+- [Apps using native resize during window animations](#apps-using-native-resize-during-window-animations)
 
 ## Keyboard Shortcuts
 
@@ -305,13 +306,13 @@ defaults write com.knollsoft.Rectangle cascadeActiveApp -dict-add keyCode -float
 
 ## Modify the "footprint" displayed for drag to snap area
 
-Adjust the alpha (transparency). Default is 0.3.
+Adjust the alpha (transparency). Default is 0.3, or 0 for the blurred preview, where it controls tint opacity.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintAlpha -float <VALUE_BETWEEN_0_&_1>
 ```
 
-Change the border width. Default is 2 (used to be 1).
+Change the border width. Default is 2 (used to be 1), or 1 for the blurred preview. A custom value overrides either default.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintBorderWidth -float <NUM_PIXELS>
@@ -323,13 +324,13 @@ Disable the fade.
 defaults write com.knollsoft.Rectangle footprintFade -int 2
 ```
 
-Change the color.
+Change the color. With blur enabled, this sets the tint color. Delete `footprintColor` to restore the automatic light/dark tint color.
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintColor -string "{\"red\":0,\"blue\":0.5,\"green\":0.5}"
 ```
 
-Change the animation duration. The value is a multiplier. Default is 0 (no animation).
+Change the animation duration. The value is a multiplier. Default is 0 (no movement animation).
 
 ```bash
 defaults write com.knollsoft.Rectangle footprintAnimationDurationMultiplier -float <MULTIPLIER>
@@ -653,4 +654,14 @@ Some windows can't be resized to fill a snap area — either because they're a f
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 1  # align edges and corners (default)
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 2  # align corners only, center halves/sides
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 3  # center within the snap area
+```
+
+## Apps using native resize during window animations
+
+Certain applications (such as IINA) enforce aspect ratios or custom constraints asynchronously when resized. During direct window animations, continuous intermediate frame adjustments can fight with the application's internal aspect-ratio corrections. For apps in this list, Rectangle resizes the window once natively, allows the animation duration for the app to asynchronously settle its aspect ratio, and then aligns the final achieved size using a position-only write.
+
+The default list contains IINA (`com.colliderli.iina`). You can configure this list of bundle IDs:
+
+```bash
+defaults write com.knollsoft.Rectangle directAnimationNativeResizeApps -string "[\"com.colliderli.iina\", \"org.videolan.vlc\"]"
 ```

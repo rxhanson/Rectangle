@@ -8,6 +8,83 @@ struct SnapArea: Equatable {
     let action: WindowAction
 }
 
+struct NativeSnapGesture {
+    private(set) var generation = UUID()
+    private(set) var held = false
+    private(set) var cancelled = false
+    private(set) var observedDrag = false
+
+    mutating func begin() { generation = UUID(); held = true; cancelled = false; observedDrag = false }
+    mutating func drag() { if held { observedDrag = true } }
+    mutating func cancel() { if held { cancelled = true } }
+    mutating func end() { held = false }
+}
+
+struct WindowDragGeometry {
+    let initialFrame: CGRect?
+    let currentFrame: CGRect
+
+    init?(initialFrame: CGRect?, initialServerFrame: CGRect?, serverFrame: CGRect?, accessibilityFrame: () -> CGRect?) {
+        // Compare frames from the same source; AX and WindowServer can disagree during a drag.
+        if let initialServerFrame, !initialServerFrame.isNull, !initialServerFrame.isEmpty,
+           let serverFrame, !serverFrame.isNull, !serverFrame.isEmpty {
+            self.initialFrame = initialServerFrame
+            currentFrame = serverFrame
+        } else {
+            guard let frame = accessibilityFrame(), !frame.isNull else { return nil }
+            self.initialFrame = initialFrame
+            currentFrame = frame
+        }
+    }
+
+    var isResizing: Bool {
+        guard let initialFrame else { return true }
+        return currentFrame.size != initialFrame.size && currentFrame.numSharedEdges(withRect: initialFrame) >= 2
+    }
+
+    var isMoving: Bool {
+        guard let initialFrame else { return false }
+        return !isResizing && currentFrame.origin != initialFrame.origin
+    }
+
+    var movedWithoutResizing: Bool {
+        initialFrame?.size == currentFrame.size && initialFrame?.origin != currentFrame.origin
+    }
+
+    static func releasedMovement(initialAX: CGRect, initialServer: CGRect, ax: CGRect, server: CGRect?) -> Bool {
+        let serverGeometry = WindowDragGeometry(initialFrame: initialAX, initialServerFrame: initialServer,
+            serverFrame: server, accessibilityFrame: { nil })
+        if serverGeometry?.movedWithoutResizing == true { return true }
+        // The two mouse-down reads may straddle the first native movement.
+        // AX catching up still proves movement against its own baseline, but
+        // a persistent difference between coordinate sources does not.
+        guard let server, WindowAnimationGeometry.near(ax, server, tolerance: 1),
+              !WindowAnimationGeometry.near(initialAX, ax, tolerance: 1) else { return false }
+        return WindowDragGeometry(initialFrame: initialAX, initialServerFrame: nil, serverFrame: nil,
+            accessibilityFrame: { ax })?.movedWithoutResizing == true
+    }
+}
+
+enum DragRestorePlacement {
+    static func referenceCursor(current: CGRect, initial: CGRect?, mouseDown: CGPoint?, fallback: CGPoint) -> CGPoint {
+        guard let initial, let mouseDown else { return fallback }
+        return CGPoint(x: current.minX + mouseDown.x - initial.minX,
+                       y: current.minY + mouseDown.y - initial.minY)
+    }
+
+    static func frame(from current: CGRect, size: CGSize, cursor: CGPoint?) -> CGRect {
+        var restored = CGRect(origin: current.origin, size: size)
+        if let cursor {
+            // Move only as far as the grab point needs. Keeping the old right edge would
+            // abruptly shift by the entire width difference when the cursor crosses the cutoff.
+            let inset = min(32, size.width / 2)
+            let neededShift = cursor.x - current.minX - (size.width - inset)
+            restored.origin.x += min(max(0, neededShift), max(0, current.width - size.width))
+        }
+        return restored
+    }
+}
+
 class SnappingManager {
     
     private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", 
@@ -26,6 +103,17 @@ class SnappingManager {
     var isFullScreen: Bool = false
     var allowListening: Bool = true
     var initialWindowRect: CGRect?
+    private var initialWindowServerRect: CGRect?
+    private var initialCursorLocation: CGPoint?
+    private var initialEventWindowID: CGWindowID?
+    private var nativeGesture = NativeSnapGesture()
+    private var pendingReleasedRestore: UUID?
+    private struct NativeSizeRestore {
+        let windowID: CGWindowID
+        let size: CGSize
+        var lastAttemptOrigin: CGPoint
+    }
+    private var nativeSizeRestore: NativeSizeRestore?
     var currentSnapArea: SnapArea?
     var dragPrevY: Double?
     var dragRestrictionExpirationTimestamp: UInt64 = 0
@@ -145,12 +233,13 @@ class SnappingManager {
     }
     
     private func startEventMonitor() {
-        let mask: NSEvent.EventTypeMask = [.leftMouseDown, .leftMouseUp, .leftMouseDragged]
+        let mask: NSEvent.EventTypeMask = [.leftMouseDown, .leftMouseUp, .leftMouseDragged, .keyDown]
         eventMonitor = Defaults.missionControlDragging.userDisabled ? ActiveEventMonitor(mask: mask, filterer: filter, handler: handle) : PassiveEventMonitor(mask: mask, handler: handle)
         eventMonitor?.start()
     }
     
     private func stopEventMonitor() {
+        pendingReleasedRestore = nil
         eventMonitor?.stop()
         eventMonitor = nil
     }
@@ -194,31 +283,56 @@ class SnappingManager {
     
     func handle(event: NSEvent) {
         switch event.type {
+        case .keyDown:
+            guard event.keyCode == 53, nativeGesture.held else { return }
+            nativeGesture.cancel()
+            currentSnapArea = nil
+            box?.orderOut(nil)
         case .leftMouseDown:
+            beginNativeDrag()
+            WindowAnimator.shared.finishForNewDrag()
+            initialCursorLocation = event.cgEvent?.location
+            // The main queue can handle this after the pointer and window have
+            // already moved. Keep the event's original target for all retries.
+            initialEventWindowID = event.cgEvent.flatMap {
+                let id = $0.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent)
+                return id > 0 ? CGWindowID(exactly: id) : nil
+            }
             if !Defaults.obtainWindowOnClick.userDisabled {
-                windowElement = AccessibilityElement.getWindowElementUnderCursor()
+                windowElement = AccessibilityElement.getWindowElementUnderCursor(at: initialCursorLocation, eventWindowID: initialEventWindowID)
                 windowId = windowElement?.getWindowId()
                 initialWindowRect = windowElement?.frame
+                initialWindowServerRect = windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
             }
+            traceNativeInput(event, phase: "down")
         case .leftMouseUp:
+            nativeGesture.end()
+            traceNativeInput(event, phase: "up")
+            if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
+            if currentSnapArea != nil {
+                // A coalesced final drag can leave the preview on the previous screen.
+                // Commit the release event's position, including withdrawal from an edge.
+                currentSnapArea = snapAreaForNativeRelease(event)
+                if currentSnapArea == nil { box?.orderOut(nil) }
+            }
             if let currentSnapArea = self.currentSnapArea {
-                box?.orderOut(nil)
+                nativeSizeRestore = nil
+                dismissSnapPreviewForCommit()
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
                 // this typically only happens if the user is dragging and dropping windows really quickly
                 // in this scenario, the footprint doesn't display but the snap will still occur, as long as the window position is updated as of mouse up.
-                if let currentRect = windowElement?.frame,
-                   currentRect.size == initialWindowRect?.size,
-                   currentRect.origin != initialWindowRect?.origin {
+                if !nativeGesture.cancelled, let geometry = dragGeometry(), geometry.movedWithoutResizing {
   
-                    if let windowId {
-                        unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
+                    // Displayed bounds may still have the old size just after finish().
+                    if !windowMoving, let windowId {
+                        unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                     
-                    if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea)  {
-                        box?.orderOut(nil)
+                    if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
+                        dismissSnapPreviewForCommit()
                         if canSnap(event) {
                             snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
                         }
@@ -226,13 +340,20 @@ class SnappingManager {
                     }
                 }
             }
+            finishNativeSizeRestore()
             windowElement = nil
             windowId = nil
             windowMoving = false
             initialWindowRect = nil
+            initialWindowServerRect = nil
+            initialCursorLocation = nil
+            initialEventWindowID = nil
             windowIdAttempt = 0
             lastWindowIdAttempt = nil
         case .leftMouseDragged:
+            nativeGesture.drag()
+
+            if nativeGesture.cancelled { return }
             if windowId == nil, windowIdAttempt < 20 {
                 if let lastWindowIdAttempt = lastWindowIdAttempt {
                     if event.timestamp - lastWindowIdAttempt < 0.1 {
@@ -240,30 +361,30 @@ class SnappingManager {
                     }
                 }
                 if windowElement == nil {
-                    windowElement = AccessibilityElement.getWindowElementUnderCursor()
+                    windowElement = AccessibilityElement.getWindowElementUnderCursor(at: initialCursorLocation, eventWindowID: initialEventWindowID)
                 }
                 windowId = windowElement?.getWindowId()
                 initialWindowRect = windowElement?.frame
+                initialWindowServerRect = windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
                 windowIdAttempt += 1
                 lastWindowIdAttempt = event.timestamp
             }
-            guard let currentRect = windowElement?.frame
-            else { return }
-            
+            var currentRect: CGRect?
             if !windowMoving {
-                if let initialWindowRect, (currentRect.size == initialWindowRect.size || currentRect.numSharedEdges(withRect: initialWindowRect) < 2) {
-                    if currentRect.origin != initialWindowRect.origin {
-                        windowMoving = true
-                        if let windowId {
-                            unsnapRestore(windowId: windowId, currentRect: currentRect, cursorLoc: event.cgEvent?.location)
-                        }
+                guard let geometry = dragGeometry() else { return }
+                currentRect = geometry.currentFrame
+                if geometry.isMoving {
+                    windowMoving = true
+                    if let windowId {
+                        unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
-                else if let windowId {
+                else if geometry.isResizing, let windowId {
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
             if windowMoving {
+                retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
                         box?.orderOut(nil)
@@ -272,10 +393,12 @@ class SnappingManager {
                     return
                 }
                 
-                if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea) {
+                if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event) {
                     if snapArea == currentSnapArea {
                         return
                     }
+
+                    guard let currentRect = currentRect ?? dragGeometry()?.currentFrame else { return }
                     
                     if Defaults.hapticFeedbackOnSnap.userEnabled {
                         NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
@@ -284,24 +407,7 @@ class SnappingManager {
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
-                        if box == nil {
-                            box = FootprintWindow()
-                        }
-                        if Defaults.footprintAnimationDurationMultiplier.value > 0 {
-                            if !box!.realIsVisible, let origin = getFootprintAnimationOrigin(snapArea, newBoxRect) {
-                                let frame = CGRect(origin: origin, size: .zero)
-                                box!.setFrame(frame, display: false)
-                            }
-                        } else {
-                            box!.setFrame(newBoxRect, display: true)
-                        }
-                        box!.orderFront(nil)
-                        if Defaults.footprintAnimationDurationMultiplier.value > 0 {
-                            NSAnimationContext.runAnimationGroup { changes in
-                                changes.duration = getFootprintAnimationDuration(box!, newBoxRect)
-                                box!.animator().setFrame(newBoxRect, display: true)
-                            }
-                        }
+                        showSnapPreview(in: newBoxRect, snapArea: snapArea)
                     }
                     
                     currentSnapArea = snapArea
@@ -317,6 +423,30 @@ class SnappingManager {
         }
     }
     
+    private func dragGeometry() -> WindowDragGeometry? {
+        WindowDragGeometry(initialFrame: initialWindowRect, initialServerFrame: initialWindowServerRect,
+                           serverFrame: windowId.flatMap { WindowUtil.getWindowFrame(id: $0) },
+                           accessibilityFrame: { windowElement?.frame })
+    }
+
+    private func traceNativeInput(_ event: NSEvent, phase: String) {
+        guard WindowAnimationDiagnostics.enabled else { return }
+        func fields(_ frame: CGRect?) -> [CGFloat] {
+            guard let frame else { return [] }
+            return [frame.minX, frame.minY, frame.width, frame.height]
+        }
+        WindowAnimationDiagnostics.event("native-input-" + phase, fields: ["windowID": windowId ?? 0,
+            "initialAX": fields(initialWindowRect), "initialServer": fields(initialWindowServerRect),
+            "history": fields(windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0]?.rect }),
+            "moving": windowMoving, "dragged": nativeGesture.observedDrag, "cancelled": nativeGesture.cancelled,
+            "targetPID": event.cgEvent?.getIntegerValueField(.eventTargetUnixProcessID) ?? 0,
+            "pointerWindow": event.cgEvent?.getIntegerValueField(.mouseEventWindowUnderMousePointer) ?? 0,
+            "handlingWindow": event.cgEvent?.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent) ?? 0,
+            "eventTimestamp": event.cgEvent?.timestamp ?? 0,
+            "eventCursor": event.cgEvent.map { [$0.location.x, $0.location.y] } ?? [],
+            "globalCursor": [NSEvent.mouseLocation.screenFlipped.x, NSEvent.mouseLocation.screenFlipped.y]])
+    }
+
     func unsnapRestore(windowId: CGWindowID, currentRect: CGRect, cursorLoc: CGPoint?) {
         guard !Defaults.unsnapRestore.userDisabled else { return }
         guard !isRestoreSuppressedBySizeChange(windowId: windowId) else { return }
@@ -326,18 +456,25 @@ class SnappingManager {
             
             if let windowElement = windowElement {
                 if #available(macOS 12, *) { // earlier versions of macOS would stutter the reposition when dragging the window
-                    var newRect = currentRect
-                    newRect.size = restoreRect.size
-                    if let cursorLoc = cursorLoc {
-                        if !newRect.contains(cursorLoc) { // keep the same maxX if possible
-                            newRect.origin = CGPoint(x: currentRect.maxX - newRect.width, y: newRect.minY)
-                            
-                            if !newRect.contains(cursorLoc) { // still doesn't contain cursor
-                                newRect.origin = CGPoint(x: cursorLoc.x - (newRect.width / 2), y: newRect.minY)
-                            }
-                        }
+                    // Pair the displayed frame with its native grab point, not a newer mouse sample.
+                    let initialCursor = DragRestorePlacement.referenceCursor(current: currentRect, initial: initialWindowRect,
+                                                                              mouseDown: initialCursorLocation,
+                                                                              fallback: cursorLoc ?? NSEvent.mouseLocation.screenFlipped)
+                    let newRect = DragRestorePlacement.frame(from: currentRect, size: restoreRect.size, cursor: initialCursor)
+                    // Native drag restoration applies the saved size immediately.
+                    windowElement.setFrame(newRect, adjustSizeFirst: false,
+                                           adjustPosition: newRect.origin != currentRect.origin)
+                    // AX can report success while the Dock limits only the width.
+                    // Keep the unachieved size after consuming snap history so the
+                    // native drag can make room for it on a later event.
+                    let achieved = windowElement.frame
+                    if needsNativeSizeRestore(achieved.size, to: restoreRect.size) {
+                        nativeSizeRestore = NativeSizeRestore(windowID: windowId, size: restoreRect.size,
+                                                              lastAttemptOrigin: currentRect.origin)
                     }
-                    windowElement.setFrame(newRect, adjustSizeFirst: false)
+                    WindowAnimationDiagnostics.event("native-size-restore", fields: ["windowID": windowId,
+                        "requested": [restoreRect.width, restoreRect.height],
+                        "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
                 } else {
                     windowElement.size = restoreRect.size
                 }
@@ -348,17 +485,106 @@ class SnappingManager {
             AppDelegate.windowHistory.restoreRects[windowId] = initialWindowRect
         }
     }
+
+    private func needsNativeSizeRestore(_ actual: CGSize, to requested: CGSize) -> Bool {
+        // Native tracking can return a size larger as well as smaller than the
+        // saved frame. Keep either mismatch pending for the existing retry path.
+        abs(actual.width - requested.width) > 1 || abs(actual.height - requested.height) > 1
+    }
+
+    private func retryNativeSizeRestore(cursor: CGPoint?) {
+        guard var pending = nativeSizeRestore, pending.windowID == windowId,
+              let windowElement, !Defaults.unsnapRestore.userDisabled else { return }
+        let current = windowElement.frame
+        guard WindowAnimationGeometry.valid(current) else { return }
+        guard needsNativeSizeRestore(current.size, to: pending.size) else {
+            nativeSizeRestore = nil
+            return
+        }
+        guard current.origin != pending.lastAttemptOrigin else { return }
+        let point = cursor ?? current.centerPoint
+        if let screen = NSScreen.screens.first(where: { $0.frame.screenFlipped.contains(point) }) {
+            let bounds = screen.visibleFrame.screenFlipped
+            // Do not repeatedly ask for growth that still cannot fit at the
+            // native drag's current origin. Position remains owned by the app.
+            if current.width < pending.size.width - 1 && current.minX + pending.size.width > bounds.maxX { return }
+            if current.height < pending.size.height - 1 && current.minY + pending.size.height > bounds.maxY { return }
+        }
+        pending.lastAttemptOrigin = current.origin
+        nativeSizeRestore = pending
+        windowElement.setFrame(CGRect(origin: current.origin, size: pending.size),
+                               adjustSizeFirst: false, adjustPosition: false)
+        let achieved = windowElement.frame
+        if !needsNativeSizeRestore(achieved.size, to: pending.size) { nativeSizeRestore = nil }
+        WindowAnimationDiagnostics.event("native-size-restore-retry", fields: ["windowID": pending.windowID,
+            "requested": [pending.size.width, pending.size.height],
+            "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
+    }
+
+    private func finishNativeSizeRestore() {
+        guard let pending = nativeSizeRestore, let element = windowElement,
+              AppDelegate.windowHistory.lastRectangleActions[pending.windowID] == nil else {
+            nativeSizeRestore = nil
+            return
+        }
+        nativeSizeRestore = nil
+        let operation = UUID()
+        pendingReleasedRestore = operation
+        // Wait until mouse-up has left native tracking before moving a short
+        // release far enough inside its display to accept the full saved size.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.pendingReleasedRestore == operation, !self.nativeGesture.held,
+                  !Defaults.unsnapRestore.userDisabled,
+                  AppDelegate.windowHistory.lastRectangleActions[pending.windowID] == nil else { return }
+            self.pendingReleasedRestore = nil
+            let current = element.frame
+            guard WindowAnimationGeometry.valid(current), self.needsNativeSizeRestore(current.size, to: pending.size) else { return }
+            var target = CGRect(origin: current.origin, size: pending.size)
+            if let screen = NSScreen.screens.first(where: { $0.frame.screenFlipped.contains(current.origin) }) {
+                target = WindowFrameBounds.constrained(target, to: screen.visibleFrame.screenFlipped, gap: 0)
+            }
+            element.setFrame(target, adjustSizeFirst: false)
+            let achieved = element.frame
+            WindowAnimationDiagnostics.event("native-size-restore-released", fields: ["windowID": pending.windowID,
+                "requested": [pending.size.width, pending.size.height],
+                "achieved": [achieved.width, achieved.height]])
+        }
+    }
+
+    @discardableResult
+    func beginNativeDrag() -> UUID {
+        pendingReleasedRestore = nil
+        nativeGesture.begin()
+        resetNativeDragState()
+        return nativeGesture.generation
+    }
+
+    private func resetNativeDragState() {
+        nativeSizeRestore = nil
+        if box?.realIsVisible == true { box?.orderOut(nil) }
+        currentSnapArea = nil
+        windowElement = nil
+        windowId = nil
+        windowMoving = false
+        initialWindowRect = nil
+        initialWindowServerRect = nil
+        initialCursorLocation = nil
+        initialEventWindowID = nil
+        windowIdAttempt = 0
+        lastWindowIdAttempt = nil
+    }
     
     private func isRestoreSuppressedBySizeChange(windowId: CGWindowID) -> Bool {
         guard Defaults.unsnapRestoreFromSizeChange.userDisabled,
               let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
               lastAction.rect == initialWindowRect
         else { return false }
-        
+
         return lastAction.action.category == .size
     }
-    
+
     private func getRestoreRect(windowId: CGWindowID) -> CGRect? {
+        guard !isRestoreSuppressedBySizeChange(windowId: windowId) else { return nil }
         guard let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
               lastAction.rect == initialWindowRect
         else { return nil }
@@ -366,8 +592,24 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
-    func getFootprintAnimationDuration(_ box: FootprintWindow, _ boxRect: CGRect) -> Double {
-        return box.animationResizeTime(boxRect) * Double(Defaults.footprintAnimationDurationMultiplier.value)
+    private func dismissSnapPreviewForCommit() {
+        box?.orderOut(nil)
+    }
+
+    private func showSnapPreview(in rect: CGRect, snapArea: SnapArea) {
+        // A transient window can retain its old display's Space. Construct it
+        // with a real frame on the destination display before first ordering.
+        if box == nil || box?.frame.isEmpty == true || box?.screen != snapArea.screen {
+            box?.close()
+            box = FootprintWindow(initialFrame: rect)
+        }
+        box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
+                         duration: getFootprintAnimationDuration())
+    }
+
+    func getFootprintAnimationDuration() -> Double {
+        // The checkbox uses 0.75; normalize it to the shared preview duration.
+        return WindowPreviewDeceleration.duration * Double(Defaults.footprintAnimationDurationMultiplier.value) / 0.75
     }
     
     func getFootprintAnimationOrigin(_ snapArea: SnapArea, _ boxRect: CGRect) -> CGPoint? {
@@ -413,9 +655,23 @@ class SnappingManager {
         return nil
     }
     
+    func snapAreaForNativeRelease(_ event: NSEvent) -> SnapArea? {
+        guard !nativeGesture.cancelled, canSnap(event) else { return nil }
+        return snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)
+    }
+
+    func snapAreaContainingCursor(priorSnapArea: SnapArea?, event: NSEvent) -> SnapArea? {
+        guard let location = event.cgEvent?.location else {
+            return snapAreaContainingCursor(priorSnapArea: priorSnapArea)
+        }
+        return snapAreaContainingCursor(priorSnapArea: priorSnapArea, at: location.screenFlipped)
+    }
+
     func snapAreaContainingCursor(priorSnapArea: SnapArea?) -> SnapArea? {
-        let loc = NSEvent.mouseLocation
-        
+        snapAreaContainingCursor(priorSnapArea: priorSnapArea, at: NSEvent.mouseLocation)
+    }
+
+    func snapAreaContainingCursor(priorSnapArea: SnapArea?, at loc: CGPoint) -> SnapArea? {
         for screen in NSScreen.screens {
             guard let directional = directionalLocationOfCursor(loc: loc, screen: screen)
             else { continue }
