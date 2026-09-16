@@ -117,6 +117,7 @@ class Defaults {
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
     static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
     static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
+    static let directAnimationNativeResizeApps = JSONDefault<Set<String>>(key: "directAnimationNativeResizeApps", defaultValue: Set<String>(["com.colliderli.iina"]))
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
@@ -214,6 +215,7 @@ class Defaults {
         ignoreDragSnapToo,
         systemWideMouseDown,
         systemWideMouseDownApps,
+        directAnimationNativeResizeApps,
         screensOrderedByX,
         showAdditionalSizesInMenu,
         cyclingOverlapOffset,

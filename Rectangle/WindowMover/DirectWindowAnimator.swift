@@ -63,6 +63,7 @@ final class DirectWindowAnimator {
     private let environmentIsSafe: () -> Bool
     private let serverFrame: (AccessibilityElement) -> CGRect?
     private let crossesDisplays: (CGRect, CGRect) -> Bool
+    private let isNativeResizeApp: (String?) -> Bool
     private var lastEnvironmentCheck: TimeInterval = 0
 
     init(enabled: @escaping () -> Bool = { WindowAnimator.enabled },
@@ -72,13 +73,18 @@ final class DirectWindowAnimator {
          serverFrame: @escaping (AccessibilityElement) -> CGRect? = { element in
              element.windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
          },
-         crossesDisplays: @escaping (CGRect, CGRect) -> Bool = { WindowAnimator.crossesDisplays(from: $0, to: $1) }) {
+         crossesDisplays: @escaping (CGRect, CGRect) -> Bool = { WindowAnimator.crossesDisplays(from: $0, to: $1) },
+         isNativeResizeApp: @escaping (String?) -> Bool = { id in
+             guard let id else { return false }
+             return Defaults.directAnimationNativeResizeApps.typedValue?.contains(id) == true
+         }) {
         self.enabled = enabled
         self.clock = clock
         self.automaticallyAdvances = automaticallyAdvances
         self.environmentIsSafe = environmentIsSafe
         self.serverFrame = serverFrame
         self.crossesDisplays = crossesDisplays
+        self.isNativeResizeApp = isNativeResizeApp
     }
 
     func destination(for element: AccessibilityElement) -> CGRect? {
@@ -188,7 +194,7 @@ final class DirectWindowAnimator {
                  curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value, completion: @escaping (CGRect) -> Void) {
         let generation = UUID()
         intent = generation
-        if profile == .keyboard, !releasedSnap, !resizeOnly, element.bundleIdentifier != "com.colliderli.iina" {
+        if profile == .keyboard, !releasedSnap, !resizeOnly, !isNativeResizeApp(element.bundleIdentifier) {
             animateKeyboard(element, to: destination, placement: placement, generation: generation, completion: completion)
             return
         }
@@ -398,9 +404,9 @@ final class DirectWindowAnimator {
               [origin.minX, origin.minY, origin.width, origin.height,
                destination.minX, destination.minY, destination.width, destination.height].allSatisfy(\.isFinite),
               origin != destination else { completion(.null); return }
-        // IINA applies its aspect ratio asynchronously. Resize once, then align
+        // Certain apps (such as IINA) apply their aspect ratio asynchronously. Resize once, then align
         // the settled size at completion without triggering another size change.
-        let nativeResize = origin.size != destination.size && element.bundleIdentifier == "com.colliderli.iina"
+        let nativeResize = origin.size != destination.size && isNativeResizeApp(element.bundleIdentifier)
         var nativeResizeAccepted = false
         let restoreAccessibility = element.beginAnimatedAdjustment()
         var finalFrame: CGRect?
@@ -465,7 +471,7 @@ final class DirectWindowAnimator {
                 guard nativeResizeAccepted else { return }
                 let actual = element.frame
                 guard WindowAnimationGeometry.valid(actual) else { return }
-                // Restore requests carry a previously achieved size. If IINA
+                // Restore requests carry a previously achieved size. If the native resize app
                 // rejected that growth, let the ordinary mover retry it.
                 if placement?.sharedEdges == nil,
                    abs(actual.width - frame.width) > 1 || abs(actual.height - frame.height) > 1 { return }
