@@ -68,7 +68,7 @@ final class ShortcutSectionCellView: NSTableCellView {
         addSubview(titleLabel)
 
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
@@ -173,13 +173,13 @@ class ShortcutsViewController: NSViewController {
         scrollView.autohidesScrollers = true
         scrollView.drawsBackground = false
 
-        outlineView.translatesAutoresizingMaskIntoConstraints = false
         outlineView.headerView = nil
         outlineView.selectionHighlightStyle = .none
         outlineView.rowHeight = 28
         outlineView.indentationPerLevel = 16
         outlineView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
-
+        outlineView.indentationPerLevel = 0
+        
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("ShortcutColumn"))
         column.resizingMask = .autoresizingMask
         column.width = 460
@@ -315,8 +315,28 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
         }
         return 28
     }
+    
+    // MARK: - NSOutlineViewDelegate Dynamic Sizing Fix
 
-    func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        return false
+    func outlineViewItemDidExpand(_ notification: Notification) {
+        scheduleScrollViewUpdate()
+    }
+
+    func outlineViewItemDidCollapse(_ notification: Notification) {
+        scheduleScrollViewUpdate()
+    }
+
+    private func scheduleScrollViewUpdate() {
+        // Defer execution until NSOutlineView completes its internal row animation and index updates
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            // Recalculate document frame height safely after row changes have finalized
+            if let documentView = self.scrollView.documentView {
+                documentView.frame.size.height = self.outlineView.intrinsicContentSize.height
+            }
+            
+            self.scrollView.reflectScrolledClipView(self.scrollView.contentView)
+        }
     }
 }
