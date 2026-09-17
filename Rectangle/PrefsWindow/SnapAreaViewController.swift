@@ -290,3 +290,13 @@ class SnapAreaViewController: NSViewController {
         }
     }
 }
+
+extension NSViewController {
+    static func newControllerFromStoryboard(storyboardName: String = "Main", identifier: String) -> NSViewController {
+        let storyboard = NSStoryboard(name: storyboardName, bundle: nil)
+        guard let viewController = storyboard.instantiateController(withIdentifier: identifier) as? NSViewController else {
+            fatalError("Unable to find \(identifier) in \(storyboardName)")
+        }
+        return viewController
+    }
+}

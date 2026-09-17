@@ -3879,601 +3879,125 @@ DQ
         <!--Snap Area View Controller-->
         <scene sceneID="WiD-Tk-7pr">
             <objects>
-                <viewController storyboardIdentifier="HookshotConfigViewController" id="t2d-Q7-RLy" customClass="SnapAreaViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SnapAreaViewController" id="t2d-Q7-RLy" customClass="SnapAreaViewController" customModule="Rectangle" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" misplaced="YES" id="yfQ-gV-dm5">
-                        <rect key="frame" x="0.0" y="0.0" width="850" height="754"/>
+                        <rect key="frame" x="0.0" y="0.0" width="709" height="678"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="equalCentering" orientation="horizontal" alignment="centerY" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pem-lh-xwe">
-                                <rect key="frame" x="0.0" y="0.0" width="850" height="754"/>
+                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9T6-Lr-8m1">
+                                <rect key="frame" x="0.0" y="20" width="689" height="676"/>
                                 <subviews>
-                                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9T6-Lr-8m1">
-                                        <rect key="frame" x="71" y="26" width="708" height="708"/>
+                                    <stackView distribution="fillEqually" orientation="horizontal" alignment="top" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5k8-dN-bzX">
+                                        <rect key="frame" x="20" y="556" width="669" height="120"/>
                                         <subviews>
-                                            <stackView distribution="fillEqually" orientation="horizontal" alignment="top" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5k8-dN-bzX">
-                                                <rect key="frame" x="20" y="556" width="688" height="152"/>
+                                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Le-Om-VLZ">
+                                                <rect key="frame" x="0.0" y="0.0" width="265" height="120"/>
                                                 <subviews>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Le-Om-VLZ">
-                                                        <rect key="frame" x="0.0" y="0.0" width="264" height="152"/>
-                                                        <subviews>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
-                                                                <rect key="frame" x="0.0" y="136" width="185" height="16"/>
-                                                                <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <connections>
-                                                                    <action selector="toggleWindowSnapping:" target="t2d-Q7-RLy" id="hiC-vy-gm4"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
-                                                                <rect key="frame" x="0.0" y="94" width="252" height="32"/>
-                                                                <buttonCell key="cell" type="check" title="Restore window size when unsnapped" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UZP-5q-D5Y">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <connections>
-                                                                    <action selector="toggleUnsnapRestore:" target="t2d-Q7-RLy" id="3vt-Lw-NJs"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="idz-Fq-8Qx">
-                                                                <rect key="frame" x="0.0" y="68" width="121" height="16"/>
-                                                                <buttonCell key="cell" type="check" title="Haptic feedback" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="16" id="f8W-Fl-K4a"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="toggleHapticFeedback:" target="t2d-Q7-RLy" id="fYe-DO-EgM"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="vrs-iM-XVL" userLabel="Mission Control Dragging Checkbox">
-                                                                <rect key="frame" x="0.0" y="26" width="264" height="32"/>
-                                                                <buttonCell key="cell" type="check" title="Disable fast dragging to Mission Control" bezelStyle="regularSquare" imagePosition="left" inset="2" id="3hZ-Cs-EZ6">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <connections>
-                                                                    <action selector="toggleMissionControlDragging:" target="t2d-Q7-RLy" id="iGt-Mk-K1Y"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="cbx-fa-jJh">
-                                                                <rect key="frame" x="0.0" y="0.0" width="128" height="16"/>
-                                                                <buttonCell key="cell" type="check" title="Animate footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="kx2-tZ-lk8">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="16" id="Xlt-wM-rDc"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="toggleAnimateFootprint:" target="t2d-Q7-RLy" id="qo7-sw-gbY"/>
-                                                                </connections>
-                                                            </button>
-                                                        </subviews>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rWQ-Uf-U5w">
-                                                        <rect key="frame" x="284" y="0.0" width="165" height="152"/>
-                                                    </stackView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GxY-ZJ-2qa">
-                                                        <rect key="frame" x="469" y="110" width="219" height="42"/>
-                                                        <subviews>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ani-win-opt">
-                                                                <rect key="frame" x="0.0" y="26" width="219" height="16"/>
-                                                                <buttonCell key="cell" type="check" title="Animate windows (experimental)" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ani-win-cell">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="16" id="ani-win-height"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="toggleExperimentalWindowAnimations:" target="t2d-Q7-RLy" id="ani-win-action"/>
-                                                                </connections>
-                                                            </button>
-                                                            <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="blur-preview-opt">
-                                                                <rect key="frame" x="0.0" y="0.0" width="102" height="16"/>
-                                                                <buttonCell key="cell" type="check" title="Blur footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="blur-preview-cell">
-                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="height" constant="16" id="blur-preview-height"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="toggleBlurFootprint:" target="t2d-Q7-RLy" id="blur-preview-action"/>
-                                                                </connections>
-                                                            </button>
-                                                        </subviews>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstAttribute="bottom" secondItem="rWQ-Uf-U5w" secondAttribute="bottom" id="hYo-UK-AaS"/>
-                                                </constraints>
-                                                <visibilityPriorities>
-                                                    <integer value="1000"/>
-                                                    <integer value="1000"/>
-                                                    <integer value="1000"/>
-                                                </visibilityPriorities>
-                                                <customSpacing>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                </customSpacing>
-                                            </stackView>
-                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="RAB-qk-O6q">
-                                                <rect key="frame" x="306" y="534" width="96" height="4"/>
-                                            </box>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="14" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vcp-1H-jc9">
-                                                <rect key="frame" x="50" y="314" width="608" height="202"/>
-                                                <subviews>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oWJ-Ie-4bk">
-                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="202"/>
-                                                        <subviews>
-                                                            <popUpButton tag="1" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dvs-uM-6VU">
-                                                                <rect key="frame" x="0.0" y="178" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="EBt-5H-0z6" id="82y-37-rlM">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="g7p-EV-39L">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="EBt-5H-0z6"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="YL6-f5-Cb2"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="PHq-Gs-ONZ"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                            <popUpButton tag="4" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jqR-m9-Kh7">
-                                                                <rect key="frame" x="0.0" y="89" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="xBU-le-7cX" id="4d5-Se-z1S">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="5WZ-bt-0Fn">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="xBU-le-7cX"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="8eG-6N-9WW"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="al4-TZ-b2U"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                            <popUpButton tag="6" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bVZ-3z-DYF">
-                                                                <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="I97-ob-ue4" id="AkL-7b-8Up">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="hHJ-nm-Msn">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="I97-ob-ue4"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="eeJ-SY-aXK"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="2yz-dG-Dod"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                        </subviews>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="13" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hbp-4G-5mJ">
-                                                        <rect key="frame" x="204" y="0.0" width="200" height="202"/>
-                                                        <subviews>
-                                                            <popUpButton tag="2" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="qa7-5C-PSI">
-                                                                <rect key="frame" x="5" y="175" width="190" height="27"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="NMu-W8-Awa" id="yaC-wx-qst">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="pf5-Uy-uaq">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="NMu-W8-Awa"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="uMh-Lo-5N5"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="cXd-By-Jle"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="EyR-o0-dgo">
-                                                                <rect key="frame" x="-3" y="34" width="206" height="131"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="200" id="7YZ-ww-UVh"/>
-                                                                    <constraint firstAttribute="height" constant="125" id="Xte-V6-YWz"/>
-                                                                </constraints>
-                                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="wallpaperTiger" id="EGh-Nz-7rJ"/>
-                                                            </imageView>
-                                                            <popUpButton tag="7" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3c6-3h-J52">
-                                                                <rect key="frame" x="5" y="0.0" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="r4Q-q9-FLt" id="FoW-W1-Wr4">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="fCp-nQ-uAe">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="r4Q-q9-FLt"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="yaA-Id-Y1d"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="Wao-XB-BCD"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                        </subviews>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
-                                                    <stackView distribution="fill" orientation="vertical" alignment="trailing" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H40-PM-o61">
-                                                        <rect key="frame" x="418" y="0.0" width="190" height="202"/>
-                                                        <subviews>
-                                                            <popUpButton tag="3" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f8h-NV-mPC">
-                                                                <rect key="frame" x="0.0" y="178" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="Tt8-3X-UpT" id="VUm-bx-uRE">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="O2T-B6-jyn">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="Tt8-3X-UpT"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="LeD-YV-5Br"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="869-tM-t4p"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                            <popUpButton tag="5" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HM2-rd-Wka">
-                                                                <rect key="frame" x="0.0" y="89" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="oEQ-RN-TTJ" id="ycZ-Le-vhx">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="wSR-D9-eze">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="oEQ-RN-TTJ"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="nK1-No-QVf"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="Q8o-7b-RSd"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                            <popUpButton tag="8" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jVF-3c-sL0">
-                                                                <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
-                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="KfQ-dw-3jk" id="7h2-cE-0M2">
-                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="message"/>
-                                                                    <menu key="menu" id="Sam-p4-uj0">
-                                                                        <items>
-                                                                            <menuItem title="-" state="on" tag="-1" id="KfQ-dw-3jk"/>
-                                                                        </items>
-                                                                    </menu>
-                                                                </popUpButtonCell>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="190" id="1Tr-s8-bxh"/>
-                                                                </constraints>
-                                                                <connections>
-                                                                    <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="mtt-GM-BzO"/>
-                                                                </connections>
-                                                            </popUpButton>
-                                                        </subviews>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
-                                                </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="H40-PM-o61" firstAttribute="top" secondItem="oWJ-Ie-4bk" secondAttribute="top" id="1Mb-IW-c2a"/>
-                                                    <constraint firstItem="qa7-5C-PSI" firstAttribute="top" secondItem="Dvs-uM-6VU" secondAttribute="top" id="ARD-Up-4LA"/>
-                                                    <constraint firstItem="H40-PM-o61" firstAttribute="bottom" secondItem="oWJ-Ie-4bk" secondAttribute="bottom" id="FkG-tv-WXD"/>
-                                                    <constraint firstItem="f8h-NV-mPC" firstAttribute="top" secondItem="Dvs-uM-6VU" secondAttribute="top" id="aid-5O-AzU"/>
-                                                    <constraint firstItem="Hbp-4G-5mJ" firstAttribute="top" secondItem="oWJ-Ie-4bk" secondAttribute="top" id="gnb-X0-Eug"/>
-                                                    <constraint firstItem="Hbp-4G-5mJ" firstAttribute="bottom" secondItem="oWJ-Ie-4bk" secondAttribute="bottom" id="peX-zu-WNd"/>
-                                                </constraints>
-                                                <visibilityPriorities>
-                                                    <integer value="1000"/>
-                                                    <integer value="1000"/>
-                                                    <integer value="1000"/>
-                                                </visibilityPriorities>
-                                                <customSpacing>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                </customSpacing>
-                                            </stackView>
-                                            <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3fZ-2P-Yw8">
-                                                <rect key="frame" x="40" y="0.0" width="628" height="294"/>
-                                                <subviews>
-                                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="PH1-h4-ZhC">
-                                                        <rect key="frame" x="65" y="292" width="498" height="4"/>
-                                                    </box>
-                                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MnW-gb-EXP">
-                                                        <rect key="frame" x="17" y="0.0" width="594" height="274"/>
-                                                        <subviews>
-                                                            <stackView distribution="equalCentering" orientation="vertical" alignment="leading" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aRa-8h-39S">
-                                                                <rect key="frame" x="0.0" y="0.0" width="190" height="274"/>
-                                                                <subviews>
-                                                                    <popUpButton tag="1" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ytt-rI-KMq">
-                                                                        <rect key="frame" x="0.0" y="250" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="xK0-Bn-yqf" id="RTg-Kq-V2E">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="HxQ-fS-Z8p">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="xK0-Bn-yqf"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="VhY-YE-zqg"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="ctL-Ka-Z7V"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                    <popUpButton tag="4" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NlH-2s-Bb2">
-                                                                        <rect key="frame" x="0.0" y="125" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="5WR-Ui-uYB" id="pg4-zC-ivJ">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="H9m-bZ-eKV">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="5WR-Ui-uYB"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="McE-Ba-5jp"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="Xnn-6W-ToT"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                    <popUpButton tag="6" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DPC-eZ-HIy">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="Q2j-YZ-1jU" id="JXR-La-eQ0">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="WNl-e0-w5C">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="Q2j-YZ-1jU"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="g8b-oS-9oQ"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="sZU-iY-Tjs"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                </subviews>
-                                                                <visibilityPriorities>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                </visibilityPriorities>
-                                                                <customSpacing>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                </customSpacing>
-                                                            </stackView>
-                                                            <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="13" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ki-JA-AZb">
-                                                                <rect key="frame" x="202" y="0.0" width="190" height="274"/>
-                                                                <subviews>
-                                                                    <popUpButton tag="2" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="rs4-Tg-Omn">
-                                                                        <rect key="frame" x="0.0" y="250" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="2ue-Mv-5Wh" id="4gU-9A-TnP">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="xr0-Bg-vHD">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="2ue-Mv-5Wh"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="ROc-Ns-vAP"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="QvF-QG-HdI"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZBk-gP-LPR">
-                                                                        <rect key="frame" x="30" y="34" width="131" height="206"/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="height" constant="200" id="L6K-rA-7ef"/>
-                                                                            <constraint firstAttribute="width" constant="125" id="q6Z-S0-e4Z"/>
-                                                                        </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="wallpaperTigerVertical" id="uxh-iv-ahv"/>
-                                                                    </imageView>
-                                                                    <popUpButton tag="7" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ZYO-D7-C2a">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="FLh-CI-WNK" id="8Ck-e6-dvF">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="kwv-U1-cQe">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="FLh-CI-WNK"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="mPN-N7-3n2"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="ArK-3M-bC2"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                </subviews>
-                                                                <visibilityPriorities>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                </visibilityPriorities>
-                                                                <customSpacing>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                </customSpacing>
-                                                            </stackView>
-                                                            <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7xm-ZM-Gqk">
-                                                                <rect key="frame" x="404" y="0.0" width="190" height="274"/>
-                                                                <subviews>
-                                                                    <popUpButton tag="3" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYw-mV-KH2">
-                                                                        <rect key="frame" x="0.0" y="250" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="qBm-QP-s63" id="GEM-Db-kKE">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="432-ys-RXR">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="qBm-QP-s63"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="xY9-Lp-sSm"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="U8d-ad-SCC"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                    <popUpButton tag="5" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="efR-xi-okh">
-                                                                        <rect key="frame" x="0.0" y="125" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="JSl-FY-MF0" id="sKz-wv-Rtz">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="u14-Im-koA">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="JSl-FY-MF0"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="D5l-DR-cPS"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="Yza-RI-8mz"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                    <popUpButton tag="8" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lje-Rc-9Hj">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
-                                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="fL5-gz-pOD" id="X4M-df-26I">
-                                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                                            <font key="font" metaFont="message"/>
-                                                                            <menu key="menu" id="8lV-Zy-44g">
-                                                                                <items>
-                                                                                    <menuItem title="-" state="on" tag="-1" id="fL5-gz-pOD"/>
-                                                                                </items>
-                                                                            </menu>
-                                                                        </popUpButtonCell>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="190" id="0oQ-OQ-cnQ"/>
-                                                                        </constraints>
-                                                                        <connections>
-                                                                            <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="OH3-Ry-3Ss"/>
-                                                                        </connections>
-                                                                    </popUpButton>
-                                                                </subviews>
-                                                                <visibilityPriorities>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                    <integer value="1000"/>
-                                                                </visibilityPriorities>
-                                                                <customSpacing>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                    <real value="3.4028234663852886e+38"/>
-                                                                </customSpacing>
-                                                            </stackView>
-                                                        </subviews>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3wO-pf-nsb">
+                                                        <rect key="frame" x="0.0" y="104" width="185" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Snap windows by dragging" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="1ui-PL-TkR">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleWindowSnapping:" target="t2d-Q7-RLy" id="hiC-vy-gm4"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9Ed-T3-hCA">
+                                                        <rect key="frame" x="0.0" y="78" width="253" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Restore window size when unsnapped" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="UZP-5q-D5Y">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleUnsnapRestore:" target="t2d-Q7-RLy" id="3vt-Lw-NJs"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="idz-Fq-8Qx">
+                                                        <rect key="frame" x="0.0" y="52" width="122" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Haptic feedback" bezelStyle="regularSquare" imagePosition="left" inset="2" id="r2Y-cY-tgn">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
                                                         <constraints>
-                                                            <constraint firstItem="pYw-mV-KH2" firstAttribute="top" secondItem="Ytt-rI-KMq" secondAttribute="top" id="7kg-bT-uCf"/>
-                                                            <constraint firstItem="rs4-Tg-Omn" firstAttribute="top" secondItem="Ytt-rI-KMq" secondAttribute="top" id="Mci-KR-QSG"/>
+                                                            <constraint firstAttribute="height" constant="16" id="f8W-Fl-K4a"/>
                                                         </constraints>
-                                                        <visibilityPriorities>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                            <integer value="1000"/>
-                                                        </visibilityPriorities>
-                                                        <customSpacing>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                            <real value="3.4028234663852886e+38"/>
-                                                        </customSpacing>
-                                                    </stackView>
+                                                        <connections>
+                                                            <action selector="toggleHapticFeedback:" target="t2d-Q7-RLy" id="fYe-DO-EgM"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="vrs-iM-XVL" userLabel="Mission Control Dragging Checkbox">
+                                                        <rect key="frame" x="0.0" y="26" width="265" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Disable fast dragging to Mission Control" bezelStyle="regularSquare" imagePosition="left" inset="2" id="3hZ-Cs-EZ6">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="toggleMissionControlDragging:" target="t2d-Q7-RLy" id="iGt-Mk-K1Y"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="cbx-fa-jJh">
+                                                        <rect key="frame" x="0.0" y="0.0" width="128" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Animate footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="kx2-tZ-lk8">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="16" id="Xlt-wM-rDc"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="toggleAnimateFootprint:" target="t2d-Q7-RLy" id="qo7-sw-gbY"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
-                                                <constraints>
-                                                    <constraint firstItem="PH1-h4-ZhC" firstAttribute="leading" secondItem="3fZ-2P-Yw8" secondAttribute="leading" constant="65" id="Dlt-CM-UWe"/>
-                                                </constraints>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rWQ-Uf-U5w">
+                                                <rect key="frame" x="285" y="0.0" width="145" height="120"/>
+                                            </stackView>
+                                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="10" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GxY-ZJ-2qa">
+                                                <rect key="frame" x="450" y="78" width="219" height="42"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ani-win-opt">
+                                                        <rect key="frame" x="0.0" y="26" width="219" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Animate windows (experimental)" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ani-win-cell">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="16" id="ani-win-height"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="toggleExperimentalWindowAnimations:" target="t2d-Q7-RLy" id="ani-win-action"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="blur-preview-opt">
+                                                        <rect key="frame" x="0.0" y="0.0" width="102" height="16"/>
+                                                        <buttonCell key="cell" type="check" title="Blur footprint" bezelStyle="regularSquare" imagePosition="left" inset="2" id="blur-preview-cell">
+                                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="16" id="blur-preview-height"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="toggleBlurFootprint:" target="t2d-Q7-RLy" id="blur-preview-action"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
                                                 <visibilityPriorities>
                                                     <integer value="1000"/>
                                                     <integer value="1000"/>
@@ -4485,16 +4009,9 @@ DQ
                                             </stackView>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="0p9-e7-C6B"/>
-                                            <constraint firstItem="5k8-dN-bzX" firstAttribute="leading" secondItem="9T6-Lr-8m1" secondAttribute="leading" constant="20" symbolic="YES" id="4jz-c4-0m9"/>
-                                            <constraint firstAttribute="height" priority="750" constant="100" id="Gde-pc-Mrq"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="306" id="PeA-h0-vh6"/>
-                                            <constraint firstAttribute="width" priority="750" constant="306" id="aYF-GN-dmL"/>
-                                            <constraint firstItem="3fZ-2P-Yw8" firstAttribute="centerX" secondItem="9T6-Lr-8m1" secondAttribute="centerX" id="gIv-0a-YeJ"/>
-                                            <constraint firstItem="3fZ-2P-Yw8" firstAttribute="leading" secondItem="9T6-Lr-8m1" secondAttribute="leading" constant="40" id="jfY-5s-dFp"/>
+                                            <constraint firstAttribute="bottom" secondItem="rWQ-Uf-U5w" secondAttribute="bottom" id="hYo-UK-AaS"/>
                                         </constraints>
                                         <visibilityPriorities>
-                                            <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
@@ -4503,28 +4020,495 @@ DQ
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="RAB-qk-O6q">
+                                        <rect key="frame" x="296" y="534" width="96" height="4"/>
+                                    </box>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="14" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vcp-1H-jc9">
+                                        <rect key="frame" x="40" y="314" width="608" height="202"/>
+                                        <subviews>
+                                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oWJ-Ie-4bk">
+                                                <rect key="frame" x="0.0" y="0.0" width="190" height="202"/>
+                                                <subviews>
+                                                    <popUpButton tag="1" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dvs-uM-6VU">
+                                                        <rect key="frame" x="0.0" y="178" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="EBt-5H-0z6" id="82y-37-rlM">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="g7p-EV-39L">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="EBt-5H-0z6"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="YL6-f5-Cb2"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="PHq-Gs-ONZ"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <popUpButton tag="4" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jqR-m9-Kh7">
+                                                        <rect key="frame" x="0.0" y="89" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="xBU-le-7cX" id="4d5-Se-z1S">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="5WZ-bt-0Fn">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="xBU-le-7cX"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="8eG-6N-9WW"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="al4-TZ-b2U"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <popUpButton tag="6" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bVZ-3z-DYF">
+                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="I97-ob-ue4" id="AkL-7b-8Up">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="hHJ-nm-Msn">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="I97-ob-ue4"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="eeJ-SY-aXK"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="2yz-dG-Dod"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="13" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hbp-4G-5mJ">
+                                                <rect key="frame" x="204" y="0.0" width="200" height="202"/>
+                                                <subviews>
+                                                    <popUpButton tag="2" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="qa7-5C-PSI">
+                                                        <rect key="frame" x="5" y="175" width="190" height="27"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="NMu-W8-Awa" id="yaC-wx-qst">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="pf5-Uy-uaq">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="NMu-W8-Awa"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="uMh-Lo-5N5"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="cXd-By-Jle"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="EyR-o0-dgo">
+                                                        <rect key="frame" x="-3" y="34" width="206" height="131"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="200" id="7YZ-ww-UVh"/>
+                                                            <constraint firstAttribute="height" constant="125" id="Xte-V6-YWz"/>
+                                                        </constraints>
+                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="wallpaperTiger" id="EGh-Nz-7rJ"/>
+                                                    </imageView>
+                                                    <popUpButton tag="7" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="3c6-3h-J52">
+                                                        <rect key="frame" x="5" y="0.0" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="r4Q-q9-FLt" id="FoW-W1-Wr4">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="fCp-nQ-uAe">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="r4Q-q9-FLt"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="yaA-Id-Y1d"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="Wao-XB-BCD"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                            <stackView distribution="fill" orientation="vertical" alignment="trailing" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H40-PM-o61">
+                                                <rect key="frame" x="418" y="0.0" width="190" height="202"/>
+                                                <subviews>
+                                                    <popUpButton tag="3" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f8h-NV-mPC">
+                                                        <rect key="frame" x="0.0" y="178" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="Tt8-3X-UpT" id="VUm-bx-uRE">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="O2T-B6-jyn">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="Tt8-3X-UpT"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="LeD-YV-5Br"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="869-tM-t4p"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <popUpButton tag="5" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HM2-rd-Wka">
+                                                        <rect key="frame" x="0.0" y="89" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="oEQ-RN-TTJ" id="ycZ-Le-vhx">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="wSR-D9-eze">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="oEQ-RN-TTJ"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="nK1-No-QVf"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="Q8o-7b-RSd"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <popUpButton tag="8" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jVF-3c-sL0">
+                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
+                                                        <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="KfQ-dw-3jk" id="7h2-cE-0M2">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="message"/>
+                                                            <menu key="menu" id="Sam-p4-uj0">
+                                                                <items>
+                                                                    <menuItem title="-" state="on" tag="-1" id="KfQ-dw-3jk"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="190" id="1Tr-s8-bxh"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <action selector="setLandscapeSnapArea:" target="t2d-Q7-RLy" id="mtt-GM-BzO"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                </subviews>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="H40-PM-o61" firstAttribute="top" secondItem="oWJ-Ie-4bk" secondAttribute="top" id="1Mb-IW-c2a"/>
+                                            <constraint firstItem="qa7-5C-PSI" firstAttribute="top" secondItem="Dvs-uM-6VU" secondAttribute="top" id="ARD-Up-4LA"/>
+                                            <constraint firstItem="H40-PM-o61" firstAttribute="bottom" secondItem="oWJ-Ie-4bk" secondAttribute="bottom" id="FkG-tv-WXD"/>
+                                            <constraint firstItem="f8h-NV-mPC" firstAttribute="top" secondItem="Dvs-uM-6VU" secondAttribute="top" id="aid-5O-AzU"/>
+                                            <constraint firstItem="Hbp-4G-5mJ" firstAttribute="top" secondItem="oWJ-Ie-4bk" secondAttribute="top" id="gnb-X0-Eug"/>
+                                            <constraint firstItem="Hbp-4G-5mJ" firstAttribute="bottom" secondItem="oWJ-Ie-4bk" secondAttribute="bottom" id="peX-zu-WNd"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="20" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3fZ-2P-Yw8">
+                                        <rect key="frame" x="40" y="0.0" width="609" height="294"/>
+                                        <subviews>
+                                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="PH1-h4-ZhC">
+                                                <rect key="frame" x="65" y="292" width="499" height="4"/>
+                                            </box>
+                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MnW-gb-EXP">
+                                                <rect key="frame" x="7" y="0.0" width="594" height="274"/>
+                                                <subviews>
+                                                    <stackView distribution="equalCentering" orientation="vertical" alignment="leading" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aRa-8h-39S">
+                                                        <rect key="frame" x="0.0" y="0.0" width="190" height="274"/>
+                                                        <subviews>
+                                                            <popUpButton tag="1" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ytt-rI-KMq">
+                                                                <rect key="frame" x="0.0" y="250" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="xK0-Bn-yqf" id="RTg-Kq-V2E">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="HxQ-fS-Z8p">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="xK0-Bn-yqf"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="VhY-YE-zqg"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="ctL-Ka-Z7V"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                            <popUpButton tag="4" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NlH-2s-Bb2">
+                                                                <rect key="frame" x="0.0" y="125" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="5WR-Ui-uYB" id="pg4-zC-ivJ">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="H9m-bZ-eKV">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="5WR-Ui-uYB"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="McE-Ba-5jp"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="Xnn-6W-ToT"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                            <popUpButton tag="6" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DPC-eZ-HIy">
+                                                                <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="Q2j-YZ-1jU" id="JXR-La-eQ0">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="WNl-e0-w5C">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="Q2j-YZ-1jU"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="g8b-oS-9oQ"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="sZU-iY-Tjs"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
+                                                    <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="13" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Ki-JA-AZb">
+                                                        <rect key="frame" x="202" y="0.0" width="190" height="274"/>
+                                                        <subviews>
+                                                            <popUpButton tag="2" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="rs4-Tg-Omn">
+                                                                <rect key="frame" x="0.0" y="250" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="2ue-Mv-5Wh" id="4gU-9A-TnP">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="xr0-Bg-vHD">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="2ue-Mv-5Wh"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="ROc-Ns-vAP"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="QvF-QG-HdI"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZBk-gP-LPR">
+                                                                <rect key="frame" x="30" y="34" width="131" height="206"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="200" id="L6K-rA-7ef"/>
+                                                                    <constraint firstAttribute="width" constant="125" id="q6Z-S0-e4Z"/>
+                                                                </constraints>
+                                                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="wallpaperTigerVertical" id="uxh-iv-ahv"/>
+                                                            </imageView>
+                                                            <popUpButton tag="7" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ZYO-D7-C2a">
+                                                                <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="FLh-CI-WNK" id="8Ck-e6-dvF">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="kwv-U1-cQe">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="FLh-CI-WNK"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="mPN-N7-3n2"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="ArK-3M-bC2"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
+                                                    <stackView distribution="equalCentering" orientation="vertical" alignment="centerX" spacing="65" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7xm-ZM-Gqk">
+                                                        <rect key="frame" x="404" y="0.0" width="190" height="274"/>
+                                                        <subviews>
+                                                            <popUpButton tag="3" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYw-mV-KH2">
+                                                                <rect key="frame" x="0.0" y="250" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="qBm-QP-s63" id="GEM-Db-kKE">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="432-ys-RXR">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="qBm-QP-s63"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="xY9-Lp-sSm"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="U8d-ad-SCC"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                            <popUpButton tag="5" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="efR-xi-okh">
+                                                                <rect key="frame" x="0.0" y="125" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="JSl-FY-MF0" id="sKz-wv-Rtz">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="u14-Im-koA">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="JSl-FY-MF0"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="D5l-DR-cPS"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="Yza-RI-8mz"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                            <popUpButton tag="8" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lje-Rc-9Hj">
+                                                                <rect key="frame" x="0.0" y="0.0" width="190" height="24"/>
+                                                                <popUpButtonCell key="cell" type="push" title="-" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" imageScaling="proportionallyDown" inset="2" selectedItem="fL5-gz-pOD" id="X4M-df-26I">
+                                                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="message"/>
+                                                                    <menu key="menu" id="8lV-Zy-44g">
+                                                                        <items>
+                                                                            <menuItem title="-" state="on" tag="-1" id="fL5-gz-pOD"/>
+                                                                        </items>
+                                                                    </menu>
+                                                                </popUpButtonCell>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="190" id="0oQ-OQ-cnQ"/>
+                                                                </constraints>
+                                                                <connections>
+                                                                    <action selector="setPortraitSnapArea:" target="t2d-Q7-RLy" id="OH3-Ry-3Ss"/>
+                                                                </connections>
+                                                            </popUpButton>
+                                                        </subviews>
+                                                        <visibilityPriorities>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                            <integer value="1000"/>
+                                                        </visibilityPriorities>
+                                                        <customSpacing>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                            <real value="3.4028234663852886e+38"/>
+                                                        </customSpacing>
+                                                    </stackView>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="pYw-mV-KH2" firstAttribute="top" secondItem="Ytt-rI-KMq" secondAttribute="top" id="7kg-bT-uCf"/>
+                                                    <constraint firstItem="rs4-Tg-Omn" firstAttribute="top" secondItem="Ytt-rI-KMq" secondAttribute="top" id="Mci-KR-QSG"/>
+                                                </constraints>
+                                                <visibilityPriorities>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                    <integer value="1000"/>
+                                                </visibilityPriorities>
+                                                <customSpacing>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                    <real value="3.4028234663852886e+38"/>
+                                                </customSpacing>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="PH1-h4-ZhC" firstAttribute="leading" secondItem="3fZ-2P-Yw8" secondAttribute="leading" constant="65" id="Dlt-CM-UWe"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="850" id="Lbt-yT-fFL"/>
-                                    <constraint firstItem="9T6-Lr-8m1" firstAttribute="top" secondItem="Pem-lh-xwe" secondAttribute="top" constant="20" symbolic="YES" id="XIo-D6-P4Z"/>
-                                    <constraint firstAttribute="bottom" secondItem="9T6-Lr-8m1" secondAttribute="bottom" constant="26" id="xVU-v5-Yg3"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="0p9-e7-C6B"/>
+                                    <constraint firstItem="5k8-dN-bzX" firstAttribute="leading" secondItem="9T6-Lr-8m1" secondAttribute="leading" constant="20" symbolic="YES" id="4jz-c4-0m9"/>
+                                    <constraint firstAttribute="height" priority="750" constant="100" id="Gde-pc-Mrq"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="306" id="PeA-h0-vh6"/>
+                                    <constraint firstAttribute="width" priority="750" constant="306" id="aYF-GN-dmL"/>
+                                    <constraint firstItem="3fZ-2P-Yw8" firstAttribute="centerX" secondItem="9T6-Lr-8m1" secondAttribute="centerX" id="gIv-0a-YeJ"/>
+                                    <constraint firstItem="3fZ-2P-Yw8" firstAttribute="leading" secondItem="9T6-Lr-8m1" secondAttribute="leading" constant="40" id="jfY-5s-dFp"/>
                                 </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Pem-lh-xwe" firstAttribute="top" secondItem="yfQ-gV-dm5" secondAttribute="top" id="Eli-kO-CkT"/>
-                            <constraint firstItem="Pem-lh-xwe" firstAttribute="leading" secondItem="yfQ-gV-dm5" secondAttribute="leading" id="MfO-Bq-vqY"/>
-                            <constraint firstAttribute="trailing" secondItem="Pem-lh-xwe" secondAttribute="trailing" id="QrX-se-kTG"/>
-                            <constraint firstAttribute="bottom" secondItem="Pem-lh-xwe" secondAttribute="bottom" id="WY1-ws-xkP"/>
+                            <constraint firstItem="9T6-Lr-8m1" firstAttribute="top" secondItem="yfQ-gV-dm5" secondAttribute="top" constant="20" symbolic="YES" id="Dfc-jY-r08"/>
+                            <constraint firstAttribute="trailing" secondItem="9T6-Lr-8m1" secondAttribute="trailing" constant="20" symbolic="YES" id="av2-NB-nS9"/>
+                            <constraint firstAttribute="bottom" secondItem="9T6-Lr-8m1" secondAttribute="bottom" constant="20" symbolic="YES" id="jd3-a4-0Bn"/>
+                            <constraint firstItem="9T6-Lr-8m1" firstAttribute="leading" secondItem="yfQ-gV-dm5" secondAttribute="leading" id="kuz-q0-QA1"/>
                         </constraints>
                     </view>
                     <connections>

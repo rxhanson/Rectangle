@@ -11,13 +11,38 @@ final class ShortcutItem: NSObject {
     }
 }
 
-final class ShortcutSection: NSObject {
-    let title: String
-    let items: [ShortcutItem]
+final class SpacerItem: NSObject {}
 
-    init(title: String, actions: [WindowAction]) {
+final class ShortcutCategory: NSObject {
+    let items: [Any]
+
+    init(actions: [WindowAction], includeSpacer: Bool = true) {
+        var categoryItems: [Any] = actions.map { ShortcutItem($0) }
+        if includeSpacer {
+            categoryItems.append(SpacerItem())
+        }
+        self.items = categoryItems
+    }
+}
+
+final class ShortcutGroup: NSObject {
+    let title: String
+    let items: [Any]
+
+    init(title: String, categories: [ShortcutCategory]) {
         self.title = title
-        self.items = actions.map { ShortcutItem($0) }
+
+        var flatItems: [Any] = []
+        for (index, category) in categories.enumerated() {
+            // Include action items
+            flatItems.append(contentsOf: category.items.compactMap { $0 as? ShortcutItem })
+
+            // Add spacer after each category except the last inside the group
+            if index < categories.count - 1 {
+                flatItems.append(SpacerItem())
+            }
+        }
+        self.items = flatItems
     }
 }
 
@@ -104,7 +129,7 @@ final class ShortcutActionCellView: NSTableCellView {
 
             titleLabel.trailingAnchor.constraint(equalTo: iconImageView.leadingAnchor, constant: -8),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 8)
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20)
         ])
     }
 
@@ -136,37 +161,10 @@ class ShortcutsViewController: NSViewController {
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     private var allowAnyShortcutObserver: NSObjectProtocol?
 
-    private let sections: [ShortcutSection] = [
-        ShortcutSection(title: WindowActionCategory.halves.displayName, actions: [
-            .leftHalf, .rightHalf, .centerHalf, .topHalf, .bottomHalf
-        ]),
-        ShortcutSection(title: WindowActionCategory.corners.displayName, actions: [
-            .topLeft, .topRight, .bottomLeft, .bottomRight
-        ]),
-        ShortcutSection(title: WindowActionCategory.max.displayName, actions: [
-            .maximize, .almostMaximize, .maximizeHeight, .center, .restore
-        ]),
-        ShortcutSection(title: WindowActionCategory.size.displayName, actions: [
-            .larger, .smaller
-        ]),
-        ShortcutSection(title: WindowActionCategory.thirds.displayName, actions: [
-            .firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds
-        ]),
-        ShortcutSection(title: WindowActionCategory.move.displayName, actions: [
-            .moveLeft, .moveRight, .moveUp, .moveDown
-        ]),
-        ShortcutSection(title: WindowActionCategory.fourths.displayName, actions: [
-            .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths
-        ]),
-        ShortcutSection(title: WindowActionCategory.sixths.displayName, actions: [
-            .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth
-        ]),
-        ShortcutSection(title: WindowActionCategory.display.displayName, actions: [
-            .nextDisplay, .previousDisplay
-        ])
-    ]
+    private var rootItems: [Any] = []
 
     override func loadView() {
+        setupGroups()
         let containerView = NSView(frame: NSRect(x: 0, y: 0, width: 480, height: 500))
 
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -206,8 +204,38 @@ class ShortcutsViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        outlineView.expandItem(nil, expandChildren: true)
+//        outlineView.expandItem(nil, expandChildren: true)
         subscribeToAllowAnyShortcutToggle()
+    }
+
+    private func setupGroups() {
+        let standardCategories: [ShortcutCategory] = [
+            ShortcutCategory(actions: [.leftHalf, .rightHalf, .centerHalf, .topHalf, .bottomHalf]),
+            ShortcutCategory(actions: [.topLeft, .topRight, .bottomLeft, .bottomRight]),
+            ShortcutCategory(actions: [.maximize, .almostMaximize, .maximizeHeight, .larger, .smaller, .center, .restore]),
+            ShortcutCategory(actions: [.nextDisplay, .previousDisplay], includeSpacer: false)
+        ]
+
+        let moreCategories: [ShortcutCategory] = [
+            ShortcutCategory(actions: [.firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds]),
+            ShortcutCategory(actions: [
+                .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths
+            ]),
+            ShortcutCategory(actions: [
+                .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth
+            ]),
+            ShortcutCategory(actions: [.moveLeft, .moveRight, .moveUp, .moveDown], includeSpacer: false),
+        ]
+
+        var items: [Any] = []
+        for category in standardCategories {
+            items.append(contentsOf: category.items)
+        }
+
+        let moreGroup = ShortcutGroup(title: "More", categories: moreCategories)
+        items.append(moreGroup)
+
+        rootItems = items
     }
 
     deinit {
@@ -223,41 +251,44 @@ class ShortcutsViewController: NSViewController {
             self.outlineView.expandItem(nil, expandChildren: true)
         }
     }
-
 }
+
+// MARK: - NSOutlineViewDataSource
 
 extension ShortcutsViewController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
         if item == nil {
-            return sections.count
+            return rootItems.count
         }
-        if let section = item as? ShortcutSection {
-            return section.items.count
+        if let group = item as? ShortcutGroup {
+            return group.items.count
         }
         return 0
     }
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        return item is ShortcutSection
+        return item is ShortcutGroup
     }
 
     func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
         if item == nil {
-            return sections[index]
+            return rootItems[index]
         }
-        if let section = item as? ShortcutSection {
-            return section.items[index]
+        if let group = item as? ShortcutGroup {
+            return group.items[index]
         }
         fatalError("Unexpected outline view item: \(String(describing: item))")
     }
 }
 
+// MARK: - NSOutlineViewDelegate
+
 extension ShortcutsViewController: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-        if let section = item as? ShortcutSection {
+        if let group = item as? ShortcutGroup {
             let cell = outlineView.makeView(withIdentifier: ShortcutSectionCellView.identifier, owner: self) as? ShortcutSectionCellView ?? ShortcutSectionCellView()
             cell.identifier = ShortcutSectionCellView.identifier
-            cell.configure(title: section.title)
+            cell.configure(title: group.title)
             return cell
         }
 
@@ -268,7 +299,21 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
             return cell
         }
 
+        if item is SpacerItem {
+            let spacerView = NSView()
+            spacerView.translatesAutoresizingMaskIntoConstraints = false
+            spacerView.heightAnchor.constraint(equalToConstant: 14).isActive = true
+            return spacerView
+        }
+
         return nil
+    }
+
+    func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
+        if item is SpacerItem {
+            return 14
+        }
+        return 28
     }
 
     func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {

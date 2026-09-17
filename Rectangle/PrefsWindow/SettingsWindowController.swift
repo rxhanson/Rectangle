@@ -31,11 +31,11 @@ class SettingsTabViewController: NSTabViewController {
         shortcutsItem.image = NSImage(imageLiteralResourceName: "keyboardToolbarTemplate")
         addTabViewItem(shortcutsItem)
 
-        let advancedVC = AdvancedSettingsViewController()
-        let advancedItem = NSTabViewItem(viewController: advancedVC)
-        advancedItem.label = "Advanced"
-        advancedItem.image = NSImage(systemSymbolName: "slider.horizontal.3", accessibilityDescription: "Advanced")
-        addTabViewItem(advancedItem)
+        let snapAreaVC = NSViewController.newControllerFromStoryboard(identifier: "SnapAreaViewController")
+        let snapAreaItem = NSTabViewItem(viewController: snapAreaVC)
+        snapAreaItem.label = "Snap Areas"
+        snapAreaItem.image = NSImage(imageLiteralResourceName: "snapAreaTemplate")
+        addTabViewItem(snapAreaItem)
 
         let generalVC = GeneralSettingsViewController()
         let generalItem = NSTabViewItem(viewController: generalVC)
