@@ -72,37 +72,39 @@ final class ShortcutActionCellView: NSTableCellView {
     }
 
     private func setup() {
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.font = NSFont.systemFont(ofSize: NSFont.systemFontSize)
+        titleLabel.textColor = .labelColor
+        titleLabel.alignment = .right
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         iconImageView.imageScaling = .scaleProportionallyDown
         iconImageView.setContentHuggingPriority(.required, for: .horizontal)
         iconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = NSFont.systemFont(ofSize: NSFont.systemFontSize)
-        titleLabel.textColor = .labelColor
-        titleLabel.lineBreakMode = .byTruncatingTail
-        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
         shortcutView.translatesAutoresizingMaskIntoConstraints = false
 
-        addSubview(iconImageView)
         addSubview(titleLabel)
+        addSubview(iconImageView)
         addSubview(shortcutView)
 
         NSLayoutConstraint.activate([
-            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            shortcutView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            shortcutView.widthAnchor.constraint(equalToConstant: 160),
+            shortcutView.heightAnchor.constraint(equalToConstant: 19),
+
+            iconImageView.trailingAnchor.constraint(equalTo: shortcutView.leadingAnchor, constant: -16),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: 21),
             iconImageView.heightAnchor.constraint(equalToConstant: 14),
 
-            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
+            titleLabel.trailingAnchor.constraint(equalTo: iconImageView.leadingAnchor, constant: -8),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-            shortcutView.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor, constant: 12),
-            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            shortcutView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            shortcutView.widthAnchor.constraint(equalToConstant: 160),
-            shortcutView.heightAnchor.constraint(equalToConstant: 19)
+            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 8)
         ])
     }
 
