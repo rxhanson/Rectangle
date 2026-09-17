@@ -8,8 +8,10 @@ class SettingsWindowController: NSWindowController {
         let contentViewController = SettingsTabViewController()
         let window = NSWindow(contentViewController: contentViewController)
         
-        window.styleMask = [.titled, .closable, .miniaturizable]
+        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         window.title = "Preferences"
+        window.setContentSize(NSSize(width: 480, height: 540))
+        window.minSize = NSSize(width: 420, height: 350)
         window.center()
         
         self.init(window: window)
@@ -21,22 +23,25 @@ class SettingsTabViewController: NSTabViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Configures the tab view controller to display tabs inside the window's toolbar
         self.tabStyle = .toolbar
         
-        // 1. General Settings View Controller
-        let generalVC = GeneralSettingsViewController()
-        let generalItem = NSTabViewItem(viewController: generalVC)
-        generalItem.label = "General"
-        generalItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: "General")
-        addTabViewItem(generalItem)
-        
-        // 2. Advanced Settings View Controller
+        let shortcutsVC = ShortcutsViewController()
+        let shortcutsItem = NSTabViewItem(viewController: shortcutsVC)
+        shortcutsItem.label = "Shortcuts"
+        shortcutsItem.image = NSImage(imageLiteralResourceName: "keyboardToolbarTemplate")
+        addTabViewItem(shortcutsItem)
+
         let advancedVC = AdvancedSettingsViewController()
         let advancedItem = NSTabViewItem(viewController: advancedVC)
         advancedItem.label = "Advanced"
         advancedItem.image = NSImage(systemSymbolName: "slider.horizontal.3", accessibilityDescription: "Advanced")
         addTabViewItem(advancedItem)
+
+        let generalVC = GeneralSettingsViewController()
+        let generalItem = NSTabViewItem(viewController: generalVC)
+        generalItem.label = "General"
+        generalItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: "General")
+        addTabViewItem(generalItem)
     }
 }
 

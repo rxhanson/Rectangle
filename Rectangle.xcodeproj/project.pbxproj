@@ -108,6 +108,7 @@
 		988D068322EB4EF3004EABD7 /* MoveUpDownCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068222EB4EF3004EABD7 /* MoveUpDownCalculation.swift */; };
 		98910B3E231130AF0066EC23 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98910B3D231130AF0066EC23 /* SettingsViewController.swift */; };
 		98985839305C1B6400459AFF /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98985838305C1B6400459AFF /* SettingsWindowController.swift */; };
+		9898583B305C1B6400459AFF /* ShortcutsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9898583A305C1B6400459AFF /* ShortcutsViewController.swift */; };
 		98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98987AA22391890300BE72C4 /* LogViewer.storyboard */; };
 		98987AA52391890400BE72C4 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98987AA32391890400BE72C4 /* LogViewer.swift */; };
 		989DA30E243FC0DF008C7AA4 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */; };
@@ -336,6 +337,7 @@
 		988D068222EB4EF3004EABD7 /* MoveUpDownCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveUpDownCalculation.swift; sourceTree = "<group>"; };
 		98910B3D231130AF0066EC23 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		98985838305C1B6400459AFF /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		9898583A305C1B6400459AFF /* ShortcutsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsViewController.swift; sourceTree = "<group>"; };
 		98987AA22391890300BE72C4 /* LogViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LogViewer.storyboard; sourceTree = "<group>"; };
 		98987AA32391890400BE72C4 /* LogViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
@@ -745,6 +747,7 @@
 			children = (
 				944F25CC2CE5A144004B2FD2 /* PrefsViewController.swift */,
 				98985838305C1B6400459AFF /* SettingsWindowController.swift */,
+				9898583A305C1B6400459AFF /* ShortcutsViewController.swift */,
 				944F25CE2CE5A144004B2FD2 /* ShortcutRecordingObserver.swift */,
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
 				983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */,
@@ -1077,6 +1080,7 @@
 				6490B39527BF96880056C220 /* TopLeftEighthCalculation.swift in Sources */,
 				D04CE30227817A6100BD47B3 /* TopCenterNinthCalculation.swift in Sources */,
 				98985839305C1B6400459AFF /* SettingsWindowController.swift in Sources */,
+				9898583B305C1B6400459AFF /* ShortcutsViewController.swift in Sources */,
 				98A009B52512537800CFBF0C /* TopLeftSixthCalculation.swift in Sources */,
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				30166BD024F27D6A00A38608 /* SpecifiedCalculation.swift in Sources */,
