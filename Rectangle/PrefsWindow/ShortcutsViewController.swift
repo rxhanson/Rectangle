@@ -117,7 +117,7 @@ final class ShortcutActionCellView: NSTableCellView {
         addSubview(shortcutView)
 
         NSLayoutConstraint.activate([
-            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -56),
             shortcutView.centerYAnchor.constraint(equalTo: centerYAnchor),
             shortcutView.widthAnchor.constraint(equalToConstant: 160),
             shortcutView.heightAnchor.constraint(equalToConstant: 19),
@@ -156,6 +156,7 @@ final class ShortcutActionCellView: NSTableCellView {
 
 class ShortcutsViewController: NSViewController {
 
+    private let initialSize = NSSize(width: 480, height: 610)
     private let scrollView = NSScrollView()
     private let outlineView = NSOutlineView()
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
@@ -165,8 +166,15 @@ class ShortcutsViewController: NSViewController {
 
     override func loadView() {
         setupGroups()
-        let containerView = NSView(frame: NSRect(x: 0, y: 0, width: 480, height: 500))
+        let containerView = NSView(frame: NSRect(origin: .zero, size: initialSize))
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            containerView.widthAnchor.constraint(equalToConstant: initialSize.width),
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200) // Minimum height allowed
+        ])
+        
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = false
@@ -176,13 +184,12 @@ class ShortcutsViewController: NSViewController {
         outlineView.headerView = nil
         outlineView.selectionHighlightStyle = .none
         outlineView.rowHeight = 28
-        outlineView.indentationPerLevel = 16
         outlineView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
         outlineView.indentationPerLevel = 0
         
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("ShortcutColumn"))
         column.resizingMask = .autoresizingMask
-        column.width = 460
+        column.width = 300
         outlineView.addTableColumn(column)
         outlineView.outlineTableColumn = column
 
@@ -193,9 +200,9 @@ class ShortcutsViewController: NSViewController {
         containerView.addSubview(scrollView)
 
         NSLayoutConstraint.activate([
-            scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
             scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
             scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
@@ -204,10 +211,14 @@ class ShortcutsViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        outlineView.expandItem(nil, expandChildren: true)
         subscribeToAllowAnyShortcutToggle()
     }
-
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        view.window?.setContentSize(initialSize)
+    }
+    
     private func setupGroups() {
         let standardCategories: [ShortcutCategory] = [
             ShortcutCategory(actions: [.leftHalf, .rightHalf, .centerHalf, .topHalf, .bottomHalf]),
