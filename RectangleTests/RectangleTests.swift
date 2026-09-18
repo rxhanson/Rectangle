@@ -51,9 +51,61 @@ class WindowActionMenuTests: XCTestCase {
     }
 }
 
+class GridLimitDefaultsTests: XCTestCase {
+    // Separate limits round-trip without replacing explicitly saved values or
+    // writing an absent default into the user's preferences.
+    func testIndependentDefaultsAndConfigRoundTripPreserveExplicitValues() {
+        let suiteName = "RectangleGridDefaults-\(UUID().uuidString)"
+        let preferences = UserDefaults(suiteName: suiteName)!
+        defer { preferences.removePersistentDomain(forName: suiteName) }
+        let columns = PositiveIntDefault(key: "columns", defaultValue: 3, userDefaults: preferences)
+        let rows = PositiveIntDefault(key: "rows", defaultValue: 3, userDefaults: preferences)
+        XCTAssertEqual(columns.value, 3)
+        XCTAssertEqual(rows.value, 3)
+        XCTAssertNil(preferences.object(forKey: "columns"))
+        columns.value = 1
+        rows.load(from: CodableDefault(int: 2))
+        XCTAssertEqual(columns.toCodable().int, 1)
+        XCTAssertEqual(rows.toCodable().int, 2)
+        XCTAssertEqual(PositiveIntDefault(key: "columns", defaultValue: 3, userDefaults: preferences).value, 1)
+        XCTAssertEqual(PositiveIntDefault(key: "rows", defaultValue: 3, userDefaults: preferences).value, 2)
+        columns.load(from: CodableDefault())
+        XCTAssertEqual(columns.value, 1)
+    }
+
+    func testInvalidSavedLimitsNormalizeWithoutWritingOnRead() {
+        let suiteName = "RectangleGridDefaults-\(UUID().uuidString)"
+        let preferences = UserDefaults(suiteName: suiteName)!
+        defer { preferences.removePersistentDomain(forName: suiteName) }
+        preferences.set("invalid", forKey: "limit")
+        let limit = PositiveIntDefault(key: "limit", defaultValue: 3, userDefaults: preferences)
+        XCTAssertEqual(limit.value, 1)
+        XCTAssertEqual(preferences.string(forKey: "limit"), "invalid")
+        limit.load(from: CodableDefault(int: 0))
+        XCTAssertEqual(limit.value, 1)
+        XCTAssertEqual(preferences.integer(forKey: "limit"), 1)
+    }
+}
+
 class BandTilingTests: XCTestCase {
 
     private typealias Manager = MultiWindowManager
+
+    private func applyBandTiling(_ windows: [Manager.TilingWindow], bounds: Manager.BackingPixelBounds,
+                                direction: Manager.BandDirection, constraints: [Manager.BandConstraint],
+                                pointFrame: (CGRect) -> CGRect, backingFrame: (CGRect) -> CGRect) {
+        let cross = GridTiling.Constraint.resizable(minimum: 0, maximum: bounds.extent(direction.cross))
+        let sizes = constraints.map { primary in
+            direction == .rows
+                ? GridTiling.WindowConstraints(width: cross, height: primary)
+                : GridTiling.WindowConstraints(width: primary, height: cross)
+        }
+        _ = GridTiling.apply(observedFrames: windows.map { backingFrame($0.element.frame) }, bounds: bounds,
+                             direction: direction, subdivision: 1, constraints: sizes) { index, frame in
+            windows[index].element.setFrame(pointFrame(frame))
+            return backingFrame(windows[index].element.frame)
+        }
+    }
 
     private final class TestElement: AccessibilityElement {
         private var acceptedFrame: CGRect
@@ -572,7 +624,7 @@ class BandTilingTests: XCTestCase {
         let constraints: [Manager.BandConstraint] = [5, 5, 1, 1, 1].map {
             .resizable(minimum: $0, maximum: 17)
         }
-        let result = Manager.balancedBandLengths(totalPixels: 17, constraints: constraints)
+        let result = GridTiling.balancedBandLengths(totalPixels: 17, constraints: constraints)
         XCTAssertTrue(result.feasible)
         XCTAssertEqual(result.lengths, [5, 5, 3, 2, 2])
     }
@@ -586,7 +638,7 @@ class BandTilingTests: XCTestCase {
                           identity: CFHashCode(index + 1))
             }
             let constraints = Array(repeating: Manager.BandConstraint.resizable(minimum: 0, maximum: 901), count: 3)
-            Manager.applyBandTiling(windows, bounds: bounds, direction: .rows, constraints: constraints,
+            applyBandTiling(windows, bounds: bounds, direction: .rows, constraints: constraints,
                                     pointFrame: { self.scaled($0, by: 1 / scale) },
                                     backingFrame: { self.scaled($0, by: scale) })
             let achieved = elements.map { scaled($0.frame, by: scale) }
@@ -607,7 +659,7 @@ class BandTilingTests: XCTestCase {
                       identity: CFHashCode(index + 1))
         }
         let constraints = Array(repeating: Manager.BandConstraint.resizable(minimum: 0, maximum: 901), count: 3)
-        Manager.applyBandTiling(windows, bounds: bounds, direction: .columns, constraints: constraints,
+        applyBandTiling(windows, bounds: bounds, direction: .columns, constraints: constraints,
                                 pointFrame: { self.scaled($0, by: 0.5) },
                                 backingFrame: { self.scaled($0, by: 2) })
         let achieved = elements.map { scaled($0.frame, by: 2) }
@@ -619,7 +671,7 @@ class BandTilingTests: XCTestCase {
         XCTAssertEqual(achieved.last?.maxX, 911)
 
         let single = TestElement()
-        Manager.applyBandTiling([candidate(single, frame: .zero, identity: 4)],
+        applyBandTiling([candidate(single, frame: .zero, identity: 4)],
                                 bounds: bounds, direction: .rows,
                                 constraints: [.resizable(minimum: 0, maximum: 1200)],
                                 pointFrame: { $0 }, backingFrame: { $0 })
@@ -632,7 +684,7 @@ class BandTilingTests: XCTestCase {
         let flexible = TestElement()
         let fixedWindows = [candidate(fixed, frame: CGRect(x: 0, y: 0, width: 600, height: 100), identity: 1),
                             candidate(flexible, frame: CGRect(x: 0, y: 100, width: 600, height: 100), identity: 2)]
-        Manager.applyBandTiling(fixedWindows, bounds: bounds, direction: .rows,
+        applyBandTiling(fixedWindows, bounds: bounds, direction: .rows,
                                 constraints: [.fixed(100), .resizable(minimum: 0, maximum: 900)],
                                 pointFrame: { $0 }, backingFrame: { $0 })
         XCTAssertEqual([fixed.frame.height, flexible.frame.height], [100, 800])
@@ -646,7 +698,7 @@ class BandTilingTests: XCTestCase {
             candidate(element, frame: CGRect(x: 0, y: CGFloat(index * 100), width: 600, height: 100),
                       identity: CFHashCode(index + 1))
         }
-        Manager.applyBandTiling(windows, bounds: bounds, direction: .rows,
+        applyBandTiling(windows, bounds: bounds, direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 900), count: 3),
                                 pointFrame: { $0 }, backingFrame: { $0 })
         XCTAssertEqual(elements.map { $0.frame.height }, [500, 200, 200])
@@ -662,7 +714,7 @@ class BandTilingTests: XCTestCase {
         let flexible = TestElement()
         let windows = [candidate(capped, frame: CGRect(x: 0, y: 0, width: 100, height: 600), identity: 1),
                        candidate(flexible, frame: CGRect(x: 100, y: 0, width: 100, height: 600), identity: 2)]
-        Manager.applyBandTiling(windows, bounds: bounds, direction: .columns,
+        applyBandTiling(windows, bounds: bounds, direction: .columns,
                                 constraints: [.resizable(minimum: 0, maximum: 900), .resizable(minimum: 0, maximum: 900)],
                                 pointFrame: { $0 }, backingFrame: { $0 })
         XCTAssertEqual([capped.frame.width, flexible.frame.width], [200, 700])
@@ -677,7 +729,7 @@ class BandTilingTests: XCTestCase {
             candidate(element, frame: CGRect(x: 0, y: CGFloat(index * 100), width: 600, height: 100),
                       identity: CFHashCode(index + 1))
         }
-        Manager.applyBandTiling(windows,
+        applyBandTiling(windows,
                                 bounds: Manager.BackingPixelBounds(CGRect(x: 0, y: 0, width: 600, height: 4000)),
                                 direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 4000), count: 4),
@@ -694,7 +746,7 @@ class BandTilingTests: XCTestCase {
                                  identity: 1),
                        candidate(flexible, frame: CGRect(x: 0, y: 100, width: 600, height: 100),
                                  identity: 2)]
-        Manager.applyBandTiling(windows,
+        applyBandTiling(windows,
                                 bounds: Manager.BackingPixelBounds(CGRect(x: 0, y: 0, width: 600, height: 900)),
                                 direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 900), count: 2),
@@ -712,7 +764,7 @@ class BandTilingTests: XCTestCase {
             .resizable(minimum: 500, maximum: 900),
             .resizable(minimum: 0, maximum: 900)
         ]
-        let result = Manager.balancedBandLengths(totalPixels: 900, constraints: constraints)
+        let result = GridTiling.balancedBandLengths(totalPixels: 900, constraints: constraints)
         XCTAssertFalse(result.feasible)
         XCTAssertEqual(result.lengths, [300, 300, 300])
 
@@ -723,7 +775,7 @@ class BandTilingTests: XCTestCase {
             candidate(element, frame: CGRect(x: 0, y: CGFloat(index * 100), width: 600, height: 100),
                       identity: CFHashCode(index + 1))
         }
-        Manager.applyBandTiling(windows,
+        applyBandTiling(windows,
                                 bounds: Manager.BackingPixelBounds(CGRect(x: 0, y: 0, width: 600, height: 900)),
                                 direction: .rows,
                                 constraints: Array(repeating: .resizable(minimum: 0, maximum: 900), count: 3),
@@ -4558,9 +4610,12 @@ final class DragRestoreReleaseTests: XCTestCase {
     }
 
     func testWindowWithoutServerIdentityFallsBackOnceAndMouseUpDoesNotRepeatIt() throws {
+        let savedStyle = Defaults.windowAnimationStyle.value
+        Defaults.windowAnimationStyle.value = .frosted
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
+            Defaults.windowAnimationStyle.value = savedStyle
             WindowAnimator.shared.finish()
             Defaults.experimentalWindowAnimations.enabled = saved
         }
@@ -5433,13 +5488,14 @@ class WindowAnimationPlacementTests: XCTestCase {
 
 class ClampedWindowAlignerTests: XCTestCase {
 
-    // Screen 2000x1200 at origin. Coordinates are already screen-flipped (window space):
-    // the zone's maxY edge is the screen TOP, minY edge is the screen BOTTOM.
+    // AX coordinates: minY is the visual top. Edge names follow CGRect.sharedEdges.
+    private let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
 
     func testRightHalfClampedBothAxesAnchorsRightCentersVertically() {
         let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
         let window = CGRect(x: 1000, y: 0, width: 600, height: 800) // narrower + shorter than zone
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 1400, accuracy: 0.001) // zone.maxX - width = 2000 - 600
         XCTAssertEqual(result.origin.y, 200, accuracy: 0.001)  // centered: (1200 - 800)/2
         XCTAssertEqual(result.width, 600, accuracy: 0.001)
@@ -5449,7 +5505,8 @@ class ClampedWindowAlignerTests: XCTestCase {
     func testRightHalfFullHeightLeavesVerticalUntouched() {
         let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
         let window = CGRect(x: 1000, y: 0, width: 600, height: 1200) // fills height
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 1400, accuracy: 0.001)
         XCTAssertEqual(result.origin.y, 0, accuracy: 0.001)
     }
@@ -5457,15 +5514,17 @@ class ClampedWindowAlignerTests: XCTestCase {
     func testLeftHalfClampedAnchorsLeftCentersVertically() {
         let zone = CGRect(x: 0, y: 0, width: 1000, height: 1200)
         let window = CGRect(x: 0, y: 0, width: 600, height: 800)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.left, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 0, accuracy: 0.001)
         XCTAssertEqual(result.origin.y, 200, accuracy: 0.001)
     }
 
-    func testTopRightQuarterAnchorsToCorner() {
-        let zone = CGRect(x: 1000, y: 600, width: 1000, height: 600) // top-right; maxY=1200=screen top
+    func testBottomRightQuarterAnchorsToCorner() {
+        let zone = CGRect(x: 1000, y: 600, width: 1000, height: 600)
         let window = CGRect(x: 1000, y: 600, width: 600, height: 400)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 1400, accuracy: 0.001) // maxX - width
         XCTAssertEqual(result.origin.y, 800, accuracy: 0.001)  // maxY - height = 1200 - 400
     }
@@ -5473,7 +5532,8 @@ class ClampedWindowAlignerTests: XCTestCase {
     func testInteriorZoneCentersBothAxes() {
         let zone = CGRect(x: 600, y: 400, width: 800, height: 400)
         let window = CGRect(x: 600, y: 400, width: 400, height: 200)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 800, accuracy: 0.001) // (800-400)/2 + 600
         XCTAssertEqual(result.origin.y, 500, accuracy: 0.001) // (400-200)/2 + 400
     }
@@ -5481,7 +5541,8 @@ class ClampedWindowAlignerTests: XCTestCase {
     func testExactFitReturnsUnchanged() {
         let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
         let window = zone
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertTrue(result.equalTo(window))
     }
 
@@ -5491,65 +5552,109 @@ class ClampedWindowAlignerTests: XCTestCase {
     func testMaximizeOnePointNarrowStaysPut() {
         let zone = CGRect(x: 0, y: 0, width: 1679, height: 1079)
         let window = CGRect(x: 0, y: 0, width: 1678, height: 1079)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.left, .right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: zone, alignment: .edgesAndCorners)
         XCTAssertTrue(result.equalTo(window))
     }
 
     func testRightHalfOnePointNarrowStaysPut() {
         let zone = CGRect(x: 840, y: 0, width: 839, height: 1079)
         let window = CGRect(x: 840, y: 0, width: 838, height: 1079)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let screen = CGRect(x: 0, y: 0, width: 1679, height: 1079)
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screen, alignment: .edgesAndCorners)
         XCTAssertTrue(result.equalTo(window))
     }
 
     func testOnePointShortHeightStaysPut() {
         let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
         let window = CGRect(x: 1000, y: 0, width: 1000, height: 1199)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertTrue(result.equalTo(window))
     }
 
     func testShortfallJustOverToleranceStillAligns() {
         let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
         let window = CGRect(x: 1000, y: 0, width: 998.5, height: 1200)
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 1001.5, accuracy: 0.001) // zone.maxX - width = 2000 - 998.5
     }
 
     func testOnePointNarrowLeavesOtherAxisAlignmentIntact() {
         let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
         let window = CGRect(x: 1000, y: 0, width: 999, height: 800) // a point narrow, genuinely short
-        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, sharedEdges: [.right, .top, .bottom])
+        let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                  screenFrame: screenFrame, alignment: .edgesAndCorners)
         XCTAssertEqual(result.origin.x, 1000, accuracy: 0.001) // width within tolerance, left alone
         XCTAssertEqual(result.origin.y, 200, accuracy: 0.001)  // height still centered: (1200-800)/2
     }
 
-    func testEdgesAndCornersAlignmentKeepsHalfEdges() {
-        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
-        let rightHalf = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
-        let result = EdgeAlignment.edgesAndCorners.alignmentEdges(for: rightHalf, in: screenFrame)
-        XCTAssertEqual(result, [.right, .top, .bottom])
+    func testCornersModeCentersHalfButAnchorsQuarter() {
+        let window = CGRect(x: 1000, y: 0, width: 600, height: 400)
+        let half = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let quarter = CGRect(x: 1000, y: 0, width: 1000, height: 600)
+
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: half, initialRect: half,
+                                                    screenFrame: screenFrame, alignment: .corners),
+                       CGRect(x: 1200, y: 400, width: 600, height: 400))
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: quarter, initialRect: quarter,
+                                                    screenFrame: screenFrame, alignment: .corners),
+                       CGRect(x: 1400, y: 0, width: 600, height: 400))
     }
 
-    func testCornersAlignmentCentersHalfEdges() {
-        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
-        let rightHalf = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
-        let result = EdgeAlignment.corners.alignmentEdges(for: rightHalf, in: screenFrame)
-        XCTAssertEqual(result, .none)
+    func testCenteredModeCentersEvenInCorner() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 600)
+        let window = CGRect(x: 1000, y: 0, width: 600, height: 400)
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                    screenFrame: screenFrame, alignment: .centered),
+                       CGRect(x: 1200, y: 100, width: 600, height: 400))
     }
 
-    func testCornersAlignmentKeepsCornerEdges() {
-        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
-        let topRight = CGRect(x: 1000, y: 600, width: 1000, height: 600)
-        let result = EdgeAlignment.corners.alignmentEdges(for: topRight, in: screenFrame)
-        XCTAssertEqual(result, [.right, .top])
+    func testLeadingCornerKeepsAspectRatioWindowsTopAlignedAcrossSideWidths() {
+        // Offset display, including negative coordinates; widths are 1/2, 2/3, 1/3.
+        let screen = CGRect(x: -2400, y: -600, width: 2400, height: 1400)
+        for width: CGFloat in [1200, 1600, 800] {
+            for x in [screen.minX, screen.maxX - width] {
+                let zone = CGRect(x: x, y: screen.minY, width: width, height: screen.height)
+                let window = CGRect(x: 100, y: 200, width: width, height: width * 9 / 16)
+                let result = ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                          screenFrame: screen, alignment: .leadingCorner)
+                XCTAssertEqual(result, CGRect(x: x, y: -600, width: width, height: width * 9 / 16))
+            }
+        }
     }
 
-    func testCenteredAlignmentIgnoresSharedEdges() {
-        let screenFrame = CGRect(x: 0, y: 0, width: 2000, height: 1200)
-        let topRight = CGRect(x: 1000, y: 600, width: 1000, height: 600)
-        let result = EdgeAlignment.centered.alignmentEdges(for: topRight, in: screenFrame)
-        XCTAssertEqual(result, .none)
+    func testLeadingCornerUsesGappedZoneOriginForWidthConstrainedWindow() {
+        let initialRect = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let zone = initialRect.insetBy(dx: 12, dy: 12)
+        let window = CGRect(x: 1500, y: 200, width: 600, height: zone.height)
+
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: initialRect,
+                                                    screenFrame: screenFrame, alignment: .leadingCorner),
+                       CGRect(x: 1012, y: 12, width: 600, height: 1176))
+        // Existing edge alignment must still detect edges before gaps are applied.
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: initialRect,
+                                                    screenFrame: screenFrame, alignment: .edgesAndCorners),
+                       CGRect(x: 1388, y: 200, width: 600, height: 1176))
+    }
+
+    func testLeadingCornerPreservesFixedSizeLargerThanZone() {
+        let zone = CGRect(x: 1000, y: 600, width: 1000, height: 600)
+        let window = CGRect(x: 100, y: 200, width: 1100, height: 800)
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                    screenFrame: screenFrame, alignment: .leadingCorner),
+                       CGRect(x: 1000, y: 600, width: 1100, height: 800))
+        // Screen containment is applied separately by BestEffortWindowMover.
+    }
+
+    func testLeadingCornerRestoresRequestedOriginWithinSizeTolerance() {
+        let zone = CGRect(x: 1000, y: 0, width: 1000, height: 1200)
+        let window = CGRect(x: 1004, y: 7, width: 999, height: 1199)
+        XCTAssertEqual(ClampedWindowAligner.aligned(window: window, inZone: zone, initialRect: zone,
+                                                    screenFrame: screenFrame, alignment: .leadingCorner),
+                       CGRect(x: 1000, y: 0, width: 999, height: 1199))
     }
 }
 
@@ -5749,6 +5854,12 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
+            (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
+            (Defaults.verticalSplitRatio, CodableDefault(float: 50)),
+            (Defaults.halvesPreserveOtherAxisSize, CodableDefault(bool: false)),
+            (Defaults.cycleSizesIsChanged, CodableDefault(bool: false)),
+            (Defaults.resizeOnDirectionalMove, CodableDefault(bool: false)),
+            (Defaults.centeredDirectionalMove, CodableDefault(int: 2)),
             (Defaults.gapSize, CodableDefault(float: 0)),
             (Defaults.stageSize, CodableDefault(float: 0)),
             (Defaults.screenEdgeGapLeft, CodableDefault(float: 0)),
@@ -5775,6 +5886,91 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         AppDelegate.windowHistory.lastRectangleActions = savedActions
         Logger.logging = savedLogging
         super.tearDown()
+    }
+
+    func testLeadingOriginPersistsThroughConstrainedHalfCycles() {
+        assertConstrainedHalfCycles(alignment: .leadingCorner, topOffsets: [0, 0, 0, 0])
+    }
+
+    func testEdgesAndCornersCentersConstrainedHalfCycles() {
+        assertConstrainedHalfCycles(alignment: .edgesAndCorners, topOffsets: [363, 250, 475, 363])
+    }
+
+    func testCornersOnlyCentersConstrainedHalfCycles() {
+        assertConstrainedHalfCycles(alignment: .corners, topOffsets: [363, 250, 475, 363])
+    }
+
+    func testCenteredModeCentersConstrainedHalfCycles() {
+        assertConstrainedHalfCycles(alignment: .centered, topOffsets: [363, 250, 475, 363])
+    }
+
+    private func assertConstrainedHalfCycles(alignment: EdgeAlignment, topOffsets: [CGFloat],
+                                            file: StaticString = #filePath, line: UInt = #line) {
+        Defaults.moveFixedSizeToEdge.value = alignment
+        Defaults.subsequentExecutionMode.value = .resize
+        let screen = TestScreen(frame: CGRect(x: -2400, y: -600, width: 2400, height: 1400))
+        let window = ConstrainedWindow(frame: CGRect(x: -2000, y: -200, width: 800, height: 450).screenFlipped) {
+            CGRect(origin: $0.origin, size: CGSize(width: $0.width, height: $0.width * 9 / 16))
+        }
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+
+        // Each execution consumes the achieved frame and history from the previous one.
+        // Changing sides must start the new action's cycle at one half.
+        for action: WindowAction in [.leftHalf, .rightHalf] {
+            for (index, width) in [CGFloat(1200), 1600, 800, 1200].enumerated() {
+                manager.execute(ExecutionParameters(action, screen: screen, windowElement: window,
+                                                    windowId: windowId, source: .menuItem))
+
+                let x = action == .leftHalf ? screen.frame.minX : screen.frame.maxX - width
+                XCTAssertEqual(window.frame,
+                               CGRect(x: x, y: screen.frame.screenFlipped.minY + topOffsets[index],
+                                      width: width, height: width * 9 / 16),
+                               "\(action), width \(width)", file: file, line: line)
+            }
+        }
+    }
+
+    func testLeadingOriginFixedWindowIsContainedAfterBottomRightPlacement() {
+        Defaults.moveFixedSizeToEdge.value = .leadingCorner
+        let screen = TestScreen(frame: CGRect(x: -1600, y: 200, width: 1200, height: 900))
+        let size = CGSize(width: 800, height: 700)
+        let window = ConstrainedWindow(frame: CGRect(x: -1500, y: 300, width: size.width, height: size.height).screenFlipped,
+                                       resizable: false) {
+            CGRect(origin: $0.origin, size: size)
+        }
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+
+        manager.execute(ExecutionParameters(.bottomRight, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+
+        // The 600x450 snap region cannot hold this window. Containment takes precedence
+        // over its requested origin without shrinking the app's accepted size.
+        let visibleFrame = screen.frame.screenFlipped
+        XCTAssertEqual(window.frame,
+                       CGRect(x: visibleFrame.maxX - size.width, y: visibleFrame.maxY - size.height,
+                              width: size.width, height: size.height))
+        XCTAssertTrue(visibleFrame.contains(window.frame))
+    }
+
+    func testLeadingOriginDoesNotOverrideAppPositionAfterMovementOnlyAction() {
+        Defaults.moveFixedSizeToEdge.value = .leadingCorner
+        let screen = TestScreen(frame: CGRect(x: -2400, y: -600, width: 2400, height: 1400))
+        let initialFrame = CGRect(x: -1900, y: 0, width: 600, height: 400).screenFlipped
+        var initialMove = true
+        let window = ConstrainedWindow(frame: initialFrame) { requestedFrame in
+            // Simulate the app correcting its position after the initial move.
+            // A subsequent alignment write would wrongly undo that correction.
+            defer { initialMove = false }
+            return initialMove ? requestedFrame.offsetBy(dx: 0, dy: 7) : requestedFrame
+        }
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+
+        manager.execute(ExecutionParameters(.moveRight, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+
+        XCTAssertEqual(window.frame,
+                       CGRect(x: screen.frame.maxX - initialFrame.width, y: initialFrame.minY + 7,
+                              width: initialFrame.width, height: initialFrame.height))
     }
 
     func testClampedFirstAndLastThirdsWarnAndPreserveAchievedGeometry() {
@@ -5932,6 +6128,30 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
                     currentFrame.size.width = max(frame.width, 600)
                 }
             }
+        }
+    }
+
+    private final class ConstrainedWindow: AccessibilityElement {
+        private var currentFrame: CGRect
+        private let resizable: Bool
+        private let acceptedFrame: (CGRect) -> CGRect
+
+        init(frame: CGRect, resizable: Bool = true, acceptedFrame: @escaping (CGRect) -> CGRect) {
+            currentFrame = frame
+            self.resizable = resizable
+            self.acceptedFrame = acceptedFrame
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { currentFrame }
+        override var isSheet: Bool? { false }
+        override var isSystemDialog: Bool? { false }
+        override var minimumSize: CGSize? { nil }
+        override func getWindowId() -> CGWindowID? { nil }
+        override func isResizable() -> Bool { resizable }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            currentFrame = acceptedFrame(frame)
         }
     }
 

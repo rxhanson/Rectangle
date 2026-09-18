@@ -2,37 +2,14 @@
 
 import Cocoa
 
-enum WindowAnimationStyle: Int, CaseIterable {
-    case frosted = 0
-    case direct = 1
-
-    func isEnabled(animations: Bool, reduceMotion: Bool, reduceTransparency: Bool,
-                   voiceOver: Bool, switchControl: Bool) -> Bool {
-        animations && !reduceMotion && !voiceOver && !switchControl
-            && (self == .direct || !reduceTransparency)
-    }
-}
-
-enum BlurAppearance: Int, CaseIterable {
-    case system = 0
-    case light = 1
-    case dark = 2
-
-    var appearance: NSAppearance? {
-        switch self {
-        case .system: return nil
-        case .light: return NSAppearance(named: .aqua)
-        case .dark: return NSAppearance(named: .darkAqua)
-        }
-    }
-}
-
 class Defaults {
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
     static let disabledApps = JSONDefault<Set<String>>(key: "disabledApps")
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
     static let alternateDefaultShortcuts = BoolDefault(key: "alternateDefaultShortcuts") // switch to magnet defaults
     static let subsequentExecutionMode = SubsequentExecutionDefault()
+    static let tileColumnsMaxWindows = PositiveIntDefault(key: "tileColumnsMaxWindows", defaultValue: 3)
+    static let tileRowsMaxWindows = PositiveIntDefault(key: "tileRowsMaxWindows", defaultValue: 3)
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
@@ -151,6 +128,7 @@ class Defaults {
     static let ignoreDragSnapToo = OptionalBoolDefault(key: "ignoreDragSnapToo")
     static let systemWideMouseDown = OptionalBoolDefault(key: "systemWideMouseDown")
     static let systemWideMouseDownApps = JSONDefault<Set<String>>(key:"systemWideMouseDownApps", defaultValue: Set<String>(["org.languagetool.desktop", "com.microsoft.teams2"]))
+    static let directAnimationNativeResizeApps = JSONDefault<Set<String>>(key: "directAnimationNativeResizeApps", defaultValue: Set<String>(["com.colliderli.iina"]))
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
@@ -161,6 +139,8 @@ class Defaults {
         hideMenuBarIcon,
         alternateDefaultShortcuts,
         subsequentExecutionMode,
+        tileColumnsMaxWindows,
+        tileRowsMaxWindows,
         selectedCycleSizes,
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
@@ -249,6 +229,7 @@ class Defaults {
         ignoreDragSnapToo,
         systemWideMouseDown,
         systemWideMouseDownApps,
+        directAnimationNativeResizeApps,
         screensOrderedByX,
         showAdditionalSizesInMenu,
         cyclingOverlapOffset,
@@ -462,6 +443,41 @@ class DoubleDefault: Default {
     }
 }
 
+class PositiveIntDefault: Default {
+    let key: String
+    private let userDefaults: UserDefaults
+    private var storedValue: Int
+
+    var value: Int {
+        get { storedValue }
+        set {
+            storedValue = max(1, newValue)
+            userDefaults.set(storedValue, forKey: key)
+        }
+    }
+
+    init(key: String, defaultValue: Int, userDefaults: UserDefaults = .standard) {
+        precondition(defaultValue > 0)
+        self.key = key
+        self.userDefaults = userDefaults
+        if let savedValue = userDefaults.object(forKey: key) {
+            storedValue = max(1, savedValue as? Int ?? 1)
+        } else {
+            storedValue = defaultValue
+        }
+    }
+
+    func load(from codable: CodableDefault) {
+        if let int = codable.int {
+            value = int
+        }
+    }
+
+    func toCodable() -> CodableDefault {
+        CodableDefault(int: value)
+    }
+}
+
 class IntDefault: Default {
     public private(set) var key: String
     private var initialized = false
@@ -603,5 +619,31 @@ struct CodableColor : Codable {
         self.green = nsColor.greenComponent
         self.blue = nsColor.blueComponent
         self.alpha = nsColor.alphaComponent
+    }
+}
+
+enum BlurAppearance: Int, CaseIterable {
+    case system = 0
+    case light = 1
+    case dark = 2
+
+    var appearance: NSAppearance? {
+        switch self {
+        case .system: return nil
+        case .light: return NSAppearance(named: .aqua)
+        case .dark: return NSAppearance(named: .darkAqua)
+        }
+    }
+}
+
+
+enum WindowAnimationStyle: Int, CaseIterable {
+    case frosted = 0
+    case direct = 1
+
+    func isEnabled(animations: Bool, reduceMotion: Bool, reduceTransparency: Bool,
+                   voiceOver: Bool, switchControl: Bool) -> Bool {
+        animations && !reduceMotion && !voiceOver && !switchControl
+            && (self == .direct || !reduceTransparency)
     }
 }

@@ -136,8 +136,7 @@ enum BlurPreviewStyle {
     static let cornerRadius: CGFloat = {
         // Use macOS 27's uniform window radius on both Liquid Glass releases.
         if #available(macOS 26.0, *) { return 16 }
-        if #available(macOS 11.0, *) { return 10 }
-        return 5
+        return 10
     }()
     static let shadowPadding: CGFloat = 96
     static let shadowRadius: CGFloat = 32
@@ -222,7 +221,7 @@ final class BlurPreviewShadow {
             layer.position = .zero
             layer.contentsFormat = .RGBA8Uint
             if #available(macOS 26, *) { layer.preferredDynamicRange = .standard }
-            else if #available(macOS 14, *) { layer.wantsExtendedDynamicRangeContent = false }
+            else { layer.wantsExtendedDynamicRangeContent = false }
         }
         let padding = BlurPreviewStyle.shadowPadding
         container.position = CGPoint(x: -padding, y: -padding)
@@ -445,7 +444,7 @@ class FootprintWindow: NSWindow {
             view.layer?.contentsFormat = .RGBA8Uint
             if #available(macOS 26, *) {
                 view.layer?.preferredDynamicRange = .standard
-            } else if #available(macOS 14, *) {
+            } else {
                 view.layer?.wantsExtendedDynamicRangeContent = false
             }
         }

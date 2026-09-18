@@ -2,7 +2,6 @@
 
 import Cocoa
 import MASShortcut
-import ServiceManagement
 
 class PrefsViewController: NSViewController {
     

@@ -615,29 +615,21 @@ class SnappingManager {
         if let restoreRect = getRestoreRect(windowId: windowId) {
             
             if let windowElement = windowElement {
-                if #available(macOS 12, *) { // earlier versions of macOS would stutter the reposition when dragging the window
-                    // Pair the displayed frame with its native grab point, not a newer mouse sample.
-                    let initialCursor = DragRestorePlacement.referenceCursor(current: currentRect, initial: initialWindowRect,
-                                                                              mouseDown: initialCursorLocation,
-                                                                              fallback: cursorLoc ?? NSEvent.mouseLocation.screenFlipped)
-                    let newRect = DragRestorePlacement.frame(from: currentRect, size: restoreRect.size, cursor: initialCursor)
-                    // Native drag restoration applies the saved size immediately.
-                    // Frosted drags use their separate owned handoff before this fallback.
-                    windowElement.setFrame(newRect, adjustSizeFirst: false,
-                                           adjustPosition: newRect.origin != currentRect.origin)
-                    // AX can report success while the Dock limits only the width.
-                    // Keep the unachieved size after consuming snap history so the
-                    // native drag can make room for it on a later event.
-                    let achieved = windowElement.frame
-                    if needsNativeSizeRestore(achieved.size, to: restoreRect.size) {
-                        nativeSizeRestore = NativeSizeRestore(windowID: windowId, size: restoreRect.size,
-                                                              lastAttemptOrigin: currentRect.origin)
-                    }
-                    WindowFrostDiagnostics.event("native-size-restore", fields: ["windowID": windowId,
-                        "requested": [restoreRect.width, restoreRect.height],
-                        "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
-                } else {
-                    windowElement.size = restoreRect.size
+                // Pair the displayed frame with its native grab point, not a newer mouse sample.
+                let initialCursor = DragRestorePlacement.referenceCursor(current: currentRect, initial: initialWindowRect,
+                                                                         mouseDown: initialCursorLocation,
+                                                                         fallback: cursorLoc ?? NSEvent.mouseLocation.screenFlipped)
+                let newRect = DragRestorePlacement.frame(from: currentRect, size: restoreRect.size, cursor: initialCursor)
+                // Native drag restoration applies the saved size immediately.
+                windowElement.setFrame(newRect, adjustSizeFirst: false,
+                                       adjustPosition: newRect.origin != currentRect.origin)
+                // AX can report success while the Dock limits only the width.
+                // Keep the unachieved size after consuming snap history so the
+                // native drag can make room for it on a later event.
+                let achieved = windowElement.frame
+                if needsNativeSizeRestore(achieved.size, to: restoreRect.size) {
+                    nativeSizeRestore = NativeSizeRestore(windowID: windowId, size: restoreRect.size,
+                                                          lastAttemptOrigin: currentRect.origin)
                 }
             }
             

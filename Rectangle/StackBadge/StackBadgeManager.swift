@@ -230,7 +230,6 @@ class StackBadgeManager {
 
     private func query(corner: CGPoint, screenFrame: CGRect) {
         let cornerAX = corner.screenFlipped
-        let screenFrameAX = screenFrame.screenFlipped
         let tolerance: CGFloat = 4
         let offsetSize = CGFloat(Defaults.cyclingOverlapOffsetSize.value)
         let maxCascade = CGFloat(min(5, max(1, Defaults.cyclingOverlapMaxCascade.value)))

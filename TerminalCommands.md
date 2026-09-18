@@ -43,6 +43,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Attempt to preserve window position when moving to another display](#attempt-to-preserve-window-position-when-moving-to-another-display)
 - [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
 - [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
+- [Apps using native resize during window animations](#apps-using-native-resize-during-window-animations)
 
 ## Keyboard Shortcuts
 
@@ -653,4 +654,25 @@ Some windows can't be resized to fill a snap area — either because they're a f
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 1  # align edges and corners (default)
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 2  # align corners only, center halves/sides
 defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 3  # center within the snap area
+defaults write com.knollsoft.Rectangle moveFixedSizeToEdge -int 4  # keep windows at the snap area's top-left
+```
+
+Mode `4` keeps constrained windows at the snap area's top-left. For video windows such as IINA, this keeps left/right snaps top-aligned as you cycle through sizes.
+
+Narrower windows stay at the snap area's left edge, even for right-side snaps. Gaps still apply, and Rectangle may shift the window to keep it on screen.
+
+Restart Rectangle after changing this preference. To restore the default:
+
+```bash
+defaults delete com.knollsoft.Rectangle moveFixedSizeToEdge
+```
+
+## Apps using native resize during window animations
+
+Certain applications (such as IINA) enforce aspect ratios or custom constraints asynchronously when resized. During direct window animations, continuous intermediate frame adjustments can fight with the application's internal aspect-ratio corrections. For apps in this list, Rectangle resizes the window once natively, allows the animation duration for the app to asynchronously settle its aspect ratio, and then aligns the final achieved size using a position-only write.
+
+The default list contains IINA (`com.colliderli.iina`). You can configure this list of bundle IDs:
+
+```bash
+defaults write com.knollsoft.Rectangle directAnimationNativeResizeApps -string "[\"com.colliderli.iina\", \"org.videolan.vlc\"]"
 ```

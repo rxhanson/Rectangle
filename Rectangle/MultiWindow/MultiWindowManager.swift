@@ -4,9 +4,11 @@ import Cocoa
 import MASShortcut
 
 class MultiWindowManager {
-    enum BandDirection {
-        case rows, columns
-    }
+    typealias BandDirection = GridTiling.Direction
+    typealias BandConstraint = GridTiling.Constraint
+    typealias BackingPixelBounds = GridTiling.Bounds
+
+    private static var gridStates = [NSScreen: GridTiling.State<AccessibilityElement>]()
 
     struct TilingWindow {
         let element: AccessibilityElement
@@ -14,58 +16,6 @@ class MultiWindowManager {
         let windowId: CGWindowID?
         let pid: pid_t?
         let isFocused: Bool
-    }
-
-    enum BandConstraint: Equatable {
-        case fixed(Int)
-        case resizable(minimum: Int, maximum: Int)
-
-        var lowerBound: Int {
-            switch self {
-            case .fixed(let size):
-                return max(0, size)
-            case .resizable(let minimum, _):
-                return max(0, minimum)
-            }
-        }
-
-        var upperBound: Int {
-            switch self {
-            case .fixed(let size):
-                return max(0, size)
-            case .resizable(_, let maximum):
-                return max(0, maximum)
-            }
-        }
-
-        func observing(achieved: Int, requested: Int) -> BandConstraint {
-            switch self {
-            case .fixed:
-                return self
-            case .resizable(let minimum, let maximum):
-                let lower = achieved > requested ? max(minimum, achieved) : minimum
-                let upper = achieved < requested ? min(maximum, achieved) : maximum
-                return lower <= upper ? .resizable(minimum: lower, maximum: upper) : self
-            }
-        }
-    }
-
-    struct BackingPixelBounds {
-        let left: Int
-        let right: Int
-        let bottom: Int
-        let top: Int
-
-        init(_ frame: CGRect) {
-            left = Int(frame.minX.rounded())
-            right = Int(frame.maxX.rounded())
-            bottom = Int(frame.minY.rounded())
-            top = Int(frame.maxY.rounded())
-        }
-
-        func extent(_ direction: BandDirection) -> Int {
-            direction == .rows ? top - bottom : right - left
-        }
     }
 
     static func execute(parameters: ExecutionParameters) -> Bool {
@@ -216,77 +166,29 @@ class MultiWindowManager {
         guard !ordered.isEmpty else { return }
 
         let bounds = BackingPixelBounds(screen.convertRectToBacking(visibleFrame))
-        let totalPixels = bounds.extent(direction)
-        guard totalPixels > 0 else { return }
+        guard bounds.extent(.rows) > 0, bounds.extent(.columns) > 0 else { return }
 
-        let constraints = ordered.map { candidate -> BandConstraint in
+        let constraints = ordered.map { candidate -> GridTiling.WindowConstraints in
             let isResizable = candidate.element.isResizable()
             let size = isResizable ? (candidate.element.minimumSize ?? .zero) : candidate.frame.size
             let backingSize = screen.convertRectToBacking(CGRect(origin: .zero, size: size)).size
-            let axisSize = direction == .rows ? backingSize.height : backingSize.width
-            let pixels = max(0, Int(isResizable ? ceil(axisSize) : axisSize.rounded()))
-            return isResizable
-                ? .resizable(minimum: pixels, maximum: totalPixels)
-                : .fixed(pixels)
+            func constraint(_ size: CGFloat, maximum: Int) -> GridTiling.Constraint {
+                let pixels = max(0, Int(isResizable ? ceil(size) : size.rounded()))
+                return isResizable ? .resizable(minimum: pixels, maximum: maximum) : .fixed(pixels)
+            }
+            return GridTiling.WindowConstraints(width: constraint(backingSize.width, maximum: bounds.extent(.columns)),
+                                                height: constraint(backingSize.height, maximum: bounds.extent(.rows)))
         }
 
-        applyBandTiling(ordered, bounds: bounds, direction: direction, constraints: constraints,
-                        pointFrame: { screen.convertRectFromBacking($0).screenFlipped },
-                        backingFrame: { screen.convertRectToBacking($0.screenFlipped) })
-    }
-
-    static func applyBandTiling(_ ordered: [TilingWindow],
-                                bounds: BackingPixelBounds,
-                                direction: BandDirection,
-                                constraints initialConstraints: [BandConstraint],
-                                pointFrame: (CGRect) -> CGRect,
-                                backingFrame: (CGRect) -> CGRect) {
-        var constraints = initialConstraints
-        let totalPixels = bounds.extent(direction)
-        var lastRequestedFrames = [CGRect?](repeating: nil, count: ordered.count)
-
-        // A clamp changes the remaining targets now and earlier targets on the
-        // next pass. Avoid repeating a frame request that was already made.
-        for _ in 0..<(2 * ordered.count + 1) {
-            var allocation = balancedBandLengths(totalPixels: totalPixels, constraints: constraints)
-            var frames = backingBandRects(bounds: bounds, lengths: allocation.lengths, direction: direction)
-            var learnedConstraint = false
-            var infeasibleConstraint = false
-            for (index, candidate) in ordered.enumerated() {
-                let targetFrame = pointFrame(frames[index])
-                if lastRequestedFrames[index] != targetFrame {
-                    candidate.element.setFrame(targetFrame)
-                    lastRequestedFrames[index] = targetFrame
-                    if allocation.feasible && !infeasibleConstraint {
-                        let achievedFrame = candidate.element.frame
-                        if !achievedFrame.isNull {
-                            let backingSize = backingFrame(achievedFrame).size
-                            let achieved = max(0, Int((direction == .rows ? backingSize.height : backingSize.width).rounded()))
-                            let revised = constraints[index].observing(achieved: achieved,
-                                                                       requested: allocation.lengths[index])
-                            if revised != constraints[index] {
-                                var candidateConstraints = constraints
-                                candidateConstraints[index] = revised
-                                let candidateAllocation = balancedBandLengths(totalPixels: totalPixels,
-                                                                              constraints: candidateConstraints)
-                                if candidateAllocation.feasible {
-                                    constraints = candidateConstraints
-                                    allocation = candidateAllocation
-                                    frames = backingBandRects(bounds: bounds, lengths: allocation.lengths,
-                                                              direction: direction)
-                                    learnedConstraint = true
-                                } else {
-                                    infeasibleConstraint = true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if !allocation.feasible || !learnedConstraint {
-                break
-            }
+        let limit = direction == .rows ? Defaults.tileRowsMaxWindows.value : Defaults.tileColumnsMaxWindows.value
+        let observed = ordered.map { BackingPixelBounds(screen.convertRectToBacking($0.frame.screenFlipped)).rect }
+        gridStates[screen] = GridTiling.perform(windows: ordered.map(\.element), observedFrames: observed,
+                                               bounds: bounds, direction: direction, limit: limit,
+                                               constraints: constraints, previous: gridStates[screen]) { index, frame in
+            let window = ordered[index].element
+            window.setFrame(screen.convertRectFromBacking(frame).screenFlipped)
+            let achieved = window.frame
+            return achieved.isNull ? .null : BackingPixelBounds(screen.convertRectToBacking(achieved.screenFlipped)).rect
         }
     }
 
@@ -399,55 +301,6 @@ class MultiWindowManager {
                 return firstSecondary < secondSecondary
             }
         }
-    }
-
-    static func backingBandRects(bounds: BackingPixelBounds, lengths: [Int], direction: BandDirection) -> [CGRect] {
-        var next = direction == .rows ? bounds.top : bounds.left
-        return lengths.map { length in
-            if direction == .rows {
-                next -= length
-                return CGRect(x: bounds.left, y: next, width: bounds.right - bounds.left, height: length)
-            } else {
-                let rect = CGRect(x: next, y: bounds.bottom, width: length, height: bounds.top - bounds.bottom)
-                next += length
-                return rect
-            }
-        }
-    }
-
-    /// Equalize flexible bands within observed limits, retaining exact fixed
-    /// extents when feasible. Infeasible restrictions use equal targets for every window.
-    static func balancedBandLengths(totalPixels: Int, constraints: [BandConstraint]) -> (lengths: [Int], feasible: Bool) {
-        guard !constraints.isEmpty, totalPixels > 0 else { return ([], false) }
-        let count = constraints.count
-        let equal = (0..<count).map { totalPixels / count + ($0 < totalPixels % count ? 1 : 0) }
-        let lower = constraints.map(\.lowerBound)
-        let upper = constraints.map(\.upperBound)
-        guard zip(lower, upper).allSatisfy({ pair in pair.0 <= pair.1 }),
-              lower.reduce(0, +) <= totalPixels,
-              upper.reduce(0, +) >= totalPixels
-        else { return (equal, false) }
-
-        var low = 0
-        var high = totalPixels
-        while low < high {
-            let middle = low + (high - low + 1) / 2
-            let required = zip(lower, upper).reduce(0) { $0 + min($1.1, max($1.0, middle)) }
-            if required <= totalPixels {
-                low = middle
-            } else {
-                high = middle - 1
-            }
-        }
-
-        var lengths = zip(lower, upper).map { min($0.1, max($0.0, low)) }
-        var remainder = totalPixels - lengths.reduce(0, +)
-        // Bands held above the water level by a minimum are already larger.
-        for index in lengths.indices where lengths[index] == low && lengths[index] < upper[index] && remainder > 0 {
-            lengths[index] += 1
-            remainder -= 1
-        }
-        return (lengths, true)
     }
 
     static func tileAllWindowsOnScreen() {

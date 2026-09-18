@@ -7,18 +7,16 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
-    private let animationsEnabled: () -> Bool
-    private let animationDestination: (AccessibilityElement) -> CGRect?
+    private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
     private var requestID = 0
     private var executionID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
-         animationsEnabled: @escaping () -> Bool = { WindowAnimator.enabled },
-         animationDestination: @escaping (AccessibilityElement) -> CGRect? = { WindowAnimator.shared.destination(for: $0) }) {
+         windowAnimator: WindowAnimator = WindowAnimator.shared) {
+
         self.screenDetection = screenDetection
-        self.animationsEnabled = animationsEnabled
-        self.animationDestination = animationDestination
+        self.windowAnimator = windowAnimator
         standardWindowMoverChain = [
             StandardWindowMover(),
             EdgeAlignmentWindowMover(),
@@ -32,7 +30,7 @@ class WindowManager {
     }
     
     func logicalFrame(for element: AccessibilityElement) -> CGRect {
-        animationDestination(element) ?? element.frame
+        windowAnimator.destination(for: element) ?? element.frame
     }
 
     func recordAction(windowId: CGWindowID?,
@@ -71,14 +69,14 @@ class WindowManager {
 
         // Recovery still owns the real window. Keep the latest action bound to this
         // element, and do not inspect its temporary parking geometry or update history.
-        if WindowAnimator.shared.isRecovering(for: frontmostWindowElement) {
+        if windowAnimator.isRecovering(for: frontmostWindowElement) {
             let deferredParameters = ExecutionParameters(parameters.action,
                                                          updateRestoreRect: parameters.updateRestoreRect,
                                                          screen: parameters.screen,
                                                          windowElement: frontmostWindowElement,
                                                          windowId: parameters.windowId,
                                                          source: parameters.source)
-            let deferred = WindowAnimator.shared.deferUntilReleased(element: frontmostWindowElement) { [weak self] in
+            let deferred = windowAnimator.deferUntilReleased(element: frontmostWindowElement) { [weak self] in
                 guard let self, self.requestID == currentRequestID else { return }
                 self.execute(deferredParameters)
             }
@@ -102,7 +100,7 @@ class WindowManager {
                 let currentExecutionID = executionID
                 // The animation planner accepts reachable, partly offscreen targets
                 // and falls back when it cannot prepare a safe local transition.
-                if animationsEnabled(), frontmostWindowElement.isResizable() {
+                if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
                     animateWindow(frontmostWindowElement, to: restoreRect, restoring: true, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A successful frosted transition has already verified and placed
@@ -112,10 +110,10 @@ class WindowManager {
                 } else {
                     let restore = { [weak self] in
                         guard let self, self.executionID == currentExecutionID else { return }
-                        WindowAnimator.shared.cancel(for: frontmostWindowElement)
+                        self.windowAnimator.cancel(for: frontmostWindowElement)
                         frontmostWindowElement.setFrame(restoreRect)
                     }
-                    if !WindowAnimator.shared.deferUntilReleased(element: frontmostWindowElement, action: restore) {
+                    if !windowAnimator.deferUntilReleased(element: frontmostWindowElement, action: restore) {
                         restore()
                     }
                 }
@@ -142,7 +140,7 @@ class WindowManager {
             return
         }
         
-        let pendingDestination = animationDestination(frontmostWindowElement)
+        let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
         let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
         
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
@@ -261,12 +259,12 @@ class WindowManager {
         
         // Frosted commands prepare the destination before revealing the real
         // window, including when that destination is on another display.
-        let animated = animationsEnabled() && !isFixedSize
+        let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap || Defaults.windowAnimationStyle.value == .frosted)
             && !Defaults.cooperativeCornerResize.enabled
         WindowFrostDiagnostics.event("window-action-animation-decision", fields: [
             "windowID": windowId ?? 0, "source": String(describing: parameters.source),
-            "animated": animated, "enabled": animationsEnabled(), "fixedSize": isFixedSize,
+            "animated": animated, "enabled": WindowAnimator.enabled, "fixedSize": isFixedSize,
             "crossDisplay": isMovedAcrossDisplays, "cooperative": Defaults.cooperativeCornerResize.enabled,
             "sourceDisplayFrame": [sourceScreens.currentScreen.frame.minX, sourceScreens.currentScreen.frame.minY,
                                    sourceScreens.currentScreen.frame.width, sourceScreens.currentScreen.frame.height],
@@ -325,8 +323,8 @@ class WindowManager {
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
         }
+
         if animated {
-            // Record the destination before animation for repeated-shortcut cycling.
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
             let placement = WindowAnimationPlacement(
@@ -345,10 +343,10 @@ class WindowManager {
             }
         } else {
             let complete = {
-                WindowAnimator.shared.cancel(for: frontmostWindowElement)
+                self.windowAnimator.cancel(for: frontmostWindowElement)
                 completeMove(false)
             }
-            if !WindowAnimator.shared.deferUntilReleased(element: frontmostWindowElement, action: complete) {
+            if !windowAnimator.deferUntilReleased(element: frontmostWindowElement, action: complete) {
                 complete()
             }
         }
@@ -362,7 +360,7 @@ class WindowManager {
     func animateWindow(_ element: AccessibilityElement, to destination: CGRect,
                        placement: WindowAnimationPlacement? = nil, restoring: Bool = false, releasedSnap: Bool = false,
                        profile: WindowAnimationProfile = .standard, completion: @escaping (CGRect) -> Void) {
-        WindowAnimator.shared.animate(element, to: destination, restoring: restoring, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
+        windowAnimator.animate(element, to: destination, restoring: restoring, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
     }
     
     /// Move/resize a window based on the calculation results.

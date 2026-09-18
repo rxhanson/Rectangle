@@ -60,7 +60,7 @@ struct StackBadgeStackedWindow {
             // All accessibility traffic stays off the main thread; only the
             // activation is AppKit and hops over.
             DispatchQueue.main.async {
-                NSRunningApplication(processIdentifier: pid)?.activate(options: .activateIgnoringOtherApps)
+                NSRunningApplication(processIdentifier: pid)?.activate()
                 raised?()
             }
         }
