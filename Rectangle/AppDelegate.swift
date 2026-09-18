@@ -10,6 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     static let launcherAppId = "com.knollsoft.RectangleLauncher"
 
     private let accessibilityAuthorization = AccessibilityAuthorization()
+    private let welcomeController = WelcomeController()
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
     var updaterController: SPUStandardUpdaterController!
@@ -50,13 +51,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()
 
+        welcomeController.prepareForLaunch()
         checkVersion()
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
         
-        let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
-            self.showWelcomeWindow()
+        let alreadyTrusted = welcomeController.checkAccessibility(
+            using: accessibilityAuthorization,
+            showWelcome: { self.showWelcomeWindow() }
+        ) {
             self.checkForConflictingApps()
             self.openPreferences(self)
             self.statusItem.statusMenu = self.mainStatusMenu
