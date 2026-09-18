@@ -26,7 +26,8 @@ class ScreenDetection {
         }
         
         let screensOrdered = order(screens: screens)
-        // Route repeated actions using the destination instead of an intermediate animation frame.
+        // A transition can temporarily park the real AX window at a display corner.
+        // Route subsequent actions using its logical destination, not that parking frame.
         let windowFrame = frontmostWindowElement.map { logicalFrame($0) ?? $0.frame } ?? .zero
         guard let sourceScreen: NSScreen = screenContaining(windowFrame, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)

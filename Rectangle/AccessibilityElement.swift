@@ -135,6 +135,7 @@ class AccessibilityElement {
         }
         set {
             guard let newValue = newValue else { return }
+            if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in self.size = newValue }) { return }
             wrappedElement.setValue(.size, newValue)
             Logger.log("AX sizing proposed: \(newValue.debugDescription), result: \(size?.debugDescription ?? "N/A")")
         }
@@ -154,6 +155,9 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+        if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
+            setFrame(frame, adjustSizeFirst: adjustSizeFirst, adjustPosition: adjustPosition)
+        }) { return }
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
             || NSWorkspace.shared.isSwitchControlEnabled
@@ -196,7 +200,22 @@ class AccessibilityElement {
     }
 
     /// Writes one frame without readback; completion handles the final placement.
+    /// The coordinator has already released recovery but still owns this drag.
+    func setOwnedOrdinaryDragFrame(_ frame: CGRect, token: UUID) {
+        guard WindowAnimator.shared.ownsOrdinaryDrag(element: self, token: token) else { return }
+        // setFrame/size treat callers as external requests and cancel an active
+        // transition. This token-checked path is the transition's own movement.
+        // Its Enhanced UI adjustment remains held until the drag completes.
+        wrappedElement.setValue(.size, frame.size)
+        wrappedElement.setValue(.position, frame.origin)
+        wrappedElement.setValue(.size, frame.size)
+    }
+
+    /// Writes one frame without readback; completion handles the final placement.
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool {
+        if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
+            setFrame(frame, adjustSizeFirst: false, adjustPosition: !resizeOnly)
+        }) { return false }
         var size = frame.size
         var position = frame.origin
         guard let sizeValue = AXValueCreate(.cgSize, &size),
@@ -212,6 +231,9 @@ class AccessibilityElement {
     func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
                                       origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil,
                                       maximumCorrection: CGFloat = 0) -> CGRect? {
+        if WindowAnimator.shared.deferUntilReleased(element: self, action: { [self] in
+            setFrame(frame)
+        }) { return nil }
         var preparedPosition: CGPoint?
         if let previousFrame,
            let position = placement.positionBeforeGrowing(from: previousFrame, to: frame),
@@ -456,23 +478,28 @@ extension AccessibilityElement {
     }
     
     private static func getWindowInfo(_ location: CGPoint, eventWindowID: CGWindowID? = nil) -> WindowInfo? {
-        // Ignore Rectangle preview surfaces when selecting an application window.
+        // Reused frost surfaces stay ordered at alpha zero. WindowServer still
+        // lists them above the dragged app, even though they ignore mouse input.
         let ignoredWindows = Set(NSApp.windows.compactMap { window in
             window.ignoresMouseEvents ? CGWindowID(exactly: window.windowNumber) : nil
         })
         // A new click can follow a focus change or reveal within the list's
         // 100 ms cache lifetime. Select from the current stacking order.
         return windowInfoUnderCursor(at: location, windows: WindowUtil.getWindowList(ids: eventWindowID.map { [$0] }, forceRefresh: true),
-                                     eventWindowID: eventWindowID, ignoring: ignoredWindows)
+                                     eventWindowID: eventWindowID, ignoring: ignoredWindows,
+                                     frostSurfaces: WindowFrostRendererConnection.shared.inputTransparentSurfaces)
     }
 
     static func windowInfoUnderCursor(at location: CGPoint, windows: [WindowInfo],
                                      eventWindowID: CGWindowID? = nil,
-                                     ignoring ignoredWindows: Set<CGWindowID> = []) -> WindowInfo? {
+                                     ignoring ignoredWindows: Set<CGWindowID> = [],
+                                     frostSurfaces: [CGWindowID: pid_t] = [:]) -> WindowInfo? {
         windows.first(where: { windowInfo in
             windowInfo.level < 21 // 21 is the level of the Notification Center
             && windowInfo.alpha > 0
             && !ignoredWindows.contains(windowInfo.id)
+            && !FrostedRestoreDragRules.isInputTransparentFrostSurface(windowID: windowInfo.id,
+                ownerPID: windowInfo.pid, level: Int(windowInfo.level), registered: frostSurfaces)
             && !["Dock", "WindowManager"].contains(windowInfo.processName)
             && (eventWindowID.map { windowInfo.id == $0 } ?? windowInfo.frame.contains(location))
         })

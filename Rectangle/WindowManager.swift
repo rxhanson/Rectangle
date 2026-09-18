@@ -9,11 +9,12 @@ class WindowManager {
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
+    private var requestID = 0
     private var executionID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
-        
+
         self.screenDetection = screenDetection
         self.windowAnimator = windowAnimator
         standardWindowMoverChain = [
@@ -55,6 +56,9 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        WindowFrostDiagnostics.event("window-action", fields: ["action": parameters.action.name])
+        requestID &+= 1
+        let currentRequestID = requestID
         hideSizeConstraintWarning()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
@@ -63,6 +67,22 @@ class WindowManager {
             return
         }
 
+        // Recovery still owns the real window. Keep the latest action bound to this
+        // element, and do not inspect its temporary parking geometry or update history.
+        if windowAnimator.isRecovering(for: frontmostWindowElement) {
+            let deferredParameters = ExecutionParameters(parameters.action,
+                                                         updateRestoreRect: parameters.updateRestoreRect,
+                                                         screen: parameters.screen,
+                                                         windowElement: frontmostWindowElement,
+                                                         windowId: parameters.windowId,
+                                                         source: parameters.source)
+            let deferred = windowAnimator.deferUntilReleased(element: frontmostWindowElement) { [weak self] in
+                guard let self, self.requestID == currentRequestID else { return }
+                self.execute(deferredParameters)
+            }
+            if deferred { return }
+        }
+        
         // The window id can be unavailable when macOS stops vending window info
         // after a session transition (#640). Actions still execute; only
         // window-id-keyed history is skipped.
@@ -78,15 +98,24 @@ class WindowManager {
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 executionID &+= 1
                 let currentExecutionID = executionID
+                // The animation planner accepts reachable, partly offscreen targets
+                // and falls back when it cannot prepare a safe local transition.
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                    animateWindow(frontmostWindowElement, to: restoreRect, restoring: true, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
-                        // A completed animation has already placed the real window.
+                        // A successful frosted transition has already verified and placed
+                        // the real window. Only the ordinary fallback needs another write.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
                     }
                 } else {
-                    WindowAnimator.shared.cancel(for: frontmostWindowElement)
-                    frontmostWindowElement.setFrame(restoreRect)
+                    let restore = { [weak self] in
+                        guard let self, self.executionID == currentExecutionID else { return }
+                        self.windowAnimator.cancel(for: frontmostWindowElement)
+                        frontmostWindowElement.setFrame(restoreRect)
+                    }
+                    if !windowAnimator.deferUntilReleased(element: frontmostWindowElement, action: restore) {
+                        restore()
+                    }
                 }
             }
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
@@ -201,12 +230,14 @@ class WindowManager {
                                                                             gapSize: cooperativeCornerPlan.gapSize)
                 Logger.log("Cooperative resize no-op: solved frames already match current frames")
                 recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+                finishSnapPreview(source: parameters.source, windowID: windowId, frame: calcResult.rect.screenFlipped)
                 return
             }
         } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+            finishSnapPreview(source: parameters.source, windowID: windowId, frame: calcResult.rect.screenFlipped)
 
             return
         }
@@ -226,10 +257,20 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
         
+        // Frosted commands prepare the destination before revealing the real
+        // window, including when that destination is on another display.
         let animated = WindowAnimator.enabled && !isFixedSize
-            && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
+            && (!isMovedAcrossDisplays || parameters.source == .dragToSnap || Defaults.windowAnimationStyle.value == .frosted)
             && !Defaults.cooperativeCornerResize.enabled
-        
+        WindowFrostDiagnostics.event("window-action-animation-decision", fields: [
+            "windowID": windowId ?? 0, "source": String(describing: parameters.source),
+            "animated": animated, "enabled": WindowAnimator.enabled, "fixedSize": isFixedSize,
+            "crossDisplay": isMovedAcrossDisplays, "cooperative": Defaults.cooperativeCornerResize.enabled,
+            "sourceDisplayFrame": [sourceScreens.currentScreen.frame.minX, sourceScreens.currentScreen.frame.minY,
+                                   sourceScreens.currentScreen.frame.width, sourceScreens.currentScreen.frame.height],
+            "destinationDisplayFrame": [calcResult.screen.frame.minX, calcResult.screen.frame.minY,
+                                        calcResult.screen.frame.width, calcResult.screen.frame.height],
+            "actual": [currentWindowRect.minX, currentWindowRect.minY, currentWindowRect.width, currentWindowRect.height]])
         let completeMove = { [self] (animationHandledPlacement: Bool) in
             guard executionID == currentExecutionID else { return }
             var resultingRect: CGRect
@@ -282,7 +323,7 @@ class WindowManager {
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
         }
-        
+
         if animated {
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
@@ -291,17 +332,35 @@ class WindowManager {
                 sharedEdges: action.resizes ? Defaults.moveFixedSizeToEdge.value.alignmentEdges(
                     for: calcResult.initialRect.screenFlipped, in: visibleFrameOfDestinationScreen.screenFlipped) : nil,
                 constrainToScreen: !(action.allowedToExtendOutsideCurrentScreenArea && !NSScreen.screensHaveSeparateSpaces),
-                gap: CGFloat(Defaults.gapSize.value))
-            windowAnimator.animate(frontmostWindowElement,
-                                   to: calcResult.rect.screenFlipped,
-                                   releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
+                gap: CGFloat(Defaults.gapSize.value),
+                displayCommand: isMovedAcrossDisplays && parameters.source != .dragToSnap)
+            animateWindow(frontmostWindowElement, to: calcResult.rect.screenFlipped,
+                          placement: placement,
+                          restoring: Defaults.windowAnimationStyle.value == .direct && calcResult.resultingAction == .restore,
+                          releasedSnap: parameters.source == .dragToSnap,
+                          profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
                 completeMove(!frame.isNull)
             }
         } else {
-            windowAnimator.cancel(for: frontmostWindowElement)
-            completeMove(false)
+            let complete = {
+                self.windowAnimator.cancel(for: frontmostWindowElement)
+                completeMove(false)
+            }
+            if !windowAnimator.deferUntilReleased(element: frontmostWindowElement, action: complete) {
+                complete()
+            }
         }
+    }
+
+    private func finishSnapPreview(source: ExecutionSource, windowID: CGWindowID?, frame: CGRect) {
+        guard source == .dragToSnap, let windowID else { return }
+        SnapPreviewHandoff(windowID: windowID, frame: frame, covered: false).post()
+    }
+
+    func animateWindow(_ element: AccessibilityElement, to destination: CGRect,
+                       placement: WindowAnimationPlacement? = nil, restoring: Bool = false, releasedSnap: Bool = false,
+                       profile: WindowAnimationProfile = .standard, completion: @escaping (CGRect) -> Void) {
+        windowAnimator.animate(element, to: destination, restoring: restoring, releasedSnap: releasedSnap, placement: placement, profile: profile, completion: completion)
     }
     
     /// Move/resize a window based on the calculation results.
@@ -333,6 +392,9 @@ class WindowManager {
 
     func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
         let calcResult = result.calcResult
+        // Ordinary placement and no-animation fallbacks do not produce a renderer
+        // coverage callback. They must still release the committed target outline.
+        finishSnapPreview(source: result.source, windowID: result.windowId, frame: calcResult.rect.screenFlipped)
 
         if WindowSizeConstraint.isExceeded(requested: calcResult.rect, actual: resultingRect, action: result.action) {
             showSizeConstraintWarning(on: calcResult.screen)
@@ -354,7 +416,7 @@ class WindowManager {
                 evidence["restore"] = [restore.minX, restore.minY, restore.width, restore.height]
             }
         }
-        WindowAnimationDiagnostics.event("window-action-achieved", fields: evidence)
+        WindowFrostDiagnostics.event("window-action-achieved", fields: evidence)
         Notification.Name.windowActionCompleted.post()
         
         if Logger.logging {
