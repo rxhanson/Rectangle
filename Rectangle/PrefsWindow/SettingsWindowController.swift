@@ -9,7 +9,7 @@ class SettingsWindowController: NSWindowController {
         let window = NSWindow(contentViewController: contentViewController)
         
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        window.title = "Preferences"
+        window.title = "Shortcuts"
         window.setContentSize(NSSize(width: 480, height: 540))
         window.minSize = NSSize(width: 420, height: 350)
         window.center()
@@ -19,6 +19,8 @@ class SettingsWindowController: NSWindowController {
 }
 
 class SettingsTabViewController: NSTabViewController {
+    
+    private var savedTabSizes: [Int: NSSize] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +44,37 @@ class SettingsTabViewController: NSTabViewController {
         generalItem.label = "General"
         generalItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: "General")
         addTabViewItem(generalItem)
+    }
+    
+    override var selectedTabViewItemIndex: Int {
+        willSet {
+            if selectedTabViewItemIndex != -1, let window = view.window {
+                savedTabSizes[selectedTabViewItemIndex] = window.frame.size
+            }
+        }
+        didSet {
+            guard selectedTabViewItemIndex != -1 else { return }
+            let selectedItem = tabViewItems[selectedTabViewItemIndex]
+            tabDidSwitch(to: selectedItem, at: selectedTabViewItemIndex)
+        }
+    }
+    
+    private func resizeWindow(to newSize: NSSize, animated: Bool) {
+        guard let window = view.window else { return }
+        
+        var frame = window.frame
+        frame.origin.y -= (newSize.height - frame.size.height)
+        frame.size = newSize
+        
+        window.setFrame(frame, display: true, animate: animated)
+    }
+    
+    private func tabDidSwitch(to item: NSTabViewItem, at index: Int) {
+        view.window?.title = item.label
+        
+        if let savedSize = savedTabSizes[selectedTabViewItemIndex] {
+            resizeWindow(to: savedSize, animated: true)
+        }
     }
 }
 
