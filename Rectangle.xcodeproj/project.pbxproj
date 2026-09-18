@@ -138,6 +138,7 @@
 		98D16A442592AD55005228CB /* MASShortcutMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D16A432592AD55005228CB /* MASShortcutMigration.swift */; };
 		98D16A492592B460005228CB /* NotificationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D16A482592B460005228CB /* NotificationExtension.swift */; };
 		98D4B6C525B6256C009C7BF6 /* TodoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D4B6C425B6256C009C7BF6 /* TodoManager.swift */; };
+		98ED7038305D9AEE0077BD10 /* ExtraSettingsPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED7037305D9AE50077BD10 /* ExtraSettingsPopover.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
@@ -367,6 +368,7 @@
 		98D16A432592AD55005228CB /* MASShortcutMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MASShortcutMigration.swift; sourceTree = "<group>"; };
 		98D16A482592B460005228CB /* NotificationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtension.swift; sourceTree = "<group>"; };
 		98D4B6C425B6256C009C7BF6 /* TodoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoManager.swift; sourceTree = "<group>"; };
+		98ED7037305D9AE50077BD10 /* ExtraSettingsPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraSettingsPopover.swift; sourceTree = "<group>"; };
 		98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThreeFourthsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThreeFourthsCalculation.swift; sourceTree = "<group>"; };
@@ -750,6 +752,7 @@
 				9898583A305C1B6400459AFF /* ShortcutsViewController.swift */,
 				944F25CE2CE5A144004B2FD2 /* ShortcutRecordingObserver.swift */,
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
+				98ED7037305D9AE50077BD10 /* ExtraSettingsPopover.swift */,
 				983DD03F28A844BE00BF1EEE /* SnapAreaViewController.swift */,
 				98C97FFC25893B040061F01F /* Config.swift */,
 			);
@@ -1038,6 +1041,7 @@
 				7B4C0A212F1B000100C0FFEE /* RepeatedMaximizeRestore.swift in Sources */,
 				7BE578F32EFE11010083DAE3 /* ActiveSideSplitRatios.swift in Sources */,
 				9821403722B3D16700ABFB3F /* MaximizeHeightCalculation.swift in Sources */,
+				98ED7038305D9AEE0077BD10 /* ExtraSettingsPopover.swift in Sources */,
 				9824704122B186D00037B409 /* WindowManager.swift in Sources */,
 				F05220000000000000000002 /* WindowSizeWarning.swift in Sources */,
 				982470432EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift in Sources */,
