@@ -282,6 +282,8 @@ class SnappingManager {
     }
     
     func handle(event: NSEvent) {
+        if WindowDividerManager.shared.containsPointerEvent(event) { return }
+        if LayoutHelperManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
             guard event.keyCode == 53, nativeGesture.held else { return }
@@ -289,6 +291,9 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            WindowSizeConstraints.shared.cancelPendingObservations()
+            WindowDividerManager.shared.interrupt()
+            LayoutHelperManager.shared.cancel()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -306,6 +311,7 @@ class SnappingManager {
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
+            LayoutHelperManager.shared.cancelPrefetch()
             nativeGesture.end()
             traceNativeInput(event, phase: "up")
             if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
@@ -387,6 +393,7 @@ class SnappingManager {
                 retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -407,12 +414,15 @@ class SnappingManager {
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
+                        let prefetchRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow, applyingGaps: false) ?? newBoxRect
+                        LayoutHelperManager.shared.prefetch(on: snapArea.screen, action: snapArea.action, anchor: prefetchRect, excluding: windowId)
                         showSnapPreview(in: newBoxRect, snapArea: snapArea)
                     }
                     
                     currentSnapArea = snapArea
                 } else {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -628,7 +638,7 @@ class SnappingManager {
         }
     }
     
-    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window, applyingGaps: Bool = true) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
             let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
@@ -636,14 +646,30 @@ class SnappingManager {
             let rectResult = calculation.calculateRect(rectCalcParams)
             
             let gapsApplicable = hotSpot.action.gapsApplicable
+            var target = rectResult.rect
             
             if Defaults.gapSize.value > 0, gapsApplicable != .none {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
 
-                return GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                target = GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
             }
-            
-            return rectResult.rect
+            let minimum = windowElement?.minimumSize
+            if windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
+                switch SnappedWindowFit.resolve(action: hotSpot.action, window: currentWindow,
+                    initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen,
+                    minimum: minimum) {
+                case let .fit(plan):
+                    return applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target)
+                case .noRoom: return nil
+                case .unchanged: break
+                }
+            }
+            if !applyingGaps { target = rectResult.rect }
+            let bounds = applyingGaps
+                ? GapCalculation.applyGaps(rectCalcParams.visibleFrameOfScreen, dimension: gapsApplicable,
+                    gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                : rectCalcParams.visibleFrameOfScreen
+            return WindowSizeConstraints.fitting(target, minimum: minimum, in: bounds)
         }
         return nil
     }

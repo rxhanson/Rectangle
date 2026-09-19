@@ -41,6 +41,8 @@
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSScreenCaptureUsageDescription</key>
+	<string>Rectangle uses window screenshots to show previews in Layout Helper. Images are not saved.</string>
 	<key>SUFeedURL</key>
 	<string>https://rectangleapp.com/downloads/updates.xml</string>
 	<key>SUPublicEDKey</key>

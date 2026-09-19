@@ -21,6 +21,39 @@ enum WindowSizeConstraint {
 }
 
 final class WindowSizeWarning: NSPanel {
+    private static var current: WindowSizeWarning?
+    static var shared: WindowSizeWarning {
+        if let current { return current }
+        let warning = WindowSizeWarning()
+        current = warning
+        return warning
+    }
+    static func hideCurrent() { current?.hide() }
+
+    enum Reason {
+        case minimumSize, unavailable, restored, couldNotFit
+
+        var title: String {
+            switch self {
+            case .minimumSize:
+                return NSLocalizedString("windowSizeWarningTitle", tableName: "Main", value: "Minimum window size reached", comment: "Window size warning title")
+            case .unavailable, .restored, .couldNotFit:
+                return NSLocalizedString("windowPlacementWarningTitle", tableName: "Main", value: "Window could not fit", comment: "Window placement warning title")
+            }
+        }
+        var message: String {
+            switch self {
+            case .minimumSize:
+                return NSLocalizedString("windowSizeWarningMessage", tableName: "Main", value: "Unable to resize window smaller. Windows may overlap.", comment: "App minimum size prevented the requested layout")
+            case .unavailable:
+                return NSLocalizedString("windowPlacementUnavailableMessage", tableName: "Main", value: "The window is too large for the available space. Its position is unchanged.", comment: "Known minimum prevented any window movement")
+            case .restored:
+                return NSLocalizedString("windowPlacementRestoredMessage", tableName: "Main", value: "The window could not fit. Its previous position was restored.", comment: "Failed placement was restored and verified")
+            case .couldNotFit:
+                return NSLocalizedString("windowPlacementFailedMessage", tableName: "Main", value: "The window could not fit the available space.", comment: "Placement failed and restoration could not be confirmed")
+            }
+        }
+    }
     private static let padding: CGFloat = 24
     private var dismissal: DispatchWorkItem?
     private var labels: [NSTextField] = []
@@ -65,16 +98,10 @@ final class WindowSizeWarning: NSPanel {
         icon.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(icon)
 
-        let title = NSTextField(wrappingLabelWithString: NSLocalizedString(
-            "windowSizeWarningTitle", tableName: "Main", value: "Minimum window size reached",
-            comment: "Title of the on-screen message when a window cannot fit its requested size"))
+        let title = NSTextField(wrappingLabelWithString: Reason.minimumSize.title)
         title.font = .systemFont(ofSize: 21, weight: .semibold)
         title.alignment = .center
-
-        let message = NSTextField(wrappingLabelWithString: NSLocalizedString(
-            "windowSizeWarningMessage", tableName: "Main",
-            value: "Unable to resize window smaller.\nWindows may overlap.",
-            comment: "Explains that an app can prevent a window from shrinking to the requested layout"))
+        let message = NSTextField(wrappingLabelWithString: Reason.minimumSize.message)
         message.font = .systemFont(ofSize: NSFont.systemFontSize)
         message.textColor = .secondaryLabelColor
         message.alignment = .center
@@ -100,10 +127,12 @@ final class WindowSizeWarning: NSPanel {
         contentView = container
     }
 
-    func show(on screen: NSScreen, duration: TimeInterval = 3) {
+    func show(on screen: NSScreen, duration: TimeInterval = 3, reason: Reason = .minimumSize) {
         hide()
         guard let contentView else { return }
-        let visibleFrame = screen.visibleFrame
+        labels[0].stringValue = reason.title
+        labels[1].stringValue = reason.message
+        let visibleFrame = screen.adjustedVisibleFrame()
         let width = min(360, visibleFrame.width - 32)
         guard width > Self.padding * 2, visibleFrame.height > 0 else { return }
 

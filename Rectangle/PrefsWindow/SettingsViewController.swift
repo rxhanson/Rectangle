@@ -40,6 +40,11 @@ class SettingsViewController: NSViewController {
 
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
+    private var windowSizeLimitsController: WindowSizeLimitsWindowController?
+    private var rememberWindowSizeLimitsCheckbox: NSButton?
+    private var fitBesideSnappedWindowsCheckbox: NSButton?
+    private var windowDividerCheckbox: NSButton?
+    private var windowDividerEnhancedCheckbox: NSButton?
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     private var tilingShortcutViews = [MASShortcutView]()
     private var tileGridLimitRows = [TileGridLimitRow]()
@@ -1211,6 +1216,8 @@ class SettingsViewController: NSViewController {
 
         initializeAutoMaximizeCheckbox()
 
+        initializeWindowSizeLimitsControls()
+
         Notification.Name.configImported.onPost(using: {_ in
             self.initializeTodoModeSettings()
             self.initializeToggles()
@@ -1224,6 +1231,41 @@ class SettingsViewController: NSViewController {
         Notification.Name.updateAvailability.onPost { _ in
             self.updateCheckForUpdatesTitle()
         }
+        makeSettingsScrollable()
+    }
+
+    private func makeSettingsScrollable() {
+        let settings = view
+        let document = SettingsDocumentView()
+        settings.translatesAutoresizingMaskIntoConstraints = false
+        document.addSubview(settings)
+        NSLayoutConstraint.activate([
+            settings.leadingAnchor.constraint(equalTo: document.leadingAnchor),
+            settings.trailingAnchor.constraint(equalTo: document.trailingAnchor),
+            settings.topAnchor.constraint(equalTo: document.topAnchor),
+            settings.bottomAnchor.constraint(equalTo: document.bottomAnchor)
+        ])
+        let scroll = NSScrollView()
+        scroll.drawsBackground = false
+        scroll.hasVerticalScroller = true
+        scroll.autohidesScrollers = true
+        scroll.documentView = document
+        document.translatesAutoresizingMaskIntoConstraints = false
+        document.widthAnchor.constraint(equalTo: scroll.contentView.widthAnchor).isActive = true
+        scroll.widthAnchor.constraint(equalToConstant: 850).isActive = true
+        let availableHeight = (NSScreen.main?.visibleFrame.height ?? 800) - 140
+        scroll.heightAnchor.constraint(equalToConstant: min(650, max(400, availableHeight))).isActive = true
+        view = scroll
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        guard let window = view.window, let screen = window.screen else { return }
+        let area = screen.visibleFrame
+        var frame = window.frame
+        frame.origin.x = max(area.minX, min(frame.minX, area.maxX - frame.width))
+        frame.origin.y = max(area.minY, min(frame.minY, area.maxY - frame.height))
+        if frame != window.frame { window.setFrame(frame, display: true) }
     }
     
     func updateCheckForUpdatesTitle() {
@@ -1283,6 +1325,10 @@ class SettingsViewController: NSViewController {
         greenButtonOverrideCheckbox?.state = Defaults.greenButtonOverride.enabled ? .on : .off
 
         autoMaximizeCheckbox?.state = Defaults.autoMaximize.userDisabled ? .off : .on
+        rememberWindowSizeLimitsCheckbox?.state = Defaults.rememberWindowSizeLimits.enabled ? .on : .off
+        windowDividerCheckbox?.state = Defaults.windowDivider.enabled ? .on : .off
+        refreshWindowDividerEnhanced()
+        fitBesideSnappedWindowsCheckbox?.state = Defaults.fitBesideSnappedWindows.enabled ? .on : .off
 
         halvesPreserveOtherAxisSizeCheckbox?.state = Defaults.halvesPreserveOtherAxisSize.enabled ? .on : .off
         repeatedMaximizeRestoresPreviousCheckbox?.state = Defaults.repeatedMaximizeRestoresPrevious.enabled ? .on : .off
@@ -1386,6 +1432,119 @@ class SettingsViewController: NSViewController {
             parentStack.insertArrangedSubview(checkbox, at: insertIdx + 1)
             autoMaximizeCheckbox = checkbox
         }
+    }
+
+    private func initializeWindowSizeLimitsControls() {
+        guard rememberWindowSizeLimitsCheckbox == nil,
+              let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
+              let index = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) else { return }
+        let checkbox = NSButton(checkboxWithTitle: "Remember learned window limits indefinitely".localized,
+                                target: self, action: #selector(toggleRememberWindowSizeLimits(_:)))
+        checkbox.state = Defaults.rememberWindowSizeLimits.enabled ? .on : .off
+        checkbox.setAccessibilityIdentifier("rememberWindowSizeLimits")
+        let button = NSButton(title: "Manage memory".localized, target: self, action: #selector(showWindowSizeLimits))
+        button.bezelStyle = .rounded
+        button.setAccessibilityIdentifier("showWindowSizeLimits")
+        for control in [checkbox, button] {
+            control.setContentCompressionResistancePriority(.required, for: .horizontal)
+            control.setContentCompressionResistancePriority(.required, for: .vertical)
+            control.setContentHuggingPriority(.required, for: .horizontal)
+        }
+        let row = NSStackView(views: [checkbox, button, NSView()])
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 12
+        parentStack.insertArrangedSubview(row, at: index + 1)
+        rememberWindowSizeLimitsCheckbox = checkbox
+
+        let fit = NSButton(checkboxWithTitle: "Fit remaining space".localized,
+                           target: self, action: #selector(toggleFitBesideSnappedWindows(_:)))
+        fit.state = Defaults.fitBesideSnappedWindows.enabled ? .on : .off
+        fit.toolTip = "Fit into the remaining space next to an already snapped window.".localized
+        fit.setAccessibilityIdentifier("fitBesideSnappedWindows")
+        fit.setContentCompressionResistancePriority(.required, for: .vertical)
+        let divider = NSButton(checkboxWithTitle: "Resize windows together".localized,
+                               target: self, action: #selector(toggleWindowDivider(_:)))
+        divider.setContentCompressionResistancePriority(.required, for: .vertical)
+        divider.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        divider.state = Defaults.windowDivider.enabled ? .on : .off
+        divider.setAccessibilityIdentifier("windowDivider")
+        divider.toolTip = "Drag the handle between two snapped windows to resize them together.".localized
+        func supportLabel(identifier: String) -> NSTextField {
+            let label = NSTextField(labelWithString: "Left/right and top/bottom pairs only.".localized)
+            label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+            label.textColor = .secondaryLabelColor
+            label.setContentCompressionResistancePriority(.required, for: .vertical)
+            label.setContentHuggingPriority(.defaultHigh, for: .vertical)
+            label.setAccessibilityIdentifier(identifier)
+            return label
+        }
+        func supportedPairRow(_ button: NSButton, identifier: String) -> NSStackView {
+            let row = NSStackView(views: [button, supportLabel(identifier: identifier)])
+            row.orientation = .horizontal
+            row.alignment = .centerY
+            row.spacing = 12
+            return row
+        }
+        parentStack.insertArrangedSubview(supportedPairRow(divider, identifier: "windowDividerSupport"), at: index + 2)
+        windowDividerCheckbox = divider
+        let enhanced = NSButton(checkboxWithTitle: "Enhanced transitions", target: self,
+                                action: #selector(toggleWindowDividerEnhanced(_:)))
+        enhanced.setAccessibilityIdentifier("windowDividerEnhanced")
+        enhanced.setContentCompressionResistancePriority(.required, for: .vertical)
+        let hint = NSTextField(labelWithString: "Uses a temporary screenshot to hide resizing. Requires Screen Recording access.")
+        hint.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        hint.textColor = .secondaryLabelColor
+        hint.setContentCompressionResistancePriority(.required, for: .horizontal)
+        hint.setContentCompressionResistancePriority(.required, for: .vertical)
+        hint.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        let enhancedGroup = NSStackView(views: [enhanced, hint])
+        enhancedGroup.orientation = .vertical
+        enhancedGroup.alignment = .leading
+        enhancedGroup.spacing = 4
+        enhancedGroup.edgeInsets = NSEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+        parentStack.insertArrangedSubview(enhancedGroup, at: index + 3)
+        enhancedGroup.widthAnchor.constraint(equalTo: parentStack.widthAnchor).isActive = true
+        windowDividerEnhancedCheckbox = enhanced
+        refreshWindowDividerEnhanced()
+        parentStack.insertArrangedSubview(supportedPairRow(fit, identifier: "windowPairSupport"), at: index + 4)
+        fitBesideSnappedWindowsCheckbox = fit
+    }
+
+    @objc private func toggleRememberWindowSizeLimits(_ sender: NSButton) {
+        WindowSizeConstraints.shared.setRememberLimits(sender.state == .on)
+    }
+
+    @objc private func toggleWindowDivider(_ sender: NSButton) {
+        Defaults.windowDivider.enabled = sender.state == .on
+        refreshWindowDividerEnhanced()
+        WindowDividerManager.shared.clear()
+    }
+
+    private func refreshWindowDividerEnhanced() {
+        windowDividerEnhancedCheckbox?.state = Defaults.windowDividerEnhanced.enabled ? .on : .off
+        windowDividerEnhancedCheckbox?.isEnabled = Defaults.windowDivider.enabled && LayoutHelperPermission.previewsSupported
+        windowDividerEnhancedCheckbox?.toolTip = "Uses standard transitions when Screen Recording access is unavailable. Requires macOS 14 or later."
+    }
+
+    @objc private func toggleWindowDividerEnhanced(_ sender: NSButton) {
+        Defaults.windowDividerEnhanced.enabled = sender.state == .on
+        WindowDividerManager.shared.clear()
+        if sender.state == .on {
+            LayoutHelperPermission.guideIfNeeded(for: .windowDivider) { [weak self] in
+                self?.refreshWindowDividerEnhanced()
+            }
+        }
+    }
+
+    @objc private func toggleFitBesideSnappedWindows(_ sender: NSButton) {
+        Defaults.fitBesideSnappedWindows.enabled = sender.state == .on
+        WindowSizeConstraints.shared.cancelPendingObservations()
+    }
+
+    @objc private func showWindowSizeLimits() {
+        if windowSizeLimitsController == nil { windowSizeLimitsController = WindowSizeLimitsWindowController() }
+        windowSizeLimitsController?.showWindow(self)
     }
 
     private func setVisibility(shown: Bool, ofView view: NSView, withConstraint constraint: NSLayoutConstraint, animated: Bool) {
@@ -1615,6 +1774,10 @@ extension SettingsViewController: NSTextFieldDelegate {
 
         ActiveSideSplitRatios.shared.resetAll()
     }
+}
+
+private final class SettingsDocumentView: NSView {
+    override var isFlipped: Bool { true }
 }
 
 private class TileGridLimitRow: NSStackView, NSTextFieldDelegate {

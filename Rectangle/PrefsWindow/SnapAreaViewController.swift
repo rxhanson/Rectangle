@@ -3,6 +3,78 @@
 import Cocoa
 
 class SnapAreaViewController: NSViewController {
+    private var layoutHelperCheckboxes: [NSButton] = []
+    private var layoutHelperPermissionLabel: NSTextField?
+    private var layoutHelperPermissionButton: NSButton?
+    private var layoutHelperExamplePopover: NSPopover?
+
+    @objc private func showLayoutHelperExample(_ sender: NSButton) {
+        let controller = NSViewController()
+        let screenshot = NSImageView()
+        screenshot.image = NSImage(named: "LayoutHelperExample")
+        screenshot.imageScaling = .scaleProportionallyUpOrDown
+        screenshot.setAccessibilityLabel("Layout Helper example: Notes is snapped on the left; choose Research or Tasks to fill the right side.")
+        screenshot.widthAnchor.constraint(equalToConstant: 560).isActive = true
+        screenshot.heightAnchor.constraint(equalToConstant: 325).isActive = true
+        let explanation = NSTextField(wrappingLabelWithString: "Snap a window, then choose another to fill the remaining space. Sample windows shown.\n\nThumbnails need Screen Recording access; icons and titles work without it.")
+        explanation.widthAnchor.constraint(equalToConstant: 560).isActive = true
+        explanation.setContentCompressionResistancePriority(.required, for: .vertical)
+        let content = NSStackView(views: [screenshot, explanation])
+        content.orientation = .vertical
+        content.alignment = .leading
+        content.spacing = 12
+        content.translatesAutoresizingMaskIntoConstraints = false
+        let container = NSView()
+        container.addSubview(content)
+        NSLayoutConstraint.activate([
+            content.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
+            content.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
+            content.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
+            content.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
+        ])
+        controller.view = container
+        let popover = NSPopover()
+        popover.behavior = .transient
+        popover.contentViewController = controller
+        popover.contentSize = container.fittingSize
+        layoutHelperExamplePopover = popover
+        popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .maxY)
+    }
+
+    @objc private func toggleLayoutHelper(_ sender: NSButton) {
+        switch sender.tag {
+        case 0: Defaults.layoutHelper.enabled = sender.state == .on
+        case 1: Defaults.layoutHelperKeyboard.enabled = sender.state == .on
+        default: Defaults.layoutHelperDenseGrids.enabled = sender.state == .on
+        }
+        LayoutHelperManager.shared.cancel()
+        if sender.tag == 0, sender.state == .on {
+            LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshLayoutHelperSettings() }
+        }
+        refreshLayoutHelperSettings()
+    }
+
+    @objc private func enableLayoutHelperPreviews(_ sender: NSButton) {
+        LayoutHelperManager.shared.cancel()
+        LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshLayoutHelperSettings() }
+        refreshLayoutHelperSettings()
+    }
+
+    private func refreshLayoutHelperSettings() {
+        let states = [Defaults.layoutHelper.userEnabled, Defaults.layoutHelperKeyboard.enabled, Defaults.layoutHelperDenseGrids.enabled]
+        for (index, checkbox) in layoutHelperCheckboxes.enumerated() {
+            checkbox.state = states[index] ? .on : .off
+            checkbox.isEnabled = index == 0 || states[0]
+        }
+        let supported = LayoutHelperPermission.previewsSupported
+        let allowed = LayoutHelperPermission.previewsAllowed
+        layoutHelperPermissionLabel?.isHidden = !states[0]
+        layoutHelperPermissionLabel?.stringValue = !supported
+            ? "Window thumbnails require macOS 14 or later."
+            : allowed ? "Window thumbnails enabled."
+            : "Thumbnails need Screen Recording access. Icons and titles work without it."
+        layoutHelperPermissionButton?.isHidden = !states[0] || !supported || allowed
+    }
     
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
     @IBOutlet weak var unsnapRestoreButton: NSButton!
@@ -127,6 +199,78 @@ class SnapAreaViewController: NSViewController {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        if let animationStack = blurFootprintCheckbox.superview as? NSStackView,
+           let optionsRow = animationStack.superview as? NSStackView,
+           let contentStack = optionsRow.superview as? NSStackView {
+            let section = NSStackView()
+            section.orientation = .vertical
+            section.alignment = .leading
+            section.spacing = 14
+            section.setAccessibilityIdentifier("layoutHelperSection")
+            let separator = NSBox()
+            separator.boxType = .separator
+            contentStack.addArrangedSubview(separator)
+            contentStack.addArrangedSubview(section)
+            separator.widthAnchor.constraint(equalTo: contentStack.widthAnchor).isActive = true
+            section.leadingAnchor.constraint(equalTo: optionsRow.leadingAnchor).isActive = true
+            section.trailingAnchor.constraint(equalTo: optionsRow.trailingAnchor).isActive = true
+
+            func checkbox(_ title: String, tag: Int) -> NSButton {
+                let button = NSButton(checkboxWithTitle: title, target: self, action: #selector(toggleLayoutHelper(_:)))
+                button.tag = tag
+                button.setContentCompressionResistancePriority(.required, for: .vertical)
+                layoutHelperCheckboxes.append(button)
+                return button
+            }
+            let master = checkbox("Layout Helper", tag: 0)
+            let example = NSButton(title: "See example…", target: self, action: #selector(showLayoutHelperExample(_:)))
+            example.bezelStyle = .rounded
+            let spacer = NSView()
+            spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            let header = NSStackView(views: [master, spacer, example])
+            header.orientation = .horizontal
+            header.alignment = .centerY
+            section.addArrangedSubview(header)
+            header.widthAnchor.constraint(equalTo: section.widthAnchor).isActive = true
+
+            func formRow(_ title: String, content: NSView) {
+                let label = NSTextField(labelWithString: title)
+                label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+                label.textColor = .secondaryLabelColor
+                label.widthAnchor.constraint(equalToConstant: 116).isActive = true
+                let row = NSStackView(views: [label, content])
+                row.orientation = .horizontal
+                row.alignment = .top
+                row.spacing = 16
+                row.edgeInsets = NSEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+                section.addArrangedSubview(row)
+                row.widthAnchor.constraint(equalTo: section.widthAnchor).isActive = true
+            }
+            let options = NSStackView(views: [checkbox("Keyboard and menu snaps", tag: 1),
+                                            checkbox("Grids with eight or more cells", tag: 2)])
+            options.orientation = .vertical
+            options.alignment = .leading
+            options.spacing = 8
+            formRow("Also enable for", content: options)
+
+            let permissionButton = NSButton(title: "Enable previews…", target: self, action: #selector(enableLayoutHelperPreviews(_:)))
+            permissionButton.bezelStyle = .rounded
+            permissionButton.setContentCompressionResistancePriority(.required, for: .vertical)
+            layoutHelperPermissionButton = permissionButton
+            let permissionLabel = NSTextField(wrappingLabelWithString: "")
+            permissionLabel.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+            permissionLabel.textColor = .secondaryLabelColor
+            permissionLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+            layoutHelperPermissionLabel = permissionLabel
+            let previews = NSStackView(views: [permissionButton, permissionLabel])
+            previews.orientation = .vertical
+            previews.alignment = .leading
+            previews.spacing = 6
+            formRow("Window previews", content: previews)
+            permissionLabel.widthAnchor.constraint(equalTo: previews.widthAnchor).isActive = true
+        }
+        refreshLayoutHelperSettings()
         configureBlurAppearance()
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
         unsnapRestoreButton.state = Defaults.unsnapRestore.userDisabled ? .off : .on
@@ -140,12 +284,14 @@ class SnapAreaViewController: NSViewController {
         Notification.Name.configImported.onPost(using: { [weak self] _ in
             self?.refreshWindowAnimationPreferences()
             self?.loadSnapAreas()
+            self?.refreshLayoutHelperSettings()
         })
         Notification.Name.defaultSnapAreas.onPost(using: { [weak self] _ in
             self?.loadSnapAreas()
         })
         Notification.Name.appWillBecomeActive.onPost() { [weak self] _ in
             self?.showHidePortrait()
+            self?.refreshLayoutHelperSettings()
         }
         Notification.Name.windowSnapping.onPost { [weak self] _ in
             self?.windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on
@@ -162,6 +308,7 @@ class SnapAreaViewController: NSViewController {
     // Only load the selects when the view appears, to fix a performance issue where switching to this tab was taking a long time to load
     var selectsLoaded = false
     override func viewWillAppear() {
+        refreshLayoutHelperSettings()
         refreshWindowAnimationPreferences()
         animateFootprintCheckbox.state = Defaults.footprintAnimationDurationMultiplier.value > 0 ? .on : .off
         if !selectsLoaded {

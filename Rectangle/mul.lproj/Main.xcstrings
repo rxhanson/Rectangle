@@ -1,6 +1,75 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Resize windows together" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resize windows together"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "联动调整窗口大小"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連動調整視窗大小"
+          }
+        }
+      }
+    },
+    "Drag the handle between two snapped windows to resize them together." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag the handle between two snapped windows to resize them together."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖动两个分屏窗口之间的手柄，同时调整它们的大小。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖移兩個分割視窗之間的控制柄，同時調整它們的大小。"
+          }
+        }
+      }
+    },
+    "Current window" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current window"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前視窗"
+          }
+        }
+      }
+    },
     "Blur appearance" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -46865,6 +46934,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bước chiều rộng (px)"
+          }
+        }
+      }
+    },
+    "windowPlacementFailedMessage" : {
+      "comment" : "Placement failed and restoration could not be confirmed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window could not fit the available space."
+          }
+        }
+      }
+    },
+    "windowPlacementRestoredMessage" : {
+      "comment" : "Failed placement was restored and verified",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window could not fit. Its previous position was restored."
+          }
+        }
+      }
+    },
+    "windowPlacementUnavailableMessage" : {
+      "comment" : "Known minimum prevented any window movement",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The window is too large for the available space. Its position is unchanged."
+          }
+        }
+      }
+    },
+    "windowPlacementWarningTitle" : {
+      "comment" : "Window placement warning title",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Window could not fit"
           }
         }
       }

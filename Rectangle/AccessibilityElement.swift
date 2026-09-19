@@ -141,8 +141,28 @@ class AccessibilityElement {
     }
 
     var minimumSize: CGSize? {
+        WindowSizeConstraints.shared.minimum(for: self, reported: reportedMinimumSize)
+    }
+
+    var reportedMinimumSize: CGSize? {
         wrappedElement.getWrappedValue(.minSize)
             ?? wrappedElement.getWrappedValue(.minimumSize)
+    }
+
+    /// Structural metadata only: never read text values or document content.
+    /// An incomplete hierarchy cannot justify restoring a different live window.
+    var sizeConstraintIdentity: (identifier: String?, role: String, subrole: String, structure: [String]) {
+        let identifier = wrappedElement.getValue(.identifier) as? String
+        let subrole = wrappedElement.getValue(.subrole) as? String ?? ""
+        let children = childElements
+        let structure: [String]
+        if let children, !children.isEmpty, children.count <= 32 {
+            structure = children.map {
+                [$0.role?.rawValue ?? "", $0.wrappedElement.getValue(.subrole) as? String ?? "",
+                 $0.wrappedElement.getValue(.identifier) as? String ?? ""].joined(separator: "|")
+            }.sorted()
+        } else { structure = [] }
+        return (identifier, role?.rawValue ?? "", subrole, structure)
     }
     
     var frame: CGRect {
@@ -154,6 +174,7 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+        let before = self.frame
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
             || NSWorkspace.shared.isSwitchControlEnabled
@@ -175,9 +196,13 @@ class AccessibilityElement {
                 size = frame.size
             }
         )
+        if isWindow == true, isSystemDialog != true, isResizable() {
+            WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame)
+        }
     }
 
-    /// Holds the Enhanced UI policy for the transition; returns its cleanup closure.
+    /// Keep the existing Enhanced UI policy active for the whole transition,
+    /// instead of toggling application accessibility on every timer tick.
     func beginAnimatedAdjustment() -> () -> Void {
         let appElement = applicationElement
         let restore = Defaults.enhancedUI.value.beginWindowAdjustment(
@@ -187,7 +212,7 @@ class AccessibilityElement {
             readEnhancedUI: { appElement?.enhancedUserInterface },
             writeEnhancedUI: { appElement?.enhancedUserInterface = $0 }
         )
-        // Bound AX calls so an unresponsive app cannot stall the animation.
+        // Avoid a long stream of blocking requests to an unresponsive app.
         setMessagingTimeout(0.05)
         return { [self] in
             setMessagingTimeout(0)
@@ -197,13 +222,28 @@ class AccessibilityElement {
 
     /// Writes one frame without readback; completion handles the final placement.
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool {
+        setAnimationFrame(frame, resizeOnly: resizeOnly, positionFirst: false)
+    }
+
+    /// A divider acknowledgment step must not resend an already accepted size.
+    func setDividerPosition(_ point: CGPoint) -> Bool {
+        guard WindowAnimator.shared.destination(for: self) == nil else { return false }
+        var point = point
+        guard let value = AXValueCreate(.cgPoint, &point) else { return false }
+        return AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, value) == .success
+    }
+
+    func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false, positionFirst: Bool) -> Bool {
         var size = frame.size
         var position = frame.origin
         guard let sizeValue = AXValueCreate(.cgSize, &size),
               let positionValue = AXValueCreate(.cgPoint, &position) else { return false }
+        if positionFirst && !resizeOnly {
+            guard AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return false }
+        }
         guard AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success else { return false }
         // Native dragging owns position during size restoration.
-        if !resizeOnly {
+        if !resizeOnly && !positionFirst {
             guard AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return false }
         }
         return true

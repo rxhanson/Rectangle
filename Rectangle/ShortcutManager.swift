@@ -206,6 +206,7 @@ class ShortcutManager {
     private func execute(_ originalParameters: ExecutionParameters) {
         var parameters = originalParameters
 
+        LayoutHelperManager.shared.cancel()
         if MultiWindowManager.execute(parameters: parameters) {
             return
         }

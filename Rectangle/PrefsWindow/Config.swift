@@ -51,7 +51,8 @@ extension Defaults {
         return try? decoder.decode(Config.self, from: jsonData)
     }
     
-    static func load(fileUrl: URL, notificationCenter: NotificationCenter = .default) {
+    static func load(fileUrl: URL, notificationCenter: NotificationCenter = .default,
+                     shortcutDefaults: UserDefaults = .standard) {
         guard let dictTransformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName)) else { return }
         
         // Size cap: legitimate configs are ~tens of KB; refuse anything that
@@ -65,7 +66,8 @@ extension Defaults {
               let config = convert(jsonString: jsonString) else { return }
 
         for availableDefault in Defaults.array {
-            if let codedDefault = config.defaults[availableDefault.key] {
+            if let codedDefault = config.defaults[availableDefault.key]
+                ?? Defaults.legacyLayoutHelperKeys[availableDefault.key].flatMap({ config.defaults[$0] }) {
                 availableDefault.load(from: codedDefault)
             }
         }
@@ -75,18 +77,18 @@ extension Defaults {
             if let importedShortcut, importedShortcut.keyCode >= 0 {
                 let shortcut = importedShortcut.toMASSHortcut()
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
-                UserDefaults.standard.setValue(dictValue, forKey: action.name)
+                shortcutDefaults.setValue(dictValue, forKey: action.name)
             } else {
-                UserDefaults.standard.removeObject(forKey: action.name)
+                shortcutDefaults.removeObject(forKey: action.name)
             }
         }
         for defaultsKey in TodoManager.defaultsKeys + StackBadgeManager.defaultsKeys {
             if let importedShortcut = config.shortcuts[defaultsKey], importedShortcut.keyCode >= 0 {
                 let shortcut = importedShortcut.toMASSHortcut()
                 let dictValue = dictTransformer.reverseTransformedValue(shortcut)
-                UserDefaults.standard.setValue(dictValue, forKey: defaultsKey)
+                shortcutDefaults.setValue(dictValue, forKey: defaultsKey)
             } else {
-                UserDefaults.standard.removeObject(forKey: defaultsKey)
+                shortcutDefaults.removeObject(forKey: defaultsKey)
             }
         }
         
