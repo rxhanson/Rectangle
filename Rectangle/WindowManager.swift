@@ -60,7 +60,10 @@ class WindowManager {
         WindowSizeConstraints.shared.cancelPendingObservations()
         let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
         WindowDividerManager.shared.interrupt()
-        let layoutHelperToken = LayoutHelperManager.shared.cancel()
+        let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
+            windowID: parameters.windowId, screen: parameters.screen)
+        var acceptedHelperPrefetch = false
+        defer { if !acceptedHelperPrefetch { LayoutHelperManager.shared.cancelPrefetch() } }
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
             NSSound.beep()
@@ -254,10 +257,15 @@ class WindowManager {
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
             checkSizeConstraintWarning(result: resultParameters)
+            acceptedHelperPrefetch = true
+            LayoutHelperManager.shared.prefetchForSnap(result: resultParameters)
             LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
 
             return
         }
+
+        acceptedHelperPrefetch = true
+        LayoutHelperManager.shared.prefetchForSnap(result: resultParameters)
 
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.

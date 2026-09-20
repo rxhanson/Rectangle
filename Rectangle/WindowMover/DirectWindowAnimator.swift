@@ -86,6 +86,7 @@ final class DirectWindowAnimator {
     private var animation: WindowFrameAnimation?
     private var pendingRelease: PendingRelease?
     private var pendingSettlement: PendingSettlement?
+    private let capturePauseID = UUID()
     private var timer: Timer?
     private var displayLinkCleanup: (() -> Void)?
     private var screenObserver: NSObjectProtocol?
@@ -910,7 +911,10 @@ final class DirectWindowAnimator {
         pending.completion(frame)
     }
 
+    deinit { LayoutHelperCaptureGate.shared.end(capturePauseID) }
+
     private func stopDriving() {
+        LayoutHelperCaptureGate.shared.end(capturePauseID)
         displayLinkCleanup?()
         displayLinkCleanup = nil
         if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
@@ -932,6 +936,7 @@ final class DirectWindowAnimator {
     private func startDriving() {
         guard automaticallyAdvances else { return }
         stopDriving()
+        LayoutHelperCaptureGate.shared.begin(capturePauseID)
         let destination = helperDestination ?? pendingRelease?.destination ?? pendingSettlement?.destination ?? keyboardSession?.motion.destination ?? animation?.destination
         let screen = NSScreen.screens.max { first, second in
             func area(_ screen: NSScreen) -> CGFloat {

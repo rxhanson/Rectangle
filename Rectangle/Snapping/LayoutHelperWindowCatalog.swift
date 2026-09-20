@@ -51,12 +51,22 @@ final class LayoutHelperWindowCatalog {
     private var generation = 0
     private var observers: [pid_t: AXObserver] = [:]
     private var invalidation: DispatchWorkItem?
+    private var updateDelivery: DispatchWorkItem?
+    private var refreshID = 0
+    private var enumerating = false
+    private var cancellation = Cancellation()
+    private final class Cancellation {
+        private let lock = NSLock()
+        private var cancelled = false
+        var isCancelled: Bool { lock.lock(); defer { lock.unlock() }; return cancelled }
+        func cancel() { lock.lock(); cancelled = true; lock.unlock() }
+    }
     private let windowList: () -> [WindowInfo]
     private(set) var isSuspended = false
     var didUpdate: (() -> Void)?
-    var isRefreshing: Bool { !running.isEmpty || !waiting.isEmpty }
+    var isRefreshing: Bool { enumerating || !running.isEmpty || !waiting.isEmpty }
 
-    init(windowList: @escaping () -> [WindowInfo] = { WindowUtil.getWindowList(forceRefresh: true) }) {
+    init(windowList: @escaping () -> [WindowInfo] = { WindowUtil.getWindowList(forceRefresh: true, cacheResult: false) }) {
         self.windowList = windowList
     }
 
@@ -82,6 +92,9 @@ final class LayoutHelperWindowCatalog {
 
     private func discardPendingWork() {
         generation += 1
+        refreshID += 1; enumerating = false
+        cancellation.cancel(); cancellation = Cancellation()
+        updateDelivery?.cancel(); updateDelivery = nil
         waiting.removeAll(); continuations.removeAll(); demands.removeAll()
         invalidation?.cancel(); invalidation = nil
         for observer in observers.values {
@@ -101,18 +114,39 @@ final class LayoutHelperWindowCatalog {
         guard !isSuspended else { return }
         WindowAnimationDiagnostics.event("helper-catalog-refresh")
         let ignored = Set((Defaults.disabledApps.typedValue ?? []) + (Defaults.fullIgnoreBundleIds.typedValue ?? []))
-        let infos = windowList().filter {
-            $0.level == 0 && $0.pid != getpid() && WindowAnimationGeometry.valid($0.frame)
-                && !(Defaults.todo.userEnabled && TodoManager.cachedWindowID == $0.id)
+        let excludedTodo = Defaults.todo.userEnabled ? TodoManager.cachedWindowID : nil
+        // AppKit state is copied on its owning thread before background enumeration.
+        let appInfo = NSWorkspace.shared.runningApplications.reduce(into: [pid_t: (TimeInterval, String, String)]()) { result, app in
+            guard !app.isTerminated, !app.isHidden, app.activationPolicy == .regular,
+                  !ignored.contains(app.bundleIdentifier ?? ""), let launch = WindowProcessIdentity.launchTime(for: app.processIdentifier) else { return }
+            result[app.processIdentifier] = (launch, app.bundleIdentifier ?? "", app.localizedName ?? "Window")
         }
-        let groups = Dictionary(grouping: infos, by: \.pid)
-        applications = groups.reduce(into: [:]) { result, group in
-            guard let app = NSRunningApplication(processIdentifier: group.key), !app.isTerminated,
-                  !app.isHidden, app.activationPolicy == .regular, let launch = WindowProcessIdentity.launchTime(for: group.key),
-                  !ignored.contains(app.bundleIdentifier ?? "") else { return }
-            result[group.key] = Application(pid: group.key, launch: launch,
-                bundle: app.bundleIdentifier ?? "", name: app.localizedName ?? "Window", infos: group.value)
+        refreshID += 1
+        let request = refreshID
+        let epoch = generation
+        let cancellation = cancellation
+        let windowList = windowList
+        enumerating = true
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard !cancellation.isCancelled else { return }
+            let infos = windowList().filter {
+                $0.level == 0 && $0.pid != getpid() && WindowAnimationGeometry.valid($0.frame) && $0.id != excludedTodo
+            }
+            let applications = Dictionary(grouping: infos, by: \.pid).reduce(into: [pid_t: Application]()) { result, group in
+                guard let app = appInfo[group.key] else { return }
+                result[group.key] = Application(pid: group.key, launch: app.0, bundle: app.1, name: app.2, infos: group.value)
+            }
+            guard !cancellation.isCancelled else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.generation == epoch, self.refreshID == request, !self.isSuspended else { return }
+                self.enumerating = false
+                self.apply(infos: infos, applications: applications)
+            }
         }
+    }
+
+    private func apply(infos: [WindowInfo], applications: [pid_t: Application]) {
+        self.applications = applications
         order = infos.filter { applications[$0.pid] != nil }.map(\.id)
         for (pid, observer) in observers where applications[pid] == nil {
             CFRunLoopRemoveSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .commonModes)
@@ -134,6 +168,7 @@ final class LayoutHelperWindowCatalog {
             applications[pid] != nil && !running.contains(pid) && seen.insert(pid).inserted
                 && (failures[pid]?.retryAt ?? 0) <= now
         }
+        scheduleUpdate()
         pump()
     }
 
@@ -156,11 +191,12 @@ final class LayoutHelperWindowCatalog {
             guard let application = continuations.removeValue(forKey: pid) ?? applications[pid],
                   running.insert(pid).inserted else { continue }
             let epoch = generation
+            let cancellation = cancellation
             let observe = observers[pid] == nil
             let context = Unmanaged.passUnretained(self).toOpaque()
             let preferred = demands.keys.first(where: { snapshots[$0]?.pid == pid }).flatMap { snapshots[$0]?.element }
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                let batch = Self.scan(application, observe: observe, context: context, preferred: preferred)
+                let batch = Self.scan(application, observe: observe, context: context, preferred: preferred, cancellation: cancellation)
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
                     self.running.remove(pid)
@@ -194,7 +230,7 @@ final class LayoutHelperWindowCatalog {
                             let fresh = batch.windows.first { $0.id == id }
                             callbacks.forEach { $0(fresh) }
                         }
-                        self.didUpdate?()
+                        self.scheduleUpdate()
                     }
                     let remaining = application.infos.filter { !batch.checked.contains($0.id) && live.contains($0.id) }
                     if epoch == self.generation, !batch.timedOut, !batch.checked.isEmpty, !remaining.isEmpty {
@@ -210,6 +246,18 @@ final class LayoutHelperWindowCatalog {
         }
     }
 
+    private func scheduleUpdate() {
+        guard updateDelivery == nil else { return }
+        let epoch = generation
+        let work = DispatchWorkItem { [weak self] in
+            guard let self, self.generation == epoch else { return }
+            self.updateDelivery = nil
+            self.didUpdate?()
+        }
+        updateDelivery = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0 / 60.0, execute: work)
+    }
+
     private func invalidate() {
         guard !isSuspended, didUpdate != nil, invalidation == nil else { return }
         let work = DispatchWorkItem { [weak self] in
@@ -222,7 +270,8 @@ final class LayoutHelperWindowCatalog {
     }
 
     private static func scan(_ application: Application, observe: Bool, context: UnsafeMutableRawPointer,
-                             preferred: AXUIElement?) -> Batch {
+                             preferred: AXUIElement?, cancellation: Cancellation) -> Batch {
+        guard !cancellation.isCancelled else { return Batch(windows: [], checked: [], timedOut: false) }
         let reader = AccessibilityReadBatch(budget: 0.15)
         let app = AXUIElementCreateApplication(application.pid)
         guard let elements = reader.value(app, kAXWindowsAttribute) as? [AXUIElement] else {
@@ -233,7 +282,7 @@ final class LayoutHelperWindowCatalog {
         var matched = Set<CGWindowID>()
         let ordered = preferred.map { preferred in [preferred] + elements.filter { !CFEqual($0, preferred) } } ?? elements
         for element in ordered {
-            guard reader.available else { break }
+            guard reader.available, !cancellation.isCancelled else { break }
             // ID lookup is an application RPC too and shares the batch budget.
             let id = reader.windowID(element)
             guard let info = application.infos.first(where: { $0.id == id }) else { continue }
@@ -254,7 +303,7 @@ final class LayoutHelperWindowCatalog {
             let minimum: CGSize? = reader.wrapped(element, "AXMinSize", type: .cgSize)
                 ?? reader.wrapped(element, "AXMinimumSize", type: .cgSize)
             let resizable = reader.settable(element, kAXSizeAttribute)
-            guard reader.available else { break }
+            guard reader.available, !cancellation.isCancelled else { break }
             result.append(LayoutHelperWindowSnapshot(id: info.id, pid: application.pid, launch: application.launch,
                 bundleID: application.bundle, title: title.flatMap { $0.isEmpty ? nil : $0 } ?? application.name,
                 frame: frame, reportedMinimum: minimum, resizable: resizable, element: element,
@@ -264,7 +313,7 @@ final class LayoutHelperWindowCatalog {
             checked.formUnion(application.infos.map(\.id).filter { !matched.contains($0) })
         }
         var observer: AXObserver?
-        if observe, reader.available {
+        if observe, reader.available, !cancellation.isCancelled {
             let callback: AXObserverCallback = { _, _, _, context in
                 guard let context else { return }
                 Unmanaged<LayoutHelperWindowCatalog>.fromOpaque(context).takeUnretainedValue().invalidate()

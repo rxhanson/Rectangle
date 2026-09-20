@@ -47,6 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        _ = LayoutHelperPreviewResolution.shared
         Defaults.migrateLayoutHelperPreferences()
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()

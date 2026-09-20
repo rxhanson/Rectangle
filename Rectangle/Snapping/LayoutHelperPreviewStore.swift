@@ -43,24 +43,62 @@ final class LayoutHelperImageCache<Key: Hashable> {
 
 /// All entry points run on the main thread. In-flight calls retain their slots
 /// until the system actually returns, even when the desired queue is replaced.
+/// Main-thread animation ownership. Waiting captures retain demand without polling
+/// or a fixed delay, and recheck ownership after every asynchronous wake-up.
+final class LayoutHelperCaptureGate {
+    static let shared = LayoutHelperCaptureGate()
+    private var owners = Set<UUID>()
+    private var waiters: [UUID: CheckedContinuation<Void, Never>] = [:]
+    var isPaused: Bool { !owners.isEmpty }
+
+    func begin(_ owner: UUID) { owners.insert(owner) }
+    func end(_ owner: UUID) {
+        owners.remove(owner)
+        guard owners.isEmpty else { return }
+        let pending = waiters.values
+        waiters.removeAll()
+        for waiter in pending { waiter.resume() }
+    }
+
+    @MainActor func waitUntilIdle() async {
+        while isPaused && !Task.isCancelled {
+            let id = UUID()
+            await withTaskCancellationHandler(operation: {
+                await withCheckedContinuation { continuation in
+                    if Task.isCancelled || !isPaused { continuation.resume() }
+                    else { waiters[id] = continuation }
+                }
+            }, onCancel: { [weak self] in
+                Task { @MainActor in self?.waiters.removeValue(forKey: id)?.resume() }
+            })
+        }
+    }
+}
+
 final class LayoutHelperCaptureQueue<Key: Hashable, Value> {
     var load: (Key) async -> Value?
     var completed: (Key, Value) -> Void = { _, _ in }
+    var failed: (Key) -> Void = { _ in }
     private var waiting: [Key] = []
     private var running = Set<Key>()
     private var runningGeneration: [Key: Int] = [:]
     private var generation = 0
+    private var tasks: [Key: Task<Void, Never>] = [:]
     private(set) var activeCount = 0
     init(load: @escaping (Key) async -> Value?) { self.load = load }
 
     func replace(with keys: [Key]) {
         var seen = Set<Key>()
-        waiting = keys.filter { runningGeneration[$0] != generation && seen.insert($0).inserted }
+        let desired = Set(keys)
+        waiting.removeAll { !desired.contains($0) }
+        seen.formUnion(waiting)
+        waiting.append(contentsOf: keys.filter { runningGeneration[$0] != generation && seen.insert($0).inserted })
         pump()
     }
     func stop(discardResults: Bool = false) {
         waiting.removeAll()
-        if discardResults { generation += 1 }
+        generation += 1
+        for task in tasks.values { task.cancel() }
     }
     private func pump() {
         while activeCount < 2, let index = waiting.firstIndex(where: { !running.contains($0) }) {
@@ -68,14 +106,63 @@ final class LayoutHelperCaptureQueue<Key: Hashable, Value> {
             running.insert(key); activeCount += 1
             let epoch = generation
             runningGeneration[key] = epoch
-            Task { @MainActor [weak self] in
+            tasks[key] = Task { @MainActor [weak self] in
                 guard let self else { return }
-                let value = await self.load(key)
+                let value = Task.isCancelled ? nil : await self.load(key)
+                self.tasks[key] = nil
                 self.running.remove(key); self.runningGeneration[key] = nil; self.activeCount -= 1
-                if self.generation == epoch, let value { self.completed(key, value) }
+                if !Task.isCancelled, self.generation == epoch {
+                    if let value { self.completed(key, value) } else { self.failed(key) }
+                }
                 self.pump()
             }
         }
+    }
+}
+
+/// One capture budget per display, independent of candidate count and card layout.
+final class LayoutHelperPreviewResolution {
+    static let shared = LayoutHelperPreviewResolution()
+    private var sizes: [CGDirectDisplayID: CGSize] = [:]
+    private struct Input: Equatable {
+        let size: CGSize
+        let scale: CGFloat
+    }
+    private var inputs: [CGDirectDisplayID: Input] = [:]
+    private var observer: NSObjectProtocol?
+
+    static func limit(for available: CGSize, backingScale: CGFloat = 1) -> CGSize {
+        let region = CGSize(width: available.width, height: available.height / 2)
+        let inset = LayoutHelperPreviewLayout.inset(for: region)
+        let scale = backingScale >= 2 ? CGFloat(2) : 1
+        return CGSize(width: max(1, min(420, floor(region.width - inset * 2 - 40))) * scale, height: 260 * scale)
+    }
+
+    private init() {
+        refresh()
+        observer = NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
+            object: nil, queue: .main) { [weak self] _ in self?.refresh() }
+    }
+    deinit { if let observer { NotificationCenter.default.removeObserver(observer) } }
+    func refresh() {
+        var live = Set<CGDirectDisplayID>()
+        for screen in NSScreen.screens {
+            guard let id = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else { continue }
+            let key = id.uint32Value
+            live.insert(key)
+            let input = Input(size: screen.visibleFrame.size, scale: screen.backingScaleFactor)
+            if inputs[key] != input {
+                inputs[key] = input
+                sizes[key] = Self.limit(for: input.size, backingScale: input.scale)
+            }
+        }
+        sizes = sizes.filter { live.contains($0.key) }
+        inputs = inputs.filter { live.contains($0.key) }
+    }
+    func limit(on screen: NSScreen) -> CGSize {
+        guard let id = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber,
+              let size = sizes[id.uint32Value] else { return Self.limit(for: screen.visibleFrame.size, backingScale: screen.backingScaleFactor) }
+        return size
     }
 }
 
@@ -85,12 +172,24 @@ struct LayoutHelperPreviewKey: Hashable {
     let launch: TimeInterval
     let width: Int
     let height: Int
+    var captureWidth: Int = 420
+    var captureHeight: Int = 260
+    var captureScale: CGFloat = 1
+
+    func on(_ screen: NSScreen) -> Self {
+        let size = LayoutHelperPreviewResolution.shared.limit(on: screen)
+        var key = self
+        key.captureWidth = Int(size.width); key.captureHeight = Int(size.height)
+        key.captureScale = screen.backingScaleFactor >= 2 ? 2 : 1
+        return key
+    }
 }
 
 final class LayoutHelperPreviewStore {
     private let cache = LayoutHelperImageCache<LayoutHelperPreviewKey>()
     private var wanted = Set<LayoutHelperPreviewKey>()
     private var deliver: ((LayoutHelperPreviewKey, NSImage) -> Void)?
+    private var failureDelivery: ((LayoutHelperPreviewKey) -> Void)?
     private var expiry: DispatchWorkItem?
     private var pressure: DispatchSourceMemoryPressure?
     private var contentTask: Any?
@@ -113,6 +212,10 @@ final class LayoutHelperPreviewStore {
                 self.deliver?(key, NSImage(cgImage: image, size: NSSize(width: image.width, height: image.height)))
             }
             self.scheduleExpiry()
+        }
+        queue.failed = { [weak self] key in
+            guard let self, self.wanted.contains(key) else { return }
+            self.failureDelivery?(key)
         }
         return queue
     }()
@@ -138,21 +241,22 @@ final class LayoutHelperPreviewStore {
         guard let image = cache.image(for: key, now: Date.timeIntervalSinceReferenceDate) else { return nil }
         return NSImage(cgImage: image, size: NSSize(width: image.width, height: image.height))
     }
-    func request(_ keys: [LayoutHelperPreviewKey], deliver: ((LayoutHelperPreviewKey, NSImage) -> Void)? = nil) {
+    func request(_ keys: [LayoutHelperPreviewKey], onFailure: ((LayoutHelperPreviewKey) -> Void)? = nil, deliver: ((LayoutHelperPreviewKey, NSImage) -> Void)? = nil) {
         guard #available(macOS 14, *), !suspended, Defaults.layoutHelper.userEnabled,
               LayoutHelperPermission.previewsAllowed else { clear(); return }
         let now = Date.timeIntervalSinceReferenceDate
-        self.wanted = Set(keys); self.deliver = deliver
+        self.wanted = Set(keys); self.deliver = deliver; self.failureDelivery = onFailure
         cache.prune(now: now)
         failures = failures.filter { now - $0.value < 5 }
+        for key in keys where failures[key] != nil && !cache.isFresh(key, now: now) { onFailure?(key) }
         queue.replace(with: keys.filter { !cache.isFresh($0, now: now) && failures[$0] == nil })
     }
     func stop() {
-        wanted.removeAll(); deliver = nil; queue.stop()
+        wanted.removeAll(); deliver = nil; failureDelivery = nil; queue.stop()
         scheduleExpiry()
     }
     func clear() {
-        wanted.removeAll(); deliver = nil; queue.stop(discardResults: true)
+        wanted.removeAll(); deliver = nil; failureDelivery = nil; queue.stop(discardResults: true)
         cache.removeAll(); failures.removeAll(); contentTask = nil; expiry?.cancel()
     }
     func suspend(_ reason: String) { suspensionReasons.insert(reason); clear() }
@@ -167,6 +271,8 @@ final class LayoutHelperPreviewStore {
         DispatchQueue.main.asyncAfter(deadline: .now() + 120, execute: work)
     }
     @MainActor @available(macOS 14, *) private func capture(_ key: LayoutHelperPreviewKey) async -> CGImage? {
+        await LayoutHelperCaptureGate.shared.waitUntilIdle()
+        guard !Task.isCancelled else { return nil }
         let now = Date.timeIntervalSinceReferenceDate
         if contentTask == nil || now - contentDate > 2 {
             contentDate = now
@@ -176,19 +282,24 @@ final class LayoutHelperPreviewStore {
               let content = await task.value,
               let window = content.windows.first(where: { $0.windowID == key.id && $0.owningApplication?.processID == key.pid }),
               WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
-              !suspended, Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsAllowed else { return nil }
-        let config = Self.configuration(for: window.frame.size)
+              !Task.isCancelled, !suspended, Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsAllowed else { return nil }
+        await LayoutHelperCaptureGate.shared.waitUntilIdle()
+        guard !Task.isCancelled, !suspended, Defaults.layoutHelper.userEnabled,
+              LayoutHelperPermission.previewsAllowed else { return nil }
+        let config = Self.configuration(for: window.frame.size, limit: CGSize(width: key.captureWidth, height: key.captureHeight), sourceScale: key.captureScale)
         do {
-            return try await SCScreenshotManager.captureImage(contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: config)
+            let image = try await SCScreenshotManager.captureImage(contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: config)
+            return Task.isCancelled ? nil : image
         } catch {
+            guard !Task.isCancelled else { return nil }
             failures[key] = Date.timeIntervalSinceReferenceDate
             return nil
         }
     }
 
-    @available(macOS 14, *) static func configuration(for size: CGSize) -> SCStreamConfiguration {
+    @available(macOS 14, *) static func configuration(for size: CGSize, limit: CGSize = CGSize(width: 420, height: 260), sourceScale: CGFloat = 1) -> SCStreamConfiguration {
         let config = SCStreamConfiguration()
-        let scale = min(1, 640 / max(1, size.width), 400 / max(1, size.height))
+        let scale = min(sourceScale, limit.width / max(1, size.width), limit.height / max(1, size.height))
         config.width = max(1, Int(size.width * scale))
         config.height = max(1, Int(size.height * scale))
         config.showsCursor = false

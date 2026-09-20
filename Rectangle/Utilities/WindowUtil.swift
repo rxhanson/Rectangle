@@ -15,8 +15,8 @@ class WindowUtil {
         return frame
     }
     
-    static func getWindowList(ids: [CGWindowID]? = nil, all: Bool = false, forceRefresh: Bool = false) -> [WindowInfo] {
-        if !forceRefresh, let infos = windowListCache[ids] {
+    static func getWindowList(ids: [CGWindowID]? = nil, all: Bool = false, forceRefresh: Bool = false, cacheResult: Bool = true) -> [WindowInfo] {
+        if cacheResult, !forceRefresh, let infos = windowListCache[ids] {
             return infos
         }
         var infos = [WindowInfo]()
@@ -57,7 +57,7 @@ class WindowUtil {
                 infos.append(info)
             }
         }
-        windowListCache[ids] = infos
+        if cacheResult { windowListCache[ids] = infos }
         return infos
     }
 }

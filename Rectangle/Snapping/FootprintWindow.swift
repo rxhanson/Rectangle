@@ -178,6 +178,7 @@ class FootprintWindow: NSWindow {
     private var showing = false
     private var frameAnimation: WindowFrameAnimation?
     private var fade: Fade?
+    private let capturePauseID = UUID()
     private var timer: Timer?
 
     private struct Fade {
@@ -262,6 +263,7 @@ class FootprintWindow: NSWindow {
     }
 
     deinit {
+        LayoutHelperCaptureGate.shared.end(capturePauseID)
         timer?.invalidate()
         if let shadowWindow {
             removeChildWindow(shadowWindow)
@@ -471,6 +473,7 @@ class FootprintWindow: NSWindow {
         frameAnimation?.cancel()
         timer?.invalidate()
         timer = nil
+        LayoutHelperCaptureGate.shared.end(capturePauseID)
         shadowWindow?.orderOut(nil)
         super.close()
     }
@@ -487,6 +490,7 @@ class FootprintWindow: NSWindow {
     }
 
     private func startTimer() {
+        LayoutHelperCaptureGate.shared.begin(capturePauseID)
         guard timer == nil else { return }
         let timer = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
             guard let self else { return }
@@ -511,6 +515,7 @@ class FootprintWindow: NSWindow {
 
     private func stopTimerIfIdle() {
         if frameAnimation == nil && fade == nil {
+            LayoutHelperCaptureGate.shared.end(capturePauseID)
             timer?.invalidate()
             timer = nil
         }

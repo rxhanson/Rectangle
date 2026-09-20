@@ -333,6 +333,7 @@ class SnappingManager {
         case .keyDown:
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
+            LayoutHelperManager.shared.cancelPrefetch()
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
@@ -356,7 +357,7 @@ class SnappingManager {
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
-            LayoutHelperManager.shared.cancelPrefetch()
+            var committedSnap = false
             nativeGesture.end()
             traceNativeInput(event, phase: "up")
             if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
@@ -369,6 +370,7 @@ class SnappingManager {
             if let currentSnapArea = self.currentSnapArea {
                 nativeSizeRestore = nil
                 dismissSnapPreviewForCommit()
+                committedSnap = true
                 currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
                 self.currentSnapArea = nil
             } else {
@@ -385,12 +387,14 @@ class SnappingManager {
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
                         dismissSnapPreviewForCommit()
                         if canSnap(event) {
+                            committedSnap = true
                             snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
                         }
                         self.currentSnapArea = nil
                     }
                 }
             }
+            if !committedSnap { LayoutHelperManager.shared.cancelPrefetch() }
             finishNativeSizeRestore()
             windowElement = nil
             windowId = nil
