@@ -68,7 +68,7 @@ final class WindowSizeLimitsWindowController: NSWindowController, NSOutlineViewD
         buttons.orientation = .horizontal
         buttons.distribution = .fill
         buttons.spacing = 8
-        for (id, title, width) in [("window", "Application / Window".localized, 300.0), ("minimum", "Minimum Size".localized, 130.0), ("reuse", "Remembered For".localized, 240.0)] {
+        for (id, title, width) in [("window", "Application / Window".localized, 300.0), ("minimum", "Observed Size".localized, 130.0), ("reuse", "Observed For".localized, 240.0)] {
             let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(id))
             column.title = title; column.width = width; column.minWidth = id == "window" ? 190 : 100
             outline.addTableColumn(column)
@@ -163,17 +163,17 @@ final class WindowSizeLimitsWindowController: NSWindowController, NSOutlineViewD
             let record = row.record
             switch tableColumn?.identifier.rawValue {
             case "window":
-                // Live titles help distinguish siblings, but are never saved.
-                let live = NSRunningApplication(processIdentifier: record.identity.pid)
-                let title = live?.launchDate?.timeIntervalSinceReferenceDate == record.identity.launch
-                    ? AccessibilityElement.getWindowElement(record.identity.windowID)?.title : nil
+                // WindowServer titles avoid synchronously querying a slow app
+                // while drawing the management table. Titles are never saved.
+                let rows = WindowProcessIdentity.launchTime(for: record.identity.pid) == record.identity.launch
+                    ? CGWindowListCopyWindowInfo(.optionIncludingWindow, record.identity.windowID) as? [[String: Any]] : nil
+                let title = rows?.first?[kCGWindowName as String] as? String
                 text = title?.isEmpty == false ? title! : String(format: "Window %u".localized, record.identity.windowID)
             case "minimum":
                 let size = record.evidence.learned
                 text = "\(size.width > 0 ? String(Int(size.width.rounded())) : "—") × \(size.height > 0 ? String(Int(size.height.rounded())) : "—") pt"
             default:
                 if !WindowSizeConstraints.shared.rememberLimits { text = "10 minutes".localized }
-                else if record.identity.identifier != nil && !record.identity.structure.isEmpty { text = "Identifiable windows".localized }
                 else { text = "This open window".localized }
             }
         } else { return nil }

@@ -215,6 +215,8 @@
 		F7B6C43BB57F8064F49DDBB6 /* BottomLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */; };
 		FA34D0FF2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA34D0FE2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift */; };
 		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
+		BC1900000000000000000002 /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1900000000000000000001 /* WindowPlacementCoordinator.swift */; };
+		BC1900000000000000000012 /* LayoutHelperWindowCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1900000000000000000011 /* LayoutHelperWindowCatalog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -455,6 +457,8 @@
 		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
 		de0950b8b00f40308934a523 /* JSONDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDefaultTests.swift; sourceTree = "<group>"; };
+		BC1900000000000000000001 /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPlacementCoordinator.swift; sourceTree = "<group>"; };
+		BC1900000000000000000011 /* LayoutHelperWindowCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutHelperWindowCatalog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -631,6 +635,7 @@
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
 				AC0100010000000000000002 /* WindowAnimator.swift */,
 				AC0200010000000000000002 /* DirectWindowAnimator.swift */,
+				BC1900000000000000000001 /* WindowPlacementCoordinator.swift */,
 				AC0200030000000000000002 /* WindowAnimationCurves.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
 				98B3559723CE025700E410E0 /* FixedSizeWindowMover.swift */,
@@ -801,6 +806,7 @@
 				AB5100000000000000000001 /* LayoutHelperLayout.swift */,
 				AB5100000000000000000011 /* LayoutHelperPanel.swift */,
 				AB5100000000000000000021 /* LayoutHelperManager.swift */,
+				BC1900000000000000000011 /* LayoutHelperWindowCatalog.swift */,
 				AB5100000000000000000031 /* LayoutHelperPermission.swift */,
 				AB5100000000000000000041 /* LayoutHelperPreviewStore.swift */,
 				AB5100000000000000000071 /* WindowDividerManager.swift */,
@@ -1032,6 +1038,7 @@
 				AB5100000000000000000002 /* LayoutHelperLayout.swift in Sources */,
 				AB5100000000000000000012 /* LayoutHelperPanel.swift in Sources */,
 				AB5100000000000000000022 /* LayoutHelperManager.swift in Sources */,
+				BC1900000000000000000012 /* LayoutHelperWindowCatalog.swift in Sources */,
 				AB5100000000000000000032 /* LayoutHelperPermission.swift in Sources */,
 				AB5100000000000000000042 /* LayoutHelperPreviewStore.swift in Sources */,
 				AB5100000000000000000072 /* WindowDividerManager.swift in Sources */,
@@ -1039,6 +1046,7 @@
 				AB5100000000000000000052 /* WindowDividerGeometry.swift in Sources */,
 				AC0100010000000000000001 /* WindowAnimator.swift in Sources */,
 				AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */,
+				BC1900000000000000000002 /* WindowPlacementCoordinator.swift in Sources */,
 				AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */,
 				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
 				6490B39927BF97BB0056C220 /* TopCenterRightEighthCalculation.swift in Sources */,

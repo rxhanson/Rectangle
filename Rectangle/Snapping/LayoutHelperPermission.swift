@@ -22,13 +22,36 @@ import ScreenCaptureKit
 
 enum LayoutHelperPermission {
     private static var requesting = false
+    static let changed = Notification.Name("layoutHelperPreviewPermissionChanged")
+    private static var checkedAt: TimeInterval = -.infinity
+    private static var checking = false
+    private static var revision = 0
+    private static var cachedAllowed = false
     static var previewsSupported: Bool {
         if #available(macOS 14, *) { return true }
         return false
     }
 
     static var previewsAllowed: Bool {
-        previewsSupported && CGPreflightScreenCaptureAccess()
+        guard previewsSupported else { return false }
+        // TCC preflight is synchronous IPC. Repeated candidate/image callbacks
+        // must not each block the main thread on the permission service.
+        if !checking, ProcessInfo.processInfo.systemUptime - checkedAt > 1 {
+            checking = true
+            let requestedRevision = revision
+            DispatchQueue.global(qos: .utility).async {
+                let allowed = CGPreflightScreenCaptureAccess()
+                DispatchQueue.main.async {
+                    checking = false
+                    guard requestedRevision == revision else { return }
+                    let previous = cachedAllowed
+                    cachedAllowed = allowed
+                    checkedAt = ProcessInfo.processInfo.systemUptime
+                    if previous != allowed { NotificationCenter.default.post(name: changed, object: nil) }
+                }
+            }
+        }
+        return cachedAllowed
     }
 
     enum Feature { case layoutHelper, windowDivider }
@@ -56,10 +79,11 @@ enum LayoutHelperPermission {
     static func guideIfNeeded(for feature: Feature = .layoutHelper, completion: @escaping () -> Void = {}) {
         guard #available(macOS 14, *), !requesting else { completion(); return }
         requesting = true
+        revision += 1
         Task { @MainActor in
             defer { requesting = false; completion() }
             let outcome = await LayoutHelperPermissionFlow(
-                isAllowed: { previewsAllowed },
+                isAllowed: { CGPreflightScreenCaptureAccess() },
                 explain: {
                     NSApp.activate(ignoringOtherApps: true)
                     return explanationAlert(for: feature).runModal() == .alertFirstButtonReturn
@@ -84,6 +108,10 @@ enum LayoutHelperPermission {
                     }
                 }
             ).run()
+            revision += 1
+            cachedAllowed = outcome == .allowed || outcome == .alreadyAllowed
+            checkedAt = ProcessInfo.processInfo.systemUptime
+            NotificationCenter.default.post(name: changed, object: nil)
             if feature == .windowDivider, outcome == .iconsOnly {
                 Defaults.windowDividerEnhanced.enabled = false
             }

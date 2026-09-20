@@ -1,17 +1,6 @@
 import Cocoa
 import ScreenCaptureKit
 
-/// Use the same preference and accessibility gates as other window moves, then
-/// perform the normal final AX write before checking the achieved placement.
-enum LayoutHelperPlacement {
-    static func move(_ window: AccessibilityElement, to target: CGRect, completion: @escaping () -> Void) {
-        WindowAnimator.shared.animate(window, to: target) { frame in
-            if frame.isNull { window.setFrame(target) }
-            completion()
-        }
-    }
-}
-
 /// Owns one assist sequence. Tokens prevent late animation/capture callbacks from
 /// reviving a dismissed picker or placing a window into a newer layout.
 final class LayoutHelperManager {
@@ -19,17 +8,22 @@ final class LayoutHelperManager {
     private(set) var token = UUID()
     private var pending: DispatchWorkItem?
     private let previews = LayoutHelperPreviewStore()
+    private let catalog = LayoutHelperWindowCatalog()
     private var prefetchTask: DispatchWorkItem?
     private var previewKeys: [CGWindowID: LayoutHelperPreviewKey] = [:]
     private var displayedIDs: [CGWindowID] = []
+    private var icons: [pid_t: NSImage] = [:]
     private var appOrder = LayoutHelperWindowOrder()
     private var keyboardTriggered = false
     private var layout: LayoutHelperLayout?
     private var screen: NSScreen?
     private var retained: [AccessibilityElement: CGRect] = [:]
-    private var candidates: [CGWindowID: AccessibilityElement] = [:]
+    private var retainedLaunches: [CGWindowID: TimeInterval] = [:]
+    private var candidates: [CGWindowID: LayoutHelperWindowSnapshot] = [:]
+    private var completedCells: Set<Int> = []
     private var currentCell: Int?
     private var selecting = false
+    private var statusMessage: String?
     private var placingWindow: AccessibilityElement?
     private var refreshTimer: Timer?
     private var globalMonitor: Any?
@@ -75,21 +69,26 @@ final class LayoutHelperManager {
         })
         observers.append(NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
                                                                object: nil, queue: .main) { [weak self] _ in self?.cancel() })
+        observers.append(NotificationCenter.default.addObserver(forName: LayoutHelperPermission.changed,
+            object: nil, queue: .main) { [weak self] _ in
+                guard let self, self.layout != nil, !self.selecting else { return }
+                if !LayoutHelperPermission.previewsAllowed { self.previews.clear() }
+                self.showNext()
+            })
     }
 
     @discardableResult func cancel() -> UUID {
+        WindowAnimationDiagnostics.event("helper-cancel", fields: ["visible": panel.isVisible, "selecting": selecting])
         token = UUID()
-        // Settle only this sequence's accepted move. Invalidate the token first
-        // so finishing it cannot reopen the picker after Escape or a new drag.
-        if let placingWindow, WindowAnimator.shared.destination(for: placingWindow) != nil {
-            WindowAnimator.shared.finish()
-        }
+        if let placingWindow { WindowPlacementCoordinator.shared.cancel(placingWindow) }
+        catalog.stop()
         placingWindow = nil
         pending?.cancel(); pending = nil
         cancelPrefetch()
         previews.stop()
         if !Defaults.layoutHelper.userEnabled { previews.clear() }
         previewKeys.removeAll(); displayedIDs.removeAll()
+        icons.removeAll()
         appOrder = LayoutHelperWindowOrder()
         refreshTimer?.invalidate(); refreshTimer = nil
         if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
@@ -98,11 +97,16 @@ final class LayoutHelperManager {
         panel.dismiss()
         layout = nil; screen = nil; currentCell = nil
         selecting = false
-        retained.removeAll(); candidates.removeAll()
+        statusMessage = nil
+        retained.removeAll(); retainedLaunches.removeAll(); candidates.removeAll()
+        completedCells.removeAll()
         return token
     }
 
     func didSnap(result: ResultParameters, frame: CGRect) {
+        WindowAnimationDiagnostics.event("helper-consider", fields: ["enabled": Defaults.layoutHelper.userEnabled,
+            "keyboard": Defaults.layoutHelperKeyboard.enabled, "source": String(describing: result.source),
+            "tokenMatches": result.layoutHelperToken == token, "fixed": result.isFixedSize])
         if !result.isFixedSize {
             WindowDividerManager.shared.record(result.windowElement, id: result.windowId,
                                                    frame: frame, screen: result.calcResult.screen)
@@ -136,11 +140,19 @@ final class LayoutHelperManager {
         installInputMonitors()
         let work = DispatchWorkItem { [weak self] in
             guard let self, self.token == requestToken else { return }
-            guard LayoutHelperLayout.matches(result.windowElement.frame, frame) else { self.cancel(); return }
+            guard let id = result.windowId, let actual = WindowUtil.getWindowFrame(id: id),
+                  LayoutHelperLayout.matches(actual, frame) else { self.cancel(); return }
             self.keyboardTriggered = result.source == .keyboardShortcut
             self.layout = plan
             self.screen = result.calcResult.screen
             self.retained = [result.windowElement: frame]
+            self.retainedLaunches[id] = result.windowElement.pid.flatMap { WindowProcessIdentity.launchTime(for: $0) }
+            self.catalog.didUpdate = { [weak self] in
+                guard let self, self.token == requestToken, !self.selecting else { return }
+                self.showNext()
+            }
+            self.catalog.refresh()
+            WindowAnimationDiagnostics.event("helper-open", fields: ["candidates": self.catalog.snapshots.count])
             self.showNext()
             if self.layout != nil {
                 self.refreshTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
@@ -169,81 +181,70 @@ final class LayoutHelperManager {
         }
     }
 
-    private func availableWindows(on requestedScreen: NSScreen? = nil) -> [(CGWindowID, AccessibilityElement)] {
+    private func availableWindows(on requestedScreen: NSScreen? = nil) -> [LayoutHelperWindowSnapshot] {
         guard let screen = requestedScreen ?? screen else { return [] }
-        // Joining to the on-screen WindowServer inventory filters other Spaces and
-        // avoids using Rectangle's synthetic bookkeeping IDs for image capture.
-        let infos = WindowUtil.getWindowList().filter { $0.level == 0 && $0.pid != getpid() }
-        var result: [(CGWindowID, AccessibilityElement)] = []
-        var seen = Set<CGWindowID>()
-        for pid in Set(infos.map(\.pid)) {
-            let app = AccessibilityElement(pid)
-            app.setMessagingTimeout(0.15)
-            let bundle = app.bundleIdentifier ?? ""
-            if Defaults.disabledApps.typedValue?.contains(bundle) == true
-                || Defaults.fullIgnoreBundleIds.typedValue?.contains(bundle) == true { continue }
-            for window in app.windowElements ?? [] {
-                window.setMessagingTimeout(0.15)
-                guard window.isWindow == true, window.isSheet != true, window.isMinimized != true,
-                      window.isHidden != true, window.isSystemDialog != true, window.isFullScreen != true,
-                      !window.frame.isNull,
-                      ScreenDetection().detectScreens(using: window)?.currentScreen == screen,
-                      !(Defaults.todo.userEnabled && TodoManager.isTodoWindow(window)) else { continue }
-                let matches = infos.filter { $0.pid == pid && ($0.id == window.windowId || LayoutHelperLayout.matches($0.frame, window.frame, tolerance: 1)) }
-                let info = matches.first { $0.id == window.windowId } ?? (matches.count == 1 ? matches.first : nil)
-                guard let info, seen.insert(info.id).inserted else { continue }
-                result.append((info.id, window))
-            }
+        return catalog.windows(on: screen)
+    }
+
+    private func retainedIsValid() -> Bool {
+        let live = WindowUtil.getWindowList(forceRefresh: true)
+        return retained.allSatisfy { window, frame in
+            guard let id = window.windowId, let pid = window.pid,
+                  let launch = retainedLaunches[id], WindowProcessIdentity.launchTime(for: pid) == launch,
+                  let info = live.first(where: { $0.id == id && $0.pid == pid }) else { return false }
+            return LayoutHelperLayout.matches(info.frame, frame)
         }
-        let order = Dictionary(uniqueKeysWithValues: infos.enumerated().map { ($0.element.id, $0.offset) })
-        return result.sorted { (order[$0.0] ?? 0) < (order[$1.0] ?? 0) }
     }
 
     private func showNext(message: String? = nil) {
         guard let layout else { return }
+        if let message { statusMessage = message }
         let windows = availableWindows()
-        var occupied = Set([layout.anchorIndex])
-        for (window, frame) in retained {
-            guard LayoutHelperLayout.matches(window.frame, frame) else { cancel(); return }
+        WindowAnimationDiagnostics.event("helper-render", fields: ["candidates": windows.count])
+        var occupied = completedCells.union([layout.anchorIndex])
+        for frame in retained.values {
             occupied.formUnion(layout.occupiedCells(by: frame))
         }
-        for (_, window) in windows where retained[window] == nil {
-            let cells = layout.prefilledCells(by: window.frame)
-            if !cells.isEmpty && occupied.isDisjoint(with: cells) {
+        let retainedIDs = Set(retained.keys.compactMap(\.windowId))
+        for snapshot in windows where !retainedIDs.contains(snapshot.id) {
+            let cells = layout.prefilledCells(by: snapshot.frame)
+            if !cells.isEmpty && occupied.isDisjoint(with: cells), let window = snapshot.accessibilityElement() {
                 occupied.formUnion(cells)
-                retained[window] = window.frame
+                retained[window] = snapshot.frame
+                retainedLaunches[snapshot.id] = snapshot.launch
+                if snapshot.resizable == true, let screen {
+                    WindowDividerManager.shared.record(window, id: snapshot.id, frame: snapshot.frame,
+                        screen: screen, eligibilityConfirmed: true)
+                }
             }
         }
-        // Both left/right and top/bottom picker completions can form a pair.
-        if layout.cells.count == 2, let screen {
-            for (window, frame) in retained {
-                WindowDividerManager.shared.record(window, id: window.windowId, frame: frame, screen: screen)
-            }
+        guard let next = layout.remaining(excluding: occupied).first else {
+            cancel()
+            return
         }
-        guard let next = layout.remaining(excluding: occupied).first else { cancel(); return }
-        candidates = Dictionary(uniqueKeysWithValues: windows.filter { retained[$0.1] == nil })
-        guard !candidates.isEmpty else { cancel(); return }
+        let occupiedIDs = Set(retained.keys.compactMap(\.windowId))
+        candidates = Dictionary(uniqueKeysWithValues: windows.filter { !occupiedIDs.contains($0.id) }.map { ($0.id, $0) })
+        guard !candidates.isEmpty else {
+            if !catalog.isRefreshing { cancel() }
+            return
+        }
         currentCell = next
         let target = layout.target(for: layout.cells[next])
-        let candidateWindows = windows.filter { candidates[$0.0] != nil }
-        let currentWindowID = candidateWindows.first { LayoutHelperLayout.matches($0.1.frame, target) }?.0
-        let appOrderedIDs = appOrder.ordered(candidateWindows.map { id, window in
-            (id, window.pid.flatMap { NSRunningApplication(processIdentifier: $0)?.bundleIdentifier } ?? "pid:\(window.pid ?? 0)")
-        })
+        let candidateWindows = windows.filter { candidates[$0.id] != nil }
+        let currentWindowID = candidateWindows.first { LayoutHelperLayout.matches($0.frame, target) }?.id
+        let appOrderedIDs = appOrder.ordered(candidateWindows.map { ($0.id, $0.bundleID.isEmpty ? "pid:\($0.pid)" : $0.bundleID) })
         let orderedIDs = appOrderedIDs.filter { $0 == currentWindowID } + appOrderedIDs.filter { $0 != currentWindowID }
-        previewKeys = Dictionary(uniqueKeysWithValues: candidateWindows.compactMap { id, window in
-            LayoutHelperPreviewStore.key(id: id, window: window).map { (id, $0) }
-        })
+        previewKeys = Dictionary(uniqueKeysWithValues: candidateWindows.map { ($0.id, $0.previewKey) })
         let items = orderedIDs.compactMap { id -> LayoutHelperPanel.Item? in
-            guard let window = candidates[id] else { return nil }
-            let app = window.pid.flatMap { NSRunningApplication(processIdentifier: $0) }
-            let title = window.title.flatMap { $0.isEmpty ? nil : $0 } ?? app?.localizedName ?? "Window"
-            return LayoutHelperPanel.Item(id: id, title: title, icon: app?.icon,
-                unavailableReason: unavailableReason(window, target: target), sourceSize: window.frame.size,
+            guard let snapshot = candidates[id] else { return nil }
+            if icons[snapshot.pid] == nil { icons[snapshot.pid] = NSRunningApplication(processIdentifier: snapshot.pid)?.icon }
+            return LayoutHelperPanel.Item(id: id, title: snapshot.title,
+                icon: icons[snapshot.pid],
+                unavailableReason: unavailableReason(snapshot, target: target), sourceSize: snapshot.frame.size,
                 isCurrentWindow: id == currentWindowID)
         }
         var offerPermission = false
-        if #available(macOS 14, *) { offerPermission = !CGPreflightScreenCaptureAccess() }
+        if #available(macOS 14, *) { offerPermission = !LayoutHelperPermission.previewsAllowed }
         let remaining = layout.remaining(excluding: occupied).filter { $0 != next }
             .map { layout.target(for: layout.cells[$0]).screenFlipped }
         displayedIDs = items.map(\.id)
@@ -252,72 +253,89 @@ final class LayoutHelperManager {
             return (item.id, image)
         })
         let usesKeyboard = panel.isVisible ? panel.keyboardSelection : keyboardTriggered
-        panel.show(in: target.screenFlipped, items: items, offerPermission: offerPermission, message: message,
+        panel.show(in: target.screenFlipped, items: items, offerPermission: offerPermission, message: statusMessage,
                    remainingRegions: remaining, keyboardTriggered: usesKeyboard, images: images)
         refreshPreviews()
     }
 
-    private func unavailableReason(_ window: AccessibilityElement, target: CGRect) -> String? {
-        if LayoutHelperLayout.matches(window.frame, target) { return nil }
-        if !window.isResizable() { return "This window cannot be resized" }
-        if let minimum = window.minimumSize, minimum.width > target.width + 3 || minimum.height > target.height + 3 {
-            return "Too large for this space"
-        }
+    private func unavailableReason(_ snapshot: LayoutHelperWindowSnapshot, target: CGRect) -> String? {
+        if LayoutHelperLayout.matches(snapshot.frame, target) { return nil }
+        // An expired observation is unknown, not a reason to block a retry.
+        guard ProcessInfo.processInfo.systemUptime - snapshot.observedAt < 1.5 else { return nil }
+        if snapshot.resizable == false { return "This window cannot be resized" }
         return nil
     }
 
     private func select(_ id: CGWindowID) {
-        guard !selecting, let layout, let currentCell, let window = candidates[id] else { return }
-        guard availableWindows().contains(where: { $0.0 == id && $0.1 == window }) else { showNext(); return }
-        let target = layout.target(for: layout.cells[currentCell])
-        guard unavailableReason(window, target: target) == nil else { showNext(); return }
-        if LayoutHelperLayout.matches(window.frame, target) {
-            retained[window] = window.frame
-            window.bringToFront(force: true)
-            showNext()
-            return
-        }
-        WindowSizeConstraints.shared.cancelPendingObservations()
-        let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
-        let original = window.frame
-        let previousRestore = AppDelegate.windowHistory.restoreRects[id]
+        guard !selecting, let layout, let currentCell, candidates[id] != nil else { return }
         selecting = true
-        if previousRestore == nil || AppDelegate.windowHistory.lastRectangleActions[id]?.rect != original {
-            AppDelegate.windowHistory.restoreRects[id] = original
-        }
+        statusMessage = nil
+        panel.showSelection(inProgress: id)
         let selectionToken = token
+        let target = layout.target(for: layout.cells[currentCell])
+        catalog.resolve(id) { [weak self] snapshot in
+            guard let self, self.token == selectionToken else { return }
+            guard let snapshot, WindowProcessIdentity.launchTime(for: snapshot.pid) == snapshot.launch,
+                  let window = snapshot.accessibilityElement(),
+                  self.retainedIsValid(), self.unavailableReason(snapshot, target: target) == nil else {
+                self.selecting = false
+                self.showNext(message: snapshot == nil ? "That window is not responding. Try again." : "That window could not be placed. Try again.")
+                return
+            }
+            self.place(window, snapshot: snapshot, target: target, selectionToken: selectionToken)
+        }
+    }
+
+    private func place(_ window: AccessibilityElement, snapshot: LayoutHelperWindowSnapshot,
+                       target: CGRect, selectionToken: UUID) {
+        guard let layout, let screen, let selectedCell = currentCell else { selecting = false; return }
+        WindowSizeConstraints.shared.cancelPendingObservations()
+        let generation = WindowSizeConstraints.shared.observationGeneration
+        let original = snapshot.frame
         placingWindow = window
-        // Reveal the actual window throughout its movement into the empty area.
         panel.dismiss()
         previews.stop()
-        window.bringToFront(force: true)
-        LayoutHelperPlacement.move(window, to: target) { [weak self] in
-            guard let self, self.token == selectionToken else { return }
-            self.placingWindow = nil
-            // Allow delayed AX acknowledgements after the animation's final write,
-            // never while the window is still passing through intermediate frames.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+        NSRunningApplication(processIdentifier: snapshot.pid)?.activate()
+        let bounds = layout.screen
+        let placement = WindowAnimationPlacement(screenFrame: bounds,
+            sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: target, in: bounds),
+            constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
+        WindowPlacementCoordinator.shared.place(window, from: original, to: target, placement: placement,
+            animated: WindowAnimator.enabled, profile: keyboardTriggered ? .keyboard : .standard,
+            isCurrent: { [weak self] in
+                guard let self, self.token == selectionToken,
+                      WindowSizeConstraints.shared.observationGeneration == generation,
+                      NSScreen.screens.contains(screen),
+                      LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, bounds) else { return false }
+                return self.retainedIsValid()
+            }) { [weak self] outcome in
                 guard let self, self.token == selectionToken else { return }
-                let first = window.frame
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) { [weak self] in
-                    guard let self, self.token == selectionToken else { return }
-                    let settled = window.frame
-                    WindowSizeConstraints.shared.recordSettledResize(window, before: original, requested: target,
-                        first: first, settled: settled, generation: sizeObservationGeneration)
-                    self.selecting = false
-                    guard LayoutHelperLayout.matches(settled, target) else {
-                        window.setFrame(original)
-                        AppDelegate.windowHistory.restoreRects[id] = previousRestore
-                        self.showNext(message: "That window could not fit. Choose another.")
-                        return
+                self.placingWindow = nil; self.selecting = false
+                switch outcome {
+                case .placed(let frame):
+                    WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
+                    if AppDelegate.windowHistory.restoreRects[snapshot.id] == nil
+                        || AppDelegate.windowHistory.lastRectangleActions[snapshot.id]?.rect != original {
+                        AppDelegate.windowHistory.restoreRects[snapshot.id] = original
                     }
-                    AppDelegate.windowHistory.lastRectangleActions[id] = RectangleAction(action: .specified, subAction: nil, rect: target, count: 1)
-                    self.retained[window] = target
-                    window.bringToFront(force: true)
+                    AppDelegate.windowHistory.lastRectangleActions[snapshot.id] = RectangleAction(action: .specified, subAction: nil, rect: frame, count: 1)
+                    self.completedCells.insert(selectedCell)
+                    self.retained[window] = frame
+                    self.retainedLaunches[snapshot.id] = snapshot.launch
+                    WindowDividerManager.shared.record(window, id: snapshot.id, frame: frame,
+                        screen: screen, eligibilityConfirmed: true)
+                    if WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
+                        WindowSizeWarning.shared.show(on: screen)
+                    }
+                    self.catalog.refresh()
                     self.showNext()
+                case .unresponsive:
+                    self.showNext(message: "That window is not responding. Try again.")
+                case .failed:
+                    self.showNext(message: "That window could not be placed. Try again.")
+                case .cancelled: self.cancel()
                 }
             }
-        }
     }
 
     private func validateSession() {
@@ -325,14 +343,10 @@ final class LayoutHelperManager {
         guard let layout, let screen, Defaults.layoutHelper.userEnabled,
               NSScreen.screens.contains(screen),
               LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, layout.screen),
-              retained.allSatisfy({ $0.key.isMinimized != true && $0.key.isHidden != true && LayoutHelperLayout.matches($0.key.frame, $0.value) })
-        else { cancel(); return }
-        let windows = availableWindows()
+              retainedIsValid() else { cancel(); return }
         if !LayoutHelperPermission.previewsAllowed { previews.clear() }
         previews.removeClosedWindows(live: Set(WindowUtil.getWindowList().map(\.id)))
-        let available = Set(windows.map(\.0))
-        let expected = Set(windows.filter { retained[$0.1] == nil }.map(\.0))
-        if !Set(candidates.keys).isSubset(of: available) || expected != Set(candidates.keys) { showNext() }
+        catalog.refresh()
     }
 
     private func refreshPreviews() {
@@ -350,7 +364,7 @@ final class LayoutHelperManager {
 
     func cancelPrefetch() {
         prefetchTask?.cancel(); prefetchTask = nil
-        if !panel.isVisible { previews.stop() }
+        if !panel.isVisible { previews.stop(); if layout == nil { catalog.stop() } }
     }
 
     /// One debounced batch as a drag enters an eligible snap area. No idle polling.
@@ -361,9 +375,15 @@ final class LayoutHelperManager {
                                     anchor: anchor.screenFlipped, includeDenseGrids: Defaults.layoutHelperDenseGrids.enabled) != nil else { return }
         let work = DispatchWorkItem { [weak self] in
             guard let self, !self.panel.isVisible else { return }
-            let windows = self.availableWindows(on: screen).filter { $0.0 != id }
+            self.catalog.didUpdate = { [weak self] in
+                guard let self, !self.panel.isVisible, self.layout == nil else { return }
+                let windows = self.availableWindows(on: screen).filter { $0.id != id }
+                self.previews.request(windows.map(\.previewKey))
+            }
+            self.catalog.refresh()
+            let windows = self.availableWindows(on: screen).filter { $0.id != id }
             self.previews.removeClosedWindows(live: Set(WindowUtil.getWindowList().map(\.id)))
-            self.previews.request(windows.compactMap { LayoutHelperPreviewStore.key(id: $0.0, window: $0.1) })
+            self.previews.request(windows.map(\.previewKey))
         }
         prefetchTask = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12, execute: work)

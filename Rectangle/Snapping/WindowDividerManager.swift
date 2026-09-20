@@ -85,10 +85,12 @@ final class WindowDividerManager {
 
     /// Called only for placements known to Rectangle, including compatible
     /// neighbors retained by a completed two-cell Layout Helper sequence.
-    func record(_ window: AccessibilityElement, id: CGWindowID?, frame: CGRect, screen: NSScreen) {
+    func record(_ window: AccessibilityElement, id: CGWindowID?, frame: CGRect, screen: NSScreen,
+                eligibilityConfirmed: Bool = false) {
         guard Defaults.windowDivider.enabled, let id, let pid = window.pid,
-              let app = NSRunningApplication(processIdentifier: pid), window.isResizable(),
-              window.isSystemDialog != true, window.isMinimized != true, window.isHidden != true else {
+              let app = NSRunningApplication(processIdentifier: pid),
+              eligibilityConfirmed || (window.isResizable() && window.isSystemDialog != true
+                  && window.isMinimized != true && window.isHidden != true) else {
             WindowAnimationDiagnostics.event("divider-record-ineligible", fields: ["windowID": id ?? 0])
             return
         }
@@ -113,14 +115,16 @@ final class WindowDividerManager {
         entries[id] = entry
         entries = entries.filter { !$0.value.app.isTerminated }
         if entries.count > 32, let oldest = entries.keys.first(where: { $0 != id }) { entries.removeValue(forKey: oldest) }
-        let visibleOrder = WindowUtil.getWindowList()
+        let visibleOrder = WindowUtil.getWindowList(forceRefresh: true)
         let orderedEntries = entries.values.sorted { a, b in
             (visibleOrder.firstIndex(where: { $0.id == a.id }) ?? Int.max)
                 < (visibleOrder.firstIndex(where: { $0.id == b.id }) ?? Int.max)
         }
         for other in orderedEntries where other.id != id && screenID(other.screen) == screenID(screen) {
-            guard visibleOrder.contains(where: { $0.id == other.id && $0.pid == other.app.processIdentifier }),
-                  !other.app.isTerminated, LayoutHelperLayout.matches(other.element.frame, other.frame) else { continue }
+            guard !other.app.isTerminated, visibleOrder.contains(where: {
+                $0.id == other.id && $0.pid == other.app.processIdentifier
+                    && LayoutHelperLayout.matches($0.frame, other.frame)
+            }) else { continue }
             let left = normalized.minX < axis.rect(other.frame).minX ? entry : other
             let right = left.id == id ? other : entry
             guard abs(axis.rect(left.frame).minX - extent.minX) <= 3,
@@ -328,7 +332,7 @@ final class WindowDividerManager {
                 overlay.show(in: engine.geometry.outer.screenFlipped, divider: engine.divider,
                              gap: engine.geometry.gap, axis: pair.axis, below: panel)
             }
-            awaitSettlement(engine: engine, pair: pair,
+            awaitSettlement(engine: engine, pair: pair, minimumSizeReached: placement.minimumSizeReached,
                 gate: WindowDividerRevealGate(left: engine.left, right: engine.right,
                     startedAt: ProcessInfo.processInfo.systemUptime))
         case .failed:
@@ -338,7 +342,8 @@ final class WindowDividerManager {
         }
     }
 
-    private func awaitSettlement(engine: WindowDividerResize, pair: Pair, gate: WindowDividerRevealGate) {
+    private func awaitSettlement(engine: WindowDividerResize, pair: Pair, minimumSizeReached: Bool,
+                                 gate: WindowDividerRevealGate) {
         guard active === pair, resize === engine else { return }
         var gate = gate
         switch gate.observe(left: pair.left.element.frame, right: pair.right.element.frame,
@@ -347,7 +352,7 @@ final class WindowDividerManager {
             let work = DispatchWorkItem { [weak self] in
                 guard let self, self.active === pair, self.resize === engine else { return }
                 self.settlement = nil
-                self.awaitSettlement(engine: engine, pair: pair, gate: gate)
+                self.awaitSettlement(engine: engine, pair: pair, minimumSizeReached: minimumSizeReached, gate: gate)
             }
             settlement = work
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.025, execute: work)
@@ -364,6 +369,7 @@ final class WindowDividerManager {
             overlay.fadeOut { [weak self] in
                 guard let self, self.active === pair, self.resize === engine else { return }
                 self.finishMovement()
+                if minimumSizeReached { WindowSizeWarning.shared.show(on: pair.left.screen) }
                 self.shown = pair
                 // Reveal the handle only if the pointer is still near the split.
                 if pair.hoverFrame.contains(NSEvent.mouseLocation.screenFlipped) { self.showHandle(pair) }

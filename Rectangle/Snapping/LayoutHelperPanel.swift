@@ -163,6 +163,9 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         cards.filter { $0.superview?.visibleRect.intersects($0.frame) == true }.map { $0.item.id }
     }
     private var cards: [LayoutHelperCard] = []
+    private var scrollView: NSScrollView?
+    private var showingPermission = false
+    private var shownMessage: String?
     private var backdrops: [LayoutHelperSurface] = []
     override var canBecomeKey: Bool { true }
 
@@ -178,7 +181,20 @@ final class LayoutHelperPanel: LayoutHelperSurface {
 
     func show(in frame: CGRect, items: [Item], offerPermission: Bool, message: String? = nil,
               remainingRegions: [CGRect] = [], keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:]) {
+        if isVisible, self.frame == frame, showingPermission == offerPermission, shownMessage == message,
+           cards.map({ $0.item.id }) == items.map(\.id),
+           zip(cards, items).allSatisfy({ $0.item.sourceSize == $1.sourceSize
+               && $0.item.unavailableReason == $1.unavailableReason }) {
+            for (card, item) in zip(cards, items) {
+                card.state = .off
+                card.item = item
+                if let image = images[item.id] { card.preview = image }
+            }
+            return
+        }
         let existingIDs = isVisible && self.frame == frame ? Set(cards.map { $0.item.id }) : []
+        let focusedID = existingIDs.isEmpty ? nil : (firstResponder as? LayoutHelperCard)?.item.id
+        let scrollPosition = existingIDs.isEmpty ? nil : scrollView?.contentView.bounds.origin
         backdrops.forEach { $0.orderOut(nil) }
         backdrops = remainingRegions.map { region in
             let backdrop = LayoutHelperSurface()
@@ -189,7 +205,11 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         }
         configure(in: frame, items: items, offerPermission: offerPermission, message: message,
                   keyboardTriggered: keyboardTriggered, images: images)
-        makeFirstResponder(initialFirstResponder)
+        makeFirstResponder(cards.first(where: { $0.item.id == focusedID && $0.isEnabled }) ?? initialFirstResponder)
+        if let scrollPosition, let scrollView {
+            scrollView.contentView.scroll(to: scrollPosition)
+            scrollView.reflectScrolledClipView(scrollView.contentView)
+        }
         contentView?.layoutSubtreeIfNeeded()
         // Render the cached thumbnails before committing the entrance, so a
         // freshly created layer does not spend its first frames empty.
@@ -204,6 +224,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         finishPresentation()
         if let scrollObserver { NotificationCenter.default.removeObserver(scrollObserver) }
         keyboardSelection = keyboardTriggered
+        showingPermission = offerPermission
+        shownMessage = message
         let surface = prepare(in: frame)
         let width = surface.bounds.width
         let height = surface.bounds.height
@@ -234,6 +256,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
             footerControls.append(permission)
         }
         let scroll = NSScrollView(frame: NSRect(x: 20, y: top, width: max(1, width - 40), height: max(1, height - top - bottom)))
+        scrollView = scroll
         scroll.drawsBackground = false
         scroll.hasVerticalScroller = true
         scroll.scrollerStyle = .overlay
@@ -272,6 +295,13 @@ final class LayoutHelperPanel: LayoutHelperSurface {
 
     func updateImage(_ image: NSImage, for id: CGWindowID) {
         cards.first { $0.item.id == id }?.preview = image
+    }
+
+    func showSelection(inProgress id: CGWindowID) {
+        if let card = cards.first(where: { $0.item.id == id }) {
+            card.state = .on
+            card.needsDisplay = true
+        }
     }
 
     /// Each visible card settles independently while layout and hit testing
@@ -420,7 +450,15 @@ private final class LayoutHelperDocument: NSView {
 }
 
 private final class LayoutHelperCard: NSButton {
-    let item: LayoutHelperPanel.Item
+    var item: LayoutHelperPanel.Item {
+        didSet {
+            title = item.title
+            isEnabled = item.unavailableReason == nil
+            toolTip = item.unavailableReason.map { "\(item.title) — \($0)" } ?? item.title
+            setAccessibilityLabel(toolTip)
+            needsDisplay = true
+        }
+    }
     var preview: NSImage? { didSet { needsDisplay = true } }
     override var allowsVibrancy: Bool { false }
     override var isFlipped: Bool { true }
@@ -457,7 +495,7 @@ private final class LayoutHelperCard: NSButton {
     }
     override func resignFirstResponder() -> Bool { needsDisplay = true; return super.resignFirstResponder() }
     override func draw(_ dirtyRect: NSRect) {
-        let selected = isEnabled && (window as? LayoutHelperPanel)?.keyboardSelection == true && window?.firstResponder === self
+        let selected = state == .on || (isEnabled && (window as? LayoutHelperPanel)?.keyboardSelection == true && window?.firstResponder === self)
         let lineWidth: CGFloat = selected ? 2 : 1
         let radius = min(LayoutHelperAppearance.cornerRadius, min(bounds.width, bounds.height) / 2)
         let outline = NSBezierPath(roundedRect: bounds.insetBy(dx: lineWidth / 2, dy: lineWidth / 2), xRadius: radius, yRadius: radius)

@@ -83,8 +83,9 @@ struct SnappedWindowFit: Equatable {
         let left = action == .rightHalf ? neighbor.frame.maxX + gap : bounds.minX
         let right = action == .leftHalf ? neighbor.frame.minX - gap : bounds.maxX
         let fitted = CGRect(x: left, y: bounds.minY, width: right - left, height: bounds.height)
-        guard fitted.width > 0, minimum.map({ $0.width <= fitted.width + 1 && $0.height <= fitted.height + 1 }) ?? true
-        else { return .noRoom }
+        // The remaining region is a request, not a minimum-size admission test.
+        // A constrained incoming window may overlap its unchanged neighbor.
+        guard fitted.width > 0 else { return .noRoom }
         return .fit(Self(target: fitted, neighborID: neighbor.id, neighborPID: neighbor.pid, neighborFrame: neighbor.frame))
     }
 

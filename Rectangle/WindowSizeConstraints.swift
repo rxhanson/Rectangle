@@ -1,69 +1,126 @@
 import Cocoa
 
-/// Per-window evidence. A successful smaller size disproves a learned limit;
-/// a refused write alone is not evidence of a minimum.
+/// Reported constraints and historical hints deliberately have different uses.
+/// Only independently verified operations can promote an observation to a hint;
+/// even a confirmed hint never rejects an explicit resize request.
 final class WindowSizeConstraintStore<Key: Hashable> {
     private(set) var entries: [Key: WindowSizeEvidence] = [:]
     var lifetime: TimeInterval?
     private let capacity: Int
+    private struct Observation {
+        let operation: UUID
+        let learned: CGSize
+        let reported: CGSize?
+        let time: TimeInterval
+    }
+    private var observations: [Key: Observation] = [:]
+    private var accepted: [Key: CGSize] = [:]
+    private var reports: [Key: CGSize] = [:]
 
     init(lifetime: TimeInterval = 600, capacity: Int = 128) {
         self.lifetime = lifetime; self.capacity = capacity
     }
 
     func minimum(for key: Key, reported: CGSize?, current: CGSize, now: TimeInterval) -> CGSize? {
-        let reported = Self.normalized(reported)
-        guard var entry = entries[key] else { return reported }
-        if lifetime.map({ now - entry.learnedAt > $0 }) == true || entry.reported != reported {
+        let report = Self.normalized(reported) ?? .zero
+        if let previous = reports[key], previous != report {
+            accepted.removeValue(forKey: key)
+            observations.removeValue(forKey: key)
+        }
+        reports[key] = report
+        if reports.count > capacity, let oldest = reports.keys.first(where: { $0 != key }) { reports.removeValue(forKey: oldest) }
+        _ = hint(for: key, reported: reported, current: current, now: now)
+        var result = Self.normalized(reported) ?? .zero
+        if let success = accepted[key] {
+            if success.width + 2 < result.width { result.width = 0 }
+            if success.height + 2 < result.height { result.height = 0 }
+        }
+        return Self.normalized(result)
+    }
+
+    func hint(for key: Key, reported: CGSize?, current: CGSize, now: TimeInterval) -> CGSize? {
+        guard var entry = entries[key] else { return nil }
+        if lifetime.map({ now - entry.learnedAt > $0 }) == true || entry.reported != Self.normalized(reported) {
             entries.removeValue(forKey: key)
-            return reported
+            observations.removeValue(forKey: key)
+            return nil
         }
         if Self.valid(current) {
             if current.width + 2 < entry.learned.width { entry.learned.width = 0 }
             if current.height + 2 < entry.learned.height { entry.learned.height = 0 }
         }
         entries[key] = Self.normalized(entry.learned) == nil ? nil : entry
-        return Self.normalized(CGSize(width: max(reported?.width ?? 0, entry.learned.width),
-                                      height: max(reported?.height ?? 0, entry.learned.height)))
+        return Self.normalized(entry.learned)
+    }
+
+    func recordSuccess(for key: Key, size: CGSize) {
+        guard Self.valid(size) else { return }
+        let old = accepted[key] ?? size
+        accepted[key] = CGSize(width: min(old.width, size.width), height: min(old.height, size.height))
+        observations.removeValue(forKey: key)
+        if var entry = entries[key] {
+            if size.width + 2 < entry.learned.width { entry.learned.width = 0 }
+            if size.height + 2 < entry.learned.height { entry.learned.height = 0 }
+            entries[key] = Self.normalized(entry.learned) == nil ? nil : entry
+        }
+        if accepted.count > capacity { accepted.removeValue(forKey: accepted.keys.first!) }
     }
 
     func observe(for key: Key, reported: CGSize?, before: CGSize, requested: CGSize,
-                 first: CGSize, settled: CGSize, now: TimeInterval, verifiedClamp: Bool = false) {
+                 first: CGSize, settled: CGSize, now: TimeInterval, verifiedClamp: Bool = false,
+                 operation: UUID = UUID()) {
         guard [before, requested, first, settled].allSatisfy(Self.valid),
               abs(first.width - settled.width) <= 1, abs(first.height - settled.height) <= 1 else { return }
-        _ = minimum(for: key, reported: reported, current: settled, now: now)
-        var entry = entries[key] ?? WindowSizeEvidence(reported: Self.normalized(reported), learned: .zero, learnedAt: now)
-        func clamp(_ old: CGFloat, _ target: CGFloat, _ actual: CGFloat) -> CGFloat {
-            // Require actual progress toward a smaller request. Unchanged or
-            // growing windows can indicate refusal, latency, or another action.
-            target + 2 < actual && (actual + 2 < old || (verifiedClamp && actual <= old + 1)) ? actual : 0
+        if abs(requested.width - settled.width) <= 1 && abs(requested.height - settled.height) <= 1 {
+            recordSuccess(for: key, size: settled)
+            return
         }
-        let width = clamp(before.width, requested.width, settled.width)
-        let height = clamp(before.height, requested.height, settled.height)
-        guard width > 0 || height > 0 else { return }
-        entry.learned.width = max(entry.learned.width, width)
-        entry.learned.height = max(entry.learned.height, height)
+        guard verifiedClamp else { return }
+        func clamp(_ old: CGFloat, _ target: CGFloat, _ actual: CGFloat) -> CGFloat {
+            // No size progress can mean an ignored write, even when position
+            // succeeded. It is not evidence of a minimum equal to the old size.
+            target + 2 < actual && actual < old - 1 ? actual : 0
+        }
+        let learned = CGSize(width: clamp(before.width, requested.width, settled.width),
+                             height: clamp(before.height, requested.height, settled.height))
+        // Coupled dimensions may be an aspect ratio or sizing grid, not minima.
+        guard (learned.width > 0) != (learned.height > 0),
+              learned.width > 0 ? abs(requested.height - settled.height) <= 1
+                                : abs(requested.width - settled.width) <= 1 else { return }
+        let reported = Self.normalized(reported)
+        let previous = observations[key]
+        if previous?.operation == operation { return }
+        observations[key] = Observation(operation: operation, learned: learned, reported: reported, time: now)
+        if observations.count > capacity, let oldest = observations.min(by: { $0.value.time < $1.value.time })?.key {
+            observations.removeValue(forKey: oldest)
+        }
+        guard let previous, now - previous.time <= 600, previous.reported == reported,
+              abs(previous.learned.width - learned.width) <= 1,
+              abs(previous.learned.height - learned.height) <= 1 else { return }
+        var entry = entries[key] ?? WindowSizeEvidence(reported: reported, learned: .zero, learnedAt: now)
+        entry.learned.width = max(entry.learned.width, learned.width)
+        entry.learned.height = max(entry.learned.height, learned.height)
         entry.learnedAt = now
+        entry.requested = requested; entry.achieved = settled
         entries[key] = entry
-        if lifetime != nil, entries.count > capacity, let oldest = entries.min(by: { $0.value.learnedAt < $1.value.learnedAt })?.key {
-            entries.removeValue(forKey: oldest)
+        if entries.count > capacity, let oldest = entries.min(by: { $0.value.learnedAt < $1.value.learnedAt })?.key {
+            remove(oldest)
+        }
+        if observations.count > capacity, let oldest = observations.min(by: { $0.value.time < $1.value.time })?.key {
+            observations.removeValue(forKey: oldest)
         }
     }
 
-    func clear() { entries.removeAll() }
-
-    func remove(_ key: Key) { entries.removeValue(forKey: key) }
-
+    func clear() { entries.removeAll(); observations.removeAll(); accepted.removeAll(); reports.removeAll() }
+    func remove(_ key: Key) { entries.removeValue(forKey: key); observations.removeValue(forKey: key); accepted.removeValue(forKey: key); reports.removeValue(forKey: key) }
     func restore(_ evidence: WindowSizeEvidence, for key: Key, now: TimeInterval) {
-        guard Self.normalized(evidence.learned) != nil else { return }
-        entries[key] = WindowSizeEvidence(reported: Self.normalized(evidence.reported),
-            learned: Self.normalized(evidence.learned)!, learnedAt: now)
+        guard evidence.isValid else { return }
+        entries[key] = evidence
     }
 
     private static func valid(_ size: CGSize) -> Bool {
         size.width.isFinite && size.height.isFinite && size.width > 0 && size.height > 0
     }
-
     private static func normalized(_ size: CGSize?) -> CGSize? {
         guard let size else { return nil }
         let width = size.width.isFinite && size.width > 0 ? size.width : 0
@@ -76,7 +133,7 @@ final class WindowSizeConstraintStore<Key: Hashable> {
 final class WindowSizeConstraints {
     static let shared = WindowSizeConstraints()
     static let changed = Notification.Name("windowSizeConstraintsChanged")
-    private static let archiveKey = "learnedWindowSizeLimits.v1"
+    private static let archiveKey = "windowSizeHints.v2"
     private struct Key: Hashable {
         let element: AccessibilityElement
         let pid: pid_t
@@ -90,8 +147,6 @@ final class WindowSizeConstraints {
     }
     private struct Descriptor {
         var record: WindowSizeLimitRecord
-        var checkedAt: TimeInterval
-        var attemptedRestore = false
     }
     private var descriptors: [Key: Descriptor] = [:]
     private var pending: [Key: PendingResize] = [:]
@@ -108,7 +163,7 @@ final class WindowSizeConstraints {
         synchronizePreference()
         // Expiry is checked here too, so the management list never presents an
         // expired temporary record as an active minimum.
-        let now = ProcessInfo.processInfo.systemUptime
+        let now = Date.timeIntervalSinceReferenceDate
         for (key, evidence) in store.entries {
             if store.lifetime.map({ now - evidence.learnedAt > $0 }) == true {
                 store.remove(key)
@@ -163,7 +218,7 @@ final class WindowSizeConstraints {
         let enabled = Defaults.rememberWindowSizeLimits.enabled
         guard enabled != remembers else { return }
         if enabled {
-            let now = ProcessInfo.processInfo.systemUptime
+            let now = Date.timeIntervalSinceReferenceDate
             for (key, evidence) in store.entries where now - evidence.learnedAt > 600 { store.remove(key) }
         }
         remembers = enabled
@@ -188,8 +243,8 @@ final class WindowSizeConstraints {
     private func screenParametersChanged() {
         cancelPendingObservations()
         // Rebuild live descriptors after a display change, but retain opt-in
-        // records. The next lookup rechecks reported and currently accepted
-        // sizes before a saved minimum can constrain a new placement.
+        // records. Fresh reported constraints are checked again on the next
+        // request; saved hints never constrain a new placement.
         store.clear(); descriptors.removeAll()
         saveAndNotify()
     }
@@ -205,12 +260,9 @@ final class WindowSizeConstraints {
 
     func reset(recordID: UUID) {
         cancelPendingObservations()
-        for (key, var descriptor) in descriptors where descriptor.record.id == recordID {
+        for (key, descriptor) in descriptors where descriptor.record.id == recordID {
             store.remove(key)
-            // A reset must not immediately fall back to another archived record
-            // with the same identifier on the next lookup of this live window.
-            descriptor.attemptedRestore = true
-            descriptors[key] = descriptor
+            descriptors.removeValue(forKey: key)
         }
         archive.remove(id: recordID)
         saveAndNotify()
@@ -230,80 +282,117 @@ final class WindowSizeConstraints {
         NotificationCenter.default.post(name: Self.changed, object: nil)
     }
 
-    private func identity(for window: AccessibilityElement, key: Key) -> WindowSizeLimitIdentity? {
-        guard let app = NSRunningApplication(processIdentifier: key.pid), let bundleID = app.bundleIdentifier else { return nil }
-        let metadata = window.sizeConstraintIdentity
-        let info = app.bundleURL.flatMap(Bundle.init(url:))?.infoDictionary
-        let version = [info?["CFBundleShortVersionString"] as? String, info?["CFBundleVersion"] as? String].compactMap { $0 }.joined(separator: "/")
-        return WindowSizeLimitIdentity(bundleID: bundleID, appVersion: version, pid: key.pid, launch: key.launch,
-            session: session, windowID: window.windowId ?? 0, identifier: metadata.identifier,
-            role: metadata.role, subrole: metadata.subrole, structure: metadata.structure)
-    }
+    private let identityQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "Rectangle.WindowSizeEvidence"
+        queue.maxConcurrentOperationCount = 3
+        queue.qualityOfService = .userInitiated
+        return queue
+    }()
+    private var identityRequests: [Key: UUID] = [:]
+    private var observationIdentities: [Key: WindowSizeLimitIdentity] = [:]
 
-    private func prepare(_ window: AccessibilityElement, key: Key) {
-        synchronizePreference()
-        let now = ProcessInfo.processInfo.systemUptime
-        if let descriptor = descriptors[key], now - descriptor.checkedAt < 1 { return }
-        guard let identity = identity(for: window, key: key) else { return }
-        if var descriptor = descriptors[key] {
-            // A sidebar or another structural layout change is evidence that a
-            // previously learned minimum may no longer apply.
-            if descriptor.record.identity.structure != identity.structure || descriptor.record.identity.identifier != identity.identifier {
-                store.remove(key); archive.remove(id: descriptor.record.id)
-                descriptor.attemptedRestore = true
-                saveAndNotify()
+    private func observeVerifiedClamp(_ window: AccessibilityElement, key: Key, before: CGRect,
+                                      requested: CGRect, settled: CGRect, generation: UUID) {
+        guard identityRequests[key] == nil, let id = window.windowId,
+              let app = NSRunningApplication(processIdentifier: key.pid), let bundleID = app.bundleIdentifier else { return }
+        let request = UUID()
+        identityRequests[key] = request
+        let name = app.localizedName ?? bundleID
+        let info = app.bundleURL.flatMap(Bundle.init(url:))?.infoDictionary
+        let version = [info?["CFBundleShortVersionString"] as? String, info?["CFBundleVersion"] as? String]
+            .compactMap { $0 }.joined(separator: "/")
+        let session = self.session
+        identityQueue.addOperation { [weak self] in
+            let reader = AccessibilityReadBatch(budget: 0.15)
+            let application = AXUIElementCreateApplication(key.pid)
+            let elements = reader.value(application, kAXWindowsAttribute) as? [AXUIElement] ?? []
+            var identity: WindowSizeLimitIdentity?
+            var reported: CGSize?
+            if let element = elements.first(where: { reader.windowID($0) == id }) {
+                let identifier = reader.value(element, kAXIdentifierAttribute) as? String
+                let role = reader.value(element, kAXRoleAttribute) as? String ?? ""
+                let subrole = reader.value(element, kAXSubroleAttribute) as? String ?? ""
+                var structure: [String] = []
+                if let children = reader.value(element, kAXChildrenAttribute) as? [AXUIElement], children.count <= 32 {
+                    for child in children where reader.available {
+                        structure.append([kAXRoleAttribute, kAXSubroleAttribute, kAXIdentifierAttribute]
+                            .map { reader.value(child, $0) as? String ?? "" }.joined(separator: "|"))
+                    }
+                }
+                reported = reader.wrapped(element, "AXMinSize", type: .cgSize)
+                    ?? reader.wrapped(element, "AXMinimumSize", type: .cgSize)
+                let position: CGPoint? = reader.wrapped(element, kAXPositionAttribute, type: .cgPoint)
+                let size: CGSize? = reader.wrapped(element, kAXSizeAttribute, type: .cgSize)
+                if reader.available, role == kAXWindowRole, let position, let size,
+                   LayoutHelperLayout.matches(CGRect(origin: position, size: size), settled, tolerance: 1),
+                   let server = WindowUtil.getWindowFrame(id: id), LayoutHelperLayout.matches(server, settled, tolerance: 1) {
+                    identity = WindowSizeLimitIdentity(bundleID: bundleID, appVersion: version, pid: key.pid,
+                        launch: key.launch, session: session, windowID: id, identifier: identifier,
+                        role: role, subrole: subrole, structure: structure.sorted())
+                }
             }
-            descriptor.record.identity = identity; descriptor.checkedAt = now
-            descriptors[key] = descriptor
-        } else {
-            let name = NSRunningApplication(processIdentifier: key.pid)?.localizedName ?? identity.bundleID
-            descriptors[key] = Descriptor(record: WindowSizeLimitRecord(id: UUID(), identity: identity, appName: name,
-                evidence: WindowSizeEvidence(reported: nil, learned: .zero, learnedAt: now)), checkedAt: now)
-        }
-        guard remembers, var descriptor = descriptors[key], !descriptor.attemptedRestore else { return }
-        descriptor.attemptedRestore = true
-        let live: [WindowSizeLimitIdentity]
-        if archive.records.contains(where: { $0.identity.isSameLiveWindow(as: identity) }) {
-            live = [identity]
-        } else if identity.identifier != nil {
-            live = (AccessibilityElement(key.pid).windowElements ?? []).compactMap { element in
-                guard let candidateKey = self.key(for: element) else { return nil }
-                return self.identity(for: element, key: candidateKey)
+            let verifiedIdentity = identity
+            let verifiedReported = reported
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.identityRequests[key] == request else { return }
+                self.identityRequests.removeValue(forKey: key)
+                guard self.observationGeneration == generation, WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
+                      let identity = verifiedIdentity else { return }
+                let now = Date.timeIntervalSinceReferenceDate
+                if let old = self.observationIdentities[key], old != identity {
+                    self.store.remove(key)
+                    if let descriptor = self.descriptors[key] { self.archive.remove(id: descriptor.record.id) }
+                }
+                self.observationIdentities[key] = identity
+                if self.observationIdentities.count > 128, let oldest = self.observationIdentities.keys.first(where: { $0 != key }) {
+                    self.observationIdentities.removeValue(forKey: oldest)
+                }
+                let previous = self.store.entries[key]
+                self.store.observe(for: key, reported: verifiedReported, before: before.size, requested: requested.size,
+                    first: settled.size, settled: settled.size, now: now, verifiedClamp: true, operation: generation)
+                guard previous != self.store.entries[key], let evidence = self.store.entries[key] else { return }
+                let id = self.archive.match(identity)?.id ?? self.descriptors[key]?.record.id ?? UUID()
+                self.descriptors[key] = Descriptor(record: WindowSizeLimitRecord(id: id, identity: identity,
+                    appName: name, evidence: evidence))
+                self.synchronizeRecord(key)
             }
-        } else { live = [] }
-        if var record = archive.match(identity, liveIdentities: live) {
-            record.identity = identity
-            descriptor.record = record
-            store.restore(record.evidence, for: key, now: now)
-            archive.upsert(record)
-            descriptors[key] = descriptor
-            saveAndNotify()
-            return
         }
-        descriptors[key] = descriptor
     }
 
     private func key(for window: AccessibilityElement) -> Key? {
         guard let pid = window.pid, let app = NSRunningApplication(processIdentifier: pid),
-              !app.isTerminated, let launch = app.launchDate else { return nil }
-        return Key(element: window, pid: pid, launch: launch.timeIntervalSinceReferenceDate)
+              !app.isTerminated, let launch = WindowProcessIdentity.launchTime(for: pid) else { return nil }
+        return Key(element: window, pid: pid, launch: launch)
     }
 
     func minimum(for window: AccessibilityElement, reported: CGSize?) -> CGSize? {
         guard let key = key(for: window) else { return reported }
         synchronizePreference()
-        if !remembers && store.entries[key] == nil {
-            // The default path needs no accessibility hierarchy inventory for
-            // a window that has never supplied any learned evidence.
-            return store.minimum(for: key, reported: reported, current: window.frame.size,
-                now: ProcessInfo.processInfo.systemUptime)
-        }
-        prepare(window, key: key)
-        let before = store.entries[key]
-        let result = store.minimum(for: key, reported: reported, current: window.frame.size,
-                                   now: ProcessInfo.processInfo.systemUptime)
-        if before != store.entries[key] { synchronizeRecord(key) }
+        let previous = store.entries[key]
+        let result = store.minimum(for: key, reported: reported, current: .zero,
+                                   now: Date.timeIntervalSinceReferenceDate)
+        if previous != store.entries[key] { synchronizeRecord(key) }
         return result
+    }
+
+    func recordSuccessfulPlacement(_ window: AccessibilityElement, frame: CGRect) {
+        guard let key = key(for: window), WindowAnimationGeometry.valid(frame) else { return }
+        let previous = store.entries[key]
+        store.recordSuccess(for: key, size: frame.size)
+        // A saved record for this same live window must also be invalidated,
+        // even when no hint has been loaded in this Rectangle process yet.
+        let id = window.windowId
+        var changed = false
+        for var record in archive.records where record.identity.pid == key.pid
+            && record.identity.launch == key.launch && record.identity.session == session
+            && record.identity.windowID == id {
+            if frame.width + 2 < record.evidence.learned.width { record.evidence.learned.width = 0; changed = true }
+            if frame.height + 2 < record.evidence.learned.height { record.evidence.learned.height = 0; changed = true }
+            if record.evidence.isValid { archive.upsert(record) } else { archive.remove(id: record.id) }
+        }
+        if previous != store.entries[key] { synchronizeRecord(key) }
+        else if changed { saveAndNotify() }
     }
 
     private func synchronizeRecord(_ key: Key) {
@@ -320,12 +409,15 @@ final class WindowSizeConstraints {
         guard generation == nil || generation == observationGeneration else { return }
         guard let key = key(for: window), !before.isNull, !requested.isNull,
               LayoutHelperLayout.matches(first, settled, tolerance: 1) else { return }
-        prepare(window, key: key)
-        let previous = store.entries[key]
-        store.observe(for: key, reported: window.reportedMinimumSize, before: before.size, requested: requested.size,
-                      first: first.size, settled: settled.size, now: ProcessInfo.processInfo.systemUptime,
-                      verifiedClamp: verifiedClamp)
-        if previous != store.entries[key] { synchronizeRecord(key) }
+        guard let id = window.windowId, let server = WindowUtil.getWindowFrame(id: id),
+              LayoutHelperLayout.matches(server, settled, tolerance: 1) else { return }
+        if LayoutHelperLayout.matches(requested, settled, tolerance: 1) {
+            recordSuccessfulPlacement(window, frame: settled)
+            return
+        }
+        guard verifiedClamp else { return }
+        observeVerifiedClamp(window, key: key, before: before, requested: requested, settled: settled,
+                             generation: generation ?? observationGeneration)
     }
 
     /// Observe only the user's actual requested resize; never probe by secretly
@@ -338,20 +430,39 @@ final class WindowSizeConstraints {
             earlierBefore: pending[key]?.before, earlierRequested: pending[key]?.requested,
             replacesEarlierAttempt: replacesEarlierAttempt)
         pending[key] = PendingResize(token: token, before: original, requested: requested)
+        guard let id = window.windowId else { pending.removeValue(forKey: key); return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
             guard let self, self.pending[key]?.token == token else { return }
-            let first = window.frame
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) { [weak self] in
-                guard let self, self.pending[key]?.token == token else { return }
-                self.pending.removeValue(forKey: key)
-                self.recordSettledResize(window, before: original, requested: requested, first: first, settled: window.frame)
+            self.identityQueue.addOperation { [weak self] in
+                let reader = AccessibilityReadBatch(budget: 0.15)
+                let app = AXUIElementCreateApplication(key.pid)
+                let windows = reader.value(app, kAXWindowsAttribute) as? [AXUIElement] ?? []
+                var confirmed: CGRect?
+                if let element = windows.first(where: { reader.windowID($0) == id }),
+                   let position: CGPoint = reader.wrapped(element, kAXPositionAttribute, type: .cgPoint),
+                   let size: CGSize = reader.wrapped(element, kAXSizeAttribute, type: .cgSize),
+                   reader.available, let server = WindowUtil.getWindowFrame(id: id) {
+                    let frame = CGRect(origin: position, size: size)
+                    if LayoutHelperLayout.matches(frame, requested, tolerance: 1),
+                       LayoutHelperLayout.matches(frame, server, tolerance: 1) { confirmed = frame }
+                }
+                let result = confirmed
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, self.pending[key]?.token == token else { return }
+                    self.pending.removeValue(forKey: key)
+                    guard WindowProcessIdentity.launchTime(for: key.pid) == key.launch, let result else { return }
+                    self.recordSuccessfulPlacement(window, frame: result)
+                }
             }
         }
     }
 
     func cancelPendingObservations() {
         pending.removeAll()
+        identityRequests.removeAll()
+        identityQueue.cancelAllOperations()
         observationGeneration = UUID()
+        WindowPlacementCoordinator.shared.cancelAll()
         WindowSizeWarning.hideCurrent()
     }
 

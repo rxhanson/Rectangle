@@ -46938,54 +46938,6 @@
         }
       }
     },
-    "windowPlacementFailedMessage" : {
-      "comment" : "Placement failed and restoration could not be confirmed",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The window could not fit the available space."
-          }
-        }
-      }
-    },
-    "windowPlacementRestoredMessage" : {
-      "comment" : "Failed placement was restored and verified",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The window could not fit. Its previous position was restored."
-          }
-        }
-      }
-    },
-    "windowPlacementUnavailableMessage" : {
-      "comment" : "Known minimum prevented any window movement",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The window is too large for the available space. Its position is unchanged."
-          }
-        }
-      }
-    },
-    "windowPlacementWarningTitle" : {
-      "comment" : "Window placement warning title",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Window could not fit"
-          }
-        }
-      }
-    },
     "windowSizeWarningMessage" : {
       "comment" : "Explains that an app can prevent a window from shrinking to the requested layout",
       "extractionState" : "manual",

@@ -120,23 +120,33 @@ struct WindowAnimationSizeFeedback {
     }
 }
 
-/// Waits for AX and WindowServer to agree before accepting a constrained size.
-/// Retries a stalled resize with a small position change before moving fully in bounds.
-/// A new drag cancels this state in the driver.
+/// Verifies size retries and animates any remaining position correction.
+/// Observations belong to this placement only; they never become size hints.
 struct WindowAnimationSettlement {
     enum Decision {
         case waiting, retrySize, retrySizeAt(CGPoint), align(CGRect), complete(CGRect), failed
     }
 
+    private struct Alignment {
+        let origin: CGRect
+        let target: CGRect
+        let duration: TimeInterval
+        var elapsed: TimeInterval = 0
+        var lastTick: TimeInterval
+        var expected: CGRect
+    }
+
     let startedAt: TimeInterval
+    private var verificationStartedAt: TimeInterval
     private var previous: CGRect?
     private var stableSince: TimeInterval?
-    private var retriedSize = false
-    private var retriedNearDestination = false
+    private var sizeRetries = 0
+    private var alignment: Alignment?
     private let alignmentTolerance: CGFloat
 
     init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil, alignmentTolerance: CGFloat = 1) {
         self.startedAt = startedAt
+        verificationStartedAt = startedAt
         self.alignmentTolerance = alignmentTolerance
         if let verifiedFrame {
             previous = verifiedFrame
@@ -147,60 +157,80 @@ struct WindowAnimationSettlement {
     mutating func observe(ax: CGRect, server: CGRect?, destination: CGRect,
                           placement: WindowAnimationPlacement, origin: CGRect,
                           at now: TimeInterval) -> Decision {
-        guard now - startedAt < 0.3 else { return .failed }
+        // Two bounded resize retries, position motion and final verification
+        // share one deadline. A missing acknowledgment also has its own limit.
+        guard now - startedAt < 1.2 else { return .failed }
         guard let server, WindowAnimationGeometry.valid(ax), WindowAnimationGeometry.valid(server),
               WindowAnimationGeometry.near(ax, server, tolerance: 1) else {
-            resetObservation()
-            return .waiting
+            previous = nil
+            stableSince = nil
+            alignment?.lastTick = now
+            return now - verificationStartedAt < 0.2 ? .waiting : .failed
         }
+        if var motion = alignment {
+            guard WindowAnimationGeometry.near(ax, motion.expected, tolerance: 1) else {
+                // A resize acknowledgment or external position change invalidates
+                // the old trajectory. Recompute from corroborated actual geometry.
+                alignment = nil
+                resetObservation(at: now)
+                return .waiting
+            }
+            motion.elapsed += min(1.0 / 30, max(0, now - motion.lastTick))
+            motion.lastTick = now
+            let t = min(1, motion.elapsed / motion.duration)
+            let progress = CGFloat(t * t * (3 - 2 * t))
+            let next = CGRect(x: motion.origin.minX + (motion.target.minX - motion.origin.minX) * progress,
+                              y: motion.origin.minY + (motion.target.minY - motion.origin.minY) * progress,
+                              width: ax.width, height: ax.height)
+            motion.expected = next
+            alignment = t >= 1 ? nil : motion
+            resetObservation(at: now)
+            return .align(next)
+        }
+        guard now - verificationStartedAt < 0.2 else { return .failed }
         guard let previous, WindowAnimationGeometry.near(previous, ax, tolerance: 1) else {
             self.previous = ax
             stableSince = now
             return .waiting
         }
-        guard let stableSince, now - stableSince >= 1.0 / 30 else { return .waiting }
-        if !retriedSize, abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1 {
-            if placement.constrainToScreen {
-                // A shrink can stop while returning from off screen even when AX
-                // reports success. Moving the entire oversized frame in bounds can
-                // expose a backwards step after it has already reached its target.
-                var retryFrame = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-                if let position = placement.positionBeforeGrowing(from: retryFrame, to: destination) {
-                    retryFrame.origin = position
-                }
-                if !WindowAnimationGeometry.near(ax, retryFrame, tolerance: 1) {
-                    if !retriedNearDestination,
-                       abs(ax.minX - destination.minX) <= 1, abs(ax.minY - destination.minY) <= 1,
-                       ax.width >= destination.width, ax.height >= destination.height {
-                        // A one-point move can unblock the resize without exposing
-                        // the full correction. Verify it before using the in-bounds
-                        // retry; genuine minimum sizes still take the normal path.
-                        retriedNearDestination = true
-                        func step(_ current: CGFloat, toward target: CGFloat) -> CGFloat {
-                            current + min(1, abs(target - current)) * (target < current ? -1 : 1)
-                        }
-                        resetObservation()
-                        return .retrySizeAt(CGPoint(x: step(ax.minX, toward: retryFrame.minX),
-                                                    y: step(ax.minY, toward: retryFrame.minY)))
-                    }
-                    retriedSize = true
-                    resetObservation()
-                    return .retrySizeAt(retryFrame.origin)
-                }
+        guard let stableSince, now - stableSince + 0.000001 >= 1.0 / 30 else { return .waiting }
+        let sizeDiffers = abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1
+        var aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+        if sizeDiffers, sizeRetries < 2 {
+            if let position = placement.positionBeforeGrowing(from: aligned, to: destination) {
+                aligned.origin = position
             }
-            retriedSize = true
-            resetObservation()
-            return .retrySize
+            if sizeRetries == 0 {
+                sizeRetries += 1
+                resetObservation(at: now)
+                // A small move may release a temporary edge clamp. Count it as
+                // a size retry and leave final alignment to the motion phase.
+                func step(_ current: CGFloat, toward target: CGFloat) -> CGFloat {
+                    current + min(1, max(-1, target - current))
+                }
+                let position = CGPoint(x: step(ax.minX, toward: aligned.minX),
+                                       y: step(ax.minY, toward: aligned.minY))
+                return position == ax.origin ? .retrySize : .retrySizeAt(position)
+            }
+            if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+                sizeRetries += 1
+                resetObservation(at: now)
+                return .retrySize
+            }
+        } else if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+            return .complete(ax)
         }
-        let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-        if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) { return .complete(ax) }
-        resetObservation()
-        return .align(aligned)
+        let distance = max(abs(aligned.minX - ax.minX), abs(aligned.minY - ax.minY))
+        alignment = Alignment(origin: ax, target: aligned,
+            duration: min(0.3, max(0.18, Double(distance) / 140)), lastTick: now, expected: ax)
+        resetObservation(at: now)
+        return .waiting
     }
 
-    private mutating func resetObservation() {
+    private mutating func resetObservation(at now: TimeInterval) {
         previous = nil
         stableSince = nil
+        verificationStartedAt = now
     }
 }
 

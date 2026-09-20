@@ -1,16 +1,36 @@
 /// AccessibilityElement.swift
 
 import Foundation
+import Darwin
+
+enum WindowProcessIdentity {
+    /// Launch Services may omit launchDate for apps started by an executable.
+    /// Kernel start time still distinguishes a reused PID without an AX query.
+    static func launchTime(for pid: pid_t) -> TimeInterval? {
+        var info = proc_bsdinfo()
+        if proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &info, Int32(MemoryLayout<proc_bsdinfo>.size)) == MemoryLayout<proc_bsdinfo>.size {
+            return Date(timeIntervalSince1970: Double(info.pbi_start_tvsec) + Double(info.pbi_start_tvusec) / 1_000_000)
+                .timeIntervalSinceReferenceDate
+        }
+        return NSRunningApplication(processIdentifier: pid)?.launchDate?.timeIntervalSinceReferenceDate
+    }
+}
 
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
+    private let knownApplication: Bool
+    private var resolvedWindowID: CGWindowID?
+    private(set) var messagingTimeout: Float = 0
     
-    init(_ element: AXUIElement) {
+    init(_ element: AXUIElement, application: Bool = false, messagingTimeout: Float = 0, windowID: CGWindowID? = nil) {
         wrappedElement = element
+        knownApplication = application
+        resolvedWindowID = windowID
+        if messagingTimeout > 0 { setMessagingTimeout(messagingTimeout) }
     }
     
     convenience init(_ pid: pid_t) {
-        self.init(AXUIElementCreateApplication(pid))
+        self.init(AXUIElementCreateApplication(pid), application: true)
     }
     
     convenience init?(_ bundleIdentifier: String) {
@@ -25,15 +45,16 @@ class AccessibilityElement {
     
     private func getElementValue(_ attribute: NSAccessibility.Attribute) -> AccessibilityElement? {
         guard let value = wrappedElement.getValue(attribute), CFGetTypeID(value) == AXUIElementGetTypeID() else { return nil }
-        return AccessibilityElement(value as! AXUIElement)
+        return AccessibilityElement(value as! AXUIElement, messagingTimeout: messagingTimeout)
     }
     
     private func getElementsValue(_ attribute: NSAccessibility.Attribute) -> [AccessibilityElement]? {
         guard let value = wrappedElement.getValue(attribute), let array = value as? [AXUIElement] else { return nil }
-        return array.map { AccessibilityElement($0) }
+        return array.map { AccessibilityElement($0, messagingTimeout: messagingTimeout) }
     }
     
     private var role: NSAccessibility.Role? {
+        if knownApplication { return .application }
         guard let value = wrappedElement.getValue(.role) as? String else { return nil }
         return NSAccessibility.Role(rawValue: value)
     }
@@ -213,9 +234,10 @@ class AccessibilityElement {
             writeEnhancedUI: { appElement?.enhancedUserInterface = $0 }
         )
         // Avoid a long stream of blocking requests to an unresponsive app.
-        setMessagingTimeout(0.05)
+        let previousTimeout = messagingTimeout
+        setMessagingTimeout(previousTimeout > 0 ? min(previousTimeout, 0.05) : 0.05)
         return { [self] in
-            setMessagingTimeout(0)
+            setMessagingTimeout(previousTimeout)
             restore()
         }
     }
@@ -339,7 +361,10 @@ class AccessibilityElement {
     }
     
     var windowId: CGWindowID? {
-        wrappedElement.getWindowId()
+        if let resolvedWindowID { return resolvedWindowID }
+        guard let id = wrappedElement.getWindowId(), id != 0 else { return nil }
+        resolvedWindowID = id
+        return id
     }
 
     func getWindowId() -> CGWindowID? {
@@ -404,6 +429,7 @@ class AccessibilityElement {
     /// Caps how long AX calls through this element can block on an
     /// unresponsive app (the systemwide default is several seconds).
     func setMessagingTimeout(_ seconds: Float) {
+        messagingTimeout = seconds
         AXUIElementSetMessagingTimeout(wrappedElement, seconds)
     }
     
@@ -428,9 +454,12 @@ class AccessibilityElement {
     }
     
     private var applicationElement: AccessibilityElement? {
-        if isApplication == true { return self }
+        // PID construction already establishes the type. A failed role request
+        // must not create an unbounded replacement application handle.
+        if knownApplication { return self }
         guard let pid = pid else { return nil }
-        return AccessibilityElement(pid)
+        return AccessibilityElement(AXUIElementCreateApplication(pid), application: true,
+                                    messagingTimeout: messagingTimeout)
     }
     
     private var focusedWindowElement: AccessibilityElement? {
@@ -733,6 +762,55 @@ enum EnhancedUI: Int {
            )
         return {
             if shouldRestore { writeEnhancedUI(true) }
+        }
+    }
+}
+
+/// The deadline covers the entire batch. A timeout ends it immediately; optional
+/// unsupported attributes are absence, not an excuse to reset the AX timeout.
+final class AccessibilityReadBatch {
+    private let deadline: TimeInterval
+    private var failed = false
+    var timedOut: Bool { failed }
+    init(budget: TimeInterval) { deadline = ProcessInfo.processInfo.systemUptime + budget }
+    var available: Bool { !failed && ProcessInfo.processInfo.systemUptime < deadline }
+    private func prepare(_ element: AXUIElement) -> Bool {
+        guard available else { return false }
+        AXUIElementSetMessagingTimeout(element, Float(min(0.05, max(0.001, deadline - ProcessInfo.processInfo.systemUptime))))
+        return true
+    }
+    func value(_ element: AXUIElement, _ attribute: String) -> CFTypeRef? {
+        guard prepare(element) else { return nil }
+        var result: CFTypeRef?
+        let status = AXUIElementCopyAttributeValue(element, attribute as CFString, &result)
+        if status == .cannotComplete { failed = true }
+        return status == .success ? result : nil
+    }
+    func windowID(_ element: AXUIElement) -> CGWindowID? {
+        guard prepare(element) else { return nil }
+        var id: CGWindowID = 0
+        let status = _AXUIElementGetWindow(element, &id)
+        if status == .cannotComplete { failed = true }
+        return status == .success && id != 0 ? id : nil
+    }
+    func wrapped<T>(_ element: AXUIElement, _ attribute: String, type: AXValueType) -> T? {
+        guard let value = value(element, attribute), CFGetTypeID(value) == AXValueGetTypeID() else { return nil }
+        let pointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
+        defer { pointer.deallocate() }
+        return AXValueGetValue(value as! AXValue, type, pointer) ? pointer.pointee : nil
+    }
+    func settable(_ element: AXUIElement, _ attribute: String) -> Bool? {
+        guard prepare(element) else { return nil }
+        var result = DarwinBoolean(false)
+        let status = AXUIElementIsAttributeSettable(element, attribute as CFString, &result)
+        if status == .cannotComplete { failed = true }
+        return status == .success ? result.boolValue : nil
+    }
+    func observe(_ observer: AXObserver, _ element: AXUIElement, _ notification: String,
+                 context: UnsafeMutableRawPointer) {
+        guard prepare(element) else { return }
+        if AXObserverAddNotification(observer, element, notification as CFString, context) == .cannotComplete {
+            failed = true
         }
     }
 }

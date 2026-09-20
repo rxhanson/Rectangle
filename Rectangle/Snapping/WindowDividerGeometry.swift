@@ -82,6 +82,7 @@ final class WindowDividerResize {
     private(set) var minimumLeft: CGFloat
     private(set) var minimumRight: CGFloat
     private(set) var pendingDivider: CGFloat?
+    private var requestedDivider: CGFloat?
     private let writeFrame: (Bool, CGRect, Bool, Bool) -> Bool
     private let read: (Bool) -> CGRect
     private var lastWrittenLeft: CGRect
@@ -94,17 +95,20 @@ final class WindowDividerResize {
     /// until release, so an app's resize speed cannot hold back the handle.
     @discardableResult func preview(to requested: CGFloat) -> CGFloat? {
         guard let frames = geometry.frames(at: requested, minimumLeft: minimumLeft, minimumRight: minimumRight) else { return nil }
+        requestedDivider = requested
         pendingDivider = (axis.rect(frames.left).maxX + axis.rect(frames.right).minX) / 2
         return pendingDivider
     }
 
     func takePreview() -> CGFloat? {
-        let x = pendingDivider
-        pendingDivider = nil
+        // The preview stays within the known limits, but placement must retain
+        // the pointer's intent to distinguish a minimum from an ordinary split.
+        let x = requestedDivider
+        cancelPreview()
         return x
     }
 
-    func cancelPreview() { pendingDivider = nil }
+    func cancelPreview() { pendingDivider = nil; requestedDivider = nil }
 
     func accept(left: CGRect, right: CGRect) {
         self.left = left; self.right = right
@@ -219,6 +223,14 @@ final class WindowDividerPlacement {
     private var rollbackIncomplete = false
     private var terminal: State?
     private var unreadableSince: TimeInterval?
+
+    /// Only acknowledged placement can produce a size warning. Rounding the
+    /// split by up to one point, a rollback, or a refused write cannot do so.
+    var minimumSizeReached: Bool {
+        guard terminal == .completed else { return false }
+        let actual = (geometry.axis.rect(left).maxX + geometry.axis.rect(right).minX) / 2
+        return abs(actual - requested) > 1
+    }
 
     var left: CGRect { targets[0] }
     var right: CGRect { targets[1] }

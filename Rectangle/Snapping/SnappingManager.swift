@@ -184,9 +184,54 @@ class SnappingManager {
         checkFullScreen()
     }
     
+    private var fullScreenCheckGeneration = UUID()
+    private var fullScreenCheckRunning = false
+
     func checkFullScreen() {
-        isFullScreen = AccessibilityElement.getFrontWindowElement()?.isFullScreen == true
+        fullScreenCheckGeneration = UUID()
         toggleListening()
+        refreshFullScreenState()
+    }
+
+    private func refreshFullScreenState() {
+        guard !fullScreenCheckRunning else { return }
+        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
+              let launch = WindowProcessIdentity.launchTime(for: pid) else {
+            isFullScreen = false
+            toggleListening()
+            return
+        }
+        let generation = fullScreenCheckGeneration
+        fullScreenCheckRunning = true
+        // Activation also occurs while selecting a helper candidate. A stalled
+        // previous app must not block that handoff or enqueue repeated scans.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let reader = AccessibilityReadBatch(budget: 0.15)
+            let application = AXUIElementCreateApplication(pid)
+            let focused = reader.value(application, kAXFocusedWindowAttribute)
+            let window: AXUIElement?
+            if let focused, CFGetTypeID(focused) == AXUIElementGetTypeID() {
+                window = (focused as! AXUIElement)
+            } else {
+                window = (reader.value(application, kAXWindowsAttribute) as? [AXUIElement])?.first
+            }
+            let fullScreen = window.flatMap { reader.value($0, "AXFullScreen") as? Bool } == true
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.fullScreenCheckRunning = false
+                guard self.fullScreenCheckGeneration == generation,
+                      NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
+                      WindowProcessIdentity.launchTime(for: pid) == launch else {
+                    self.refreshFullScreenState()
+                    return
+                }
+                // An unchanged delayed reply must not reset a newer gesture.
+                if self.isFullScreen != fullScreen {
+                    self.isFullScreen = fullScreen
+                    self.toggleListening()
+                }
+            }
+        }
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
@@ -669,7 +714,7 @@ class SnappingManager {
                 ? GapCalculation.applyGaps(rectCalcParams.visibleFrameOfScreen, dimension: gapsApplicable,
                     gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
                 : rectCalcParams.visibleFrameOfScreen
-            return WindowSizeConstraints.fitting(target, minimum: minimum, in: bounds)
+            return WindowSizeConstraints.fitting(target, minimum: minimum, in: bounds) ?? target
         }
         return nil
     }

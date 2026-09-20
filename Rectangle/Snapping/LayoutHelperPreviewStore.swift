@@ -101,12 +101,12 @@ final class LayoutHelperPreviewStore {
     private lazy var queue: LayoutHelperCaptureQueue<LayoutHelperPreviewKey, CGImage> = {
         let queue = LayoutHelperCaptureQueue<LayoutHelperPreviewKey, CGImage> { [weak self] key in
             guard #available(macOS 14, *), let self, !self.suspended,
-                  Defaults.layoutHelper.userEnabled, CGPreflightScreenCaptureAccess() else { return nil }
+                  Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsAllowed else { return nil }
             return await self.capture(key)
         }
         queue.completed = { [weak self] key, image in
             guard let self, !self.suspended, Defaults.layoutHelper.userEnabled,
-                  CGPreflightScreenCaptureAccess() else { return }
+                  LayoutHelperPermission.previewsAllowed else { return }
             self.failures[key] = nil
             self.cache.insert(image, for: key, now: Date.timeIntervalSinceReferenceDate)
             if self.wanted.contains(key) {
@@ -130,7 +130,7 @@ final class LayoutHelperPreviewStore {
         let frame = window.frame
         guard frame.width.isFinite, frame.height.isFinite, frame.width > 0, frame.height > 0 else { return nil }
         return LayoutHelperPreviewKey(id: id, pid: pid,
-            launch: NSRunningApplication(processIdentifier: pid)?.launchDate?.timeIntervalSinceReferenceDate ?? 0,
+            launch: WindowProcessIdentity.launchTime(for: pid) ?? 0,
             width: Int(frame.width.rounded()), height: Int(frame.height.rounded()))
     }
 
@@ -140,7 +140,7 @@ final class LayoutHelperPreviewStore {
     }
     func request(_ keys: [LayoutHelperPreviewKey], deliver: ((LayoutHelperPreviewKey, NSImage) -> Void)? = nil) {
         guard #available(macOS 14, *), !suspended, Defaults.layoutHelper.userEnabled,
-              CGPreflightScreenCaptureAccess() else { clear(); return }
+              LayoutHelperPermission.previewsAllowed else { clear(); return }
         let now = Date.timeIntervalSinceReferenceDate
         self.wanted = Set(keys); self.deliver = deliver
         cache.prune(now: now)
@@ -175,8 +175,8 @@ final class LayoutHelperPreviewStore {
         guard let task = contentTask as? Task<SCShareableContent?, Never>,
               let content = await task.value,
               let window = content.windows.first(where: { $0.windowID == key.id && $0.owningApplication?.processID == key.pid }),
-              NSRunningApplication(processIdentifier: key.pid)?.launchDate?.timeIntervalSinceReferenceDate ?? 0 == key.launch,
-              !suspended, Defaults.layoutHelper.userEnabled, CGPreflightScreenCaptureAccess() else { return nil }
+              WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
+              !suspended, Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsAllowed else { return nil }
         let config = Self.configuration(for: window.frame.size)
         do {
             return try await SCScreenshotManager.captureImage(contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: config)
