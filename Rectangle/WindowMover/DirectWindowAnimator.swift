@@ -384,7 +384,7 @@ final class DirectWindowAnimator {
         animation = WindowFrameAnimation(from: origin, to: destination, startTime: startedAt,
             duration: preparation.duration, curve: WindowAnimationCurve.placementValue,
             maximumFrameInterval: { [weak self] in max(1.0 / 30, self?.drivingInterval ?? 1.0 / 60) },
-            maximumDuration: preparation.duration * 1.5, write: { frame, _ in
+            maximumDuration: max(0.45, preparation.duration * 1.5), write: { frame, _ in
                 let position = CGPoint(x: frame.minX.rounded(), y: frame.minY.rounded())
                 guard position != previous else { return true }
                 let start = WindowAnimationDiagnostics.enabled ? animationClock() : nil
@@ -535,7 +535,6 @@ final class DirectWindowAnimator {
     private func advanceKeyboard(at time: TimeInterval) {
         guard let session = keyboardSession, let window else { return }
         let sample = session.motion.sample(at: time)
-        if sample.progress >= 1 { finishKeyboard(); return }
         let frame = sample.frame
         let sampled = CGRect(x: frame.minX.rounded(), y: frame.minY.rounded(),
                              width: frame.width.rounded(), height: frame.height.rounded())
@@ -579,9 +578,9 @@ final class DirectWindowAnimator {
                 }
             }
         }
-        if sampled == session.motion.destination,
-           WindowAnimationGeometry.near(window.frame, sampled, tolerance: 0.001),
-           serverFrame(window).map({ WindowAnimationGeometry.near($0, sampled, tolerance: 0.001) }) == true {
+        if sample.progress >= 1 || (sampled == session.motion.destination
+            && WindowAnimationGeometry.near(window.frame, sampled, tolerance: 0.001)
+            && serverFrame(window).map({ WindowAnimationGeometry.near($0, sampled, tolerance: 0.001) }) == true) {
             finishKeyboard()
         }
     }
@@ -675,7 +674,7 @@ final class DirectWindowAnimator {
         }
         animation = WindowFrameAnimation(from: origin, to: destination, startTime: startedAt, duration: duration,
                                          offset: offset, curve: curve, maximumFrameInterval: maximumFrameInterval,
-                                         maximumDuration: profile == .layoutHelper ? duration * 3 : nil,
+                                         maximumDuration: profile == .layoutHelper ? max(0.9, duration * 3) : nil,
                                          write: { [weak self] frame, progress in
             let traceStart = WindowAnimationDiagnostics.enabled ? animationClock() : nil
             defer {

@@ -443,7 +443,7 @@ class FootprintWindow: NSWindow {
         showing = true
         if presentation.fades {
             super.orderFront(sender)
-            startFade(to: presentation.alpha, duration: 0.18)
+            startFade(to: presentation.alpha, duration: 0.12)
         } else {
             fade = nil
             alphaValue = presentation.alpha
@@ -458,7 +458,7 @@ class FootprintWindow: NSWindow {
         tracePresentation("dismiss")
         frameAnimation?.cancel()
         if presentation.fades && super.isVisible {
-            startFade(to: 0, duration: 0.12)
+            startFade(to: 0, duration: 0.09)
         } else {
             fade = nil
             alphaValue = 0

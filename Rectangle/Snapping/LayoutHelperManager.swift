@@ -181,7 +181,7 @@ final class LayoutHelperManager {
             }
         }
         pending = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + (result.source == .dragToSnap ? 0.1 : 0.3), execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + (result.source == .dragToSnap ? 0.05 : 0.08), execute: work)
     }
 
     private func installInputMonitors() {

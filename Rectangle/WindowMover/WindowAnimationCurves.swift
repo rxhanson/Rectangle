@@ -14,7 +14,7 @@ enum WindowDisplayTransition {
 
 /// Shared geometry timing for target-zone previews and window enlargement.
 enum WindowPreviewDeceleration {
-    static let duration: TimeInterval = 0.26
+    static let duration: TimeInterval = 0.20
 
     static var timingFunction: CAMediaTimingFunction {
         CAMediaTimingFunction(controlPoints: 0.1, 0.9, 0.2, 1)
@@ -39,7 +39,7 @@ enum WindowPreviewDeceleration {
 
 /// Timing for direct resizing and drag restoration.
 enum WindowAnimationCurve {
-    static let duration: TimeInterval = 0.3
+    static let duration: TimeInterval = 0.24
     static let unsnapPlaybackRate: Double = 1.2
     static let unsnapDuration: TimeInterval = 0.18 / unsnapPlaybackRate
 
@@ -82,7 +82,7 @@ enum WindowAnimationProfile {
 
 /// A finite trajectory can be replaced without estimating velocity from rounded AX frames.
 struct WindowKeyboardMotion {
-    static let duration: TimeInterval = 0.22
+    static let duration: TimeInterval = 0.18
 
     struct Sample {
         let frame: CGRect
