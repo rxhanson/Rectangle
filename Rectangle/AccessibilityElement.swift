@@ -497,6 +497,65 @@ class AccessibilityElement {
             app.activate()
         }
     }
+
+    /// Select one window before activating its application. Front-window-only
+    /// activation preserves the stacking order of the application's siblings.
+    func activateAndRaiseWindow(isCurrent: @escaping () -> Bool,
+                                completion: @escaping (AXError, AXError, AXError) -> Void) {
+        guard let pid else { completion(.invalidUIElement, .invalidUIElement, .invalidUIElement); return }
+        let workspace = NSWorkspace.shared
+        func raiseSelected(activation: AXError) {
+            guard isCurrent() else { return }
+            guard workspace.frontmostApplication?.processIdentifier == pid else {
+                completion(activation, .cannotComplete, .cannotComplete)
+                return
+            }
+            let main = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
+            let raise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
+            completion(activation, main, raise)
+        }
+        if workspace.frontmostApplication?.processIdentifier == pid {
+            raiseSelected(activation: .success)
+            return
+        }
+        var observer: NSObjectProtocol?
+        var timeout: DispatchWorkItem?
+        var finished = false
+        var activation = AXError.success
+        let finish = {
+            guard !finished else { return }
+            finished = true
+            if let registered = observer { workspace.notificationCenter.removeObserver(registered) }
+            observer = nil
+            timeout?.cancel(); timeout = nil
+            raiseSelected(activation: activation)
+        }
+        observer = workspace.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil, queue: .main) { note in
+                guard (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.processIdentifier == pid else { return }
+                DispatchQueue.main.async(execute: finish)
+            }
+        let deadline = DispatchWorkItem(block: finish)
+        timeout = deadline
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: deadline)
+        let application = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(application, messagingTimeout > 0 ? min(messagingTimeout, 0.05) : 0.05)
+        // Establish which window activation should bring forward before changing
+        // the frontmost process. Never request activation of every app window.
+        let selectedMain = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
+        let selectedRaise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
+        guard isCurrent() else { finish(); return }
+        if selectedMain == .success, selectedRaise == .success,
+           let app = NSRunningApplication(processIdentifier: pid), app.activate(options: []) {
+            activation = .success
+        } else {
+            // Some applications refuse background main-window changes. Retain
+            // application activation as the fallback for an otherwise unusable selection.
+            activation = AXUIElementSetAttributeValue(application, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+        }
+        if activation != .success || workspace.frontmostApplication?.processIdentifier == pid { finish() }
+    }
+
 }
 
 extension AccessibilityElement {

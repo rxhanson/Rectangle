@@ -298,51 +298,57 @@ final class LayoutHelperManager {
         previews.stop()
         catalog.suspendForPlacement()
         WindowAnimationDiagnostics.event("helper-placement-start", fields: ["windowID": snapshot.id])
-        NSRunningApplication(processIdentifier: snapshot.pid)?.activate()
         let bounds = layout.screen
         let placement = WindowAnimationPlacement(screenFrame: bounds,
             sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: target, in: bounds),
             constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
-        WindowPlacementCoordinator.shared.place(window, from: original, to: target, placement: placement,
-            animated: WindowAnimator.enabled, profile: .layoutHelper,
-            isCurrent: { [weak self] in
-                guard let self, self.token == selectionToken,
-                      WindowSizeConstraints.shared.observationGeneration == generation,
-                      NSScreen.screens.contains(screen),
-                      LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, bounds) else { return false }
-                return self.retainedIsValid()
-            }) { [weak self] outcome in
-                guard let self, self.token == selectionToken else { return }
-                WindowAnimationDiagnostics.event("helper-placement-complete", fields: ["windowID": snapshot.id,
-                    "outcome": String(describing: outcome)])
-                self.placingWindow = nil; self.selecting = false
-                switch outcome {
-                case .placed(let frame):
-                    WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
-                    if AppDelegate.windowHistory.restoreRects[snapshot.id] == nil
-                        || AppDelegate.windowHistory.lastRectangleActions[snapshot.id]?.rect != original {
-                        AppDelegate.windowHistory.restoreRects[snapshot.id] = original
+        window.activateAndRaiseWindow(isCurrent: { [weak self] in
+            self?.token == selectionToken && self?.placingWindow == window
+        }) { [weak self] activation, main, raise in
+            guard let self, self.token == selectionToken, self.placingWindow == window else { return }
+            WindowAnimationDiagnostics.event("helper-window-raise", fields: ["windowID": snapshot.id,
+                "activation": activation.rawValue, "main": main.rawValue, "raise": raise.rawValue])
+            WindowPlacementCoordinator.shared.place(window, from: original, to: target, placement: placement,
+                animated: WindowAnimator.enabled, profile: .layoutHelper,
+                isCurrent: { [weak self] in
+                    guard let self, self.token == selectionToken,
+                          WindowSizeConstraints.shared.observationGeneration == generation,
+                          NSScreen.screens.contains(screen),
+                          LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, bounds) else { return false }
+                    return self.retainedIsValid()
+                }) { [weak self] outcome in
+                    guard let self, self.token == selectionToken else { return }
+                    WindowAnimationDiagnostics.event("helper-placement-complete", fields: ["windowID": snapshot.id,
+                        "outcome": String(describing: outcome)])
+                    self.placingWindow = nil; self.selecting = false
+                    switch outcome {
+                    case .placed(let frame):
+                        WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
+                        if AppDelegate.windowHistory.restoreRects[snapshot.id] == nil
+                            || AppDelegate.windowHistory.lastRectangleActions[snapshot.id]?.rect != original {
+                            AppDelegate.windowHistory.restoreRects[snapshot.id] = original
+                        }
+                        AppDelegate.windowHistory.lastRectangleActions[snapshot.id] = RectangleAction(action: .specified, subAction: nil, rect: frame, count: 1)
+                        self.completedCells.insert(selectedCell)
+                        self.retained[window] = frame
+                        self.retainedLaunches[snapshot.id] = snapshot.launch
+                        WindowDividerManager.shared.record(window, id: snapshot.id, frame: frame,
+                            screen: screen, eligibilityConfirmed: true)
+                        if WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
+                            WindowSizeWarning.shared.show(on: screen)
+                        }
+                        self.catalog.resumeAfterPlacement()
+                        self.showNext()
+                    case .unresponsive:
+                        self.catalog.resumeAfterPlacement()
+                        self.showNext(message: "That window is not responding. Try again.")
+                    case .failed:
+                        self.catalog.resumeAfterPlacement()
+                        self.showNext(message: "That window could not be placed. Try again.")
+                    case .cancelled: self.cancel()
                     }
-                    AppDelegate.windowHistory.lastRectangleActions[snapshot.id] = RectangleAction(action: .specified, subAction: nil, rect: frame, count: 1)
-                    self.completedCells.insert(selectedCell)
-                    self.retained[window] = frame
-                    self.retainedLaunches[snapshot.id] = snapshot.launch
-                    WindowDividerManager.shared.record(window, id: snapshot.id, frame: frame,
-                        screen: screen, eligibilityConfirmed: true)
-                    if WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
-                        WindowSizeWarning.shared.show(on: screen)
-                    }
-                    self.catalog.resumeAfterPlacement()
-                    self.showNext()
-                case .unresponsive:
-                    self.catalog.resumeAfterPlacement()
-                    self.showNext(message: "That window is not responding. Try again.")
-                case .failed:
-                    self.catalog.resumeAfterPlacement()
-                    self.showNext(message: "That window could not be placed. Try again.")
-                case .cancelled: self.cancel()
                 }
-            }
+        }
     }
 
     private func validateSession() {
