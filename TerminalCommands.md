@@ -40,7 +40,8 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
 - [Keep window size when moving a maximized window to another display](#keep-window-size-when-moving-a-maximized-window-to-another-display)
-- [Attempt to preserve window position when moving to another display](#attempt-to-preserve-window-position-when-moving-to-another-display)
+- [Repeat the last Rectangle action when moving to another display](#repeat-the-last-rectangle-action-when-moving-to-another-display)
+- [Center a window when moving it to another display](#center-a-window-when-moving-it-to-another-display)
 - [Offset cycling position when overlapping another window](#offset-cycling-position-when-overlapping-another-window)
 - [Move windows that can't fill the snap area to the edge](#move-windows-that-cant-fill-the-snap-area-to-the-edge)
 - [Apps using native resize during window animations](#apps-using-native-resize-during-window-animations)
@@ -604,9 +605,9 @@ To restore the default behavior:
 defaults write com.knollsoft.Rectangle autoMaximize -int 0
 ```
 
-## Attempt to preserve window position when moving to another display
+## Repeat the last Rectangle action when moving to another display
 
-By default, moving a window to the next, previous, or a specific display centers it on the destination display. Enable this to instead try preserving the window's position on the destination. If the previous action was a Rectangle snap (half, third, maximize, etc.), that snap is replayed on the destination display. If the window was positioned manually, its rect is mapped proportionally from the source display to the destination display (a window at the right third stays at the right third) and clamped so it never overflows. This is off by default.
+Moving a window to the next, previous, or a specific display keeps the spot it had on the source display. Enable this to replay the last Rectangle action on the destination display instead, when there is one: a window that was snapped to the left half of the source display is snapped to the left half of the destination display, so it is resized to match the new display rather than keeping its size. Windows that were positioned manually are unaffected. This is off by default.
 
 ```bash
 defaults write com.knollsoft.Rectangle attemptMatchOnNextPrevDisplay -int 1
@@ -616,6 +617,20 @@ To disable it again:
 
 ```bash
 defaults write com.knollsoft.Rectangle attemptMatchOnNextPrevDisplay -int 2
+```
+
+## Center a window when moving it to another display
+
+Moving a window to the next, previous, or a specific display keeps the spot it had on the source display: window edges that were against a screen edge stay against that screen edge, a maximized window stays maximized, and everything else keeps its size and its relative position. Enable this to center the window on the destination display instead, which is what Rectangle did previously.
+
+```bash
+defaults write com.knollsoft.Rectangle centerOnDisplayChange -int 1
+```
+
+To restore the default behavior:
+
+```bash
+defaults write com.knollsoft.Rectangle centerOnDisplayChange -int 0
 ```
 
 ## Offset cycling position when overlapping another window

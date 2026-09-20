@@ -76,6 +76,7 @@ class Defaults {
     static let todoSidebarSide = IntEnumDefault<TodoSidebarSide>(key: "todoSidebarSide", defaultValue: .right)
     static let snapModifiers = IntDefault(key: "snapModifiers")
     static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
+    static let centerOnDisplayChange = OptionalBoolDefault(key: "centerOnDisplayChange")
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
     static let centerHalfCycles = OptionalBoolDefault(key: "centerHalfCycles")
     static let cyclingOverlapOffset = OptionalBoolDefault(key: "cyclingOverlapOffset")
@@ -185,6 +186,7 @@ class Defaults {
         todoSidebarSide,
         snapModifiers,
         attemptMatchOnNextPrevDisplay,
+        centerOnDisplayChange,
         altThirdCycle,
         centerHalfCycles,
         fullIgnoreBundleIds,
