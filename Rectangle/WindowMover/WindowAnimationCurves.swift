@@ -54,11 +54,30 @@ enum WindowAnimationCurve {
         // Cubic deceleration reaches rest without an extended near-stationary tail.
         return CGFloat(t * (3 + t * (t - 3)))
     }
+
+    static func placementValue(at progress: Double) -> CGFloat {
+        let t = min(1, max(0, progress))
+        // A picker starts from rest rather than inheriting a drag's motion.
+        return CGFloat(t * t * (3 - 2 * t))
+    }
 }
 
 /// Input-specific timing shares the same window placement and verification code.
 enum WindowAnimationProfile {
     case standard, keyboard
+    // A picker selection is one placement, even when a shortcut opened it.
+    // Use the single destination trajectory without keyboard retargeting.
+    case layoutHelper
+
+    func constraintCorrection(after elapsed: TimeInterval) -> CGFloat {
+        if self == .layoutHelper {
+            // A picker can consume more of the constrained alignment during
+            // its one-shot motion instead of deferring it to a second movement.
+            // Bound long ticks so an unresponsive app cannot cause a large jump.
+            return CGFloat(min(1.0 / 30, max(0, elapsed))) * 240
+        }
+        return min(1, CGFloat(max(0, elapsed)) * 60)
+    }
 }
 
 /// A finite trajectory can be replaced without estimating velocity from rounded AX frames.

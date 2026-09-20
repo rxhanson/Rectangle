@@ -187,11 +187,12 @@ final class LayoutHelperManager {
     }
 
     private func retainedIsValid() -> Bool {
-        let live = WindowUtil.getWindowList(forceRefresh: true)
+        let ids = retained.keys.compactMap(\.windowId)
+        let live = WindowUtil.getWindowList(ids: ids, forceRefresh: true)
         return retained.allSatisfy { window, frame in
             guard let id = window.windowId, let pid = window.pid,
                   let launch = retainedLaunches[id], WindowProcessIdentity.launchTime(for: pid) == launch,
-                  let info = live.first(where: { $0.id == id && $0.pid == pid }) else { return false }
+                  let info = live.first(where: { $0.id == id && $0.pid == pid }), info.isOnScreen else { return false }
             return LayoutHelperLayout.matches(info.frame, frame)
         }
     }
@@ -295,13 +296,15 @@ final class LayoutHelperManager {
         placingWindow = window
         panel.dismiss()
         previews.stop()
+        catalog.suspendForPlacement()
+        WindowAnimationDiagnostics.event("helper-placement-start", fields: ["windowID": snapshot.id])
         NSRunningApplication(processIdentifier: snapshot.pid)?.activate()
         let bounds = layout.screen
         let placement = WindowAnimationPlacement(screenFrame: bounds,
             sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: target, in: bounds),
             constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
         WindowPlacementCoordinator.shared.place(window, from: original, to: target, placement: placement,
-            animated: WindowAnimator.enabled, profile: keyboardTriggered ? .keyboard : .standard,
+            animated: WindowAnimator.enabled, profile: .layoutHelper,
             isCurrent: { [weak self] in
                 guard let self, self.token == selectionToken,
                       WindowSizeConstraints.shared.observationGeneration == generation,
@@ -310,6 +313,8 @@ final class LayoutHelperManager {
                 return self.retainedIsValid()
             }) { [weak self] outcome in
                 guard let self, self.token == selectionToken else { return }
+                WindowAnimationDiagnostics.event("helper-placement-complete", fields: ["windowID": snapshot.id,
+                    "outcome": String(describing: outcome)])
                 self.placingWindow = nil; self.selecting = false
                 switch outcome {
                 case .placed(let frame):
@@ -327,11 +332,13 @@ final class LayoutHelperManager {
                     if WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
                         WindowSizeWarning.shared.show(on: screen)
                     }
-                    self.catalog.refresh()
+                    self.catalog.resumeAfterPlacement()
                     self.showNext()
                 case .unresponsive:
+                    self.catalog.resumeAfterPlacement()
                     self.showNext(message: "That window is not responding. Try again.")
                 case .failed:
+                    self.catalog.resumeAfterPlacement()
                     self.showNext(message: "That window could not be placed. Try again.")
                 case .cancelled: self.cancel()
                 }

@@ -51,12 +51,38 @@ final class LayoutHelperWindowCatalog {
     private var generation = 0
     private var observers: [pid_t: AXObserver] = [:]
     private var invalidation: DispatchWorkItem?
+    private let windowList: () -> [WindowInfo]
+    private(set) var isSuspended = false
     var didUpdate: (() -> Void)?
     var isRefreshing: Bool { !running.isEmpty || !waiting.isEmpty }
 
+    init(windowList: @escaping () -> [WindowInfo] = { WindowUtil.getWindowList(forceRefresh: true) }) {
+        self.windowList = windowList
+    }
+
     func stop() {
+        isSuspended = false
+        discardPendingWork()
+        didUpdate = nil
+    }
+
+    /// Keep the picker snapshots, but release observers and discard in-flight
+    /// results while placement owns the selected window's Accessibility calls.
+    func suspendForPlacement() {
+        guard !isSuspended else { return }
+        isSuspended = true
+        discardPendingWork()
+    }
+
+    func resumeAfterPlacement() {
+        guard isSuspended else { return }
+        isSuspended = false
+        refresh()
+    }
+
+    private func discardPendingWork() {
         generation += 1
-        waiting.removeAll(); continuations.removeAll(); demands.removeAll(); didUpdate = nil
+        waiting.removeAll(); continuations.removeAll(); demands.removeAll()
         invalidation?.cancel(); invalidation = nil
         for observer in observers.values {
             CFRunLoopRemoveSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .commonModes)
@@ -72,8 +98,10 @@ final class LayoutHelperWindowCatalog {
     }
 
     func refresh() {
+        guard !isSuspended else { return }
+        WindowAnimationDiagnostics.event("helper-catalog-refresh")
         let ignored = Set((Defaults.disabledApps.typedValue ?? []) + (Defaults.fullIgnoreBundleIds.typedValue ?? []))
-        let infos = WindowUtil.getWindowList(forceRefresh: true).filter {
+        let infos = windowList().filter {
             $0.level == 0 && $0.pid != getpid() && WindowAnimationGeometry.valid($0.frame)
                 && !(Defaults.todo.userEnabled && TodoManager.cachedWindowID == $0.id)
         }
@@ -111,7 +139,7 @@ final class LayoutHelperWindowCatalog {
 
     /// A click gets one fresh batch for its application, never a desktop rescan.
     func resolve(_ id: CGWindowID, completion: @escaping (LayoutHelperWindowSnapshot?) -> Void) {
-        guard let snapshot = snapshots[id], applications[snapshot.pid] != nil else { completion(nil); return }
+        guard !isSuspended, let snapshot = snapshots[id], applications[snapshot.pid] != nil else { completion(nil); return }
         demands[id, default: []].append(completion)
         failures[snapshot.pid] = nil
         if !running.contains(snapshot.pid) {
@@ -122,6 +150,7 @@ final class LayoutHelperWindowCatalog {
     }
 
     private func pump() {
+        guard !isSuspended else { return }
         while running.count < 3, !waiting.isEmpty {
             let pid = waiting.removeFirst()
             guard let application = continuations.removeValue(forKey: pid) ?? applications[pid],
@@ -137,7 +166,7 @@ final class LayoutHelperWindowCatalog {
                     self.running.remove(pid)
                     guard self.applications[pid]?.launch == application.launch else { self.pump(); return }
                     guard epoch == self.generation else {
-                        if self.didUpdate != nil, !self.waiting.contains(pid) { self.waiting.append(pid) }
+                        if !self.isSuspended, self.didUpdate != nil, !self.waiting.contains(pid) { self.waiting.append(pid) }
                         self.pump()
                         return
                     }
@@ -182,7 +211,7 @@ final class LayoutHelperWindowCatalog {
     }
 
     private func invalidate() {
-        guard didUpdate != nil, invalidation == nil else { return }
+        guard !isSuspended, didUpdate != nil, invalidation == nil else { return }
         let work = DispatchWorkItem { [weak self] in
             guard let self else { return }
             self.invalidation = nil

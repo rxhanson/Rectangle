@@ -52,7 +52,8 @@ class WindowUtil {
                     processName = String(rawProcessName)
                 }
                 let alpha = (rawInfo.getValue(kCGWindowAlpha) as CFNumber?).map { CGFloat(truncating: $0) } ?? 1
-                let info = WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: processName, alpha: alpha)
+                let isOnScreen = (rawInfo.getValue(kCGWindowIsOnscreen) as CFBoolean?).map { CFBooleanGetValue($0) } ?? false
+                let info = WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: processName, alpha: alpha, isOnScreen: isOnScreen)
                 infos.append(info)
             }
         }
@@ -68,4 +69,5 @@ struct WindowInfo {
     let pid: pid_t
     let processName: String?
     var alpha: CGFloat = 1
+    var isOnScreen: Bool = true
 }

@@ -1,7 +1,8 @@
 import Cocoa
 
-/// A placement commits only after both window APIs agree. Ending an animation
-/// merely hands ownership to this bounded acknowledgement phase.
+/// A placement commits only after both window APIs agree. A successful animation
+/// hands its verified frame to a short readback check; other paths retry within
+/// a bounded acknowledgement phase.
 final class WindowPlacementCoordinator {
     enum Outcome {
         case placed(CGRect)
@@ -71,20 +72,24 @@ final class WindowPlacementCoordinator {
             guard isCurrent() else { completion(.cancelled); return }
             completion(result)
         }
-        let verify = {
+        let verify: (CGRect?) -> Void = { animatedFrame in
             guard !cancellation.isCancelled, isCurrent() else { finish(.cancelled); return }
+            let evidence = animatedFrame.flatMap {
+                WindowPlacementAnimationEvidence(frame: $0, original: original, target: target,
+                    placement: placement, completedAt: ProcessInfo.processInfo.systemUptime)
+            }
             DispatchQueue.global(qos: .userInitiated).async {
                 let worker = WindowPlacementWorker(pid: pid, id: id, launch: launch,
                     cancellation: cancellation)
-                let result = worker.place(target, original: original, placement: placement)
+                let result = worker.place(target, original: original, placement: placement, animationEvidence: evidence)
                 DispatchQueue.main.async { finish(result) }
             }
         }
         if animated && WindowAnimator.enabled {
             WindowAnimator.shared.animate(window, from: original, to: target, placement: placement,
-                                          profile: profile) { _ in verify() }
+                                          profile: profile) { verify($0) }
         } else {
-            verify()
+            verify(nil)
         }
         return cancellation
     }
@@ -109,7 +114,8 @@ private final class WindowPlacementWorker {
         !cancellation.isCancelled && WindowProcessIdentity.launchTime(for: pid) == launch
     }
 
-    func place(_ target: CGRect, original: CGRect, placement: WindowAnimationPlacement) -> WindowPlacementCoordinator.Outcome {
+    func place(_ target: CGRect, original: CGRect, placement: WindowAnimationPlacement,
+               animationEvidence: WindowPlacementAnimationEvidence? = nil) -> WindowPlacementCoordinator.Outcome {
         guard valid else { return .cancelled }
         let reader = AccessibilityReadBatch(budget: 0.15)
         let application = AXUIElementCreateApplication(pid)
@@ -121,7 +127,7 @@ private final class WindowPlacementWorker {
         window.setMessagingTimeout(0.05)
         let start = ProcessInfo.processInfo.systemUptime
         if let frame = settle(target, bounds: placement.screenFrame, deadline: start + 3.4,
-                              placement: placement, original: original) {
+                              placement: placement, original: original, animationEvidence: animationEvidence) {
             return .placed(frame)
         }
         guard valid else { return .cancelled }
@@ -143,11 +149,12 @@ private final class WindowPlacementWorker {
     }
 
     private func settle(_ target: CGRect, bounds: CGRect, deadline: TimeInterval,
-                        placement: WindowAnimationPlacement? = nil, original: CGRect? = nil) -> CGRect? {
+                        placement: WindowAnimationPlacement? = nil, original: CGRect? = nil,
+                        animationEvidence: WindowPlacementAnimationEvidence? = nil) -> CGRect? {
         guard let window else { return nil }
         var state = WindowPlacementAcknowledgement(target: target, startedAt: ProcessInfo.processInfo.systemUptime,
                                                     pendingWrite: false, bounds: bounds, placement: placement, original: original,
-                                                    reportedMinimum: window.reportedMinimumSize)
+                                                    reportedMinimum: window.reportedMinimumSize, animationEvidence: animationEvidence)
         while valid && ProcessInfo.processInfo.systemUptime < deadline {
             let now = ProcessInfo.processInfo.systemUptime
             let frame = agreedFrame()
@@ -168,6 +175,31 @@ private final class WindowPlacementWorker {
             Thread.sleep(forTimeInterval: 0.02)
         }
         return nil
+    }
+}
+
+/// Evidence belongs only to this completed animation and its destination. It
+/// never becomes a learned minimum or survives a newer placement operation.
+struct WindowPlacementAnimationEvidence {
+    let frame: CGRect
+    let target: CGRect
+    let placement: WindowAnimationPlacement
+    let completedAt: TimeInterval
+
+    init?(frame: CGRect, original: CGRect, target: CGRect, placement: WindowAnimationPlacement,
+          completedAt: TimeInterval) {
+        guard WindowAnimationGeometry.valid(frame), WindowAnimationGeometry.valid(original),
+              WindowAnimationGeometry.valid(target), completedAt.isFinite,
+              frame.width >= target.width - 1, frame.height >= target.height - 1,
+              WindowAnimationGeometry.near(frame,
+                placement.frame(for: target, actualSize: frame.size, origin: original, progress: 1), tolerance: 1),
+              WindowAnimationGeometry.near(frame, target, tolerance: 1)
+                || !WindowAnimationGeometry.near(frame, original, tolerance: 1) else { return nil }
+        self.frame = frame; self.target = target; self.placement = placement; self.completedAt = completedAt
+    }
+
+    func isCurrent(target: CGRect, placement: WindowAnimationPlacement?, at time: TimeInterval) -> Bool {
+        self.target == target && self.placement == placement && time >= completedAt && time - completedAt <= 0.25
     }
 }
 
@@ -193,21 +225,41 @@ struct WindowPlacementAcknowledgement {
     private var probeSize: CGSize?
     private var probePosition: CGPoint?
     private var acceptedSize: CGSize?
+    private var animationEvidence: WindowPlacementAnimationEvidence?
 
     init(target: CGRect, startedAt: TimeInterval, pendingWrite: Bool, bounds: CGRect? = nil,
-         placement: WindowAnimationPlacement? = nil, original: CGRect? = nil, reportedMinimum: CGSize? = nil) {
+         placement: WindowAnimationPlacement? = nil, original: CGRect? = nil, reportedMinimum: CGSize? = nil,
+         animationEvidence: WindowPlacementAnimationEvidence? = nil) {
         self.target = target
         self.bounds = bounds
         self.placement = placement
         self.original = original
         self.reportedMinimum = reportedMinimum
+        self.animationEvidence = animationEvidence
         waitingUntil = startedAt + (pendingWrite ? 0.65 : 0)
     }
 
     mutating func observe(_ frame: CGRect?, at now: TimeInterval) -> Decision {
+        if let evidence = animationEvidence,
+           !evidence.isCurrent(target: target, placement: placement, at: now) {
+            animationEvidence = nil
+            stableAt = nil
+        }
         guard let frame, WindowAnimationGeometry.valid(frame) else {
             stableAt = nil; sizeStableAt = nil; previousSize = nil
             return .waiting
+        }
+        if let evidence = animationEvidence {
+            if WindowAnimationGeometry.near(frame, evidence.frame, tolerance: 1) {
+                // observe receives only fresh, agreeing AX/WindowServer frames.
+                // Reuse the animation's resize retries instead of repeating them
+                // or visibly probing a window that has already settled.
+                if let stableAt, now - stableAt >= 0.04 { return .complete(frame) }
+                if stableAt == nil { stableAt = now }
+                return .waiting
+            }
+            animationEvidence = nil
+            stableAt = nil
         }
         if let original, !sameSize(frame.size, original.size) { resizeResponded = true }
         if let previousSize, !sameSize(frame.size, previousSize) { resizeResponded = true }
