@@ -144,6 +144,7 @@
 		98ED703E305DC12D0077BD10 /* MASShortcutViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */; };
 		98ED704B306171650077BD10 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED7049306171650077BD10 /* AppSettingsView.swift */; };
 		98ED704C306171650077BD10 /* AppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704A306171650077BD10 /* AppSettingsViewModel.swift */; };
+		98ED704F306180AD0077BD10 /* SnapAreaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
@@ -379,6 +380,7 @@
 		98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MASShortcutViewRepresentable.swift; sourceTree = "<group>"; };
 		98ED7049306171650077BD10 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		98ED704A306171650077BD10 /* AppSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsViewModel.swift; sourceTree = "<group>"; };
+		98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaSettingsView.swift; sourceTree = "<group>"; };
 		98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThreeFourthsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThreeFourthsCalculation.swift; sourceTree = "<group>"; };
@@ -814,6 +816,7 @@
 				98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */,
 				98ED7049306171650077BD10 /* AppSettingsView.swift */,
 				98ED704A306171650077BD10 /* AppSettingsViewModel.swift */,
+				98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */,
 			);
 			path = SettingsWindow;
 			sourceTree = "<group>";
@@ -1174,6 +1177,7 @@
 				630644571003EB468CB643D8 /* BottomCenterRightSixteenthCalculation.swift in Sources */,
 				2D240EE416CC03AC921E3A4F /* BottomRightSixteenthCalculation.swift in Sources */,
 				98ED703C305DB20A0077BD10 /* BehaviorSettingsViewModel.swift in Sources */,
+				98ED704F306180AD0077BD10 /* SnapAreaSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

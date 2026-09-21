@@ -47,7 +47,7 @@ class SettingsTabViewController: NSTabViewController {
         var defaultSize: NSSize {
             switch self {
             case .shortcuts:   return NSSize(width: 500, height: 540)
-            case .snapAreas:   return NSSize(width: 550, height: 480)
+            case .snapAreas:   return NSSize(width: 500, height: 480)
             case .behavior:    return NSSize(width: 500, height: 550)
             case .appSettings: return NSSize(width: 500, height: 442)
             }
@@ -58,7 +58,7 @@ class SettingsTabViewController: NSTabViewController {
             case .shortcuts:
                 return ShortcutsViewController()
             case .snapAreas:
-                return NSViewController.newControllerFromStoryboard(identifier: "SnapAreaViewController")
+                return SnapAreaSettingsViewController()
             case .behavior:
                 return BehaviorSettingsViewController()
             case .appSettings:
