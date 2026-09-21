@@ -73,7 +73,12 @@ class TitleBarManager {
             windowFrame: windowElement.frame,
             pendingFrame: WindowAnimator.shared.logicalFrame(for: windowElement),
             lastAction: historyAction)
-        resolvedAction.postTitleBar(windowElement: windowElement)
+        let clickedScreen = Self.screenForClick(at: location.screenFlipped, screens: NSScreen.screens)
+        resolvedAction.postTitleBar(windowElement: windowElement, screen: clickedScreen)
+    }
+
+    static func screenForClick(at location: CGPoint, screens: [NSScreen]) -> NSScreen? {
+        screens.first { $0.frame.contains(location) }
     }
 
     static func resolveAction(_ action: WindowAction, restoreEnabled: Bool,

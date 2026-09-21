@@ -189,8 +189,8 @@ enum WindowAction: Int, Codable {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .url))
     }
     
-    func postTitleBar(windowElement: AccessibilityElement?) {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, windowElement: windowElement, source: .titleBar))
+    func postTitleBar(windowElement: AccessibilityElement?, screen: NSScreen? = nil) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, screen: screen, windowElement: windowElement, source: .titleBar))
     }
 
     // Determines where separators should be used in the menu
