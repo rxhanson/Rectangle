@@ -757,14 +757,8 @@
 		98910B3C2311304D0066EC23 /* PrefsWindow */ = {
 			isa = PBXGroup;
 			children = (
-				98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */,
-				9898583A305C1B6400459AFF /* ShortcutsViewController.swift */,
-				98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */,
-				98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */,
-				98ED7049306171650077BD10 /* AppSettingsView.swift */,
-				98ED704A306171650077BD10 /* AppSettingsViewModel.swift */,
+				98ED704D306179160077BD10 /* SettingsWindow */,
 				944F25CC2CE5A144004B2FD2 /* PrefsViewController.swift */,
-				98985838305C1B6400459AFF /* SettingsWindowController.swift */,
 				944F25CE2CE5A144004B2FD2 /* ShortcutRecordingObserver.swift */,
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
 				98ED7037305D9AE50077BD10 /* ExtraSettingsPopover.swift */,
@@ -808,6 +802,20 @@
 				98D4B6C425B6256C009C7BF6 /* TodoManager.swift */,
 			);
 			path = TodoMode;
+			sourceTree = "<group>";
+		};
+		98ED704D306179160077BD10 /* SettingsWindow */ = {
+			isa = PBXGroup;
+			children = (
+				98985838305C1B6400459AFF /* SettingsWindowController.swift */,
+				98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */,
+				9898583A305C1B6400459AFF /* ShortcutsViewController.swift */,
+				98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */,
+				98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */,
+				98ED7049306171650077BD10 /* AppSettingsView.swift */,
+				98ED704A306171650077BD10 /* AppSettingsViewModel.swift */,
+			);
+			path = SettingsWindow;
 			sourceTree = "<group>";
 		};
 		F1AC0DE000000000000000A5 /* StackBadge */ = {

@@ -9,8 +9,8 @@ class SettingsWindowController: NSWindowController {
         let window = NSWindow(contentViewController: contentViewController)
         
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        window.title = "Shortcuts"
-        window.setContentSize(NSSize(width: 480, height: 540))
+        window.title = SettingsTabViewController.Tab.shortcuts.label
+        window.setContentSize(SettingsTabViewController.Tab.shortcuts.defaultSize)
         window.minSize = NSSize(width: 420, height: 350)
         window.center()
         
@@ -20,6 +20,53 @@ class SettingsWindowController: NSWindowController {
 
 class SettingsTabViewController: NSTabViewController {
     
+    enum Tab: Int, CaseIterable {
+        case shortcuts
+        case snapAreas
+        case behavior
+        case appSettings
+        
+        var label: String {
+            switch self {
+            case .shortcuts:   return "Shortcuts"
+            case .snapAreas:   return "Snap Areas"
+            case .behavior:    return "Behavior"
+            case .appSettings: return "App Settings"
+            }
+        }
+        
+        var imageName: String {
+            switch self {
+            case .shortcuts:   return "keyboardToolbarTemplate"
+            case .snapAreas:   return "snapAreaTemplate"
+            case .behavior:    return "toolbarSettingsTemplate"
+            case .appSettings: return "appSettingsTemplate"
+            }
+        }
+        
+        var defaultSize: NSSize {
+            switch self {
+            case .shortcuts:   return NSSize(width: 500, height: 540)
+            case .snapAreas:   return NSSize(width: 550, height: 480)
+            case .behavior:    return NSSize(width: 500, height: 550)
+            case .appSettings: return NSSize(width: 500, height: 442)
+            }
+        }
+        
+        func makeViewController() -> NSViewController {
+            switch self {
+            case .shortcuts:
+                return ShortcutsViewController()
+            case .snapAreas:
+                return NSViewController.newControllerFromStoryboard(identifier: "SnapAreaViewController")
+            case .behavior:
+                return BehaviorSettingsViewController()
+            case .appSettings:
+                return AppSettingsViewController()
+            }
+        }
+    }
+    
     private var savedTabSizes: [Int: NSSize] = [:]
     
     override func viewDidLoad() {
@@ -27,29 +74,12 @@ class SettingsTabViewController: NSTabViewController {
         
         self.tabStyle = .toolbar
         
-        let shortcutsVC = ShortcutsViewController()
-        let shortcutsItem = NSTabViewItem(viewController: shortcutsVC)
-        shortcutsItem.label = "Shortcuts"
-        shortcutsItem.image = NSImage(imageLiteralResourceName: "keyboardToolbarTemplate")
-        addTabViewItem(shortcutsItem)
-
-        let snapAreaVC = NSViewController.newControllerFromStoryboard(identifier: "SnapAreaViewController")
-        let snapAreaItem = NSTabViewItem(viewController: snapAreaVC)
-        snapAreaItem.label = "Snap Areas"
-        snapAreaItem.image = NSImage(imageLiteralResourceName: "snapAreaTemplate")
-        addTabViewItem(snapAreaItem)
-
-        let behaviorVC = BehaviorSettingsViewController()
-        let behaviorItem = NSTabViewItem(viewController: behaviorVC)
-        behaviorItem.label = "Behavior"
-        behaviorItem.image = NSImage(imageLiteralResourceName: "toolbarSettingsTemplate")
-        addTabViewItem(behaviorItem)
-        
-        let appSettingsVC = AppSettingsViewController()
-        let appSettingsItem = NSTabViewItem(viewController: appSettingsVC)
-        appSettingsItem.label = "App Settings"
-        appSettingsItem.image = NSImage(imageLiteralResourceName: "appSettingsTemplate")
-        addTabViewItem(appSettingsItem)
+        for tab in Tab.allCases {
+            let item = NSTabViewItem(viewController: tab.makeViewController())
+            item.label = tab.label
+            item.image = NSImage(imageLiteralResourceName: tab.imageName)
+            addTabViewItem(item)
+        }
     }
     
     override var selectedTabViewItemIndex: Int {
@@ -78,23 +108,11 @@ class SettingsTabViewController: NSTabViewController {
     private func tabDidSwitch(to item: NSTabViewItem, at index: Int) {
         view.window?.title = item.label
         
-        if let savedSize = savedTabSizes[selectedTabViewItemIndex] {
+        if let savedSize = savedTabSizes[index] {
             resizeWindow(to: savedSize, animated: true)
+        } else if Tab.allCases.indices.contains(index) {
+            let initialSize = Tab.allCases[index].defaultSize
+            resizeWindow(to: initialSize, animated: true)
         }
-    }
-}
-
-class AdvancedSettingsViewController: NSViewController {
-    override func loadView() {
-        self.view = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 200))
-        
-        let label = NSTextField(labelWithString: "Advanced Settings View")
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
     }
 }
