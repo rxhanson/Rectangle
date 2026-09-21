@@ -255,9 +255,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     var settingsWindowController: NSWindowController?
     @IBAction func openPreferences(_ sender: Any) {
-        if prefsWindowController == nil {
+        if settingsWindowController == nil {
 //            prefsWindowController = SettingsWindowController()
-            prefsWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "PrefsWindowController") as? NSWindowController
+//            prefsWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "PrefsWindowController") as? NSWindowController
             settingsWindowController = SettingsWindowController()
         }
         settingsWindowController?.showWindow(self)

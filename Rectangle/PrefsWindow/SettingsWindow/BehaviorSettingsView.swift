@@ -39,7 +39,7 @@ struct BehaviorSettingsView: View {
                         }
                     }
                 }
-
+                
                 if viewModel.subsequentExecutionMode.resizes {
                     VStack(alignment: .leading, spacing: 8) {
                         // Keep fraction choices as compact checkboxes
@@ -50,7 +50,7 @@ struct BehaviorSettingsView: View {
                                     .toggleStyle(.checkbox)
                             }
                         }
-
+                        
                         HStack(spacing: 12) {
                             Text("Cyclic corner shortcuts expand:")
                             Spacer()
@@ -61,7 +61,7 @@ struct BehaviorSettingsView: View {
                             .pickerStyle(.radioGroup)
                             .horizontalRadioGroupLayout()
                         }
-
+                        
                         if viewModel.showCooperativeCornerResize {
                             Toggle("Resize adjacent windows when cycling side or corner shortcuts", isOn: $viewModel.cooperativeCornerResize)
                                 .toggleStyle(.switch)
@@ -70,8 +70,10 @@ struct BehaviorSettingsView: View {
                     .padding(.leading, 4)
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
-
-                VStack(alignment: .leading, spacing: 4) {
+            }
+            
+            Section {
+                VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text("Gaps between windows")
                         Slider(
@@ -84,40 +86,41 @@ struct BehaviorSettingsView: View {
                         Text("\(Int(viewModel.gapSize)) px")
                             .frame(width: 45, alignment: .trailing)
                     }
-
+                    
                     if viewModel.gapSize > 0 {
                         Toggle("Remove top gap when snapping to top edge", isOn: $viewModel.skipGapTopEdge)
                             .toggleStyle(.switch)
                     }
                 }
-
-                Group {
-                    Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
-
-                    if viewModel.showCursorScreenDetection {
-                        Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
-                    }
-
-                    Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
-                    Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
-                    
+            }
+            
+            Section {
+                if viewModel.showCursorScreenDetection {
+                    Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
+                }
+                
+                Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
+                Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
+                    Text("Hold any modifier key or use the window menu for default macOS behavior")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                if viewModel.showCombinedDisplayMode {
                     VStack(alignment: .leading, spacing: 2) {
-                        Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
-                        Text("Hold any modifier key or use the window menu for default macOS behavior")
+                        Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
+                        Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-
-                    if viewModel.showCombinedDisplayMode {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
-                            Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
                 }
-                .toggleStyle(.switch)
+            }
+            
+            Section {
+                Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
             }
 
             // MARK: - Todo Mode

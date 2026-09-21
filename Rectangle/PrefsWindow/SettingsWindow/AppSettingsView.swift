@@ -37,7 +37,6 @@ struct AppSettingsView: View {
                     Text("When the menu bar icon is hidden, relaunch Rectangle from Finder to open")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                        .padding(.leading, 18)
                 }
             }
             
