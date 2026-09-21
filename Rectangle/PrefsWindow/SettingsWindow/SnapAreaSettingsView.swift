@@ -161,9 +161,9 @@ struct SnapAreaSettingsView: View {
         Form {
             
             Section {
-                HStack(spacing: 16) {
+                HStack {
                     Button(action: { viewModel.isLandscapePopoverPresented.toggle() }) {
-                        Label("Landscape Snap Areas", systemImage: "rectangle.inset.filled")
+                        Label("Landscape Snap Areas…", systemImage: "rectangle.inset.filled")
                     }
                     .popover(isPresented: $viewModel.isLandscapePopoverPresented, arrowEdge: .bottom) {
                         SnapAreaGridPopoverView(viewModel: viewModel, orientation: .landscape)
@@ -172,8 +172,9 @@ struct SnapAreaSettingsView: View {
                     }
 
                     if viewModel.isPortraitConnected {
+                        Spacer()
                         Button(action: { viewModel.isPortraitPopoverPresented.toggle() }) {
-                            Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
+                            Label("Portrait Snap Areas…", systemImage: "rectangle.portrait.inset.filled")
                         }
                         .popover(isPresented: $viewModel.isPortraitPopoverPresented, arrowEdge: .bottom) {
                             SnapAreaGridPopoverView(viewModel: viewModel, orientation: .portrait)
@@ -185,10 +186,12 @@ struct SnapAreaSettingsView: View {
                 .padding(.vertical, 4)
             }
             
-            
             Section {
                 Toggle("Snap windows by dragging", isOn: $viewModel.windowSnapping)
                 Toggle("Restore window size when unsnapped", isOn: $viewModel.unsnapRestore)
+            }
+            
+            Section {
                 Toggle("Provide haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
                 Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
@@ -223,7 +226,7 @@ struct SnapAreaGridPopoverView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("\(orientation == .landscape ? "Landscape" : "Portrait") Snap Areas…")
+            Text("\(orientation == .landscape ? "Landscape" : "Portrait") Snap Areas")
                 .font(.headline)
 
             VStack(spacing: 12) {
