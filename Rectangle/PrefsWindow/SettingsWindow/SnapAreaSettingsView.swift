@@ -157,13 +157,17 @@ final class SnapAreaViewModel: ObservableObject {
 struct SnapAreaSettingsView: View {
     @StateObject private var viewModel = SnapAreaViewModel()
 
+    private var landscapeButtonTitle: String {
+        viewModel.isPortraitConnected ? "Landscape Snap Areas…" : "Configure Snap Areas…"
+    }
+
     var body: some View {
         Form {
             
             Section {
                 HStack {
                     Button(action: { viewModel.isLandscapePopoverPresented.toggle() }) {
-                        Label("Landscape Snap Areas…", systemImage: "rectangle.inset.filled")
+                        Label(landscapeButtonTitle, systemImage: "rectangle.inset.filled")
                     }
                     .popover(isPresented: $viewModel.isLandscapePopoverPresented, arrowEdge: .bottom) {
                         SnapAreaGridPopoverView(viewModel: viewModel, orientation: .landscape)
@@ -224,9 +228,17 @@ struct SnapAreaGridPopoverView: View {
     @ObservedObject var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
 
+    private var headerTitle: String {
+        if orientation == .portrait {
+            return "Portrait Snap Areas"
+        } else {
+            return viewModel.isPortraitConnected ? "Landscape Snap Areas" : "Snap Areas"
+        }
+    }
+
     var body: some View {
         VStack(spacing: 12) {
-            Text("\(orientation == .landscape ? "Landscape" : "Portrait") Snap Areas")
+            Text(headerTitle)
                 .font(.headline)
 
             VStack(spacing: 12) {
