@@ -372,21 +372,26 @@ class AppShortcutValidator: MASShortcutValidator {
 typealias TodoShortcutConflict = AppShortcutConflict
 typealias TodoShortcutValidator = AppShortcutValidator
 
-enum TodoSidebarSide: Int {
+enum TodoSidebarSide: Int, CaseIterable {
     case right = 1
     case left = 2
+    
+    var title: String {
+        switch self {
+        case .left: return "Left"
+        case .right: return "Right"
+        }
+    }
 }
 
-enum TodoSidebarWidthUnit: Int, CustomStringConvertible {
+enum TodoSidebarWidthUnit: Int, CaseIterable, CustomStringConvertible {
     case pixels = 1
     case pct = 2
     
     var description: String {
         switch self {
-        case .pixels:
-            return "px"
-        case .pct:
-            return "%"
+        case .pixels: return "px"
+        case .pct: return "%"
         }
     }
 }

@@ -42,7 +42,7 @@ class SettingsTabViewController: NSTabViewController {
         let generalVC = GeneralSettingsViewController()
         let generalItem = NSTabViewItem(viewController: generalVC)
         generalItem.label = "General"
-        generalItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: "General")
+        generalItem.image = NSImage(imageLiteralResourceName: "toolbarSettingsTemplate")
         addTabViewItem(generalItem)
     }
     
@@ -75,22 +75,6 @@ class SettingsTabViewController: NSTabViewController {
         if let savedSize = savedTabSizes[selectedTabViewItemIndex] {
             resizeWindow(to: savedSize, animated: true)
         }
-    }
-}
-
-// Example View Controllers
-class GeneralSettingsViewController: NSViewController {
-    override func loadView() {
-        self.view = NSView(frame: NSRect(x: 0, y: 0, width: 400, height: 200))
-        
-        let label = NSTextField(labelWithString: "General Settings View")
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
     }
 }
 

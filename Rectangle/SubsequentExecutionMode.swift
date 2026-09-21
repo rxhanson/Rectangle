@@ -9,6 +9,26 @@ enum SubsequentExecutionMode: Int {
     case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
     case cycleMonitor = 4
     case resizeAndCycleQuadrants = 5
+    
+    var title: String {
+        switch self {
+        case .resize: return "Cycle sizes on side actions"
+        case .acrossMonitor: return "Move to adjacent display on left or right"
+        case .none: return "Do Nothing"
+        case .acrossAndResize: return "Move to adjacent on left/right, or cycle size on side"
+        case .cycleMonitor: return "Cycle through displays"
+        case .resizeAndCycleQuadrants: return "Cycle positions on quadrants, cycle sizes on side"
+        }
+    }
+    
+    var resizes: Bool {
+        switch self {
+        case .resize, .acrossAndResize, .resizeAndCycleQuadrants: return true
+        default: return false
+        }
+    }
+    
+    static var ordered: [SubsequentExecutionMode] = [.none, .cycleMonitor, .resize, .acrossMonitor, .acrossAndResize, .resizeAndCycleQuadrants]
 }
 
 class SubsequentExecutionDefault: Default {
