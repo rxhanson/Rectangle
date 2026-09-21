@@ -1,8 +1,5 @@
 {
   "color-space-for-untagged-svg-colors" : "display-p3",
-  "features" : [
-    "specular-location"
-  ],
   "fill" : {
     "linear-gradient" : [
       "display-p3:0.36863,0.43529,0.50980,1.00000",
@@ -23,7 +20,7 @@
         "kind" : "none",
         "opacity" : 0.5
       },
-      "specular" : "inside",
+      "specular" : true,
       "translucency" : {
         "enabled" : true,
         "value" : 0.2
