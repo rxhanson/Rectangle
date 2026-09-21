@@ -377,9 +377,9 @@ extension AppDelegate: NSMenuDelegate {
             guard let displayName = action.displayName else { continue }
             let newMenuItem = NSMenuItem(title: displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
             newMenuItem.representedObject = action
-            if #available(macOS 27.0, *) {
-                newMenuItem.preferredImageVisibility = .visible
-            }
+//            if #available(macOS 27.0, *) {
+//                newMenuItem.preferredImageVisibility = .visible
+//            }
             if !showAllActions, let category = action.category {
                 // When additional sizes are off, keep Thirds and Size as flat items
                 if submenuOnlyWhenAdditional.contains(category) && !showAdditional {
