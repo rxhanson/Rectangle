@@ -233,16 +233,7 @@ struct SnapAreaGridView: View {
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .l)
 
                 // Display Graphic Representation (Center Cell)
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.blue.opacity(0.12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
-                    )
-                    .frame(width: 100, height: 62.5)
-                    .rotationEffect(orientation == .portrait ? .degrees(90) : .zero)
-                    .frame(width: 100, height: 100)
-                    .gridCellAnchor(.center)
+                MacDesktopGraphic(orientation: orientation)
 
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .r)
             }
@@ -314,5 +305,97 @@ extension NSImage {
         let copy = self.copy() as! NSImage
         copy.size = NSSize(width: targetHeight * aspectRatio, height: targetHeight)
         return copy
+    }
+}
+
+// MARK: - Mac Desktop Display Graphic
+
+struct MacDesktopGraphic: View {
+    let orientation: DisplayOrientation
+
+    var body: some View {
+        ZStack {
+            // Main Display Background
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.blue.opacity(0.12))
+
+            // Screen Content (Menu Bar & Dock)
+            VStack(spacing: 0) {
+                // Menu Bar
+                Rectangle()
+                    .fill(Color.primary.opacity(0.18))
+                    .frame(height: 5)
+                    .overlay(
+                        HStack(spacing: 2) {
+                            // Apple Logo Dot
+                            Circle()
+                                .fill(Color.primary.opacity(0.4))
+                                .frame(width: 2, height: 2)
+
+                            // Menu Text Placeholders (Mini Lines)
+                            Capsule()
+                                .fill(Color.primary.opacity(0.4))
+                                .frame(width: 5, height: 1.2)
+
+                            Capsule()
+                                .fill(Color.primary.opacity(0.25))
+                                .frame(width: 4, height: 1.2)
+
+                            Capsule()
+                                .fill(Color.primary.opacity(0.25))
+                                .frame(width: 4, height: 1.2)
+
+                            Spacer()
+
+                            // Right-Side Status Items
+                            Capsule()
+                                .fill(Color.primary.opacity(0.25))
+                                .frame(width: 3, height: 1.2)
+
+                            Capsule()
+                                .fill(Color.primary.opacity(0.25))
+                                .frame(width: 3, height: 1.2)
+                        }
+                        .padding(.horizontal, 3)
+                    )
+
+                Spacer()
+
+                // Dock
+                let iconCount = orientation == .portrait ? 4 : 6
+
+                HStack(spacing: 1.5) {
+                    ForEach(0..<iconCount, id: \.self) { _ in
+                        RoundedRectangle(cornerRadius: 1.2)
+                            .fill(Color.primary.opacity(0.35))
+                            .frame(maxHeight: .infinity)
+                            .aspectRatio(1, contentMode: .fit)
+                    }
+                }
+                .padding(.horizontal, 2.5)
+                .padding(.vertical, 1)
+                .frame(height: 5.5)
+                .background(
+                    RoundedRectangle(cornerRadius: 3.5)
+                        .fill(Color.primary.opacity(0.2))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3.5)
+                                .stroke(Color.primary.opacity(0.15), lineWidth: 0.5)
+                        )
+                )
+                .padding(.bottom, 3)
+            }
+
+            // Screen Border Overlay
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .frame(
+            width: orientation == .portrait ? 62.5 : 100,
+            height: orientation == .portrait ? 100 : 62.5
+        )
+        .frame(width: 100, height: 100)
+        .gridCellAnchor(.center)
     }
 }
