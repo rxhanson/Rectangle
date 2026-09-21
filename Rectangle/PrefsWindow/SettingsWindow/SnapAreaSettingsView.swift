@@ -300,7 +300,12 @@ struct SnapAreaPicker: View {
             Section {
                 ForEach(WindowAction.active.filter { $0.isDragSnappable }, id: \.rawValue) { action in
                     if let name = action.displayName {
-                        Text(name).tag(action.rawValue)
+                        Label {
+                            Text(name)
+                        } icon: {
+                            Image(nsImage: action.image.resizedForMenu())
+                        }
+                        .tag(action.rawValue)
                     }
                 }
             }
@@ -316,5 +321,16 @@ struct SnapAreaPicker: View {
         .onReceive(NotificationCenter.default.publisher(for: .defaultSnapAreas)) { _ in
             selectedTag = viewModel.getSelectedTag(for: directional, orientation: orientation)
         }
+    }
+}
+
+extension NSImage {
+    func resizedForMenu(targetHeight: CGFloat = 14) -> NSImage {
+        guard size.height > 0 else { return self }
+        
+        let aspectRatio = size.width / size.height
+        let copy = self.copy() as! NSImage
+        copy.size = NSSize(width: targetHeight * aspectRatio, height: targetHeight)
+        return copy
     }
 }
