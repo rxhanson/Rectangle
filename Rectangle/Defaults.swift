@@ -50,6 +50,7 @@ class Defaults {
     static let screenEdgeGapsOnMainScreenOnly = BoolDefault(key: "screenEdgeGapsOnMainScreenOnly")
     static let screenEdgeGapTopNotch = FloatDefault(key: "screenEdgeGapTopNotch", defaultValue: 0)
     static let lastVersion = StringDefault(key: "lastVersion")
+    static let welcomePending = BoolDefault(key: "welcomePending")
     static let installVersion = StringDefault(key: "installVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
     static let showAdditionalSizesInMenu = OptionalBoolDefault(key: "showAdditionalSizesInMenu")

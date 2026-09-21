@@ -74,8 +74,6 @@
 		9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824701F22AF9B7E0037B409 /* RectangleTests.swift */; };
 		9824702C22AFA22E0037B409 /* AccessibilityWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702A22AFA22E0037B409 /* AccessibilityWindowController.swift */; };
 		9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */; };
-		B91800000000000000000001 /* WelcomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91800000000000000000002 /* WelcomeController.swift */; };
-		B91800000000000000000003 /* WelcomeControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91800000000000000000004 /* WelcomeControllerTests.swift */; };
 		9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703022AFA8470037B409 /* RectangleStatusItem.swift */; };
 		9824703722B0F3200037B409 /* WindowAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703622B0F3200037B409 /* WindowAction.swift */; };
 		982470382EFA00010037B409 /* WindowActionCooperativeResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */; };
@@ -305,8 +303,6 @@
 		9824702122AF9B7E0037B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9824702A22AFA22E0037B409 /* AccessibilityWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessibilityWindowController.swift; sourceTree = "<group>"; };
 		9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuthorization.swift; sourceTree = "<group>"; };
-		B91800000000000000000002 /* WelcomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeController.swift; sourceTree = "<group>"; };
-		B91800000000000000000004 /* WelcomeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeControllerTests.swift; sourceTree = "<group>"; };
 		9824703022AFA8470037B409 /* RectangleStatusItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleStatusItem.swift; sourceTree = "<group>"; };
 		9824703622B0F3200037B409 /* WindowAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAction.swift; sourceTree = "<group>"; };
 		982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowActionCooperativeResize.swift; sourceTree = "<group>"; };
@@ -622,7 +618,6 @@
 			isa = PBXGroup;
 			children = (
 				9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */,
-				B91800000000000000000002 /* WelcomeController.swift */,
 				9824702A22AFA22E0037B409 /* AccessibilityWindowController.swift */,
 			);
 			path = AccessibilityAuthorization;
@@ -726,7 +721,6 @@
 			isa = PBXGroup;
 			children = (
 				9824701F22AF9B7E0037B409 /* RectangleTests.swift */,
-				B91800000000000000000004 /* WelcomeControllerTests.swift */,
 				AF09A0000000000000000004 /* GridTilingTests.swift */,
 				944F25D02CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift */,
 				de0950b8b00f40308934a523 /* JSONDefaultTests.swift */,
@@ -967,7 +961,6 @@
 				9821403522B38A2B00ABFB3F /* UpperRightCalculation.swift in Sources */,
 				984EDB0F29A42ED200D119D2 /* LaunchOnLogin.swift in Sources */,
 				9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */,
-				B91800000000000000000001 /* WelcomeController.swift in Sources */,
 				988D066322EB4CA5004EABD7 /* FirstTwoThirdsCalculation.swift in Sources */,
 				D04CE30A27817A9F00BD47B3 /* MiddleRightNinthCalculation.swift in Sources */,
 				98BEFA482620DEDD00D9D54F /* NSImageExtension.swift in Sources */,
@@ -1150,7 +1143,6 @@
 			files = (
 				9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */,
 				AF09A0000000000000000003 /* GridTilingTests.swift in Sources */,
-				B91800000000000000000003 /* WelcomeControllerTests.swift in Sources */,
 				944F25D12CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift in Sources */,
 				01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */,
 			);

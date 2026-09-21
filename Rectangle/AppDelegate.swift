@@ -10,7 +10,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     static let launcherAppId = "com.knollsoft.RectangleLauncher"
 
     private let accessibilityAuthorization = AccessibilityAuthorization()
-    private let welcomeController = WelcomeController()
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
     var updaterController: SPUStandardUpdaterController!
@@ -51,16 +50,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()
 
-        welcomeController.prepareForLaunch()
+        // Remember first-launch Welcome before checkVersion records a version.
+        if Defaults.lastVersion.value == nil {
+            Defaults.welcomePending.enabled = true
+        }
         checkVersion()
         mainStatusMenu.delegate = self
         statusItem.refreshVisibility()
         checkLaunchOnLogin()
         
-        let alreadyTrusted = welcomeController.checkAccessibility(
-            using: accessibilityAuthorization,
-            showWelcome: { self.showWelcomeWindow() }
-        ) {
+        let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
+            self.showWelcomeWindow()
             self.checkForConflictingApps()
             self.openPreferences(self)
             self.statusItem.statusMenu = self.mainStatusMenu
@@ -68,6 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         if alreadyTrusted {
+            showWelcomeWindow()
             accessibilityTrusted()
         }
         
@@ -230,22 +231,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
         
     private func showWelcomeWindow() {
-        let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil)
-            .instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
-        guard let welcomeWindow = welcomeWindowController?.window else { return }
-        welcomeWindow.delegate = self
-        
-        NSApp.activate(ignoringOtherApps: true)
-        
-        let response = NSApp.runModal(for: welcomeWindow)
-        
-        let usingRecommended = response == .alertFirstButtonReturn || response == .abort
-        
-        Defaults.alternateDefaultShortcuts.enabled = usingRecommended
-        
-        Defaults.subsequentExecutionMode.value = usingRecommended ? .acrossMonitor : .resize
-        
-        welcomeWindowController?.close()
+        if Defaults.welcomePending.enabled {
+            let welcomeWindowController = NSStoryboard(name: "Main", bundle: nil)
+                .instantiateController(withIdentifier: "WelcomeWindowController") as? NSWindowController
+            if let welcomeWindow = welcomeWindowController?.window {
+                welcomeWindow.delegate = self
+
+                NSApp.activate(ignoringOtherApps: true)
+
+                let response = NSApp.runModal(for: welcomeWindow)
+                let usingRecommended = response == .alertFirstButtonReturn || response == .abort
+
+                Defaults.alternateDefaultShortcuts.enabled = usingRecommended
+                Defaults.subsequentExecutionMode.value = usingRecommended ? .acrossMonitor : .resize
+                Defaults.welcomePending.enabled = false
+
+                welcomeWindowController?.close()
+            }
+        }
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
