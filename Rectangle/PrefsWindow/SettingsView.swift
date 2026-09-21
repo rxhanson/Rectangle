@@ -73,6 +73,7 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         // Keep fraction choices as compact checkboxes
                         HStack(spacing: 12) {
+                            Spacer()
                             ForEach(CycleSize.sortedSizes, id: \.self) { size in
                                 Toggle(size.title, isOn: viewModel.binding(for: size))
                                     .toggleStyle(.checkbox)
@@ -81,6 +82,7 @@ struct SettingsView: View {
 
                         HStack(spacing: 12) {
                             Text("Cyclic corner shortcuts expand:")
+                            Spacer()
                             Picker("", selection: $viewModel.cornerCycleExpansionAxis) {
                                 Text("horizontally").tag(CornerCycleExpansionAxis.horizontal)
                                 Text("vertically").tag(CornerCycleExpansionAxis.vertical)
@@ -104,7 +106,6 @@ struct SettingsView: View {
                         Slider(
                             value: $viewModel.gapSize,
                             in: 0...100,
-                            step: 1,
                             onEditingChanged: { editing in
                                 if !editing { viewModel.commitGapSize() }
                             }
@@ -116,7 +117,6 @@ struct SettingsView: View {
                     if viewModel.gapSize > 0 {
                         Toggle("Remove top gap when snapping to top edge", isOn: $viewModel.skipGapTopEdge)
                             .toggleStyle(.switch)
-                            .padding(.leading, 18)
                     }
                 }
 
@@ -136,7 +136,6 @@ struct SettingsView: View {
                         Text("Hold any modifier key or use the window menu for default macOS behavior")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                            .padding(.leading, 18)
                     }
 
                     if viewModel.showCombinedDisplayMode {
@@ -145,7 +144,6 @@ struct SettingsView: View {
                             Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                                .padding(.leading, 18)
                         }
                     }
                 }
@@ -155,12 +153,15 @@ struct SettingsView: View {
             // MARK: - Todo Mode
             Section {
                 HStack {
-                    Toggle("Show Todo Mode in menu", isOn: $viewModel.todoEnabled)
-                        .toggleStyle(.switch)
-                    Button(action: viewModel.showTodoModeHelp) {
-                        Image(systemName: "info.circle")
+                    Toggle(isOn: $viewModel.todoEnabled) {
+                        HStack(spacing: 4) {
+                            Text("Show Todo Mode in menu")
+                            Button(action: viewModel.showTodoModeHelp) {
+                                Image(systemName: "info.circle")
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
 
                 if viewModel.todoEnabled {
@@ -227,7 +228,6 @@ struct SettingsView: View {
                             Slider(
                                 value: $viewModel.stageSize,
                                 in: 0...400,
-                                step: 1,
                                 onEditingChanged: { editing in
                                     if !editing { viewModel.commitStageSize() }
                                 }
