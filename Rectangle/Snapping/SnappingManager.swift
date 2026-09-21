@@ -703,22 +703,29 @@ class SnappingManager {
                 target = GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
             }
             let minimum = windowElement?.minimumSize
+            let bounds = applyingGaps
+                ? GapCalculation.applyGaps(rectCalcParams.visibleFrameOfScreen, dimension: gapsApplicable,
+                    gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                : rectCalcParams.visibleFrameOfScreen
+            let hint = windowElement?.rememberedMinimumSize
+            func predictedPreview(_ requested: CGRect) -> CGRect {
+                let size = WindowSizeConstraints.animationSize(requested.size, origin: currentWindow.rect.size, hint: hint)
+                let previewMinimum = CGSize(width: max(minimum?.width ?? 0, size.width),
+                                            height: max(minimum?.height ?? 0, size.height))
+                return WindowSizeConstraints.fitting(requested, minimum: previewMinimum, in: bounds) ?? requested
+            }
             if windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
                 switch SnappedWindowFit.resolve(action: hotSpot.action, window: currentWindow,
                     initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen,
                     minimum: minimum) {
                 case let .fit(plan):
-                    return applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target)
+                    return predictedPreview(applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target))
                 case .noRoom: return nil
                 case .unchanged: break
                 }
             }
             if !applyingGaps { target = rectResult.rect }
-            let bounds = applyingGaps
-                ? GapCalculation.applyGaps(rectCalcParams.visibleFrameOfScreen, dimension: gapsApplicable,
-                    gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
-                : rectCalcParams.visibleFrameOfScreen
-            return WindowSizeConstraints.fitting(target, minimum: minimum, in: bounds) ?? target
+            return predictedPreview(target)
         }
         return nil
     }

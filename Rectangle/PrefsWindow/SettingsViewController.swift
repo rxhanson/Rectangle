@@ -41,6 +41,7 @@ class SettingsViewController: NSViewController {
     private var aboutTodoWindowController: NSWindowController?
     private var extraSettingsPopover: NSPopover?
     private var windowSizeLimitsController: WindowSizeLimitsWindowController?
+    private var minimumWindowSizeWarningCheckbox: NSButton?
     private var rememberWindowSizeLimitsCheckbox: NSButton?
     private var fitBesideSnappedWindowsCheckbox: NSButton?
     private var windowDividerCheckbox: NSButton?
@@ -1325,6 +1326,7 @@ class SettingsViewController: NSViewController {
         greenButtonOverrideCheckbox?.state = Defaults.greenButtonOverride.enabled ? .on : .off
 
         autoMaximizeCheckbox?.state = Defaults.autoMaximize.userDisabled ? .off : .on
+        minimumWindowSizeWarningCheckbox?.state = Defaults.showMinimumWindowSizeWarning.userDisabled ? .off : .on
         rememberWindowSizeLimitsCheckbox?.state = Defaults.rememberWindowSizeLimits.enabled ? .on : .off
         windowDividerCheckbox?.state = Defaults.windowDivider.enabled ? .on : .off
         refreshWindowDividerEnhanced()
@@ -1438,7 +1440,15 @@ class SettingsViewController: NSViewController {
         guard rememberWindowSizeLimitsCheckbox == nil,
               let parentStack = doubleClickTitleBarCheckbox.superview as? NSStackView,
               let index = parentStack.arrangedSubviews.firstIndex(of: doubleClickTitleBarCheckbox) else { return }
-        let checkbox = NSButton(checkboxWithTitle: "Remember learned window limits indefinitely".localized,
+        let warning = NSButton(checkboxWithTitle: "Show minimum window size warning".localized,
+                               target: self, action: #selector(toggleMinimumWindowSizeWarning(_:)))
+        warning.state = Defaults.showMinimumWindowSizeWarning.userDisabled ? .off : .on
+        warning.setAccessibilityIdentifier("showMinimumWindowSizeWarning")
+        warning.setContentCompressionResistancePriority(.required, for: .vertical)
+        parentStack.insertArrangedSubview(warning, at: index + 1)
+        minimumWindowSizeWarningCheckbox = warning
+
+        let checkbox = NSButton(checkboxWithTitle: "Remember learned window size limits".localized,
                                 target: self, action: #selector(toggleRememberWindowSizeLimits(_:)))
         checkbox.state = Defaults.rememberWindowSizeLimits.enabled ? .on : .off
         checkbox.setAccessibilityIdentifier("rememberWindowSizeLimits")
@@ -1454,7 +1464,7 @@ class SettingsViewController: NSViewController {
         row.orientation = .horizontal
         row.alignment = .centerY
         row.spacing = 12
-        parentStack.insertArrangedSubview(row, at: index + 1)
+        parentStack.insertArrangedSubview(row, at: index + 2)
         rememberWindowSizeLimitsCheckbox = checkbox
 
         let fit = NSButton(checkboxWithTitle: "Fit remaining space".localized,
@@ -1463,7 +1473,7 @@ class SettingsViewController: NSViewController {
         fit.toolTip = "Fit into the remaining space next to an already snapped window.".localized
         fit.setAccessibilityIdentifier("fitBesideSnappedWindows")
         fit.setContentCompressionResistancePriority(.required, for: .vertical)
-        let divider = NSButton(checkboxWithTitle: "Resize windows together".localized,
+        let divider = NSButton(checkboxWithTitle: "Drag dividers to resize adjacent windows".localized,
                                target: self, action: #selector(toggleWindowDivider(_:)))
         divider.setContentCompressionResistancePriority(.required, for: .vertical)
         divider.setContentHuggingPriority(.defaultHigh, for: .vertical)
@@ -1486,7 +1496,7 @@ class SettingsViewController: NSViewController {
             row.spacing = 12
             return row
         }
-        parentStack.insertArrangedSubview(supportedPairRow(divider, identifier: "windowDividerSupport"), at: index + 2)
+        parentStack.insertArrangedSubview(supportedPairRow(divider, identifier: "windowDividerSupport"), at: index + 3)
         windowDividerCheckbox = divider
         let enhanced = NSButton(checkboxWithTitle: "Enhanced transitions", target: self,
                                 action: #selector(toggleWindowDividerEnhanced(_:)))
@@ -1503,12 +1513,17 @@ class SettingsViewController: NSViewController {
         enhancedGroup.alignment = .leading
         enhancedGroup.spacing = 4
         enhancedGroup.edgeInsets = NSEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
-        parentStack.insertArrangedSubview(enhancedGroup, at: index + 3)
+        parentStack.insertArrangedSubview(enhancedGroup, at: index + 4)
         enhancedGroup.widthAnchor.constraint(equalTo: parentStack.widthAnchor).isActive = true
         windowDividerEnhancedCheckbox = enhanced
         refreshWindowDividerEnhanced()
-        parentStack.insertArrangedSubview(supportedPairRow(fit, identifier: "windowPairSupport"), at: index + 4)
+        parentStack.insertArrangedSubview(supportedPairRow(fit, identifier: "windowPairSupport"), at: index + 5)
         fitBesideSnappedWindowsCheckbox = fit
+    }
+
+    @objc private func toggleMinimumWindowSizeWarning(_ sender: NSButton) {
+        Defaults.showMinimumWindowSizeWarning.enabled = sender.state == .on
+        if sender.state == .off { WindowSizeWarning.hideCurrent() }
     }
 
     @objc private func toggleRememberWindowSizeLimits(_ sender: NSButton) {

@@ -165,6 +165,10 @@ class AccessibilityElement {
         WindowSizeConstraints.shared.minimum(for: self, reported: reportedMinimumSize)
     }
 
+    var rememberedMinimumSize: CGSize? {
+        WindowSizeConstraints.shared.rememberedMinimum(for: self)
+    }
+
     var reportedMinimumSize: CGSize? {
         wrappedElement.getWrappedValue(.minSize)
             ?? wrappedElement.getWrappedValue(.minimumSize)

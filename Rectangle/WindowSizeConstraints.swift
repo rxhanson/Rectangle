@@ -376,6 +376,73 @@ final class WindowSizeConstraints {
         return result
     }
 
+    /// Historical evidence plans intermediate motion only. The final requested
+    /// size remains unchanged and must still be verified against the live app.
+    func rememberedMinimum(for window: AccessibilityElement) -> CGSize? {
+        guard let key = key(for: window) else { return nil }
+        synchronizePreference()
+        if store.entries[key] == nil { restoreRememberedHint(window, key: key) }
+        let previous = store.entries[key]
+        let result = store.hint(for: key, reported: window.reportedMinimumSize,
+                                current: window.size ?? .zero, now: Date.timeIntervalSinceReferenceDate)
+        if previous != store.entries[key] { synchronizeRecord(key) }
+        return result
+    }
+
+    private func restoreRememberedHint(_ window: AccessibilityElement, key: Key) {
+        guard remembers, identityRequests[key] == nil, let id = window.windowId,
+              let record = archive.records.first(where: {
+                  $0.identity.pid == key.pid && $0.identity.launch == key.launch
+                      && $0.identity.session == session && $0.identity.windowID == id
+              }), let app = NSRunningApplication(processIdentifier: key.pid) else { return }
+        let info = app.bundleURL.flatMap(Bundle.init(url:))?.infoDictionary
+        let version = [info?["CFBundleShortVersionString"] as? String, info?["CFBundleVersion"] as? String]
+            .compactMap { $0 }.joined(separator: "/")
+        guard record.identity.bundleID == app.bundleIdentifier, record.identity.appVersion == version else { return }
+        let request = UUID()
+        identityRequests[key] = request
+        identityQueue.addOperation { [weak self] in
+            let reader = AccessibilityReadBatch(budget: 0.15)
+            let elements = reader.value(AXUIElementCreateApplication(key.pid), kAXWindowsAttribute) as? [AXUIElement] ?? []
+            var identity: WindowSizeLimitIdentity?
+            if let element = elements.first(where: { reader.windowID($0) == id }) {
+                var candidate = record.identity
+                candidate.identifier = reader.value(element, kAXIdentifierAttribute) as? String
+                candidate.role = reader.value(element, kAXRoleAttribute) as? String ?? ""
+                candidate.subrole = reader.value(element, kAXSubroleAttribute) as? String ?? ""
+                var structure: [String] = []
+                if let children = reader.value(element, kAXChildrenAttribute) as? [AXUIElement], children.count <= 32 {
+                    for child in children where reader.available {
+                        structure.append([kAXRoleAttribute, kAXSubroleAttribute, kAXIdentifierAttribute]
+                            .map { reader.value(child, $0) as? String ?? "" }.joined(separator: "|"))
+                    }
+                }
+                candidate.structure = structure.sorted()
+                if reader.available { identity = candidate }
+            }
+            let checked = identity
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.identityRequests[key] == request else { return }
+                self.identityRequests.removeValue(forKey: key)
+                guard self.remembers, self.store.entries[key] == nil,
+                      WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
+                      let checked, let match = self.archive.match(checked), match == record else { return }
+                self.store.restore(match.evidence, for: key, now: Date.timeIntervalSinceReferenceDate)
+                self.descriptors[key] = Descriptor(record: match)
+            }
+        }
+    }
+
+    static func animationSize(_ requested: CGSize, origin: CGSize, hint: CGSize?) -> CGSize {
+        guard let hint else { return requested }
+        func axis(_ requested: CGFloat, _ origin: CGFloat, _ hint: CGFloat) -> CGFloat {
+            guard hint.isFinite, hint > 0, hint <= origin + 2, requested < origin else { return requested }
+            return max(requested, min(origin, hint))
+        }
+        return CGSize(width: axis(requested.width, origin.width, hint.width),
+                      height: axis(requested.height, origin.height, hint.height))
+    }
+
     func recordSuccessfulPlacement(_ window: AccessibilityElement, frame: CGRect) {
         guard let key = key(for: window), WindowAnimationGeometry.valid(frame) else { return }
         let previous = store.entries[key]

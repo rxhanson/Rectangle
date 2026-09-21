@@ -1,25 +1,47 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Resize windows together" : {
+    "Show minimum window size warning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show minimum window size warning"
+          }
+        }
+      }
+    },
+    "Remember learned window size limits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remember learned window size limits"
+          }
+        }
+      }
+    },
+    "Drag dividers to resize adjacent windows" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resize windows together"
+            "value" : "Drag dividers to resize adjacent windows"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "联动调整窗口大小"
+            "value" : "拖动分隔条调整相邻窗口大小"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "連動調整視窗大小"
+            "value" : "拖移分隔線調整相鄰視窗大小"
           }
         }
       }
@@ -46957,7 +46979,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Minimum window size reached"
+            "value" : "Minimum size reached"
           }
         }
       }

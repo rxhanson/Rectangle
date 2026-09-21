@@ -22,6 +22,7 @@ final class DirectWindowAnimator {
     }
 
     private final class KeyboardSession {
+        var minimumHint: CGSize?
         var motion: WindowKeyboardMotion
         var placement: WindowAnimationPlacement
         var completion: (CGRect) -> Void
@@ -60,13 +61,13 @@ final class DirectWindowAnimator {
         var retried = false
 
         init(destination: CGRect, origin: CGRect, placement: WindowAnimationPlacement,
-             duration: TimeInterval, startedAt: TimeInterval, cleanup: @escaping () -> Void,
+             duration: TimeInterval, startedAt: TimeInterval, hint: CGSize?, cleanup: @escaping () -> Void,
              completion: @escaping (CGRect) -> Void) {
             self.destination = destination
             self.origin = origin
             self.placement = placement
             self.duration = duration
-            var initialSize = destination.size
+            var initialSize = WindowSizeConstraints.animationSize(destination.size, origin: origin.size, hint: hint)
             // Defer growth that needs a different origin. Moving there first
             // would introduce a visible jump before the position animation.
             if let position = placement.positionBeforeGrowing(from: origin, to: destination) {
@@ -101,6 +102,7 @@ final class DirectWindowAnimator {
     private let environmentIsSafe: () -> Bool
     private let serverFrame: (AccessibilityElement) -> CGRect?
     private let crossesDisplays: (CGRect, CGRect) -> Bool
+    private let minimumHint: (AccessibilityElement) -> CGSize?
     private let isNativeResizeApp: (String?) -> Bool
     private var lastEnvironmentCheck: TimeInterval = 0
 
@@ -113,6 +115,7 @@ final class DirectWindowAnimator {
              element.windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
          },
          crossesDisplays: @escaping (CGRect, CGRect) -> Bool = { WindowAnimator.crossesDisplays(from: $0, to: $1) },
+         minimumHint: @escaping (AccessibilityElement) -> CGSize? = { $0.rememberedMinimumSize },
          isNativeResizeApp: @escaping (String?) -> Bool = { id in
              guard let id else { return false }
              return Defaults.directAnimationNativeResizeApps.typedValue?.contains(id) == true
@@ -125,6 +128,7 @@ final class DirectWindowAnimator {
         self.serverFrame = serverFrame
         self.crossesDisplays = crossesDisplays
         self.isNativeResizeApp = isNativeResizeApp
+        self.minimumHint = minimumHint
     }
 
     func destination(for element: AccessibilityElement) -> CGRect? {
@@ -316,7 +320,7 @@ final class DirectWindowAnimator {
         helperDestination = destination
         lastEnvironmentCheck = clock()
         let preparation = HelperPreparation(destination: destination, origin: origin, placement: placement,
-            duration: duration, startedAt: clock(), cleanup: cleanup, completion: completion)
+            duration: duration, startedAt: clock(), hint: minimumHint(element), cleanup: cleanup, completion: completion)
         helperPreparation = preparation
         if origin.size != preparation.initialSize {
             let result = element.writeAnimationSize(preparation.initialSize)
@@ -481,6 +485,7 @@ final class DirectWindowAnimator {
             }
             let screenChanged = session.placement.screenFrame != placement.screenFrame
             session.motion = WindowKeyboardMotion(from: actual, to: destination, velocity: velocity, at: now, driftLimits: driftLimits)
+            session.minimumHint = minimumHint(element)
             session.placement = placement
             session.previousFrame = actual
             session.lastSampledFrame = nil
@@ -524,6 +529,7 @@ final class DirectWindowAnimator {
         let cleanup = restoreAccessibility ?? element.beginAnimatedAdjustment()
         keyboardSession = KeyboardSession(origin: origin, destination: destination, placement: placement,
                                           at: now, cleanup: cleanup, completion: completion)
+        keyboardSession?.minimumHint = minimumHint(element)
         window = element
         lastEnvironmentCheck = now
         if rebindDriver { startDriving() }
@@ -546,7 +552,8 @@ final class DirectWindowAnimator {
         }
         if sampled != session.lastSampledFrame || session.previousFrame.size != sampled.size {
             var requested = sampled
-            let predicted = session.sizeFeedback.size(for: sampled.size)
+            let plannedSize = WindowSizeConstraints.animationSize(sampled.size, origin: session.motion.origin.size, hint: session.minimumHint)
+            let predicted = session.sizeFeedback.size(for: plannedSize)
             if predicted != sampled.size {
                 requested = session.placement.frame(for: sampled, actualSize: predicted,
                     origin: session.motion.origin, progress: sample.progress)
@@ -659,6 +666,7 @@ final class DirectWindowAnimator {
         var verifiedFinalFrame: CGRect?
         let readServer = serverFrame
         let animationClock = clock
+        let hint = minimumHint(element)
         var finalized = false
         let needsSettlement = placement != nil && !nativeResize
         var finalResizeAccepted = false
@@ -700,7 +708,8 @@ final class DirectWindowAnimator {
                 }
                 if sampledFrame != lastSampledFrame || previousFrame.size != sampledFrame.size {
                     var requested = sampledFrame
-                    let predictedSize = sizeFeedback.size(for: sampledFrame.size)
+                    let plannedSize = WindowSizeConstraints.animationSize(sampledFrame.size, origin: origin.size, hint: hint)
+                    let predictedSize = sizeFeedback.size(for: plannedSize)
                     if predictedSize != sampledFrame.size {
                         requested = placement.frame(for: sampledFrame, actualSize: predictedSize, origin: origin, progress: progress)
                     }
