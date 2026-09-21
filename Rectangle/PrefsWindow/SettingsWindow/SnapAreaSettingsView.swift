@@ -160,7 +160,6 @@ struct SnapAreaSettingsView: View {
     var body: some View {
         Form {
             
-            // MARK: Popover Grid Triggers
             Section {
                 HStack(spacing: 16) {
                     Button(action: { viewModel.isLandscapePopoverPresented.toggle() }) {
@@ -186,7 +185,7 @@ struct SnapAreaSettingsView: View {
                 .padding(.vertical, 4)
             }
             
-            // MARK: Top Section (Single-Column Toggles)
+            
             Section {
                 Toggle("Snap windows by dragging", isOn: $viewModel.windowSnapping)
                 Toggle("Restore window size when unsnapped", isOn: $viewModel.unsnapRestore)
@@ -195,12 +194,13 @@ struct SnapAreaSettingsView: View {
                 Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
 
-                Picker("Blur appearance", selection: $viewModel.blurAppearance) {
-                    Text("Follow System").tag(BlurAppearance.system)
-                    Text("Light").tag(BlurAppearance.light)
-                    Text("Dark").tag(BlurAppearance.dark)
+                if viewModel.footprintBlur {
+                    Picker("Blur appearance", selection: $viewModel.blurAppearance) {
+                        Text("Follow System").tag(BlurAppearance.system)
+                        Text("Light").tag(BlurAppearance.light)
+                        Text("Dark").tag(BlurAppearance.dark)
+                    }
                 }
-                .disabled(!viewModel.footprintBlur)
 
                 if viewModel.missionControlDraggingDisabled {
                     Toggle("Mission Control dragging", isOn: $viewModel.missionControlDraggingDisabled)
@@ -211,6 +211,7 @@ struct SnapAreaSettingsView: View {
         .formStyle(.grouped)
         .frame(minHeight: 400)
         .frame(width: 500)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
     }
 }
 
