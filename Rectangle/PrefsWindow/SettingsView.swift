@@ -172,28 +172,34 @@ struct SettingsView: View {
 
                         HStack {
                             Text("Todo app width")
-                            
-                            TextField("", value: $viewModel.todoSidebarWidth, format: .number)
-                                .frame(width: 55)
-                                .textFieldStyle(.roundedBorder)
-                                .onSubmit { viewModel.commitTodoWidth() }
-
-                            Picker("", selection: $viewModel.todoSidebarWidthUnit) {
-                                Text("px").tag(TodoSidebarWidthUnit.pixels)
-                                Text("%").tag(TodoSidebarWidthUnit.pct)
-                            }
-                            .frame(width: 65)
 
                             Spacer()
 
+                            HStack(spacing: 4) {
+                                TextField("", value: $viewModel.todoSidebarWidth, format: .number)
+                                    .frame(width: 100)
+                                    .textFieldStyle(.roundedBorder)
+                                    .onSubmit { viewModel.commitTodoWidth() }
+
+                                Picker("", selection: $viewModel.todoSidebarWidthUnit) {
+                                    Text("px").tag(TodoSidebarWidthUnit.pixels)
+                                    Text("%").tag(TodoSidebarWidthUnit.pct)
+                                }
+                                .labelsHidden()
+                                .fixedSize()
+                            }
+                        }
+                        
+                        HStack {
                             Text("Todo side")
+                            Spacer()
                             Picker("", selection: $viewModel.todoSidebarSide) {
                                 Text("Left").tag(TodoSidebarSide.left)
                                 Text("Right").tag(TodoSidebarSide.right)
                             }
                             .frame(width: 90)
                         }
-
+                        
                         HStack {
                             Text("Toggle Todo")
                             Spacer()
