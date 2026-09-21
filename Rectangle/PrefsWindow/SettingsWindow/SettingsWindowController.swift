@@ -47,7 +47,9 @@ class SettingsTabViewController: NSTabViewController {
         var defaultSize: NSSize {
             switch self {
             case .shortcuts:   return NSSize(width: 500, height: 540)
-            case .snapAreas:   return NSSize(width: 500, height: 480)
+            case .snapAreas:   return NSScreen.portraitDisplayConnected
+                ? NSSize(width: 500, height: 860)
+                : NSSize(width: 500, height: 616)
             case .behavior:    return NSSize(width: 500, height: 550)
             case .appSettings: return NSSize(width: 500, height: 442)
             }

@@ -88,8 +88,6 @@ final class SnapAreaViewModel: ObservableObject {
 
     // Displays / UI State
     @Published var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
-    @Published var isLandscapePopoverPresented: Bool = false
-    @Published var isPortraitPopoverPresented: Bool = false
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -157,44 +155,19 @@ final class SnapAreaViewModel: ObservableObject {
 struct SnapAreaSettingsView: View {
     @StateObject private var viewModel = SnapAreaViewModel()
 
-    private var landscapeButtonTitle: String {
-        viewModel.isPortraitConnected ? "Landscape Snap Areas…" : "Configure Snap Areas…"
+    private var landscapeHeaderTitle: String {
+        viewModel.isPortraitConnected ? "Landscape Snap Areas" : "Snap Areas"
     }
 
     var body: some View {
         Form {
-            
-            Section {
-                HStack {
-                    Button(action: { viewModel.isLandscapePopoverPresented.toggle() }) {
-                        Label(landscapeButtonTitle, systemImage: "rectangle.inset.filled")
-                    }
-                    .popover(isPresented: $viewModel.isLandscapePopoverPresented, arrowEdge: .bottom) {
-                        SnapAreaGridPopoverView(viewModel: viewModel, orientation: .landscape)
-                            .padding()
-                            .frame(width: 520, height: 380)
-                    }
-
-                    if viewModel.isPortraitConnected {
-                        Spacer()
-                        Button(action: { viewModel.isPortraitPopoverPresented.toggle() }) {
-                            Label("Portrait Snap Areas…", systemImage: "rectangle.portrait.inset.filled")
-                        }
-                        .popover(isPresented: $viewModel.isPortraitPopoverPresented, arrowEdge: .bottom) {
-                            SnapAreaGridPopoverView(viewModel: viewModel, orientation: .portrait)
-                                .padding()
-                                .frame(width: 380, height: 520)
-                        }
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-            
+            // General Toggles
             Section {
                 Toggle("Snap windows by dragging", isOn: $viewModel.windowSnapping)
                 Toggle("Restore window size when unsnapped", isOn: $viewModel.unsnapRestore)
             }
-            
+
+            // Customization Options
             Section {
                 Toggle("Provide haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
@@ -213,64 +186,72 @@ struct SnapAreaSettingsView: View {
                     Toggle("Mission Control dragging", isOn: $viewModel.missionControlDraggingDisabled)
                 }
             }
+            
+            // Landscape Inline Section
+            Section {
+                SnapAreaGridView(viewModel: viewModel, orientation: .landscape)
+            } header: {
+                Label(landscapeHeaderTitle, systemImage: "rectangle.inset.filled")
+                    .font(.headline)
+            }
 
+            // Portrait Inline Section (Only visible if portrait monitor connected)
+            if viewModel.isPortraitConnected {
+                Section {
+                    SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
+                } header: {
+                    Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
+                        .font(.headline)
+                }
+            }
         }
         .formStyle(.grouped)
         .frame(minHeight: 400)
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isPortraitConnected)
     }
 }
 
-// MARK: - Popover Snap Area Grid Layout
+// MARK: - Grid Snap Area Layout
 
-struct SnapAreaGridPopoverView: View {
+struct SnapAreaGridView: View {
     @ObservedObject var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
 
-    private var headerTitle: String {
-        if orientation == .portrait {
-            return "Portrait Snap Areas"
-        } else {
-            return viewModel.isPortraitConnected ? "Landscape Snap Areas" : "Snap Areas"
-        }
-    }
-
     var body: some View {
-        VStack(spacing: 12) {
-            Text(headerTitle)
-                .font(.headline)
+        Grid(alignment: .trailing, horizontalSpacing: 12, verticalSpacing: 12) {
+            // Top Row
+            GridRow(alignment: .center) {
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .tl)
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .t)
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .tr)
+            }
 
-            VStack(spacing: 12) {
-                // Top Row
-                HStack(spacing: 8) {
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .tl)
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .t)
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .tr)
-                }
+            // Middle Row
+            GridRow(alignment: .center) {
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .l)
 
-                // Middle Row
-                HStack(spacing: 12) {
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .l)
+                // Display Graphic Representation (Center Cell)
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.blue.opacity(0.12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)
+                    )
+                    .frame(width: 100, height: 62.5)
+                    .rotationEffect(orientation == .portrait ? .degrees(90) : .zero)
+                    .frame(width: 100, height: 100)
+                    .gridCellAnchor(.center)
 
-                    // Display Graphic
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.blue.opacity(0.15))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.blue.opacity(0.5), lineWidth: 1.5)
-                        )
-                        .aspectRatio(orientation == .landscape ? 16 / 10 : 10 / 16, contentMode: .fit)
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .r)
+            }
 
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .r)
-                }
-
-                // Bottom Row
-                HStack(spacing: 8) {
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .bl)
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .b)
-                    SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .br)
-                }
+            // Bottom Row
+            GridRow(alignment: .center) {
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .bl)
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .b)
+                SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .br)
             }
         }
     }
@@ -312,6 +293,7 @@ struct SnapAreaPicker: View {
         }
         .labelsHidden()
         .pickerStyle(.menu)
+        .frame(maxWidth: .infinity, alignment: .trailing)
         .onAppear {
             selectedTag = viewModel.getSelectedTag(for: directional, orientation: orientation)
         }
