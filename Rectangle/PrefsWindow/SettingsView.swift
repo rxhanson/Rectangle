@@ -66,7 +66,6 @@ struct SettingsView: View {
                             Text(mode.title).tag(mode)
                         }
                     }
-                    .frame(width: 320)
                 }
 
                 if viewModel.subsequentExecutionMode.resizes {
@@ -276,8 +275,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .padding(20)
-        .frame(width: 600)
+        .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
     }
