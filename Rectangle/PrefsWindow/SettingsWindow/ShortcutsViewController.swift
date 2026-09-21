@@ -161,6 +161,7 @@ class ShortcutsViewController: NSViewController {
     private let outlineView = NSOutlineView()
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     private var allowAnyShortcutObserver: NSObjectProtocol?
+    private var lastGroupToggleTime: TimeInterval = 0
 
     private var rootItems: [Any] = []
 
@@ -350,4 +351,24 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
             self.scrollView.reflectScrolledClipView(self.scrollView.contentView)
         }
     }
+
+    func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
+        if item is ShortcutGroup {
+            let now = ProcessInfo.processInfo.systemUptime
+            
+            // Ignore calls occurring within 100 ms of the last toggle
+            if now - lastGroupToggleTime > 0.10 {
+                lastGroupToggleTime = now
+                
+                if outlineView.isItemExpanded(item) {
+                    outlineView.animator().collapseItem(item)
+                } else {
+                    outlineView.animator().expandItem(item)
+                }
+            }
+            return false
+        }
+        return true
+    }
+    
 }
