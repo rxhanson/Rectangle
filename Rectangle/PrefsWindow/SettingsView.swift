@@ -30,14 +30,7 @@ struct SettingsView: View {
         Form {
             // MARK: - App & Updates
             Section {
-                HStack {
-                    Toggle("Launch on login", isOn: $viewModel.launchOnLogin)
-                    Spacer()
-                    Text(viewModel.versionString)
-                        .foregroundColor(.secondary)
-                        .font(.callout)
-                }
-
+                Toggle("Launch on login", isOn: $viewModel.launchOnLogin)
                 Toggle("Hide menu bar icon", isOn: $viewModel.hideMenuBarIcon)
 
                 if viewModel.hideMenuBarIcon {
@@ -46,16 +39,22 @@ struct SettingsView: View {
                         .foregroundColor(.secondary)
                         .padding(.leading, 18)
                 }
-
+            }
+            
+            Section {
                 HStack {
-                    Toggle("Check for updates automatically", isOn: $viewModel.checkForUpdatesAutomatically)
-                    Spacer()
                     Button(viewModel.hasPendingUpdate ? "Update Available…" : "Check for Updates…") {
                         viewModel.checkForUpdates()
                     }
+                    Spacer()
+                    Text(viewModel.versionString)
+                        .foregroundColor(.secondary)
+                        .font(.callout)
                 }
+                Toggle("Check for updates automatically", isOn: $viewModel.checkForUpdatesAutomatically)
             }
-            .toggleStyle(.switch)
+
+            
 
             // MARK: - Cycle Sizes & Window Behaviors
             Section {
