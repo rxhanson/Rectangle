@@ -48,7 +48,7 @@ class SettingsTabViewController: NSTabViewController {
         let appSettingsVC = AppSettingsViewController()
         let appSettingsItem = NSTabViewItem(viewController: appSettingsVC)
         appSettingsItem.label = "App Settings"
-        appSettingsItem.image = NSImage(imageLiteralResourceName: "toolbarSettingsTemplate")
+        appSettingsItem.image = NSImage(imageLiteralResourceName: "appSettingsTemplate")
         addTabViewItem(appSettingsItem)
     }
     
