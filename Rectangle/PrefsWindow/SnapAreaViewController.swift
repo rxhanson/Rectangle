@@ -13,10 +13,13 @@ class SnapAreaViewController: NSViewController {
         let screenshot = NSImageView()
         screenshot.image = NSImage(named: "LayoutHelperExample")
         screenshot.imageScaling = .scaleProportionallyUpOrDown
+        screenshot.wantsLayer = true
+        screenshot.layer?.cornerRadius = 12
+        screenshot.layer?.masksToBounds = true
         screenshot.setAccessibilityLabel("Layout Helper example: Notes is snapped on the left; choose Research or Tasks to fill the right side.")
         screenshot.widthAnchor.constraint(equalToConstant: 560).isActive = true
         screenshot.heightAnchor.constraint(equalToConstant: 325).isActive = true
-        let explanation = NSTextField(wrappingLabelWithString: "Snap a window, then choose another to fill the remaining space. Sample windows shown.\n\nThumbnails need Screen Recording access; icons and titles work without it.")
+        let explanation = NSTextField(wrappingLabelWithString: "Snap a window, then choose another to fill the remaining space. Thumbnails need Screen Recording access.")
         explanation.widthAnchor.constraint(equalToConstant: 560).isActive = true
         explanation.setContentCompressionResistancePriority(.required, for: .vertical)
         let content = NSStackView(views: [screenshot, explanation])

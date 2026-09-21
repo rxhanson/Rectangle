@@ -41,7 +41,6 @@ struct SnappedWindowFit: Equatable {
         return .fit(plan)
     }
 
-    /// Pure scene calculation shared by previews and actual placements.
     static func resolve(enabled: Bool, action: WindowAction, movingWindowID: CGWindowID,
                         target: CGRect, bounds: CGRect, gap: CGFloat, minimum: CGSize?,
                         windows: [WindowInfo], recordedFrames: [CGWindowID: CGRect],

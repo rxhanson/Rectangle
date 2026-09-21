@@ -544,8 +544,6 @@ class AccessibilityElement {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: deadline)
         let application = AXUIElementCreateApplication(pid)
         AXUIElementSetMessagingTimeout(application, messagingTimeout > 0 ? min(messagingTimeout, 0.05) : 0.05)
-        // Establish which window activation should bring forward before changing
-        // the frontmost process. Never request activation of every app window.
         let selectedMain = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
         let selectedRaise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
         guard isCurrent() else { finish(); return }

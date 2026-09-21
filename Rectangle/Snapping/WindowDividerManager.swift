@@ -235,8 +235,7 @@ final class WindowDividerManager {
         guard visible(pair, in: WindowUtil.getWindowList(forceRefresh: true)),
               LayoutHelperLayout.matches(pair.left.element.frame, engine.left),
               LayoutHelperLayout.matches(pair.right.element.frame, engine.right) else { interrupt(); return }
-        // Keep the destination skeletons visible throughout the actual placement.
-        // Both apps receive their final frame directly, with no interpolation.
+        // Keep the preview visible until both windows acknowledge placement.
         overlay.show(in: engine.geometry.outer.screenFlipped,
                      divider: pair.axis.rect(target.left).maxX + engine.geometry.gap / 2,
                      gap: engine.geometry.gap, axis: pair.axis, below: panel)
@@ -327,7 +326,6 @@ final class WindowDividerManager {
             if let attempt = sizeAttempt,
                LayoutHelperLayout.matches(placement.left, attempt.beforeLeft),
                LayoutHelperLayout.matches(placement.right, attempt.beforeRight) { sizeAttempt = nil }
-            // A learned minimum can move the accepted split away from the drag proposal.
             if overlay.guide.frozenImage == nil {
                 overlay.show(in: engine.geometry.outer.screenFlipped, divider: engine.divider,
                              gap: engine.geometry.gap, axis: pair.axis, below: panel)

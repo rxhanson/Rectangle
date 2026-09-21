@@ -2,7 +2,6 @@ import Cocoa
 import ScreenCaptureKit
 
 /// The permission request is reachable only after the user accepts the explanation.
-/// Injected actions let tests cover denial and cancellation without changing TCC.
 @MainActor struct LayoutHelperPermissionFlow {
     enum Outcome: Equatable { case alreadyAllowed, iconsOnly, allowed, needsSettings }
     var isAllowed: () -> Bool

@@ -1,18 +1,15 @@
 import Cocoa
 
 enum LayoutHelperAppearance {
-    // The deployment SDK has no public native-window-radius accessor. Keep the
-    // newer/legacy shapes in one place. The supplied macOS 27 reference has
-    // an approximately 36 px corner at 2x scale (18 pt).
     static var cornerRadius: CGFloat {
         if #available(macOS 26, *) { return 18 }
         return 10
     }
+    static let cardCornerRadius: CGFloat = 10
     static let outline = NSColor(calibratedWhite: 0.76, alpha: 1)
     static let selection = NSColor(calibratedWhite: 0.62, alpha: 1)
 }
 
-/// Preview geometry is independent of snap destinations and image arrival order.
 struct LayoutHelperPreviewLayout {
     static let titleHeight: CGFloat = 40
     struct Result {
@@ -121,8 +118,7 @@ class LayoutHelperSurface: NSPanel {
         return foreground
     }
 
-    /// Used by the event path and native hit-testing tests. Disabled cards are
-    /// still controls: clicking one must not dismiss the sequence.
+    /// Disabled cards remain controls; clicking one must not dismiss the picker.
     func isBackground(at point: NSPoint) -> Bool {
         var hit = contentView?.hitTest(point)
         while let view = hit {
@@ -231,7 +227,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         makeKeyAndOrderFront(nil)
     }
 
-    /// Build the native view without ordering a window, also used for offscreen rendering.
+    /// Configure without displaying or activating the panel.
     func configure(in frame: CGRect, items: [Item], offerPermission: Bool, message: String? = nil,
                    keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:], waitForPreviews: Bool = false) {
         finishPresentation()
@@ -295,7 +291,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
             document.addSubview(card)
             return card
         }
-        // Explicit traversal keeps focus in stable candidate order.
+        // Keyboard traversal follows display order as previews become ready.
         self.footerControls = footerControls + [close]
         updateKeyViews()
         initialFirstResponder = cards.first(where: { $0.isEnabled && !$0.isHidden }) ?? close
@@ -539,7 +535,7 @@ private final class LayoutHelperPreviewContent: NSView {
     override func draw(_ dirtyRect: NSRect) {
         guard let card = superview else { return }
         let cardBounds = card.bounds.offsetBy(dx: -frame.minX, dy: -frame.minY)
-        let radius = min(LayoutHelperAppearance.cornerRadius, min(cardBounds.width, cardBounds.height) / 2)
+        let radius = min(LayoutHelperAppearance.cardCornerRadius, min(cardBounds.width, cardBounds.height) / 2)
         NSGraphicsContext.saveGraphicsState()
         NSBezierPath(roundedRect: cardBounds, xRadius: radius, yRadius: radius).addClip()
         let dark = effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
@@ -617,7 +613,7 @@ private final class LayoutHelperCard: NSButton {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     override func layout() {
         super.layout()
-        let radius = min(LayoutHelperAppearance.cornerRadius, min(bounds.width, bounds.height) / 2)
+        let radius = min(LayoutHelperAppearance.cardCornerRadius, min(bounds.width, bounds.height) / 2)
         layer?.shadowPath = CGPath(roundedRect: bounds, cornerWidth: radius, cornerHeight: radius, transform: nil)
         artwork.frame = NSRect(x: 0, y: LayoutHelperPreviewLayout.titleHeight,
                                width: bounds.width, height: max(1, bounds.height - LayoutHelperPreviewLayout.titleHeight))
@@ -634,7 +630,7 @@ private final class LayoutHelperCard: NSButton {
     override func draw(_ dirtyRect: NSRect) {
         let selected = state == .on || (isEnabled && (window as? LayoutHelperPanel)?.keyboardSelection == true && window?.firstResponder === self)
         let lineWidth: CGFloat = selected ? 2 : 1
-        let radius = min(LayoutHelperAppearance.cornerRadius, min(bounds.width, bounds.height) / 2)
+        let radius = min(LayoutHelperAppearance.cardCornerRadius, min(bounds.width, bounds.height) / 2)
         let outline = NSBezierPath(roundedRect: bounds.insetBy(dx: lineWidth / 2, dy: lineWidth / 2), xRadius: radius, yRadius: radius)
         NSGraphicsContext.saveGraphicsState()
         outline.addClip()
@@ -657,7 +653,7 @@ private final class LayoutHelperCard: NSButton {
     fileprivate func drawForeground() {
         let selected = state == .on || (isEnabled && (window as? LayoutHelperPanel)?.keyboardSelection == true && window?.firstResponder === self)
         let lineWidth: CGFloat = selected ? 2 : 1
-        let radius = min(LayoutHelperAppearance.cornerRadius, min(bounds.width, bounds.height) / 2)
+        let radius = min(LayoutHelperAppearance.cardCornerRadius, min(bounds.width, bounds.height) / 2)
         let outline = NSBezierPath(roundedRect: bounds.insetBy(dx: lineWidth / 2, dy: lineWidth / 2), xRadius: radius, yRadius: radius)
         let imageArea = NSRect(x: 0, y: LayoutHelperPreviewLayout.titleHeight,
                                width: bounds.width, height: max(1, bounds.height - LayoutHelperPreviewLayout.titleHeight))
@@ -685,7 +681,6 @@ private final class LayoutHelperCard: NSButton {
 }
 
 
-/// Keeps the capture opt-in distinct from window candidates and readable over blur.
 final class LayoutHelperPermissionButton: NSButton {
     init(target: AnyObject?, action: Selector) {
         super.init(frame: .zero)

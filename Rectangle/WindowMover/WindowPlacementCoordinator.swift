@@ -203,9 +203,8 @@ struct WindowPlacementAnimationEvidence {
     }
 }
 
-/// Pure state makes slow acknowledgements and write ordering testable without
-/// sleeping or moving a real window. Size requests receive at most two retries;
-/// an unchanged size without reported constraints gets one bounded growth probe.
+/// Size requests receive at most two retries. An unchanged size without
+/// reported constraints gets one bounded growth probe.
 struct WindowPlacementAcknowledgement {
     enum Decision { case waiting, position(CGPoint), size(CGSize), complete(CGRect), failed }
     let target: CGRect

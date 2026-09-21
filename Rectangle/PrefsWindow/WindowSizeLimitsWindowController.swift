@@ -1,7 +1,6 @@
 import Cocoa
 
-/// The list groups records by app for management; each child remains a separate
-/// window limit. Reset is immediate and never resizes an application window.
+/// Resetting a saved limit never resizes its window.
 final class WindowSizeLimitsWindowController: NSWindowController, NSOutlineViewDataSource, NSOutlineViewDelegate {
     private final class Row {
         let record: WindowSizeLimitRecord
