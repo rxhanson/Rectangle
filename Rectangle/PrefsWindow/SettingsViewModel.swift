@@ -116,6 +116,7 @@ final class SettingsViewModel: ObservableObject {
             Defaults.todoSidebarWidthUnit.value = todoSidebarWidthUnit
             TodoManager.refreshTodoScreen()
             TodoManager.changeSidebarWidthUnit(to: todoSidebarWidthUnit)
+            todoSidebarWidth = Defaults.todoSidebarWidth.value
             TodoManager.moveAllIfNeeded(false)
         }
     }
