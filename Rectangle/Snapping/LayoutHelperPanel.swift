@@ -94,7 +94,7 @@ class LayoutHelperSurface: NSPanel {
         setAccessibilityLabel("Layout Helper")
     }
 
-    @discardableResult func prepare(in frame: CGRect) -> NSView {
+    @discardableResult func prepare(in frame: CGRect, drawsBackground: Bool = true) -> NSView {
         setFrame(frame, display: false)
         let root = LayoutHelperDocument(frame: CGRect(origin: .zero, size: frame.size))
         let inset = LayoutHelperPreviewLayout.inset(for: frame.size)
@@ -109,7 +109,7 @@ class LayoutHelperSurface: NSPanel {
         blur.layer?.masksToBounds = true
         blur.layer?.contentsFormat = .RGBA8Uint
         if #available(macOS 26, *) { blur.layer?.preferredDynamicRange = .standard }
-        root.addSubview(blur)
+        if drawsBackground { root.addSubview(blur) }
         // Foreground content must be a sibling, never a descendant of the
         // visual-effect view: vibrancy can otherwise alter opaque drawing live.
         let foreground = LayoutHelperDocument(frame: blur.frame)
@@ -167,6 +167,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     private var waitsForPreviews = false
     private var shownMessage: String?
     private var backdrops: [LayoutHelperSurface] = []
+    private var regionEntranceOffset: CGPoint?
+    var hasActiveSession: Bool { !backdrops.isEmpty }
     override var canBecomeKey: Bool { true }
 
     func owns(_ window: NSWindow?) -> Bool {
@@ -181,6 +183,22 @@ final class LayoutHelperPanel: LayoutHelperSurface {
 
     func show(in frame: CGRect, items: [Item], offerPermission: Bool, message: String? = nil,
               remainingRegions: [CGRect] = [], keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:], waitForPreviews: Bool = false) {
+        if hasActiveSession {
+            if self.frame != frame {
+                regionEntranceOffset = Self.regionSlideOffset(from: self.frame, to: frame)
+            } else if !isVisible {
+                regionEntranceOffset = .zero
+            }
+        } else {
+            regionEntranceOffset = nil
+        }
+        reconcileBackdrops(for: [frame] + remainingRegions)
+        var images = images
+        for card in cards where images[card.item.id] == nil {
+            if let item = items.first(where: { $0.id == card.item.id }),
+               item.previewKey == card.item.previewKey, item.sourceSize == card.item.sourceSize,
+               let image = card.preview { images[item.id] = image }
+        }
         if isVisible, self.frame == frame, showingPermission == offerPermission, shownMessage == message,
            candidateIDs == items.map(\.id) {
             let itemsByID = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
@@ -204,16 +222,9 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         let existingIDs = isVisible && self.frame == frame ? Set(cards.map { $0.item.id }) : []
         let focusedID = existingIDs.isEmpty ? nil : (firstResponder as? LayoutHelperCard)?.item.id
         let scrollPosition = existingIDs.isEmpty ? nil : scrollView?.contentView.bounds.origin
-        backdrops.forEach { $0.orderOut(nil) }
-        backdrops = remainingRegions.map { region in
-            let backdrop = LayoutHelperSurface()
-            backdrop.onDismiss = { [weak self] in self?.onDismiss?() }
-            backdrop.prepare(in: region)
-            backdrop.orderFront(nil)
-            return backdrop
-        }
         configure(in: frame, items: items, offerPermission: offerPermission, message: message,
-                  keyboardTriggered: keyboardTriggered, images: images, waitForPreviews: waitForPreviews)
+                  keyboardTriggered: keyboardTriggered, images: images, waitForPreviews: waitForPreviews,
+                  separateBackground: true)
         makeFirstResponder(cards.first(where: { $0.item.id == focusedID && $0.isEnabled }) ?? initialFirstResponder)
         if let scrollPosition, let scrollView {
             scrollView.contentView.scroll(to: scrollPosition)
@@ -227,16 +238,48 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         makeKeyAndOrderFront(nil)
     }
 
+    static func regionSlideOffset(from previous: CGRect, to next: CGRect) -> CGPoint {
+        // Screen coordinates increase upwards; card layers are flipped.
+        let dx = previous.midX - next.midX
+        let dy = next.midY - previous.midY
+        let distance = hypot(dx, dy)
+        guard distance > 0 else { return .zero }
+        return CGPoint(x: dx / distance * 8, y: dy / distance * 8)
+    }
+
+    private func reconcileBackdrops(for regions: [CGRect]) {
+        for backdrop in backdrops where !regions.contains(backdrop.frame) { backdrop.orderOut(nil) }
+        backdrops = regions.map { region in
+            let backdrop: LayoutHelperSurface
+            if let existing = backdrops.first(where: { $0.frame == region }) {
+                backdrop = existing
+            } else {
+                backdrop = LayoutHelperSurface()
+                backdrop.onDismiss = { [weak self] in self?.onDismiss?() }
+                backdrop.prepare(in: region)
+            }
+            if !backdrop.isVisible { backdrop.orderFront(nil) }
+            return backdrop
+        }
+    }
+
+    func beginPlacement() {
+        finishPresentation()
+        orderOut(nil)
+        backdrops.first(where: { $0.frame == frame })?.orderOut(nil)
+    }
+
     /// Configure without displaying or activating the panel.
     func configure(in frame: CGRect, items: [Item], offerPermission: Bool, message: String? = nil,
-                   keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:], waitForPreviews: Bool = false) {
+                   keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:], waitForPreviews: Bool = false,
+                   separateBackground: Bool = false) {
         finishPresentation()
         if let scrollObserver { NotificationCenter.default.removeObserver(scrollObserver) }
         keyboardSelection = keyboardTriggered
         showingPermission = offerPermission
         waitsForPreviews = waitForPreviews && !offerPermission
         shownMessage = message
-        let surface = prepare(in: frame)
+        let surface = prepare(in: frame, drawsBackground: !separateBackground)
         let width = surface.bounds.width
         let height = surface.bounds.height
         let close = NSButton(title: "×", target: self, action: #selector(dismissPicker))
@@ -372,6 +415,28 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         let start = CACurrentMediaTime()
         for (index, card) in entering.enumerated() {
             guard let layer = card.layer else { continue }
+            if let offset = regionEntranceOffset {
+                let fade = CABasicAnimation(keyPath: "opacity")
+                fade.fromValue = 0
+                fade.toValue = 1
+                fade.duration = 0.12
+                fade.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                var animations: [CAAnimation] = [fade]
+                if !reduceMotion && !preserveExisting {
+                    let slide = CABasicAnimation(keyPath: "transform")
+                    slide.fromValue = NSValue(caTransform3D: CATransform3DMakeTranslation(offset.x, offset.y, 0))
+                    slide.toValue = NSValue(caTransform3D: CATransform3DIdentity)
+                    slide.duration = 0.12
+                    slide.timingFunction = fade.timingFunction
+                    animations.append(slide)
+                }
+                let entrance = CAAnimationGroup()
+                entrance.animations = animations
+                entrance.duration = 0.12
+                entrance.beginTime = layer.convertTime(start, from: nil)
+                layer.add(entrance, forKey: "layoutHelperEntrance")
+                continue
+            }
             let weight = min(1, sqrt(card.frame.width * card.frame.height) / max(1, largest))
             let cadence = CGFloat(index % 3) / 2
             let duration = reduceMotion ? 0.083 : 0.24 + Double(weight) * 0.055 + Double(cadence) * 0.025
@@ -435,6 +500,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         orderOut(nil)
         backdrops.forEach { $0.orderOut(nil) }
         backdrops.removeAll()
+        regionEntranceOffset = nil
         cards.removeAll()
         footerControls.removeAll()
         contentView = nil

@@ -226,19 +226,6 @@ final class LayoutHelperManager {
         for frame in retained.values {
             occupied.formUnion(layout.occupiedCells(by: frame))
         }
-        let retainedIDs = Set(retained.keys.compactMap(\.windowId))
-        for snapshot in windows where !retainedIDs.contains(snapshot.id) {
-            let cells = layout.prefilledCells(by: snapshot.frame)
-            if !cells.isEmpty && occupied.isDisjoint(with: cells), let window = snapshot.accessibilityElement() {
-                occupied.formUnion(cells)
-                retained[window] = snapshot.frame
-                retainedLaunches[snapshot.id] = snapshot.launch
-                if snapshot.resizable == true {
-                    WindowDividerManager.shared.record(window, id: snapshot.id, frame: snapshot.frame,
-                        screen: screen, eligibilityConfirmed: true)
-                }
-            }
-        }
         guard let next = layout.remaining(excluding: occupied).first else {
             cancel()
             return
@@ -274,7 +261,7 @@ final class LayoutHelperManager {
             guard let key = previewKeys[item.id], let image = previews.cached(key) else { return nil }
             return (item.id, image)
         })
-        let usesKeyboard = panel.isVisible ? panel.keyboardSelection : keyboardTriggered
+        let usesKeyboard = panel.hasActiveSession ? panel.keyboardSelection : keyboardTriggered
         panel.show(in: target.screenFlipped, items: items, offerPermission: offerPermission, message: statusMessage,
                    remainingRegions: remaining, keyboardTriggered: usesKeyboard, images: images,
                    waitForPreviews: LayoutHelperPermission.previewsSupported && !offerPermission)
@@ -316,7 +303,7 @@ final class LayoutHelperManager {
         let generation = WindowSizeConstraints.shared.observationGeneration
         let original = snapshot.frame
         placingWindow = window
-        panel.dismiss()
+        panel.beginPlacement()
         previews.stop()
         cancelImageDelivery()
         catalog.suspendForPlacement()

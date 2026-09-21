@@ -126,12 +126,6 @@ struct LayoutHelperLayout {
         cells.indices.filter { $0 != anchorIndex && !occupied.contains($0) }
     }
 
-    /// A two-window split offers the other side again, even when occupied.
-    /// Larger grids continue to preserve compatible windows already in place.
-    func prefilledCells(by frame: CGRect) -> Set<Int> {
-        cells.count == 2 ? [] : occupiedCells(by: frame)
-    }
-
     static func matches(_ lhs: CGRect, _ rhs: CGRect, tolerance: CGFloat = 3) -> Bool {
         !lhs.isNull && !rhs.isNull && abs(lhs.minX - rhs.minX) <= tolerance
             && abs(lhs.minY - rhs.minY) <= tolerance && abs(lhs.maxX - rhs.maxX) <= tolerance
