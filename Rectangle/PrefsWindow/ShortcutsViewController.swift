@@ -117,7 +117,7 @@ final class ShortcutActionCellView: NSTableCellView {
         addSubview(shortcutView)
 
         NSLayoutConstraint.activate([
-            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -56),
+            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -66),
             shortcutView.centerYAnchor.constraint(equalTo: centerYAnchor),
             shortcutView.widthAnchor.constraint(equalToConstant: 160),
             shortcutView.heightAnchor.constraint(equalToConstant: 19),
@@ -156,7 +156,7 @@ final class ShortcutActionCellView: NSTableCellView {
 
 class ShortcutsViewController: NSViewController {
 
-    private let initialSize = NSSize(width: 480, height: 610)
+    private let initialSize = NSSize(width: 500, height: 610)
     private let scrollView = NSScrollView()
     private let outlineView = NSOutlineView()
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
