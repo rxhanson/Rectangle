@@ -24,199 +24,256 @@ class GeneralSettingsViewController: NSViewController {
 }
 
 struct SettingsView: View {
-    @ObservedObject var viewModel = SettingsViewModel()
+    @StateObject private var viewModel = SettingsViewModel()
 
     var body: some View {
         Form {
-            // General Section
-            Section("General") {
-                Toggle("Launch on login", isOn: $viewModel.launchOnLogin)
-                
-                Picker("Subsequent execution mode", selection: $viewModel.subsequentExecutionMode) {
-                    ForEach(SubsequentExecutionMode.ordered, id: \.self) { mode in
-                        Text(mode.title).tag(mode)
-                    }
+            // MARK: - App & Updates
+            Section {
+                HStack {
+                    Toggle("Launch on login", isOn: $viewModel.launchOnLogin)
+                    Spacer()
+                    Text(viewModel.versionString)
+                        .foregroundColor(.secondary)
+                        .font(.callout)
                 }
-                
-                Toggle("Allow any shortcut", isOn: $viewModel.allowAnyShortcut)
-                
-                Toggle("Check for updates automatically", isOn: $viewModel.checkForUpdatesAutomatically)
-                
-                LabeledContent {
-                    Button("Check for Updates") {
+
+                Toggle("Hide menu bar icon", isOn: $viewModel.hideMenuBarIcon)
+
+                if viewModel.hideMenuBarIcon {
+                    Text("When the menu bar icon is hidden, relaunch Rectangle from Finder to open")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.leading, 18)
+                }
+
+                HStack {
+                    Toggle("Check for updates automatically", isOn: $viewModel.checkForUpdatesAutomatically)
+                    Spacer()
+                    Button(viewModel.hasPendingUpdate ? "Update Available…" : "Check for Updates…") {
                         viewModel.checkForUpdates()
                     }
-                } label: {
-                    Text("Updates")
                 }
             }
+            .toggleStyle(.switch)
 
-            // Gap Section
-            Section("Gap") {
-                LabeledContent("Gap size") {
-                    HStack(spacing: 8) {
-                        Slider(value: $viewModel.gapSize, in: 0...100, step: 1)
+            // MARK: - Cycle Sizes & Window Behaviors
+            Section {
+                HStack {
+                    Text("Repeated commands")
+                    Spacer()
+                    Picker("", selection: $viewModel.subsequentExecutionMode) {
+                        ForEach(SubsequentExecutionMode.ordered, id: \.self) { mode in
+                            Text(mode.title).tag(mode)
+                        }
+                    }
+                    .frame(width: 320)
+                }
+
+                if viewModel.subsequentExecutionMode.resizes {
+                    VStack(alignment: .leading, spacing: 8) {
+                        // Keep fraction choices as compact checkboxes
+                        HStack(spacing: 12) {
+                            ForEach(CycleSize.sortedSizes, id: \.self) { size in
+                                Toggle(size.title, isOn: viewModel.binding(for: size))
+                                    .toggleStyle(.checkbox)
+                            }
+                        }
+
+                        HStack(spacing: 12) {
+                            Text("Cyclic corner shortcuts expand:")
+                            Picker("", selection: $viewModel.cornerCycleExpansionAxis) {
+                                Text("horizontally").tag(CornerCycleExpansionAxis.horizontal)
+                                Text("vertically").tag(CornerCycleExpansionAxis.vertical)
+                            }
+                            .pickerStyle(.radioGroup)
+                            .horizontalRadioGroupLayout()
+                        }
+
+                        if viewModel.showCooperativeCornerResize {
+                            Toggle("Resize adjacent windows when cycling side or corner shortcuts", isOn: $viewModel.cooperativeCornerResize)
+                                .toggleStyle(.switch)
+                        }
+                    }
+                    .padding(.leading, 4)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Gaps between windows")
+                        Slider(
+                            value: $viewModel.gapSize,
+                            in: 0...100,
+                            step: 1,
+                            onEditingChanged: { editing in
+                                if !editing { viewModel.commitGapSize() }
+                            }
+                        )
                         Text("\(Int(viewModel.gapSize)) px")
-                            .monospacedDigit()
                             .frame(width: 45, alignment: .trailing)
                     }
-                }
 
-                if viewModel.gapSize > 0 {
-                    Toggle("Skip gap top edge", isOn: $viewModel.skipGapTopEdge)
-                }
-            }
-
-            // Window & Display Section
-            Section("Window & Display") {
-                Toggle("Move cursor across displays", isOn: $viewModel.moveCursorAcrossDisplays)
-                
-                if viewModel.useCursorScreenDetection {
-                    Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
-                }
-
-                Toggle("Double click title bar", isOn: Binding(
-                    get: { viewModel.doubleClickTitleBar != nil },
-                    set: { newValue in
-                        viewModel.requestDoubleClickTitleBarChange(to: newValue)
+                    if viewModel.gapSize > 0 {
+                        Toggle("Remove top gap when snapping to top edge", isOn: $viewModel.skipGapTopEdge)
+                            .toggleStyle(.switch)
+                            .padding(.leading, 18)
                     }
-                ))
+                }
 
-                Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
-                Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
-                Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
-                Toggle("Halves preserve other axis size", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                Toggle("Repeated maximize restores previous", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
+                Group {
+                    Toggle("Remove keyboard shortcut restrictions", isOn: $viewModel.allowAnyShortcut)
+                    Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
+
+                    if viewModel.showCursorScreenDetection {
+                        Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
+                    }
+
+                    Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
+                    Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
+                        Text("Hold any modifier key or use the window menu for default macOS behavior")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.leading, 18)
+                    }
+
+                    if viewModel.showCombinedDisplayMode {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
+                            Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .padding(.leading, 18)
+                        }
+                    }
+                }
+                .toggleStyle(.switch)
             }
 
-            // Stage Section (Conditional)
-            if StageUtil.stageCapable {
-                Section("Stage") {
-                    LabeledContent("Stage size") {
-                        HStack(spacing: 8) {
-                            Slider(value: $viewModel.stageSize, in: 0...500, step: 1)
+            // MARK: - Todo Mode
+            Section {
+                HStack {
+                    Toggle("Show Todo Mode in menu", isOn: $viewModel.todoEnabled)
+                        .toggleStyle(.switch)
+                    Button(action: viewModel.showTodoModeHelp) {
+                        Image(systemName: "info.circle")
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                if viewModel.todoEnabled {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Keep a chosen application visible on the right of your primary screen at all times")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        HStack {
+                            Text("Todo app width")
+                            
+                            TextField("", value: $viewModel.todoSidebarWidth, format: .number)
+                                .frame(width: 55)
+                                .textFieldStyle(.roundedBorder)
+                                .onSubmit { viewModel.commitTodoWidth() }
+
+                            Picker("", selection: $viewModel.todoSidebarWidthUnit) {
+                                Text("px").tag(TodoSidebarWidthUnit.pixels)
+                                Text("%").tag(TodoSidebarWidthUnit.pct)
+                            }
+                            .frame(width: 65)
+
+                            Spacer()
+
+                            Text("Todo side")
+                            Picker("", selection: $viewModel.todoSidebarSide) {
+                                Text("Left").tag(TodoSidebarSide.left)
+                                Text("Right").tag(TodoSidebarSide.right)
+                            }
+                            .frame(width: 90)
+                        }
+
+                        HStack {
+                            Text("Toggle Todo")
+                            Spacer()
+                            MASShortcutViewRepresentable(
+                                defaultsKey: TodoManager.toggleDefaultsKey,
+                                validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
+                            )
+                            .frame(width: 130, height: 22)
+                        }
+
+                        HStack {
+                            Text("Reflow Todo")
+                            Spacer()
+                            MASShortcutViewRepresentable(
+                                defaultsKey: TodoManager.reflowDefaultsKey,
+                                validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
+                            )
+                            .frame(width: 130, height: 22)
+                        }
+                    }
+                    .padding(.leading, 18)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+
+            // MARK: - Stage Manager
+            if viewModel.stageCapable {
+                Section {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("Stage Manager recent apps area")
+                            Slider(
+                                value: $viewModel.stageSize,
+                                in: 0...400,
+                                step: 1,
+                                onEditingChanged: { editing in
+                                    if !editing { viewModel.commitStageSize() }
+                                }
+                            )
                             Text("\(Int(viewModel.stageSize)) px")
-                                .monospacedDigit()
                                 .frame(width: 45, alignment: .trailing)
                         }
+                        Text("If the area is too small, recent apps will be hidden")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
 
-            // Cycle Sizes Section
-            Section("Cycle Sizes") {
-                ForEach(CycleSize.sortedSizes, id: \.self) { size in
-                    Toggle(size.title, isOn: Binding(
-                        get: { viewModel.selectedCycleSizes.contains(size) },
-                        set: { isSelected in
-                            if isSelected {
-                                viewModel.selectedCycleSizes.insert(size)
-                            } else {
-                                viewModel.selectedCycleSizes.remove(size)
-                            }
-                        }
-                    ))
-                }
-
-                Picker("Cyclic corner shortcuts expand", selection: $viewModel.cornerCycleExpansionAxis) {
-                    ForEach(CornerCycleExpansionAxis.allCases, id: \.self) { axis in
-                        Text(axis.title).tag(axis)
-                    }
-                }
-                .pickerStyle(.segmented)
-
-                Toggle("Resize adjacent windows when cycling side or corner shortcuts", isOn: $viewModel.cooperativeCornerResize)
-            }
-
-            // Todo Section
-            Section("Todo") {
-                Toggle("Enable Todo mode", isOn: $viewModel.todoMode)
-
-                if viewModel.todoMode {
-                    LabeledContent("Toggle Todo Shortcut") {
-                        MASShortcutRepresentable(
-                            defaultsKey: TodoManager.toggleDefaultsKey,
-                            validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
-                        )
-                        .frame(width: 130, height: 22)
+            // MARK: - Footer Actions
+            Section {
+                HStack {
+                    Button("Restore Default Shortcuts & Snap Areas") {
+                        viewModel.restoreDefaults()
                     }
 
-                    LabeledContent("Reflow Todo Shortcut") {
-                        MASShortcutRepresentable(
-                            defaultsKey: TodoManager.reflowDefaultsKey,
-                            validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
-                        )
-                        .frame(width: 130, height: 22)
+                    Spacer()
+
+                    Button {
+                        viewModel.importConfig()
+                    } label: {
+                        Label("Import", systemImage: "square.and.arrow.down")
                     }
 
-                    LabeledContent("Sidebar width") {
-                        HStack(spacing: 4) {
-                            TextField("", value: $viewModel.todoSidebarWidth, formatter: NumberFormatter())
-                                .frame(width: 50)
-                                .textFieldStyle(.roundedBorder)
-                            
-                            Picker("", selection: $viewModel.todoSidebarWidthUnit) {
-                                ForEach(TodoSidebarWidthUnit.allCases, id: \.self) { unit in
-                                    Text(unit.description).tag(unit)
-                                }
-                            }
-                            .labelsHidden()
-                            .fixedSize()
-                        }
+                    Button {
+                        viewModel.exportConfig()
+                    } label: {
+                        Label("Export", systemImage: "square.and.arrow.up")
                     }
-
-                    Picker("Sidebar side", selection: $viewModel.todoSidebarSide) {
-                        ForEach(TodoSidebarSide.allCases, id: \.self) { side in
-                            Text(side.title).tag(side)
-                        }
-                    }
-                }
-            }
-
-            // Config Section
-            Section("Configuration") {
-                LabeledContent("Actions") {
-                    HStack {
-                        Button("Restore Defaults") {
-                            viewModel.restoreDefaults()
-                        }
-                        Button("Export") {
-                            viewModel.exportConfig()
-                        }
-                        Button("Import") {
-                            viewModel.importConfig()
-                        }
+                    
+                    Button("Extras") {
+                        viewModel.showExtrasPopover()
                     }
                 }
             }
         }
         .formStyle(.grouped)
-        .toggleStyle(.switch)
-        .frame(minWidth: 500)
-        .padding()
-        .sheet(isPresented: $viewModel.showDoubleClickConflictAlert) {
-            VStack(spacing: 16) {
-                Text("Conflict with system setting")
-                    .font(.headline)
-                
-                Text("To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.")
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.secondary)
-                
-                HStack {
-                    Button("Close") {
-                        viewModel.cancelDoubleClickTitleBarChange()
-                    }
-                    .keyboardShortcut(.cancelAction)
-                    
-                    Button("Open System Settings") {
-                        viewModel.confirmDoubleClickTitleBarChange()
-                    }
-                    .keyboardShortcut(.defaultAction)
-                }
-            }
-            .padding(20)
-            .frame(width: 360)
-        }
+        .padding(20)
+        .frame(width: 600)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
     }
 }

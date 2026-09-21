@@ -1,7 +1,7 @@
 import SwiftUI
 import MASShortcut
 
-struct MASShortcutRepresentable: NSViewRepresentable {
+struct MASShortcutViewRepresentable: NSViewRepresentable {
     let defaultsKey: String
     let validator: MASShortcutValidator?
 
