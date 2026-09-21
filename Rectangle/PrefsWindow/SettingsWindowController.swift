@@ -39,11 +39,17 @@ class SettingsTabViewController: NSTabViewController {
         snapAreaItem.image = NSImage(imageLiteralResourceName: "snapAreaTemplate")
         addTabViewItem(snapAreaItem)
 
-        let generalVC = GeneralSettingsViewController()
-        let generalItem = NSTabViewItem(viewController: generalVC)
-        generalItem.label = "General"
-        generalItem.image = NSImage(imageLiteralResourceName: "toolbarSettingsTemplate")
-        addTabViewItem(generalItem)
+        let behaviorVC = BehaviorSettingsViewController()
+        let behaviorItem = NSTabViewItem(viewController: behaviorVC)
+        behaviorItem.label = "Behavior"
+        behaviorItem.image = NSImage(imageLiteralResourceName: "toolbarSettingsTemplate")
+        addTabViewItem(behaviorItem)
+        
+        let appSettingsVC = AppSettingsViewController()
+        let appSettingsItem = NSTabViewItem(viewController: appSettingsVC)
+        appSettingsItem.label = "App Settings"
+        appSettingsItem.image = NSImage(imageLiteralResourceName: "toolbarSettingsTemplate")
+        addTabViewItem(appSettingsItem)
     }
     
     override var selectedTabViewItemIndex: Int {

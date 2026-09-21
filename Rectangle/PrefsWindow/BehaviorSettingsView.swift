@@ -1,13 +1,13 @@
 import AppKit
 import SwiftUI
 
-class GeneralSettingsViewController: NSViewController {
-    private var hostingController: NSHostingController<SettingsView>!
+class BehaviorSettingsViewController: NSViewController {
+    private var hostingController: NSHostingController<BehaviorSettingsView>!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let swiftUIView = SettingsView()
+        let swiftUIView = BehaviorSettingsView()
         hostingController = NSHostingController(rootView: swiftUIView)
         
         addChild(hostingController)
@@ -23,39 +23,11 @@ class GeneralSettingsViewController: NSViewController {
     }
 }
 
-struct SettingsView: View {
-    @StateObject private var viewModel = SettingsViewModel()
+struct BehaviorSettingsView: View {
+    @StateObject private var viewModel = BehaviorSettingsViewModel()
 
     var body: some View {
         Form {
-            // MARK: - App & Updates
-            Section {
-                Toggle("Launch on login", isOn: $viewModel.launchOnLogin)
-                Toggle("Hide menu bar icon", isOn: $viewModel.hideMenuBarIcon)
-
-                if viewModel.hideMenuBarIcon {
-                    Text("When the menu bar icon is hidden, relaunch Rectangle from Finder to open")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.leading, 18)
-                }
-            }
-            
-            Section {
-                HStack {
-                    Button(viewModel.hasPendingUpdate ? "Update Available…" : "Check for Updates…") {
-                        viewModel.checkForUpdates()
-                    }
-                    Spacer()
-                    Text(viewModel.versionString)
-                        .foregroundColor(.secondary)
-                        .font(.callout)
-                }
-                Toggle("Check for updates automatically", isOn: $viewModel.checkForUpdatesAutomatically)
-            }
-
-            
-
             // MARK: - Cycle Sizes & Window Behaviors
             Section {
                 HStack {
@@ -120,7 +92,6 @@ struct SettingsView: View {
                 }
 
                 Group {
-                    Toggle("Remove keyboard shortcut restrictions", isOn: $viewModel.allowAnyShortcut)
                     Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
 
                     if viewModel.showCursorScreenDetection {
@@ -250,24 +221,6 @@ struct SettingsView: View {
             // MARK: - Footer Actions
             Section {
                 HStack {
-                    Button("Restore Default Shortcuts & Snap Areas") {
-                        viewModel.restoreDefaults()
-                    }
-
-                    Spacer()
-
-                    Button {
-                        viewModel.importConfig()
-                    } label: {
-                        Label("Import", systemImage: "square.and.arrow.down")
-                    }
-
-                    Button {
-                        viewModel.exportConfig()
-                    } label: {
-                        Label("Export", systemImage: "square.and.arrow.up")
-                    }
-                    
                     Button("Extras") {
                         viewModel.showExtrasPopover()
                     }

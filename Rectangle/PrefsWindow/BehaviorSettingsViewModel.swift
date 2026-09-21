@@ -1,31 +1,7 @@
 import SwiftUI
 import AppKit
 
-final class SettingsViewModel: ObservableObject {
-    // MARK: - General Settings
-    @Published var launchOnLogin: Bool {
-        didSet {
-            LaunchOnLogin.isEnabled = launchOnLogin
-            Defaults.launchOnLogin.enabled = launchOnLogin
-        }
-    }
-
-    @Published var hideMenuBarIcon: Bool {
-        didSet {
-            Defaults.hideMenuBarIcon.enabled = hideMenuBarIcon
-            RectangleStatusItem.instance.refreshVisibility()
-        }
-    }
-
-    @Published var checkForUpdatesAutomatically: Bool {
-        didSet {
-            AppDelegate.instance.updaterController?.updater.automaticallyChecksForUpdates = checkForUpdatesAutomatically
-        }
-    }
-
-    @Published var hasPendingUpdate: Bool = false
-    @Published var versionString: String = ""
-
+final class BehaviorSettingsViewModel: ObservableObject {
     // MARK: - Window Behavior & Cycle Settings
     @Published var subsequentExecutionMode: SubsequentExecutionMode {
         didSet {
@@ -50,13 +26,6 @@ final class SettingsViewModel: ObservableObject {
     @Published var skipGapTopEdge: Bool {
         didSet {
             Defaults.skipGapTopEdge.enabled = skipGapTopEdge
-        }
-    }
-
-    @Published var allowAnyShortcut: Bool {
-        didSet {
-            Defaults.allowAnyShortcut.enabled = allowAnyShortcut
-            Notification.Name.allowAnyShortcut.post(object: allowAnyShortcut)
         }
     }
 
@@ -141,14 +110,6 @@ final class SettingsViewModel: ObservableObject {
 
     // MARK: - Initialization
     init() {
-        self.launchOnLogin = Defaults.launchOnLogin.enabled
-        self.hideMenuBarIcon = Defaults.hideMenuBarIcon.enabled
-        self.checkForUpdatesAutomatically = AppDelegate.instance.updaterController?.updater.automaticallyChecksForUpdates ?? false
-        self.hasPendingUpdate = AppDelegate.instance.hasPendingUpdate
-
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
-        self.versionString = "v\(appVersion) (\(build))"
 
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
@@ -159,7 +120,6 @@ final class SettingsViewModel: ObservableObject {
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
 
-        self.allowAnyShortcut = Defaults.allowAnyShortcut.enabled
         self.moveCursorAcrossDisplays = Defaults.moveCursorAcrossDisplays.userEnabled
         self.useCursorScreenDetection = Defaults.useCursorScreenDetection.enabled
 
@@ -179,28 +139,17 @@ final class SettingsViewModel: ObservableObject {
     }
 
     private func setupObservers() {
-        Notification.Name.menuBarIconHidden.onPost { [weak self] _ in
-            self?.hideMenuBarIcon = true
-        }
-
-        Notification.Name.updateAvailability.onPost { [weak self] _ in
-            self?.hasPendingUpdate = AppDelegate.instance.hasPendingUpdate
-        }
-
         Notification.Name.configImported.onPost { [weak self] _ in
             self?.reloadFromDefaults()
         }
     }
 
     func reloadFromDefaults() {
-        self.launchOnLogin = Defaults.launchOnLogin.enabled
-        self.hideMenuBarIcon = Defaults.hideMenuBarIcon.enabled
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         self.selectedCycleSizes = Defaults.cycleSizesIsChanged.enabled ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
-        self.allowAnyShortcut = Defaults.allowAnyShortcut.enabled
         self.moveCursorAcrossDisplays = Defaults.moveCursorAcrossDisplays.userEnabled
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
