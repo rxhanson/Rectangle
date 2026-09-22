@@ -21,12 +21,12 @@ final class ShortcutCategory: NSObject {
     }
 }
 
-final class ShortcutGroup: NSObject {
+final class CategoryGroup: NSObject {
     let title: String
     let items: [Any]
     let isCollapsible: Bool
 
-    init(title: String, categories: [ShortcutCategory], isCollapsible: Bool = true) {
+    init(title: String, categories: [ShortcutCategory], subGroups: [CategoryGroup] = [], isCollapsible: Bool = true) {
         self.title = title
         self.isCollapsible = isCollapsible
 
@@ -35,11 +35,15 @@ final class ShortcutGroup: NSObject {
             // Include action items
             flatItems.append(contentsOf: category.items)
 
-            // Add spacer after each category except the last inside the group
-            if index < categories.count - 1 {
+            // Add spacer after each category except the last inside the group (or if sub-groups follow)
+            if index < categories.count - 1 || !subGroups.isEmpty {
                 flatItems.append(SpacerItem())
             }
         }
+
+        // Append child groups at the end of this group
+        flatItems.append(contentsOf: subGroups)
+
         self.items = flatItems
     }
 }
@@ -163,7 +167,7 @@ class ShortcutsViewController: NSViewController {
     private var allowAnyShortcutObserver: NSObjectProtocol?
     private var lastGroupToggleTime: TimeInterval = 0
 
-    private var rootItems: [ShortcutGroup] = []
+    private var rootItems: [CategoryGroup] = []
 
     override func loadView() {
         setupGroups()
@@ -245,13 +249,18 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.moveLeft, .moveRight, .moveUp, .moveDown])
         ]
 
-        // Explicitly set isCollapsible to false for standardGroup
-        let standardGroup = ShortcutGroup(title: "", categories: standardCategories, isCollapsible: false)
-        let moreGroup = ShortcutGroup(title: "More", categories: moreCategories, isCollapsible: true)
+        let extraCategories: [ShortcutCategory] = [
+            ShortcutCategory(actions: [.topLeftNinth, .topLeftTwelfth, .topLeftSixteenth])
+        ]
+
+        let extraGroup = CategoryGroup(title: "Extras", categories: extraCategories, isCollapsible: true)
+
+        let standardGroup = CategoryGroup(title: "", categories: standardCategories, isCollapsible: false)
+        let moreGroup = CategoryGroup(title: "More", categories: moreCategories, subGroups: [extraGroup], isCollapsible: true)
 
         rootItems = [standardGroup, moreGroup]
     }
-
+    
     deinit {
         if let observer = allowAnyShortcutObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -274,21 +283,21 @@ extension ShortcutsViewController: NSOutlineViewDataSource {
         if item == nil {
             return rootItems.count
         }
-        if let group = item as? ShortcutGroup {
+        if let group = item as? CategoryGroup {
             return group.items.count
         }
         return 0
     }
 
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        return item is ShortcutGroup
+        return item is CategoryGroup
     }
 
     func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
         if item == nil {
             return rootItems[index]
         }
-        if let group = item as? ShortcutGroup {
+        if let group = item as? CategoryGroup {
             return group.items[index]
         }
         fatalError("Unexpected outline view item: \(String(describing: item))")
@@ -299,7 +308,7 @@ extension ShortcutsViewController: NSOutlineViewDataSource {
 
 extension ShortcutsViewController: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-        if let group = item as? ShortcutGroup {
+        if let group = item as? CategoryGroup {
             let cell = outlineView.makeView(withIdentifier: ShortcutSectionCellView.identifier, owner: self) as? ShortcutSectionCellView ?? ShortcutSectionCellView()
             cell.identifier = ShortcutSectionCellView.identifier
             cell.configure(title: group.title)
@@ -327,7 +336,7 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
         if item is SpacerItem {
             return 14
         }
-        if let group = item as? ShortcutGroup, !group.isCollapsible {
+        if let group = item as? CategoryGroup, !group.isCollapsible {
             return 10
         }
         return 28
@@ -335,7 +344,7 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
 
     // Hide disclosure triangle arrow for non-collapsible groups
     func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
-        if let group = item as? ShortcutGroup, !group.isCollapsible {
+        if let group = item as? CategoryGroup, !group.isCollapsible {
             return false
         }
         return true
@@ -343,7 +352,7 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
 
     // Prevent collapsing if group is non-collapsible
     func outlineView(_ outlineView: NSOutlineView, shouldCollapseItem item: Any) -> Bool {
-        if let group = item as? ShortcutGroup, !group.isCollapsible {
+        if let group = item as? CategoryGroup, !group.isCollapsible {
             return false
         }
         return true
@@ -374,7 +383,7 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
     }
 
     func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        if let group = item as? ShortcutGroup {
+        if let group = item as? CategoryGroup {
             guard group.isCollapsible else { return false }
 
             let now = ProcessInfo.processInfo.systemUptime
