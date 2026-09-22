@@ -378,7 +378,7 @@ extension AppDelegate: NSMenuDelegate {
         var menuIndex = 0
         var categoryMenus: [CategoryMenu] = []
         for action in WindowAction.active {
-            guard let displayName = action.displayName else { continue }
+            guard !action.excludedFromMenu, let displayName = action.displayName else { continue }
             let newMenuItem = NSMenuItem(title: displayName, action: #selector(executeMenuWindowAction), keyEquivalent: "")
             newMenuItem.representedObject = action
             if #available(macOS 27.0, *) {

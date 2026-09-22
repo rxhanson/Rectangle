@@ -202,6 +202,13 @@ enum WindowAction: Int, Codable {
             return false
         }
     }
+    
+    var excludedFromMenu: Bool {
+        switch self {
+        case .smallerWidth, .largerWidth: return true
+        default: return false
+        }
+    }
 
     var name: String {
         switch self {
