@@ -25,6 +25,7 @@ class BehaviorSettingsViewController: NSViewController {
 
 struct BehaviorSettingsView: View {
     @StateObject private var viewModel = BehaviorSettingsViewModel()
+    @State private var isMaximizeExpanded = false // Controls disclosure state
 
     var body: some View {
         Form {
@@ -98,6 +99,39 @@ struct BehaviorSettingsView: View {
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
                 Toggle(NSLocalizedString("Half actions preserve the window's size on the other axis", tableName: "Main", value: "", comment: ""), isOn: $viewModel.halvesPreserveOtherAxisSize)
                 Toggle(NSLocalizedString("Show Extra shortcuts in menu", tableName: "Main", value: "", comment: ""), isOn: $viewModel.showAdditionalSizesInMenu)
+            }
+
+            // MARK: - Maximize (Disclosure Section)
+            Section {
+                DisclosureGroup("Maximize Settings", isExpanded: $isMaximizeExpanded) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        if viewModel.showCursorScreenDetection {
+                            Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
+                        }
+                        
+                        Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
+                        Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
+                            Text("Hold any modifier key or use the window menu for default macOS behavior")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        if viewModel.showCombinedDisplayMode {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
+                                Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        Toggle(NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), isOn: $viewModel.repeatedMaximizeRestoresPrevious)
+                    }
+                    .padding(.top, 4)
+                }
             }
 
             // MARK: - Todo Mode
@@ -175,36 +209,7 @@ struct BehaviorSettingsView: View {
                 }
             }
 
-            Section {
-                if viewModel.showCursorScreenDetection {
-                    Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
-                }
-                
-                Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
-                Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
-                    Text("Hold any modifier key or use the window menu for default macOS behavior")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                if viewModel.showCombinedDisplayMode {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
-                        Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                Toggle(NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), isOn: $viewModel.repeatedMaximizeRestoresPrevious)
-
-            } header: {
-                Text("Maximize")
-            }
-
+            // MARK: Stacked Windows
             Section {
                 VStack(alignment: .leading, spacing: 8) {
                     Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
@@ -299,14 +304,12 @@ struct BehaviorSettingsView: View {
                     Text("Stage Manager")
                 }
             }
-
-            // MARK: - Footer Actions
-            ExtraSettingsSections()
         }
         .formStyle(.grouped)
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
+        .animation(.easeInOut(duration: 0.2), value: isMaximizeExpanded)
     }
     
     private var percentFormatter: NumberFormatter {

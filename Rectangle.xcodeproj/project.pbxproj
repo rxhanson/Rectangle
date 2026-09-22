@@ -146,6 +146,7 @@
 		98ED704C306171650077BD10 /* AppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704A306171650077BD10 /* AppSettingsViewModel.swift */; };
 		98ED704F306180AD0077BD10 /* SnapAreaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */; };
 		98ED70533062D3860077BD10 /* ExtraSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED70523062D3810077BD10 /* ExtraSettings.swift */; };
+		98ED73AA3062FCD20077BD10 /* PopoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED73A93062FCD20077BD10 /* PopoverButton.swift */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
@@ -383,6 +384,7 @@
 		98ED704A306171650077BD10 /* AppSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsViewModel.swift; sourceTree = "<group>"; };
 		98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaSettingsView.swift; sourceTree = "<group>"; };
 		98ED70523062D3810077BD10 /* ExtraSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraSettings.swift; sourceTree = "<group>"; };
+		98ED73A93062FCD20077BD10 /* PopoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverButton.swift; sourceTree = "<group>"; };
 		98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThreeFourthsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThreeFourthsCalculation.swift; sourceTree = "<group>"; };
@@ -817,6 +819,7 @@
 				98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */,
 				98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */,
 				98ED70523062D3810077BD10 /* ExtraSettings.swift */,
+				98ED73A93062FCD20077BD10 /* PopoverButton.swift */,
 				98ED7049306171650077BD10 /* AppSettingsView.swift */,
 				98ED704A306171650077BD10 /* AppSettingsViewModel.swift */,
 				98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */,
@@ -1086,6 +1089,7 @@
 				98ED703E305DC12D0077BD10 /* MASShortcutViewRepresentable.swift in Sources */,
 				B4521F932BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift in Sources */,
 				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
+				98ED73AA3062FCD20077BD10 /* PopoverButton.swift in Sources */,
 				7BE578EF2C5BF4EE0083DAE3 /* CycleSize.swift in Sources */,
 				9821402122B3884600ABFB3F /* BottomHalfCalculation.swift in Sources */,
 				98ED704C306171650077BD10 /* AppSettingsViewModel.swift in Sources */,

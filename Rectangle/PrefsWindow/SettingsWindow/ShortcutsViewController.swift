@@ -81,12 +81,53 @@ final class ShortcutSectionCellView: NSTableCellView {
     }
 }
 
+// MARK: - Action Button Configuration
+
+struct ActionButtonConfig {
+    let iconName: String
+    let popoverMessage: String
+
+    init(iconName: String = "info.circle", popoverMessage: String) {
+        self.iconName = iconName
+        self.popoverMessage = popoverMessage
+    }
+}
+
+import Cocoa
+import MASShortcut
+import SwiftUI
+
+// MARK: - Action Button Registry
+
+enum ActionButtonRegistry {
+    /// Maps WindowAction to a factory closure that returns a configured NSButton/PopoverButton
+    static let buttons: [WindowAction: () -> NSButton] = [
+        .tileRows: {
+            let button = PopoverButton(
+                image: NSImage(systemSymbolName: "gear", accessibilityDescription: "Information"),
+                rootView: TileSettingsView()
+            )
+            button.bezelStyle = .inline
+            button.isBordered = false
+            button.contentTintColor = .secondaryLabelColor
+            return button
+        }
+    ]
+}
+
+// MARK: - ShortcutActionCellView Update
+
 final class ShortcutActionCellView: NSTableCellView {
     static let identifier = NSUserInterfaceItemIdentifier("ShortcutActionCell")
 
     let iconImageView = NSImageView()
     let titleLabel = NSTextField(labelWithString: "")
     let shortcutView = MASShortcutView()
+    
+    private let buttonContainerView = NSView()
+    private var currentActionButton: NSButton?
+
+    private var shortcutTrailingConstraint: NSLayoutConstraint?
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -113,16 +154,26 @@ final class ShortcutActionCellView: NSTableCellView {
         iconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         shortcutView.translatesAutoresizingMaskIntoConstraints = false
+        buttonContainerView.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(titleLabel)
         addSubview(iconImageView)
         addSubview(shortcutView)
+        addSubview(buttonContainerView)
+
+        let trailingConstraint = shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -66)
+        self.shortcutTrailingConstraint = trailingConstraint
 
         NSLayoutConstraint.activate([
-            shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -66),
+            trailingConstraint,
             shortcutView.centerYAnchor.constraint(equalTo: centerYAnchor),
             shortcutView.widthAnchor.constraint(equalToConstant: 160),
             shortcutView.heightAnchor.constraint(equalToConstant: 19),
+
+            buttonContainerView.leadingAnchor.constraint(equalTo: shortcutView.trailingAnchor, constant: 8),
+            buttonContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            buttonContainerView.widthAnchor.constraint(equalToConstant: 20),
+            buttonContainerView.heightAnchor.constraint(equalToConstant: 20),
 
             iconImageView.trailingAnchor.constraint(equalTo: shortcutView.leadingAnchor, constant: -16),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -138,6 +189,10 @@ final class ShortcutActionCellView: NSTableCellView {
     override func prepareForReuse() {
         super.prepareForReuse()
         shortcutView.associatedUserDefaultsKey = nil
+        
+        // Clear subviews in container to prevent reuse leaks
+        currentActionButton?.removeFromSuperview()
+        currentActionButton = nil
     }
 
     func configure(with action: WindowAction, recordingObserver: ShortcutRecordingObserver) {
@@ -153,6 +208,28 @@ final class ShortcutActionCellView: NSTableCellView {
         shortcutView.associatedUserDefaultsKey = nil
         shortcutView.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
         recordingObserver.observe([shortcutView])
+
+        // Remove old button if existing
+        currentActionButton?.removeFromSuperview()
+
+        // Construct dynamic button if registered for this action
+        if let buttonFactory = ActionButtonRegistry.buttons[action] {
+            let button = buttonFactory()
+            button.translatesAutoresizingMaskIntoConstraints = false
+            buttonContainerView.addSubview(button)
+
+            NSLayoutConstraint.activate([
+                button.topAnchor.constraint(equalTo: buttonContainerView.topAnchor),
+                button.bottomAnchor.constraint(equalTo: buttonContainerView.bottomAnchor),
+                button.leadingAnchor.constraint(equalTo: buttonContainerView.leadingAnchor),
+                button.trailingAnchor.constraint(equalTo: buttonContainerView.trailingAnchor)
+            ])
+
+            self.currentActionButton = button
+            buttonContainerView.isHidden = false
+        } else {
+            buttonContainerView.isHidden = true
+        }
     }
 }
 
