@@ -362,7 +362,7 @@ enum WindowAction: Int, Codable {
     }
 
     var displayName: String? {
-        var key: String
+        var key: String?
         var value: String
 
         switch self {
@@ -552,10 +552,22 @@ enum WindowAction: Int, Codable {
             value = "Tile Windows in Columns"
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp, .tileActiveApp:
             return nil
-        case .centerProminently, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
+        case .largerWidth:
+            value = "Larger Width"
+        case .smallerWidth:
+            value = "Smaller Width"
+        case .centerProminently, .largerHeight, .smallerHeight:
             return nil
-        case .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds:
-            return nil
+        case .topVerticalThird:
+            value = "Top Third"
+        case .middleVerticalThird:
+            value = "Middle Third"
+        case .bottomVerticalThird:
+            value = "Bottom Third"
+        case .topVerticalTwoThirds:
+            value = "Top Two Thirds"
+        case .bottomVerticalTwoThirds:
+            value = "Bottom Two Thirds"
         case .topLeftTwelfth:
             key = "topLeftTwelfth.title"
             value = "Top Left Twelfth"
@@ -645,7 +657,7 @@ enum WindowAction: Int, Codable {
             return nil
         }
 
-        return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
+        return NSLocalizedString(key ?? value, tableName: "Main", value: value, comment: "")
     }
 
     var notificationName: Notification.Name {
