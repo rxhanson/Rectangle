@@ -222,13 +222,7 @@ struct BehaviorSettingsView: View {
             }
 
             // MARK: - Footer Actions
-            Section {
-                HStack {
-                    Button("Extras") {
-                        viewModel.showExtrasPopover()
-                    }
-                }
-            }
+            ExtraSettingsView()
         }
         .formStyle(.grouped)
         .frame(width: 500)
