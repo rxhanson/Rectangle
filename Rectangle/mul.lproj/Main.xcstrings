@@ -23,6 +23,17 @@
         }
       }
     },
+    "Remembers window size limits and updates them as windows change.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remembers window size limits and updates them as windows change."
+          }
+        }
+      }
+    },
     "Drag dividers to resize adjacent windows" : {
       "extractionState" : "manual",
       "localizations" : {

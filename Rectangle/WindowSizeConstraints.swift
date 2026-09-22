@@ -165,15 +165,8 @@ final class WindowSizeConstraints {
 
     var records: [WindowSizeLimitRecord] {
         synchronizePreference()
-        // Expiry is checked here too, so the management list never presents an
-        // expired temporary record as an active minimum.
-        let now = Date.timeIntervalSinceReferenceDate
-        for (key, evidence) in store.entries {
-            if store.lifetime.map({ now - evidence.learnedAt > $0 }) == true {
-                store.remove(key)
-            }
-        }
-        var result = remembers ? archive.records : []
+        guard remembers else { return [] }
+        var result = archive.records
         for (key, descriptor) in descriptors {
             guard let evidence = store.entries[key] else { continue }
             var record = descriptor.record; record.evidence = evidence
@@ -184,9 +177,11 @@ final class WindowSizeConstraints {
     }
 
     private init() {
-        store.lifetime = remembers ? nil : 600
+        store.lifetime = nil
         if remembers, let data = UserDefaults.standard.data(forKey: Self.archiveKey) {
             archive = WindowSizeLimitArchive.decode(data) ?? WindowSizeLimitArchive()
+        } else if !remembers {
+            UserDefaults.standard.removeObject(forKey: Self.archiveKey)
         }
         observations.append(NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main) { [weak self] _ in self?.screenParametersChanged() })
@@ -221,20 +216,12 @@ final class WindowSizeConstraints {
     private func synchronizePreference() {
         let enabled = Defaults.rememberWindowSizeLimits.enabled
         guard enabled != remembers else { return }
-        if enabled {
-            let now = Date.timeIntervalSinceReferenceDate
-            for (key, evidence) in store.entries where now - evidence.learnedAt > 600 { store.remove(key) }
-        }
         remembers = enabled
         cancelPendingObservations()
-        store.lifetime = enabled ? nil : 600
+        store.clear()
+        descriptors.removeAll()
+        observationIdentities.removeAll()
         archive.clear()
-        if enabled {
-            for (key, evidence) in store.entries {
-                guard var record = descriptors[key]?.record else { continue }
-                record.evidence = evidence; archive.upsert(record)
-            }
-        }
         saveAndNotify()
     }
 
@@ -298,6 +285,7 @@ final class WindowSizeConstraints {
 
     private func observeVerifiedClamp(_ window: AccessibilityElement, key: Key, before: CGRect,
                                       requested: CGRect, settled: CGRect, generation: UUID) {
+        guard remembers else { return }
         guard identityRequests[key] == nil, let id = window.windowId,
               let app = NSRunningApplication(processIdentifier: key.pid), let bundleID = app.bundleIdentifier else { return }
         let request = UUID()
@@ -341,7 +329,8 @@ final class WindowSizeConstraints {
             DispatchQueue.main.async { [weak self] in
                 guard let self, self.identityRequests[key] == request else { return }
                 self.identityRequests.removeValue(forKey: key)
-                guard self.observationGeneration == generation, WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
+                guard self.remembers, self.observationGeneration == generation,
+                      WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
                       let identity = verifiedIdentity else { return }
                 let now = Date.timeIntervalSinceReferenceDate
                 if let old = self.observationIdentities[key], old != identity {
@@ -371,8 +360,9 @@ final class WindowSizeConstraints {
     }
 
     func minimum(for window: AccessibilityElement, reported: CGSize?) -> CGSize? {
-        guard let key = key(for: window) else { return reported }
         synchronizePreference()
+        guard remembers else { return reported }
+        guard let key = key(for: window) else { return reported }
         let previous = store.entries[key]
         let result = store.minimum(for: key, reported: reported, current: .zero,
                                    now: Date.timeIntervalSinceReferenceDate)
@@ -383,8 +373,9 @@ final class WindowSizeConstraints {
     /// Historical evidence guides animation, previews, and divider bounds.
     /// Placement must still be verified against the live app.
     func rememberedMinimum(for window: AccessibilityElement) -> CGSize? {
-        guard let key = key(for: window) else { return nil }
         synchronizePreference()
+        guard remembers else { return nil }
+        guard let key = key(for: window) else { return nil }
         if store.entries[key] == nil { restoreRememberedHint(window, key: key) }
         let previous = store.entries[key]
         let result = store.hint(for: key, reported: window.reportedMinimumSize,
@@ -448,6 +439,8 @@ final class WindowSizeConstraints {
     }
 
     func recordSuccessfulPlacement(_ window: AccessibilityElement, frame: CGRect) {
+        synchronizePreference()
+        guard remembers else { return }
         guard let key = key(for: window), WindowAnimationGeometry.valid(frame) else { return }
         let previous = store.entries[key]
         store.recordSuccess(for: key, size: frame.size)
@@ -477,6 +470,8 @@ final class WindowSizeConstraints {
 
     func recordSettledResize(_ window: AccessibilityElement, before: CGRect, requested: CGRect,
                              first: CGRect, settled: CGRect, verifiedClamp: Bool = false, generation: UUID? = nil) {
+        synchronizePreference()
+        guard remembers else { return }
         guard generation == nil || generation == observationGeneration else { return }
         guard let key = key(for: window), !before.isNull, !requested.isNull,
               LayoutHelperLayout.matches(first, settled, tolerance: 1) else { return }
@@ -494,6 +489,8 @@ final class WindowSizeConstraints {
     /// Observe only the user's actual requested resize; never probe by secretly
     /// shrinking a window. A later command or manual grab cancels these samples.
     func observeResize(_ window: AccessibilityElement, before: CGRect, requested: CGRect, replacesEarlierAttempt: Bool = false) {
+        synchronizePreference()
+        guard remembers else { return }
         guard let key = key(for: window), !before.isNull, !requested.isNull,
               before.size != requested.size else { return }
         let token = UUID()

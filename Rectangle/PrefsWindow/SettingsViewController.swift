@@ -43,6 +43,7 @@ class SettingsViewController: NSViewController {
     private var windowSizeLimitsController: WindowSizeLimitsWindowController?
     private var minimumWindowSizeWarningCheckbox: NSButton?
     private var rememberWindowSizeLimitsCheckbox: NSButton?
+    private var windowSizeLimitsButton: NSButton?
     private var fitBesideSnappedWindowsCheckbox: NSButton?
     private var windowDividerCheckbox: NSButton?
     private var windowDividerEnhancedCheckbox: NSButton?
@@ -1328,6 +1329,7 @@ class SettingsViewController: NSViewController {
         autoMaximizeCheckbox?.state = Defaults.autoMaximize.userDisabled ? .off : .on
         minimumWindowSizeWarningCheckbox?.state = Defaults.showMinimumWindowSizeWarning.userDisabled ? .off : .on
         rememberWindowSizeLimitsCheckbox?.state = Defaults.rememberWindowSizeLimits.enabled ? .on : .off
+        windowSizeLimitsButton?.isEnabled = Defaults.rememberWindowSizeLimits.enabled
         windowDividerCheckbox?.state = Defaults.windowDivider.enabled ? .on : .off
         refreshWindowDividerEnhanced()
         fitBesideSnappedWindowsCheckbox?.state = Defaults.fitBesideSnappedWindows.enabled ? .on : .off
@@ -1455,6 +1457,7 @@ class SettingsViewController: NSViewController {
         let button = NSButton(title: "Manage memory".localized, target: self, action: #selector(showWindowSizeLimits))
         button.bezelStyle = .rounded
         button.setAccessibilityIdentifier("showWindowSizeLimits")
+        button.isEnabled = Defaults.rememberWindowSizeLimits.enabled
         for control in [checkbox, button] {
             control.setContentCompressionResistancePriority(.required, for: .horizontal)
             control.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -1464,8 +1467,21 @@ class SettingsViewController: NSViewController {
         row.orientation = .horizontal
         row.alignment = .centerY
         row.spacing = 12
-        parentStack.insertArrangedSubview(row, at: index + 2)
+        let description = NSTextField(labelWithString:
+            "Remembers window size limits and updates them as windows change.".localized)
+        description.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        description.textColor = .secondaryLabelColor
+        description.setContentCompressionResistancePriority(.required, for: .vertical)
+        description.setContentHuggingPriority(.required, for: .vertical)
+        description.setAccessibilityIdentifier("rememberWindowSizeLimitsDescription")
+        let group = NSStackView(views: [row, description])
+        group.orientation = .vertical
+        group.alignment = .leading
+        group.spacing = 4
+        group.setContentCompressionResistancePriority(.required, for: .vertical)
+        parentStack.insertArrangedSubview(group, at: index + 2)
         rememberWindowSizeLimitsCheckbox = checkbox
+        windowSizeLimitsButton = button
 
         let fit = NSButton(checkboxWithTitle: "Fit remaining space".localized,
                            target: self, action: #selector(toggleFitBesideSnappedWindows(_:)))
@@ -1528,6 +1544,7 @@ class SettingsViewController: NSViewController {
 
     @objc private func toggleRememberWindowSizeLimits(_ sender: NSButton) {
         WindowSizeConstraints.shared.setRememberLimits(sender.state == .on)
+        windowSizeLimitsButton?.isEnabled = sender.state == .on
     }
 
     @objc private func toggleWindowDivider(_ sender: NSButton) {
