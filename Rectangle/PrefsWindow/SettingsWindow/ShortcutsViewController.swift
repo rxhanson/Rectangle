@@ -14,28 +14,26 @@ final class ShortcutItem: NSObject {
 final class SpacerItem: NSObject {}
 
 final class ShortcutCategory: NSObject {
-    let items: [Any]
+    let items: [ShortcutItem]
 
-    init(actions: [WindowAction], includeSpacer: Bool = true) {
-        var categoryItems: [Any] = actions.map { ShortcutItem($0) }
-        if includeSpacer {
-            categoryItems.append(SpacerItem())
-        }
-        self.items = categoryItems
+    init(actions: [WindowAction]) {
+        self.items = actions.map { ShortcutItem($0) }
     }
 }
 
 final class ShortcutGroup: NSObject {
     let title: String
     let items: [Any]
+    let isCollapsible: Bool
 
-    init(title: String, categories: [ShortcutCategory]) {
+    init(title: String, categories: [ShortcutCategory], isCollapsible: Bool = true) {
         self.title = title
+        self.isCollapsible = isCollapsible
 
         var flatItems: [Any] = []
         for (index, category) in categories.enumerated() {
             // Include action items
-            flatItems.append(contentsOf: category.items.compactMap { $0 as? ShortcutItem })
+            flatItems.append(contentsOf: category.items)
 
             // Add spacer after each category except the last inside the group
             if index < categories.count - 1 {
@@ -154,6 +152,8 @@ final class ShortcutActionCellView: NSTableCellView {
     }
 }
 
+// MARK: ShortcutsViewController
+
 class ShortcutsViewController: NSViewController {
 
     private let initialSize = NSSize(width: 500, height: 610)
@@ -163,7 +163,7 @@ class ShortcutsViewController: NSViewController {
     private var allowAnyShortcutObserver: NSObjectProtocol?
     private var lastGroupToggleTime: TimeInterval = 0
 
-    private var rootItems: [Any] = []
+    private var rootItems: [ShortcutGroup] = []
 
     override func loadView() {
         setupGroups()
@@ -203,7 +203,7 @@ class ShortcutsViewController: NSViewController {
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
             scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10),
+            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
 
@@ -212,6 +212,12 @@ class ShortcutsViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Expand non-collapsible groups on load
+        for group in rootItems where !group.isCollapsible {
+            outlineView.expandItem(group)
+        }
+        
         subscribeToAllowAnyShortcutToggle()
     }
     
@@ -225,7 +231,7 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.leftHalf, .rightHalf, .centerHalf, .topHalf, .bottomHalf]),
             ShortcutCategory(actions: [.topLeft, .topRight, .bottomLeft, .bottomRight]),
             ShortcutCategory(actions: [.maximize, .almostMaximize, .maximizeHeight, .larger, .smaller, .center, .restore]),
-            ShortcutCategory(actions: [.nextDisplay, .previousDisplay], includeSpacer: false)
+            ShortcutCategory(actions: [.nextDisplay, .previousDisplay])
         ]
 
         let moreCategories: [ShortcutCategory] = [
@@ -236,18 +242,14 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [
                 .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth
             ]),
-            ShortcutCategory(actions: [.moveLeft, .moveRight, .moveUp, .moveDown], includeSpacer: false),
+            ShortcutCategory(actions: [.moveLeft, .moveRight, .moveUp, .moveDown])
         ]
 
-        var items: [Any] = []
-        for category in standardCategories {
-            items.append(contentsOf: category.items)
-        }
+        // Explicitly set isCollapsible to false for standardGroup
+        let standardGroup = ShortcutGroup(title: "", categories: standardCategories, isCollapsible: false)
+        let moreGroup = ShortcutGroup(title: "More", categories: moreCategories, isCollapsible: true)
 
-        let moreGroup = ShortcutGroup(title: "More", categories: moreCategories)
-        items.append(moreGroup)
-
-        rootItems = items
+        rootItems = [standardGroup, moreGroup]
     }
 
     deinit {
@@ -325,9 +327,28 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
         if item is SpacerItem {
             return 14
         }
+        if let group = item as? ShortcutGroup, !group.isCollapsible {
+            return 10
+        }
         return 28
     }
-    
+
+    // Hide disclosure triangle arrow for non-collapsible groups
+    func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
+        if let group = item as? ShortcutGroup, !group.isCollapsible {
+            return false
+        }
+        return true
+    }
+
+    // Prevent collapsing if group is non-collapsible
+    func outlineView(_ outlineView: NSOutlineView, shouldCollapseItem item: Any) -> Bool {
+        if let group = item as? ShortcutGroup, !group.isCollapsible {
+            return false
+        }
+        return true
+    }
+
     // MARK: - NSOutlineViewDelegate Dynamic Sizing Fix
 
     func outlineViewItemDidExpand(_ notification: Notification) {
@@ -353,7 +374,9 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
     }
 
     func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        if item is ShortcutGroup {
+        if let group = item as? ShortcutGroup {
+            guard group.isCollapsible else { return false }
+
             let now = ProcessInfo.processInfo.systemUptime
             
             // Ignore calls occurring within 100 ms of the last toggle
@@ -370,5 +393,4 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
         }
         return true
     }
-    
 }
