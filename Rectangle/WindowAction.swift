@@ -261,14 +261,14 @@ enum WindowAction: Int, Codable {
         case .topRightThird: return "topRightThird"
         case .bottomLeftThird: return "bottomLeftThird"
         case .bottomRightThird: return "bottomRightThird"
-        case .topLeftEighth: return "topLeftEighth"
-        case .topCenterLeftEighth: return "topCenterLeftEighth"
-        case .topCenterRightEighth: return "topCenterRightEighth"
-        case .topRightEighth: return "topRightEighth"
-        case .bottomLeftEighth: return "bottomLeftEighth"
-        case .bottomCenterLeftEighth: return "bottomCenterLeftEighth"
-        case .bottomCenterRightEighth: return "bottomCenterRightEighth"
-        case .bottomRightEighth: return "bottomRightEighth"
+        case .topLeftEighth: return "topLeft8th"
+        case .topCenterLeftEighth: return "topCenterLeft8th"
+        case .topCenterRightEighth: return "topCenterRight8th"
+        case .topRightEighth: return "topRight8th"
+        case .bottomLeftEighth: return "bottomLeft8th"
+        case .bottomCenterLeftEighth: return "bottomCenterLeft8th"
+        case .bottomCenterRightEighth: return "bottomCenterRight8th"
+        case .bottomRightEighth: return "bottomRight8th"
         case .doubleHeightUp: return "doubleHeightUp"
         case .doubleHeightDown: return "doubleHeightDown"
         case .doubleWidthLeft: return "doubleWidthLeft"
@@ -491,7 +491,7 @@ enum WindowAction: Int, Codable {
             value = "Bottom Right Sixth"
         case .topLeftNinth:
             key = "topLeftNinth.title"
-            value = "Top Left Ninth"
+            value = "Ninths (3x3)"
         case .topCenterNinth:
             key = "topCenterNinth.title"
             value = "Top Center Ninth"
@@ -520,36 +520,36 @@ enum WindowAction: Int, Codable {
             return nil
         case .topLeftEighth:
             key = "topLeftEighth.title"
-            value = "Top Left Eighth"
+            value = "Top Left 8th"
         case .topCenterLeftEighth:
             key = "topCenterLeftEighth.title"
-            value = "Top Center Left Eighth"
+            value = "Top Center Left 8th"
         case .topCenterRightEighth:
             key = "topCenterRightEighth.title"
-            value = "Top Center Right Eighth"
+            value = "Top Center Right 8th"
         case .topRightEighth:
             key = "topRightEighth.title"
-            value = "Top Right Eighth"
+            value = "Top Right 8th"
         case .bottomLeftEighth:
             key = "bottomLeftEighth.title"
-            value = "Bottom Left Eighth"
+            value = "Bottom Left 8th"
         case .bottomCenterLeftEighth:
             key = "bottomCenterLeftEighth.title"
-            value = "Bottom Center Left Eighth"
+            value = "Bottom Center Left 8th"
         case .bottomCenterRightEighth:
             key = "bottomCenterRightEighth.title"
-            value = "Bottom Center Right Eighth"
+            value = "Bottom Center Right 8th"
         case .bottomRightEighth:
             key = "bottomRightEighth.title"
-            value = "Bottom Right Eighth"
+            value = "Bottom Right 8th"
         case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight, .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight:
             return nil
         case .tileRows:
             key = "tileRows.title"
-            value = "Tile Windows in Rows"
+            value = "Tile in Rows"
         case .tileColumns:
             key = "tileColumns.title"
-            value = "Tile Windows in Columns"
+            value = "Tile in Columns"
         case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp, .tileActiveApp:
             return nil
         case .largerWidth:
@@ -570,7 +570,7 @@ enum WindowAction: Int, Codable {
             value = "Bottom Two Thirds"
         case .topLeftTwelfth:
             key = "topLeftTwelfth.title"
-            value = "Top Left Twelfth"
+            value = "Twelfths (4x3)"
         case .topCenterLeftTwelfth:
             key = "topCenterLeftTwelfth.title"
             value = "Top Center Left Twelfth"
@@ -606,7 +606,7 @@ enum WindowAction: Int, Codable {
             value = "Bottom Right Twelfth"
         case .topLeftSixteenth:
             key = "topLeftSixteenth.title"
-            value = "Top Left Sixteenth"
+            value = "Sixteenths (4x4)"
         case .topCenterLeftSixteenth:
             key = "topCenterLeftSixteenth.title"
             value = "Top Center Left Sixteenth"
