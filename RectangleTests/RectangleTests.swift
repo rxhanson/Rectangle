@@ -4610,10 +4610,11 @@ final class DragRestoreReleaseTests: XCTestCase {
     }
 
     func testDirectAnimationWithoutServerIdentityCompletesOnceAndMouseUpDoesNotRepeatIt() throws {
+        let animator = DirectWindowAnimator(enabled: { true }, automaticallyAdvances: false, environmentIsSafe: { true })
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
-            WindowAnimator.shared.finish()
+            animator.finish()
             Defaults.experimentalWindowAnimations.enabled = saved
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
@@ -4621,19 +4622,19 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(window.windowId, "Direct animation does not require a WindowServer identity")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
         var completedFrames: [CGRect] = []
-        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
+        animator.animate(window, to: destination, duration: 0.18, resizeOnly: false, placement: nil, offset: { .zero }) { completedFrames.append($0) }
 
         XCTAssertTrue(completedFrames.isEmpty)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
-        WindowAnimator.shared.finish()
+        XCTAssertEqual(animator.destination(for: window), destination)
+        animator.finish()
         XCTAssertEqual(completedFrames, [destination])
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
 
         let manager = try release(dragAlreadyDetected: true)
 
         XCTAssertEqual(completedFrames, [destination], "A later native release must not repeat the completed animation")
         XCTAssertEqual(manager.restores, 0)
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
     }
 }
 

@@ -18,6 +18,26 @@ enum WindowProcessIdentity {
 
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
+    var animationReads: WindowAnimationReadCache?
+    var animationPolicy: WindowAnimationWritePolicy?
+    var animationSizeInterval: TimeInterval = 0
+    var animationLastSizeWrite: TimeInterval = -.infinity
+    var animationSizeDeferred = false
+    var animationNeedsPositionStep = false
+    var animationVerificationTime: TimeInterval?
+    var animationIntermediateStep = false
+    var animationYieldRequested = false
+    var animationNeedsRecovery = false
+    var animationObservedFrame: CGRect?
+    var animationObservedAt: TimeInterval = -.infinity
+    var animationExpectedOrigin: CGPoint?
+    var animationNeedsFreshGeometry = false
+    var animationResizeNotified = false
+    var animationDestination: CGRect?
+    var animationEdgeProbeSent = false
+    var animationResizeResponse = WindowAnimationResizeResponse()
+    var animationMotionApplied = true
+    var animationObservationElement: AXUIElement { wrappedElement }
     private let knownApplication: Bool
     private var resolvedWindowID: CGWindowID?
     private(set) var messagingTimeout: Float = 0
@@ -133,7 +153,10 @@ class AccessibilityElement {
     
     private var position: CGPoint? {
         get {
-            wrappedElement.getWrappedValue(.position)
+            if let cached = animationReads?.position { return cached }
+            let value: CGPoint? = wrappedElement.getWrappedValue(.position)
+            animationReads?.position = value
+            return value
         }
         set {
             guard let newValue = newValue else { return }
@@ -152,7 +175,10 @@ class AccessibilityElement {
     
     var size: CGSize? {
         get {
-            wrappedElement.getWrappedValue(.size)
+            if let cached = animationReads?.size { return cached }
+            let value: CGSize? = wrappedElement.getWrappedValue(.size)
+            animationReads?.size = value
+            return value
         }
         set {
             guard let newValue = newValue else { return }
@@ -190,7 +216,22 @@ class AccessibilityElement {
         return (identifier, role?.rawValue ?? "", subrole, structure)
     }
     
+    func readAnimationGeometry() -> Bool {
+        guard let cache = animationReads else { return false }
+        var values: CFArray?
+        let keys = [kAXPositionAttribute, kAXSizeAttribute] as CFArray
+        guard AXUIElementCopyMultipleAttributeValues(wrappedElement, keys, AXCopyMultipleAttributeOptions(rawValue: 0), &values) == .success,
+              let values = values as? [AnyObject], values.count == 2,
+              CFGetTypeID(values[0]) == AXValueGetTypeID(), CFGetTypeID(values[1]) == AXValueGetTypeID() else { return false }
+        var position = CGPoint.zero; var size = CGSize.zero
+        guard AXValueGetValue(values[0] as! AXValue, .cgPoint, &position),
+              AXValueGetValue(values[1] as! AXValue, .cgSize, &size) else { return false }
+        cache.position = position; cache.size = size
+        return true
+    }
+
     var frame: CGRect {
+        if let cache = animationReads, cache.position == nil, cache.size == nil { _ = readAnimationGeometry() }
         guard let position = position, let size = size else { return .null }
         return .init(origin: position, size: size)
     }
@@ -260,38 +301,70 @@ class AccessibilityElement {
     }
 
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false, positionFirst: Bool) -> Bool {
-        var size = frame.size
-        var position = frame.origin
-        guard let sizeValue = AXValueCreate(.cgSize, &size),
-              let positionValue = AXValueCreate(.cgPoint, &position) else { return false }
-        if positionFirst && !resizeOnly {
-            guard AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return false }
-        }
-        guard AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success else { return false }
-        // Native dragging owns position during size restoration.
-        if !resizeOnly && !positionFirst {
-            guard AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return false }
-        }
+        if positionFirst, !resizeOnly, writeAnimationPosition(frame.origin) != .success { return false }
+        guard writeAnimationSize(frame.size) == .success else { return false }
+        if !resizeOnly, !positionFirst, writeAnimationPosition(frame.origin) != .success { return false }
         return true
     }
 
     func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
                                       origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil,
                                       maximumCorrection: CGFloat = 0) -> CGRect? {
+        if progress < 1, let observed = animationObservedFrame {
+            return setObservedAnimationFrame(frame, observed: observed, placement: placement, origin: origin)
+        }
+        animationSizeDeferred = false
+        var frame = frame
+        // Grow only into space already available at the current origin. Moving
+        // creates room for the next step without exposing a second position write.
+        if progress < 0.9, let previousFrame,
+           placement.positionBeforeGrowing(from: previousFrame, to: frame) != nil {
+            let bounds = placement.screenFrame
+            if frame.width > previousFrame.width {
+                frame.size.width = min(frame.width, max(previousFrame.width, bounds.maxX - previousFrame.minX))
+            }
+            if frame.height > previousFrame.height {
+                frame.size.height = min(frame.height, max(previousFrame.height, bounds.maxY - previousFrame.minY))
+            }
+            animationSizeDeferred = true
+        }
+        let predicted = animationPolicy?.mayPredict(frame, previous: previousFrame, placement: placement,
+            progress: progress) == true
         var preparedPosition: CGPoint?
-        if let previousFrame,
+        if progress >= 0.9, let previousFrame,
            let position = placement.positionBeforeGrowing(from: previousFrame, to: frame),
            writeAnimationPosition(position) == .success {
             preparedPosition = position
         }
+        if progress < 1, animationYieldRequested {
+            animationNeedsRecovery = true
+            return nil
+        }
         // Resize before moving on shrinking axes: a refused shrink must not carry the wider window
         // to the narrower frame's origin and leave it behind the Dock until completion.
         let sizeUnchanged = progress < 1 && previousFrame?.size == frame.size
-        let resized = sizeUnchanged || writeAnimationSize(frame.size) == .success
-        let actualSize = size.flatMap { size -> CGSize? in
+        let now = ProcessInfo.processInfo.systemUptime
+        let deferred = progress < 0.85 && previousFrame != nil && preparedPosition == nil
+            && animationSizeInterval > 0
+            && (now - animationLastSizeWrite < animationSizeInterval
+                || (animationNeedsPositionStep && frame.origin != previousFrame?.origin))
+        animationSizeDeferred = animationSizeDeferred || (deferred && !sizeUnchanged)
+        animationNeedsPositionStep = !sizeUnchanged && !deferred
+        let resized = sizeUnchanged || deferred || writeAnimationSize(frame.size) == .success
+        if !sizeUnchanged && !deferred { animationLastSizeWrite = now; animationReads?.invalidate() }
+        if progress < 1, !resized || animationYieldRequested {
+            animationNeedsRecovery = true
+            animationPolicy?.reset()
+            return nil
+        }
+        let actualSize = ((deferred || sizeUnchanged) ? previousFrame?.size : (predicted ? frame.size : size)).flatMap { size -> CGSize? in
             guard size.width.isFinite, size.height.isFinite,
                   size.width > 0, size.height > 0 else { return nil }
             return size
+        }
+        if progress < 1, animationYieldRequested {
+            animationNeedsRecovery = true
+            return nil
         }
         // Finish positioning with the size the app reports. Shrinking axes must
         // not move to the requested origin and then move back after a delayed
@@ -304,19 +377,102 @@ class AccessibilityElement {
             resolved = placement.intermediateFrame(resolved, requested: frame, previous: previous, maximumCorrection: maximumCorrection)
         }
         if (preparedPosition ?? previousFrame?.origin) != resolved.origin {
-            guard writeAnimationPosition(resolved.origin) == .success else { return nil }
+            guard writeAnimationPosition(resolved.origin) == .success else {
+                animationNeedsRecovery = progress < 1
+                animationPolicy?.reset(); return nil
+            }
+            animationReads?.position = nil
+            animationReads?.server = nil
         }
-        guard resized, actualSize != nil else { return nil }
+        if progress < 1, animationYieldRequested {
+            animationNeedsRecovery = true
+            return nil
+        }
+        guard resized, actualSize != nil else { animationPolicy?.reset(); return nil }
+        if deferred || WindowAnimationGeometry.near(resolved, frame, tolerance: 1) {
+            animationPolicy?.requested(resolved)
+        } else { animationPolicy?.reset() }
         return resolved
     }
 
+    private func setObservedAnimationFrame(_ requested: CGRect, observed: CGRect,
+                                          placement: WindowAnimationPlacement, origin: CGRect) -> CGRect? {
+        let now = animationVerificationTime ?? ProcessInfo.processInfo.systemUptime
+        animationMotionApplied = false
+        animationSizeDeferred = true
+        var size = requested.size
+        if placement.positionBeforeGrowing(from: observed, to: requested) != nil {
+            size.width = min(size.width, max(observed.width, placement.screenFrame.maxX - observed.minX))
+            size.height = min(size.height, max(observed.height, placement.screenFrame.maxY - observed.minY))
+        }
+        let intermediate = WindowAnimationPlacement(screenFrame: placement.screenFrame, sharedEdges: nil,
+            constrainToScreen: placement.constrainToScreen, gap: placement.gap)
+        var safeSize = observed.size
+        if let pending = animationResizeResponse.pendingSize {
+            safeSize.width = max(safeSize.width, pending.width)
+            safeSize.height = max(safeSize.height, pending.height)
+        }
+        safeSize.width = max(safeSize.width, size.width)
+        safeSize.height = max(safeSize.height, size.height)
+        var position = intermediate.frame(for: requested, actualSize: safeSize, origin: origin, progress: 0).origin
+        var probe = false
+        if let destination = animationDestination, placement.constrainToScreen,
+           abs(requested.minX - destination.minX) <= 2, abs(requested.minY - destination.minY) <= 2,
+           requested.size == destination.size {
+            let bounds = placement.screenFrame.insetBy(dx: placement.gap, dy: placement.gap)
+            if observed.width > destination.width + 1, observed.maxX > bounds.maxX + 1 {
+                position.x = destination.minX - 1
+                probe = !animationEdgeProbeSent
+            } else if observed.height > destination.height + 1, observed.maxY > bounds.maxY + 1 {
+                position.y = destination.minY - 1
+                probe = !animationEdgeProbeSent
+            }
+        }
+        // Submit safe motion before a potentially slow resize. Size delivery
+        // cannot consume the position step or turn its response into a minimum.
+        if position != observed.origin {
+            guard writeAnimationPosition(position) == .success else {
+                animationNeedsRecovery = true
+                return nil
+            }
+            animationExpectedOrigin = position
+        }
+        animationMotionApplied = true
+        if probe {
+            animationNeedsFreshGeometry = true
+        }
+        let achieved = CGRect(origin: position, size: observed.size)
+        guard !animationYieldRequested else { return achieved }
+        let grows = size.width > observed.width + 0.5 || size.height > observed.height + 0.5
+        if grows, now - animationObservedAt > 1.0 / 60 {
+            animationNeedsFreshGeometry = true
+            return achieved
+        }
+        let needsSize = abs(size.width - observed.width) > 0.5 || abs(size.height - observed.height) > 0.5
+        if needsSize, (probe || animationResizeResponse.mayRequest(at: now)),
+           now - animationLastSizeWrite >= animationSizeInterval {
+            let result = writeAnimationSize(size)
+            if probe { animationEdgeProbeSent = true }
+            animationResizeResponse.requested(size, previous: observed.size, at: now)
+            animationLastSizeWrite = now
+            if result != .success { animationNeedsRecovery = true }
+        }
+        return achieved
+    }
+
     func writeAnimationPosition(_ position: CGPoint) -> AXError {
+        animationReads?.position = nil
+        animationReads?.server = nil
         var position = position
         guard let value = AXValueCreate(.cgPoint, &position) else { return .failure }
         return AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, value)
     }
 
     func writeAnimationSize(_ size: CGSize) -> AXError {
+        // A resize can also move the origin when AppKit enforces screen bounds.
+        animationReads?.size = nil
+        animationReads?.position = nil
+        animationReads?.server = nil
         var size = size
         guard let value = AXValueCreate(.cgSize, &size) else { return .failure }
         return AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, value)
@@ -824,6 +980,31 @@ enum EnhancedUI: Int {
         return {
             if shouldRestore { writeEnhancedUI(true) }
         }
+    }
+}
+
+enum WindowAccessibilityLookup {
+    static func resolve(pid: pid_t, id: CGWindowID, launch: TimeInterval,
+                        preferred: AXUIElement?, isCurrent: () -> Bool) -> AXUIElement? {
+        let deadline = ProcessInfo.processInfo.systemUptime + 0.25
+        func valid() -> Bool { isCurrent() && WindowProcessIdentity.launchTime(for: pid) == launch }
+        while valid(), ProcessInfo.processInfo.systemUptime < deadline {
+            let reader = AccessibilityReadBatch(budget: deadline - ProcessInfo.processInfo.systemUptime)
+            // Activation can stall AXWindows even while the selected window responds.
+            if let preferred {
+                var owner: pid_t = 0
+                if AXUIElementGetPid(preferred, &owner) == .success, owner == pid,
+                   reader.windowID(preferred) == id, valid() { return preferred }
+            }
+            if reader.available,
+               let windows = reader.value(AXUIElementCreateApplication(pid), kAXWindowsAttribute) as? [AXUIElement],
+               let window = windows.first(where: { reader.windowID($0) == id }),
+               reader.available, valid() { return window }
+            guard reader.timedOut, valid() else { return nil }
+            let remaining = deadline - ProcessInfo.processInfo.systemUptime
+            if remaining > 0 { Thread.sleep(forTimeInterval: min(0.02, remaining)) }
+        }
+        return nil
     }
 }
 

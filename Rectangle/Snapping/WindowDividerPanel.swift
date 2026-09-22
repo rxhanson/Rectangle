@@ -8,8 +8,7 @@ final class WindowDividerPanel: NSPanel {
     var onEnd: (() -> Void)?
     var onReset: (() -> Void)?
     private let handle = WindowDividerHandle(frame: CGRect(x: 0, y: 0, width: 18, height: 76))
-    private var fadeTimer: Timer?
-    private var fade: DividerHandleFade?
+    private let fade = PreviewOpacityAnimation()
     private var fadeCompletion: (() -> Void)?
     private(set) var isHiding = false
     var acceptsPointer: Bool { isVisible && !isHiding }
@@ -31,6 +30,7 @@ final class WindowDividerPanel: NSPanel {
         level = .floating
         collectionBehavior = [.transient, .moveToActiveSpace]
         title = "Resize split"
+        handle.wantsLayer = true
         contentView = handle
         acceptsMouseMovedEvents = true
     }
@@ -42,7 +42,7 @@ final class WindowDividerPanel: NSPanel {
                        width: size.width, height: size.height), display: true)
         invalidateCursorRects(for: handle)
         if acceptsPointer { handle.updateHoverCursor(); return }
-        if !isVisible { alphaValue = 0; orderFront(nil) }
+        if !isVisible { handle.layer?.opacity = 0; orderFront(nil) }
         isHiding = false; ignoresMouseEvents = false
         startFade(to: 1)
         handle.updateHoverCursor()
@@ -50,7 +50,8 @@ final class WindowDividerPanel: NSPanel {
 
     func holdVisible() {
         cancelFade()
-        isHiding = false; ignoresMouseEvents = false; alphaValue = 1
+        isHiding = false; ignoresMouseEvents = false
+        if let layer = handle.layer { fade.set(layer, to: 1, duration: 0) }
         handle.updateHoverCursor()
     }
 
@@ -68,47 +69,20 @@ final class WindowDividerPanel: NSPanel {
     private func startFade(to target: CGFloat, animated: Bool = true, completion: (() -> Void)? = nil) {
         cancelFade()
         fadeCompletion = completion
-        let now = ProcessInfo.processInfo.systemUptime
-        fade = DividerHandleFade(from: alphaValue, to: target, startedAt: now,
-            duration: animated && WindowAnimator.enabled ? 0.12 : 0)
-        advanceFade(at: now)
-        guard fade != nil else { return }
-        let timer = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
-            self?.advanceFade(at: ProcessInfo.processInfo.systemUptime)
-        }
-        fadeTimer = timer
-        RunLoop.main.add(timer, forMode: .common)
-    }
-
-    func advanceFade(at time: TimeInterval) {
-        guard let fade else { return }
-        let finished = !WindowAnimator.enabled || fade.isFinished(at: time)
-        alphaValue = finished ? fade.to : fade.value(at: time)
-        if finished {
-            let completion = fadeCompletion
-            cancelFade()
-            if isHiding { orderOut(nil) }
+        guard let layer = handle.layer else { completion?(); return }
+        fade.set(layer, to: target, duration: animated && WindowAnimator.enabled ? 0.12 : 0,
+                 timing: PreviewLayerTransition.smoothstep) { [weak self] in
+            guard let self else { return }
+            let completion = self.fadeCompletion
+            self.fadeCompletion = nil
+            if self.isHiding { self.orderOut(nil) }
             completion?()
         }
     }
 
     private func cancelFade() {
-        fadeTimer?.invalidate(); fadeTimer = nil
-        fade = nil; fadeCompletion = nil
-    }
-}
-
-/// Reversing an interrupted fade starts from the displayed opacity.
-struct DividerHandleFade {
-    let from: CGFloat
-    let to: CGFloat
-    let startedAt: TimeInterval
-    let duration: TimeInterval
-    func isFinished(at time: TimeInterval) -> Bool { duration <= 0 || time - startedAt >= duration }
-    func value(at time: TimeInterval) -> CGFloat {
-        let t = duration > 0 ? min(1, max(0, (time - startedAt) / duration)) : 1
-        let eased = CGFloat(t * t * (3 - 2 * t))
-        return from + (to - from) * eased
+        fade.cancel()
+        fadeCompletion = nil
     }
 }
 
@@ -116,10 +90,8 @@ struct DividerHandleFade {
 final class WindowDividerOverlay: NSPanel {
     let guide = WindowDividerGuide(frame: .zero)
     var snapshotScreenFrame: CGRect?
-    private var fadeTimer: Timer?
-    private var fadeCompletion: (() -> Void)?
-    private var fadeStartedAt: TimeInterval?
-    static let fadeDuration: TimeInterval = 0.12
+    private let fade = PreviewOpacityAnimation()
+    static let fadeDuration: TimeInterval = 0.08
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
 
@@ -134,14 +106,16 @@ final class WindowDividerOverlay: NSPanel {
         ignoresMouseEvents = true
         level = .floating
         collectionBehavior = [.transient, .moveToActiveSpace]
+        guide.wantsLayer = true
         contentView = guide
     }
 
     func show(in frame: CGRect, divider: CGFloat, gap: CGFloat, axis: WindowSplitAxis = .horizontal,
               below handle: WindowDividerPanel) {
         cancelFade()
-        guide.setFrozenImage(nil)
-        alphaValue = 1
+        guide.backdrop.isHidden = false
+        guide.decoration.isHidden = false
+        if let layer = guide.layer { fade.set(layer, to: 1, duration: 0) }
         // Reserve transparent space before capture so freezing the native
         // shadows does not resize the panel during the image handoff.
         let coverage = snapshotScreenFrame.map {
@@ -158,45 +132,28 @@ final class WindowDividerOverlay: NSPanel {
 
     func freeze(_ image: CGImage) {
         guide.setFrozenImage(image)
-        guide.displayIfNeeded()
-        CATransaction.flush()
     }
 
     func fadeOut(startedAt: TimeInterval = ProcessInfo.processInfo.systemUptime, completion: @escaping () -> Void) {
         cancelFade()
-        fadeStartedAt = startedAt
-        fadeCompletion = completion
-        let timer = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
-            self?.advanceFade(at: ProcessInfo.processInfo.systemUptime)
-        }
-        fadeTimer = timer
-        RunLoop.main.add(timer, forMode: .common)
-    }
-
-    func advanceFade(at time: TimeInterval) {
-        guard let start = fadeStartedAt else { return }
-        let progress = min(1, max(0, (time - start) / Self.fadeDuration))
-        alphaValue = 1 - progress
-        if progress == 1 {
-            let completion = fadeCompletion
-            dismiss()
-            completion?()
+        guard let layer = guide.layer else { dismiss(); completion(); return }
+        let remaining = max(0, Self.fadeDuration - (ProcessInfo.processInfo.systemUptime - startedAt))
+        fade.set(layer, to: 0, duration: WindowAnimator.enabled ? remaining : 0,
+                 timing: CAMediaTimingFunction(name: .linear)) { [weak self] in
+            self?.dismiss()
+            completion()
         }
     }
 
     func dismiss() {
         cancelFade()
-        // Keep the retired surface transparent even if ordering and drawing
-        // reach the compositor in different transactions. Only show() reveals it.
-        alphaValue = 0
+        // Retire the surface before ordering it out to avoid a stale final frame.
+        if let layer = guide.layer { fade.set(layer, to: 0, duration: 0) }
         orderOut(nil)
         guide.retire()
     }
 
-    private func cancelFade() {
-        fadeTimer?.invalidate(); fadeTimer = nil
-        fadeStartedAt = nil; fadeCompletion = nil
-    }
+    private func cancelFade() { fade.cancel() }
 
 }
 
@@ -215,6 +172,18 @@ final class WindowDividerGuide: NSView {
         backdrop.blendingMode = .behindWindow
         backdrop.state = .active
         backdrop.wantsLayer = true
+        let radius = FootprintStyle.cornerRadius
+        backdrop.layer?.cornerRadius = radius
+        backdrop.layer?.masksToBounds = true
+        // Clip the material itself as well as its layer to avoid bright corners.
+        let mask = NSImage(size: NSSize(width: radius * 2 + 1, height: radius * 2 + 1), flipped: false) { rect in
+            NSColor.white.setFill()
+            NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
+            return true
+        }
+        mask.capInsets = NSEdgeInsets(top: radius, left: radius, bottom: radius, right: radius)
+        mask.resizingMode = .stretch
+        backdrop.maskImage = mask
         backdrop.layer?.contentsFormat = .RGBA8Uint
         if #available(macOS 26, *) { backdrop.layer?.preferredDynamicRange = .standard }
         // Cover the margins and gutter from the start of the drag. Rounded
@@ -226,13 +195,15 @@ final class WindowDividerGuide: NSView {
 
     func setFrozenImage(_ image: CGImage?) {
         frozenImage = image.map { NSImage(cgImage: $0, size: bounds.size) }
-        backdrop.isHidden = image != nil
-        decoration.isHidden = image != nil
+        backdrop.blendingMode = image == nil ? .behindWindow : .withinWindow
+        backdrop.isHidden = false
+        decoration.isHidden = false
         needsDisplay = true
     }
 
     func retire() {
         frozenImage = nil
+        backdrop.blendingMode = .behindWindow
         backdrop.isHidden = true
         decoration.isHidden = true
         needsDisplay = true
@@ -286,7 +257,7 @@ final class WindowDividerDecoration: NSView {
         bounds.fill(using: .copy)
         LayoutHelperAppearance.outline.setStroke()
         for frame in outlines {
-            let radius = min(LayoutHelperAppearance.cornerRadius, min(frame.width, frame.height) / 2)
+            let radius = min(min(12, FootprintStyle.cornerRadius), min(frame.width, frame.height) / 2)
             let outline = NSBezierPath(roundedRect: frame, xRadius: radius, yRadius: radius)
             outline.lineWidth = 1
             outline.stroke()
@@ -298,8 +269,8 @@ final class WindowDividerDecoration: NSView {
     }
 }
 
-/// One in-memory, cursor-free capture of the already composited drag preview.
-/// Unlike caching an NSVisualEffectView, display capture includes its backdrop.
+/// Capture the background once per drag. Rectangle's blur and moving outlines
+/// are rendered separately so the snapshot does not depend on the final split.
 final class WindowDividerSnapshot {
     private static let imageContext = CIContext(options: [.cacheIntermediates: false])
 
@@ -309,8 +280,6 @@ final class WindowDividerSnapshot {
                height: frame.height + 64).intersection(screenFrame)
     }
 
-    // Resolve the display inventory during the drag, before mouse-up. The
-    // actual image is still captured only once, at the final preview position.
     private var contentTask: Any?
 
     static var enabled: Bool {
@@ -339,14 +308,18 @@ final class WindowDividerSnapshot {
                   !Task.isCancelled, Self.enabled,
                   let display = content.displays.first(where: { $0.displayID == displayID }),
                   display.frame.contains(frame) else { return nil }
-            let filter = SCContentFilter(display: display, excludingWindows: [])
+            let applications = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
+            guard !applications.isEmpty else { return nil }
+            let filter = SCContentFilter(display: display, excludingApplications: applications, exceptingWindows: [])
             let config = Self.configuration(frame: frame, displayFrame: display.frame, scale: scale)
             // captureImage can omit native window shadows on macOS 26. Keep
             // the composited sample buffer, including the reserved bottom edge.
             let sample = try await SCScreenshotManager.captureSampleBuffer(contentFilter: filter, configuration: config)
             guard !Task.isCancelled, let buffer = CMSampleBufferGetImageBuffer(sample) else { return nil }
-            let image = CIImage(cvPixelBuffer: buffer)
-            return Self.imageContext.createCGImage(image, from: image.extent)
+            return await Task.detached(priority: .userInitiated) {
+                let image = CIImage(cvPixelBuffer: buffer)
+                return Self.imageContext.createCGImage(image, from: image.extent)
+            }.value
         } catch { return nil }
     }
 

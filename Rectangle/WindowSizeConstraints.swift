@@ -2,7 +2,7 @@ import Cocoa
 
 /// Reported constraints and historical hints deliberately have different uses.
 /// Only independently verified operations can promote an observation to a hint;
-/// even a confirmed hint never rejects an explicit resize request.
+/// direct resize requests still verify the live app rather than trusting hints.
 final class WindowSizeConstraintStore<Key: Hashable> {
     private(set) var entries: [Key: WindowSizeEvidence] = [:]
     var lifetime: TimeInterval?
@@ -57,7 +57,11 @@ final class WindowSizeConstraintStore<Key: Hashable> {
         guard Self.valid(size) else { return }
         let old = accepted[key] ?? size
         accepted[key] = CGSize(width: min(old.width, size.width), height: min(old.height, size.height))
-        observations.removeValue(forKey: key)
+        // Growing between independent resize attempts does not disprove a clamp.
+        if let observation = observations[key],
+           size.width + 2 < observation.learned.width || size.height + 2 < observation.learned.height {
+            observations.removeValue(forKey: key)
+        }
         if var entry = entries[key] {
             if size.width + 2 < entry.learned.width { entry.learned.width = 0 }
             if size.height + 2 < entry.learned.height { entry.learned.height = 0 }
@@ -376,8 +380,8 @@ final class WindowSizeConstraints {
         return result
     }
 
-    /// Historical evidence plans intermediate motion only. The final requested
-    /// size remains unchanged and must still be verified against the live app.
+    /// Historical evidence guides animation, previews, and divider bounds.
+    /// Placement must still be verified against the live app.
     func rememberedMinimum(for window: AccessibilityElement) -> CGSize? {
         guard let key = key(for: window) else { return nil }
         synchronizePreference()

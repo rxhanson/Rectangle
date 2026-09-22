@@ -56,6 +56,7 @@ class WindowManager {
     
     func execute(_ parameters: ExecutionParameters) {
         hideSizeConstraintWarning()
+        let fitOpportunity = SnappedWindowFitSession.shared.take()
 
         WindowSizeConstraints.shared.cancelPendingObservations()
         let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
@@ -93,7 +94,10 @@ class WindowManager {
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
-                    frontmostWindowElement.setFrame(restoreRect)
+                    windowAnimator.afterPendingWrites { [weak self] in
+                        guard self?.executionID == currentExecutionID else { return }
+                        frontmostWindowElement.setFrame(restoreRect)
+                    }
                 }
             }
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
@@ -186,7 +190,8 @@ class WindowManager {
         if !isFixedSize, willResize, !action.allowedToExtendOutsideCurrentScreenArea {
             switch SnappedWindowFit.resolve(action: calcResult.resultingAction, window: currentWindow,
                 initialTarget: calcResult.initialRect, target: calcResult.rect,
-                screenFrame: visibleFrameOfDestinationScreen, minimum: frontmostWindowElement.minimumSize) {
+                screenFrame: visibleFrameOfDestinationScreen, minimum: frontmostWindowElement.minimumSize,
+                opportunity: fitOpportunity) {
             case let .fit(plan):
                 besidePlan = plan
                 calcResult.rect = plan.target.screenFlipped
@@ -260,6 +265,7 @@ class WindowManager {
             acceptedHelperPrefetch = true
             LayoutHelperManager.shared.prefetchForSnap(result: resultParameters)
             LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
+            if besidePlan == nil { SnappedWindowFitSession.shared.record(result: resultParameters, frame: currentWindowRect) }
 
             return
         }
@@ -364,7 +370,10 @@ class WindowManager {
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
-            completeMove(false)
+            windowAnimator.afterPendingWrites { [weak self] in
+                guard self?.executionID == currentExecutionID else { return }
+                completeMove(false)
+            }
         }
     }
 
@@ -372,6 +381,8 @@ class WindowManager {
 
     private func placeBesideSnappedWindow(result: ResultParameters, plan: SnappedWindowFit, before: CGRect,
                                          previousAction: RectangleAction?, previousRestore: CGRect?, generation: UUID, acrossDisplays: Bool) {
+        var result = result
+        result.allowsFitPairing = false
         let window = result.windowElement
         let requestExecutionID = executionID
         if let id = result.windowId {
@@ -451,6 +462,7 @@ class WindowManager {
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
         LayoutHelperManager.shared.didSnap(result: result, frame: resultingRect)
+        if result.allowsFitPairing { SnappedWindowFitSession.shared.record(result: result, frame: resultingRect) }
 
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
@@ -526,6 +538,7 @@ struct ResultParameters {
     var layoutHelperToken: UUID? = nil
     var requestedLayoutRect: CGRect? = nil
     var observationGeneration: UUID? = nil
+    var allowsFitPairing = true
 }
 
 struct RectangleAction {

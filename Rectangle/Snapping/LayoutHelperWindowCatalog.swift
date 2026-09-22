@@ -174,6 +174,8 @@ final class LayoutHelperWindowCatalog {
 
     /// A click gets one fresh batch for its application, never a desktop rescan.
     func resolve(_ id: CGWindowID, completion: @escaping (LayoutHelperWindowSnapshot?) -> Void) {
+        WindowAnimationDiagnostics.event("helper-resolve-request", fields: ["windowID": id,
+            "snapshot": snapshots[id] != nil, "suspended": isSuspended])
         guard !isSuspended, let snapshot = snapshots[id], applications[snapshot.pid] != nil else { completion(nil); return }
         demands[id, default: []].append(completion)
         failures[snapshot.pid] = nil
@@ -228,6 +230,11 @@ final class LayoutHelperWindowCatalog {
                         for id in application.infos.map(\.id) where batch.checked.contains(id) || batch.timedOut || batch.checked.isEmpty {
                             let callbacks = self.demands.removeValue(forKey: id) ?? []
                             let fresh = batch.windows.first { $0.id == id }
+                            if !callbacks.isEmpty {
+                                WindowAnimationDiagnostics.event("helper-resolve-result", fields: ["windowID": id,
+                                    "found": fresh != nil, "timedOut": batch.timedOut,
+                                    "checked": batch.checked.contains(id), "checkedCount": batch.checked.count])
+                            }
                             callbacks.forEach { $0(fresh) }
                         }
                         self.scheduleUpdate()

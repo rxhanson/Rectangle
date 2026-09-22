@@ -15,8 +15,9 @@ struct SnappedWindowFit: Equatable {
     }
 
     static func resolve(action: WindowAction, window: Window, initialTarget: CGRect,
-                        target: CGRect, screenFrame: CGRect, minimum: CGSize?) -> Resolution {
-        guard Defaults.fitBesideSnappedWindows.enabled, let id = window.id,
+                        target: CGRect, screenFrame: CGRect, minimum: CGSize?,
+                        opportunity: SnappedWindowFitOpportunity? = SnappedWindowFitSession.shared.current) -> Resolution {
+        guard Defaults.fitBesideSnappedWindows.enabled, let id = window.id, let opportunity,
               WindowSplitAxis(action: action) != nil,
               let calculation = WindowCalculationFactory.calculationsByAction[action] else { return .unchanged }
         // Preserve explicit fractions and repeated-command size cycling. Only
@@ -27,17 +28,28 @@ struct SnappedWindowFit: Equatable {
         let gap = max(0, CGFloat(Defaults.gapSize.value))
         let bounds = GapCalculation.applyGaps(screenFrame, gapSize: Float(gap),
             skipTopGap: Defaults.skipGapTopEdge.enabled).screenFlipped
+        guard opportunity.accepts(action: action, movingWindowID: id, bounds: bounds,
+                                  at: ProcessInfo.processInfo.systemUptime),
+              WindowProcessIdentity.launchTime(for: opportunity.pid) == opportunity.launch else { return .unchanged }
         let infos = WindowUtil.getWindowList(forceRefresh: true)
+        guard infos.contains(where: { $0.id == opportunity.id && $0.pid == opportunity.pid
+            && LayoutHelperLayout.matches($0.frame, opportunity.frame) }) else {
+            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
+            return .unchanged
+        }
         let resolution = resolve(enabled: true, action: action, movingWindowID: id,
             target: target.screenFlipped, bounds: bounds, gap: gap, minimum: minimum,
-            windows: infos, recordedFrames: AppDelegate.windowHistory.lastRectangleActions.mapValues(\.rect),
+            windows: infos, recordedFrames: [opportunity.id: opportunity.frame],
             ignoredPID: ProcessInfo.processInfo.processIdentifier)
         guard case let .fit(plan) = resolution else { return resolution }
         guard let neighbor = AccessibilityElement.getWindowElement(plan.neighborID),
               neighbor.pid == plan.neighborPID, neighbor.isWindow == true,
               neighbor.isMinimized != true, neighbor.isHidden != true, neighbor.isFullScreen != true,
               neighbor.isSheet != true, neighbor.isSystemDialog != true,
-              LayoutHelperLayout.matches(neighbor.frame, plan.neighborFrame) else { return .unchanged }
+              LayoutHelperLayout.matches(neighbor.frame, plan.neighborFrame) else {
+            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
+            return .unchanged
+        }
         return .fit(plan)
     }
 
@@ -106,5 +118,89 @@ struct SnappedWindowFit: Equatable {
                       y: frame.minY - (padded.minY - initial.minY),
                       width: frame.width + initial.width - padded.width,
                       height: frame.height + initial.height - padded.height)
+    }
+}
+
+/// Historical placements do not imply an ongoing layout. Only the next
+/// complementary snap may use this short-lived, explicitly created anchor.
+struct SnappedWindowFitOpportunity {
+    let id: CGWindowID
+    let pid: pid_t
+    let launch: TimeInterval
+    let action: WindowAction
+    let frame: CGRect
+    let bounds: CGRect
+    let createdAt: TimeInterval
+
+    func accepts(action incoming: WindowAction, movingWindowID: CGWindowID, bounds: CGRect,
+                 at time: TimeInterval) -> Bool {
+        guard movingWindowID != id, time >= createdAt, time - createdAt < 10,
+              LayoutHelperLayout.matches(self.bounds, bounds, tolerance: 0.5) else { return false }
+        switch (action, incoming) {
+        case (.leftHalf, .rightHalf), (.rightHalf, .leftHalf), (.topHalf, .bottomHalf), (.bottomHalf, .topHalf): return true
+        default: return false
+        }
+    }
+}
+
+final class SnappedWindowFitSession {
+    static let shared = SnappedWindowFitSession()
+    private var anchor: SnappedWindowFitOpportunity?
+    private var observers: [(NotificationCenter, NSObjectProtocol)] = []
+
+    var current: SnappedWindowFitOpportunity? {
+        if let anchor, ProcessInfo.processInfo.systemUptime - anchor.createdAt >= 10 { clear() }
+        return anchor
+    }
+
+    private init() {
+        let center = NotificationCenter.default
+        let workspace = NSWorkspace.shared.notificationCenter
+        for (source, names) in [
+            (center, [NSApplication.didChangeScreenParametersNotification, .configImported]),
+            (workspace, [NSWorkspace.activeSpaceDidChangeNotification, NSWorkspace.sessionDidResignActiveNotification,
+                         NSWorkspace.screensDidSleepNotification])
+        ] {
+            for name in names {
+                observers.append((source, source.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in self?.clear() }))
+            }
+        }
+        for name in [NSWorkspace.didHideApplicationNotification, NSWorkspace.didTerminateApplicationNotification] {
+            observers.append((workspace, workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] note in
+                guard let self, let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                      app.processIdentifier == self.anchor?.pid else { return }
+                self.clear()
+            }))
+        }
+    }
+
+    func clear() { anchor = nil }
+
+    func invalidate(windowID: CGWindowID?) {
+        if let windowID, anchor?.id == windowID { clear() }
+    }
+
+    func take() -> SnappedWindowFitOpportunity? {
+        let opportunity = current
+        clear()
+        return opportunity
+    }
+
+    func record(result: ResultParameters, frame: CGRect) {
+        clear()
+        let action = result.calcResult.resultingAction
+        guard Defaults.fitBesideSnappedWindows.enabled, !result.isFixedSize,
+              result.source == .dragToSnap || result.source == .keyboardShortcut || result.source == .menuItem,
+              WindowSplitAxis(action: action) != nil, let id = result.windowId,
+              let pid = result.windowElement.pid, let launch = WindowProcessIdentity.launchTime(for: pid),
+              WindowAnimationGeometry.valid(frame),
+              let calculation = WindowCalculationFactory.calculationsByAction[action] else { return }
+        let ordinary = calculation.calculateRect(RectCalculationParameters(window: Window(id: id, rect: frame.screenFlipped),
+            visibleFrameOfScreen: result.visibleFrameOfScreen, action: action, lastAction: nil)).rect
+        guard LayoutHelperLayout.matches(result.calcResult.initialRect, ordinary, tolerance: 1) else { return }
+        let bounds = GapCalculation.applyGaps(result.visibleFrameOfScreen, gapSize: max(0, Defaults.gapSize.value),
+            skipTopGap: Defaults.skipGapTopEdge.enabled).screenFlipped
+        anchor = SnappedWindowFitOpportunity(id: id, pid: pid, launch: launch, action: action,
+            frame: frame, bounds: bounds, createdAt: ProcessInfo.processInfo.systemUptime)
     }
 }

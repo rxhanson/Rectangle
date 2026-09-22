@@ -31,6 +31,7 @@ final class LayoutHelperManager {
     private var selecting = false
     private var statusMessage: String?
     private var placingWindow: AccessibilityElement?
+    private var placementActivationObserver: NSObjectProtocol?
     private var refreshTimer: Timer?
     private var globalMonitor: Any?
     private var localMonitor: Any?
@@ -99,6 +100,7 @@ final class LayoutHelperManager {
     @discardableResult func cancel() -> UUID {
         WindowAnimationDiagnostics.event("helper-cancel", fields: ["visible": panel.isVisible, "selecting": selecting])
         token = UUID()
+        stopPlacementActivationObservation()
         if let placingWindow { WindowPlacementCoordinator.shared.cancel(placingWindow) }
         catalog.stop()
         placingWindow = nil
@@ -188,7 +190,7 @@ final class LayoutHelperManager {
         guard globalMonitor == nil else { return }
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
             guard let self else { return }
-            if event.type != .keyDown || event.keyCode == 53 { self.cancel() }
+            if event.type != .keyDown || event.keyCode == 53 || self.placingWindow != nil { self.cancel() }
         }
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
             guard let self else { return event }
@@ -196,6 +198,7 @@ final class LayoutHelperManager {
                 self.cancel()
                 return nil
             }
+            if event.type == .keyDown, self.placingWindow != nil { self.cancel() }
             if event.type != .keyDown, !self.panel.owns(event.window) { self.cancel() }
             return event
         }
@@ -302,6 +305,7 @@ final class LayoutHelperManager {
         WindowSizeConstraints.shared.cancelPendingObservations()
         let generation = WindowSizeConstraints.shared.observationGeneration
         let original = snapshot.frame
+        SnappedWindowFitSession.shared.clear()
         placingWindow = window
         panel.beginPlacement()
         previews.stop()
@@ -312,53 +316,117 @@ final class LayoutHelperManager {
         let placement = WindowAnimationPlacement(screenFrame: bounds,
             sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: target, in: bounds),
             constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
-        window.activateAndRaiseWindow(isCurrent: { [weak self] in
-            self?.token == selectionToken && self?.placingWindow == window
-        }) { [weak self] activation, main, raise in
-            guard let self, self.token == selectionToken, self.placingWindow == window else { return }
-            WindowAnimationDiagnostics.event("helper-window-raise", fields: ["windowID": snapshot.id,
-                "activation": activation.rawValue, "main": main.rawValue, "raise": raise.rawValue])
-            WindowPlacementCoordinator.shared.place(window, from: original, to: target, placement: placement,
-                animated: WindowAnimator.enabled, profile: .layoutHelper,
-                isCurrent: { [weak self] in
+        let animated = WindowAnimator.enabled
+        let focused = AccessibilityElement.getFocusedWindowElement()
+        let deferActivation = !animated && (focused?.pid != snapshot.pid || focused?.windowId != snapshot.id)
+        var expectedFrontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        var activating = false
+        let isCurrent: () -> Bool = { [weak self] in
+            guard let self, self.token == selectionToken, self.placingWindow == window,
+                  WindowProcessIdentity.launchTime(for: snapshot.pid) == snapshot.launch,
+                  WindowSizeConstraints.shared.observationGeneration == generation,
+                  NSScreen.screens.contains(screen),
+                  LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, bounds) else { return false }
+            let frontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+            if deferActivation, frontPID != expectedFrontPID && !(activating && frontPID == snapshot.pid) { return false }
+            return self.retainedIsValid()
+        }
+        if deferActivation {
+            placementActivationObserver = NSWorkspace.shared.notificationCenter.addObserver(
+                forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
                     guard let self, self.token == selectionToken,
-                          WindowSizeConstraints.shared.observationGeneration == generation,
-                          NSScreen.screens.contains(screen),
-                          LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, bounds) else { return false }
-                    return self.retainedIsValid()
-                }) { [weak self] outcome in
-                    guard let self, self.token == selectionToken else { return }
-                    WindowAnimationDiagnostics.event("helper-placement-complete", fields: ["windowID": snapshot.id,
-                        "outcome": String(describing: outcome)])
-                    self.placingWindow = nil; self.selecting = false
-                    switch outcome {
-                    case .placed(let frame):
-                        WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
-                        if AppDelegate.windowHistory.restoreRects[snapshot.id] == nil
-                            || AppDelegate.windowHistory.lastRectangleActions[snapshot.id]?.rect != original {
-                            AppDelegate.windowHistory.restoreRects[snapshot.id] = original
-                        }
-                        AppDelegate.windowHistory.lastRectangleActions[snapshot.id] = RectangleAction(action: .specified, subAction: nil, rect: frame, count: 1)
-                        self.completedCells.insert(selectedCell)
-                        self.retained[window] = frame
-                        self.retainedLaunches[snapshot.id] = snapshot.launch
-                        WindowDividerManager.shared.record(window, id: snapshot.id, frame: frame,
-                            screen: screen, eligibilityConfirmed: true)
-                        if WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
-                            WindowSizeWarning.shared.show(on: screen)
-                        }
-                        self.catalog.resumeAfterPlacement()
-                        self.showNext()
-                    case .unresponsive:
-                        self.catalog.resumeAfterPlacement()
-                        self.showNext(message: "That window is not responding. Try again.")
-                    case .failed:
-                        self.catalog.resumeAfterPlacement()
-                        self.showNext(message: "That window could not be placed. Try again.")
-                    case .cancelled: self.cancel()
-                    }
+                          let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
+                    if activating && app.processIdentifier == snapshot.pid { expectedFrontPID = snapshot.pid }
+                    else if app.processIdentifier != expectedFrontPID { self.cancel() }
                 }
         }
+        let finish: (WindowPlacementCoordinator.Outcome) -> Void = { [weak self] outcome in
+            guard let self, self.token == selectionToken else { return }
+            guard isCurrent() else { self.cancel(); return }
+            WindowAnimationDiagnostics.event("helper-placement-complete", fields: ["windowID": snapshot.id,
+                "outcome": String(describing: outcome)])
+            self.stopPlacementActivationObservation()
+            self.placingWindow = nil; self.selecting = false
+            switch outcome {
+            case .placed(let frame):
+                WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
+                if AppDelegate.windowHistory.restoreRects[snapshot.id] == nil
+                    || AppDelegate.windowHistory.lastRectangleActions[snapshot.id]?.rect != original {
+                    AppDelegate.windowHistory.restoreRects[snapshot.id] = original
+                }
+                AppDelegate.windowHistory.lastRectangleActions[snapshot.id] = RectangleAction(action: .specified, subAction: nil, rect: frame, count: 1)
+                self.completedCells.insert(selectedCell)
+                self.retained[window] = frame
+                self.retainedLaunches[snapshot.id] = snapshot.launch
+                WindowDividerManager.shared.record(window, id: snapshot.id, frame: frame,
+                    screen: screen, eligibilityConfirmed: true)
+                if WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
+                    WindowSizeWarning.shared.show(on: screen)
+                }
+                self.catalog.resumeAfterPlacement()
+                self.showNext()
+            case .unresponsive:
+                self.catalog.resumeAfterPlacement()
+                self.showNext(message: "That window is not responding. Try again.")
+            case .failed:
+                self.catalog.resumeAfterPlacement()
+                self.showNext(message: "That window could not be placed. Try again.")
+            case .cancelled: self.cancel()
+            }
+        }
+        func performPlacement(limited: Bool, completion: @escaping (WindowPlacementCoordinator.Outcome) -> Void) {
+            guard isCurrent() else { finish(.cancelled); return }
+            WindowPlacementCoordinator.shared.place(window, from: original, to: target, placement: placement,
+                animated: animated, profile: .layoutHelper,
+                acknowledgementTimeout: limited ? 1.2 : 3.4, restoreOnFailure: !limited,
+                isCurrent: isCurrent, completion: completion)
+        }
+        func raiseSelected(_ completion: @escaping () -> Void) {
+            guard isCurrent() else { finish(.cancelled); return }
+            activating = true
+            window.activateAndRaiseWindow(isCurrent: isCurrent) { activation, main, raise in
+                guard isCurrent() else { finish(.cancelled); return }
+                expectedFrontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+                activating = false
+                WindowAnimationDiagnostics.event("helper-window-raise", fields: ["windowID": snapshot.id,
+                    "activation": activation.rawValue, "main": main.rawValue, "raise": raise.rawValue])
+                guard expectedFrontPID == snapshot.pid else { finish(.unresponsive); return }
+                completion()
+            }
+        }
+        guard deferActivation else {
+            raiseSelected { performPlacement(limited: false, completion: finish) }
+            return
+        }
+        WindowAnimationDiagnostics.event("helper-background-placement", fields: ["windowID": snapshot.id])
+        performPlacement(limited: true) { outcome in
+            guard isCurrent() else { finish(.cancelled); return }
+            switch outcome {
+            case .placed(let frame):
+                WindowAnimationDiagnostics.event("helper-background-placed", fields: ["windowID": snapshot.id])
+                raiseSelected {
+                    // Activation can cause an application to relayout its window.
+                    // Read the visible geometry before committing the layout.
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) {
+                        guard isCurrent() else { finish(.cancelled); return }
+                        if let actual = WindowUtil.getWindowFrame(id: snapshot.id),
+                           LayoutHelperLayout.matches(actual, frame) { finish(.placed(actual)) }
+                        else { performPlacement(limited: true, completion: finish) }
+                    }
+                }
+            case .unresponsive, .failed:
+                WindowAnimationDiagnostics.event("helper-background-fallback", fields: ["windowID": snapshot.id])
+                raiseSelected { performPlacement(limited: false, completion: finish) }
+            case .cancelled: finish(.cancelled)
+            }
+        }
+    }
+
+    private func stopPlacementActivationObservation() {
+        if let placementActivationObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(placementActivationObserver)
+        }
+        placementActivationObserver = nil
     }
 
     private func validateSession() {

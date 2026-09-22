@@ -430,11 +430,13 @@ class SnappingManager {
                 currentRect = geometry.currentFrame
                 if geometry.isMoving {
                     windowMoving = true
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     if let windowId {
                         unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
                 else if geometry.isResizing, let windowId {
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -655,6 +657,7 @@ class SnappingManager {
             box?.close()
             box = FootprintWindow(initialFrame: rect)
         }
+        if let windowElement { WindowAnimator.shared.prepare(windowElement) }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
                          duration: getFootprintAnimationDuration())
     }

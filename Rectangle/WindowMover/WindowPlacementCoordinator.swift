@@ -23,8 +23,8 @@ final class WindowPlacementCoordinator {
         }
         var isCancelled: Bool { lock.lock(); defer { lock.unlock() }; return cancelled }
         func write(_ body: () -> AXError) -> AXError? {
-            lock.lock(); defer { lock.unlock() }
-            return cancelled ? nil : body()
+            guard !isCancelled else { return nil }
+            return body()
         }
     }
 
@@ -43,6 +43,7 @@ final class WindowPlacementCoordinator {
     @discardableResult func place(_ window: AccessibilityElement, from original: CGRect, to target: CGRect,
                                  placement: WindowAnimationPlacement, animated: Bool,
                                  profile: WindowAnimationProfile = .standard,
+                                 acknowledgementTimeout: TimeInterval = 3.4, restoreOnFailure: Bool = true,
                                  isCurrent: @escaping () -> Bool,
                                  completion: @escaping (Outcome) -> Void) -> Cancellation {
         cancel(window)
@@ -72,16 +73,21 @@ final class WindowPlacementCoordinator {
             guard isCurrent() else { completion(.cancelled); return }
             completion(result)
         }
+        let directPlacement = !animated || !WindowAnimator.enabled
+        let minimumHint = directPlacement ? window.rememberedMinimumSize : nil
         let verify: (CGRect?) -> Void = { animatedFrame in
             guard !cancellation.isCancelled, isCurrent() else { finish(.cancelled); return }
             let evidence = animatedFrame.flatMap {
                 WindowPlacementAnimationEvidence(frame: $0, original: original, target: target,
                     placement: placement, completedAt: ProcessInfo.processInfo.systemUptime)
             }
-            DispatchQueue.global(qos: .userInitiated).async {
+            let preferred = window.animationObservationElement
+            WindowAnimator.shared.performPlacementWork {
                 let worker = WindowPlacementWorker(pid: pid, id: id, launch: launch,
-                    cancellation: cancellation)
-                let result = worker.place(target, original: original, placement: placement, animationEvidence: evidence)
+                    preferred: preferred, cancellation: cancellation)
+                let result = worker.place(target, original: original, placement: placement, animationEvidence: evidence,
+                    directPlacement: directPlacement, minimumHint: minimumHint,
+                    acknowledgementTimeout: acknowledgementTimeout, restoreOnFailure: restoreOnFailure)
                 DispatchQueue.main.async { finish(result) }
             }
         }
@@ -89,7 +95,7 @@ final class WindowPlacementCoordinator {
             WindowAnimator.shared.animate(window, from: original, to: target, placement: placement,
                                           profile: profile) { verify($0) }
         } else {
-            verify(nil)
+            WindowAnimator.shared.afterPendingWrites { verify(nil) }
         }
         return cancellation
     }
@@ -103,11 +109,14 @@ private final class WindowPlacementWorker {
     let id: CGWindowID
     let launch: TimeInterval
     let cancellation: WindowPlacementCoordinator.Cancellation
+    let preferred: AXUIElement
     private var window: AccessibilityElement?
     private var timedOut = false
 
-    init(pid: pid_t, id: CGWindowID, launch: TimeInterval, cancellation: WindowPlacementCoordinator.Cancellation) {
+    init(pid: pid_t, id: CGWindowID, launch: TimeInterval, preferred: AXUIElement,
+         cancellation: WindowPlacementCoordinator.Cancellation) {
         self.pid = pid; self.id = id; self.launch = launch; self.cancellation = cancellation
+        self.preferred = preferred
     }
 
     private var valid: Bool {
@@ -115,23 +124,33 @@ private final class WindowPlacementWorker {
     }
 
     func place(_ target: CGRect, original: CGRect, placement: WindowAnimationPlacement,
-               animationEvidence: WindowPlacementAnimationEvidence? = nil) -> WindowPlacementCoordinator.Outcome {
+               animationEvidence: WindowPlacementAnimationEvidence? = nil,
+               directPlacement: Bool = false, minimumHint: CGSize? = nil,
+               acknowledgementTimeout: TimeInterval = 3.4, restoreOnFailure: Bool = true) -> WindowPlacementCoordinator.Outcome {
         guard valid else { return .cancelled }
-        let reader = AccessibilityReadBatch(budget: 0.15)
-        let application = AXUIElementCreateApplication(pid)
-        let elements = reader.value(application, kAXWindowsAttribute) as? [AXUIElement] ?? []
-        if let element = elements.first(where: { reader.windowID($0) == id }), reader.available {
+        if let element = WindowAccessibilityLookup.resolve(pid: pid, id: id, launch: launch,
+            preferred: preferred, isCurrent: { self.valid }) {
             window = AccessibilityElement(element, messagingTimeout: 0.05, windowID: id)
         }
-        guard let window else { return valid ? .unresponsive : .cancelled }
+        guard let window else {
+            WindowAnimationDiagnostics.event("placement-unresponsive", fields: ["windowID": id,
+                "operation": "lookup"])
+            return valid ? .unresponsive : .cancelled
+        }
         window.setMessagingTimeout(0.05)
         let start = ProcessInfo.processInfo.systemUptime
-        if let frame = settle(target, bounds: placement.screenFrame, deadline: start + 3.4,
-                              placement: placement, original: original, animationEvidence: animationEvidence) {
+        if let frame = settle(target, bounds: placement.screenFrame, deadline: start + acknowledgementTimeout,
+                              placement: placement, original: original, animationEvidence: animationEvidence,
+                              directPlacement: directPlacement, minimumHint: minimumHint) {
             return .placed(frame)
         }
         guard valid else { return .cancelled }
-        if timedOut { return .unresponsive }
+        if timedOut {
+            WindowAnimationDiagnostics.event("placement-unresponsive", fields: ["windowID": id,
+                "operation": "acknowledgement"])
+            return .unresponsive
+        }
+        guard restoreOnFailure else { return .failed(restored: false) }
         // Restoration has its own finite budget. It is still owned by the same
         // token, so a new drag or command can interrupt it before any next write.
         let restored = settle(original, bounds: placement.screenFrame, deadline: ProcessInfo.processInfo.systemUptime + 2.2) != nil
@@ -142,7 +161,13 @@ private final class WindowPlacementWorker {
     private func agreedFrame() -> CGRect? {
         guard valid, let window else { return nil }
         let frame = window.frame
-        if frame.isNull { timedOut = true; return nil }
+        if frame.isNull {
+            if !timedOut {
+                WindowAnimationDiagnostics.event("placement-ack-timeout", fields: ["windowID": id, "operation": "frame-read"])
+            }
+            timedOut = true; return nil
+        }
+        timedOut = false
         guard valid, let server = WindowUtil.getWindowFrame(id: id),
               WindowAnimationGeometry.valid(frame), WindowAnimationGeometry.near(frame, server, tolerance: 1) else { return nil }
         return frame
@@ -150,25 +175,34 @@ private final class WindowPlacementWorker {
 
     private func settle(_ target: CGRect, bounds: CGRect, deadline: TimeInterval,
                         placement: WindowAnimationPlacement? = nil, original: CGRect? = nil,
-                        animationEvidence: WindowPlacementAnimationEvidence? = nil) -> CGRect? {
+                        animationEvidence: WindowPlacementAnimationEvidence? = nil,
+                        directPlacement: Bool = false, minimumHint: CGSize? = nil) -> CGRect? {
         guard let window else { return nil }
         var state = WindowPlacementAcknowledgement(target: target, startedAt: ProcessInfo.processInfo.systemUptime,
                                                     pendingWrite: false, bounds: bounds, placement: placement, original: original,
-                                                    reportedMinimum: window.reportedMinimumSize, animationEvidence: animationEvidence)
+                                                    reportedMinimum: window.reportedMinimumSize, animationEvidence: animationEvidence,
+                                                    directPlacement: directPlacement, minimumHint: minimumHint)
         while valid && ProcessInfo.processInfo.systemUptime < deadline {
             let now = ProcessInfo.processInfo.systemUptime
             let frame = agreedFrame()
-            if timedOut { return nil }
             switch state.observe(frame, at: now) {
             case .complete(let frame): return frame
             case .position(let point):
                 guard let result = cancellation.write({ window.writeAnimationPosition(point) }) else { return nil }
-                if result == .cannotComplete { timedOut = true; return nil }
-                guard result == .success else { return nil }
+                if result == .cannotComplete {
+                    WindowAnimationDiagnostics.event("placement-ack-timeout", fields: ["windowID": id, "operation": "position-write"])
+                    timedOut = true
+                }
+                // A timed-out write may still have been applied. Let readback
+                // acknowledge it before the existing bounded retry can resend.
+                guard result == .success || result == .cannotComplete else { return nil }
             case .size(let size):
                 guard let result = cancellation.write({ window.writeAnimationSize(size) }) else { return nil }
-                if result == .cannotComplete { timedOut = true; return nil }
-                guard result == .success else { return nil }
+                if result == .cannotComplete {
+                    WindowAnimationDiagnostics.event("placement-ack-timeout", fields: ["windowID": id, "operation": "size-write"])
+                    timedOut = true
+                }
+                guard result == .success || result == .cannotComplete else { return nil }
             case .failed: return nil
             case .waiting: break
             }
@@ -222,19 +256,26 @@ struct WindowPlacementAcknowledgement {
     private var resizeResponded = false
     private var probeAttempted = false
     private var probeSize: CGSize?
+    private var verifiedProbeSize: CGSize?
     private var probePosition: CGPoint?
     private var acceptedSize: CGSize?
     private var animationEvidence: WindowPlacementAnimationEvidence?
+    private let directPlacement: Bool
+    private let minimumHint: CGSize?
+    private var sizeRequestedAt: TimeInterval?
 
     init(target: CGRect, startedAt: TimeInterval, pendingWrite: Bool, bounds: CGRect? = nil,
          placement: WindowAnimationPlacement? = nil, original: CGRect? = nil, reportedMinimum: CGSize? = nil,
-         animationEvidence: WindowPlacementAnimationEvidence? = nil) {
+         animationEvidence: WindowPlacementAnimationEvidence? = nil,
+         directPlacement: Bool = false, minimumHint: CGSize? = nil) {
         self.target = target
         self.bounds = bounds
         self.placement = placement
         self.original = original
         self.reportedMinimum = reportedMinimum
         self.animationEvidence = animationEvidence
+        self.directPlacement = directPlacement
+        self.minimumHint = minimumHint
         waitingUntil = startedAt + (pendingWrite ? 0.65 : 0)
     }
 
@@ -268,6 +309,13 @@ struct WindowPlacementAcknowledgement {
             self.acceptedSize = nil
             stableAt = nil
         }
+        if directPlacement, acceptedSize == nil, placement != nil, probeSize == nil,
+           let requestedAt = sizeRequestedAt, now - requestedAt >= 0.12,
+           let sizeStableAt, now - sizeStableAt >= 0.12,
+           verifiedConstrainedSize(frame.size) {
+            acceptedSize = frame.size
+            waitingUntil = now
+        }
         if let acceptedSize {
             guard let placement else { return .failed }
             let aligned = placement.frame(for: target, actualSize: acceptedSize, origin: frame, progress: 1)
@@ -296,7 +344,7 @@ struct WindowPlacementAcknowledgement {
             if abs(frame.minX - point.x) <= 1 && abs(frame.minY - point.y) <= 1 { waitingUntil = now; pending = .waiting }
         case .size(let requested):
             if sameSize(frame.size, requested) {
-                if probeSize != nil { resizeResponded = true; probeSize = nil }
+                if probeSize != nil { resizeResponded = true; verifiedProbeSize = frame.size; probeSize = nil }
                 waitingUntil = now; pending = .waiting
             }
         default: break
@@ -313,8 +361,20 @@ struct WindowPlacementAcknowledgement {
         if !sizeMatches, let bounds {
             // Reserve room for the larger size on each axis, including growth.
             // This prevents Dock/edge clipping from masquerading as a minimum.
-            position.x = min(max(position.x, bounds.minX), max(bounds.minX, bounds.maxX - max(frame.width, target.width)))
-            position.y = min(max(position.y, bounds.minY), max(bounds.minY, bounds.maxY - max(frame.height, target.height)))
+            if directPlacement, bounds.insetBy(dx: -1, dy: -1).contains(frame) {
+                // A same-screen shrink needs no staging move. Only make room
+                // on growing axes that would otherwise be clipped by an edge.
+                position = frame.origin
+                if target.width > frame.width + 1 {
+                    position.x = min(position.x, max(bounds.minX, bounds.maxX - target.width))
+                }
+                if target.height > frame.height + 1 {
+                    position.y = min(position.y, max(bounds.minY, bounds.maxY - target.height))
+                }
+            } else {
+                position.x = min(max(position.x, bounds.minX), max(bounds.minX, bounds.maxX - max(frame.width, target.width)))
+                position.y = min(max(position.y, bounds.minY), max(bounds.minY, bounds.maxY - max(frame.height, target.height)))
+            }
         }
         let needsPosition = abs(frame.minX - position.x) > 1 || abs(frame.minY - position.y) > 1
         if needsPosition && (positionWrites == 0 || sizeMatches) {
@@ -322,7 +382,7 @@ struct WindowPlacementAcknowledgement {
             positionWrites += 1
             pending = .position(position)
         } else if !sizeMatches {
-            if sizeWrites >= 2 {
+            if sizeWrites >= 2 || (directPlacement && sizeWrites == 1 && !resizeResponded && !probeAttempted) {
                 guard let placement, frame.width >= target.width - 1, frame.height >= target.height - 1 else { return .failed }
                 guard let sizeStableAt, now - sizeStableAt >= 0.12 else { return .waiting }
                 let reported = reportedMinimum.map {
@@ -356,10 +416,29 @@ struct WindowPlacementAcknowledgement {
                 return observe(frame, at: now)
             }
             sizeWrites += 1
+            sizeRequestedAt = now
             pending = .size(target.size)
         } else { return .failed }
         waitingUntil = now + 0.65
         return pending
+    }
+
+    private func verifiedConstrainedSize(_ size: CGSize) -> Bool {
+        guard size.width >= target.width - 1, size.height >= target.height - 1,
+              !sameSize(size, target.size) else { return false }
+        func verified(_ actual: CGFloat, _ requested: CGFloat, _ previous: CGFloat?,
+                      _ reported: CGFloat?, _ hint: CGFloat?) -> Bool {
+            if actual <= requested + 1 { return true }
+            if let previous, actual < previous - 1 { return true }
+            return [reported, hint].contains { value in
+                guard let value, value.isFinite, value > 0 else { return false }
+                return abs(value - actual) <= 1
+            }
+        }
+        // Each constrained axis needs evidence. A change in height alone must
+        // not justify accepting an ignored width request.
+        return verified(size.width, target.width, verifiedProbeSize?.width ?? original?.width, reportedMinimum?.width, minimumHint?.width)
+            && verified(size.height, target.height, verifiedProbeSize?.height ?? original?.height, reportedMinimum?.height, minimumHint?.height)
     }
 
     private func sameSize(_ first: CGSize, _ second: CGSize) -> Bool {

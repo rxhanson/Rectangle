@@ -1554,6 +1554,7 @@ class SettingsViewController: NSViewController {
 
     @objc private func toggleFitBesideSnappedWindows(_ sender: NSButton) {
         Defaults.fitBesideSnappedWindows.enabled = sender.state == .on
+        SnappedWindowFitSession.shared.clear()
         WindowSizeConstraints.shared.cancelPendingObservations()
     }
 
