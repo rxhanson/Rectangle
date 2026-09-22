@@ -7,6 +7,7 @@ class SnapAreaViewController: NSViewController {
     private var layoutHelperPermissionLabel: NSTextField?
     private var layoutHelperPermissionButton: NSButton?
     private var layoutHelperExamplePopover: NSPopover?
+    private var stageObservation: NSObject?
 
     @objc private func showLayoutHelperExample(_ sender: NSButton) {
         let controller = NSViewController()
@@ -65,9 +66,10 @@ class SnapAreaViewController: NSViewController {
 
     private func refreshLayoutHelperSettings() {
         let states = [Defaults.layoutHelper.userEnabled, Defaults.layoutHelperKeyboard.enabled, Defaults.layoutHelperDenseGrids.enabled]
+        let stageEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
         for (index, checkbox) in layoutHelperCheckboxes.enumerated() {
             checkbox.state = states[index] ? .on : .off
-            checkbox.isEnabled = index == 0 || states[0]
+            checkbox.isEnabled = !stageEnabled && (index == 0 || states[0])
         }
         let supported = LayoutHelperPermission.previewsSupported
         let allowed = LayoutHelperPermission.previewsAllowed
@@ -77,6 +79,7 @@ class SnapAreaViewController: NSViewController {
             : allowed ? "Window thumbnails enabled."
             : "Thumbnails need Screen Recording access. Icons and titles work without it."
         layoutHelperPermissionButton?.isHidden = !states[0] || !supported || allowed
+        layoutHelperPermissionButton?.isEnabled = !stageEnabled
     }
     
     @IBOutlet weak var windowSnappingCheckbox: NSButton!
@@ -236,6 +239,12 @@ class SnapAreaViewController: NSViewController {
             header.alignment = .centerY
             section.addArrangedSubview(header)
             header.widthAnchor.constraint(equalTo: section.widthAnchor).isActive = true
+            let stageNote = NSTextField(wrappingLabelWithString: "Layout Helper will be disabled when Stage Manager is enabled.")
+            stageNote.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+            stageNote.textColor = .secondaryLabelColor
+            stageNote.setContentCompressionResistancePriority(.required, for: .vertical)
+            section.addArrangedSubview(stageNote)
+            stageNote.widthAnchor.constraint(equalTo: section.widthAnchor).isActive = true
 
             func formRow(_ title: String, content: NSView) {
                 let label = NSTextField(labelWithString: title)
@@ -273,6 +282,7 @@ class SnapAreaViewController: NSViewController {
             formRow("Window previews", content: previews)
             permissionLabel.widthAnchor.constraint(equalTo: previews.widthAnchor).isActive = true
         }
+        stageObservation = StageUtil.observeEnabled { [weak self] in self?.refreshLayoutHelperSettings() }
         refreshLayoutHelperSettings()
         configureBlurAppearance()
         windowSnappingCheckbox.state = Defaults.windowSnapping.userDisabled ? .off : .on

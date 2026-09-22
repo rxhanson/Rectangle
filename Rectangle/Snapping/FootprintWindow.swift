@@ -177,6 +177,8 @@ class FootprintWindow: NSWindow {
         effectView.state = .active
         surface.addSubview(effectView)
         surface.layer?.addSublayer(decoration)
+        // AppKit attaches the effect view's backing layer later, above existing sublayers.
+        decoration.zPosition = 1
         decoration.contentsScale = backingScaleFactor
         decoration.contentsFormat = .RGBA8Uint
         if #available(macOS 26, *) { decoration.preferredDynamicRange = .standard }

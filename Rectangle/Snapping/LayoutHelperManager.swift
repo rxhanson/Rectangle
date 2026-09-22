@@ -5,6 +5,9 @@ import ScreenCaptureKit
 /// reviving a dismissed picker or placing a window into a newer layout.
 final class LayoutHelperManager {
     static let shared = LayoutHelperManager()
+    static var enabled: Bool {
+        Defaults.layoutHelper.userEnabled && !(StageUtil.stageCapable && StageUtil.stageEnabled)
+    }
     private(set) var token = UUID()
     private var pending: DispatchWorkItem?
     private let previews = LayoutHelperPreviewStore()
@@ -38,6 +41,7 @@ final class LayoutHelperManager {
     private let panel = LayoutHelperPanel()
     private var observers: [NSObjectProtocol] = []
     private var lockObservers: [NSObjectProtocol] = []
+    private var stageObservation: NSObject?
 
     func containsPointerEvent(_ event: NSEvent) -> Bool {
         panel.containsPointerEvent(event)
@@ -46,6 +50,9 @@ final class LayoutHelperManager {
     var isPresenting: Bool { panel.isVisible || selecting }
 
     private init() {
+        stageObservation = StageUtil.observeEnabled { [weak self] in
+            if !Self.enabled { self?.cancel() }
+        }
         panel.onVisiblePreviewsChanged = { [weak self] in self?.refreshPreviews() }
         panel.onDismiss = { [weak self] in self?.cancel() }
         panel.onSelect = { [weak self] id in self?.select(id) }
@@ -90,6 +97,7 @@ final class LayoutHelperManager {
     }
 
     func beginSnap(source: ExecutionSource, windowID: CGWindowID?, screen: NSScreen?) -> UUID {
+        guard Self.enabled else { return cancel() }
         if source == .dragToSnap, let windowID, windowID == prefetchWindow,
            let screen, screen == prefetchScreen, !panel.isVisible, layout == nil {
             return token
@@ -108,7 +116,7 @@ final class LayoutHelperManager {
         cancelPrefetch()
         previews.stop()
         cancelImageDelivery()
-        if !Defaults.layoutHelper.userEnabled { previews.clear() }
+        if !Self.enabled { previews.clear() }
         previewKeys.removeAll(); displayedIDs.removeAll()
         icons.removeAll()
         appOrder = LayoutHelperWindowOrder()
@@ -134,7 +142,7 @@ final class LayoutHelperManager {
                                                    frame: frame, screen: result.calcResult.screen)
         }
         guard let requestToken = result.layoutHelperToken, requestToken == token,
-              Defaults.layoutHelper.userEnabled,
+              Self.enabled,
               result.source == .dragToSnap || (Defaults.layoutHelperKeyboard.enabled &&
                   (result.source == .keyboardShortcut || result.source == .menuItem)),
               !result.isFixedSize,
@@ -162,6 +170,7 @@ final class LayoutHelperManager {
         installInputMonitors()
         let work = DispatchWorkItem { [weak self] in
             guard let self, self.token == requestToken else { return }
+            guard Self.enabled else { self.cancel(); return }
             guard let id = result.windowId, let actual = WindowUtil.getWindowFrame(id: id),
                   LayoutHelperLayout.matches(actual, frame) else { self.cancel(); return }
             self.keyboardTriggered = result.source == .keyboardShortcut
@@ -221,6 +230,7 @@ final class LayoutHelperManager {
     }
 
     private func showNext(message: String? = nil) {
+        guard Self.enabled else { cancel(); return }
         guard let layout, let screen else { return }
         if let message { statusMessage = message }
         let windows = availableWindows()
@@ -280,6 +290,7 @@ final class LayoutHelperManager {
     }
 
     private func select(_ id: CGWindowID) {
+        guard Self.enabled else { cancel(); return }
         guard !selecting, let layout, let currentCell, candidates[id] != nil else { return }
         selecting = true
         statusMessage = nil
@@ -322,7 +333,7 @@ final class LayoutHelperManager {
         var expectedFrontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
         var activating = false
         let isCurrent: () -> Bool = { [weak self] in
-            guard let self, self.token == selectionToken, self.placingWindow == window,
+            guard let self, Self.enabled, self.token == selectionToken, self.placingWindow == window,
                   WindowProcessIdentity.launchTime(for: snapshot.pid) == snapshot.launch,
                   WindowSizeConstraints.shared.observationGeneration == generation,
                   NSScreen.screens.contains(screen),
@@ -430,8 +441,9 @@ final class LayoutHelperManager {
     }
 
     private func validateSession() {
+        guard Self.enabled else { cancel(); return }
         guard !selecting else { return }
-        guard let layout, let screen, Defaults.layoutHelper.userEnabled,
+        guard let layout, let screen,
               NSScreen.screens.contains(screen),
               LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, layout.screen),
               retainedIsValid() else { cancel(); return }
@@ -441,6 +453,7 @@ final class LayoutHelperManager {
     }
 
     private func refreshPreviews() {
+        guard Self.enabled else { cancel(); return }
         guard panel.isVisible else { return }
         let visible = panel.visiblePreviewIDs
         let ids = visible + displayedIDs.filter { !visible.contains($0) }
@@ -494,7 +507,7 @@ final class LayoutHelperManager {
     /// One immediate batch per screen and anchor. Changing zones reuses the same work.
     func prefetch(on screen: NSScreen, action: WindowAction, anchor: CGRect, excluding id: CGWindowID?,
                   delay: TimeInterval = 0) {
-        guard Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsSupported,
+        guard Self.enabled, LayoutHelperPermission.previewsSupported,
               LayoutHelperLayout.make(action: action, screen: screen.adjustedVisibleFrame().screenFlipped,
                                     anchor: anchor.screenFlipped, includeDenseGrids: Defaults.layoutHelperDenseGrids.enabled) != nil else { cancelPrefetch(); return }
         if prefetchScreen == screen, prefetchWindow == id { return }
@@ -504,6 +517,7 @@ final class LayoutHelperManager {
         let prefetchGeneration = prefetchGeneration
         let work = DispatchWorkItem { [weak self] in
             guard let self, self.token == requestToken, self.prefetchGeneration == prefetchGeneration, !self.panel.isVisible, self.layout == nil else { return }
+            guard Self.enabled else { self.cancelPrefetch(); return }
             guard LayoutHelperPermission.previewsAllowed else {
                 // A cold permission cache is unknown until its asynchronous check returns.
                 self.permissionPrefetch = { [weak self] in
@@ -517,6 +531,7 @@ final class LayoutHelperManager {
             self.catalog.didUpdate = { [weak self] in
                 guard let self, self.token == requestToken, self.prefetchGeneration == prefetchGeneration,
                       !self.panel.isVisible, self.layout == nil else { return }
+                guard Self.enabled else { self.cancelPrefetch(); return }
                 let windows = self.availableWindows(on: screen).filter { $0.id != id }
                 self.previews.request(windows.map { $0.previewKey.on(screen) })
             }
