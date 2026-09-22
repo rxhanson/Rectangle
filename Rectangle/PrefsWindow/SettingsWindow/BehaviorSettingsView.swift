@@ -95,32 +95,9 @@ struct BehaviorSettingsView: View {
             }
             
             Section {
-                if viewModel.showCursorScreenDetection {
-                    Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
-                }
-                
-                Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
-                Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
-                    Text("Hold any modifier key or use the window menu for default macOS behavior")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                if viewModel.showCombinedDisplayMode {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
-                        Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            
-            Section {
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
+                Toggle(NSLocalizedString("Half actions preserve the window's size on the other axis", tableName: "Main", value: "", comment: ""), isOn: $viewModel.halvesPreserveOtherAxisSize)
+                Toggle(NSLocalizedString("Show Extra shortcuts in menu", tableName: "Main", value: "", comment: ""), isOn: $viewModel.showAdditionalSizesInMenu)
             }
 
             // MARK: - Todo Mode
@@ -198,12 +175,112 @@ struct BehaviorSettingsView: View {
                 }
             }
 
+            Section {
+                if viewModel.showCursorScreenDetection {
+                    Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
+                }
+                
+                Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
+                Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
+                    Text("Hold any modifier key or use the window menu for default macOS behavior")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                if viewModel.showCombinedDisplayMode {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
+                        Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Toggle(NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), isOn: $viewModel.repeatedMaximizeRestoresPrevious)
+
+            } header: {
+                Text("Maximize")
+            }
+
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
+                    Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
+
+                    HStack {
+                        Text(NSLocalizedString("Toggle window list", tableName: "Main", value: "", comment: ""))
+                        Spacer()
+                        MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
+                            .frame(width: 160, height: 19)
+                    }
+                }
+            } header: {
+                Text(NSLocalizedString("Stacked Windows", tableName: "Main", value: "", comment: ""))
+            }
+
+            // MARK: - Side Split Ratios
+            Section {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text(NSLocalizedString("Horizontal (L/R, %)", tableName: "Main", value: "", comment: ""))
+                        Spacer()
+
+                        if viewModel.selectedHSplitPreset == nil {
+                            TextField("", value: $viewModel.horizontalSplitRatio, formatter: percentFormatter)
+                                .frame(width: 45)
+                                .multilineTextAlignment(.trailing)
+                        }
+
+                        Picker("", selection: Binding(
+                            get: { viewModel.selectedHSplitPreset },
+                            set: { viewModel.selectHSplitPreset($0) }
+                        )) {
+                            ForEach(CycleSize.sortedSizes, id: \.self) { size in
+                                Text(size.title).tag(Optional(size))
+                            }
+                            Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
+                        }
+                        .labelsHidden()
+                        .frame(width: 110)
+
+                    }
+
+                    HStack {
+                        Text(NSLocalizedString("Vertical (T/B, %)", tableName: "Main", value: "", comment: ""))
+                        Spacer()
+
+                        if viewModel.selectedVSplitPreset == nil {
+                            TextField("", value: $viewModel.verticalSplitRatio, formatter: percentFormatter)
+                                .frame(width: 45)
+                                .multilineTextAlignment(.trailing)
+                        }
+
+                        Picker("", selection: Binding(
+                            get: { viewModel.selectedVSplitPreset },
+                            set: { viewModel.selectVSplitPreset($0) }
+                        )) {
+                            ForEach(CycleSize.sortedSizes, id: \.self) { size in
+                                Text(size.title).tag(Optional(size))
+                            }
+                            Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
+                        }
+                        .labelsHidden()
+                        .frame(width: 110)
+                    }
+                }
+            } header: {
+                Text(NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""))
+            }
+            
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
-                            Text("Stage Manager recent apps area")
+                            Text("Recent apps area")
                             Slider(
                                 value: $viewModel.stageSize,
                                 in: 0...400,
@@ -218,15 +295,25 @@ struct BehaviorSettingsView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                } header: {
+                    Text("Stage Manager")
                 }
             }
 
             // MARK: - Footer Actions
-            ExtraSettingsView()
+            ExtraSettingsSections()
         }
         .formStyle(.grouped)
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
+    }
+    
+    private var percentFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.allowsFloats = false
+        formatter.minimum = 1
+        formatter.maximum = 99
+        return formatter
     }
 }

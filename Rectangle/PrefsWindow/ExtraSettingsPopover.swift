@@ -27,11 +27,6 @@ extension SettingsViewController {
             let tileColumnsLabel = NSTextField(labelWithString: NSLocalizedString("tileColumns.title", tableName: "Main", value: "Tile Windows in Columns", comment: ""))
             tileColumnsLabel.alignment = .right
             tileColumnsLabel.translatesAutoresizingMaskIntoConstraints = false
-
-            let tileRowsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let tileColumnsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            tilingShortcutViews = [tileRowsShortcutView, tileColumnsShortcutView]
-
             let largerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Larger Width", tableName: "Main", value: "", comment: ""))
             largerWidthLabel.alignment = .right
             let smallerWidthLabel = NSTextField(labelWithString: NSLocalizedString("Smaller Width", tableName: "Main", value: "", comment: ""))
@@ -66,41 +61,6 @@ extension SettingsViewController {
             bottomCenterRightEighthLabel.alignment = .right
             let bottomRightEighthLabel = NSTextField(labelWithString: NSLocalizedString("Bottom Right Eighth", tableName: "Main", value: "", comment: ""))
             bottomRightEighthLabel.alignment = .right
-
-            largerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
-            smallerWidthLabel.translatesAutoresizingMaskIntoConstraints = false
-            widthStepLabel.translatesAutoresizingMaskIntoConstraints = false
-            topVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
-            middleVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
-            bottomVerticalThirdLabel.translatesAutoresizingMaskIntoConstraints = false
-            topVerticalTwoThirdsLabel.translatesAutoresizingMaskIntoConstraints = false
-            bottomVerticalTwoThirdsLabel.translatesAutoresizingMaskIntoConstraints = false
-            topLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            topCenterLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            topCenterRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            topRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            bottomLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            bottomCenterLeftEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            bottomCenterRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-            bottomRightEighthLabel.translatesAutoresizingMaskIntoConstraints = false
-
-            let largerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let smallerWidthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            
-            let topVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let middleVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let bottomVerticalThirdShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let topVerticalTwoThirdsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let bottomVerticalTwoThirdsShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-
-            let topLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let topCenterLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let topCenterRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let topRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let bottomLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let bottomCenterLeftEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let bottomCenterRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let bottomRightEighthShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
 
             let widthStepField = AutoSaveFloatField(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
             widthStepField.stringValue = String(Int(Defaults.widthStepSize.value))
@@ -176,263 +136,6 @@ extension SettingsViewController {
                 vSplitPopUpButton?.selectCurrentValue()
             }
 
-            tileRowsShortcutView.setAssociatedUserDefaultsKey(WindowAction.tileRows.name, withTransformerName: MASDictionaryTransformerName)
-            tileColumnsShortcutView.setAssociatedUserDefaultsKey(WindowAction.tileColumns.name, withTransformerName: MASDictionaryTransformerName)
-
-            largerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.largerWidth.name, withTransformerName: MASDictionaryTransformerName)
-            smallerWidthShortcutView.setAssociatedUserDefaultsKey(WindowAction.smallerWidth.name, withTransformerName: MASDictionaryTransformerName)
-            
-            topVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            middleVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.middleVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            bottomVerticalThirdShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalThird.name, withTransformerName: MASDictionaryTransformerName)
-            topVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.topVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
-            bottomVerticalTwoThirdsShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomVerticalTwoThirds.name, withTransformerName: MASDictionaryTransformerName)
-
-            topLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            topRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.topRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomCenterLeftEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterLeftEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomCenterRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomCenterRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-            bottomRightEighthShortcutView.setAssociatedUserDefaultsKey(WindowAction.bottomRightEighth.name, withTransformerName: MASDictionaryTransformerName)
-
-            if Defaults.allowAnyShortcut.enabled {
-                let passThroughValidator = PassthroughShortcutValidator()
-                tileRowsShortcutView.shortcutValidator = passThroughValidator
-                tileColumnsShortcutView.shortcutValidator = passThroughValidator
-                largerWidthShortcutView.shortcutValidator = passThroughValidator
-                smallerWidthShortcutView.shortcutValidator = passThroughValidator
-                topVerticalThirdShortcutView.shortcutValidator = passThroughValidator
-                middleVerticalThirdShortcutView.shortcutValidator = passThroughValidator
-                bottomVerticalThirdShortcutView.shortcutValidator = passThroughValidator
-                topVerticalTwoThirdsShortcutView.shortcutValidator = passThroughValidator
-                bottomVerticalTwoThirdsShortcutView.shortcutValidator = passThroughValidator
-                topLeftEighthShortcutView.shortcutValidator = passThroughValidator
-                topCenterLeftEighthShortcutView.shortcutValidator = passThroughValidator
-                topCenterRightEighthShortcutView.shortcutValidator = passThroughValidator
-                topRightEighthShortcutView.shortcutValidator = passThroughValidator
-                bottomLeftEighthShortcutView.shortcutValidator = passThroughValidator
-                bottomCenterLeftEighthShortcutView.shortcutValidator = passThroughValidator
-                bottomCenterRightEighthShortcutView.shortcutValidator = passThroughValidator
-                bottomRightEighthShortcutView.shortcutValidator = passThroughValidator
-            }
-
-            let tileRowsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            tileRowsIcon.image = WindowAction.tileRows.image
-            tileRowsIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let tileColumnsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            tileColumnsIcon.image = WindowAction.tileColumns.image
-            tileColumnsIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let largerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            largerWidthIcon.image = WindowAction.largerWidth.image
-            largerWidthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let smallerWidthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            smallerWidthIcon.image = WindowAction.smallerWidth.image
-            smallerWidthIcon.image?.size = NSSize(width: 21, height: 14)
-            
-            let topVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            topVerticalThirdIcon.image = WindowAction.topVerticalThird.image
-            topVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
-            
-            let middleVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            middleVerticalThirdIcon.image = WindowAction.middleVerticalThird.image
-            middleVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
-            
-            let bottomVerticalThirdIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            bottomVerticalThirdIcon.image = WindowAction.bottomVerticalThird.image
-            bottomVerticalThirdIcon.image?.size = NSSize(width: 21, height: 14)
-            
-            let topVerticalTwoThirdsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            topVerticalTwoThirdsIcon.image = WindowAction.topVerticalTwoThirds.image
-            topVerticalTwoThirdsIcon.image?.size = NSSize(width: 21, height: 14)
-            
-            let bottomVerticalTwoThirdsIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            bottomVerticalTwoThirdsIcon.image = WindowAction.bottomVerticalTwoThirds.image
-            bottomVerticalTwoThirdsIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let topLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            topLeftEighthIcon.image = WindowAction.topLeftEighth.image
-            topLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let topCenterLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            topCenterLeftEighthIcon.image = WindowAction.topCenterLeftEighth.image
-            topCenterLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let topCenterRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            topCenterRightEighthIcon.image = WindowAction.topCenterRightEighth.image
-            topCenterRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let topRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            topRightEighthIcon.image = WindowAction.topRightEighth.image
-            topRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let bottomLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            bottomLeftEighthIcon.image = WindowAction.bottomLeftEighth.image
-            bottomLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let bottomCenterLeftEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            bottomCenterLeftEighthIcon.image = WindowAction.bottomCenterLeftEighth.image
-            bottomCenterLeftEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let bottomCenterRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            bottomCenterRightEighthIcon.image = WindowAction.bottomCenterRightEighth.image
-            bottomCenterRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let bottomRightEighthIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
-            bottomRightEighthIcon.image = WindowAction.bottomRightEighth.image
-            bottomRightEighthIcon.image?.size = NSSize(width: 21, height: 14)
-
-            let tileRowsLabelStack = NSStackView()
-            tileRowsLabelStack.orientation = .horizontal
-            tileRowsLabelStack.alignment = .centerY
-            tileRowsLabelStack.spacing = 8
-            tileRowsLabelStack.addArrangedSubview(tileRowsLabel)
-            tileRowsLabelStack.addArrangedSubview(tileRowsIcon)
-
-            let tileColumnsLabelStack = NSStackView()
-            tileColumnsLabelStack.orientation = .horizontal
-            tileColumnsLabelStack.alignment = .centerY
-            tileColumnsLabelStack.spacing = 8
-            tileColumnsLabelStack.addArrangedSubview(tileColumnsLabel)
-            tileColumnsLabelStack.addArrangedSubview(tileColumnsIcon)
-
-            let largerWidthLabelStack = NSStackView()
-            largerWidthLabelStack.orientation = .horizontal
-            largerWidthLabelStack.alignment = .centerY
-            largerWidthLabelStack.spacing = 8
-            largerWidthLabelStack.addArrangedSubview(largerWidthLabel)
-            largerWidthLabelStack.addArrangedSubview(largerWidthIcon)
-
-            let smallerWidthLabelStack = NSStackView()
-            smallerWidthLabelStack.orientation = .horizontal
-            smallerWidthLabelStack.alignment = .centerY
-            smallerWidthLabelStack.spacing = 8
-            smallerWidthLabelStack.addArrangedSubview(smallerWidthLabel)
-            smallerWidthLabelStack.addArrangedSubview(smallerWidthIcon)
-            
-            let topVerticalThirdLabelStack = NSStackView()
-            topVerticalThirdLabelStack.orientation = .horizontal
-            topVerticalThirdLabelStack.alignment = .centerY
-            topVerticalThirdLabelStack.spacing = 8
-            topVerticalThirdLabelStack.addArrangedSubview(topVerticalThirdLabel)
-            topVerticalThirdLabelStack.addArrangedSubview(topVerticalThirdIcon)
-            
-            let middleVerticalThirdLabelStack = NSStackView()
-            middleVerticalThirdLabelStack.orientation = .horizontal
-            middleVerticalThirdLabelStack.alignment = .centerY
-            middleVerticalThirdLabelStack.spacing = 8
-            middleVerticalThirdLabelStack.addArrangedSubview(middleVerticalThirdLabel)
-            middleVerticalThirdLabelStack.addArrangedSubview(middleVerticalThirdIcon)
-            
-            let bottomVerticalThirdLabelStack = NSStackView()
-            bottomVerticalThirdLabelStack.orientation = .horizontal
-            bottomVerticalThirdLabelStack.alignment = .centerY
-            bottomVerticalThirdLabelStack.spacing = 8
-            bottomVerticalThirdLabelStack.addArrangedSubview(bottomVerticalThirdLabel)
-            bottomVerticalThirdLabelStack.addArrangedSubview(bottomVerticalThirdIcon)
-            
-            let topVerticalTwoThirdsLabelStack = NSStackView()
-            topVerticalTwoThirdsLabelStack.orientation = .horizontal
-            topVerticalTwoThirdsLabelStack.alignment = .centerY
-            topVerticalTwoThirdsLabelStack.spacing = 8
-            topVerticalTwoThirdsLabelStack.addArrangedSubview(topVerticalTwoThirdsLabel)
-            topVerticalTwoThirdsLabelStack.addArrangedSubview(topVerticalTwoThirdsIcon)
-            
-            let bottomVerticalTwoThirdsLabelStack = NSStackView()
-            bottomVerticalTwoThirdsLabelStack.orientation = .horizontal
-            bottomVerticalTwoThirdsLabelStack.alignment = .centerY
-            bottomVerticalTwoThirdsLabelStack.spacing = 8
-            bottomVerticalTwoThirdsLabelStack.addArrangedSubview(bottomVerticalTwoThirdsLabel)
-            bottomVerticalTwoThirdsLabelStack.addArrangedSubview(bottomVerticalTwoThirdsIcon)
-
-            let topLeftEighthLabelStack = NSStackView()
-            topLeftEighthLabelStack.orientation = .horizontal
-            topLeftEighthLabelStack.alignment = .centerY
-            topLeftEighthLabelStack.spacing = 8
-            topLeftEighthLabelStack.addArrangedSubview(topLeftEighthLabel)
-            topLeftEighthLabelStack.addArrangedSubview(topLeftEighthIcon)
-
-            let topCenterLeftEighthLabelStack = NSStackView()
-            topCenterLeftEighthLabelStack.orientation = .horizontal
-            topCenterLeftEighthLabelStack.alignment = .centerY
-            topCenterLeftEighthLabelStack.spacing = 8
-            topCenterLeftEighthLabelStack.addArrangedSubview(topCenterLeftEighthLabel)
-            topCenterLeftEighthLabelStack.addArrangedSubview(topCenterLeftEighthIcon)
-
-            let topCenterRightEighthLabelStack = NSStackView()
-            topCenterRightEighthLabelStack.orientation = .horizontal
-            topCenterRightEighthLabelStack.alignment = .centerY
-            topCenterRightEighthLabelStack.spacing = 8
-            topCenterRightEighthLabelStack.addArrangedSubview(topCenterRightEighthLabel)
-            topCenterRightEighthLabelStack.addArrangedSubview(topCenterRightEighthIcon)
-
-            let topRightEighthLabelStack = NSStackView()
-            topRightEighthLabelStack.orientation = .horizontal
-            topRightEighthLabelStack.alignment = .centerY
-            topRightEighthLabelStack.spacing = 8
-            topRightEighthLabelStack.addArrangedSubview(topRightEighthLabel)
-            topRightEighthLabelStack.addArrangedSubview(topRightEighthIcon)
-
-            let bottomLeftEighthLabelStack = NSStackView()
-            bottomLeftEighthLabelStack.orientation = .horizontal
-            bottomLeftEighthLabelStack.alignment = .centerY
-            bottomLeftEighthLabelStack.spacing = 8
-            bottomLeftEighthLabelStack.addArrangedSubview(bottomLeftEighthLabel)
-            bottomLeftEighthLabelStack.addArrangedSubview(bottomLeftEighthIcon)
-
-            let bottomCenterLeftEighthLabelStack = NSStackView()
-            bottomCenterLeftEighthLabelStack.orientation = .horizontal
-            bottomCenterLeftEighthLabelStack.alignment = .centerY
-            bottomCenterLeftEighthLabelStack.spacing = 8
-            bottomCenterLeftEighthLabelStack.addArrangedSubview(bottomCenterLeftEighthLabel)
-            bottomCenterLeftEighthLabelStack.addArrangedSubview(bottomCenterLeftEighthIcon)
-
-            let bottomCenterRightEighthLabelStack = NSStackView()
-            bottomCenterRightEighthLabelStack.orientation = .horizontal
-            bottomCenterRightEighthLabelStack.alignment = .centerY
-            bottomCenterRightEighthLabelStack.spacing = 8
-            bottomCenterRightEighthLabelStack.addArrangedSubview(bottomCenterRightEighthLabel)
-            bottomCenterRightEighthLabelStack.addArrangedSubview(bottomCenterRightEighthIcon)
-
-            let bottomRightEighthLabelStack = NSStackView()
-            bottomRightEighthLabelStack.orientation = .horizontal
-            bottomRightEighthLabelStack.alignment = .centerY
-            bottomRightEighthLabelStack.spacing = 8
-            bottomRightEighthLabelStack.addArrangedSubview(bottomRightEighthLabel)
-            bottomRightEighthLabelStack.addArrangedSubview(bottomRightEighthIcon)
-
-            let tileRowsRow = NSStackView()
-            tileRowsRow.orientation = .horizontal
-            tileRowsRow.alignment = .centerY
-            tileRowsRow.spacing = 18
-            tileRowsRow.addArrangedSubview(tileRowsLabelStack)
-            tileRowsRow.addArrangedSubview(tileRowsShortcutView)
-
-            let tileColumnsRow = NSStackView()
-            tileColumnsRow.orientation = .horizontal
-            tileColumnsRow.alignment = .centerY
-            tileColumnsRow.spacing = 18
-            tileColumnsRow.addArrangedSubview(tileColumnsLabelStack)
-            tileColumnsRow.addArrangedSubview(tileColumnsShortcutView)
-
-            let largerWidthRow = NSStackView()
-            largerWidthRow.orientation = .horizontal
-            largerWidthRow.alignment = .centerY
-            largerWidthRow.spacing = 18
-            largerWidthRow.addArrangedSubview(largerWidthLabelStack)
-            largerWidthRow.addArrangedSubview(largerWidthShortcutView)
-
-            let smallerWidthRow = NSStackView()
-            smallerWidthRow.orientation = .horizontal
-            smallerWidthRow.alignment = .centerY
-            smallerWidthRow.spacing = 18
-            smallerWidthRow.addArrangedSubview(smallerWidthLabelStack)
-            smallerWidthRow.addArrangedSubview(smallerWidthShortcutView)
-
             let widthStepRow = NSStackView()
             widthStepRow.orientation = .horizontal
             widthStepRow.alignment = .centerY
@@ -466,102 +169,8 @@ extension SettingsViewController {
             vSplitControlsStack.addArrangedSubview(vSplitField)
             vSplitRow.addArrangedSubview(vSplitControlsStack)
             
-            let topVerticalThirdRow = NSStackView()
-            topVerticalThirdRow.orientation = .horizontal
-            topVerticalThirdRow.alignment = .centerY
-            topVerticalThirdRow.spacing = 18
-            topVerticalThirdRow.addArrangedSubview(topVerticalThirdLabelStack)
-            topVerticalThirdRow.addArrangedSubview(topVerticalThirdShortcutView)
-            
-            let middleVerticalThirdRow = NSStackView()
-            middleVerticalThirdRow.orientation = .horizontal
-            middleVerticalThirdRow.alignment = .centerY
-            middleVerticalThirdRow.spacing = 18
-            middleVerticalThirdRow.addArrangedSubview(middleVerticalThirdLabelStack)
-            middleVerticalThirdRow.addArrangedSubview(middleVerticalThirdShortcutView)
-            
-            let bottomVerticalThirdRow = NSStackView()
-            bottomVerticalThirdRow.orientation = .horizontal
-            bottomVerticalThirdRow.alignment = .centerY
-            bottomVerticalThirdRow.spacing = 18
-            bottomVerticalThirdRow.addArrangedSubview(bottomVerticalThirdLabelStack)
-            bottomVerticalThirdRow.addArrangedSubview(bottomVerticalThirdShortcutView)
-            
-            let topVerticalTwoThirdsRow = NSStackView()
-            topVerticalTwoThirdsRow.orientation = .horizontal
-            topVerticalTwoThirdsRow.alignment = .centerY
-            topVerticalTwoThirdsRow.spacing = 18
-            topVerticalTwoThirdsRow.addArrangedSubview(topVerticalTwoThirdsLabelStack)
-            topVerticalTwoThirdsRow.addArrangedSubview(topVerticalTwoThirdsShortcutView)
-            
-            let bottomVerticalTwoThirdsRow = NSStackView()
-            bottomVerticalTwoThirdsRow.orientation = .horizontal
-            bottomVerticalTwoThirdsRow.alignment = .centerY
-            bottomVerticalTwoThirdsRow.spacing = 18
-            bottomVerticalTwoThirdsRow.addArrangedSubview(bottomVerticalTwoThirdsLabelStack)
-            bottomVerticalTwoThirdsRow.addArrangedSubview(bottomVerticalTwoThirdsShortcutView)
-
-            let topLeftEighthRow = NSStackView()
-            topLeftEighthRow.orientation = .horizontal
-            topLeftEighthRow.alignment = .centerY
-            topLeftEighthRow.spacing = 18
-            topLeftEighthRow.addArrangedSubview(topLeftEighthLabelStack)
-            topLeftEighthRow.addArrangedSubview(topLeftEighthShortcutView)
-
-            let topCenterLeftEighthRow = NSStackView()
-            topCenterLeftEighthRow.orientation = .horizontal
-            topCenterLeftEighthRow.alignment = .centerY
-            topCenterLeftEighthRow.spacing = 18
-            topCenterLeftEighthRow.addArrangedSubview(topCenterLeftEighthLabelStack)
-            topCenterLeftEighthRow.addArrangedSubview(topCenterLeftEighthShortcutView)
-
-            let topCenterRightEighthRow = NSStackView()
-            topCenterRightEighthRow.orientation = .horizontal
-            topCenterRightEighthRow.alignment = .centerY
-            topCenterRightEighthRow.spacing = 18
-            topCenterRightEighthRow.addArrangedSubview(topCenterRightEighthLabelStack)
-            topCenterRightEighthRow.addArrangedSubview(topCenterRightEighthShortcutView)
-
-            let topRightEighthRow = NSStackView()
-            topRightEighthRow.orientation = .horizontal
-            topRightEighthRow.alignment = .centerY
-            topRightEighthRow.spacing = 18
-            topRightEighthRow.addArrangedSubview(topRightEighthLabelStack)
-            topRightEighthRow.addArrangedSubview(topRightEighthShortcutView)
-
-            let bottomLeftEighthRow = NSStackView()
-            bottomLeftEighthRow.orientation = .horizontal
-            bottomLeftEighthRow.alignment = .centerY
-            bottomLeftEighthRow.spacing = 18
-            bottomLeftEighthRow.addArrangedSubview(bottomLeftEighthLabelStack)
-            bottomLeftEighthRow.addArrangedSubview(bottomLeftEighthShortcutView)
-
-            let bottomCenterLeftEighthRow = NSStackView()
-            bottomCenterLeftEighthRow.orientation = .horizontal
-            bottomCenterLeftEighthRow.alignment = .centerY
-            bottomCenterLeftEighthRow.spacing = 18
-            bottomCenterLeftEighthRow.addArrangedSubview(bottomCenterLeftEighthLabelStack)
-            bottomCenterLeftEighthRow.addArrangedSubview(bottomCenterLeftEighthShortcutView)
-
-            let bottomCenterRightEighthRow = NSStackView()
-            bottomCenterRightEighthRow.orientation = .horizontal
-            bottomCenterRightEighthRow.alignment = .centerY
-            bottomCenterRightEighthRow.spacing = 18
-            bottomCenterRightEighthRow.addArrangedSubview(bottomCenterRightEighthLabelStack)
-            bottomCenterRightEighthRow.addArrangedSubview(bottomCenterRightEighthShortcutView)
-
-            let bottomRightEighthRow = NSStackView()
-            bottomRightEighthRow.orientation = .horizontal
-            bottomRightEighthRow.alignment = .centerY
-            bottomRightEighthRow.spacing = 18
-            bottomRightEighthRow.addArrangedSubview(bottomRightEighthLabelStack)
-            bottomRightEighthRow.addArrangedSubview(bottomRightEighthShortcutView)
-
             mainStackView.addArrangedSubview(headerLabel)
             mainStackView.setCustomSpacing(10, after: headerLabel)
-            mainStackView.addArrangedSubview(tileRowsRow)
-            mainStackView.addArrangedSubview(tileColumnsRow)
-            mainStackView.setCustomSpacing(10, after: tileColumnsRow)
 
             let tileGridHeaderLabel = NSTextField(labelWithString: NSLocalizedString("Tile Windows in Rows/Columns", tableName: "Main", value: "", comment: "General settings group for multi-window grid limits"))
             tileGridHeaderLabel.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
@@ -580,15 +189,7 @@ extension SettingsViewController {
             mainStackView.addArrangedSubview(rowsLimitRow)
             mainStackView.setCustomSpacing(10, after: rowsLimitRow)
 
-            mainStackView.addArrangedSubview(largerWidthRow)
-            mainStackView.addArrangedSubview(smallerWidthRow)
             mainStackView.addArrangedSubview(widthStepRow)
-            mainStackView.addArrangedSubview(topVerticalThirdRow)
-            mainStackView.addArrangedSubview(middleVerticalThirdRow)
-            mainStackView.addArrangedSubview(bottomVerticalThirdRow)
-            mainStackView.addArrangedSubview(topVerticalTwoThirdsRow)
-            mainStackView.addArrangedSubview(bottomVerticalTwoThirdsRow)
-            mainStackView.setCustomSpacing(10, after: bottomVerticalTwoThirdsRow)
             // Grid Positions - cycling shortcuts for larger grids
             let showAdditionalSizesCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Show additional sizes in menu", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleShowAdditionalSizesInMenu(_:)))
             showAdditionalSizesCheckbox.state = Defaults.showAdditionalSizesInMenu.userEnabled ? .on : .off
@@ -619,13 +220,6 @@ extension SettingsViewController {
             sixteenthsCyclingLabel.alignment = .right
             sixteenthsCyclingLabel.translatesAutoresizingMaskIntoConstraints = false
 
-            let ninthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let twelfthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-            let sixteenthsCyclingShortcutView = MASShortcutView(frame: NSRect(x: 0, y: 0, width: 160, height: 19))
-
-            ninthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftNinth.name, withTransformerName: MASDictionaryTransformerName)
-            twelfthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftTwelfth.name, withTransformerName: MASDictionaryTransformerName)
-            sixteenthsCyclingShortcutView.setAssociatedUserDefaultsKey(WindowAction.topLeftSixteenth.name, withTransformerName: MASDictionaryTransformerName)
 
             let ninthsCyclingIcon = NSImageView(frame: NSRect(x: 0, y: 0, width: 21, height: 14))
             ninthsCyclingIcon.image = WindowAction.topLeftNinth.image
@@ -646,49 +240,6 @@ extension SettingsViewController {
                 stack.addArrangedSubview(icon)
                 return stack
             }
-
-            func makeRow(_ labelStack: NSStackView, _ shortcutView: MASShortcutView) -> NSStackView {
-                let row = NSStackView()
-                row.orientation = .horizontal
-                row.alignment = .centerY
-                row.spacing = 18
-                row.addArrangedSubview(labelStack)
-                row.addArrangedSubview(shortcutView)
-                return row
-            }
-
-            let ninthsCyclingRow = makeRow(makeLabelStack(ninthsCyclingLabel, ninthsCyclingIcon), ninthsCyclingShortcutView)
-            let twelfthsCyclingRow = makeRow(makeLabelStack(twelfthsCyclingLabel, twelfthsCyclingIcon), twelfthsCyclingShortcutView)
-            let sixteenthsCyclingRow = makeRow(makeLabelStack(sixteenthsCyclingLabel, sixteenthsCyclingIcon), sixteenthsCyclingShortcutView)
-
-            if Defaults.allowAnyShortcut.enabled {
-                let passThroughValidator = PassthroughShortcutValidator()
-                ninthsCyclingShortcutView.shortcutValidator = passThroughValidator
-                twelfthsCyclingShortcutView.shortcutValidator = passThroughValidator
-                sixteenthsCyclingShortcutView.shortcutValidator = passThroughValidator
-            }
-            shortcutRecordingObserver.observe([
-                tileRowsShortcutView,
-                tileColumnsShortcutView,
-                largerWidthShortcutView,
-                smallerWidthShortcutView,
-                topVerticalThirdShortcutView,
-                middleVerticalThirdShortcutView,
-                bottomVerticalThirdShortcutView,
-                topVerticalTwoThirdsShortcutView,
-                bottomVerticalTwoThirdsShortcutView,
-                topLeftEighthShortcutView,
-                topCenterLeftEighthShortcutView,
-                topCenterRightEighthShortcutView,
-                topRightEighthShortcutView,
-                bottomLeftEighthShortcutView,
-                bottomCenterLeftEighthShortcutView,
-                bottomCenterRightEighthShortcutView,
-                bottomRightEighthShortcutView,
-                ninthsCyclingShortcutView,
-                twelfthsCyclingShortcutView,
-                sixteenthsCyclingShortcutView
-            ])
 
             let overlapOffsetCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleCyclingOverlapOffset(_:)))
             overlapOffsetCheckbox.state = Defaults.cyclingOverlapOffset.userEnabled ? .on : .off
@@ -720,17 +271,6 @@ extension SettingsViewController {
             mainStackView.setCustomSpacing(4, after: gridHeaderLabel)
             mainStackView.addArrangedSubview(cyclingHintLabel)
             mainStackView.setCustomSpacing(8, after: cyclingHintLabel)
-            mainStackView.addArrangedSubview(topLeftEighthRow)
-            mainStackView.addArrangedSubview(topCenterLeftEighthRow)
-            mainStackView.addArrangedSubview(topCenterRightEighthRow)
-            mainStackView.addArrangedSubview(topRightEighthRow)
-            mainStackView.addArrangedSubview(bottomLeftEighthRow)
-            mainStackView.addArrangedSubview(bottomCenterLeftEighthRow)
-            mainStackView.addArrangedSubview(bottomCenterRightEighthRow)
-            mainStackView.addArrangedSubview(bottomRightEighthRow)
-            mainStackView.addArrangedSubview(ninthsCyclingRow)
-            mainStackView.addArrangedSubview(twelfthsCyclingRow)
-            mainStackView.addArrangedSubview(sixteenthsCyclingRow)
             mainStackView.addArrangedSubview(showAdditionalSizesCheckbox)
             mainStackView.addArrangedSubview(overlapOffsetCheckbox)
             mainStackView.addArrangedSubview(stackBadgeCheckbox)
@@ -762,93 +302,6 @@ extension SettingsViewController {
 
             mainStackView.addArrangedSubview(repeatedMaximizeCheckbox)
             repeatedMaximizeRestoresPreviousCheckbox = repeatedMaximizeCheckbox
-
-            NSLayoutConstraint.activate([
-                headerLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
-                tileGridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
-                columnsLimitRow.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
-                rowsLimitRow.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
-                splitRatioHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
-                tileRowsLabel.widthAnchor.constraint(equalTo: tileColumnsLabel.widthAnchor),
-                tileColumnsLabel.widthAnchor.constraint(equalTo: largerWidthLabel.widthAnchor),
-                largerWidthLabel.widthAnchor.constraint(equalTo: smallerWidthLabel.widthAnchor),
-                smallerWidthLabel.widthAnchor.constraint(equalTo: widthStepLabel.widthAnchor),
-                widthStepLabel.widthAnchor.constraint(equalTo: topVerticalThirdLabel.widthAnchor),
-                topVerticalThirdLabel.widthAnchor.constraint(equalTo: middleVerticalThirdLabel.widthAnchor),
-                middleVerticalThirdLabel.widthAnchor.constraint(equalTo: bottomVerticalThirdLabel.widthAnchor),
-                bottomVerticalThirdLabel.widthAnchor.constraint(equalTo: topVerticalTwoThirdsLabel.widthAnchor),
-                topVerticalTwoThirdsLabel.widthAnchor.constraint(equalTo: bottomVerticalTwoThirdsLabel.widthAnchor),
-                bottomVerticalTwoThirdsLabel.widthAnchor.constraint(equalTo: topLeftEighthLabel.widthAnchor),
-                topLeftEighthLabel.widthAnchor.constraint(equalTo: topCenterLeftEighthLabel.widthAnchor),
-                topCenterLeftEighthLabel.widthAnchor.constraint(equalTo: topCenterRightEighthLabel.widthAnchor),
-                topCenterRightEighthLabel.widthAnchor.constraint(equalTo: topRightEighthLabel.widthAnchor),
-                topRightEighthLabel.widthAnchor.constraint(equalTo: bottomLeftEighthLabel.widthAnchor),
-                bottomLeftEighthLabel.widthAnchor.constraint(equalTo: bottomCenterLeftEighthLabel.widthAnchor),
-                bottomCenterLeftEighthLabel.widthAnchor.constraint(equalTo: bottomCenterRightEighthLabel.widthAnchor),
-                bottomCenterRightEighthLabel.widthAnchor.constraint(equalTo: bottomRightEighthLabel.widthAnchor),
-                bottomRightEighthLabel.widthAnchor.constraint(equalTo: ninthsCyclingLabel.widthAnchor),
-                ninthsCyclingLabel.widthAnchor.constraint(equalTo: twelfthsCyclingLabel.widthAnchor),
-                twelfthsCyclingLabel.widthAnchor.constraint(equalTo: sixteenthsCyclingLabel.widthAnchor),
-                sixteenthsCyclingLabel.widthAnchor.constraint(equalTo: hSplitLabel.widthAnchor),
-                stackBadgeToggleShortcutView.leadingAnchor.constraint(equalTo: sixteenthsCyclingShortcutView.leadingAnchor),
-                stackBadgeToggleShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                hSplitLabel.widthAnchor.constraint(equalTo: vSplitLabel.widthAnchor),
-                largerWidthLabelStack.widthAnchor.constraint(equalTo: smallerWidthLabelStack.widthAnchor),
-                tileRowsShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                tileColumnsShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                largerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                smallerWidthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                widthStepField.widthAnchor.constraint(equalToConstant: 160),
-                hSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
-                vSplitControlsStack.widthAnchor.constraint(equalToConstant: 160),
-                hSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
-                vSplitPopUpButton.widthAnchor.constraint(equalToConstant: 100),
-                hSplitField.widthAnchor.constraint(equalToConstant: 52),
-                vSplitField.widthAnchor.constraint(equalToConstant: 52),
-                topVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                middleVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                bottomVerticalThirdShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                topVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                bottomVerticalTwoThirdsShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                topLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                topCenterLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                topCenterRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                topRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                bottomLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                bottomCenterLeftEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                bottomCenterRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                bottomRightEighthShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                ninthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                twelfthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                sixteenthsCyclingShortcutView.widthAnchor.constraint(equalToConstant: 160),
-                widthStepField.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
-                tileRowsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                tileColumnsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                showAdditionalSizesCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                overlapOffsetCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                stackBadgeCheckbox.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                smallerWidthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                topVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                middleVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                bottomVerticalThirdShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                topVerticalTwoThirdsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                bottomVerticalTwoThirdsShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                topLeftEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                topCenterLeftEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                topCenterRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                topRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                bottomLeftEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                bottomCenterLeftEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                bottomCenterRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                bottomRightEighthShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                ninthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                twelfthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                sixteenthsCyclingShortcutView.leadingAnchor.constraint(equalTo: largerWidthShortcutView.leadingAnchor),
-                gridHeaderLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor),
-                cyclingHintLabel.widthAnchor.constraint(equalTo: mainStackView.widthAnchor, constant: -20),
-                hSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor),
-                vSplitControlsStack.trailingAnchor.constraint(equalTo: largerWidthShortcutView.trailingAnchor)
-            ])
 
             let containerView = NSView()
             containerView.addSubview(mainStackView)

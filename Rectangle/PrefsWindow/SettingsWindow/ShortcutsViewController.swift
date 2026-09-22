@@ -257,7 +257,7 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.topLeftNinth, .topLeftTwelfth, .topLeftSixteenth])
         ]
 
-        let extraGroup = CategoryGroup(title: "Extras", categories: extraCategories, isCollapsible: true)
+        let extraGroup = CategoryGroup(title: "Extra", categories: extraCategories, isCollapsible: true)
 
         let standardGroup = CategoryGroup(title: "", categories: standardCategories, isCollapsible: false)
         let moreGroup = CategoryGroup(title: "⋯", categories: moreCategories, subGroups: [extraGroup], isCollapsible: true)

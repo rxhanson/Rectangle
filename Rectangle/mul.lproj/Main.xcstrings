@@ -39208,6 +39208,9 @@
         }
       }
     },
+    "Show Extra shortcuts in menu" : {
+
+    },
     "Show stacked window list on hover" : {
 
     },
@@ -39941,6 +39944,9 @@
           }
         }
       }
+    },
+    "Stacked Windows" : {
+
     },
     "STb-JK-oB1.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"Rectangle Settings\"; ObjectID = \"STb-JK-oB1\";",
@@ -41370,43 +41376,43 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Fenster in Spalten"
           }
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tile Windows in Columns"
+            "state" : "translated",
+            "value" : "Tile in Columns"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ventanas en columnas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ventanas en columnas"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Fenêtres en colonnes"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "ウインドウを列に並べる"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "按列平铺窗口"
           }
         }
@@ -41417,43 +41423,43 @@
       "localizations" : {
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Fenster in Zeilen"
           }
         },
         "en" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Tile Windows in Rows"
+            "state" : "translated",
+            "value" : "Tile in Rows"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ventanas en filas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ventanas en filas"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Fenêtres en lignes"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "ウインドウを行に並べる"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "按行平铺窗口"
           }
         }
@@ -46997,6 +47003,9 @@
           }
         }
       }
+    },
+    "Window Sizing" : {
+
     },
     "windowSizeWarningMessage" : {
       "comment" : "Explains that an app can prevent a window from shrinking to the requested layout",

@@ -97,6 +97,40 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
     }
 
+    @Published var showAdditionalSizesInMenu: Bool {
+        didSet { Defaults.showAdditionalSizesInMenu.enabled = showAdditionalSizesInMenu }
+    }
+    @Published var cyclingOverlapOffset: Bool {
+        didSet { Defaults.cyclingOverlapOffset.enabled = cyclingOverlapOffset }
+    }
+    @Published var stackBadge: Bool {
+        didSet { Defaults.stackBadge.enabled = stackBadge }
+    }
+    @Published var horizontalSplitRatio: Float {
+        didSet {
+            Defaults.horizontalSplitRatio.value = horizontalSplitRatio
+            ActiveSideSplitRatios.shared.resetAll()
+        }
+    }
+    @Published var verticalSplitRatio: Float {
+        didSet {
+            Defaults.verticalSplitRatio.value = verticalSplitRatio
+            ActiveSideSplitRatios.shared.resetAll()
+        }
+    }
+    @Published var halvesPreserveOtherAxisSize: Bool {
+        didSet { Defaults.halvesPreserveOtherAxisSize.enabled = halvesPreserveOtherAxisSize }
+    }
+
+    // Preset Selection States
+    @Published var selectedHSplitPreset: CycleSize?
+    @Published var selectedVSplitPreset: CycleSize?
+
+    
+    @Published var repeatedMaximizeRestoresPrevious: Bool {
+        didSet { Defaults.repeatedMaximizeRestoresPrevious.enabled = repeatedMaximizeRestoresPrevious }
+    }
+
     // MARK: - Stage Manager Settings
     @Published var stageSize: Double
 
@@ -127,6 +161,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
+        self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
 
         self.todoEnabled = Defaults.todo.userEnabled
         self.todoSidebarWidth = Defaults.todoSidebarWidth.value
@@ -134,6 +169,20 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.todoSidebarSide = Defaults.todoSidebarSide.value
 
         self.stageSize = Double(Defaults.stageSize.value)
+        
+        let hRatio = Defaults.horizontalSplitRatio.value
+        let vRatio = Defaults.verticalSplitRatio.value
+
+        self.showAdditionalSizesInMenu = Defaults.showAdditionalSizesInMenu.userEnabled
+        self.cyclingOverlapOffset = Defaults.cyclingOverlapOffset.userEnabled
+        self.stackBadge = Defaults.stackBadge.userEnabled
+        self.horizontalSplitRatio = hRatio
+        self.verticalSplitRatio = vRatio
+        self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
+
+        // Match existing ratios to presets or set as custom ("Other")
+        self.selectedHSplitPreset = CycleSize(rawValue: Int(hRatio))
+        self.selectedVSplitPreset = CycleSize(rawValue: Int(vRatio))
 
         setupObservers()
     }
@@ -276,7 +325,17 @@ final class BehaviorSettingsViewModel: ObservableObject {
         Notification.Name.windowSnapping.post(object: true)
     }
 
-    func showExtrasPopover() {
-        // Trigger your existing extras popover or sheet presentation logic here
+    func selectHSplitPreset(_ preset: CycleSize?) {
+        selectedHSplitPreset = preset
+        if let percentValue = preset?.percentValue {
+            horizontalSplitRatio = percentValue
+        }
+    }
+
+    func selectVSplitPreset(_ preset: CycleSize?) {
+        selectedVSplitPreset = preset
+        if let percentValue = preset?.percentValue {
+            verticalSplitRatio = percentValue
+        }
     }
 }
