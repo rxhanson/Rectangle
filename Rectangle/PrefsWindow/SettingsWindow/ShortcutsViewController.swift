@@ -256,7 +256,7 @@ class ShortcutsViewController: NSViewController {
         let extraGroup = CategoryGroup(title: "Extras", categories: extraCategories, isCollapsible: true)
 
         let standardGroup = CategoryGroup(title: "", categories: standardCategories, isCollapsible: false)
-        let moreGroup = CategoryGroup(title: "More", categories: moreCategories, subGroups: [extraGroup], isCollapsible: true)
+        let moreGroup = CategoryGroup(title: "⋯", categories: moreCategories, subGroups: [extraGroup], isCollapsible: true)
 
         rootItems = [standardGroup, moreGroup]
     }
