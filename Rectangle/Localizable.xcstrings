@@ -61,6 +61,9 @@
     "Hold any modifier key or use the window menu for default macOS behavior" : {
 
     },
+    "Horizontal (L/R, %)" : {
+
+    },
     "horizontally" : {
 
     },
@@ -94,6 +97,12 @@
     "Move cursor along with window across displays" : {
 
     },
+    "Offset window position on overlap" : {
+
+    },
+    "Other" : {
+
+    },
     "Portrait Snap Areas" : {
 
     },
@@ -124,6 +133,9 @@
     "Repeated commands" : {
 
     },
+    "Repeated Maximize restores the previous size and position" : {
+
+    },
     "Resize adjacent windows when cycling side or corner shortcuts" : {
 
     },
@@ -139,10 +151,19 @@
     "Show Extra shortcuts in menu" : {
 
     },
+    "Show stacked window list on hover" : {
+
+    },
     "Show Todo Mode in menu" : {
 
     },
+    "Side Split Ratio" : {
+
+    },
     "Snap windows by dragging" : {
+
+    },
+    "Stacked Windows" : {
 
     },
     "Stage Manager" : {
@@ -160,6 +181,9 @@
     "Toggle Todo" : {
 
     },
+    "Toggle window list" : {
+
+    },
     "Treat multiple displays as one" : {
 
     },
@@ -167,6 +191,9 @@
 
     },
     "Use cursor screen detection" : {
+
+    },
+    "Vertical (T/B, %)" : {
 
     },
     "vertically" : {

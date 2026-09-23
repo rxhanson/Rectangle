@@ -216,7 +216,7 @@ struct BehaviorSettingsView: View {
                         Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
                         Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
                         
-                        Toggle(NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), isOn: $viewModel.repeatedMaximizeRestoresPrevious)
+                        Toggle("Repeated Maximize restores the previous size and position", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
@@ -238,20 +238,20 @@ struct BehaviorSettingsView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
-                            Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
+                            Toggle("Offset window position on overlap", isOn: $viewModel.cyclingOverlapOffset)
                             Text("This leaves a little space showing the window below and is best with gaps between windows")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
-                            Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
+                            Toggle("Show stacked window list on hover", isOn: $viewModel.stackBadge)
                             Text("Hover cursor near the top left corner of a window to show the list")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                         HStack {
-                            Text(NSLocalizedString("Toggle window list", tableName: "Main", value: "", comment: ""))
+                            Text("Toggle window list")
                             Spacer()
                             MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
                                 .frame(width: 160, height: 24)
@@ -260,7 +260,7 @@ struct BehaviorSettingsView: View {
                     .padding(.top, 4)
                     .padding(.leading, 12)
                 } label: {
-                    Label(NSLocalizedString("Stacked Windows", tableName: "Main", value: "", comment: ""), systemImage: "square.on.square")
+                    Label("Stacked Windows", systemImage: "square.on.square")
                 }
             }
 
@@ -273,7 +273,7 @@ struct BehaviorSettingsView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                         HStack {
-                            Text(NSLocalizedString("Horizontal (L/R, %)", tableName: "Main", value: "", comment: ""))
+                            Text("Horizontal (L/R, %)")
                             Spacer()
 
                             if viewModel.selectedHSplitPreset == nil {
@@ -288,13 +288,13 @@ struct BehaviorSettingsView: View {
                                 ForEach(CycleSize.sortedSizes, id: \.self) { size in
                                     Text(size.title).tag(Optional(size))
                                 }
-                                Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
+                                Text("Other").tag(Optional<CycleSize>.none)
                             }
                             .labelsHidden()
                         }
 
                         HStack {
-                            Text(NSLocalizedString("Vertical (T/B, %)", tableName: "Main", value: "", comment: ""))
+                            Text("Vertical (T/B, %)")
                             Spacer()
 
                             if viewModel.selectedVSplitPreset == nil {
@@ -309,7 +309,7 @@ struct BehaviorSettingsView: View {
                                 ForEach(CycleSize.sortedSizes, id: \.self) { size in
                                     Text(size.title).tag(Optional(size))
                                 }
-                                Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
+                                Text("Other").tag(Optional<CycleSize>.none)
                             }
                             .labelsHidden()
                         }
@@ -317,7 +317,7 @@ struct BehaviorSettingsView: View {
                     .padding(.top, 4)
                     .padding(.leading, 12)
                 } label: {
-                    Label(NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""), systemImage: "rectangle.split.2x1")
+                    Label("Side Split Ratio", systemImage: "rectangle.split.2x1")
                 }
             }
             

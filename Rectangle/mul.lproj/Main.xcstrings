@@ -39942,9 +39942,6 @@
         }
       }
     },
-    "Stacked Windows" : {
-
-    },
     "STb-JK-oB1.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"Rectangle Settings\"; ObjectID = \"STb-JK-oB1\";",
       "extractionState" : "extracted_with_value",
