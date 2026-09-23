@@ -1,16 +1,18 @@
-/// BehaviorSettingsView.swift
+// BehaviorSettingsView.swift
 
 import AppKit
 import SwiftUI
 
-class BehaviorSettingsViewController: NSViewController {
-    private var hostingController: NSHostingController<BehaviorSettingsView>!
+// MARK: - AppKit View Controller Wrapper
+final class BehaviorSettingsViewController: NSViewController {
+    private var hostingController: NSHostingController<BehaviorSettingsView>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let swiftUIView = BehaviorSettingsView()
-        hostingController = NSHostingController(rootView: swiftUIView)
+        let hostingController = NSHostingController(rootView: swiftUIView)
+        self.hostingController = hostingController
         
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -25,9 +27,19 @@ class BehaviorSettingsViewController: NSViewController {
     }
 }
 
+// MARK: - SwiftUI Settings View
 struct BehaviorSettingsView: View {
     @StateObject private var viewModel = BehaviorSettingsViewModel()
     @State private var isMaximizeExpanded = false // Controls disclosure state
+
+    // Cached formatter to avoid expensive re-allocations during view body updates
+    private static let percentFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.allowsFloats = false
+        formatter.minimum = 1
+        formatter.maximum = 99
+        return formatter
+    }()
 
     var body: some View {
         Form {
@@ -75,6 +87,7 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            // MARK: - Gaps
             Section {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
@@ -97,6 +110,7 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            // MARK: - Cursor & Display Rules
             Section {
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
                 Toggle(NSLocalizedString("Half actions preserve the window's size on the other axis", tableName: "Main", value: "", comment: ""), isOn: $viewModel.halvesPreserveOtherAxisSize)
@@ -212,7 +226,7 @@ struct BehaviorSettingsView: View {
                 }
             }
 
-            // MARK: Stacked Windows
+            // MARK: - Stacked Windows
             Section {
                 VStack(alignment: .leading, spacing: 8) {
                     Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
@@ -237,7 +251,7 @@ struct BehaviorSettingsView: View {
                         Spacer()
 
                         if viewModel.selectedHSplitPreset == nil {
-                            TextField("", value: $viewModel.horizontalSplitRatio, formatter: percentFormatter)
+                            TextField("", value: $viewModel.horizontalSplitRatio, formatter: Self.percentFormatter)
                                 .frame(width: 45)
                                 .multilineTextAlignment(.trailing)
                         }
@@ -253,7 +267,6 @@ struct BehaviorSettingsView: View {
                         }
                         .labelsHidden()
                         .frame(width: 110)
-
                     }
 
                     HStack {
@@ -261,7 +274,7 @@ struct BehaviorSettingsView: View {
                         Spacer()
 
                         if viewModel.selectedVSplitPreset == nil {
-                            TextField("", value: $viewModel.verticalSplitRatio, formatter: percentFormatter)
+                            TextField("", value: $viewModel.verticalSplitRatio, formatter: Self.percentFormatter)
                                 .frame(width: 45)
                                 .multilineTextAlignment(.trailing)
                         }
@@ -313,13 +326,5 @@ struct BehaviorSettingsView: View {
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
         .animation(.easeInOut(duration: 0.2), value: isMaximizeExpanded)
-    }
-    
-    private var percentFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.allowsFloats = false
-        formatter.minimum = 1
-        formatter.maximum = 99
-        return formatter
     }
 }
