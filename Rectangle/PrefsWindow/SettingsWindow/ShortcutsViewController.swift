@@ -53,6 +53,7 @@ final class ShortcutSectionCellView: NSTableCellView {
     static let identifier = NSUserInterfaceItemIdentifier("ShortcutSectionCell")
 
     let titleLabel = NSTextField(labelWithString: "")
+    var onTitleClick: (() -> Void)?
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -75,10 +76,19 @@ final class ShortcutSectionCellView: NSTableCellView {
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
+
+        // Add gesture recognizer specifically to the title text label
+        let clickGesture = NSClickGestureRecognizer(target: self, action: #selector(handleTitleClick))
+        titleLabel.addGestureRecognizer(clickGesture)
     }
 
-    func configure(title: String) {
+    @objc private func handleTitleClick() {
+        onTitleClick?()
+    }
+
+    func configure(title: String, onTitleClick: (() -> Void)? = nil) {
         titleLabel.stringValue = title
+        self.onTitleClick = onTitleClick
     }
 }
 
@@ -355,12 +365,23 @@ extension ShortcutsViewController: NSOutlineViewDataSource {
 
 // MARK: - NSOutlineViewDelegate
 
+// MARK: - NSOutlineViewDelegate
+
 extension ShortcutsViewController: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
         if let group = item as? CategoryGroup {
             let cell = outlineView.makeView(withIdentifier: ShortcutSectionCellView.identifier, owner: self) as? ShortcutSectionCellView ?? ShortcutSectionCellView()
             cell.identifier = ShortcutSectionCellView.identifier
-            cell.configure(title: group.title)
+            
+            cell.configure(title: group.title) { [weak self, weak group] in
+                guard let self = self, let group = group, group.isCollapsible else { return }
+                
+                if self.outlineView.isItemExpanded(group) {
+                    self.outlineView.animator().collapseItem(group)
+                } else {
+                    self.outlineView.animator().expandItem(group)
+                }
+            }
             return cell
         }
 
@@ -418,34 +439,14 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
     }
 
     private func scheduleScrollViewUpdate() {
-        // Defer execution until NSOutlineView completes its internal row animation and index updates
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            // Recalculate document frame height safely after row changes have finalized
             if let documentView = self.scrollView.documentView {
                 documentView.frame.size.height = self.outlineView.intrinsicContentSize.height
             }
             
             self.scrollView.reflectScrolledClipView(self.scrollView.contentView)
         }
-    }
-
-    func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        guard let group = item as? CategoryGroup else { return true }
-        guard group.isCollapsible else { return false }
-        
-        let now = ProcessInfo.processInfo.systemUptime
-        
-        if now - lastGroupToggleTime > 0.10 {
-            lastGroupToggleTime = now
-            
-            if outlineView.isItemExpanded(item) {
-                outlineView.animator().collapseItem(item)
-            } else {
-                outlineView.animator().expandItem(item)
-            }
-        }
-        return false
     }
 }
