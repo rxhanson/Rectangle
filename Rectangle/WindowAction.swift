@@ -181,8 +181,9 @@ enum WindowAction: Int, Codable {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .menuItem))
     }
 
-    func postSnap(windowElement: AccessibilityElement?, windowId: CGWindowID?, screen: NSScreen) {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap))
+    func postSnap(windowElement: AccessibilityElement?, windowId: CGWindowID?, screen: NSScreen,
+                  completion: (() -> Void)? = nil) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap, completion: completion))
     }
     
     func postUrl() {

@@ -147,9 +147,15 @@ class SnappingManager {
             self.startEventMonitor()
         }
         Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
+        Notification.Name.windowActionWillExecute.onPost { [weak self] notification in
+            guard let self, self.box?.waitingForPlacement == true,
+                  (notification.object as? ExecutionParameters)?.source != .dragToSnap else { return }
+            self.box?.orderOut(nil)
+        }
     }
     
     func frontAppChanged(notification: Notification) {
+        box?.cancelPlacementIfInactive()
         if ApplicationToggle.shortcutsDisabled {
             DispatchQueue.main.async {
                 if !Defaults.ignoreDragSnapToo.userDisabled {
@@ -235,6 +241,7 @@ class SnappingManager {
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         checkFullScreen()
     }
     
@@ -273,6 +280,7 @@ class SnappingManager {
     }
     
     private func disableSnapping() {
+        box?.close()
         box = nil
         stopEventMonitor()
     }
@@ -284,6 +292,7 @@ class SnappingManager {
     }
     
     private func stopEventMonitor() {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         pendingReleasedRestore = nil
         eventMonitor?.stop()
         eventMonitor = nil
@@ -331,6 +340,7 @@ class SnappingManager {
         if LayoutHelperManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
+            if box?.waitingForPlacement == true { box?.orderOut(nil) }
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
             LayoutHelperManager.shared.cancelPrefetch()
@@ -369,9 +379,9 @@ class SnappingManager {
             }
             if let currentSnapArea = self.currentSnapArea {
                 nativeSizeRestore = nil
-                dismissSnapPreviewForCommit()
+                let completion = snapPreviewCompletion()
                 committedSnap = true
-                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
+                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen, completion: completion)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
@@ -385,11 +395,11 @@ class SnappingManager {
                     }
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
-                        dismissSnapPreviewForCommit()
                         if canSnap(event) {
+                            let completion = snapPreviewCompletion()
                             committedSnap = true
-                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
-                        }
+                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen, completion: completion)
+                        } else { box?.orderOut(nil) }
                         self.currentSnapArea = nil
                     }
                 }
@@ -646,8 +656,12 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
-    private func dismissSnapPreviewForCommit() {
+    private func snapPreviewCompletion() -> (() -> Void)? {
+        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+            return box?.completionForSnap(windowID: windowId)
+        }
         box?.orderOut(nil)
+        return nil
     }
 
     private func showSnapPreview(in rect: CGRect, snapArea: SnapArea) {

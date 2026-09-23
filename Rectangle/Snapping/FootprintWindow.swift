@@ -136,6 +136,9 @@ class FootprintWindow: NSWindow {
     private var moving = false
     private let capturePauseID = UUID()
     private var foregroundWindowID: CGWindowID?
+    private var foregroundProcessID: pid_t?
+    private var placementGeneration: UUID?
+    var waitingForPlacement: Bool { placementGeneration != nil }
 
     var presentation: FootprintPresentation {
         FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
@@ -291,12 +294,14 @@ class FootprintWindow: NSWindow {
 
     func showPreview(in rect: CGRect, from origin: CGPoint?, duration: TimeInterval,
                      below windowID: CGWindowID? = nil) {
+        placementGeneration = nil
         foregroundWindowID = windowID
         tracePresentation("target", target: rect)
         let fresh = !super.isVisible || (contentView?.layer?.presentation()?.opacity ?? contentView?.layer?.opacity ?? 0) == 0
         stopGeometry()
         prepareHost(for: rect)
         updateAppearance()
+        PreviewLayerTransition.set(shadow.container, "opacity", to: Float(1), duration: 0)
         if fresh {
             let initial = presentation.animates ? origin.map { FootprintAnimationGeometry.initialFrame(in: rect, from: $0) } : nil
             setGeometry(initial ?? rect, duration: 0)
@@ -321,10 +326,12 @@ class FootprintWindow: NSWindow {
         if let foregroundWindowID,
            let window = (CGWindowListCopyWindowInfo(.optionIncludingWindow, foregroundWindowID) as? [[String: Any]])?.first,
            let windowLevel = window[kCGWindowLayer as String] as? Int {
+            foregroundProcessID = window[kCGWindowOwnerPID as String] as? pid_t
             // Relative ordering only applies within the same window level.
             level = NSWindow.Level(rawValue: windowLevel)
             super.order(.below, relativeTo: Int(foregroundWindowID))
         } else {
+            foregroundProcessID = nil
             level = FootprintStyle.previewLevel
             super.orderFront(sender)
         }
@@ -333,11 +340,39 @@ class FootprintWindow: NSWindow {
     }
 
     override func orderOut(_ sender: Any?) {
+        placementGeneration = nil
         showing = false
         if closing { super.orderOut(sender); return }
         tracePresentation("dismiss")
         stopGeometry()
         startFade(to: 0, duration: presentation.fades && super.isVisible ? 0.09 : 0)
+    }
+
+    func completionForSnap(windowID: CGWindowID?) -> (() -> Void)? {
+        guard windowID != nil, foregroundWindowID == windowID, realIsVisible else {
+            orderOut(nil)
+            return nil
+        }
+        let generation = UUID()
+        placementGeneration = generation
+        PreviewLayerTransition.set(shadow.container, "opacity", to: Float(0),
+                                   duration: presentation.usesBlur && presentation.fades ? 0.18 : 0,
+                                   timing: PreviewLayerTransition.smoothstep)
+        tracePresentation("waiting-for-placement")
+        return { [weak self] in
+            guard let self, self.placementGeneration == generation else { return }
+            self.placementGeneration = nil
+            self.showing = false
+            self.tracePresentation("placement-complete")
+            self.stopGeometry()
+            self.startFade(to: 0, duration: 0)
+        }
+    }
+
+    func cancelPlacementIfInactive() {
+        if waitingForPlacement, foregroundProcessID != NSWorkspace.shared.frontmostApplication?.processIdentifier {
+            orderOut(nil)
+        }
     }
 
     private func startFade(to opacity: CGFloat, duration: TimeInterval) {
@@ -364,6 +399,9 @@ class FootprintWindow: NSWindow {
     func refreshAccessibility() {
         updateAppearance()
         if !presentation.animates { stopGeometry(); setGeometry(destination, duration: 0) }
+        if !presentation.fades {
+            PreviewLayerTransition.set(shadow.container, "opacity", to: waitingForPlacement ? Float(0) : Float(1), duration: 0)
+        }
         startFade(to: showing ? presentation.alpha : 0, duration: 0)
     }
 
@@ -374,6 +412,7 @@ class FootprintWindow: NSWindow {
     var realIsVisible: Bool { showing && super.isVisible }
 
     override func close() {
+        placementGeneration = nil
         closing = true
         showing = false
         fade.cancel()
@@ -388,6 +427,7 @@ class FootprintWindow: NSWindow {
         WindowAnimationDiagnostics.event("footprint." + event, fields: ["windowID": windowNumber,
             "frame": [rect.minX, rect.minY, rect.width, rect.height],
             "alpha": contentView?.layer?.presentation()?.opacity ?? contentView?.layer?.opacity ?? 0,
+            "shadowOpacity": shadow.container.presentation()?.opacity ?? shadow.container.opacity,
             "showing": showing, "visible": super.isVisible])
     }
 }

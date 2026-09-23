@@ -55,6 +55,8 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        var completionDeferred = false
+        defer { if !completionDeferred { parameters.completion?() } }
         hideSizeConstraintWarning()
         let fitOpportunity = SnappedWindowFitSession.shared.take()
 
@@ -86,8 +88,10 @@ class WindowManager {
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 executionID &+= 1
                 let currentExecutionID = executionID
+                completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
                     windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                        defer { parameters.completion?() }
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
@@ -95,6 +99,7 @@ class WindowManager {
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
                     windowAnimator.afterPendingWrites { [weak self] in
+                        defer { parameters.completion?() }
                         guard self?.executionID == currentExecutionID else { return }
                         frontmostWindowElement.setFrame(restoreRect)
                     }
@@ -280,9 +285,10 @@ class WindowManager {
         let currentExecutionID = executionID
 
         if let besidePlan {
+            completionDeferred = true
             placeBesideSnappedWindow(result: resultParameters, plan: besidePlan, before: beforeResize,
                 previousAction: previousAction, previousRestore: previousRestore, generation: sizeObservationGeneration,
-                acrossDisplays: isMovedAcrossDisplays)
+                acrossDisplays: isMovedAcrossDisplays, completion: parameters.completion)
             return
         }
         let animated = WindowAnimator.enabled && !isFixedSize
@@ -290,6 +296,8 @@ class WindowManager {
             && !Defaults.cooperativeCornerResize.enabled
 
         let completeMove = { [self] (animationHandledPlacement: Bool) in
+            var waitsForRetry = false
+            defer { if !waitsForRetry { parameters.completion?() } }
             guard executionID == currentExecutionID,
                   WindowSizeConstraints.shared.observationGeneration == sizeObservationGeneration else { return }
             var resultingRect: CGRect
@@ -317,7 +325,9 @@ class WindowManager {
 
                     if calcResult.rect.size != resultingRect.size {
                         Logger.log("Final attempt to adjust across displays.")
+                        waitsForRetry = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
+                            defer { parameters.completion?() }
                             guard let self, self.executionID == currentExecutionID else { return }
                             let finalRect = self.apply(result: resultParameters)
                             self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
@@ -353,6 +363,7 @@ class WindowManager {
             }
         }
 
+        completionDeferred = true
         if animated {
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
@@ -370,8 +381,7 @@ class WindowManager {
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
-            windowAnimator.afterPendingWrites { [weak self] in
-                guard self?.executionID == currentExecutionID else { return }
+            windowAnimator.afterPendingWrites {
                 completeMove(false)
             }
         }
@@ -380,7 +390,10 @@ class WindowManager {
 
 
     private func placeBesideSnappedWindow(result: ResultParameters, plan: SnappedWindowFit, before: CGRect,
-                                         previousAction: RectangleAction?, previousRestore: CGRect?, generation: UUID, acrossDisplays: Bool) {
+                                         previousAction: RectangleAction?, previousRestore: CGRect?, generation: UUID, acrossDisplays: Bool,
+                                         completion: (() -> Void)? = nil) {
+        var completionDeferred = false
+        defer { if !completionDeferred { completion?() } }
         var result = result
         result.allowsFitPairing = false
         let window = result.windowElement
@@ -398,6 +411,7 @@ class WindowManager {
         let placement = WindowAnimationPlacement(screenFrame: bounds,
             sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: plan.target, in: bounds),
             constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
+        completionDeferred = true
         WindowPlacementCoordinator.shared.place(window, from: before, to: plan.target, placement: placement,
             animated: WindowAnimator.enabled && !acrossDisplays,
             profile: result.source == .keyboardShortcut ? .keyboard : .standard,
@@ -407,6 +421,7 @@ class WindowManager {
                     && LayoutHelperLayout.matches(result.calcResult.screen.adjustedVisibleFrame().screenFlipped, bounds)
                     && plan.neighborIsUnchanged()
             }) { [weak self] outcome in
+                defer { completion?() }
                 guard let self else { return }
                 switch outcome {
                 case .placed(let frame):
@@ -555,14 +570,16 @@ struct ExecutionParameters {
     let windowElement: AccessibilityElement?
     let windowId: CGWindowID?
     let source: ExecutionSource
+    let completion: (() -> Void)?
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, completion: (() -> Void)? = nil) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
         self.windowElement = windowElement
         self.windowId = windowId
         self.source = source
+        self.completion = completion
     }
 }
 
