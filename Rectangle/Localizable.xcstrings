@@ -1,0 +1,183 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "-" : {
+
+    },
+    "%" : {
+
+    },
+    "%lld px" : {
+
+    },
+    "Animate footprint" : {
+
+    },
+    "Animate windows (experimental)" : {
+
+    },
+    "Blur appearance" : {
+
+    },
+    "Blur footprint" : {
+
+    },
+    "Check for updates automatically" : {
+
+    },
+    "Check for Updates…" : {
+
+    },
+    "Configure the divide between side and corner actions" : {
+
+    },
+    "Cyclic corner shortcuts expand:" : {
+
+    },
+    "Dark" : {
+
+    },
+    "Double-click window title bar to maximize/restore" : {
+
+    },
+    "Export Config" : {
+
+    },
+    "Follow System" : {
+
+    },
+    "Gaps between windows" : {
+
+    },
+    "Green stoplight button maximizes instead of Full Screen" : {
+
+    },
+    "Hide menu bar icon" : {
+
+    },
+    "Hold any modifier key or use the window menu for default macOS behavior" : {
+
+    },
+    "horizontally" : {
+
+    },
+    "Hover cursor near the top left corner of a window to show the list" : {
+
+    },
+    "If the area is too small, recent apps will be hidden" : {
+
+    },
+    "Import Config" : {
+
+    },
+    "Keep a chosen application visible on the right of your primary screen at all times" : {
+
+    },
+    "Launch on login" : {
+
+    },
+    "Left" : {
+
+    },
+    "Light" : {
+
+    },
+    "Maximize Settings" : {
+
+    },
+    "Mission Control dragging" : {
+
+    },
+    "Move cursor along with window across displays" : {
+
+    },
+    "Portrait Snap Areas" : {
+
+    },
+    "Preserve maximize state when moving across displays" : {
+
+    },
+    "Preserve side axis size for half actions, similar to Windows" : {
+
+    },
+    "Provide haptic feedback" : {
+
+    },
+    "px" : {
+
+    },
+    "Recent apps area" : {
+
+    },
+    "Reflow Todo" : {
+
+    },
+    "Remove keyboard shortcut restrictions" : {
+
+    },
+    "Remove top gap when snapping to top edge" : {
+
+    },
+    "Repeated commands" : {
+
+    },
+    "Resize adjacent windows when cycling side or corner shortcuts" : {
+
+    },
+    "Restore Default Shortcuts & Snap Areas" : {
+
+    },
+    "Restore window size when unsnapped" : {
+
+    },
+    "Right" : {
+
+    },
+    "Show Extra shortcuts in menu" : {
+
+    },
+    "Show Todo Mode in menu" : {
+
+    },
+    "Snap windows by dragging" : {
+
+    },
+    "Stage Manager" : {
+
+    },
+    "This leaves a little space showing the window below and is best with gaps between windows" : {
+
+    },
+    "Todo app width" : {
+
+    },
+    "Todo side" : {
+
+    },
+    "Toggle Todo" : {
+
+    },
+    "Treat multiple displays as one" : {
+
+    },
+    "Update Available…" : {
+
+    },
+    "Use cursor screen detection" : {
+
+    },
+    "vertically" : {
+
+    },
+    "When the menu bar icon is hidden, relaunch Rectangle from Finder to open" : {
+
+    },
+    "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
+
+    }
+  },
+  "version" : "1.3"
+}

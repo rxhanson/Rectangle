@@ -147,6 +147,7 @@
 		98ED704F306180AD0077BD10 /* SnapAreaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */; };
 		98ED70533062D3860077BD10 /* ExtraSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED70523062D3810077BD10 /* ExtraSettings.swift */; };
 		98ED73AA3062FCD20077BD10 /* PopoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED73A93062FCD20077BD10 /* PopoverButton.swift */; };
+		98ED73AE3064567B0077BD10 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 98ED73AD3064567B0077BD10 /* Localizable.xcstrings */; };
 		98FA9497235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */; };
 		98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */; };
 		98FD7C612687BCB6009E9DAF /* LastThreeFourthsCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */; };
@@ -385,6 +386,7 @@
 		98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaSettingsView.swift; sourceTree = "<group>"; };
 		98ED70523062D3810077BD10 /* ExtraSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraSettings.swift; sourceTree = "<group>"; };
 		98ED73A93062FCD20077BD10 /* PopoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverButton.swift; sourceTree = "<group>"; };
+		98ED73AD3064567B0077BD10 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatedExecutionsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C5E2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstThreeFourthsCalculation.swift; sourceTree = "<group>"; };
 		98FD7C602687BCB6009E9DAF /* LastThreeFourthsCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastThreeFourthsCalculation.swift; sourceTree = "<group>"; };
@@ -696,6 +698,7 @@
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
+				98ED73AD3064567B0077BD10 /* Localizable.xcstrings */,
 				9824701222AF9B7E0037B409 /* Main.storyboard */,
 				9824701522AF9B7E0037B409 /* Info.plist */,
 				981F27D02340E3E1006CD263 /* InternetAccessPolicy.plist */,
@@ -724,6 +727,7 @@
 				AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */,
 				AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */,
 				98987AA62391890C00BE72C4 /* Logging */,
+				98ED704D306179160077BD10 /* SettingsWindow */,
 				98910B3C2311304D0066EC23 /* PrefsWindow */,
 				989DA30C243FC0C3008C7AA4 /* WelcomeWindow */,
 				98C2755F231FF6AE009B9292 /* Snapping */,
@@ -763,7 +767,6 @@
 		98910B3C2311304D0066EC23 /* PrefsWindow */ = {
 			isa = PBXGroup;
 			children = (
-				98ED704D306179160077BD10 /* SettingsWindow */,
 				944F25CC2CE5A144004B2FD2 /* PrefsViewController.swift */,
 				944F25CE2CE5A144004B2FD2 /* ShortcutRecordingObserver.swift */,
 				98910B3D231130AF0066EC23 /* SettingsViewController.swift */,
@@ -814,15 +817,15 @@
 			isa = PBXGroup;
 			children = (
 				98985838305C1B6400459AFF /* SettingsWindowController.swift */,
-				98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */,
 				9898583A305C1B6400459AFF /* ShortcutsViewController.swift */,
+				98ED70523062D3810077BD10 /* ExtraSettings.swift */,
 				98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */,
 				98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */,
-				98ED70523062D3810077BD10 /* ExtraSettings.swift */,
-				98ED73A93062FCD20077BD10 /* PopoverButton.swift */,
 				98ED7049306171650077BD10 /* AppSettingsView.swift */,
 				98ED704A306171650077BD10 /* AppSettingsViewModel.swift */,
 				98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */,
+				98ED73A93062FCD20077BD10 /* PopoverButton.swift */,
+				98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */,
 			);
 			path = SettingsWindow;
 			sourceTree = "<group>";
@@ -889,7 +892,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = "Ryan Hanson";
 				TargetAttributes = {
 					9824700822AF9B7D0037B409 = {
@@ -973,6 +976,7 @@
 				9824701422AF9B7E0037B409 /* Main.storyboard in Resources */,
 				981F27D12340E3E1006CD263 /* InternetAccessPolicy.plist in Resources */,
 				98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */,
+				98ED73AE3064567B0077BD10 /* Localizable.xcstrings in Resources */,
 				482E9E422EB1528D00D7928A /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1285,7 +1289,9 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -1345,7 +1351,9 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
@@ -1418,7 +1426,6 @@
 		9824702822AF9B7E0037B409 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
@@ -1443,7 +1450,6 @@
 		9824702922AF9B7E0037B409 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
