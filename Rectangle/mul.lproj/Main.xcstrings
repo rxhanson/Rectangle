@@ -34868,9 +34868,6 @@
     "Preserve maximize state when moving across displays" : {
 
     },
-    "Preserve side axis size for half actions, similar to Windows" : {
-
-    },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
       "localizations" : {
         "ko" : {
@@ -39210,9 +39207,6 @@
           }
         }
       }
-    },
-    "Show Extra shortcuts in menu" : {
-
     },
     "Show stacked window list on hover" : {
 

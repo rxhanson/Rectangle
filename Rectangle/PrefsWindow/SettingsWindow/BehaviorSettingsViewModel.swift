@@ -201,6 +201,9 @@ final class BehaviorSettingsViewModel: ObservableObject {
         Notification.Name.configImported.onPost { [weak self] _ in
             self?.reloadFromDefaults()
         }
+        Notification.Name.stackBadgeChanged.onPost { [weak self] _ in
+            self?.stackBadge = Defaults.stackBadge.userEnabled
+        }
     }
 
     func reloadFromDefaults() {
@@ -219,6 +222,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.todoSidebarWidth = Defaults.todoSidebarWidth.value
         self.todoSidebarWidthUnit = Defaults.todoSidebarWidthUnit.value
         self.todoSidebarSide = Defaults.todoSidebarSide.value
+        self.stackBadge = Defaults.stackBadge.userEnabled
         self.stageSize = Double(Defaults.stageSize.value)
     }
 
