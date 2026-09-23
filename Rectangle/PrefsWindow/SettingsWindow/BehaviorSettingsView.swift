@@ -115,6 +115,14 @@ struct BehaviorSettingsView: View {
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
                 Toggle(NSLocalizedString("Half actions preserve the window's size on the other axis", tableName: "Main", value: "", comment: ""), isOn: $viewModel.halvesPreserveOtherAxisSize)
                 Toggle(NSLocalizedString("Show Extra shortcuts in menu", tableName: "Main", value: "", comment: ""), isOn: $viewModel.showAdditionalSizesInMenu)
+                if viewModel.showCombinedDisplayMode {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
+                        Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
 
             // MARK: - Todo Mode
@@ -211,15 +219,6 @@ struct BehaviorSettingsView: View {
                             Text("Hold any modifier key or use the window menu for default macOS behavior")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                        }
-                        
-                        if viewModel.showCombinedDisplayMode {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
-                                Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
                         }
                     }
                     .padding(.top, 4)
