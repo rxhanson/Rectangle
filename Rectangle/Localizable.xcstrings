@@ -13,6 +13,9 @@
     "%lld px" : {
 
     },
+    "About Todo Mode" : {
+
+    },
     "Animate footprint" : {
 
     },
@@ -23,6 +26,9 @@
 
     },
     "Blur footprint" : {
+
+    },
+    "Bring your chosen todo application frontmost" : {
 
     },
     "Check for updates automatically" : {
@@ -79,7 +85,16 @@
     "Import Config" : {
 
     },
+    "In the Rectangle menu, enable Todo Mode." : {
+
+    },
+    "In the Rectangle menu, select\n\"Use [Application] as Todo App\"" : {
+
+    },
     "Keep a chosen application visible on the right of your primary screen at all times" : {
+
+    },
+    "Keep a chosen application visible on the right side of your primary screen at all times" : {
 
     },
     "Launch on login" : {
@@ -221,6 +236,9 @@
 
     },
     "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
+
+    },
+    "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut." : {
 
     }
   },

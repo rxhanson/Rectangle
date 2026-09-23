@@ -34,6 +34,9 @@ struct BehaviorSettingsView: View {
     @State private var isStackedWindowsExpanded = false
     @State private var isSideSplitRatiosExpanded = false
     @State private var isStageManagerExpanded = false
+    
+    // Popover state
+    @State private var showTodoInfoPopover = false
 
     // Cached formatter to avoid expensive re-allocations during view body updates
     private static let percentFormatter: NumberFormatter = {
@@ -135,10 +138,13 @@ struct BehaviorSettingsView: View {
                     Toggle(isOn: $viewModel.todoEnabled) {
                         HStack(spacing: 4) {
                             Text("Show Todo Mode in menu")
-                            Button(action: viewModel.showTodoModeHelp) {
+                            Button(action: { showTodoInfoPopover.toggle() }) {
                                 Image(systemName: "info.circle")
                             }
                             .buttonStyle(.plain)
+                            .popover(isPresented: $showTodoInfoPopover, arrowEdge: .trailing) {
+                                TodoModeInfoView()
+                            }
                         }
                     }
                 }
@@ -359,5 +365,65 @@ struct BehaviorSettingsView: View {
         .animation(.easeInOut(duration: 0.2), value: isStackedWindowsExpanded)
         .animation(.easeInOut(duration: 0.2), value: isSideSplitRatiosExpanded)
         .animation(.easeInOut(duration: 0.2), value: isStageManagerExpanded)
+    }
+}
+
+// MARK: - Todo Mode Info Popover View
+struct TodoModeInfoView: View {
+    // Structural data wrapper to hold LocalizedStringKey
+    private struct Step: Identifiable {
+        let id: Int
+        let number: String
+        let text: LocalizedStringKey
+    }
+
+    private let steps: [Step] = [
+        Step(id: 1, number: "1.", text: "Bring your chosen todo application frontmost"),
+        Step(id: 2, number: "2.", text: "In the Rectangle menu, select\n\"Use [Application] as Todo App\""),
+        Step(id: 3, number: "3.", text: "In the Rectangle menu, enable Todo Mode.")
+    ]
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("About Todo Mode")
+                .font(.title2)
+                .bold()
+
+            Image(nsImage: NSImage(named: NSImage.applicationIconName) ?? NSImage())
+                .resizable()
+                .scaledToFit()
+                .frame(width: 56, height: 56)
+
+            Text("Keep a chosen application visible on the right side of your primary screen at all times")
+                .multilineTextAlignment(.center)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+
+            // MARK: - Formatted Steps
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(steps) { step in
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(step.number)
+                            .font(.body)
+                            .bold()
+                            .foregroundColor(.accentColor)
+
+                        Text(step.text)
+                            .font(.body)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+            .padding(12)
+            .background(Color(NSColor.controlBackgroundColor))
+            .cornerRadius(8)
+
+            Text("While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.leading)
+        }
+        .padding(20)
+        .frame(width: 330)
     }
 }
