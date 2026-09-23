@@ -62,6 +62,14 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
     }
 
+    @Published var experimentalAnimations: Bool {
+        didSet {
+            guard oldValue != experimentalAnimations else { return }
+            Defaults.experimentalWindowAnimations.enabled = experimentalAnimations
+            Notification.Name.windowAnimationPreferencesChanged.post()
+        }
+    }
+
     @Published var combinedDisplayMode: Bool {
         didSet {
             Defaults.combinedDisplayMode.enabled = combinedDisplayMode
@@ -162,6 +170,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
+        self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
 
@@ -204,6 +213,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
+        self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.todoEnabled = Defaults.todo.userEnabled
         self.todoSidebarWidth = Defaults.todoSidebarWidth.value
@@ -276,25 +286,6 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
         NSApp.activate(ignoringOtherApps: true)
         aboutTodoWindowController?.showWindow(nil)
-    }
-
-    func restoreDefaults() {
-        let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
-        let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
-        let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
-        let cancelText = NSLocalizedString("Cancel", tableName: "Main", value: "", comment: "")
-
-        let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
-        if response == .alertThirdButtonReturn { return }
-
-        let rectangleDefaults = (response == .alertFirstButtonReturn)
-        WindowAction.active.forEach { UserDefaults.standard.removeObject(forKey: $0.name) }
-        Defaults.alternateDefaultShortcuts.enabled = rectangleDefaults
-        Notification.Name.changeDefaults.post()
-
-        Defaults.portraitSnapAreas.typedValue = nil
-        Defaults.landscapeSnapAreas.typedValue = nil
-        Notification.Name.defaultSnapAreas.post()
     }
 
     func exportConfig() {

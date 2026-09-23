@@ -115,9 +115,10 @@ struct BehaviorSettingsView: View {
             
             // MARK: - Cursor & Display Rules
             Section {
+                Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
-                Toggle(NSLocalizedString("Half actions preserve the window's size on the other axis", tableName: "Main", value: "", comment: ""), isOn: $viewModel.halvesPreserveOtherAxisSize)
-                Toggle(NSLocalizedString("Show Extra shortcuts in menu", tableName: "Main", value: "", comment: ""), isOn: $viewModel.showAdditionalSizesInMenu)
+                Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
+                Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                 if viewModel.showCombinedDisplayMode {
                     VStack(alignment: .leading, spacing: 2) {
                         Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)

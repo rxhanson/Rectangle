@@ -59,20 +59,12 @@ final class SnapAreaViewModel: ObservableObject {
         }
     }
     
-    @Published var experimentalAnimations: Bool = false {
-        didSet {
-            guard oldValue != experimentalAnimations else { return }
-            Defaults.experimentalWindowAnimations.enabled = experimentalAnimations
-            Notification.Name.windowAnimationPreferencesChanged.post()
-        }
-    }
-    
     @Published var footprintBlur: Bool = false {
         didSet {
             Defaults.footprintBlur.enabled = footprintBlur
         }
     }
-    
+
     @Published var blurAppearance: BlurAppearance = .system {
         didSet {
             Defaults.blurAppearance.value = blurAppearance
@@ -102,7 +94,6 @@ final class SnapAreaViewModel: ObservableObject {
         hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         footprintBlur = Defaults.footprintBlur.enabled
-        experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
         blurAppearance = Defaults.blurAppearance.value
         missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
         isPortraitConnected = NSScreen.portraitDisplayConnected
@@ -168,11 +159,11 @@ struct SnapAreaSettingsView: View {
             }
 
             // Customization Options
-            Section {
+             Section {
                 Toggle("Provide haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
-                Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
+
 
                 if viewModel.footprintBlur {
                     Picker("Blur appearance", selection: $viewModel.blurAppearance) {
