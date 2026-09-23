@@ -1,3 +1,5 @@
+/// BehaviorSettingsViewModel.swift
+
 import SwiftUI
 import AppKit
 

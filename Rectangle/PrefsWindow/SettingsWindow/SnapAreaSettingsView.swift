@@ -1,4 +1,4 @@
-/// SnapAreaView.swift
+/// SnapAreaSettingsView.swift
 
 import SwiftUI
 import Combine

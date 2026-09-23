@@ -1,6 +1,7 @@
 /// SettingsWindowController.swift
 
 import AppKit
+import SwiftUI
 
 class SettingsWindowController: NSWindowController {
     
@@ -10,8 +11,11 @@ class SettingsWindowController: NSWindowController {
         
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         window.title = SettingsTabViewController.Tab.shortcuts.label
-        window.setContentSize(SettingsTabViewController.Tab.shortcuts.defaultSize)
-        window.minSize = NSSize(width: 420, height: 350)
+        
+        let initialTab = SettingsTabViewController.Tab.shortcuts
+        let initialSize = initialTab.defaultSize ?? initialTab.makeViewController().view.fittingSize
+        window.setContentSize(initialSize)
+        window.minSize = NSSize(width: 500, height: 350)
         window.center()
         
         self.init(window: window)
@@ -44,14 +48,10 @@ class SettingsTabViewController: NSTabViewController {
             }
         }
         
-        var defaultSize: NSSize {
+        var defaultSize: NSSize? {
             switch self {
             case .shortcuts:   return NSSize(width: 500, height: 540)
-            case .snapAreas:   return NSScreen.portraitDisplayConnected
-                ? NSSize(width: 500, height: 860)
-                : NSSize(width: 500, height: 616)
-            case .behavior:    return NSSize(width: 500, height: 550)
-            case .appSettings: return NSSize(width: 500, height: 442)
+            default: return nil
             }
         }
         
@@ -97,24 +97,55 @@ class SettingsTabViewController: NSTabViewController {
         }
     }
     
-    private func resizeWindow(to newSize: NSSize, animated: Bool) {
+    private func tabDidSwitch(to item: NSTabViewItem, at index: Int) {
+        guard let window = view.window, let viewController = item.viewController else { return }
+        
+        window.title = item.label
+        
+        if let savedSize = savedTabSizes[index] {
+            resizeWindow(toFrameSize: savedSize, animated: true)
+        } else if Tab.allCases.indices.contains(index) {
+            let tab = Tab.allCases[index]
+            
+            if let explicitSize = tab.defaultSize {
+                resizeWindow(toContentSize: explicitSize, animated: true)
+            } else {
+                let dynamicSize = calculateContentSize(for: viewController)
+                resizeWindow(toContentSize: dynamicSize, animated: true)
+            }
+        }
+    }
+    
+    private func calculateContentSize(for vc: NSViewController) -> NSSize {
+        _ = vc.view // Ensure the view hierarchy is loaded
+        
+        if vc.preferredContentSize != .zero {
+            return vc.preferredContentSize
+        }
+        
+        let fitting = vc.view.fittingSize
+        if fitting != .zero {
+            return fitting
+        }
+        
+        return vc.view.bounds.size
+    }
+    
+    private func resizeWindow(toFrameSize targetFrameSize: NSSize, animated: Bool) {
         guard let window = view.window else { return }
         
         var frame = window.frame
-        frame.origin.y -= (newSize.height - frame.size.height)
-        frame.size = newSize
+        frame.origin.y -= (targetFrameSize.height - frame.size.height)
+        frame.size = targetFrameSize
         
         window.setFrame(frame, display: true, animate: animated)
     }
     
-    private func tabDidSwitch(to item: NSTabViewItem, at index: Int) {
-        view.window?.title = item.label
+    private func resizeWindow(toContentSize contentSize: NSSize, animated: Bool) {
+        guard let window = view.window else { return }
         
-        if let savedSize = savedTabSizes[index] {
-            resizeWindow(to: savedSize, animated: true)
-        } else if Tab.allCases.indices.contains(index) {
-            let initialSize = Tab.allCases[index].defaultSize
-            resizeWindow(to: initialSize, animated: true)
-        }
+        // Convert inner content size to total window frame rect (accounting for title bar and toolbar)
+        let targetFrameRect = window.frameRect(forContentRect: NSRect(origin: .zero, size: contentSize))
+        resizeWindow(toFrameSize: targetFrameRect.size, animated: animated)
     }
 }
