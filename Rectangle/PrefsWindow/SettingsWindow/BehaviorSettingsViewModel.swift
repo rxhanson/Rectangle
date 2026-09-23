@@ -182,9 +182,8 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.verticalSplitRatio = vRatio
         self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
 
-        // Match existing ratios to presets or set as custom ("Other")
-        self.selectedHSplitPreset = CycleSize(rawValue: Int(hRatio))
-        self.selectedVSplitPreset = CycleSize(rawValue: Int(vRatio))
+        self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
+        self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
 
         setupObservers()
     }

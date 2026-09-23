@@ -73,7 +73,7 @@ final class TileSettingsView: NSView, NSTextFieldDelegate {
         rowsRow.spacing = 8
 
         // --- Main Vertical Stack Layout ---
-        let mainStack = NSStackView(views: [titleLabel, columnsRow, rowsRow])
+        let mainStack = NSStackView(views: [titleLabel, rowsRow, columnsRow])
         mainStack.orientation = .vertical
         mainStack.alignment = .leading
         mainStack.spacing = 12
