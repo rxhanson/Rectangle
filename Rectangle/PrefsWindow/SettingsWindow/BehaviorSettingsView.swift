@@ -254,7 +254,7 @@ struct BehaviorSettingsView: View {
                             Text(NSLocalizedString("Toggle window list", tableName: "Main", value: "", comment: ""))
                             Spacer()
                             MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
-                                .frame(width: 160, height: 19)
+                                .frame(width: 160, height: 24)
                         }
                     }
                     .padding(.top, 4)
