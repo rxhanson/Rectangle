@@ -108,7 +108,10 @@ final class BehaviorSettingsViewModel: ObservableObject {
     }
 
     @Published var showAdditionalSizesInMenu: Bool {
-        didSet { Defaults.showAdditionalSizesInMenu.enabled = showAdditionalSizesInMenu }
+        didSet {
+            Defaults.showAdditionalSizesInMenu.enabled = showAdditionalSizesInMenu
+            Notification.Name.showAdditionalSizesInMenuChanged.post()
+        }
     }
     @Published var cyclingOverlapOffset: Bool {
         didSet { Defaults.cyclingOverlapOffset.enabled = cyclingOverlapOffset }
