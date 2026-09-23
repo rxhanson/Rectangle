@@ -106,7 +106,8 @@ struct BehaviorSettingsView: View {
             // MARK: - Maximize (Disclosure Section)
             Section {
                 DisclosureGroup("Maximize Settings", isExpanded: $isMaximizeExpanded) {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Divider()
                         if viewModel.showCursorScreenDetection {
                             Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
                         }
@@ -114,6 +115,8 @@ struct BehaviorSettingsView: View {
                         Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
                         Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
                         
+                        Toggle(NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), isOn: $viewModel.repeatedMaximizeRestoresPrevious)
+
                         VStack(alignment: .leading, spacing: 2) {
                             Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
                             Text("Hold any modifier key or use the window menu for default macOS behavior")
@@ -129,8 +132,6 @@ struct BehaviorSettingsView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
-
-                        Toggle(NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), isOn: $viewModel.repeatedMaximizeRestoresPrevious)
                     }
                     .padding(.top, 4)
                 }
