@@ -246,7 +246,7 @@ struct BehaviorSettingsView: View {
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
                             Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
-                            Text("Hover cursor near the top left corner to show the list")
+                            Text("Hover cursor near the top left corner of a window to show the list")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
