@@ -432,23 +432,20 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
     }
 
     func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
-        if let group = item as? CategoryGroup {
-            guard group.isCollapsible else { return false }
-
-            let now = ProcessInfo.processInfo.systemUptime
+        guard let group = item as? CategoryGroup else { return true }
+        guard group.isCollapsible else { return false }
+        
+        let now = ProcessInfo.processInfo.systemUptime
+        
+        if now - lastGroupToggleTime > 0.10 {
+            lastGroupToggleTime = now
             
-            // Ignore calls occurring within 100 ms of the last toggle
-            if now - lastGroupToggleTime > 0.10 {
-                lastGroupToggleTime = now
-                
-                if outlineView.isItemExpanded(item) {
-                    outlineView.animator().collapseItem(item)
-                } else {
-                    outlineView.animator().expandItem(item)
-                }
+            if outlineView.isItemExpanded(item) {
+                outlineView.animator().collapseItem(item)
+            } else {
+                outlineView.animator().expandItem(item)
             }
-            return false
         }
-        return true
+        return false
     }
 }
