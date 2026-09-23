@@ -30,7 +30,12 @@ final class BehaviorSettingsViewController: NSViewController {
 // MARK: - SwiftUI Settings View
 struct BehaviorSettingsView: View {
     @StateObject private var viewModel = BehaviorSettingsViewModel()
-    @State private var isMaximizeExpanded = false // Controls disclosure state
+    
+    // Disclosure states
+    @State private var isMaximizeExpanded = false
+    @State private var isStackedWindowsExpanded = false
+    @State private var isSideSplitRatiosExpanded = false
+    @State private var isStageManagerExpanded = false
 
     // Cached formatter to avoid expensive re-allocations during view body updates
     private static let percentFormatter: NumberFormatter = {
@@ -227,92 +232,98 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Stacked Windows
             Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
-                    Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
+                DisclosureGroup(NSLocalizedString("Stacked Windows", tableName: "Main", value: "", comment: ""), isExpanded: $isStackedWindowsExpanded) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Divider()
+                        Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
+                        Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
 
-                    HStack {
-                        Text(NSLocalizedString("Toggle window list", tableName: "Main", value: "", comment: ""))
-                        Spacer()
-                        MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
-                            .frame(width: 160, height: 19)
+                        HStack {
+                            Text(NSLocalizedString("Toggle window list", tableName: "Main", value: "", comment: ""))
+                            Spacer()
+                            MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
+                                .frame(width: 160, height: 19)
+                        }
                     }
+                    .padding(.top, 4)
                 }
-            } header: {
-                Text(NSLocalizedString("Stacked Windows", tableName: "Main", value: "", comment: ""))
             }
 
             // MARK: - Side Split Ratios
             Section {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Text(NSLocalizedString("Horizontal (L/R, %)", tableName: "Main", value: "", comment: ""))
-                        Spacer()
+                DisclosureGroup(NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""), isExpanded: $isSideSplitRatiosExpanded) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Divider()
+                        HStack {
+                            Text(NSLocalizedString("Horizontal (L/R, %)", tableName: "Main", value: "", comment: ""))
+                            Spacer()
 
-                        if viewModel.selectedHSplitPreset == nil {
-                            TextField("", value: $viewModel.horizontalSplitRatio, formatter: Self.percentFormatter)
-                                .multilineTextAlignment(.trailing)
-                        }
-
-                        Picker("", selection: Binding(
-                            get: { viewModel.selectedHSplitPreset },
-                            set: { viewModel.selectHSplitPreset($0) }
-                        )) {
-                            ForEach(CycleSize.sortedSizes, id: \.self) { size in
-                                Text(size.title).tag(Optional(size))
+                            if viewModel.selectedHSplitPreset == nil {
+                                TextField("", value: $viewModel.horizontalSplitRatio, formatter: Self.percentFormatter)
+                                    .multilineTextAlignment(.trailing)
                             }
-                            Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
-                        }
-                        .labelsHidden()
-                    }
 
-                    HStack {
-                        Text(NSLocalizedString("Vertical (T/B, %)", tableName: "Main", value: "", comment: ""))
-                        Spacer()
-
-                        if viewModel.selectedVSplitPreset == nil {
-                            TextField("", value: $viewModel.verticalSplitRatio, formatter: Self.percentFormatter)
-                                .multilineTextAlignment(.trailing)
-                        }
-
-                        Picker("", selection: Binding(
-                            get: { viewModel.selectedVSplitPreset },
-                            set: { viewModel.selectVSplitPreset($0) }
-                        )) {
-                            ForEach(CycleSize.sortedSizes, id: \.self) { size in
-                                Text(size.title).tag(Optional(size))
+                            Picker("", selection: Binding(
+                                get: { viewModel.selectedHSplitPreset },
+                                set: { viewModel.selectHSplitPreset($0) }
+                            )) {
+                                ForEach(CycleSize.sortedSizes, id: \.self) { size in
+                                    Text(size.title).tag(Optional(size))
+                                }
+                                Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
                             }
-                            Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
+                            .labelsHidden()
                         }
-                        .labelsHidden()
+
+                        HStack {
+                            Text(NSLocalizedString("Vertical (T/B, %)", tableName: "Main", value: "", comment: ""))
+                            Spacer()
+
+                            if viewModel.selectedVSplitPreset == nil {
+                                TextField("", value: $viewModel.verticalSplitRatio, formatter: Self.percentFormatter)
+                                    .multilineTextAlignment(.trailing)
+                            }
+
+                            Picker("", selection: Binding(
+                                get: { viewModel.selectedVSplitPreset },
+                                set: { viewModel.selectVSplitPreset($0) }
+                            )) {
+                                ForEach(CycleSize.sortedSizes, id: \.self) { size in
+                                    Text(size.title).tag(Optional(size))
+                                }
+                                Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
+                            }
+                            .labelsHidden()
+                        }
                     }
+                    .padding(.top, 4)
                 }
-            } header: {
-                Text(NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""))
             }
             
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text("Recent apps area")
-                            Slider(
-                                value: $viewModel.stageSize,
-                                in: 0...400,
-                                onEditingChanged: { editing in
-                                    if !editing { viewModel.commitStageSize() }
-                                }
-                            )
-                            Text("\(Int(viewModel.stageSize)) px")
-                                .frame(width: 45, alignment: .trailing)
+                    DisclosureGroup("Stage Manager", isExpanded: $isStageManagerExpanded) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Divider()
+                            HStack {
+                                Text("Recent apps area")
+                                Slider(
+                                    value: $viewModel.stageSize,
+                                    in: 0...400,
+                                    onEditingChanged: { editing in
+                                        if !editing { viewModel.commitStageSize() }
+                                    }
+                                )
+                                Text("\(Int(viewModel.stageSize)) px")
+                                    .frame(width: 45, alignment: .trailing)
+                            }
+                            Text("If the area is too small, recent apps will be hidden")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
-                        Text("If the area is too small, recent apps will be hidden")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        .padding(.top, 4)
                     }
-                } header: {
-                    Text("Stage Manager")
                 }
             }
         }
@@ -321,5 +332,8 @@ struct BehaviorSettingsView: View {
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
         .animation(.easeInOut(duration: 0.2), value: isMaximizeExpanded)
+        .animation(.easeInOut(duration: 0.2), value: isStackedWindowsExpanded)
+        .animation(.easeInOut(duration: 0.2), value: isSideSplitRatiosExpanded)
+        .animation(.easeInOut(duration: 0.2), value: isStageManagerExpanded)
     }
 }
