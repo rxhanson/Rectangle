@@ -135,6 +135,7 @@ class FootprintWindow: NSWindow {
     private var geometryGeneration = UUID()
     private var moving = false
     private let capturePauseID = UUID()
+    private var foregroundWindowID: CGWindowID?
 
     var presentation: FootprintPresentation {
         FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
@@ -288,7 +289,9 @@ class FootprintWindow: NSWindow {
         setGeometry(current, duration: 0)
     }
 
-    func showPreview(in rect: CGRect, from origin: CGPoint?, duration: TimeInterval) {
+    func showPreview(in rect: CGRect, from origin: CGPoint?, duration: TimeInterval,
+                     below windowID: CGWindowID? = nil) {
+        foregroundWindowID = windowID
         tracePresentation("target", target: rect)
         let fresh = !super.isVisible || (contentView?.layer?.presentation()?.opacity ?? contentView?.layer?.opacity ?? 0) == 0
         stopGeometry()
@@ -315,7 +318,16 @@ class FootprintWindow: NSWindow {
     override func orderFront(_ sender: Any?) {
         updateAppearance()
         showing = true
-        super.orderFront(sender)
+        if let foregroundWindowID,
+           let window = (CGWindowListCopyWindowInfo(.optionIncludingWindow, foregroundWindowID) as? [[String: Any]])?.first,
+           let windowLevel = window[kCGWindowLayer as String] as? Int {
+            // Relative ordering only applies within the same window level.
+            level = NSWindow.Level(rawValue: windowLevel)
+            super.order(.below, relativeTo: Int(foregroundWindowID))
+        } else {
+            level = FootprintStyle.previewLevel
+            super.orderFront(sender)
+        }
         startFade(to: presentation.alpha, duration: presentation.fades ? 0.12 : 0)
         tracePresentation("ordered")
     }

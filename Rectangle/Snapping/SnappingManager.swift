@@ -659,7 +659,8 @@ class SnappingManager {
         }
         if let windowElement { WindowAnimator.shared.prepare(windowElement) }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
-                         duration: getFootprintAnimationDuration())
+                         duration: getFootprintAnimationDuration(),
+                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {
