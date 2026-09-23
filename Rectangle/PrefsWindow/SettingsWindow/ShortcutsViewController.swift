@@ -2,6 +2,7 @@
 
 import Cocoa
 import MASShortcut
+import SwiftUI
 
 final class ShortcutItem: NSObject {
     let action: WindowAction
@@ -85,49 +86,25 @@ final class ShortcutSectionCellView: NSTableCellView {
 
 struct ActionButtonConfig {
     let iconName: String
-    let popoverMessage: String
-
-    init(iconName: String = "info.circle", popoverMessage: String) {
-        self.iconName = iconName
-        self.popoverMessage = popoverMessage
-    }
+    let view: NSView
 }
-
-import Cocoa
-import MASShortcut
-import SwiftUI
-
-// MARK: - Action Button Registry
-
-enum ActionButtonRegistry {
-    /// Maps WindowAction to a factory closure that returns a configured NSButton/PopoverButton
-    static let buttons: [WindowAction: () -> NSButton] = [
-        .tileRows: {
-            let button = PopoverButton(
-                image: NSImage(systemSymbolName: "gear", accessibilityDescription: "Information"),
-                rootView: TileSettingsView()
-            )
-            button.bezelStyle = .inline
-            button.isBordered = false
-            button.contentTintColor = .secondaryLabelColor
-            return button
-        }
-    ]
-}
-
-// MARK: - ShortcutActionCellView Update
 
 final class ShortcutActionCellView: NSTableCellView {
     static let identifier = NSUserInterfaceItemIdentifier("ShortcutActionCell")
 
+    static var actionButtonConfigs: [WindowAction: ActionButtonConfig] = [
+        .largerWidth: ActionButtonConfig(iconName: "gear", view: WidthSettingsView()),
+        .tileRows: ActionButtonConfig(iconName: "gear", view: TileSettingsView())
+    ]
+
     let iconImageView = NSImageView()
     let titleLabel = NSTextField(labelWithString: "")
     let shortcutView = MASShortcutView()
-    
-    private let buttonContainerView = NSView()
-    private var currentActionButton: NSButton?
+    let popoverButton = PopoverButton()
 
     private var shortcutTrailingConstraint: NSLayoutConstraint?
+    private var activePopover: NSPopover?
+    private var currentConfig: ActionButtonConfig?
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -154,12 +131,16 @@ final class ShortcutActionCellView: NSTableCellView {
         iconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         shortcutView.translatesAutoresizingMaskIntoConstraints = false
-        buttonContainerView.translatesAutoresizingMaskIntoConstraints = false
+
+        popoverButton.translatesAutoresizingMaskIntoConstraints = false
+        popoverButton.bezelStyle = .inline
+        popoverButton.isBordered = false
+        popoverButton.contentTintColor = .secondaryLabelColor
 
         addSubview(titleLabel)
         addSubview(iconImageView)
         addSubview(shortcutView)
-        addSubview(buttonContainerView)
+        addSubview(popoverButton)
 
         let trailingConstraint = shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -66)
         self.shortcutTrailingConstraint = trailingConstraint
@@ -170,10 +151,10 @@ final class ShortcutActionCellView: NSTableCellView {
             shortcutView.widthAnchor.constraint(equalToConstant: 160),
             shortcutView.heightAnchor.constraint(equalToConstant: 19),
 
-            buttonContainerView.leadingAnchor.constraint(equalTo: shortcutView.trailingAnchor, constant: 8),
-            buttonContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            buttonContainerView.widthAnchor.constraint(equalToConstant: 20),
-            buttonContainerView.heightAnchor.constraint(equalToConstant: 20),
+            popoverButton.leadingAnchor.constraint(equalTo: shortcutView.trailingAnchor, constant: 8),
+            popoverButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            popoverButton.widthAnchor.constraint(equalToConstant: 20),
+            popoverButton.heightAnchor.constraint(equalToConstant: 20),
 
             iconImageView.trailingAnchor.constraint(equalTo: shortcutView.leadingAnchor, constant: -16),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -189,10 +170,9 @@ final class ShortcutActionCellView: NSTableCellView {
     override func prepareForReuse() {
         super.prepareForReuse()
         shortcutView.associatedUserDefaultsKey = nil
-        
-        // Clear subviews in container to prevent reuse leaks
-        currentActionButton?.removeFromSuperview()
-        currentActionButton = nil
+        activePopover?.close()
+        activePopover = nil
+        currentConfig = nil
     }
 
     func configure(with action: WindowAction, recordingObserver: ShortcutRecordingObserver) {
@@ -209,26 +189,14 @@ final class ShortcutActionCellView: NSTableCellView {
         shortcutView.setAssociatedUserDefaultsKey(action.name, withTransformerName: MASDictionaryTransformerName)
         recordingObserver.observe([shortcutView])
 
-        // Remove old button if existing
-        currentActionButton?.removeFromSuperview()
-
-        // Construct dynamic button if registered for this action
-        if let buttonFactory = ActionButtonRegistry.buttons[action] {
-            let button = buttonFactory()
-            button.translatesAutoresizingMaskIntoConstraints = false
-            buttonContainerView.addSubview(button)
-
-            NSLayoutConstraint.activate([
-                button.topAnchor.constraint(equalTo: buttonContainerView.topAnchor),
-                button.bottomAnchor.constraint(equalTo: buttonContainerView.bottomAnchor),
-                button.leadingAnchor.constraint(equalTo: buttonContainerView.leadingAnchor),
-                button.trailingAnchor.constraint(equalTo: buttonContainerView.trailingAnchor)
-            ])
-
-            self.currentActionButton = button
-            buttonContainerView.isHidden = false
+        if let config = Self.actionButtonConfigs[action] {
+            self.currentConfig = config
+            popoverButton.image = NSImage(systemSymbolName: config.iconName, accessibilityDescription: "Information")
+            popoverButton.contentView = config.view
+            popoverButton.isHidden = false
         } else {
-            buttonContainerView.isHidden = true
+            self.currentConfig = nil
+            popoverButton.isHidden = true
         }
     }
 }

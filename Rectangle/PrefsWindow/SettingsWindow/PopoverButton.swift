@@ -1,31 +1,16 @@
-import AppKit
-import SwiftUI
+/// PopoverButton.swift
 
-/// An NSButton subclass that manages displaying a SwiftUI view inside an NSPopover when clicked.
-final class PopoverButton<Content: View>: NSButton, NSPopoverDelegate {
+import AppKit
+
+final class PopoverButton: NSButton, NSPopoverDelegate {
 
     private var popover: NSPopover?
-    private let rootView: Content
 
-    // MARK: - Initializer
-
-    init(title: String = "", image: NSImage? = nil, rootView: Content) {
-        self.rootView = rootView
-        super.init(frame: .zero)
-
-        self.title = title
-        if let image = image {
-            self.image = image
+    var contentView: NSView? {
+        didSet {
+            setupButton()
         }
-        
-        setupButton()
     }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    // MARK: - Setup
 
     private func setupButton() {
         target = self
@@ -43,13 +28,19 @@ final class PopoverButton<Content: View>: NSButton, NSPopoverDelegate {
     }
 
     private func showPopover() {
+        guard let contentView = contentView else { return }
+
+        let controller = NSViewController()
+        controller.view = contentView
+
         let popover = NSPopover()
         popover.behavior = .transient
         popover.animates = true
-        popover.contentViewController = NSHostingController(rootView: rootView)
+        popover.contentViewController = controller
         popover.delegate = self
-        
-        popover.show(relativeTo: bounds, of: self, preferredEdge: .minY)
+
+        popover.show(relativeTo: bounds, of: self, preferredEdge: .maxX)
+        popover.animates = false
         self.popover = popover
     }
 

@@ -47004,9 +47004,6 @@
         }
       }
     },
-    "Window Sizing" : {
-
-    },
     "windowSizeWarningMessage" : {
       "comment" : "Explains that an app can prevent a window from shrinking to the requested layout",
       "extractionState" : "manual",

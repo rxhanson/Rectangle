@@ -1,89 +1,177 @@
 /// ExtraSettings.swift
 
-import SwiftUI
+import AppKit
 
-final class TileSettingsViewModel: ObservableObject {
-    @Published var tileColumnsMaxWindows: Int {
-        didSet { Defaults.tileColumnsMaxWindows.value = tileColumnsMaxWindows }
-    }
-    @Published var tileRowsMaxWindows: Int {
-        didSet { Defaults.tileRowsMaxWindows.value = tileRowsMaxWindows }
-    }
-
-    init() {
-        self.tileColumnsMaxWindows = Defaults.tileColumnsMaxWindows.value
-        self.tileRowsMaxWindows = Defaults.tileRowsMaxWindows.value
-    }
-}
-
-final class WindowSizingSettingsViewModel: ObservableObject {
-    @Published var widthStepSize: Int {
-        didSet { Defaults.widthStepSize.value = Float(widthStepSize) }
-    }
-
-    init() {
-        self.widthStepSize = Int(Defaults.widthStepSize.value)
-    }
-}
-
-// MARK: - Shared Helpers
-
-private var integerFormatter: NumberFormatter {
+private var integerFormatter: NumberFormatter = {
     let formatter = NumberFormatter()
     formatter.allowsFloats = false
     formatter.minimum = 1
     return formatter
-}
+}()
 
-// MARK: - Standalone Popover Views
+// MARK: - TileSettingsView
 
-struct TileSettingsView: View {
-    @StateObject private var viewModel = TileSettingsViewModel()
+final class TileSettingsView: NSView, NSTextFieldDelegate {
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(NSLocalizedString("Tile Windows in Rows/Columns", tableName: "Main", value: "", comment: ""))
-                .font(.headline)
+    private let titleLabel: NSTextField = {
+        let label = NSTextField(labelWithString: NSLocalizedString("Tile Windows in Rows/Columns", tableName: "Main", value: "", comment: ""))
+        label.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+        return label
+    }()
 
-            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
-                GridRow {
-                    Text(NSLocalizedString("Maximum windows per column", tableName: "Main", value: "", comment: ""))
-                    Stepper(value: $viewModel.tileColumnsMaxWindows, in: 1...Int.max) {
-                        TextField("", value: $viewModel.tileColumnsMaxWindows, formatter: integerFormatter)
-                            .frame(width: 50)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
-                GridRow {
-                    Text(NSLocalizedString("Maximum windows per row", tableName: "Main", value: "", comment: ""))
-                    Stepper(value: $viewModel.tileRowsMaxWindows, in: 1...Int.max) {
-                        TextField("", value: $viewModel.tileRowsMaxWindows, formatter: integerFormatter)
-                            .frame(width: 50)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
-            }
+    private let columnsLabel = NSTextField(labelWithString: NSLocalizedString("Maximum windows per column", tableName: "Main", value: "", comment: ""))
+    private let columnsTextField = NSTextField()
+    private let columnsStepper = NSStepper()
+
+    private let rowsLabel = NSTextField(labelWithString: NSLocalizedString("Maximum windows per row", tableName: "Main", value: "", comment: ""))
+    private let rowsTextField = NSTextField()
+    private let rowsStepper = NSStepper()
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        setupViews()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupViews()
+    }
+
+    private func setupViews() {
+        // --- Setup Column Controls ---
+        columnsTextField.formatter = integerFormatter
+        columnsTextField.alignment = .right
+        columnsTextField.delegate = self
+        columnsTextField.integerValue = Defaults.tileColumnsMaxWindows.value
+        columnsTextField.translatesAutoresizingMaskIntoConstraints = false
+        columnsTextField.widthAnchor.constraint(equalToConstant: 50).isActive = true
+
+        configureStepper(columnsStepper, value: Defaults.tileColumnsMaxWindows.value)
+        columnsStepper.target = self
+        columnsStepper.action = #selector(columnsStepperChanged(_:))
+
+        let columnsRow = NSStackView(views: [columnsLabel, NSView(), columnsTextField, columnsStepper])
+        columnsRow.orientation = .horizontal
+        columnsRow.alignment = .centerY
+        columnsRow.spacing = 8
+
+        // --- Setup Row Controls ---
+        rowsTextField.formatter = integerFormatter
+        rowsTextField.alignment = .right
+        rowsTextField.delegate = self
+        rowsTextField.integerValue = Defaults.tileRowsMaxWindows.value
+        rowsTextField.translatesAutoresizingMaskIntoConstraints = false
+        rowsTextField.widthAnchor.constraint(equalToConstant: 50).isActive = true
+
+        configureStepper(rowsStepper, value: Defaults.tileRowsMaxWindows.value)
+        rowsStepper.target = self
+        rowsStepper.action = #selector(rowsStepperChanged(_:))
+
+        let rowsRow = NSStackView(views: [rowsLabel, NSView(), rowsTextField, rowsStepper])
+        rowsRow.orientation = .horizontal
+        rowsRow.alignment = .centerY
+        rowsRow.spacing = 8
+
+        // --- Main Vertical Stack Layout ---
+        let mainStack = NSStackView(views: [titleLabel, columnsRow, rowsRow])
+        mainStack.orientation = .vertical
+        mainStack.alignment = .leading
+        mainStack.spacing = 12
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(mainStack)
+
+        NSLayoutConstraint.activate([
+            mainStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            mainStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            mainStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            mainStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            columnsRow.widthAnchor.constraint(equalTo: mainStack.widthAnchor),
+            rowsRow.widthAnchor.constraint(equalTo: mainStack.widthAnchor)
+        ])
+    }
+
+    private func configureStepper(_ stepper: NSStepper, value: Int) {
+        stepper.minValue = 1
+        stepper.maxValue = Double(Int.max)
+        stepper.increment = 1
+        stepper.valueWraps = false
+        stepper.integerValue = value
+    }
+
+    // MARK: - Actions
+
+    @objc private func columnsStepperChanged(_ sender: NSStepper) {
+        let newValue = sender.integerValue
+        columnsTextField.integerValue = newValue
+        Defaults.tileColumnsMaxWindows.value = newValue
+    }
+
+    @objc private func rowsStepperChanged(_ sender: NSStepper) {
+        let newValue = sender.integerValue
+        rowsTextField.integerValue = newValue
+        Defaults.tileRowsMaxWindows.value = newValue
+    }
+
+    // MARK: - NSTextFieldDelegate
+
+    func controlTextDidChange(_ obj: Notification) {
+        guard let textField = obj.object as? NSTextField else { return }
+        let val = max(1, textField.integerValue)
+
+        if textField === columnsTextField {
+            columnsStepper.integerValue = val
+            Defaults.tileColumnsMaxWindows.value = val
+        } else if textField === rowsTextField {
+            rowsStepper.integerValue = val
+            Defaults.tileRowsMaxWindows.value = val
         }
-        .padding()
     }
 }
 
-struct WindowSizingSettingsView: View {
-    @StateObject private var viewModel = WindowSizingSettingsViewModel()
+// MARK: - WidthSettingsView
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(NSLocalizedString("Window Sizing", tableName: "Main", value: "", comment: ""))
-                .font(.headline)
+final class WidthSettingsView: NSView, NSTextFieldDelegate {
 
-            HStack {
-                Text(NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
-                Spacer()
-                TextField("", value: $viewModel.widthStepSize, formatter: integerFormatter)
-                    .frame(width: 60)
-                    .multilineTextAlignment(.trailing)
-            }
-        }
-        .padding()
+    private let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
+    private let widthStepTextField = NSTextField()
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        setupViews()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupViews()
+    }
+
+    private func setupViews() {
+        widthStepTextField.formatter = integerFormatter
+        widthStepTextField.alignment = .right
+        widthStepTextField.delegate = self
+        widthStepTextField.integerValue = Int(Defaults.widthStepSize.value)
+        widthStepTextField.translatesAutoresizingMaskIntoConstraints = false
+        widthStepTextField.widthAnchor.constraint(equalToConstant: 60).isActive = true
+
+        let rowStack = NSStackView(views: [widthStepLabel, NSView(), widthStepTextField])
+        rowStack.orientation = .horizontal
+        rowStack.alignment = .centerY
+
+        addSubview(rowStack)
+
+        NSLayoutConstraint.activate([
+            rowStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            rowStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            rowStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            rowStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+        ])
+    }
+
+    // MARK: - NSTextFieldDelegate
+
+    func controlTextDidChange(_ obj: Notification) {
+        let val = max(1, widthStepTextField.integerValue)
+        Defaults.widthStepSize.value = Float(val)
     }
 }
