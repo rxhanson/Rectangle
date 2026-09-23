@@ -28,6 +28,7 @@ final class LayoutHelperManager {
     private var screen: NSScreen?
     private var retained: [AccessibilityElement: CGRect] = [:]
     private var retainedLaunches: [CGWindowID: TimeInterval] = [:]
+    private var existingNeighbor: (window: WindowInfo, launch: TimeInterval)?
     private var candidates: [CGWindowID: LayoutHelperWindowSnapshot] = [:]
     private var completedCells: Set<Int> = []
     private var currentCell: Int?
@@ -129,6 +130,7 @@ final class LayoutHelperManager {
         selecting = false
         statusMessage = nil
         retained.removeAll(); retainedLaunches.removeAll(); candidates.removeAll()
+        existingNeighbor = nil
         completedCells.removeAll()
         return token
     }
@@ -173,6 +175,13 @@ final class LayoutHelperManager {
             guard Self.enabled else { self.cancel(); return }
             guard let id = result.windowId, let actual = WindowUtil.getWindowFrame(id: id),
                   LayoutHelperLayout.matches(actual, frame) else { self.cancel(); return }
+            self.existingNeighbor = self.occupiedFrontWindow(in: plan, excluding: id, on: result.calcResult.screen)
+            let occupied = self.existingNeighbor.map { plan.occupiedCells(by: $0.window.frame) } ?? []
+            guard !plan.remaining(excluding: occupied).isEmpty else {
+                WindowAnimationDiagnostics.event("helper-already-filled")
+                self.cancel()
+                return
+            }
             self.keyboardTriggered = result.source == .keyboardShortcut
             self.layout = plan
             self.screen = result.calcResult.screen
@@ -218,9 +227,33 @@ final class LayoutHelperManager {
         return catalog.windows(on: screen)
     }
 
+    private func occupiedFrontWindow(in plan: LayoutHelperLayout, excluding anchorID: CGWindowID,
+                                     on screen: NSScreen) -> (window: WindowInfo, launch: TimeInterval)? {
+        let detection = ScreenDetection()
+        let windows = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
+        guard let window = windows.first(where: {
+            guard $0.id != anchorID, $0.pid != getpid(), $0.level == 0, $0.isOnScreen, $0.alpha > 0,
+                  WindowAnimationGeometry.valid($0.frame),
+                  detection.screenContaining($0.frame, screens: NSScreen.screens) == screen,
+                  let app = NSRunningApplication(processIdentifier: $0.pid) else { return false }
+            return !app.isHidden && !app.isTerminated && app.activationPolicy == .regular
+        }) else { return nil }
+        // Only the immediately preceding window expresses the visible layout;
+        // never search behind a nonmatching window for an older snapped one.
+        let occupied = plan.occupiedCells(by: window.frame)
+        guard !occupied.isEmpty, !occupied.contains(plan.anchorIndex),
+              let launch = WindowProcessIdentity.launchTime(for: window.pid) else { return nil }
+        return (window, launch)
+    }
+
     private func retainedIsValid() -> Bool {
-        let ids = retained.keys.compactMap(\.windowId)
+        let ids = retained.keys.compactMap(\.windowId) + (existingNeighbor.map { [$0.window.id] } ?? [])
         let live = WindowUtil.getWindowList(ids: ids, forceRefresh: true)
+        if let neighbor = existingNeighbor {
+            guard WindowProcessIdentity.launchTime(for: neighbor.window.pid) == neighbor.launch,
+                  let info = live.first(where: { $0.id == neighbor.window.id && $0.pid == neighbor.window.pid }),
+                  info.isOnScreen, LayoutHelperLayout.matches(info.frame, neighbor.window.frame) else { return false }
+        }
         return retained.allSatisfy { window, frame in
             guard let id = window.windowId, let pid = window.pid,
                   let launch = retainedLaunches[id], WindowProcessIdentity.launchTime(for: pid) == launch,
@@ -239,11 +272,12 @@ final class LayoutHelperManager {
         for frame in retained.values {
             occupied.formUnion(layout.occupiedCells(by: frame))
         }
+        if let neighbor = existingNeighbor { occupied.formUnion(layout.occupiedCells(by: neighbor.window.frame)) }
         guard let next = layout.remaining(excluding: occupied).first else {
             cancel()
             return
         }
-        let occupiedIDs = Set(retained.keys.compactMap(\.windowId))
+        let occupiedIDs = Set(retained.keys.compactMap(\.windowId) + (existingNeighbor.map { [$0.window.id] } ?? []))
         candidates = Dictionary(uniqueKeysWithValues: windows.filter { !occupiedIDs.contains($0.id) }.map { ($0.id, $0) })
         guard !candidates.isEmpty else {
             if !catalog.isRefreshing { cancel() }
