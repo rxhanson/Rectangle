@@ -251,7 +251,6 @@ struct BehaviorSettingsView: View {
 
                         if viewModel.selectedHSplitPreset == nil {
                             TextField("", value: $viewModel.horizontalSplitRatio, formatter: Self.percentFormatter)
-                                .frame(width: 45)
                                 .multilineTextAlignment(.trailing)
                         }
 
@@ -265,7 +264,6 @@ struct BehaviorSettingsView: View {
                             Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
                         }
                         .labelsHidden()
-                        .frame(width: 110)
                     }
 
                     HStack {
@@ -274,7 +272,6 @@ struct BehaviorSettingsView: View {
 
                         if viewModel.selectedVSplitPreset == nil {
                             TextField("", value: $viewModel.verticalSplitRatio, formatter: Self.percentFormatter)
-                                .frame(width: 45)
                                 .multilineTextAlignment(.trailing)
                         }
 
@@ -288,7 +285,6 @@ struct BehaviorSettingsView: View {
                             Text(NSLocalizedString("Other", tableName: "Main", value: "", comment: "")).tag(Optional<CycleSize>.none)
                         }
                         .labelsHidden()
-                        .frame(width: 110)
                     }
                 }
             } header: {
