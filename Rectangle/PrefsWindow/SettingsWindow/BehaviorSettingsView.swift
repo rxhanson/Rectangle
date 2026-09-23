@@ -1,5 +1,3 @@
-// BehaviorSettingsView.swift
-
 import AppKit
 import SwiftUI
 
@@ -200,14 +198,14 @@ struct BehaviorSettingsView: View {
                             .frame(width: 130, height: 22)
                         }
                     }
-                    .padding(.leading, 18)
+                    .padding(.leading, 12)
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
             
             // MARK: - Maximize (Disclosure Section)
             Section {
-                DisclosureGroup("Maximize Settings", isExpanded: $isMaximizeExpanded) {
+                DisclosureGroup(isExpanded: $isMaximizeExpanded) {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         if viewModel.showCursorScreenDetection {
@@ -227,17 +225,30 @@ struct BehaviorSettingsView: View {
                         }
                     }
                     .padding(.top, 4)
+                    .padding(.leading, 12)
+                } label: {
+                    Label("Maximize Settings", systemImage: "arrow.up.left.and.arrow.down.right")
                 }
             }
 
             // MARK: - Stacked Windows
             Section {
-                DisclosureGroup(NSLocalizedString("Stacked Windows", tableName: "Main", value: "", comment: ""), isExpanded: $isStackedWindowsExpanded) {
-                    VStack(alignment: .leading, spacing: 8) {
+                DisclosureGroup(isExpanded: $isStackedWindowsExpanded) {
+                    VStack(alignment: .leading, spacing: 12) {
                         Divider()
-                        Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
-                        Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
-
+                        VStack(alignment: .leading, spacing: 4) {
+                            Toggle(NSLocalizedString("Offset window position on overlap", tableName: "Main", value: "", comment: ""), isOn: $viewModel.cyclingOverlapOffset)
+                            Text("This leaves a little space showing the window below and is best with gaps between windows")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Divider()
+                        VStack(alignment: .leading, spacing: 4) {
+                            Toggle(NSLocalizedString("Show stacked window list on hover", tableName: "Main", value: "", comment: ""), isOn: $viewModel.stackBadge)
+                            Text("Hover cursor near the top left corner to show the list")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                         HStack {
                             Text(NSLocalizedString("Toggle window list", tableName: "Main", value: "", comment: ""))
                             Spacer()
@@ -246,14 +257,20 @@ struct BehaviorSettingsView: View {
                         }
                     }
                     .padding(.top, 4)
+                    .padding(.leading, 12)
+                } label: {
+                    Label(NSLocalizedString("Stacked Windows", tableName: "Main", value: "", comment: ""), systemImage: "square.on.square")
                 }
             }
 
             // MARK: - Side Split Ratios
             Section {
-                DisclosureGroup(NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""), isExpanded: $isSideSplitRatiosExpanded) {
+                DisclosureGroup(isExpanded: $isSideSplitRatiosExpanded) {
                     VStack(alignment: .leading, spacing: 10) {
                         Divider()
+                        Text("Configure the divide between side and corner actions")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                         HStack {
                             Text(NSLocalizedString("Horizontal (L/R, %)", tableName: "Main", value: "", comment: ""))
                             Spacer()
@@ -297,13 +314,16 @@ struct BehaviorSettingsView: View {
                         }
                     }
                     .padding(.top, 4)
+                    .padding(.leading, 12)
+                } label: {
+                    Label(NSLocalizedString("Side Split Ratio", tableName: "Main", value: "", comment: ""), systemImage: "rectangle.split.2x1")
                 }
             }
             
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
-                    DisclosureGroup("Stage Manager", isExpanded: $isStageManagerExpanded) {
+                    DisclosureGroup(isExpanded: $isStageManagerExpanded) {
                         VStack(alignment: .leading, spacing: 4) {
                             Divider()
                             HStack {
@@ -323,6 +343,9 @@ struct BehaviorSettingsView: View {
                                 .foregroundColor(.secondary)
                         }
                         .padding(.top, 4)
+                        .padding(.leading, 12)
+                    } label: {
+                        Label("Stage Manager", systemImage: "squares.leading.rectangle")
                     }
                 }
             }
