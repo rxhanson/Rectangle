@@ -4662,6 +4662,8 @@ class SnappingManagerSessionTests: XCTestCase {
             object: nil
         )
 
+        let refreshed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !sm.isFullScreen }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [refreshed], timeout: 3), .completed)
         XCTAssertFalse(sm.isFullScreen,
             "receiveSessionNote should call checkFullScreen, re-evaluating isFullScreen")
     }
@@ -6133,6 +6135,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = frame
             if frame.size == targetSize {
@@ -6162,6 +6169,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { resizable }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = acceptedFrame(frame)
@@ -6293,6 +6305,11 @@ final class CrossDisplayResizeTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = CGRect(origin: adjustPosition ? frame.origin : currentFrame.origin, size: frame.size)

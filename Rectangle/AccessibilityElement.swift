@@ -161,7 +161,9 @@ class AccessibilityElement {
         set {
             guard let newValue = newValue else { return }
             wrappedElement.setValue(.position, newValue)
-            Logger.log("AX position proposed: \(newValue.debugDescription), result: \(position?.debugDescription ?? "N/A")")
+            if Logger.logging {
+                Logger.log("AX position proposed: \(newValue.debugDescription), result: \(position?.debugDescription ?? "N/A")")
+            }
         }
     }
     
@@ -183,7 +185,9 @@ class AccessibilityElement {
         set {
             guard let newValue = newValue else { return }
             wrappedElement.setValue(.size, newValue)
-            Logger.log("AX sizing proposed: \(newValue.debugDescription), result: \(size?.debugDescription ?? "N/A")")
+            if Logger.logging {
+                Logger.log("AX sizing proposed: \(newValue.debugDescription), result: \(size?.debugDescription ?? "N/A")")
+            }
         }
     }
 
@@ -241,6 +245,69 @@ class AccessibilityElement {
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
         let before = self.frame
+        performFrameAdjustment {
+            if adjustSizeFirst { size = frame.size }
+            if adjustPosition { position = frame.origin }
+            size = frame.size
+        }
+        if isWindow == true, isSystemDialog != true, isResizable() {
+            WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame)
+        }
+    }
+
+    /// A move can release a size restriction imposed by the old screen or Dock edge.
+    /// An unconfirmed size refusal may be transient until the window moves on-screen.
+    func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                           placement: WindowAnimationPlacement? = nil) {
+        guard !before.isNull, before != target else { return }
+        performFrameAdjustment {
+            if sizeFirst, before.size != target.size {
+                size = target.size
+                let resized = self.frame
+                guard !resized.isNull else {
+                    position = target.origin
+                    size = target.size
+                    return
+                }
+                // Keep the accepted size on-screen while moving to the requested edge.
+                let placedSize = CGSize(width: max(resized.width, target.width),
+                                        height: max(resized.height, target.height))
+                var destination = target.origin
+                if let placement, placedSize.width <= placement.screenFrame.width,
+                   placedSize.height <= placement.screenFrame.height {
+                    destination = placement.frame(for: target, actualSize: placedSize,
+                        origin: before, progress: 1).origin
+                }
+                if resized.origin != destination {
+                    position = destination
+                    if abs(resized.width - target.width) > 1 || abs(resized.height - target.height) > 1 {
+                        let minimum = minimumSize ?? .zero
+                        let feasibleSize = CGSize(width: max(target.width, minimum.width),
+                                                  height: max(target.height, minimum.height))
+                        if let currentSize = size,
+                           abs(currentSize.width - feasibleSize.width) > 1 || abs(currentSize.height - feasibleSize.height) > 1 {
+                            size = feasibleSize
+                            let settled = self.frame
+                            if !settled.isNull, let placement, settled.width <= placement.screenFrame.width,
+                               settled.height <= placement.screenFrame.height {
+                                let origin = placement.frame(for: target, actualSize: settled.size,
+                                    origin: before, progress: 1).origin
+                                if settled.origin != origin { position = origin }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if before.origin != target.origin { position = target.origin }
+                if before.size != target.size { size = target.size }
+            }
+        }
+        if before.size != target.size, isWindow == true, isSystemDialog != true, isResizable() {
+            WindowSizeConstraints.shared.observeResize(self, before: before, requested: target)
+        }
+    }
+
+    private func performFrameAdjustment(_ adjustment: () -> Void) {
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
             || NSWorkspace.shared.isSwitchControlEnabled
@@ -254,17 +321,8 @@ class AccessibilityElement {
                 }
                 appElement?.enhancedUserInterface = enabled
             },
-            adjustment: {
-                if adjustSizeFirst {
-                    size = frame.size
-                }
-                if adjustPosition { position = frame.origin }
-                size = frame.size
-            }
+            adjustment: adjustment
         )
-        if isWindow == true, isSystemDialog != true, isResizable() {
-            WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame)
-        }
     }
 
     /// Keep the existing Enhanced UI policy active for the whole transition,
