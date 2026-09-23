@@ -56,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         checkLaunchOnLogin()
         
         let alreadyTrusted = accessibilityAuthorization.checkAccessibility {
-            self.showWelcomeWindow()
+            WelcomeView.show()
             self.checkForConflictingApps()
             self.openPreferences(self)
             self.statusItem.statusMenu = self.mainStatusMenu

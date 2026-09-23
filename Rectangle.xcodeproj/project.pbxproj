@@ -111,7 +111,7 @@
 		9898583B305C1B6400459AFF /* ShortcutsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9898583A305C1B6400459AFF /* ShortcutsViewController.swift */; };
 		98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98987AA22391890300BE72C4 /* LogViewer.storyboard */; };
 		98987AA52391890400BE72C4 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98987AA32391890400BE72C4 /* LogViewer.swift */; };
-		989DA30E243FC0DF008C7AA4 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */; };
+		989DA30E243FC0DF008C7AA4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989DA30D243FC0DF008C7AA4 /* WelcomeView.swift */; };
 		98A009AB2512491300CFBF0C /* CenterHalfCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009AA2512491300CFBF0C /* CenterHalfCalculation.swift */; };
 		98A009AD2512498000CFBF0C /* FirstFourthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009AC2512498000CFBF0C /* FirstFourthCalculation.swift */; };
 		98A009AF2512517900CFBF0C /* SecondFourthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A009AE2512517900CFBF0C /* SecondFourthCalculation.swift */; };
@@ -350,7 +350,7 @@
 		9898583A305C1B6400459AFF /* ShortcutsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsViewController.swift; sourceTree = "<group>"; };
 		98987AA22391890300BE72C4 /* LogViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LogViewer.storyboard; sourceTree = "<group>"; };
 		98987AA32391890400BE72C4 /* LogViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
-		989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		989DA30D243FC0DF008C7AA4 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		98A009AA2512491300CFBF0C /* CenterHalfCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CenterHalfCalculation.swift; sourceTree = "<group>"; };
 		98A009AC2512498000CFBF0C /* FirstFourthCalculation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstFourthCalculation.swift; sourceTree = "<group>"; };
 		98A009AE2512517900CFBF0C /* SecondFourthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondFourthCalculation.swift; sourceTree = "<group>"; };
@@ -789,7 +789,7 @@
 		989DA30C243FC0C3008C7AA4 /* WelcomeWindow */ = {
 			isa = PBXGroup;
 			children = (
-				989DA30D243FC0DF008C7AA4 /* WelcomeViewController.swift */,
+				989DA30D243FC0DF008C7AA4 /* WelcomeView.swift */,
 			);
 			path = WelcomeWindow;
 			sourceTree = "<group>";
@@ -1084,7 +1084,7 @@
 				982470432EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift in Sources */,
 				D0423D8327A8D31D008A4894 /* HorizontalThirdsRepeated.swift in Sources */,
 				98C97FFD25893B040061F01F /* Config.swift in Sources */,
-				989DA30E243FC0DF008C7AA4 /* WelcomeViewController.swift in Sources */,
+				989DA30E243FC0DF008C7AA4 /* WelcomeView.swift in Sources */,
 				9818E01228B59B64004AA524 /* ThirdsCompoundCalculation.swift in Sources */,
 				7BE578F12EFA00010083DAE3 /* CooperativeCornerResize.swift in Sources */,
 				98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */,
