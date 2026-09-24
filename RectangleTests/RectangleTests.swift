@@ -6150,7 +6150,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { resizable }
 
-        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true) {
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = acceptedFrame(frame)
         }
     }

@@ -125,6 +125,8 @@
 		98BEFA482620DEDD00D9D54F /* NSImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BEFA472620DEDC00D9D54F /* NSImageExtension.swift */; };
 		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
 		98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */; };
+		AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000002 /* DisplayTransfer.swift */; };
+		AF09B1000000000000000003 /* DisplayTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000004 /* DisplayTransferTests.swift */; };
 		98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2755D231FF6A9009B9292 /* EventMonitor.swift */; };
 		98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C27560231FFA5F009B9292 /* SnappingManager.swift */; };
 		98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C275662322E2DA009B9292 /* WindowHistory.swift */; };
@@ -360,6 +362,8 @@
 		98BEFA472620DEDC00D9D54F /* NSImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImageExtension.swift; sourceTree = "<group>"; };
 		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
 		98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevDisplayCalculation.swift; sourceTree = "<group>"; };
+		AF09B1000000000000000002 /* DisplayTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransfer.swift; sourceTree = "<group>"; };
+		AF09B1000000000000000004 /* DisplayTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransferTests.swift; sourceTree = "<group>"; };
 		98C2755D231FF6A9009B9292 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
 		98C27560231FFA5F009B9292 /* SnappingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingManager.swift; sourceTree = "<group>"; };
 		98C275662322E2DA009B9292 /* WindowHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHistory.swift; sourceTree = "<group>"; };
@@ -547,6 +551,7 @@
 				988D068222EB4EF3004EABD7 /* MoveUpDownCalculation.swift */,
 				988D067C22EB4E17004EABD7 /* AlmostMaximizeCalculation.swift */,
 				98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */,
+				AF09B1000000000000000002 /* DisplayTransfer.swift */,
 				98FA9496235A2D7600F95C4F /* RepeatedExecutionsCalculation.swift */,
 				98C6DEEF23CE191700CC0C1E /* GapCalculation.swift */,
 				9851A5C2251BEBA300ECF78C /* OrientationAware.swift */,
@@ -739,6 +744,7 @@
 			children = (
 				9824701F22AF9B7E0037B409 /* RectangleTests.swift */,
 				AF09A0000000000000000004 /* GridTilingTests.swift */,
+				AF09B1000000000000000004 /* DisplayTransferTests.swift */,
 				944F25D02CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift */,
 				de0950b8b00f40308934a523 /* JSONDefaultTests.swift */,
 				9824702122AF9B7E0037B409 /* Info.plist */,
@@ -1052,6 +1058,7 @@
 				7B4C0A1F2F1A000100C0FFEE /* HalvesPreserveOtherAxisSize.swift in Sources */,
 				9824704D22B189250037B409 /* WindowCalculation.swift in Sources */,
 				98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */,
+				AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */,
 				9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */,
 				D04CE31027817ABE00BD47B3 /* BottomRightNinthCalculation.swift in Sources */,
 				98A009B92512538D00CFBF0C /* TopRightSixthCalculation.swift in Sources */,
@@ -1175,6 +1182,7 @@
 			files = (
 				9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */,
 				AF09A0000000000000000003 /* GridTilingTests.swift in Sources */,
+				AF09B1000000000000000003 /* DisplayTransferTests.swift in Sources */,
 				944F25D12CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift in Sources */,
 				01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */,
 			);
