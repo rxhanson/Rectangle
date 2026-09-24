@@ -71,7 +71,6 @@
 		9824701122AF9B7E0037B409 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9824701022AF9B7E0037B409 /* Assets.xcassets */; };
 		9824701422AF9B7E0037B409 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9824701222AF9B7E0037B409 /* Main.storyboard */; };
 		9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824701F22AF9B7E0037B409 /* RectangleTests.swift */; };
-		9824702C22AFA22E0037B409 /* AccessibilityWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702A22AFA22E0037B409 /* AccessibilityWindowController.swift */; };
 		9824702F22AFA2E50037B409 /* AccessibilityAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */; };
 		9824703122AFA8470037B409 /* RectangleStatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703022AFA8470037B409 /* RectangleStatusItem.swift */; };
 		9824703722B0F3200037B409 /* WindowAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703622B0F3200037B409 /* WindowAction.swift */; };
@@ -309,7 +308,6 @@
 		9824701B22AF9B7E0037B409 /* RectangleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RectangleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9824701F22AF9B7E0037B409 /* RectangleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleTests.swift; sourceTree = "<group>"; };
 		9824702122AF9B7E0037B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9824702A22AFA22E0037B409 /* AccessibilityWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessibilityWindowController.swift; sourceTree = "<group>"; };
 		9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuthorization.swift; sourceTree = "<group>"; };
 		9824703022AFA8470037B409 /* RectangleStatusItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleStatusItem.swift; sourceTree = "<group>"; };
 		9824703622B0F3200037B409 /* WindowAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAction.swift; sourceTree = "<group>"; };
@@ -636,7 +634,6 @@
 			isa = PBXGroup;
 			children = (
 				9824702E22AFA2E50037B409 /* AccessibilityAuthorization.swift */,
-				9824702A22AFA22E0037B409 /* AccessibilityWindowController.swift */,
 				98ED73AF306558490077BD10 /* AccessibilityView.swift */,
 			);
 			path = AccessibilityAuthorization;
@@ -1081,7 +1078,6 @@
 				98ED704C306171650077BD10 /* AppSettingsViewModel.swift in Sources */,
 				9851A5C3251BEBA300ECF78C /* OrientationAware.swift in Sources */,
 				98FD7C5F2687BC14009E9DAF /* FirstThreeFourthsCalculation.swift in Sources */,
-				9824702C22AFA22E0037B409 /* AccessibilityWindowController.swift in Sources */,
 				988D066122EB4C7C004EABD7 /* FirstThirdCalculation.swift in Sources */,
 				983BBD6F253B609D000D223E /* FootprintWindow.swift in Sources */,
 				F1AC0DE000000000000000C2 /* OverlapOffsetGeometry.swift in Sources */,
