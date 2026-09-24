@@ -331,11 +331,11 @@ struct AppShortcutConflict {
     private static func displayName(forDefaultsKey defaultsKey: String) -> String {
         switch defaultsKey {
         case TodoManager.toggleDefaultsKey:
-            return NSLocalizedString("Toggle Todo", tableName: "Main", value: "Toggle Todo", comment: "")
+            return String(localized: "Toggle Todo")
         case TodoManager.reflowDefaultsKey:
-            return NSLocalizedString("Reflow Todo", tableName: "Main", value: "Reflow Todo", comment: "")
+            return String(localized: "Reflow Todo")
         case StackBadgeManager.toggleDefaultsKey:
-            return NSLocalizedString("Toggle stacked window badge", tableName: "Main", value: "Toggle stacked window badge", comment: "")
+            return String(localized: "Toggle stacked window badge")
         default:
             return defaultsKey
         }
@@ -372,21 +372,26 @@ class AppShortcutValidator: MASShortcutValidator {
 typealias TodoShortcutConflict = AppShortcutConflict
 typealias TodoShortcutValidator = AppShortcutValidator
 
-enum TodoSidebarSide: Int {
+enum TodoSidebarSide: Int, CaseIterable {
     case right = 1
     case left = 2
+    
+    var title: String {
+        switch self {
+        case .left: return String(localized: "Left")
+        case .right: return String(localized: "Right")
+        }
+    }
 }
 
-enum TodoSidebarWidthUnit: Int, CustomStringConvertible {
+enum TodoSidebarWidthUnit: Int, CaseIterable, CustomStringConvertible {
     case pixels = 1
     case pct = 2
     
     var description: String {
         switch self {
-        case .pixels:
-            return "px"
-        case .pct:
-            return "%"
+        case .pixels: return String(localized: "px")
+        case .pct: return String(localized: "%")
         }
     }
 }

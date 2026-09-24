@@ -1,11 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "appSettingsTemplate.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "screenIcons-tileRowsCols.png",
+      "filename" : "appSettingsTemplate_2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
