@@ -12,12 +12,12 @@ enum SubsequentExecutionMode: Int {
     
     var title: String {
         switch self {
-        case .resize: return "Cycle sizes on side actions"
-        case .acrossMonitor: return "Move to adjacent display on left or right"
-        case .none: return "Do Nothing"
-        case .acrossAndResize: return "Move to adjacent on left/right, or cycle size on side"
-        case .cycleMonitor: return "Cycle through displays"
-        case .resizeAndCycleQuadrants: return "Cycle positions on quadrants, cycle sizes on side"
+        case .resize: return String(localized: "cycle sizes on side actions")
+        case .acrossMonitor: return String(localized: "move to adjacent display on left or right")
+        case .none: return String(localized: "do nothing")
+        case .acrossAndResize: return String(localized: "move to adjacent on left/right, or cycle size on side")
+        case .cycleMonitor: return String(localized: "cycle through displays")
+        case .resizeAndCycleQuadrants: return String(localized: "cycle positions on quadrants, cycle sizes on side")
         }
     }
     

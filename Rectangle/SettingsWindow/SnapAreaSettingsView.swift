@@ -147,7 +147,7 @@ struct SnapAreaSettingsView: View {
     @StateObject private var viewModel = SnapAreaViewModel()
 
     private var landscapeHeaderTitle: String {
-        viewModel.isPortraitConnected ? "Landscape Snap Areas" : "Snap Areas"
+        viewModel.isPortraitConnected ? String(localized: "Landscape Snap Areas") : String(localized: "Snap Areas")
     }
 
     var body: some View {
@@ -160,7 +160,7 @@ struct SnapAreaSettingsView: View {
 
             // Customization Options
              Section {
-                Toggle("Provide haptic feedback", isOn: $viewModel.hapticFeedback)
+                Toggle("Haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
 

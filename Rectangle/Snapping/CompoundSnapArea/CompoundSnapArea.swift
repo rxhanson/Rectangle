@@ -23,13 +23,13 @@ enum CompoundSnapArea: Int, Codable {
     var displayName: String {
         switch self {
         case .leftTopBottomHalf:
-            return String(localized: "Left side, top/bottom near corners")
+            return String(localized: "Left side, top/bottom side near corners")
         case .rightTopBottomHalf:
-            return String(localized: "Right side, top/bottom near corners")
+            return String(localized: "Right side, top/bottom side near corners")
         case .thirds:
             return String(localized: "Thirds, drag toward center for two thirds")
         case .portraitThirdsSide:
-            return String(localized: "Thirds, top/bottom near corners")
+            return String(localized: "Thirds, top/bottom side near corners")
         case .halves:
             return String(localized: "Left or right side")
         case .topSixths:

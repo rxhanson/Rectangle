@@ -65,13 +65,13 @@ struct AppSettingsView: View {
                     Button {
                         viewModel.importConfig()
                     } label: {
-                        Label("Import Config", systemImage: "square.and.arrow.down")
+                        Label("Import", systemImage: "square.and.arrow.down")
                     }
                     
                     Button {
                         viewModel.exportConfig()
                     } label: {
-                        Label("Export Config", systemImage: "square.and.arrow.up")
+                        Label("Export", systemImage: "square.and.arrow.up")
                     }
                 }
 
