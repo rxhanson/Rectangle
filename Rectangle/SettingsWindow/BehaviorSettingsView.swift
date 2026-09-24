@@ -119,6 +119,12 @@ struct BehaviorSettingsView: View {
             // MARK: - Cursor & Display Rules
             Section {
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
+                VStack(alignment: .leading, spacing: 2) {
+                    Toggle("Keep window position when moving across displays", isOn: $viewModel.keepWindowPositionOnDisplayChange)
+                    Text("Windows stay against the same screen edges on the new display. When off, they are centered.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
                 Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)

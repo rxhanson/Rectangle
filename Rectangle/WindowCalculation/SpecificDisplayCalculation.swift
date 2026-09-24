@@ -40,12 +40,21 @@ class SpecificDisplayCalculation: WindowCalculation {
         }
 
         // Parity with NextPrevDisplayCalculation: display 1/2/3 moves behave like next/prev moves.
-        if !Defaults.centerOnDisplayChange.userEnabled {
-            let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
+        let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
+
+        if !Defaults.keepWindowPositionOnDisplayChange.userDisabled {
             let transferredRect = DisplayTransfer.transferredRect(window: rectParams.window.rect,
                                                                   source: sourceFrame,
                                                                   destination: rectParams.visibleFrameOfScreen)
             return WindowCalculationResult(rect: transferredRect, screen: targetScreen, resultingAction: params.action)
+        } else if Defaults.attemptMatchOnNextPrevDisplay.userEnabled {
+            // Issue #1723: opt-in ON but no replayable lastAction (e.g. a manually positioned
+            // window). Map the window proportionally from the source screen to the destination
+            // screen so it keeps its relative spot instead of jumping to the center.
+            let mappedRect = NextPrevDisplayCalculation.relativePositionedRect(window: rectParams.window.rect,
+                                                                               source: sourceFrame,
+                                                                               destination: rectParams.visibleFrameOfScreen)
+            return WindowCalculationResult(rect: mappedRect, screen: targetScreen, resultingAction: params.action)
         }
 
         let rectResult = calculateRect(rectParams)

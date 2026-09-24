@@ -22,6 +22,13 @@ import CoreGraphics
 ///
 /// The distance from an edge is carried over rather than flattened to zero, so a window that was
 /// snapped with gaps arrives with the same gaps.
+///
+/// One case is handled differently: a window against three screen edges - spanning one axis and
+/// against one edge of the other, like a left half or a top half - that moves between a landscape
+/// and a portrait display. Following the rule above would stretch a left half into a tall sliver
+/// down the whole length of a portrait display. Instead it stays against the middle one of its
+/// three edges, keeps its size, and is centered along that edge. Picking a corner would mean
+/// guessing from how the displays happen to be arranged, whereas centering makes no assumption.
 class DisplayTransfer {
 
     /// How far from the screen edge a window edge can be and still count as being against it.
@@ -34,26 +41,58 @@ class DisplayTransfer {
             return window
         }
 
-        let horizontal = transfer(window: (window.minX, window.width),
+        var horizontal = transfer(window: (window.minX, window.width),
                                   source: (source.minX, source.width),
                                   destination: (destination.minX, destination.width),
                                   edgeTolerance: edgeTolerance)
-        let vertical = transfer(window: (window.minY, window.height),
+        var vertical = transfer(window: (window.minY, window.height),
                                 source: (source.minY, source.height),
                                 destination: (destination.minY, destination.height),
                                 edgeTolerance: edgeTolerance)
 
-        return CGRect(x: horizontal.origin,
-                      y: vertical.origin,
-                      width: horizontal.length,
-                      height: vertical.length)
+        if changesOrientation(from: source, to: destination) {
+            // Against three edges: one axis spans, and the other is against exactly one edge, which
+            // is the middle one of the three. The spanning axis is the one that gets centered.
+            if horizontal.contact == .both, vertical.contact.isOneEdge {
+                horizontal.span = centered(length: window.width, on: horizontal.span,
+                                          destination: (destination.minX, destination.width))
+            } else if vertical.contact == .both, horizontal.contact.isOneEdge {
+                vertical.span = centered(length: window.height, on: vertical.span,
+                                         destination: (destination.minY, destination.height))
+            }
+        }
+
+        return CGRect(x: horizontal.span.origin,
+                      y: vertical.span.origin,
+                      width: horizontal.span.length,
+                      height: vertical.span.length)
     }
 
     /// One axis of the window, the source screen and the destination screen, as a starting point
     /// and a length.
     private typealias Span = (origin: CGFloat, length: CGFloat)
 
-    private static func transfer(window: Span, source: Span, destination: Span, edgeTolerance: CGFloat) -> Span {
+    /// Which of the two screen edges on an axis the window was against.
+    private enum Contact {
+        case neither, start, end, both
+
+        var isOneEdge: Bool { self == .start || self == .end }
+    }
+
+    /// Landscape to portrait or back. A square display is neither, so it never counts.
+    private static func changesOrientation(from source: CGRect, to destination: CGRect) -> Bool {
+        return (source.width > source.height && destination.height > destination.width)
+            || (source.height > source.width && destination.width > destination.height)
+    }
+
+    /// Keeps `length` and centers it on the destination, rather than following both edges. If the
+    /// window is too long to fit between the edges, following them is all that can be done anyway.
+    private static func centered(length: CGFloat, on spanned: Span, destination: Span) -> Span {
+        guard length < spanned.length else { return spanned }
+        return (destination.origin + (destination.length - length) / 2, length)
+    }
+
+    private static func transfer(window: Span, source: Span, destination: Span, edgeTolerance: CGFloat) -> (span: Span, contact: Contact) {
         // A window hanging off the screen has a negative inset here, which counts as being against
         // that edge: bringing it back into view is the only sensible thing to do with it.
         let startInset = window.origin - source.origin
@@ -65,22 +104,22 @@ class DisplayTransfer {
             // Following both edges at once is what stretches the window to the destination.
             let start = clamp(startInset, 0, destination.length / 2)
             let end = clamp(endInset, 0, destination.length / 2)
-            return (destination.origin + start, destination.length - start - end)
+            return ((destination.origin + start, destination.length - start - end), .both)
         }
 
         let length = min(window.length, destination.length)
         let slack = destination.length - length
 
         if againstStart {
-            return (destination.origin + clamp(startInset, 0, slack), length)
+            return ((destination.origin + clamp(startInset, 0, slack), length), .start)
         }
         if againstEnd {
-            return (destination.origin + destination.length - length - clamp(endInset, 0, slack), length)
+            return ((destination.origin + destination.length - length - clamp(endInset, 0, slack), length), .end)
         }
 
         let centerFraction = (window.origin + window.length / 2 - source.origin) / source.length
         let origin = destination.origin + centerFraction * destination.length - length / 2
-        return (clamp(origin, destination.origin, destination.origin + slack), length)
+        return ((clamp(origin, destination.origin, destination.origin + slack), length), .neither)
     }
 
     private static func clamp(_ value: CGFloat, _ lowerBound: CGFloat, _ upperBound: CGFloat) -> CGFloat {

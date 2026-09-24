@@ -37,6 +37,12 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
     }
 
+    @Published var keepWindowPositionOnDisplayChange: Bool {
+        didSet {
+            Defaults.keepWindowPositionOnDisplayChange.enabled = keepWindowPositionOnDisplayChange
+        }
+    }
+
     @Published var useCursorScreenDetection: Bool {
         didSet {
             Defaults.useCursorScreenDetection.enabled = useCursorScreenDetection
@@ -168,6 +174,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
 
         self.moveCursorAcrossDisplays = Defaults.moveCursorAcrossDisplays.userEnabled
+        self.keepWindowPositionOnDisplayChange = !Defaults.keepWindowPositionOnDisplayChange.userDisabled
         self.useCursorScreenDetection = Defaults.useCursorScreenDetection.enabled
 
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
@@ -216,6 +223,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
         self.moveCursorAcrossDisplays = Defaults.moveCursorAcrossDisplays.userEnabled
+        self.keepWindowPositionOnDisplayChange = !Defaults.keepWindowPositionOnDisplayChange.userDisabled
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
