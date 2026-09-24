@@ -187,7 +187,7 @@ final class ShortcutActionCellView: NSTableCellView {
 
     func configure(with action: WindowAction, recordingObserver: ShortcutRecordingObserver) {
         iconImageView.image = action.image
-        titleLabel.stringValue = action.displayName ?? ""
+        titleLabel.stringValue = action.settingsDisplayName ?? action.displayName ?? ""
 
         if Defaults.allowAnyShortcut.enabled {
             shortcutView.shortcutValidator = PassthroughShortcutValidator()

@@ -294,7 +294,7 @@ extension SettingsViewController {
             mainStackView.addArrangedSubview(halvesCheckbox)
             halvesPreserveOtherAxisSizeCheckbox = halvesCheckbox
 
-            let repeatedMaximizeCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Repeated Maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleRepeatedMaximizeRestoresPrevious(_:)))
+            let repeatedMaximizeCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Repeated maximize restores the previous size and position", tableName: "Main", value: "", comment: ""), target: self, action: #selector(toggleRepeatedMaximizeRestoresPrevious(_:)))
             repeatedMaximizeCheckbox.state = Defaults.repeatedMaximizeRestoresPrevious.enabled ? .on : .off
             repeatedMaximizeCheckbox.toolTip = NSLocalizedString("After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position.", tableName: "Main", value: "", comment: "")
             repeatedMaximizeCheckbox.translatesAutoresizingMaskIntoConstraints = false

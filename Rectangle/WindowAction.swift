@@ -498,7 +498,7 @@ enum WindowAction: Int, Codable {
             value = "Bottom Right Sixth"
         case .topLeftNinth:
             key = "topLeftNinth.title"
-            value = "Ninths (3x3)"
+            value = "Top Left Ninth"
         case .topCenterNinth:
             key = "topCenterNinth.title"
             value = "Top Center Ninth"
@@ -577,7 +577,7 @@ enum WindowAction: Int, Codable {
             value = "Bottom Two Thirds"
         case .topLeftTwelfth:
             key = "topLeftTwelfth.title"
-            value = "Twelfths (4x3)"
+            value = "Top Left Twelfth"
         case .topCenterLeftTwelfth:
             key = "topCenterLeftTwelfth.title"
             value = "Top Center Left Twelfth"
@@ -613,7 +613,7 @@ enum WindowAction: Int, Codable {
             value = "Bottom Right Twelfth"
         case .topLeftSixteenth:
             key = "topLeftSixteenth.title"
-            value = "Sixteenths (4x4)"
+            value = "Top Left Sixteenth"
         case .topCenterLeftSixteenth:
             key = "topCenterLeftSixteenth.title"
             value = "Top Center Left Sixteenth"
@@ -665,6 +665,18 @@ enum WindowAction: Int, Codable {
         }
 
         return NSLocalizedString(key ?? value, tableName: "Main", value: value, comment: "")
+    }
+    
+    var settingsDisplayName: String? {
+        switch self {
+        case .topLeftNinth:
+            return "Ninths (3x3)"
+        case .topLeftTwelfth:
+            return "Twelfths (3x4)"
+        case .topLeftSixteenth:
+            return "Sixteenths (4x4)"
+        default: return nil
+        }
     }
 
     var notificationName: Notification.Name {
