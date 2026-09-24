@@ -3,7 +3,7 @@
   "strings" : {
     "0Ak-33-SM7.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Right\"; ObjectID = \"0Ak-33-SM7\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -189,7 +189,7 @@
     },
     "0eh-6G-rMp.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"0 px\"; ObjectID = \"0eh-6G-rMp\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -561,7 +561,7 @@
     },
     "1Rc-Od-eP5.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Down\"; ObjectID = \"1Rc-Od-eP5\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -885,7 +885,7 @@
     },
     "1ui-PL-TkR.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Snap windows by dragging\"; ObjectID = \"1ui-PL-TkR\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -1545,7 +1545,7 @@
     },
     "1zK-sf-CSX.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Version\"; ObjectID = \"1zK-sf-CSX\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -1941,7 +1941,7 @@
     },
     "2ue-Mv-5Wh.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"2ue-Mv-5Wh\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -2127,7 +2127,7 @@
     },
     "2XJ-Ca-9di.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Spectacle\"; ObjectID = \"2XJ-Ca-9di\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -2253,7 +2253,7 @@
     },
     "2Zm-fl-PcC.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Repeated commands\"; ObjectID = \"2Zm-fl-PcC\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -2439,7 +2439,7 @@
     },
     "3GE-la-fAZ.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"move to adjacent on left/right, or cycle size on side\"; ObjectID = \"3GE-la-fAZ\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -2625,7 +2625,7 @@
     },
     "3hZ-Cs-EZ6.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Disable fast dragging to Mission Control\"; ObjectID = \"3hZ-Cs-EZ6\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -3225,7 +3225,7 @@
     },
     "3zd-xE-oWl.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"First Two Thirds\"; ObjectID = \"3zd-xE-oWl\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -4155,7 +4155,7 @@
     },
     "5LN-YU-Bwy.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"px\"; ObjectID = \"5LN-YU-Bwy\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4503,7 +4503,7 @@
     },
     "5WR-Ui-uYB.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"5WR-Ui-uYB\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -4875,7 +4875,7 @@
     },
     "6DV-cd-fda.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Maximize Height\"; ObjectID = \"6DV-cd-fda\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -5067,7 +5067,7 @@
     },
     "6e0-ji-qXw.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Todo app width\"; ObjectID = \"6e0-ji-qXw\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -5253,7 +5253,7 @@
     },
     "6HX-rn-VIp.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Last Fourth\"; ObjectID = \"6HX-rn-VIp\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -5445,7 +5445,7 @@
     },
     "6ma-hP-5xX.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Left\"; ObjectID = \"6ma-hP-5xX\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -5631,7 +5631,7 @@
     },
     "7YK-9Z-lzw.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Third\"; ObjectID = \"7YK-9Z-lzw\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -5823,7 +5823,7 @@
     },
     "7yS-wj-uWD.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Show Todo Mode in menu\"; ObjectID = \"7yS-wj-uWD\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -6009,7 +6009,7 @@
     },
     "8Bg-SZ-hDO.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move to Center\"; ObjectID = \"8Bg-SZ-hDO\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -6201,7 +6201,7 @@
     },
     "8dv-v2-SPu.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"3. In the Rectangle menu, enable Todo Mode.\"; ObjectID = \"8dv-v2-SPu\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -6525,7 +6525,7 @@
     },
     "8oe-J2-oUU.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Maximize\"; ObjectID = \"8oe-J2-oUU\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -6717,7 +6717,7 @@
     },
     "08q-Ce-1QL.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Last Two Thirds\"; ObjectID = \"08q-Ce-1QL\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -7041,7 +7041,7 @@
     },
     "9JD-tZ-7jf.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"Authorize Rectangle\"; ObjectID = \"9JD-tZ-7jf\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -7233,7 +7233,7 @@
     },
     "9XM-Zb-HEb.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"If the checkbox is disabled, click the padlock and enter your password\"; ObjectID = \"9XM-Zb-HEb\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -7695,7 +7695,7 @@
     },
     "74m-kw-w1f.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Check for Updates…\"; ObjectID = \"74m-kw-w1f\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -8187,7 +8187,7 @@
     },
     "adp-cN-qkh.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Left\"; ObjectID = \"adp-cN-qkh\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -8373,7 +8373,7 @@
     },
     "AEr-NX-9wW.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"190 px\"; ObjectID = \"AEr-NX-9wW\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8533,9 +8533,6 @@
         }
       }
     },
-    "After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position." : {
-
-    },
     "agt-UL-0e3.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Use Default\"; ObjectID = \"agt-UL-0e3\";",
       "extractionState" : "manual",
@@ -8676,7 +8673,7 @@
     },
     "AgV-lP-6XB.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"%\"; ObjectID = \"AgV-lP-6XB\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8700,6 +8697,7 @@
     },
     "ani-win-cell.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Animate windows (experimental)\"; ObjectID = \"ani-win-cell\";",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9406,7 +9404,7 @@
     },
     "ayu-YO-10p.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Stage Manager recent apps area\"; ObjectID = \"ayu-YO-10p\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -9592,7 +9590,7 @@
     },
     "bg9-nw-YvU.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Gaps between windows\"; ObjectID = \"bg9-nw-YvU\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -10298,6 +10296,7 @@
     },
     "blur-preview-cell.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Blur footprint\"; ObjectID = \"blur-preview-cell\";",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10512,6 +10511,7 @@
       }
     },
     "Bottom Center Left Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10528,6 +10528,7 @@
       }
     },
     "Bottom Center Right Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10561,6 +10562,7 @@
       }
     },
     "Bottom Left Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10577,6 +10579,7 @@
       }
     },
     "Bottom Right Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10772,6 +10775,7 @@
       }
     },
     "Bottom Third" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10788,6 +10792,7 @@
       }
     },
     "Bottom Two Thirds" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10805,7 +10810,7 @@
     },
     "bRX-dV-iAR.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Center\"; ObjectID = \"bRX-dV-iAR\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -11459,7 +11464,7 @@
     },
     "C9v-g0-DH8.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Restore\"; ObjectID = \"C9v-g0-DH8\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -11644,6 +11649,7 @@
       }
     },
     "Cancel" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12175,6 +12181,7 @@
       }
     },
     "Conflict with system setting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12664,7 +12671,7 @@
     },
     "cRm-wn-Yv6.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Last Third\"; ObjectID = \"cRm-wn-Yv6\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -12850,7 +12857,7 @@
     },
     "CUR-SD-CEL.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Use cursor position for screen detection\"; ObjectID = \"CUR-SD-CEL\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12873,6 +12880,7 @@
       }
     },
     "Currently using: " : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13170,12 +13178,9 @@
         }
       }
     },
-    "Cyclic corner shortcuts expand:" : {
-
-    },
     "d7y-s8-7GE.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top\"; ObjectID = \"d7y-s8-7GE\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -13851,6 +13856,7 @@
       }
     },
     "Default Shortcuts" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -14012,7 +14018,7 @@
     },
     "DG2-BN-GPE.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Right\"; ObjectID = \"DG2-BN-GPE\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -14198,7 +14204,7 @@
     },
     "DHt-cE-Bl0.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Toggle Todo\"; ObjectID = \"DHt-cE-Bl0\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15445,7 +15451,7 @@
     },
     "e9j-DR-MEH.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Launch on login\"; ObjectID = \"e9j-DR-MEH\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15631,7 +15637,7 @@
     },
     "e57-QJ-6bL.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Almost Maximize\"; ObjectID = \"e57-QJ-6bL\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15823,7 +15829,7 @@
     },
     "Eah-KL-kbn.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Make Larger\"; ObjectID = \"Eah-KL-kbn\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16009,7 +16015,7 @@
     },
     "EBt-5H-0z6.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"EBt-5H-0z6\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16195,7 +16201,7 @@
     },
     "ec4-FB-fMa.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom\"; ObjectID = \"ec4-FB-fMa\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16558,7 +16564,7 @@
     },
     "Ext-Set-Cel.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Extras\"; ObjectID = \"Ext-Set-Cel\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16803,7 +16809,7 @@
     },
     "f3Q-q7-Pcy.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Right Sixth\"; ObjectID = \"f3Q-q7-Pcy\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16989,7 +16995,7 @@
     },
     "F8S-GI-LiB.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Right\"; ObjectID = \"F8S-GI-LiB\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -17175,7 +17181,7 @@
     },
     "F12-EV-Lfz.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"First Third\"; ObjectID = \"F12-EV-Lfz\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -17499,7 +17505,7 @@
     },
     "Fap-R2-Aj6.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"Snap Areas\"; ObjectID = \"Fap-R2-Aj6\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -17619,7 +17625,7 @@
     },
     "FCh-1Q-Xms.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Keep a chosen application visible on the right of your primary screen at all times\"; ObjectID = \"FCh-1Q-Xms\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -18129,7 +18135,7 @@
     },
     "Fko-xs-gN5.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Second Fourth\"; ObjectID = \"Fko-xs-gN5\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -18321,7 +18327,7 @@
     },
     "fL5-gz-pOD.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"fL5-gz-pOD\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -18507,7 +18513,7 @@
     },
     "FLh-CI-WNK.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"FLh-CI-WNK\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -19085,7 +19091,7 @@
     },
     "Fx0-sm-DrT.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Reflow Todo\"; ObjectID = \"Fx0-sm-DrT\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -19409,7 +19415,7 @@
     },
     "gEd-S9-Cfp.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Please select your default shortcuts and behavior\"; ObjectID = \"gEd-S9-Cfp\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -19925,7 +19931,7 @@
     },
     "gHH-BV-5kP.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"cycle sizes on side actions\"; ObjectID = \"gHH-BV-5kP\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -20424,10 +20430,8 @@
         }
       }
     },
-    "Green stoplight button maximizes instead of Full Screen" : {
-
-    },
     "Grid Positions" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -20445,7 +20449,7 @@
     },
     "gtf-PD-IHm.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"General\"; ObjectID = \"gtf-PD-IHm\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -20625,18 +20629,6 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "設定"
-          }
-        }
-      }
-    },
-    "GTP-tg-Cel.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Remove gap on top screen edge\"; ObjectID = \"GTP-tg-Cel\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove gap on top screen edge"
           }
         }
       }
@@ -20967,7 +20959,7 @@
     },
     "gyg-xl-dPn.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Rectangle needs your permission to control your window positions.\"; ObjectID = \"gyg-xl-dPn\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -21475,12 +21467,9 @@
         }
       }
     },
-    "Half actions preserve the window's size on the other axis" : {
-
-    },
     "heT-W6-Fyf.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Double-click window title bar to maximize/restore\"; ObjectID = \"heT-W6-Fyf\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -22132,12 +22121,9 @@
         }
       }
     },
-    "Hold any modifier key or use the window menu for default macOS behavior" : {
-
-    },
     "HOm-BV-2jc.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Up\"; ObjectID = \"HOm-BV-2jc\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -22323,7 +22309,7 @@
     },
     "HOp-Kd-vhY.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Recommended\"; ObjectID = \"HOp-Kd-vhY\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -22508,6 +22494,7 @@
       }
     },
     "Horizontal (L/R, %)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -22522,9 +22509,6 @@
           }
         }
       }
-    },
-    "horizontally" : {
-
     },
     "hQb-2v-fYv.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Smart Quotes\"; ObjectID = \"hQb-2v-fYv\";",
@@ -22666,7 +22650,7 @@
     },
     "HtH-yF-lBR.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"Welcome!\"; ObjectID = \"HtH-yF-lBR\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -23638,7 +23622,7 @@
     },
     "I97-ob-ue4.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"I97-ob-ue4\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24148,7 +24132,7 @@
     },
     "IO3-Hi-7gC.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Export\"; ObjectID = \"IO3-Hi-7gC\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24334,7 +24318,7 @@
     },
     "iOQ-1e-esP.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Center Sixth\"; ObjectID = \"iOQ-1e-esP\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24526,7 +24510,7 @@
     },
     "iWV-c2-BJD.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Open System Preferences\"; ObjectID = \"iWV-c2-BJD\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -24712,7 +24696,7 @@
     },
     "iXo-XL-T6q.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Authorize Rectangle\"; ObjectID = \"iXo-XL-T6q\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25042,7 +25026,7 @@
     },
     "J6t-sg-Wwz.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Right\"; ObjectID = \"J6t-sg-Wwz\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25642,7 +25626,7 @@
     },
     "Jnd-Lc-nlh.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Next Display\"; ObjectID = \"Jnd-Lc-nlh\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -25828,7 +25812,7 @@
     },
     "JSl-FY-MF0.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"JSl-FY-MF0\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -26014,7 +25998,7 @@
     },
     "jww-Ju-S3d.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"do nothing\"; ObjectID = \"jww-Ju-S3d\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -26848,7 +26832,7 @@
     },
     "KfQ-dw-3jk.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"KfQ-dw-3jk\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27172,7 +27156,7 @@
     },
     "kx2-tZ-lk8.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Animate footprint\"; ObjectID = \"kx2-tZ-lk8\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27358,7 +27342,7 @@
     },
     "kXi-dT-zSF.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Spectacle shortcuts are more likely to conflict with other shortcuts\"; ObjectID = \"kXi-dT-zSF\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -27544,7 +27528,7 @@
     },
     "kYm-Ye-gOR.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Welcome to Rectangle!\"; ObjectID = \"kYm-Ye-gOR\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28033,9 +28017,6 @@
         }
       }
     },
-    "Left Half then Top Half moves the window to the top left quarter; the action for the opposite edge expands it back." : {
-
-    },
     "Left or right side" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -28396,7 +28377,7 @@
     },
     "lgE-cR-cQ5.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Go to System Preferences → Security & Privacy → Privacy → Accessibility\"; ObjectID = \"lgE-cR-cQ5\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28611,7 +28592,7 @@
     },
     "LqQ-pM-jRN.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Left Sixth\"; ObjectID = \"LqQ-pM-jRN\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28797,7 +28778,7 @@
     },
     "ltc-mf-BHr.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"When the menu bar icon is hidden, relaunch Rectangle from Finder to open\"; ObjectID = \"ltc-mf-BHr\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28983,7 +28964,7 @@
     },
     "lUu-Hs-vuk.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"400\"; ObjectID = \"lUu-Hs-vuk\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -29289,7 +29270,7 @@
     },
     "m2F-eA-g7w.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Bottom Right Sixth\"; ObjectID = \"m2F-eA-g7w\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -29657,15 +29638,9 @@
         }
       }
     },
-    "Maximum windows per column" : {
-      "comment" : "Maximum windows stacked in each tiled column"
-    },
-    "Maximum windows per row" : {
-      "comment" : "Maximum windows placed side by side in each tiled row"
-    },
     "MDd-Sm-sUx.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"About Todo Mode\"; ObjectID = \"MDd-Sm-sUx\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -29851,7 +29826,7 @@
     },
     "mFt-Kg-UYG.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Left Sixth\"; ObjectID = \"mFt-Kg-UYG\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -30036,6 +30011,7 @@
       }
     },
     "Middle Third" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -30329,7 +30305,7 @@
     },
     "MKW-qf-Q2C.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"▶︎ ⋯\"; ObjectID = \"MKW-qf-Q2C\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -30687,7 +30663,7 @@
     },
     "mpl-sd-2Wc.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Left\"; ObjectID = \"mpl-sd-2Wc\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -30873,7 +30849,7 @@
     },
     "MzN-CJ-ASD.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Make Smaller\"; ObjectID = \"MzN-CJ-ASD\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -31059,7 +31035,7 @@
     },
     "N2U-pY-CLq.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Keep a chosen application visible on the right side of your primary screen at all times\"; ObjectID = \"N2U-pY-CLq\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -31245,7 +31221,7 @@
     },
     "n4U-FC-L9s.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Remove keyboard shortcut restrictions\"; ObjectID = \"n4U-FC-L9s\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -31446,6 +31422,7 @@
       }
     },
     "Ninths (3×3)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -31649,7 +31626,7 @@
     },
     "NMu-W8-Awa.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"NMu-W8-Awa\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -31973,7 +31950,7 @@
     },
     "nwX-h6-fwm.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Last Three Fourths\"; ObjectID = \"nwX-h6-fwm\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -32489,7 +32466,7 @@
     },
     "O9a-3Q-HB1.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Todo side\"; ObjectID = \"O9a-3Q-HB1\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -32951,7 +32928,7 @@
     },
     "oEQ-RN-TTJ.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"oEQ-RN-TTJ\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -33134,9 +33111,6 @@
           }
         }
       }
-    },
-    "Offset window position on overlap" : {
-
     },
     "ogc-rX-tC1.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Loosen\"; ObjectID = \"ogc-rX-tC1\";",
@@ -33642,6 +33616,7 @@
     },
     "oSu-n4-8Yu.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Two Thirds\"; ObjectID = \"oSu-n4-8Yu\";",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -34683,7 +34658,7 @@
     },
     "Pbz-DF-hgG.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Move cursor along with window across displays\"; ObjectID = \"Pbz-DF-hgG\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -34867,10 +34842,8 @@
         }
       }
     },
-    "Preserve maximize state when moving across displays" : {
-
-    },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -35212,7 +35185,7 @@
     },
     "Q2j-YZ-1jU.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"Q2j-YZ-1jU\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -35530,7 +35503,7 @@
     },
     "Q6Q-6J-okH.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"First Fourth\"; ObjectID = \"Q6Q-6J-okH\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -35908,7 +35881,7 @@
     },
     "q9C-qZ-xw5.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"While in Todo Mode, you can refresh the Todo Mode layout by selecting \\\"Reflow Todo\\\" in the Rectangle menu or executing the associated keyboard shortcut.\"; ObjectID = \"q9C-qZ-xw5\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -36094,7 +36067,7 @@
     },
     "qBm-QP-s63.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"qBm-QP-s63\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -36274,7 +36247,7 @@
     },
     "qCy-Kx-9mR.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"cycle positions on quadrants, cycle sizes on side\"; ObjectID = \"qCy-Kx-9mR\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -36436,7 +36409,7 @@
     },
     "qlg-kC-FMr.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Hide menu bar icon\"; ObjectID = \"qlg-kC-FMr\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -36622,7 +36595,7 @@
     },
     "QwF-QN-YH7.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Previous Display\"; ObjectID = \"QwF-QN-YH7\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -36808,7 +36781,7 @@
     },
     "qze-7p-m1X.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"1. Bring your chosen todo application frontmost\"; ObjectID = \"qze-7p-m1X\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -36994,7 +36967,7 @@
     },
     "r2Y-cY-tgn.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Haptic feedback\"; ObjectID = \"r2Y-cY-tgn\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -37186,7 +37159,7 @@
     },
     "r4Q-q9-FLt.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"r4Q-q9-FLt\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -37801,12 +37774,6 @@
         }
       }
     },
-    "Repeated maximize restores the previous size and position" : {
-
-    },
-    "Resize adjacent windows when cycling side or corner shortcuts" : {
-
-    },
     "rgM-f4-ycn.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Smart Dashes\"; ObjectID = \"rgM-f4-ycn\";",
       "extractionState" : "manual",
@@ -37947,7 +37914,7 @@
     },
     "RgZ-Jw-XQZ.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Import\"; ObjectID = \"RgZ-Jw-XQZ\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -38312,7 +38279,7 @@
     },
     "rmV-YD-Hzj.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Check for updates automatically\"; ObjectID = \"rmV-YD-Hzj\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -38822,7 +38789,7 @@
     },
     "rzr-Qq-702.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Right\"; ObjectID = \"rzr-Qq-702\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -39193,6 +39160,7 @@
       }
     },
     "Show additional sizes in menu" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -39208,10 +39176,8 @@
         }
       }
     },
-    "Show stacked window list on hover" : {
-
-    },
     "Side Split Ratio" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -39416,6 +39382,7 @@
       }
     },
     "Sixteenths (4×4)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -39944,7 +39911,7 @@
     },
     "STb-JK-oB1.title" : {
       "comment" : "Class = \"NSWindow\"; title = \"Rectangle Settings\"; ObjectID = \"STb-JK-oB1\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -40268,7 +40235,7 @@
     },
     "t7n-mU-75I.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Enable Rectangle.app\"; ObjectID = \"t7n-mU-75I\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -40454,7 +40421,7 @@
     },
     "T9Z-QF-gwc.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"First Three Fourths\"; ObjectID = \"T9Z-QF-gwc\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -41360,9 +41327,6 @@
         }
       }
     },
-    "Tile Windows in Rows/Columns" : {
-      "comment" : "General settings group for multi-window grid limits"
-    },
     "tileColumns.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -41682,6 +41646,7 @@
       }
     },
     "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting." : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -41900,10 +41865,8 @@
         }
       }
     },
-    "Toggle window list" : {
-
-    },
     "Top Center Left Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -41920,6 +41883,7 @@
       }
     },
     "Top Center Right Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -41953,6 +41917,7 @@
       }
     },
     "Top Left Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -41969,6 +41934,7 @@
       }
     },
     "Top Right Eighth" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -42181,6 +42147,7 @@
       }
     },
     "Top Third" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -42197,6 +42164,7 @@
       }
     },
     "Top Two Thirds" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -42234,9 +42202,6 @@
           }
         }
       }
-    },
-    "Treat multiple displays as one" : {
-
     },
     "Treat multiple monitors as one" : {
       "extractionState" : "stale",
@@ -42389,7 +42354,7 @@
     },
     "Tt8-3X-UpT.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"Tt8-3X-UpT\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -42575,7 +42540,7 @@
     },
     "TTx-7X-Wie.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Top Center Sixth\"; ObjectID = \"TTx-7X-Wie\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -42782,6 +42747,7 @@
       }
     },
     "Twelfths (4×3)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -43075,7 +43041,7 @@
     },
     "uLF-Uf-tBt.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Restore Default Shortcuts & Snap Areas\"; ObjectID = \"uLF-Uf-tBt\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -43990,7 +43956,7 @@
     },
     "uw2-9W-2jq.label" : {
       "comment" : "Class = \"NSTabViewItem\"; label = \"Shortcuts\"; ObjectID = \"uw2-9W-2jq\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -44176,7 +44142,7 @@
     },
     "UZP-5q-D5Y.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Restore window size when unsnapped\"; ObjectID = \"UZP-5q-D5Y\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -44362,7 +44328,7 @@
     },
     "v2f-bX-xiM.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Move Left\"; ObjectID = \"v2f-bX-xiM\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -44733,6 +44699,7 @@
       }
     },
     "Vertical (T/B, %)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -44748,12 +44715,9 @@
         }
       }
     },
-    "vertically" : {
-
-    },
     "Vfd-fe-hCe.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"ⓘ\"; ObjectID = \"Vfd-fe-hCe\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "cs" : {
           "stringUnit" : {
@@ -45935,7 +45899,7 @@
     },
     "Vph-Z0-euH.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Center Three Fourths\"; ObjectID = \"Vph-Z0-euH\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -46959,9 +46923,6 @@
         }
       }
     },
-    "When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF." : {
-
-    },
     "Width Step (px)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -47527,7 +47488,7 @@
     },
     "xBU-le-7cX.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"xBU-le-7cX\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -47713,7 +47674,7 @@
     },
     "Xc8-Sm-pig.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Left\"; ObjectID = \"Xc8-Sm-pig\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -47899,7 +47860,7 @@
     },
     "xcE-uL-2J0.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Choosing Spectacle will also cycle 1/2, 2/3, and 1/3 window widths on repeated shortcuts\"; ObjectID = \"xcE-uL-2J0\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -48085,7 +48046,7 @@
     },
     "xE6-jw-EPt.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"If the area is too small, recent apps will be hidden\"; ObjectID = \"xE6-jw-EPt\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -48271,7 +48232,7 @@
     },
     "xK0-Bn-yqf.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"-\"; ObjectID = \"xK0-Bn-yqf\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -48457,7 +48418,7 @@
     },
     "XlM-ch-cLG.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"cycle through displays\"; ObjectID = \"XlM-ch-cLG\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -48643,7 +48604,7 @@
     },
     "xNi-9K-fnJ.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"2. In the Rectangle menu, select\\n\\\"Use [Application] as Todo App\\\"\"; ObjectID = \"xNi-9K-fnJ\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -50239,7 +50200,7 @@
     },
     "Z9d-Rl-RVq.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"move to adjacent display on left or right\"; ObjectID = \"Z9d-Rl-RVq\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -50563,7 +50524,7 @@
     },
     "ZTK-rS-b17.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Third Fourth\"; ObjectID = \"ZTK-rS-b17\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -50755,7 +50716,7 @@
     },
     "ZVi-DR-1zj.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"About Todo Mode\"; ObjectID = \"ZVi-DR-1zj\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
