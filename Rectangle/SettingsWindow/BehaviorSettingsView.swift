@@ -222,7 +222,7 @@ struct BehaviorSettingsView: View {
                         Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
                         Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
                         
-                        Toggle("Repeated Maximize restores the previous size and position", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
+                        Toggle("Repeated maximize restores the previous size and position", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
