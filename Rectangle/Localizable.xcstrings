@@ -22,6 +22,9 @@
     "Animate windows (experimental)" : {
 
     },
+    "Authorize Rectangle" : {
+
+    },
     "Blur appearance" : {
 
     },
@@ -52,6 +55,9 @@
     "Double-click window title bar to maximize/restore" : {
 
     },
+    "Enable Rectangle.app" : {
+
+    },
     "Export Config" : {
 
     },
@@ -59,6 +65,12 @@
 
     },
     "Gaps between windows" : {
+
+    },
+    "Go to System Settings → Privacy & Security → Accessibility" : {
+
+    },
+    "Go to System Settings → Privacy & Security → Device Control and Data Access" : {
 
     },
     "Green stoplight button maximizes instead of Full Screen" : {
@@ -118,6 +130,9 @@
     "Offset window position on overlap" : {
 
     },
+    "Open System Settings" : {
+
+    },
     "Other" : {
 
     },
@@ -143,6 +158,9 @@
 
     },
     "Recommended" : {
+
+    },
+    "Rectangle needs your permission to control your window positions." : {
 
     },
     "Reflow Todo" : {
