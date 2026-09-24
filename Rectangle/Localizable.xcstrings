@@ -33227,7 +33227,7 @@
         }
       }
     },
-    "When off, window-to-screen edges are preserved." : {
+    "When off, window-to-screen edges are preserved where applicable." : {
 
     },
     "When the menu bar icon is hidden, relaunch Rectangle from Finder to open" : {
