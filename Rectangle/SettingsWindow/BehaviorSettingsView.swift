@@ -118,9 +118,9 @@ struct BehaviorSettingsView: View {
             
             // MARK: - Cursor & Display Rules
             Section {
-                Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
                 Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
+                Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                 if viewModel.showCombinedDisplayMode {
                     VStack(alignment: .leading, spacing: 2) {
