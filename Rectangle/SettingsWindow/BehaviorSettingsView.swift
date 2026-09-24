@@ -34,6 +34,7 @@ struct BehaviorSettingsView: View {
     @State private var isStackedWindowsExpanded = false
     @State private var isSideSplitRatiosExpanded = false
     @State private var isStageManagerExpanded = false
+    @State private var isAcrossDisplaysExpanded = false
     
     // Popover state
     @State private var showTodoInfoPopover = false
@@ -116,15 +117,8 @@ struct BehaviorSettingsView: View {
                 }
             }
             
-            // MARK: - Cursor & Display Rules
+            // MARK: - General Settings
             Section {
-                Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
-                VStack(alignment: .leading, spacing: 2) {
-                    Toggle("Keep window position when moving across displays", isOn: $viewModel.keepWindowPositionOnDisplayChange)
-                    Text("Windows stay against the same screen edges on the new display. When off, they are centered.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
                 Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
                 Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                 Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
@@ -226,8 +220,6 @@ struct BehaviorSettingsView: View {
                         }
                         
                         Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
-                        Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
-                        
                         Toggle("Repeated maximize restores the previous size and position", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
 
                         VStack(alignment: .leading, spacing: 2) {
@@ -241,6 +233,27 @@ struct BehaviorSettingsView: View {
                     .padding(.leading, 12)
                 } label: {
                     Label("Maximize Settings", systemImage: "arrow.up.left.and.arrow.down.right")
+                }
+            }
+
+            // MARK: - Across Display Settings
+            Section {
+                DisclosureGroup(isExpanded: $isAcrossDisplaysExpanded) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Divider()
+                        Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
+                        Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Toggle("Preserve window-to-screen edges when moving across displays", isOn: $viewModel.keepWindowPositionOnDisplayChange)
+                            Text("When off, windows are centered.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.top, 4)
+                    .padding(.leading, 12)
+                } label: {
+                    Label("Across Display Settings", systemImage: "display.2")
                 }
             }
 
@@ -371,6 +384,7 @@ struct BehaviorSettingsView: View {
         .animation(.easeInOut(duration: 0.2), value: isStackedWindowsExpanded)
         .animation(.easeInOut(duration: 0.2), value: isSideSplitRatiosExpanded)
         .animation(.easeInOut(duration: 0.2), value: isStageManagerExpanded)
+        .animation(.easeInOut(duration: 0.2), value: isAcrossDisplaysExpanded)
     }
 }
 

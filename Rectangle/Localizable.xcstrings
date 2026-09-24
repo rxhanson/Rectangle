@@ -2043,6 +2043,9 @@
         }
       }
     },
+    "Across Display Settings" : {
+
+    },
     "After Rectangle maximizes or almost maximizes a window, executing the same action again moves the window back to its previous size and position." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -21986,6 +21989,9 @@
         }
       }
     },
+    "Preserve window-to-screen edges when moving across displays" : {
+
+    },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -33220,6 +33226,9 @@
           }
         }
       }
+    },
+    "When off, windows are centered." : {
+
     },
     "When the menu bar icon is hidden, relaunch Rectangle from Finder to open" : {
       "localizations" : {
