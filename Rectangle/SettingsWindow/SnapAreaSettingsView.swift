@@ -211,7 +211,7 @@ struct SnapAreaGridView: View {
     let orientation: DisplayOrientation
 
     var body: some View {
-        Grid(alignment: .trailing, horizontalSpacing: 12, verticalSpacing: 12) {
+        Grid(alignment: .center, horizontalSpacing: 12, verticalSpacing: 12) {
             // Top Row
             GridRow(alignment: .center) {
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .tl)
@@ -248,6 +248,17 @@ struct SnapAreaPicker: View {
 
     @State private var selectedTag: Int = -1
 
+    private var pickerAlignment: Alignment {
+        switch directional {
+        case .tl, .l, .bl:
+            return .trailing
+        case .t, .b, .c:
+            return .center
+        case .tr, .r, .br:
+            return .leading
+        }
+    }
+
     var body: some View {
         Picker("", selection: $selectedTag) {
             Text("-").tag(-1)
@@ -275,7 +286,14 @@ struct SnapAreaPicker: View {
         }
         .labelsHidden()
         .pickerStyle(.menu)
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
+        )
+        .frame(maxWidth: .infinity, alignment: pickerAlignment)
         .onAppear {
             selectedTag = viewModel.getSelectedTag(for: directional, orientation: orientation)
         }
