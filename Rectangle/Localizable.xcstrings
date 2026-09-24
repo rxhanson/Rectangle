@@ -2485,6 +2485,9 @@
         }
       }
     },
+    "App Settings" : {
+
+    },
     "Authorize Rectangle" : {
       "localizations" : {
         "ar" : {
@@ -2865,6 +2868,9 @@
           }
         }
       }
+    },
+    "Behavior" : {
+
     },
     "Blur appearance" : {
       "localizations" : {

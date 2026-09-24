@@ -32,10 +32,10 @@ class SettingsTabViewController: NSTabViewController {
         
         var label: String {
             switch self {
-            case .shortcuts:   return "Shortcuts"
-            case .snapAreas:   return "Snap Areas"
-            case .behavior:    return "Behavior"
-            case .appSettings: return "App Settings"
+            case .shortcuts:   return String(localized:"Shortcuts")
+            case .snapAreas:   return String(localized:"Snap Areas")
+            case .behavior:    return String(localized:"Behavior")
+            case .appSettings: return String(localized:"App Settings")
             }
         }
         
