@@ -9790,17 +9790,6 @@
         }
       }
     },
-    "Export Config" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Export Config"
-          }
-        }
-      }
-    },
     "Extra Shortcuts" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -14784,17 +14773,6 @@
         }
       }
     },
-    "Import Config" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Import Config"
-          }
-        }
-      }
-    },
     "In the Rectangle menu, enable Todo Mode." : {
       "localizations" : {
         "en" : {
@@ -16710,17 +16688,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "左半或右半"
-          }
-        }
-      }
-    },
-    "Left side, top/bottom near corners" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Left side, top/bottom near corners"
           }
         }
       }
@@ -22236,17 +22203,6 @@
         }
       }
     },
-    "Provide haptic feedback" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Provide haptic feedback"
-          }
-        }
-      }
-    },
     "px" : {
       "localizations" : {
         "en" : {
@@ -24901,197 +24857,186 @@
         }
       }
     },
-    "Right side, top/bottom near corners" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Right side, top/bottom near corners"
-          }
-        }
-      }
-    },
     "Right side, top/bottom side near corners" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié droite, moitié du haut/bas près des coins"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Pravá polovina, horní/spodní polovina blízko rohů"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Rechte Hälfte, Obere/Untere Hälfte in der Nähe der Ecken"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Right side, top/bottom side near corners"
+            "value" : "Right side, top/bottom near corners"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad derecha, mitad superior/inferior cerca de las esquinas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mitad derecha, mitad superior/inferior cerca de las esquinas"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Moitié droite, moitié du haut/bas près des coins"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metà destra, metà superiore/inferiore vicino gli angoli"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半分、画面端付近の上半分・下半分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "반, 위/아래 반에 근접한 모서리"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Dešinė pusė, viršutinė/apačioje pusė šalia kampų"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Høgre halvdel, øverste/nederste halvdel nære hjørne"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Høgre halvdel, øvste/nedste halvdel nære hjørne"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Metade direita, metade cima/baixo próximo das bordas"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Правая половина, верхняя/нижняя половина возле углов"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Pravá polovica, horná/spodná polovica blízko rohov"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Right side, top/bottom side near corners"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Sağ yarım (köşelere yaklaşıldığında ise üst/alt yarım)"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Права половина, верхня/нижня половина близько кутів"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nửa phải, nửa trên/dưới nếu ngay góc"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半屏，靠近角落则上／下半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半，靠近角落則上半／下半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "右半，靠近角落則上半／下半"
           }
         }
@@ -28636,197 +28581,186 @@
         }
       }
     },
-    "Thirds, top/bottom near corners" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thirds, top/bottom near corners"
-          }
-        }
-      }
-    },
     "Thirds, top/bottom side near corners" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tiers, moitié du haut/bas près des coins"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Třetiny, horní/spodní polovina blízko rohů"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Drittel, Obere/Untere Hälfte in der Nähe der Ecken"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, top/bottom side near corners"
+            "value" : "Thirds, top/bottom near corners"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tercios, mitad superior/inferior cerca de las esquinas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tercios, mitad superior/inferior cerca de las esquinas"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tiers, moitié du haut/bas près des coins"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Terzi, metà superiore/inferiore vicino gli angoli"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "3分割、画面端付近の上半分・下半分"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "1/3, 위/아래 반에 근접한 모서리"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Trečdalys, viršutinė/apačioje pusė šalia kampų"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tredjedeler, øverste/nederste halvdel nære hjørne"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tredjedelar, øvste/nedste halvdel nære hjørne"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Трети, верхняя/нижняя половина возле углов"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tretiny, horná/spodná polovica blízko rohov"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Thirds, top/bottom side near corners"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Üçte bir (köşelere yaklaşıldığında ise üst/alt)"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Третини, верхня/нижня половина близько кутів"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "1/3, nửa trên/dưới nếu ngay góc"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "⅓，靠近角落则上／下半屏"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "⅓，靠近角落則上半／下半"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "⅓；靠近角落則上半／下半"
           }
         }
