@@ -40,7 +40,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
 
             let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
 
-            if !Defaults.keepWindowPositionOnDisplayChange.userDisabled {
+            if !Defaults.centerAcrossDisplays.userEnabled {
                 // A maximized window is re-maximized below instead, so that it stays recorded as
                 // maximized on the destination display and can still be restored from there.
                 let remaximizes = params.lastAction?.action == .maximize && !Defaults.autoMaximize.userDisabled

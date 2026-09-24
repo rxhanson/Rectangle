@@ -230,8 +230,8 @@ struct BehaviorSettingsView: View {
                         Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
                         Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
                         VStack(alignment: .leading, spacing: 2) {
-                            Toggle("Preserve window-to-screen edges when moving across displays", isOn: $viewModel.keepWindowPositionOnDisplayChange)
-                            Text("When off, windows are centered.")
+                            Toggle("Center windows when moving across displays", isOn: $viewModel.centerAcrossDisplays)
+                            Text("When off, window-to-screen edges are preserved where applicable.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

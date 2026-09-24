@@ -42,7 +42,7 @@ class SpecificDisplayCalculation: WindowCalculation {
         // Parity with NextPrevDisplayCalculation: display 1/2/3 moves behave like next/prev moves.
         let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
 
-        if !Defaults.keepWindowPositionOnDisplayChange.userDisabled {
+        if !Defaults.centerAcrossDisplays.userDisabled {
             let transferredRect = DisplayTransfer.transferredRect(window: rectParams.window.rect,
                                                                   source: sourceFrame,
                                                                   destination: rectParams.visibleFrameOfScreen)

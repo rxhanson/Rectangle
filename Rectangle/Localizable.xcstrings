@@ -5474,6 +5474,9 @@
         }
       }
     },
+    "Center windows when moving across displays" : {
+
+    },
     "Check for updates automatically" : {
       "localizations" : {
         "ar" : {
@@ -21989,9 +21992,6 @@
         }
       }
     },
-    "Preserve window-to-screen edges when moving across displays" : {
-
-    },
     "Press the shortcut repeatedly to cycle through all positions in the grid." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -33227,7 +33227,7 @@
         }
       }
     },
-    "When off, windows are centered." : {
+    "When off, window-to-screen edges are preserved." : {
 
     },
     "When the menu bar icon is hidden, relaunch Rectangle from Finder to open" : {
