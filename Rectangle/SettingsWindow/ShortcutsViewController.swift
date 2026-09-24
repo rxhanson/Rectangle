@@ -33,7 +33,6 @@ final class CategoryGroup: NSObject {
 
         var flatItems: [Any] = []
         for (index, category) in categories.enumerated() {
-            // Include action items
             flatItems.append(contentsOf: category.items)
 
             // Add spacer after each category except the last inside the group (or if sub-groups follow)
@@ -211,7 +210,7 @@ final class ShortcutActionCellView: NSTableCellView {
     }
 }
 
-// MARK: ShortcutsViewController
+// MARK: - ShortcutsViewController
 
 class ShortcutsViewController: NSViewController {
 
@@ -232,7 +231,7 @@ class ShortcutsViewController: NSViewController {
         
         NSLayoutConstraint.activate([
             containerView.widthAnchor.constraint(equalToConstant: initialSize.width),
-            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200) // Minimum height allowed
+            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200) // Minimum height
         ])
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -362,8 +361,6 @@ extension ShortcutsViewController: NSOutlineViewDataSource {
         fatalError("Unexpected outline view item: \(String(describing: item))")
     }
 }
-
-// MARK: - NSOutlineViewDelegate
 
 // MARK: - NSOutlineViewDelegate
 
