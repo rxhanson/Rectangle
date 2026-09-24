@@ -383,9 +383,9 @@ enum WindowAction: Int, Codable {
         case .nextDisplay:
             String(localized: "Next Display")
         case .larger:
-            String(localized: "Larger")
+            String(localized: "Make Larger")
         case .smaller:
-            String(localized: "Smaller")
+            String(localized: "Make Smaller")
         case .bottomHalf:
             String(localized: "Bottom")
         case .topHalf:
