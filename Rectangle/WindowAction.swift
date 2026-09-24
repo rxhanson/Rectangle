@@ -205,7 +205,7 @@ enum WindowAction: Int, Codable {
     
     var excludedFromMenu: Bool {
         switch self {
-        case .smallerWidth, .largerWidth: return true
+        case .smallerWidth, .largerWidth, .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds: return true
         default: return false
         }
     }
