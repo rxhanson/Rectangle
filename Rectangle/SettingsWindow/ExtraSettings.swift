@@ -14,16 +14,16 @@ private var integerFormatter: NumberFormatter = {
 final class TileSettingsView: NSView, NSTextFieldDelegate {
 
     private let titleLabel: NSTextField = {
-        let label = NSTextField(labelWithString: NSLocalizedString("Tile Windows in Rows/Columns", tableName: "Main", value: "", comment: ""))
+        let label = NSTextField(labelWithString: String(localized:"Tile Windows in Rows/Columns"))
         label.font = NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
         return label
     }()
 
-    private let columnsLabel = NSTextField(labelWithString: NSLocalizedString("Maximum windows per column", tableName: "Main", value: "", comment: ""))
+    private let columnsLabel = NSTextField(labelWithString: String(localized: "Maximum windows per column"))
     private let columnsTextField = NSTextField()
     private let columnsStepper = NSStepper()
 
-    private let rowsLabel = NSTextField(labelWithString: NSLocalizedString("Maximum windows per row", tableName: "Main", value: "", comment: ""))
+    private let rowsLabel = NSTextField(labelWithString: String(localized: "Maximum windows per row"))
     private let rowsTextField = NSTextField()
     private let rowsStepper = NSStepper()
 
@@ -133,7 +133,7 @@ final class TileSettingsView: NSView, NSTextFieldDelegate {
 
 final class WidthSettingsView: NSView, NSTextFieldDelegate {
 
-    private let widthStepLabel = NSTextField(labelWithString: NSLocalizedString("Width Step (px)", tableName: "Main", value: "", comment: ""))
+    private let widthStepLabel = NSTextField(labelWithString: String(localized: "Width Step (px)"))
     private let widthStepTextField = NSTextField()
 
     override init(frame frameRect: NSRect) {

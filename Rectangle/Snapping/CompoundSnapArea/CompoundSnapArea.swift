@@ -23,27 +23,27 @@ enum CompoundSnapArea: Int, Codable {
     var displayName: String {
         switch self {
         case .leftTopBottomHalf:
-            return NSLocalizedString("Left side, top/bottom near corners", tableName: "Main", value: "", comment: "")
+            return String(localized: "Left side, top/bottom near corners")
         case .rightTopBottomHalf:
-            return NSLocalizedString("Right side, top/bottom near corners", tableName: "Main", value: "", comment: "")
+            return String(localized: "Right side, top/bottom near corners")
         case .thirds:
-            return NSLocalizedString("Thirds, drag toward center for two thirds", tableName: "Main", value: "", comment: "")
+            return String(localized: "Thirds, drag toward center for two thirds")
         case .portraitThirdsSide:
-            return NSLocalizedString("Thirds, top/bottom near corners", tableName: "Main", value: "", comment: "")
+            return String(localized: "Thirds, top/bottom near corners")
         case .halves:
-            return NSLocalizedString("Left or right side", tableName: "Main", value: "", comment: "")
+            return String(localized: "Left or right side")
         case .topSixths:
-            return NSLocalizedString("Top sixths from corners; maximize", tableName: "Main", value: "", comment: "")
+            return String(localized: "Top sixths from corners; maximize")
         case .bottomSixths:
-            return NSLocalizedString("Bottom sixths from corners; thirds", tableName: "Main", value: "", comment: "")
+            return String(localized: "Bottom sixths from corners; thirds")
         case .fourths:
-            return NSLocalizedString("Fourths columns", tableName: "Main", value: "", comment: "")
+            return String(localized: "Fourths columns")
         case .portraitTopBottomHalves:
-            return NSLocalizedString("Top/bottoms", tableName: "Main", value: "", comment: "")
+            return String(localized: "Top/bottoms")
         case .topEighths:
-            return NSLocalizedString("Top eighths from corners; maximize", tableName: "Main", value: "", comment: "")
+            return String(localized: "Top eighths from corners; maximize")
         case .bottomEighths:
-            return NSLocalizedString("Bottom eighths from corners; thirds", tableName: "Main", value: "", comment: "")
+            return String(localized: "Bottom eighths from corners; thirds")
         }
     }
     

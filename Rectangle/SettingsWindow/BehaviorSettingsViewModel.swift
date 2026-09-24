@@ -273,10 +273,10 @@ final class BehaviorSettingsViewModel: ObservableObject {
 
     private func handleDoubleClickTitleBarToggle(_ enabled: Bool) {
         if enabled && !TitleBarManager.systemSettingDisabled {
-            let openSettings = NSLocalizedString("Open System Settings", tableName: "Main", value: "", comment: "")
-            let conflictTitleText = NSLocalizedString("Conflict with system setting", tableName: "Main", value: "", comment: "")
-            let conflictDescriptionText = NSLocalizedString("To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.", tableName: "Main", value: "", comment: "")
-            let closeText = NSLocalizedString("DVo-aG-piG.title", tableName: "Main", value: "Close", comment: "")
+            let openSettings = String(localized: "Open System Settings")
+            let conflictTitleText = String(localized: "Conflict with system setting")
+            let conflictDescriptionText = String(localized: "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.")
+            let closeText = String(localized: "Close")
 
             let response = AlertUtil.twoButtonAlert(question: conflictTitleText, text: conflictDescriptionText, confirmText: openSettings, cancelText: closeText)
             if response == .alertFirstButtonReturn {

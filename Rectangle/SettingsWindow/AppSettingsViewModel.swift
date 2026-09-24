@@ -76,9 +76,9 @@ final class AppSettingsViewModel: ObservableObject {
 
     func restoreDefaults() {
         let currentDefaults = Defaults.alternateDefaultShortcuts.enabled ? "Rectangle" : "Spectacle"
-        let defaultShortcutsTitle = NSLocalizedString("Default Shortcuts", tableName: "Main", value: "", comment: "")
-        let currentlyUsingText = NSLocalizedString("Currently using: ", tableName: "Main", value: "", comment: "")
-        let cancelText = NSLocalizedString("Cancel", tableName: "Main", value: "", comment: "")
+        let defaultShortcutsTitle = String(localized: "Default Shortcuts")
+        let currentlyUsingText = String(localized: "Currently using: ")
+        let cancelText = String(localized: "Cancel")
 
         let response = AlertUtil.threeButtonAlert(question: defaultShortcutsTitle, text: currentlyUsingText + currentDefaults, buttonOneText: "Rectangle", buttonTwoText: "Spectacle", buttonThreeText: cancelText)
         if response == .alertThirdButtonReturn { return }

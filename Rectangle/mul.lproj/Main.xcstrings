@@ -10544,6 +10544,7 @@
       }
     },
     "Bottom eighths from corners; thirds" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -10592,6 +10593,7 @@
       }
     },
     "Bottom sixths from corners; thirds" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -16394,6 +16396,7 @@
       }
     },
     "Enable Todo Mode" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -18896,6 +18899,7 @@
       }
     },
     "Fourths columns" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28033,6 +28037,7 @@
 
     },
     "Left or right side" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -28209,9 +28214,6 @@
           }
         }
       }
-    },
-    "Left side, top/bottom near corners" : {
-
     },
     "Left side, top/bottom side near corners" : {
       "extractionState" : "stale",
@@ -37639,6 +37641,7 @@
       }
     },
     "Reflow Todo" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -38127,9 +38130,6 @@
           }
         }
       }
-    },
-    "Right side, top/bottom near corners" : {
-
     },
     "Right side, top/bottom side near corners" : {
       "extractionState" : "stale",
@@ -41003,6 +41003,7 @@
       }
     },
     "Thirds, drag toward center for two thirds" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -41179,9 +41180,6 @@
           }
         }
       }
-    },
-    "Thirds, top/bottom near corners" : {
-
     },
     "Thirds, top/bottom side near corners" : {
       "extractionState" : "stale",
@@ -41902,12 +41900,6 @@
         }
       }
     },
-    "Toggle stacked window badge" : {
-
-    },
-    "Toggle Todo" : {
-
-    },
     "Toggle window list" : {
 
     },
@@ -41944,6 +41936,7 @@
       }
     },
     "Top eighths from corners; maximize" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -42009,6 +42002,7 @@
       }
     },
     "Top sixths from corners; maximize" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -42240,9 +42234,6 @@
           }
         }
       }
-    },
-    "Top/bottoms" : {
-
     },
     "Treat multiple displays as one" : {
 
@@ -43658,6 +43649,7 @@
       }
     },
     "Use as Todo Window" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -43836,6 +43828,7 @@
       }
     },
     "Use frontmost.app as Todo App" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
