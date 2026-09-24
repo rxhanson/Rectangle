@@ -15349,17 +15349,6 @@
     "Landscape Snap Areas" : {
 
     },
-    "Larger" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Larger"
-          }
-        }
-      }
-    },
     "Larger Width" : {
       "localizations" : {
         "en" : {
@@ -27171,17 +27160,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "大小"
-          }
-        }
-      }
-    },
-    "Smaller" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Smaller"
           }
         }
       }
