@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var titleBarManager: TitleBarManager!
     private var greenButtonManager: GreenButtonManager!
     
-    private var prefsWindowController: NSWindowController?
+    private var settingsWindowController: NSWindowController?
     
     private var prevActiveAppObservation: NSKeyValueObservation?
     private var prevActiveApp: NSRunningApplication?
@@ -253,16 +253,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
     
-    var settingsWindowController: NSWindowController?
     @IBAction func openPreferences(_ sender: Any) {
         if settingsWindowController == nil {
-//            prefsWindowController = SettingsWindowController()
-//            prefsWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "PrefsWindowController") as? NSWindowController
             settingsWindowController = SettingsWindowController()
         }
-        settingsWindowController?.showWindow(self)
         NSApp.activate(ignoringOtherApps: true)
-        prefsWindowController?.showWindow(self)
+        settingsWindowController?.showWindow(self)
     }
     
     @IBAction func showAbout(_ sender: Any) {

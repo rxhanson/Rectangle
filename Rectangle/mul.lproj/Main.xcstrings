@@ -20224,6 +20224,7 @@
       }
     },
     "Go to System Settings → Privacy & Security → Accessibility" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -20403,6 +20404,7 @@
     },
     "Go to System Settings → Privacy & Security → Device Control and Data Access" : {
       "comment" : "macOS 27 and later permission pane name.",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -33437,6 +33439,7 @@
       }
     },
     "Open System Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
