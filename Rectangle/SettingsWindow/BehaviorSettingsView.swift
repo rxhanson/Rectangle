@@ -35,6 +35,7 @@ struct BehaviorSettingsView: View {
     @State private var isSideSplitRatiosExpanded = false
     @State private var isStageManagerExpanded = false
     @State private var isAcrossDisplaysExpanded = false
+    @State private var isExtrasExpanded = false
     
     // Popover state
     @State private var showTodoInfoPopover = false
@@ -117,21 +118,6 @@ struct BehaviorSettingsView: View {
                 }
             }
             
-            // MARK: - General Settings
-            Section {
-                Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
-                Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
-                if viewModel.showCombinedDisplayMode {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
-                        Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-
             // MARK: - Todo Mode
             Section {
                 HStack {
@@ -375,6 +361,30 @@ struct BehaviorSettingsView: View {
                     }
                 }
             }
+            
+            // MARK: - Extras
+            Section {
+                DisclosureGroup(isExpanded: $isExtrasExpanded) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Divider()
+                        Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
+                        Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
+                        Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
+                        if viewModel.showCombinedDisplayMode {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
+                                Text("When using multiple displays, treats them as a single display. Requires System Settings > Desktop & Dock > Displays have separate Spaces to be OFF.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(.top, 4)
+                    .padding(.leading, 12)
+                } label: {
+                    Label("Extras", systemImage: "ellipsis.viewfinder")
+                }
+            }
         }
         .formStyle(.grouped)
         .frame(width: 500)
@@ -385,6 +395,7 @@ struct BehaviorSettingsView: View {
         .animation(.easeInOut(duration: 0.2), value: isSideSplitRatiosExpanded)
         .animation(.easeInOut(duration: 0.2), value: isStageManagerExpanded)
         .animation(.easeInOut(duration: 0.2), value: isAcrossDisplaysExpanded)
+        .animation(.easeInOut(duration: 0.2), value: isExtrasExpanded)
     }
 }
 
