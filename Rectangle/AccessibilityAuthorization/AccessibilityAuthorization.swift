@@ -1,43 +1,94 @@
 /// AccessibilityAuthorization.swift
 
 import Foundation
-import Cocoa
+import SwiftUI
 
-class AccessibilityAuthorization {
+class AccessibilityAuthorization: ObservableObject {
     
-    private var accessibilityWindowController: NSWindowController?
+    private var windowController: NSWindowController?
+    private var timer: Timer?
     
+    @discardableResult
     public func checkAccessibility(completion: @escaping () -> Void) -> Bool {
         if !AXIsProcessTrusted() {
-            
-            accessibilityWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "AccessibilityWindowController") as? NSWindowController
-            
-            NSApp.activate(ignoringOtherApps: true)
-            accessibilityWindowController?.showWindow(self)
-            pollAccessibility(completion: completion)
+            showWindow(completion: completion)
+            startPolling(completion: completion)
             return false
         } else {
             return true
         }
     }
     
-    private func pollAccessibility(completion: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+    private func showWindow(completion: @escaping () -> Void) {
+        if windowController == nil {
+            let rootView = AccessibilityView(manager: self)
+            let hostingController = NSHostingController(rootView: rootView)
+            
+            let window = CustomAccessibilityWindow(
+                contentViewController: hostingController
+            )
+            
+            let wc = NSWindowController(window: window)
+            self.windowController = wc
+        }
+        
+        NSApp.activate(ignoringOtherApps: true)
+        DispatchQueue.main.async {
+            self.windowController?.window?.center()
+            self.windowController?.showWindow(self)
+        }
+    }
+    
+    private func startPolling(completion: @escaping () -> Void) {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] t in
+            guard let self = self else { return }
+            
             if AXIsProcessTrusted() {
-                self.accessibilityWindowController?.close()
-                self.accessibilityWindowController = nil
+                t.invalidate()
+                self.timer = nil
+                self.closeWindow()
                 completion()
-            } else {
-                self.pollAccessibility(completion: completion)
             }
         }
     }
     
     func showAuthorizationWindow() {
-        if accessibilityWindowController?.window?.isMiniaturized == true {
-            accessibilityWindowController?.window?.deminiaturize(self)
+        if windowController?.window?.isMiniaturized == true {
+            windowController?.window?.deminiaturize(self)
         }
         NSApp.activate(ignoringOtherApps: true)
     }
     
+    private func closeWindow() {
+        windowController?.close()
+        windowController = nil
+    }
+}
+
+// MARK: - Window Handling Termination on Close
+
+private class CustomAccessibilityWindow: NSWindow {
+    
+    init(contentViewController: NSViewController) {
+        super.init(
+            contentRect: NSRect(x: 0, y: 0, width: 320, height: 380),
+            styleMask: [.titled, .closable, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        
+        self.contentViewController = contentViewController
+        self.titlebarAppearsTransparent = true
+        self.titleVisibility = .hidden
+        self.isMovableByWindowBackground = true
+        
+        let closeButton = self.standardWindowButton(.closeButton)
+        closeButton?.target = self
+        closeButton?.action = #selector(closeButtonClicked)
+    }
+    
+    @objc private func closeButtonClicked() {
+        exit(1)
+    }
 }
