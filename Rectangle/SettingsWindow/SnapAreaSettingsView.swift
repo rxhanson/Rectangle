@@ -27,9 +27,10 @@ class SnapAreaSettingsViewController: NSViewController {
 
 // MARK: - ViewModel
 
-final class SnapAreaViewModel: ObservableObject {
+@Observable
+final class SnapAreaViewModel {
     // General Settings
-    @Published var windowSnapping: Bool = true {
+    var windowSnapping: Bool = true {
         didSet {
             guard oldValue != windowSnapping else { return }
             Defaults.windowSnapping.enabled = windowSnapping
@@ -40,54 +41,54 @@ final class SnapAreaViewModel: ObservableObject {
         }
     }
     
-    @Published var unsnapRestore: Bool = true {
+    var unsnapRestore: Bool = true {
         didSet {
             Defaults.unsnapRestore.enabled = unsnapRestore
         }
     }
     
-    @Published var hapticFeedback: Bool = false {
+    var hapticFeedback: Bool = false {
         didSet {
             Defaults.hapticFeedbackOnSnap.enabled = hapticFeedback
         }
     }
     
-    @Published var animateFootprint: Bool = true {
+    var animateFootprint: Bool = true {
         didSet {
             let val: Float = animateFootprint ? 0.75 : 0.0
             Defaults.footprintAnimationDurationMultiplier.value = val
         }
     }
     
-    @Published var footprintBlur: Bool = false {
+    var footprintBlur: Bool = false {
         didSet {
             Defaults.footprintBlur.enabled = footprintBlur
         }
     }
-
-    @Published var blurAppearance: BlurAppearance = .system {
+    
+    var blurAppearance: BlurAppearance = .system {
         didSet {
             Defaults.blurAppearance.value = blurAppearance
         }
     }
     
-    @Published var missionControlDraggingDisabled: Bool = false {
+    var missionControlDraggingDisabled: Bool = false {
         didSet {
             Defaults.missionControlDragging.enabled = !missionControlDraggingDisabled
             Notification.Name.missionControlDragging.post(object: !missionControlDraggingDisabled)
         }
     }
-
+    
     // Displays / UI State
-    @Published var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
-
+    var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
+    
     private var cancellables = Set<AnyCancellable>()
-
+    
     init() {
         syncDefaults()
         setupNotificationObservers()
     }
-
+    
     func syncDefaults() {
         windowSnapping = !Defaults.windowSnapping.userDisabled
         unsnapRestore = !Defaults.unsnapRestore.userDisabled
@@ -98,38 +99,38 @@ final class SnapAreaViewModel: ObservableObject {
         missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
         isPortraitConnected = NSScreen.portraitDisplayConnected
     }
-
+    
     private func setupNotificationObservers() {
         let center = NotificationCenter.default
-
+        
         center.publisher(for: NSApplication.didChangeScreenParametersNotification)
             .sink { [weak self] _ in
                 self?.isPortraitConnected = NSScreen.portraitDisplayConnected
             }
             .store(in: &cancellables)
-
+        
         center.publisher(for: .configImported)
             .sink { [weak self] _ in
                 self?.syncDefaults()
             }
             .store(in: &cancellables)
-
+        
         center.publisher(for: .windowSnapping)
             .sink { [weak self] _ in
                 self?.windowSnapping = !Defaults.windowSnapping.userDisabled
             }
             .store(in: &cancellables)
     }
-
+    
     // Snap Area Handlers
     func getSelectedTag(for directional: Directional, orientation: DisplayOrientation) -> Int {
         let snapAreaConfig = orientation == .landscape
-            ? SnapAreaModel.instance.landscape[directional]
-            : SnapAreaModel.instance.portrait[directional]
-
+        ? SnapAreaModel.instance.landscape[directional]
+        : SnapAreaModel.instance.portrait[directional]
+        
         return snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? -1
     }
-
+    
     func updateSnapArea(selectedTag: Int, directional: Directional, orientation: DisplayOrientation) {
         var snapAreaConfig: SnapAreaConfig?
         if selectedTag < -1, let compound = CompoundSnapArea(rawValue: selectedTag) {
@@ -145,11 +146,11 @@ final class SnapAreaViewModel: ObservableObject {
 
 struct SnapAreaSettingsView: View {
     @State private var viewModel = SnapAreaViewModel()
-
+    
     private var landscapeHeaderTitle: String {
         viewModel.isPortraitConnected ? String(localized: "Landscape Snap Areas") : String(localized: "Snap Areas")
     }
-
+    
     var body: some View {
         Form {
             // General Toggles
@@ -157,14 +158,13 @@ struct SnapAreaSettingsView: View {
                 Toggle("Snap windows by dragging", isOn: $viewModel.windowSnapping)
                 Toggle("Restore window size when unsnapped", isOn: $viewModel.unsnapRestore)
             }
-
+            
             // Customization Options
-             Section {
+            Section {
                 Toggle("Haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
-
-
+                
                 if viewModel.footprintBlur {
                     Picker("Blur appearance", selection: $viewModel.blurAppearance) {
                         Text("Follow System").tag(BlurAppearance.system)
@@ -172,7 +172,7 @@ struct SnapAreaSettingsView: View {
                         Text("Dark").tag(BlurAppearance.dark)
                     }
                 }
-
+                
                 if viewModel.missionControlDraggingDisabled {
                     Toggle("Mission Control dragging", isOn: $viewModel.missionControlDraggingDisabled)
                 }
@@ -185,14 +185,16 @@ struct SnapAreaSettingsView: View {
                 Label(landscapeHeaderTitle, systemImage: "rectangle.inset.filled")
                     .font(.headline)
             }
-
-            // Portrait Inline Section (Only visible if portrait monitor connected)
-            if viewModel.isPortraitConnected {
-                Section {
-                    SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
-                } header: {
-                    Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
-                        .font(.headline)
+            
+            // Portrait Inline Section (Wrapped in Group for proper Form structural updates)
+            Group {
+                if viewModel.isPortraitConnected {
+                    Section {
+                        SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
+                    } header: {
+                        Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
+                            .font(.headline)
+                    }
                 }
             }
         }
@@ -201,15 +203,18 @@ struct SnapAreaSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isPortraitConnected)
+        .onChange(of: viewModel.isPortraitConnected) { oldValue, isConnected in
+            Notification.Name.snapAreaSettingsNeedsResize.post(object:isConnected)
+        }
     }
 }
 
 // MARK: - Grid Snap Area Layout
 
 struct SnapAreaGridView: View {
-    @ObservedObject var viewModel: SnapAreaViewModel
+    @Bindable var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
-
+    
     var body: some View {
         Grid(alignment: .center, horizontalSpacing: 12, verticalSpacing: 12) {
             // Top Row
@@ -218,17 +223,17 @@ struct SnapAreaGridView: View {
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .t)
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .tr)
             }
-
+            
             // Middle Row
             GridRow(alignment: .center) {
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .l)
-
+                
                 // Display Graphic Representation (Center Cell)
                 MacDesktopGraphic(orientation: orientation)
-
+                
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .r)
             }
-
+            
             // Bottom Row
             GridRow(alignment: .center) {
                 SnapAreaPicker(viewModel: viewModel, orientation: orientation, directional: .bl)
@@ -242,12 +247,12 @@ struct SnapAreaGridView: View {
 // MARK: - Individual Snap Area Menu Picker
 
 struct SnapAreaPicker: View {
-    @ObservedObject var viewModel: SnapAreaViewModel
+    @Bindable var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
     let directional: Directional
-
+    
     @State private var selectedTag: Int = -1
-
+    
     private var pickerAlignment: Alignment {
         switch directional {
         case .tl, .l, .bl:
@@ -258,11 +263,11 @@ struct SnapAreaPicker: View {
             return .leading
         }
     }
-
+    
     var body: some View {
         Picker("", selection: $selectedTag) {
             Text("-").tag(-1)
-
+            
             Section {
                 ForEach(CompoundSnapArea.all.filter {
                     $0.compatibleOrientation.contains(orientation) && $0.compatibleDirectionals.contains(directional)
@@ -270,7 +275,7 @@ struct SnapAreaPicker: View {
                     Text(compound.displayName).tag(compound.rawValue)
                 }
             }
-
+            
             Section {
                 ForEach(WindowAction.active.filter { $0.isDragSnappable }, id: \.rawValue) { action in
                     if let name = action.displayName {
@@ -321,13 +326,13 @@ extension NSImage {
 
 struct MacDesktopGraphic: View {
     let orientation: DisplayOrientation
-
+    
     var body: some View {
         ZStack {
             // Main Display Background
             RoundedRectangle(cornerRadius: 6)
                 .fill(Color.blue.opacity(0.12))
-
+            
             // Screen Content (Menu Bar & Dock)
             VStack(spacing: 0) {
                 // Menu Bar
@@ -340,39 +345,39 @@ struct MacDesktopGraphic: View {
                             Circle()
                                 .fill(Color.primary.opacity(0.4))
                                 .frame(width: 2, height: 2)
-
+                            
                             // Menu Text Placeholders (Mini Lines)
                             Capsule()
                                 .fill(Color.primary.opacity(0.4))
                                 .frame(width: 5, height: 1.2)
-
+                            
                             Capsule()
                                 .fill(Color.primary.opacity(0.25))
                                 .frame(width: 4, height: 1.2)
-
+                            
                             Capsule()
                                 .fill(Color.primary.opacity(0.25))
                                 .frame(width: 4, height: 1.2)
-
+                            
                             Spacer()
-
+                            
                             // Right-Side Status Items
                             Capsule()
                                 .fill(Color.primary.opacity(0.25))
                                 .frame(width: 3, height: 1.2)
-
+                            
                             Capsule()
                                 .fill(Color.primary.opacity(0.25))
                                 .frame(width: 3, height: 1.2)
                         }
-                        .padding(.horizontal, 3)
+                            .padding(.horizontal, 3)
                     )
-
+                
                 Spacer()
-
+                
                 // Dock
                 let iconCount = orientation == .portrait ? 4 : 6
-
+                
                 HStack(spacing: 1.5) {
                     ForEach(0..<iconCount, id: \.self) { _ in
                         RoundedRectangle(cornerRadius: 1.2)
@@ -394,7 +399,7 @@ struct MacDesktopGraphic: View {
                 )
                 .padding(.bottom, 3)
             }
-
+            
             // Screen Border Overlay
             RoundedRectangle(cornerRadius: 6)
                 .stroke(Color.blue.opacity(0.4), lineWidth: 1.5)

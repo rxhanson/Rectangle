@@ -22,6 +22,7 @@ extension Notification.Name {
     static let showAdditionalSizesInMenuChanged = Notification.Name("showAdditionalSizesInMenuChanged")
     static let shortcutRecording = Notification.Name("shortcutRecording")
     static let stackBadgeChanged = Notification.Name("stackBadgeChanged")
+    static let snapAreaSettingsNeedsResize = Notification.Name("snapAreaSettingsNeedsResize")
 
     func post(
         center: NotificationCenter = NotificationCenter.default,

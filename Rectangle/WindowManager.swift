@@ -372,6 +372,7 @@ class WindowManager {
     }
 
     func showSizeConstraintWarning(on screen: NSScreen) {
+        guard Defaults.showMinimumWindowSizeWarning.userEnabled else { return }
         if windowSizeWarning == nil {
             windowSizeWarning = WindowSizeWarning()
         }
