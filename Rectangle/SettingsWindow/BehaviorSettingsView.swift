@@ -367,8 +367,8 @@ struct BehaviorSettingsView: View {
                 DisclosureGroup(isExpanded: $isExtrasExpanded) {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
+                        Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                        Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
                         Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
