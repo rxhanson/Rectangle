@@ -2,8 +2,8 @@
 
 import Foundation
 
-/// Makes Left Half, Right Half, Top Half and Bottom Half behave like keyboard tiling on Windows or
-/// KDE: each action only changes the axis it belongs to (Left/Right → width, Top/Bottom → height)
+/// Left Half, Right Half, Top Half and Bottom Half each change only their own axis
+/// (Left/Right → width, Top/Bottom → height)
 /// and keeps the other axis as it is, so that Left Half followed by Top Half lands on the top left
 /// quarter, Top Half followed by Left Half does the same, and Bottom Half then takes that window
 /// back to Left Half.

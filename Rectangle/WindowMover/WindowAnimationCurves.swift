@@ -2,6 +2,70 @@
 
 import Cocoa
 
+enum PreviewLayerTransition {
+    static let deceleration = CAMediaTimingFunction(controlPoints: 1 / 3, 1, 2 / 3, 1)
+    static let smoothstep = CAMediaTimingFunction(controlPoints: 1 / 3, 0, 2 / 3, 1)
+
+    static func set(_ layer: CALayer, _ key: String, to value: Any, duration: TimeInterval,
+                    timing: CAMediaTimingFunction = WindowPreviewDeceleration.timingFunction) {
+        let animationKey = "preview." + key
+        let current = layer.presentation()?.value(forKeyPath: key) ?? layer.value(forKeyPath: key)
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layer.setValue(value, forKeyPath: key)
+        layer.removeAnimation(forKey: animationKey)
+        if duration > 0 {
+            let animation = CABasicAnimation(keyPath: key)
+            animation.fromValue = current
+            animation.toValue = value
+            animation.duration = duration
+            animation.timingFunction = timing
+            layer.add(animation, forKey: animationKey)
+        }
+        CATransaction.commit()
+    }
+}
+
+/// Cancelling a fade invalidates its completion before removing the animation.
+final class PreviewOpacityAnimation {
+    private weak var layer: CALayer?
+    private var generation = UUID()
+    private(set) var isAnimating = false
+
+    func cancel() {
+        generation = UUID()
+        isAnimating = false
+        if let layer {
+            let opacity = layer.presentation()?.opacity ?? layer.opacity
+            PreviewLayerTransition.set(layer, "opacity", to: opacity, duration: 0)
+        }
+    }
+
+    func set(_ layer: CALayer, to opacity: CGFloat, duration: TimeInterval,
+             timing: CAMediaTimingFunction = PreviewLayerTransition.deceleration,
+             completion: (() -> Void)? = nil) {
+        cancel()
+        self.layer = layer
+        let generation = generation
+        guard duration > 0, abs(CGFloat(layer.opacity) - opacity) > 0.001 else {
+            PreviewLayerTransition.set(layer, "opacity", to: Float(opacity), duration: 0)
+            completion?()
+            return
+        }
+        isAnimating = true
+        CATransaction.begin()
+        CATransaction.setCompletionBlock { [weak self] in
+            DispatchQueue.main.async {
+                guard let self, self.generation == generation else { return }
+                self.isAnimating = false
+                completion?()
+            }
+        }
+        PreviewLayerTransition.set(layer, "opacity", to: Float(opacity), duration: duration, timing: timing)
+        CATransaction.commit()
+    }
+}
+
 enum WindowDisplayTransition {
     static func display(containing frame: CGRect, displays: [CGRect]) -> CGRect? {
         displays.filter { $0.intersects(frame) }.max {
@@ -14,7 +78,7 @@ enum WindowDisplayTransition {
 
 /// Shared geometry timing for target-zone previews and window enlargement.
 enum WindowPreviewDeceleration {
-    static let duration: TimeInterval = 0.26
+    static let duration: TimeInterval = 0.20
 
     static var timingFunction: CAMediaTimingFunction {
         CAMediaTimingFunction(controlPoints: 0.1, 0.9, 0.2, 1)
@@ -39,7 +103,7 @@ enum WindowPreviewDeceleration {
 
 /// Timing for direct resizing and drag restoration.
 enum WindowAnimationCurve {
-    static let duration: TimeInterval = 0.3
+    static let duration: TimeInterval = 0.24
     static let unsnapPlaybackRate: Double = 1.2
     static let unsnapDuration: TimeInterval = 0.18 / unsnapPlaybackRate
 
@@ -54,16 +118,41 @@ enum WindowAnimationCurve {
         // Cubic deceleration reaches rest without an extended near-stationary tail.
         return CGFloat(t * (3 + t * (t - 3)))
     }
+
+    static func resizeValue(at progress: Double) -> CGFloat {
+        let t = min(1, max(0, progress))
+        // Start at rest, leaving enough of the tail for screen-edge constraints to settle.
+        return CGFloat(t * t * (10 + t * (-20 + t * (15 - 4 * t))))
+    }
+
+    static func placementValue(at progress: Double) -> CGFloat {
+        let t = min(1, max(0, progress))
+        // A picker starts from rest rather than inheriting a drag's motion.
+        return CGFloat(t * t * (3 - 2 * t))
+    }
 }
 
 /// Input-specific timing shares the same window placement and verification code.
 enum WindowAnimationProfile {
     case standard, keyboard
+    // A picker selection is one placement, even when a shortcut opened it.
+    // Use the single destination trajectory without keyboard retargeting.
+    case layoutHelper
+
+    func constraintCorrection(after elapsed: TimeInterval) -> CGFloat {
+        if self == .layoutHelper {
+            // A picker can consume more of the constrained alignment during
+            // its one-shot motion instead of deferring it to a second movement.
+            // Bound long ticks so an unresponsive app cannot cause a large jump.
+            return CGFloat(min(1.0 / 30, max(0, elapsed))) * 240
+        }
+        return min(1, CGFloat(max(0, elapsed)) * 60)
+    }
 }
 
 /// A finite trajectory can be replaced without estimating velocity from rounded AX frames.
 struct WindowKeyboardMotion {
-    static let duration: TimeInterval = 0.22
+    static let duration: TimeInterval = 0.18
 
     struct Sample {
         let frame: CGRect

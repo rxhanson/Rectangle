@@ -362,6 +362,36 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            Section {
+                Toggle("Show minimum window size warning", isOn: $viewModel.showMinimumWindowSizeWarning)
+                    .accessibilityIdentifier("showMinimumWindowSizeWarning")
+                HStack {
+                    Toggle("Remember learned window size limits", isOn: $viewModel.rememberWindowSizeLimits)
+                        .accessibilityIdentifier("rememberWindowSizeLimits")
+                    Spacer()
+                    Button("Manage memory") { viewModel.showWindowSizeLimits() }
+                        .disabled(!viewModel.rememberWindowSizeLimits)
+                        .accessibilityIdentifier("showWindowSizeLimits")
+                }
+                Text("Remembers window size limits and updates them as windows change.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .accessibilityIdentifier("rememberWindowSizeLimitsDescription")
+                Toggle("Drag dividers to resize adjacent windows", isOn: $viewModel.windowDivider)
+                    .accessibilityIdentifier("windowDivider")
+                Text("Left/right and top/bottom pairs only.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Toggle("Enhanced transitions", isOn: $viewModel.windowDividerEnhanced)
+                    .disabled(!viewModel.windowDivider || !LayoutHelperPermission.previewsSupported)
+                    .accessibilityIdentifier("windowDividerEnhanced")
+                Text("Uses a temporary screenshot to hide resizing. Requires Screen Recording access.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
+                    .accessibilityIdentifier("fitBesideSnappedWindows")
+            }
+
             // MARK: - Extras
             Section {
                 DisclosureGroup(isExpanded: $isExtrasExpanded) {

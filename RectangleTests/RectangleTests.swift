@@ -115,7 +115,7 @@ class BandTilingTests: XCTestCase {
         let minimumHeightAtOrigin: (CGFloat) -> CGFloat
         let testWindowId: CGWindowID?
         var testIdentity: CFHashCode
-        let reportedMinimumSize: CGSize?
+        let testMinimumSize: CGSize?
         let canResize: Bool
         let ordinaryWindow: Bool
 
@@ -129,7 +129,7 @@ class BandTilingTests: XCTestCase {
             self.minimumHeightAtOrigin = minimumHeightAtOrigin
             testWindowId = windowId
             testIdentity = identity
-            self.reportedMinimumSize = reportedMinimumSize
+            self.testMinimumSize = reportedMinimumSize
             self.canResize = canResize
             self.ordinaryWindow = ordinaryWindow
             super.init(identity == 0 ? AXUIElementCreateSystemWide()
@@ -139,7 +139,7 @@ class BandTilingTests: XCTestCase {
         override var frame: CGRect { acceptedFrame }
         override var windowId: CGWindowID? { testWindowId }
         override var pid: pid_t? { 42 }
-        override var minimumSize: CGSize? { reportedMinimumSize }
+        override var minimumSize: CGSize? { testMinimumSize }
         override func isResizable() -> Bool { canResize }
         override var isWindow: Bool? { ordinaryWindow }
         override var isSheet: Bool? { false }
@@ -4610,10 +4610,11 @@ final class DragRestoreReleaseTests: XCTestCase {
     }
 
     func testDirectAnimationWithoutServerIdentityCompletesOnceAndMouseUpDoesNotRepeatIt() throws {
+        let animator = DirectWindowAnimator(enabled: { true }, automaticallyAdvances: false, environmentIsSafe: { true })
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
-            WindowAnimator.shared.finish()
+            animator.finish()
             Defaults.experimentalWindowAnimations.enabled = saved
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
@@ -4621,19 +4622,19 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(window.windowId, "Direct animation does not require a WindowServer identity")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
         var completedFrames: [CGRect] = []
-        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
+        animator.animate(window, to: destination, duration: 0.18, resizeOnly: false, placement: nil, offset: { .zero }) { completedFrames.append($0) }
 
         XCTAssertTrue(completedFrames.isEmpty)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
-        WindowAnimator.shared.finish()
+        XCTAssertEqual(animator.destination(for: window), destination)
+        animator.finish()
         XCTAssertEqual(completedFrames, [destination])
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
 
         let manager = try release(dragAlreadyDetected: true)
 
         XCTAssertEqual(completedFrames, [destination], "A later native release must not repeat the completed animation")
         XCTAssertEqual(manager.restores, 0)
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
     }
 }
 
@@ -4661,6 +4662,8 @@ class SnappingManagerSessionTests: XCTestCase {
             object: nil
         )
 
+        let refreshed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !sm.isFullScreen }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [refreshed], timeout: 3), .completed)
         XCTAssertFalse(sm.isFullScreen,
             "receiveSessionNote should call checkFullScreen, re-evaluating isFullScreen")
     }
@@ -5881,6 +5884,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
     }
 
     override func tearDown() {
+        WindowSizeConstraints.shared.cancelPendingObservations()
         savedDefaults.forEach { $0.0.load(from: $0.1) }
         AppDelegate.windowHistory.restoreRects = savedRestoreRects
         AppDelegate.windowHistory.lastRectangleActions = savedActions
@@ -5983,6 +5987,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             manager.execute(ExecutionParameters(action, screen: screen, windowElement: window,
                                                 windowId: windowId, source: .menuItem))
 
+            waitForWarning(manager)
             XCTAssertEqual(window.resizeAttempts, 1)
             XCTAssertEqual(window.frame.width, 600)
             XCTAssertEqual(window.frame.height, 900)
@@ -6002,6 +6007,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
         manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
                                             windowId: windowId, source: .menuItem))
+        waitForWarning(manager)
         XCTAssertTrue(manager.warningVisible)
 
         manager.execute(ExecutionParameters(.firstTwoThirds, screen: screen, windowElement: window,
@@ -6049,6 +6055,14 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.action, .firstTwoThirds)
     }
 
+    private func waitForWarning(_ manager: TestWindowManager) {
+        guard !manager.warningVisible else { return }
+        let appeared = expectation(description: "Size warning appeared")
+        manager.didWarn = { appeared.fulfill() }
+        defer { manager.didWarn = nil }
+        wait(for: [appeared], timeout: 1)
+    }
+
     private func assertCrossDisplayWarning(clampedAttempts: Int?, expectsWarning: Bool) {
         let source = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
         let destination = TestScreen(frame: CGRect(x: 1512, y: 0, width: 1512, height: 900))
@@ -6066,6 +6080,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         XCTAssertNil(AppDelegate.windowHistory.lastRectangleActions[windowId])
 
         wait(for: [finished], timeout: 1)
+        if expectsWarning { waitForWarning(manager) }
         XCTAssertEqual(window.resizeAttempts, 3)
         XCTAssertEqual(window.frame.width, expectsWarning ? 600 : 504)
         XCTAssertEqual(window.frame.maxX, destination.frame.maxX)
@@ -6120,6 +6135,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = frame
             if frame.size == targetSize {
@@ -6150,6 +6170,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { resizable }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = acceptedFrame(frame)
         }
@@ -6160,10 +6185,12 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         private(set) var hideCount = 0
         private(set) var warningVisible = false
         var didFinish: (() -> Void)?
+        var didWarn: (() -> Void)?
 
         override func showSizeConstraintWarning(on screen: NSScreen) {
             warningScreens.append(screen)
             warningVisible = true
+            didWarn?()
         }
 
         override func hideSizeConstraintWarning() {
@@ -6278,6 +6305,11 @@ final class CrossDisplayResizeTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = CGRect(origin: adjustPosition ? frame.origin : currentFrame.origin, size: frame.size)

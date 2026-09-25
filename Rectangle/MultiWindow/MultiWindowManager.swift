@@ -317,30 +317,17 @@ class MultiWindowManager {
     static func tileAllWindowsOnScreen(windows: [AccessibilityElement], screen: NSScreen) {
         guard !windows.isEmpty else { return }
 
-        let screenFrame = screen.adjustedVisibleFrame().screenFlipped
-        let count = windows.count
-
-        let columns = Int(ceil(sqrt(CGFloat(count))))
-        let rows = Int(ceil(CGFloat(count) / CGFloat(columns)))
-        let size = CGSize(width: (screenFrame.maxX - screenFrame.minX) / CGFloat(columns), height: (screenFrame.maxY - screenFrame.minY) / CGFloat(rows))
-
-        for (ind, w) in windows.enumerated() {
-            let column = ind % Int(columns)
-            let row = ind / Int(columns)
-            tileWindow(w, screenFrame: screenFrame, size: size, column: column, row: row)
-        }
+        tileWindows(windows, in: screen.adjustedVisibleFrame().screenFlipped)
     }
 
-    private static func tileWindow(_ w: AccessibilityElement, screenFrame: CGRect, size: CGSize, column: Int, row: Int) {
-        var rect = w.frame
-
-        // TODO: save previous position in history
-
-        rect.origin.x = screenFrame.origin.x + size.width * CGFloat(column)
-        rect.origin.y = screenFrame.origin.y + size.height * CGFloat(row)
-        rect.size = size
-
-        w.setFrame(rect)
+    private static func tileWindows(_ windows: [AccessibilityElement], in bounds: CGRect) {
+        guard !windows.isEmpty else { return }
+        WindowSizeConstraints.shared.cancelPendingObservations()
+        let minima = windows.map { $0.isResizable() ? $0.minimumSize : $0.frame.size }
+        guard let frames = WindowSizeConstraints.tileFrames(in: bounds, minimumSizes: minima) else {
+            NSSound.beep(); Logger.log("Known window minimum sizes do not fit the tile area"); return
+        }
+        for (window, frame) in zip(windows, frames) { window.setFrame(frame) }
     }
 
     static func cascadeAllWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
@@ -427,7 +414,7 @@ class MultiWindowManager {
             }
         }
 
-        w.setFrame(rect)
+        guard WindowSizeConstraints.shared.place(w, target: rect, in: screenFrame) else { return }
         w.bringToFront()
     }
 
@@ -443,16 +430,6 @@ class MultiWindowManager {
         // keep windows with a pid equal to the front window's pid
         let filtered = windows.filter { $0.pid == frontWindowElement.pid }
 
-        let count = filtered.count
-
-        let columns = Int(ceil(sqrt(CGFloat(count))))
-        let rows = Int(ceil(CGFloat(count) / CGFloat(columns)))
-        let size = CGSize(width: (screenFrame.maxX - screenFrame.minX) / CGFloat(columns), height: (screenFrame.maxY - screenFrame.minY) / CGFloat(rows))
-
-        for (ind, w) in filtered.enumerated() {
-            let column = ind % Int(columns)
-            let row = ind / Int(columns)
-            tileWindow(w, screenFrame: screenFrame, size: size, column: column, row: row)
-        }
+        tileWindows(filtered, in: screenFrame)
     }
 }

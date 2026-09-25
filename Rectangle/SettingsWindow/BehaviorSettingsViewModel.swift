@@ -76,6 +76,44 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
     }
 
+    @Published var showMinimumWindowSizeWarning: Bool {
+        didSet {
+            Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
+            if !showMinimumWindowSizeWarning { WindowSizeWarning.hideCurrent() }
+        }
+    }
+    @Published var rememberWindowSizeLimits: Bool {
+        didSet { WindowSizeConstraints.shared.setRememberLimits(rememberWindowSizeLimits) }
+    }
+    @Published var windowDivider: Bool {
+        didSet {
+            Defaults.windowDivider.enabled = windowDivider
+            WindowDividerManager.shared.clear()
+        }
+    }
+    @Published var windowDividerEnhanced: Bool {
+        didSet {
+            Defaults.windowDividerEnhanced.enabled = windowDividerEnhanced
+            WindowDividerManager.shared.clear()
+            if windowDividerEnhanced {
+                LayoutHelperPermission.guideIfNeeded(for: .windowDivider) { }
+            }
+        }
+    }
+    @Published var fitBesideSnappedWindows: Bool {
+        didSet {
+            Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
+            SnappedWindowFitSession.shared.clear()
+            WindowSizeConstraints.shared.cancelPendingObservations()
+        }
+    }
+    private var windowSizeLimitsController: WindowSizeLimitsWindowController?
+
+    func showWindowSizeLimits() {
+        if windowSizeLimitsController == nil { windowSizeLimitsController = WindowSizeLimitsWindowController() }
+        windowSizeLimitsController?.showWindow(nil)
+    }
+
     @Published var combinedDisplayMode: Bool {
         didSet {
             Defaults.combinedDisplayMode.enabled = combinedDisplayMode
@@ -181,6 +219,11 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
+        self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
+        self.windowDivider = Defaults.windowDivider.enabled
+        self.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
 
@@ -228,6 +271,11 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
+        self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
+        self.windowDivider = Defaults.windowDivider.enabled
+        self.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.todoEnabled = Defaults.todo.userEnabled
         self.todoSidebarWidth = Defaults.todoSidebarWidth.value

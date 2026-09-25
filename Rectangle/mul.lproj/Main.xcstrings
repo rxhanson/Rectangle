@@ -22766,7 +22766,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Minimum window size reached"
+            "value" : "Minimum size reached"
           }
         }
       }

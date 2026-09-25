@@ -147,9 +147,15 @@ class SnappingManager {
             self.startEventMonitor()
         }
         Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
+        Notification.Name.windowActionWillExecute.onPost { [weak self] notification in
+            guard let self, self.box?.waitingForPlacement == true,
+                  (notification.object as? ExecutionParameters)?.source != .dragToSnap else { return }
+            self.box?.orderOut(nil)
+        }
     }
     
     func frontAppChanged(notification: Notification) {
+        box?.cancelPlacementIfInactive()
         if ApplicationToggle.shortcutsDisabled {
             DispatchQueue.main.async {
                 if !Defaults.ignoreDragSnapToo.userDisabled {
@@ -184,12 +190,58 @@ class SnappingManager {
         checkFullScreen()
     }
     
+    private var fullScreenCheckGeneration = UUID()
+    private var fullScreenCheckRunning = false
+
     func checkFullScreen() {
-        isFullScreen = AccessibilityElement.getFrontWindowElement()?.isFullScreen == true
+        fullScreenCheckGeneration = UUID()
         toggleListening()
+        refreshFullScreenState()
+    }
+
+    private func refreshFullScreenState() {
+        guard !fullScreenCheckRunning else { return }
+        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
+              let launch = WindowProcessIdentity.launchTime(for: pid) else {
+            isFullScreen = false
+            toggleListening()
+            return
+        }
+        let generation = fullScreenCheckGeneration
+        fullScreenCheckRunning = true
+        // Activation also occurs while selecting a helper candidate. A stalled
+        // previous app must not block that handoff or enqueue repeated scans.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let reader = AccessibilityReadBatch(budget: 0.15)
+            let application = AXUIElementCreateApplication(pid)
+            let focused = reader.value(application, kAXFocusedWindowAttribute)
+            let window: AXUIElement?
+            if let focused, CFGetTypeID(focused) == AXUIElementGetTypeID() {
+                window = (focused as! AXUIElement)
+            } else {
+                window = (reader.value(application, kAXWindowsAttribute) as? [AXUIElement])?.first
+            }
+            let fullScreen = window.flatMap { reader.value($0, "AXFullScreen") as? Bool } == true
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.fullScreenCheckRunning = false
+                guard self.fullScreenCheckGeneration == generation,
+                      NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
+                      WindowProcessIdentity.launchTime(for: pid) == launch else {
+                    self.refreshFullScreenState()
+                    return
+                }
+                // An unchanged delayed reply must not reset a newer gesture.
+                if self.isFullScreen != fullScreen {
+                    self.isFullScreen = fullScreen
+                    self.toggleListening()
+                }
+            }
+        }
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         checkFullScreen()
     }
     
@@ -228,6 +280,7 @@ class SnappingManager {
     }
     
     private func disableSnapping() {
+        box?.close()
         box = nil
         stopEventMonitor()
     }
@@ -239,6 +292,7 @@ class SnappingManager {
     }
     
     private func stopEventMonitor() {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         pendingReleasedRestore = nil
         eventMonitor?.stop()
         eventMonitor = nil
@@ -282,13 +336,20 @@ class SnappingManager {
     }
     
     func handle(event: NSEvent) {
+        if WindowDividerManager.shared.containsPointerEvent(event) { return }
+        if LayoutHelperManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
+            if box?.waitingForPlacement == true { box?.orderOut(nil) }
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
+            LayoutHelperManager.shared.cancelPrefetch()
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            WindowSizeConstraints.shared.cancelPendingObservations()
+            WindowDividerManager.shared.interrupt()
+            LayoutHelperManager.shared.cancel()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -306,6 +367,7 @@ class SnappingManager {
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
+            var committedSnap = false
             nativeGesture.end()
             traceNativeInput(event, phase: "up")
             if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
@@ -317,8 +379,9 @@ class SnappingManager {
             }
             if let currentSnapArea = self.currentSnapArea {
                 nativeSizeRestore = nil
-                dismissSnapPreviewForCommit()
-                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
+                let completion = snapPreviewCompletion()
+                committedSnap = true
+                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen, completion: completion)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
@@ -332,14 +395,16 @@ class SnappingManager {
                     }
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
-                        dismissSnapPreviewForCommit()
                         if canSnap(event) {
-                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
-                        }
+                            let completion = snapPreviewCompletion()
+                            committedSnap = true
+                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen, completion: completion)
+                        } else { box?.orderOut(nil) }
                         self.currentSnapArea = nil
                     }
                 }
             }
+            if !committedSnap { LayoutHelperManager.shared.cancelPrefetch() }
             finishNativeSizeRestore()
             windowElement = nil
             windowId = nil
@@ -375,11 +440,13 @@ class SnappingManager {
                 currentRect = geometry.currentFrame
                 if geometry.isMoving {
                     windowMoving = true
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     if let windowId {
                         unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
                 else if geometry.isResizing, let windowId {
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -387,6 +454,7 @@ class SnappingManager {
                 retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -407,12 +475,15 @@ class SnappingManager {
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
+                        let prefetchRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow, applyingGaps: false) ?? newBoxRect
+                        LayoutHelperManager.shared.prefetch(on: snapArea.screen, action: snapArea.action, anchor: prefetchRect, excluding: windowId)
                         showSnapPreview(in: newBoxRect, snapArea: snapArea)
                     }
                     
                     currentSnapArea = snapArea
                 } else {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -585,8 +656,12 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
-    private func dismissSnapPreviewForCommit() {
+    private func snapPreviewCompletion() -> (() -> Void)? {
+        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+            return box?.completionForSnap(windowID: windowId)
+        }
         box?.orderOut(nil)
+        return nil
     }
 
     private func showSnapPreview(in rect: CGRect, snapArea: SnapArea) {
@@ -596,8 +671,10 @@ class SnappingManager {
             box?.close()
             box = FootprintWindow(initialFrame: rect)
         }
+        if let windowElement { WindowAnimator.shared.prepare(windowElement) }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
-                         duration: getFootprintAnimationDuration())
+                         duration: getFootprintAnimationDuration(),
+                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {
@@ -628,7 +705,7 @@ class SnappingManager {
         }
     }
     
-    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window, applyingGaps: Bool = true) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
             let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
@@ -636,14 +713,37 @@ class SnappingManager {
             let rectResult = calculation.calculateRect(rectCalcParams)
             
             let gapsApplicable = hotSpot.action.gapsApplicable
+            var target = rectResult.rect
             
             if Defaults.gapSize.value > 0, gapsApplicable != .none {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
 
-                return GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                target = GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
             }
-            
-            return rectResult.rect
+            let minimum = windowElement?.minimumSize
+            let bounds = applyingGaps
+                ? GapCalculation.applyGaps(rectCalcParams.visibleFrameOfScreen, dimension: gapsApplicable,
+                    gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                : rectCalcParams.visibleFrameOfScreen
+            let hint = windowElement?.rememberedMinimumSize
+            func predictedPreview(_ requested: CGRect) -> CGRect {
+                let size = WindowSizeConstraints.animationSize(requested.size, origin: currentWindow.rect.size, hint: hint)
+                let previewMinimum = CGSize(width: max(minimum?.width ?? 0, size.width),
+                                            height: max(minimum?.height ?? 0, size.height))
+                return WindowSizeConstraints.fitting(requested, minimum: previewMinimum, in: bounds) ?? requested
+            }
+            if windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
+                switch SnappedWindowFit.resolve(action: hotSpot.action, window: currentWindow,
+                    initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen,
+                    minimum: minimum) {
+                case let .fit(plan):
+                    return predictedPreview(applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target))
+                case .noRoom: return nil
+                case .unchanged: break
+                }
+            }
+            if !applyingGaps { target = rectResult.rect }
+            return predictedPreview(target)
         }
         return nil
     }

@@ -181,16 +181,17 @@ enum WindowAction: Int, Codable {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .menuItem))
     }
 
-    func postSnap(windowElement: AccessibilityElement?, windowId: CGWindowID?, screen: NSScreen) {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap))
+    func postSnap(windowElement: AccessibilityElement?, windowId: CGWindowID?, screen: NSScreen,
+                  completion: (() -> Void)? = nil) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, updateRestoreRect: false, screen: screen, windowElement: windowElement, windowId: windowId, source: .dragToSnap, completion: completion))
     }
     
     func postUrl() {
         NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, source: .url))
     }
     
-    func postTitleBar(windowElement: AccessibilityElement?) {
-        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, windowElement: windowElement, source: .titleBar))
+    func postTitleBar(windowElement: AccessibilityElement?, screen: NSScreen? = nil) {
+        NotificationCenter.default.post(name: notificationName, object: ExecutionParameters(self, screen: screen, windowElement: windowElement, source: .titleBar))
     }
 
     // Determines where separators should be used in the menu

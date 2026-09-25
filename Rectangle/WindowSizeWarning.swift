@@ -21,9 +21,17 @@ enum WindowSizeConstraint {
 }
 
 final class WindowSizeWarning: NSPanel {
-    private static let padding: CGFloat = 24
+    private static var current: WindowSizeWarning?
+    static var shared: WindowSizeWarning {
+        if let current { return current }
+        let warning = WindowSizeWarning()
+        current = warning
+        return warning
+    }
+    static func hideCurrent() { current?.hide() }
+
+    private static let padding: CGFloat = 16.8
     private var dismissal: DispatchWorkItem?
-    private var labels: [NSTextField] = []
 
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
@@ -47,7 +55,7 @@ final class WindowSizeWarning: NSPanel {
         container.blendingMode = .behindWindow
         container.state = .active
         container.wantsLayer = true
-        let radius: CGFloat = 20
+        let radius: CGFloat = 14
         container.layer?.cornerRadius = radius
         container.layer?.masksToBounds = true
 
@@ -65,53 +73,35 @@ final class WindowSizeWarning: NSPanel {
         icon.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(icon)
 
-        let title = NSTextField(wrappingLabelWithString: NSLocalizedString(
-            "windowSizeWarningTitle", tableName: "Main", value: "Minimum window size reached",
-            comment: "Title of the on-screen message when a window cannot fit its requested size"))
-        title.font = .systemFont(ofSize: 21, weight: .semibold)
-        title.alignment = .center
+        let title = NSTextField(labelWithString: NSLocalizedString("windowSizeWarningTitle", tableName: "Main", value: "Minimum size reached", comment: "Window size warning title"))
+        title.font = .systemFont(ofSize: 14.7, weight: .semibold)
+        title.maximumNumberOfLines = 1
+        title.lineBreakMode = .byTruncatingTail
 
-        let message = NSTextField(wrappingLabelWithString: NSLocalizedString(
-            "windowSizeWarningMessage", tableName: "Main",
-            value: "Unable to resize window smaller.\nWindows may overlap.",
-            comment: "Explains that an app can prevent a window from shrinking to the requested layout"))
-        message.font = .systemFont(ofSize: NSFont.systemFontSize)
-        message.textColor = .secondaryLabelColor
-        message.alignment = .center
-
-        labels = [title, message]
-        for label in labels {
-            label.translatesAutoresizingMaskIntoConstraints = false
-            container.addSubview(label)
-        }
+        title.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(title)
         NSLayoutConstraint.activate([
-            icon.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            icon.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: Self.padding),
             icon.topAnchor.constraint(equalTo: container.topAnchor, constant: Self.padding),
-            icon.widthAnchor.constraint(equalToConstant: 48),
-            icon.heightAnchor.constraint(equalToConstant: 36),
-            title.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: Self.padding),
+            icon.widthAnchor.constraint(equalToConstant: 33.6),
+            icon.heightAnchor.constraint(equalToConstant: 25.2),
+            icon.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -Self.padding),
+            title.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 9.8),
             title.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -Self.padding),
-            title.topAnchor.constraint(equalTo: icon.bottomAnchor, constant: 17),
-            message.leadingAnchor.constraint(equalTo: title.leadingAnchor),
-            message.trailingAnchor.constraint(equalTo: title.trailingAnchor),
-            message.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
-            message.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -Self.padding)
+            title.centerYAnchor.constraint(equalTo: icon.centerYAnchor)
         ])
         contentView = container
     }
 
     func show(on screen: NSScreen, duration: TimeInterval = 3) {
         hide()
+        guard !Defaults.showMinimumWindowSizeWarning.userDisabled else { return }
         guard let contentView else { return }
-        let visibleFrame = screen.visibleFrame
-        let width = min(360, visibleFrame.width - 32)
+        let visibleFrame = screen.adjustedVisibleFrame()
+        let fittingSize = contentView.fittingSize
+        let width = min(fittingSize.width, visibleFrame.width - 32)
         guard width > Self.padding * 2, visibleFrame.height > 0 else { return }
-
-        // Fix the text width before measuring so localized messages can wrap.
-        labels.forEach { $0.preferredMaxLayoutWidth = width - Self.padding * 2 }
-        contentView.setFrameSize(NSSize(width: width, height: 0))
-        contentView.layoutSubtreeIfNeeded()
-        let height = min(contentView.fittingSize.height, visibleFrame.height)
+        let height = min(fittingSize.height, visibleFrame.height)
         setFrame(NSRect(x: visibleFrame.midX - width / 2,
                         y: min(visibleFrame.minY + 32, visibleFrame.maxY - height),
                         width: width, height: height), display: true)
@@ -135,8 +125,13 @@ final class WindowSizeWarning: NSPanel {
 
 private final class WindowSizeWarningIcon: NSView {
     override func draw(_ dirtyRect: NSRect) {
+        NSGraphicsContext.saveGraphicsState()
+        defer { NSGraphicsContext.restoreGraphicsState() }
+        let transform = NSAffineTransform()
+        transform.scaleX(by: bounds.width / 48, yBy: bounds.height / 36)
+        transform.concat()
         NSColor.labelColor.withAlphaComponent(0.8).setStroke()
-        let outline = NSBezierPath(roundedRect: bounds.insetBy(dx: 1, dy: 1), xRadius: 6, yRadius: 6)
+        let outline = NSBezierPath(roundedRect: NSRect(x: 0, y: 0, width: 48, height: 36).insetBy(dx: 1, dy: 1), xRadius: 6, yRadius: 6)
         outline.lineWidth = 2
         outline.stroke()
 

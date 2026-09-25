@@ -5,6 +5,7 @@ import MASShortcut
 
 class TodoManager {
     private static var todoWindowId: CGWindowID?
+    static var cachedWindowID: CGWindowID? { todoWindowId }
     private static var shortcutBindingsSessionActive = true
 
     static var todoScreen : NSScreen?
@@ -176,6 +177,7 @@ class TodoManager {
     }
     
     static func moveAll(_ bringToFront: Bool = true) {
+        WindowSizeConstraints.shared.cancelPendingObservations()
         TodoManager.refreshTodoScreen()
 
         let pid = ProcessInfo.processInfo.processIdentifier
@@ -214,7 +216,7 @@ class TodoManager {
                 if Defaults.gapSize.value > 0 {
                     rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
                 }
-                todoWindow.setFrame(rect)
+                _ = WindowSizeConstraints.shared.place(todoWindow, target: rect, in: adjustedVisibleFrame.screenFlipped)
             }
 
             if bringToFront {
@@ -232,6 +234,9 @@ class TodoManager {
             sidebarWidth = convert(width: sidebarWidth, toUnit: .pixels, visibleFrameWidth: visibleFrameWidth)
         }
         
+        if let minimum = getTodoWindowElement()?.minimumSize?.width {
+            sidebarWidth = max(sidebarWidth, minimum + max(0, CGFloat(Defaults.gapSize.value)) * 1.5)
+        }
         return sidebarWidth
     }
     
@@ -276,7 +281,7 @@ class TodoManager {
                 rect.size.width -= widthDiff
             }
             
-            w.setFrame(rect)
+            _ = WindowSizeConstraints.shared.place(w, target: rect, in: screenVisibleFrame.screenFlipped)
         } else if Defaults.todoSidebarSide.value == .right && rect.maxX > screenVisibleFrameMaxX {
             // Shift it to the left
             rect.origin.x = min(rect.minX, max(screenVisibleFrameMinX, screenVisibleFrameMaxX - rect.width))
@@ -286,7 +291,7 @@ class TodoManager {
                 rect.size.width -= rect.maxX - screenVisibleFrameMaxX
             }
             
-            w.setFrame(rect)
+            _ = WindowSizeConstraints.shared.place(w, target: rect, in: screenVisibleFrame.screenFlipped)
         }
     }
     

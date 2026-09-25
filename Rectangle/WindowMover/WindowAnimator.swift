@@ -120,24 +120,239 @@ struct WindowAnimationSizeFeedback {
     }
 }
 
-/// Waits for AX and WindowServer to agree before accepting a constrained size.
-/// Retries a stalled resize with a small position change before moving fully in bounds.
-/// A new drag cancels this state in the driver.
+/// Tracks an outstanding resize without interpreting delayed delivery as a limit.
+struct WindowAnimationResizeResponse {
+    private struct Request {
+        let size: CGSize
+        let previous: CGSize
+        let sentAt: TimeInterval
+        var acknowledged = false
+    }
+    private var pending: Request?
+    private var latency: TimeInterval = 1.0 / 60
+    var pendingSize: CGSize? { pending?.size }
+    var responseInterval: TimeInterval { min(0.15, max(0.05, latency * 2)) }
+
+    mutating func requested(_ size: CGSize, previous: CGSize, at time: TimeInterval) {
+        pending = Request(size: size, previous: previous, sentAt: time)
+    }
+    mutating func observe(_ size: CGSize, at time: TimeInterval) {
+        guard let pending, time >= pending.sentAt else { return }
+        let changed = abs(size.width - pending.previous.width) > 0.5 || abs(size.height - pending.previous.height) > 0.5
+        let matches = abs(size.width - pending.size.width) <= 0.5 && abs(size.height - pending.size.height) <= 0.5
+        guard changed || matches else { return }
+        if !pending.acknowledged { latency = latency * 0.75 + min(0.15, time - pending.sentAt) * 0.25 }
+        self.pending = nil
+    }
+
+    mutating func acknowledge(_ size: CGSize, at time: TimeInterval) -> Bool {
+        guard var pending, !pending.acknowledged, time >= pending.sentAt,
+              abs(size.width - pending.size.width) <= 0.5,
+              abs(size.height - pending.size.height) <= 0.5 else { return false }
+        latency = latency * 0.75 + min(0.15, time - pending.sentAt) * 0.25
+        pending.acknowledged = true
+        self.pending = pending
+        return true
+    }
+
+    func mayRequest(at time: TimeInterval) -> Bool {
+        pending.map { $0.acknowledged || time - $0.sentAt >= responseInterval } ?? true
+    }
+}
+
+/// Suppresses repeated shrinking only for the current motion. Final placement
+/// still retries the requested size; this state never becomes a learned limit.
+struct WindowAnimationResizePause {
+    private struct AxisObservation {
+        var actual: CGFloat
+        var firstRequest: CGFloat
+        var lastRequest: CGFloat
+        var startedAt: TimeInterval
+        var count: Int
+    }
+
+    struct Motion {
+        let destination: CGRect
+        let startedAt: TimeInterval
+        let width: CGFloat?
+        let height: CGFloat?
+        let x: WindowKeyboardMotion.Axis
+        let y: WindowKeyboardMotion.Axis
+
+        var endsAt: TimeInterval { startedAt + max(x.duration, y.duration) }
+
+        func sample(requested: CGRect, at time: TimeInterval) -> (frame: CGRect, velocity: [CGFloat?]) {
+            let x = x.sample(at: max(0, time - startedAt))
+            let y = y.sample(at: max(0, time - startedAt))
+            return (CGRect(x: width == nil ? requested.minX : x.position.rounded(),
+                           y: height == nil ? requested.minY : y.position.rounded(),
+                           width: width ?? requested.width, height: height ?? requested.height),
+                    [width == nil ? nil : x.velocity, height == nil ? nil : y.velocity,
+                     width == nil ? nil : 0, height == nil ? nil : 0])
+        }
+    }
+
+    private var width: AxisObservation?
+    private var height: AxisObservation?
+    private(set) var motion: Motion?
+
+    mutating func observe(requested: CGSize, actual: CGRect, server: CGRect?, destination: CGRect,
+                          placement: WindowAnimationPlacement, origin: CGRect, velocity: CGPoint,
+                          at now: TimeInterval, endingAt: TimeInterval) {
+        guard let server, WindowAnimationGeometry.valid(actual), WindowAnimationGeometry.valid(server) else {
+            width = nil; height = nil; motion = nil
+            return
+        }
+        let widthAgrees = abs(actual.width - server.width) <= 1
+        let heightAgrees = abs(actual.height - server.height) <= 1
+        let retainedWidth = motion?.width.flatMap {
+            widthAgrees && abs(actual.width - $0) <= 1 && requested.width < $0 - 1 ? $0 : nil
+        }
+        let retainedHeight = motion?.height.flatMap {
+            heightAgrees && abs(actual.height - $0) <= 1 && requested.height < $0 - 1 ? $0 : nil
+        }
+        if !widthAgrees { width = nil }
+        if !heightAgrees { height = nil }
+        let blockedWidth = widthAgrees
+            && Self.observeAxis(&width, requested: requested.width, actual: actual.width, at: now)
+        let blockedHeight = heightAgrees
+            && Self.observeAxis(&height, requested: requested.height, actual: actual.height, at: now)
+        let canStart = endingAt > now
+        let heldWidth = retainedWidth ?? (canStart && blockedWidth ? actual.width : nil)
+        let heldHeight = retainedHeight ?? (canStart && blockedHeight ? actual.height : nil)
+        guard heldWidth != nil || heldHeight != nil else { motion = nil; return }
+        guard motion == nil || heldWidth != motion?.width || heldHeight != motion?.height else { return }
+
+        // Only the rejected axis pauses. The other dimension continues to
+        // follow the original trajectory rather than growing at completion.
+        let finalSize = CGSize(width: heldWidth ?? destination.width, height: heldHeight ?? destination.height)
+        let aligned = placement.frame(for: destination, actualSize: finalSize, origin: origin, progress: 1)
+        let remaining = max(0.06, endingAt - now)
+        motion = Motion(destination: aligned, startedAt: now, width: heldWidth, height: heldHeight,
+            x: WindowKeyboardMotion.Axis(origin: actual.minX, destination: aligned.minX,
+                velocity: velocity.x, duration: remaining, maximumDrift: 0),
+            y: WindowKeyboardMotion.Axis(origin: actual.minY, destination: aligned.minY,
+                velocity: velocity.y, duration: remaining, maximumDrift: 0))
+    }
+
+    private static func observeAxis(_ observation: inout AxisObservation?, requested: CGFloat,
+                                    actual: CGFloat, at now: TimeInterval) -> Bool {
+        guard actual > requested + 1 else { observation = nil; return false }
+        guard var previous = observation, now >= previous.startedAt,
+              abs(previous.actual - actual) <= 1, requested <= previous.lastRequest + 1 else {
+            observation = AxisObservation(actual: actual, firstRequest: requested,
+                lastRequest: requested, startedAt: now, count: 1)
+            return false
+        }
+        if requested < previous.lastRequest - 0.5 { previous.count += 1 }
+        previous.lastRequest = requested
+        observation = previous
+        return previous.count >= 2 && previous.firstRequest - requested >= 2
+            && now - previous.startedAt >= 0.03
+    }
+}
+
+/// Short-lived readback from the end of one animation. It is neither a size
+/// limit nor a prediction of a later window response.
+struct WindowAnimationHandoff {
+    struct Evidence {
+        let destination: CGRect
+        let frame: CGRect
+        let sampledAt: TimeInterval
+        let stableSince: TimeInterval
+        let velocity: CGPoint
+    }
+
+    private var samples: [(frame: CGRect, time: TimeInterval, positionConfirmed: Bool)] = []
+    private var lastAttempt: TimeInterval?
+    private var attempts = 0
+
+    mutating func shouldSample(at now: TimeInterval, endingAt end: TimeInterval) -> Bool {
+        guard now >= end - 0.08, now < end, attempts < 3,
+              lastAttempt.map({ now - $0 >= 1.0 / 30 - 0.000001 }) ?? true else { return false }
+        attempts += 1
+        lastAttempt = now
+        return true
+    }
+
+    mutating func observe(ax: CGRect, server: CGRect?, at now: TimeInterval) {
+        guard now.isFinite, let server, WindowAnimationGeometry.valid(ax),
+              WindowAnimationGeometry.valid(server), abs(ax.width - server.width) <= 1,
+              abs(ax.height - server.height) <= 1 else {
+            samples.removeAll(keepingCapacity: true)
+            return
+        }
+        if let first = samples.first, let last = samples.last,
+           now <= last.time || now - last.time > 0.05
+            || abs(ax.width - first.frame.width) > 1 || abs(ax.height - first.frame.height) > 1 {
+            samples.removeAll(keepingCapacity: true)
+        }
+        // Size acknowledgments remain useful while position writes are still
+        // in flight. Velocity requires corroborated positions throughout.
+        samples.append((ax, now, WindowAnimationGeometry.near(ax, server, tolerance: 1)))
+        if samples.count > 4 { samples.removeFirst() }
+    }
+
+    func evidence(for destination: CGRect, at now: TimeInterval) -> Evidence? {
+        guard samples.count >= 3, let first = samples.first, let last = samples.last,
+              last.positionConfirmed,
+              now >= last.time, now - last.time <= 1.0 / 30,
+              last.time - first.time >= 1.0 / 30 else { return nil }
+        func velocity(_ coordinate: (CGRect) -> CGFloat) -> CGFloat {
+            guard samples.allSatisfy({ $0.positionConfirmed }) else { return 0 }
+            let delta = coordinate(last.frame) - coordinate(first.frame)
+            let pairs = Array(zip(samples, samples.dropFirst()))
+            guard let lastMovement = pairs.last(where: { coordinate($0.0.frame) != coordinate($0.1.frame) }),
+                  last.time - lastMovement.1.time <= 1.0 / 30 else { return 0 }
+            guard pairs.allSatisfy({
+                (coordinate($0.1.frame) - coordinate($0.0.frame)) * delta >= 0
+            }) else { return 0 }
+            return min(140, max(-140, delta / CGFloat(last.time - first.time)))
+        }
+        return Evidence(destination: destination, frame: last.frame, sampledAt: last.time,
+            stableSince: first.time, velocity: CGPoint(x: velocity { $0.minX }, y: velocity { $0.minY }))
+    }
+}
+
+/// Verifies size retries and animates any remaining position correction.
+/// Observations belong to this placement only; they never become size hints.
 struct WindowAnimationSettlement {
     enum Decision {
         case waiting, retrySize, retrySizeAt(CGPoint), align(CGRect), complete(CGRect), failed
     }
 
+    private struct Alignment {
+        let origin: CGRect
+        let target: CGRect
+        let duration: TimeInterval
+        let velocity: CGPoint
+        var elapsed: TimeInterval = 0
+        var lastTick: TimeInterval
+        var expected: CGRect
+    }
+
     let startedAt: TimeInterval
+    private var verificationStartedAt: TimeInterval
     private var previous: CGRect?
     private var stableSince: TimeInterval?
-    private var retriedSize = false
-    private var retriedNearDestination = false
+    private var sizeRetries = 0
+    private var alignment: Alignment?
+    private var completionCandidate: CGRect?
+    private var handoff: WindowAnimationHandoff.Evidence?
+    private(set) var reusedHandoff = false
     private let alignmentTolerance: CGFloat
+    private let probeConstrainedPosition: Bool
 
-    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil, alignmentTolerance: CGFloat = 1) {
+    init(startedAt: TimeInterval, verifiedFrame: CGRect? = nil, alignmentTolerance: CGFloat = 1,
+         handoff: WindowAnimationHandoff.Evidence? = nil, probeConstrainedPosition: Bool = false,
+         initialSizeRetry: Bool = false) {
         self.startedAt = startedAt
+        verificationStartedAt = startedAt
         self.alignmentTolerance = alignmentTolerance
+        self.probeConstrainedPosition = probeConstrainedPosition
+        sizeRetries = initialSizeRetry ? 1 : 0
+        completionCandidate = verifiedFrame
+        self.handoff = handoff
         if let verifiedFrame {
             previous = verifiedFrame
             stableSince = startedAt
@@ -147,60 +362,193 @@ struct WindowAnimationSettlement {
     mutating func observe(ax: CGRect, server: CGRect?, destination: CGRect,
                           placement: WindowAnimationPlacement, origin: CGRect,
                           at now: TimeInterval) -> Decision {
-        guard now - startedAt < 0.3 else { return .failed }
+        // Two bounded resize retries, position motion and final verification
+        // share one deadline. A missing acknowledgment also has its own limit.
+        guard now - startedAt < 1.2 else { return .failed }
         guard let server, WindowAnimationGeometry.valid(ax), WindowAnimationGeometry.valid(server),
               WindowAnimationGeometry.near(ax, server, tolerance: 1) else {
-            resetObservation()
-            return .waiting
+            previous = nil
+            stableSince = nil
+            completionCandidate = nil
+            handoff = nil
+            alignment?.lastTick = now
+            return now - verificationStartedAt < 0.2 ? .waiting : .failed
         }
-        guard let previous, WindowAnimationGeometry.near(previous, ax, tolerance: 1) else {
-            self.previous = ax
-            stableSince = now
-            return .waiting
+        let sizeDiffers = abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1
+        if !sizeDiffers, WindowAnimationGeometry.near(ax, destination, tolerance: alignmentTolerance) {
+            return .complete(ax)
         }
-        guard let stableSince, now - stableSince >= 1.0 / 30 else { return .waiting }
-        if !retriedSize, abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1 {
-            if placement.constrainToScreen {
-                // A shrink can stop while returning from off screen even when AX
-                // reports success. Moving the entire oversized frame in bounds can
-                // expose a backwards step after it has already reached its target.
-                var retryFrame = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-                if let position = placement.positionBeforeGrowing(from: retryFrame, to: destination) {
-                    retryFrame.origin = position
-                }
-                if !WindowAnimationGeometry.near(ax, retryFrame, tolerance: 1) {
-                    if !retriedNearDestination,
-                       abs(ax.minX - destination.minX) <= 1, abs(ax.minY - destination.minY) <= 1,
-                       ax.width >= destination.width, ax.height >= destination.height {
-                        // A one-point move can unblock the resize without exposing
-                        // the full correction. Verify it before using the in-bounds
-                        // retry; genuine minimum sizes still take the normal path.
-                        retriedNearDestination = true
-                        func step(_ current: CGFloat, toward target: CGFloat) -> CGFloat {
-                            current + min(1, abs(target - current)) * (target < current ? -1 : 1)
-                        }
-                        resetObservation()
-                        return .retrySizeAt(CGPoint(x: step(ax.minX, toward: retryFrame.minX),
-                                                    y: step(ax.minY, toward: retryFrame.minY)))
-                    }
-                    retriedSize = true
-                    resetObservation()
-                    return .retrySizeAt(retryFrame.origin)
+        var continuingVelocity = CGPoint.zero
+        var continuationElapsed: TimeInterval = 0
+        if let evidence = handoff {
+            handoff = nil
+            let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+            let delta = CGPoint(x: aligned.minX - ax.minX, y: aligned.minY - ax.minY)
+            let sameDirection = delta.x * evidence.velocity.x >= 0 && delta.y * evidence.velocity.y >= 0
+            if evidence.destination == destination, now >= evidence.sampledAt,
+               now - evidence.sampledAt <= 1.0 / 30,
+               WindowAnimationGeometry.near(ax, evidence.frame, tolerance: 1),
+               sameDirection {
+                reusedHandoff = true
+                previous = ax
+                // Earlier intermediate sizes cannot prove that the final
+                // resize has finished responding. Keep its full grace period.
+                stableSince = sizeDiffers ? max(startedAt, evidence.stableSince) : evidence.stableSince
+                if !sizeDiffers {
+                    continuingVelocity = CGPoint(x: delta.x * evidence.velocity.x > 0 ? evidence.velocity.x : 0,
+                                                 y: delta.y * evidence.velocity.y > 0 ? evidence.velocity.y : 0)
+                    continuationElapsed = now - evidence.sampledAt
                 }
             }
-            retriedSize = true
-            resetObservation()
-            return .retrySize
         }
-        let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-        if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) { return .complete(ax) }
-        resetObservation()
-        return .align(aligned)
+        if let candidate = completionCandidate {
+            completionCandidate = nil
+            // Reuse the final readback only when a fresh AX/WindowServer pair
+            // still confirms the requested size and aligned position.
+            let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+            if !sizeDiffers, WindowAnimationGeometry.near(ax, candidate, tolerance: alignmentTolerance),
+               WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+                return .complete(ax)
+            }
+        }
+        if var motion = alignment {
+            guard WindowAnimationGeometry.near(ax, motion.expected, tolerance: 1) else {
+                // A resize acknowledgment or external position change invalidates
+                // the old trajectory. Recompute from corroborated actual geometry.
+                alignment = nil
+                resetObservation(at: now)
+                return .waiting
+            }
+            motion.elapsed += min(1.0 / 30, max(0, now - motion.lastTick))
+            motion.lastTick = now
+            let t = min(1, motion.elapsed / motion.duration)
+            let next = alignmentFrame(motion, at: motion.elapsed, size: ax.size)
+            motion.expected = next
+            alignment = t >= 1 ? nil : motion
+            resetObservation(at: now)
+            if t >= 1, !sizeDiffers { completionCandidate = next }
+            return .align(next)
+        }
+        guard now - verificationStartedAt < 0.2 else { return .failed }
+        if sizeDiffers, sizeRetries == 0, probeConstrainedPosition, placement.constrainToScreen,
+           abs(ax.minX - destination.minX) <= 1, abs(ax.minY - destination.minY) <= 1 {
+            let bounds = placement.screenFrame.insetBy(dx: placement.gap, dy: placement.gap)
+            var position = ax.origin
+            if ax.width > destination.width + 1, ax.maxX > bounds.maxX + 1 {
+                position.x -= 1
+            } else if ax.height > destination.height + 1, ax.maxY > bounds.maxY + 1 {
+                position.y -= 1
+            }
+            if position != ax.origin {
+                // Release an edge clamp at the requested origin before waiting
+                // for a stable size. This probe does not establish a minimum.
+                sizeRetries += 1
+                resetObservation(at: now)
+                return .retrySizeAt(position)
+            }
+        }
+        if sizeDiffers {
+            guard let previous, WindowAnimationGeometry.near(previous, ax, tolerance: 1) else {
+                self.previous = ax
+                stableSince = now
+                return .waiting
+            }
+        } else if stableSince == nil {
+            previous = ax
+            stableSince = now
+        }
+        // Allow a short in-flight resize response to arrive before issuing
+        // another size write or aligning to a temporarily stale width.
+        let stabilityInterval: TimeInterval = sizeDiffers ? (sizeRetries == 0 ? 0.08 : 0.05) : 0
+        guard let stableSince, now - stableSince + 0.000001 >= stabilityInterval else { return .waiting }
+        var aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+        if sizeDiffers, sizeRetries < 2 {
+            if let position = placement.positionBeforeGrowing(from: aligned, to: destination) {
+                aligned.origin = position
+            }
+            if sizeRetries == 0 {
+                sizeRetries += 1
+                resetObservation(at: now)
+                // A small move may release a temporary edge clamp. Count it as
+                // a size retry and leave final alignment to the motion phase.
+                func step(_ current: CGFloat, toward target: CGFloat) -> CGFloat {
+                    current + min(1, max(-1, target - current))
+                }
+                var position = CGPoint(x: step(ax.minX, toward: aligned.minX),
+                                       y: step(ax.minY, toward: aligned.minY))
+                if position == ax.origin, probeConstrainedPosition, placement.constrainToScreen {
+                    // Position-only motion can reach the clamped endpoint before
+                    // verification. Retain a bounded inward probe so a temporary
+                    // edge clamp is not accepted just because alignment is exact.
+                    let bounds = placement.screenFrame.insetBy(dx: placement.gap, dy: placement.gap)
+                    if ax.width > destination.width + 1, ax.width < bounds.width - 1 {
+                        position.x += ax.maxX >= bounds.maxX - 1 ? -1 : 1
+                    } else if ax.height > destination.height + 1, ax.height < bounds.height - 1 {
+                        position.y += ax.maxY >= bounds.maxY - 1 ? -1 : 1
+                    }
+                }
+                return position == ax.origin ? .retrySize : .retrySizeAt(position)
+            }
+            if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+                sizeRetries += 1
+                resetObservation(at: now)
+                return .retrySize
+            }
+        } else if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+            return .complete(ax)
+        }
+        let distance = max(abs(aligned.minX - ax.minX), abs(aligned.minY - ax.minY))
+        if distance <= 1.000001, !sizeDiffers || (probeConstrainedPosition && sizeRetries > 0) {
+            // A one-point remainder needs one exact write. Fractional steps
+            // may round back to the same pixel and create an idle tail.
+            resetObservation(at: now)
+            if !sizeDiffers { completionCandidate = aligned }
+            return .align(aligned)
+        }
+        // Preserve the gentle constrained-size recovery. Only an ordinary
+        // position residual with no size retries uses the shorter correction.
+        let minimumDuration: TimeInterval = sizeDiffers && distance > 8 ? 0.18 : 1.0 / 30
+        // If the inward probe released a temporary clamp, the new size can
+        // expose an additional position residual. Ease that recovery rather
+        // than jumping from the previously aligned constrained frame.
+        let duration = sizeDiffers ? min(0.3, max(minimumDuration, Double(distance) / 140))
+            : min(0.12, max(minimumDuration, Double(distance) / 700))
+        alignment = Alignment(origin: ax, target: aligned,
+            duration: duration,
+            velocity: continuingVelocity, lastTick: now, expected: ax)
+        resetObservation(at: now)
+        if continuationElapsed > 0, var motion = alignment {
+            motion.elapsed = min(1.0 / 30, continuationElapsed)
+            let next = alignmentFrame(motion, at: motion.elapsed, size: ax.size)
+            motion.expected = next
+            alignment = motion.elapsed >= motion.duration ? nil : motion
+            if alignment == nil { completionCandidate = next }
+            return .align(next)
+        }
+        if !sizeDiffers, var motion = alignment {
+            motion.elapsed = min(1.0 / 60, motion.duration)
+            let next = alignmentFrame(motion, at: motion.elapsed, size: ax.size)
+            motion.expected = next
+            alignment = motion
+            return .align(next)
+        }
+        return .waiting
     }
 
-    private mutating func resetObservation() {
+    private func alignmentFrame(_ motion: Alignment, at elapsed: TimeInterval, size: CGSize) -> CGRect {
+        func position(_ origin: CGFloat, _ target: CGFloat, _ velocity: CGFloat) -> CGFloat {
+            WindowKeyboardMotion.Axis(origin: origin, destination: target, velocity: velocity,
+                duration: motion.duration, maximumDrift: 0).sample(at: elapsed).position
+        }
+        return CGRect(x: position(motion.origin.minX, motion.target.minX, motion.velocity.x),
+                      y: position(motion.origin.minY, motion.target.minY, motion.velocity.y),
+                      width: size.width, height: size.height)
+    }
+
+    private mutating func resetObservation(at now: TimeInterval) {
         previous = nil
         stableSince = nil
+        verificationStartedAt = now
     }
 }
 
@@ -213,16 +561,32 @@ final class WindowFrameAnimation {
     private let offset: () -> CGPoint
     private let curve: (Double) -> CGFloat
     private let write: (CGRect, CGFloat) -> Bool
+    private let finishNotBefore: () -> TimeInterval
     private let finishedEarly: () -> Bool
     private let finalize: ((CGRect) -> Void)?
     private let cleanup: () -> Void
     private let completion: (CGRect) -> Void
+    private let maximumFrameInterval: (() -> TimeInterval)?
+    private let maximumDuration: TimeInterval?
+    private let didApplyFrame: () -> Bool
+    private let independentSizeProgress: Bool
+    private let catchesUp: Bool
+    private var previousTime: TimeInterval
+    private var elapsed: TimeInterval = 0
     private(set) var isFinished = false
+
+    var remainingDuration: TimeInterval { max(0, duration - elapsed) }
 
     init(from: CGRect, to: CGRect, startTime: TimeInterval, duration: TimeInterval,
          offset: @escaping () -> CGPoint = { .zero },
          curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
+         maximumFrameInterval: (() -> TimeInterval)? = nil,
+         maximumDuration: TimeInterval? = nil,
+         didApplyFrame: @escaping () -> Bool = { true },
+         independentSizeProgress: Bool = false,
+         catchesUp: Bool = false,
          write: @escaping (CGRect, CGFloat) -> Bool,
+         finishNotBefore: @escaping () -> TimeInterval = { -.infinity },
          finishedEarly: @escaping () -> Bool = { false },
          finalize: ((CGRect) -> Void)? = nil,
          cleanup: @escaping () -> Void,
@@ -233,7 +597,14 @@ final class WindowFrameAnimation {
         self.duration = duration
         self.offset = offset
         self.curve = curve
+        self.maximumFrameInterval = maximumFrameInterval
+        self.maximumDuration = maximumDuration
+        self.didApplyFrame = didApplyFrame
+        self.independentSizeProgress = independentSizeProgress
+        self.catchesUp = catchesUp
+        previousTime = startTime
         self.write = write
+        self.finishNotBefore = finishNotBefore
         self.finishedEarly = finishedEarly
         self.finalize = finalize
         self.cleanup = cleanup
@@ -242,18 +613,38 @@ final class WindowFrameAnimation {
 
     func tick(at time: TimeInterval) {
         guard !isFinished else { return }
-        let progress = duration > 0 ? min(1, max(0, (time - startTime) / duration)) : 1
-        if progress >= 1 {
+        if let maximumDuration, time - startTime >= maximumDuration {
+            finish()
+            return
+        }
+        let previousElapsed = elapsed
+        if let maximumFrameInterval {
+            // Slow Accessibility replies must not turn the next frame into a
+            // catch-up jump when a caller opts into bounded playback steps.
+            let delta = max(0, time - previousTime)
+            let debt = max(0, previousTime - startTime - elapsed)
+            let catchUp = catchesUp && delta <= 0.025 ? min(0.004, debt * 0.25) : 0
+            elapsed += min(delta + catchUp, max(0, maximumFrameInterval()))
+        } else {
+            elapsed = max(0, time - startTime)
+        }
+        previousTime = max(previousTime, time)
+        let progress = duration > 0 ? min(1, elapsed / duration) : 1
+        if progress >= 1 && time >= finishNotBefore() {
             finish()
             return
         }
         let eased = curve(progress)
+        let sizeProgress = independentSizeProgress && duration > 0 ? min(1, max(progress, (time - startTime) / duration)) : progress
+        let sizeEased = curve(sizeProgress)
         let delta = offset()
         let frame = CGRect(x: origin.minX + (destination.minX - origin.minX) * eased + delta.x,
                            y: origin.minY + (destination.minY - origin.minY) * eased + delta.y,
-                           width: origin.width + (destination.width - origin.width) * eased,
-                           height: origin.height + (destination.height - origin.height) * eased)
-        if !write(frame, eased) || finishedEarly() {
+                           width: origin.width + (destination.width - origin.width) * sizeEased,
+                           height: origin.height + (destination.height - origin.height) * sizeEased)
+        let accepted = write(frame, eased)
+        if !didApplyFrame() { elapsed = previousElapsed }
+        if !accepted || finishedEarly() {
             // Let the normal mover settle the destination after a refused AX write.
             finish()
         }
@@ -371,7 +762,7 @@ enum WindowAnimationDiagnostics {
 /// Coordinates animation lifecycle and moves the actual application window.
 final class WindowAnimator {
     static let shared = WindowAnimator()
-    private let direct = DirectWindowAnimator()
+    private let direct = WindowAnimationExecutor()
 
     private init() {
         for name in [Notification.Name.windowAnimationPreferencesChanged, .configImported] {
@@ -407,6 +798,9 @@ final class WindowAnimator {
     func logicalFrame(for element: AccessibilityElement) -> CGRect? { direct.destination(for: element) }
     func cancel(for element: AccessibilityElement) { direct.cancel(for: element) }
     func finish() { direct.finish() }
+    func prepare(_ element: AccessibilityElement) { direct.prepare(element) }
+    func afterPendingWrites(_ body: @escaping () -> Void) { direct.afterPendingWrites(body) }
+    func performPlacementWork(_ body: @escaping () -> Void) { direct.performPlacementWork(body) }
     func finishForNewDrag() {
         direct.mouseDown()
         finish()
@@ -430,5 +824,84 @@ final class WindowAnimator {
         guard let a = WindowDisplayTransition.display(containing: source, displays: frames),
               let b = WindowDisplayTransition.display(containing: destination, displays: frames) else { return false }
         return a != b
+    }
+}
+
+/// Readbacks are reusable only until a write invalidates the affected geometry.
+final class WindowAnimationReadCache {
+    var position: CGPoint?
+    var size: CGSize?
+    var server: CGRect?
+    func invalidate() { position = nil; size = nil; server = nil }
+}
+
+struct WindowAnimationWritePolicy {
+    private var lastRequest: CGRect?
+    private var confirmations = 0
+    private var verifiedAt: TimeInterval = -.infinity
+    var now: TimeInterval = 0
+    var geometryChanged = false
+
+    var needsVerification: Bool {
+        let interval = confirmations < 2 ? 1.0 / 30 : (geometryChanged ? 1.0 / 20 : 1.0 / 12)
+        return lastRequest != nil && now - verifiedAt >= interval
+    }
+
+    mutating func observe(ax: CGRect, server: CGRect?, at time: TimeInterval) {
+        now = time
+        guard let requested = lastRequest, let server,
+              WindowAnimationGeometry.near(ax, requested, tolerance: 1),
+              WindowAnimationGeometry.near(ax, server, tolerance: 1) else { reset(); return }
+        if time > verifiedAt { confirmations = min(2, confirmations + 1) }
+        verifiedAt = time
+        geometryChanged = false
+    }
+
+    func mayPredict(_ frame: CGRect, previous: CGRect?, placement: WindowAnimationPlacement,
+                    progress: CGFloat) -> Bool {
+        guard confirmations >= 2, !needsVerification, progress < 0.9, let previous else { return false }
+        if placement.constrainToScreen {
+            let bounds = placement.screenFrame.insetBy(dx: placement.gap, dy: placement.gap)
+            guard bounds.contains(previous), bounds.contains(frame),
+                  placement.positionBeforeGrowing(from: previous, to: frame) == nil else { return false }
+            // A stationary edge at the screen boundary is safe; a moving edge
+            // approaching it still needs a readback to detect system clamping.
+            let oldEdges = [previous.minX, previous.maxX, previous.minY, previous.maxY]
+            let newEdges = [frame.minX, frame.maxX, frame.minY, frame.maxY]
+            let boundaries = [bounds.minX, bounds.maxX, bounds.minY, bounds.maxY]
+            for i in oldEdges.indices where abs(newEdges[i] - boundaries[i]) < 2 {
+                guard abs(newEdges[i] - oldEdges[i]) < 0.5 else { return false }
+            }
+        }
+        return true
+    }
+
+    mutating func requested(_ frame: CGRect) { lastRequest = frame }
+    mutating func reset() { confirmations = 0; verifiedAt = now; lastRequest = nil }
+}
+
+
+struct WindowAnimationResponseKey: Hashable {
+    let pid: pid_t
+    let window: CGWindowID
+    let launch: TimeInterval
+}
+
+struct WindowAnimationResponseHistory {
+    struct Entry {
+        let pacing: WindowAnimationPacing
+        let resizeCost: TimeInterval
+        let updatedAt: TimeInterval
+    }
+    private var entries: [WindowAnimationResponseKey: Entry] = [:]
+    func entry(for key: WindowAnimationResponseKey, at time: TimeInterval) -> Entry? {
+        guard let entry = entries[key], time - entry.updatedAt < 30 else { return nil }
+        return entry
+    }
+    mutating func record(_ key: WindowAnimationResponseKey, pacing: WindowAnimationPacing, resizeCost: TimeInterval, at time: TimeInterval) {
+        entries = entries.filter { time - $0.value.updatedAt < 30 }
+        if entries.count >= 32, entries[key] == nil,
+           let oldest = entries.min(by: { $0.value.updatedAt < $1.value.updatedAt })?.key { entries.removeValue(forKey: oldest) }
+        entries[key] = Entry(pacing: pacing, resizeCost: resizeCost, updatedAt: time)
     }
 }

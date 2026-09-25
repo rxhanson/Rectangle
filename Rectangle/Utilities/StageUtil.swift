@@ -19,6 +19,34 @@ class StageUtil {
         }
         return value
     }
+
+    static func observeEnabled(_ change: @escaping () -> Void) -> NSObject? {
+        guard stageCapable, let windowManagerDefaults else { return nil }
+        return EnabledObservation(defaults: windowManagerDefaults, change: change)
+    }
+
+    private final class EnabledObservation: NSObject {
+        private let defaults: UserDefaults
+        private let change: () -> Void
+
+        init(defaults: UserDefaults, change: @escaping () -> Void) {
+            self.defaults = defaults
+            self.change = change
+            super.init()
+            defaults.addObserver(self, forKeyPath: "GloballyEnabled", options: [], context: nil)
+        }
+
+        deinit { defaults.removeObserver(self, forKeyPath: "GloballyEnabled") }
+
+        override func observeValue(forKeyPath keyPath: String?, of object: Any?,
+                                   change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+            guard keyPath == "GloballyEnabled" else {
+                super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+                return
+            }
+            DispatchQueue.main.async { [weak self] in self?.change() }
+        }
+    }
     
     static var stageStripShow: Bool {
         guard let value = windowManagerDefaults?.object(forKey: "AutoHide") as? Bool else {

@@ -39,7 +39,7 @@ class BestEffortWindowMover: WindowMover {
                                                                to: visibleFrameOfScreen.screenFlipped,
                                                                gap: CGFloat(Defaults.gapSize.value))
         if !currentWindowRect.equalTo(adjustedWindowRect) {
-            windowElement.setFrame(adjustedWindowRect)
+            windowElement.setImmediateFrame(adjustedWindowRect, from: currentWindowRect, sizeFirst: false)
         }
     }
 }
