@@ -165,7 +165,6 @@ struct SnapAreaSettingsView: View {
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
                 
-                
                 if viewModel.footprintBlur {
                     Picker("Blur appearance", selection: $viewModel.blurAppearance) {
                         Text("Follow System").tag(BlurAppearance.system)
@@ -187,13 +186,15 @@ struct SnapAreaSettingsView: View {
                     .font(.headline)
             }
             
-            // Portrait Inline Section (Only visible if portrait monitor connected)
-            if viewModel.isPortraitConnected {
-                Section {
-                    SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
-                } header: {
-                    Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
-                        .font(.headline)
+            // Portrait Inline Section (Wrapped in Group for proper Form structural updates)
+            Group {
+                if viewModel.isPortraitConnected {
+                    Section {
+                        SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
+                    } header: {
+                        Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
+                            .font(.headline)
+                    }
                 }
             }
         }
@@ -202,13 +203,16 @@ struct SnapAreaSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isPortraitConnected)
+        .onChange(of: viewModel.isPortraitConnected) { oldValue, isConnected in
+            Notification.Name.snapAreaSettingsNeedsResize.post(object:isConnected)
+        }
     }
 }
 
 // MARK: - Grid Snap Area Layout
 
 struct SnapAreaGridView: View {
-    @State var viewModel: SnapAreaViewModel
+    @Bindable var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
     
     var body: some View {
@@ -243,7 +247,7 @@ struct SnapAreaGridView: View {
 // MARK: - Individual Snap Area Menu Picker
 
 struct SnapAreaPicker: View {
-    @State var viewModel: SnapAreaViewModel
+    @Bindable var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
     let directional: Directional
     
