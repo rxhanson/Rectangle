@@ -20,32 +20,45 @@ class NextPrevDisplayCalculation: WindowCalculation {
         if let screen = screen {
             let rectParams = params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo))
             
-            if Defaults.attemptMatchOnNextPrevDisplay.userEnabled {
-                if let lastAction = params.lastAction,
-                   let calculation = WindowCalculationFactory.calculationsByAction[lastAction.action] {
-                    
-                    if let windowId = params.window.id {
-                        AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                    }
-                    
-                    let newCalculationParams = RectCalculationParameters(
-                        window: rectParams.window,
-                        visibleFrameOfScreen: rectParams.visibleFrameOfScreen,
-                        action: lastAction.action,
-                        lastAction: nil)
-                    let rectResult = calculation.calculateRect(newCalculationParams)
-                    
-                    return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: lastAction.action)
-                } else {
-                    // Issue #1723: opt-in ON but no replayable lastAction (e.g. a manually positioned
-                    // window). Map the window proportionally from the source screen to the destination
-                    // screen so it keeps its relative spot instead of jumping to the center.
-                    let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
-                    let mappedRect = NextPrevDisplayCalculation.relativePositionedRect(window: rectParams.window.rect,
-                                                                                       source: sourceFrame,
-                                                                                       destination: rectParams.visibleFrameOfScreen)
-                    return WindowCalculationResult(rect: mappedRect, screen: screen, resultingAction: params.action)
+            if Defaults.attemptMatchOnNextPrevDisplay.userEnabled,
+               let lastAction = params.lastAction,
+               let calculation = WindowCalculationFactory.calculationsByAction[lastAction.action] {
+
+                if let windowId = params.window.id {
+                    AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
+
+                let newCalculationParams = RectCalculationParameters(
+                    window: rectParams.window,
+                    visibleFrameOfScreen: rectParams.visibleFrameOfScreen,
+                    action: lastAction.action,
+                    lastAction: nil)
+                let rectResult = calculation.calculateRect(newCalculationParams)
+
+                return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: lastAction.action)
+            }
+
+            let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
+
+            if !Defaults.centerAcrossDisplays.userEnabled {
+                // A maximized window is re-maximized below instead, so that it stays recorded as
+                // maximized on the destination display and can still be restored from there.
+                let remaximizes = params.lastAction?.action == .maximize && !Defaults.autoMaximize.userDisabled
+
+                if !remaximizes {
+                    let transferredRect = DisplayTransfer.transferredRect(window: rectParams.window.rect,
+                                                                          source: sourceFrame,
+                                                                          destination: rectParams.visibleFrameOfScreen)
+                    return WindowCalculationResult(rect: transferredRect, screen: screen, resultingAction: params.action)
+                }
+            } else if Defaults.attemptMatchOnNextPrevDisplay.userEnabled {
+                // Issue #1723: opt-in ON but no replayable lastAction (e.g. a manually positioned
+                // window). Map the window proportionally from the source screen to the destination
+                // screen so it keeps its relative spot instead of jumping to the center.
+                let mappedRect = NextPrevDisplayCalculation.relativePositionedRect(window: rectParams.window.rect,
+                                                                                   source: sourceFrame,
+                                                                                   destination: rectParams.visibleFrameOfScreen)
+                return WindowCalculationResult(rect: mappedRect, screen: screen, resultingAction: params.action)
             }
 
             let rectResult = calculateRect(rectParams)

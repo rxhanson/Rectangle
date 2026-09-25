@@ -203,6 +203,13 @@ enum WindowAction: Int, Codable {
             return false
         }
     }
+    
+    var excludedFromMenu: Bool {
+        switch self {
+        case .smallerWidth, .largerWidth, .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds: return true
+        default: return false
+        }
+    }
 
     var name: String {
         switch self {
@@ -363,290 +370,220 @@ enum WindowAction: Int, Codable {
     }
 
     var displayName: String? {
-        var key: String
-        var value: String
-
         switch self {
         case .leftHalf:
-            key = "Xc8-Sm-pig.title"
-            value = "Left"
+            String(localized: "Left")
         case .rightHalf:
-            key = "F8S-GI-LiB.title"
-            value = "Right"
+            String(localized: "Right")
         case .maximize:
-            key = "8oe-J2-oUU.title"
-            value = "Maximize"
+            String(localized: "Maximize")
         case .maximizeHeight:
-            key = "6DV-cd-fda.title"
-            value = "Maximize Height"
+            String(localized: "Maximize Height")
         case .previousDisplay:
-            key = "QwF-QN-YH7.title"
-            value = "Previous Display"
+            String(localized: "Previous Display")
         case .nextDisplay:
-            key = "Jnd-Lc-nlh.title"
-            value = "Next Display"
+            String(localized: "Next Display")
         case .larger:
-            key = "Eah-KL-kbn.title"
-            value = "Larger"
+            String(localized: "Make Larger")
         case .smaller:
-            key = "MzN-CJ-ASD.title"
-            value = "Smaller"
+            String(localized: "Make Smaller")
         case .bottomHalf:
-            key = "ec4-FB-fMa.title"
-            value = "Bottom"
+            String(localized: "Bottom")
         case .topHalf:
-            key = "d7y-s8-7GE.title"
-            value = "Top"
+            String(localized: "Top")
         case .center:
-            key = "8Bg-SZ-hDO.title"
-            value = "Move to Center"
+            String(localized: "Move to Center")
         case .bottomLeft:
-            key = "6ma-hP-5xX.title"
-            value = "Bottom Left"
+            String(localized: "Bottom Left")
         case .bottomRight:
-            key = "J6t-sg-Wwz.title"
-            value = "Bottom Right"
+            String(localized: "Bottom Right")
         case .topLeft:
-            key = "adp-cN-qkh.title"
-            value = "Top Left"
+            String(localized: "Top Left")
         case .topRight:
-            key = "0Ak-33-SM7.title"
-            value = "Top Right"
+            String(localized: "Top Right")
         case .restore:
-            key = "C9v-g0-DH8.title"
-            value = "Restore"
+            String(localized: "Restore")
         case .firstThird:
-            key = "F12-EV-Lfz.title"
-            value = "First Third"
+            String(localized: "First Third")
         case .firstTwoThirds:
-            key = "3zd-xE-oWl.title"
-            value = "First Two Thirds"
+            String(localized: "First Two Thirds")
         case .centerThird:
-            key = "7YK-9Z-lzw.title"
-            value = "Center Third"
+            String(localized: "Center Third")
         case .centerTwoThirds:
-            key = "oSu-n4-8Yu.title"
-            value = "Center Two Thirds"
+            String(localized: "Center Two Thirds")
         case .lastTwoThirds:
-            key = "08q-Ce-1QL.title"
-            value = "Last Two Thirds"
+            String(localized: "Last Two Thirds")
         case .lastThird:
-            key = "cRm-wn-Yv6.title"
-            value = "Last Third"
+            String(localized: "Last Third")
         case .moveLeft:
-            key = "v2f-bX-xiM.title"
-            value = "Move Left"
+            String(localized: "Move Left")
         case .moveRight:
-            key = "rzr-Qq-702.title"
-            value = "Move Right"
+            String(localized: "Move Right")
         case .moveUp:
-            key = "HOm-BV-2jc.title"
-            value = "Move Up"
+            String(localized: "Move Up")
         case .moveDown:
-            key = "1Rc-Od-eP5.title"
-            value = "Move Down"
+            String(localized: "Move Down")
         case .almostMaximize:
-            key = "e57-QJ-6bL.title"
-            value = "Almost Maximize"
+            String(localized: "Almost Maximize")
         case .centerHalf:
-            key = "bRX-dV-iAR.title"
-            value = "Center"
+            String(localized: "Center")
         case .firstFourth:
-            key = "Q6Q-6J-okH.title"
-            value = "First Fourth"
+            String(localized: "First Fourth")
         case .secondFourth:
-            key = "Fko-xs-gN5.title"
-            value = "Second Fourth"
+            String(localized: "Second Fourth")
         case .thirdFourth:
-            key = "ZTK-rS-b17.title"
-            value = "Third Fourth"
+            String(localized: "Third Fourth")
         case .lastFourth:
-            key = "6HX-rn-VIp.title"
-            value = "Last Fourth"
+            String(localized: "Last Fourth")
         case .firstThreeFourths:
-            key = "T9Z-QF-gwc.title"
-            value = "First Three Fourths"
+            String(localized: "First Three Fourths")
         case .centerThreeFourths:
-            key = "Vph-Z0-euH.title"
-            value = "Center Three Fourths"
+            String(localized: "Center Three Fourths")
         case .lastThreeFourths:
-            key = "nwX-h6-fwm.title"
-            value = "Last Three Fourths"
+            String(localized: "Last Three Fourths")
         case .topLeftSixth:
-            key = "mFt-Kg-UYG.title"
-            value = "Top Left Sixth"
+            String(localized: "Top Left Sixth")
         case .topCenterSixth:
-            key = "TTx-7X-Wie.title"
-            value = "Top Center Sixth"
+            String(localized: "Top Center Sixth")
         case .topRightSixth:
-            key = "f3Q-q7-Pcy.title"
-            value = "Top Right Sixth"
+            String(localized: "Top Right Sixth")
         case .bottomLeftSixth:
-            key = "LqQ-pM-jRN.title"
-            value = "Bottom Left Sixth"
+            String(localized: "Bottom Left Sixth")
         case .bottomCenterSixth:
-            key = "iOQ-1e-esP.title"
-            value = "Bottom Center Sixth"
+            String(localized: "Bottom Center Sixth")
         case .bottomRightSixth:
-            key = "m2F-eA-g7w.title"
-            value = "Bottom Right Sixth"
+            String(localized: "Bottom Right Sixth")
         case .topLeftNinth:
-            key = "topLeftNinth.title"
-            value = "Top Left Ninth"
+            String(localized: "Top Left Ninth")
         case .topCenterNinth:
-            key = "topCenterNinth.title"
-            value = "Top Center Ninth"
+            String(localized: "Top Center Ninth")
         case .topRightNinth:
-            key = "topRightNinth.title"
-            value = "Top Right Ninth"
+            String(localized: "Top Right Ninth")
         case .middleLeftNinth:
-            key = "middleLeftNinth.title"
-            value = "Middle Left Ninth"
+            String(localized: "Middle Left Ninth")
         case .middleCenterNinth:
-            key = "middleCenterNinth.title"
-            value = "Middle Center Ninth"
+            String(localized: "Middle Center Ninth")
         case .middleRightNinth:
-            key = "middleRightNinth.title"
-            value = "Middle Right Ninth"
+            String(localized: "Middle Right Ninth")
         case .bottomLeftNinth:
-            key = "bottomLeftNinth.title"
-            value = "Bottom Left Ninth"
+            String(localized: "Bottom Left Ninth")
         case .bottomCenterNinth:
-            key = "bottomCenterNinth.title"
-            value = "Bottom Center Ninth"
+            String(localized: "Bottom Center Ninth")
         case .bottomRightNinth:
-            key = "bottomRightNinth.title"
-            value = "Bottom Right Ninth"
-        case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird:
-            return nil
+            String(localized: "Bottom Right Ninth")
         case .topLeftEighth:
-            key = "topLeftEighth.title"
-            value = "Top Left Eighth"
+            String(localized: "Top Left 8th")
         case .topCenterLeftEighth:
-            key = "topCenterLeftEighth.title"
-            value = "Top Center Left Eighth"
+            String(localized: "Top Center Left 8th")
         case .topCenterRightEighth:
-            key = "topCenterRightEighth.title"
-            value = "Top Center Right Eighth"
+            String(localized: "Top Center Right 8th")
         case .topRightEighth:
-            key = "topRightEighth.title"
-            value = "Top Right Eighth"
+            String(localized: "Top Right 8th")
         case .bottomLeftEighth:
-            key = "bottomLeftEighth.title"
-            value = "Bottom Left Eighth"
+            String(localized: "Bottom Left 8th")
         case .bottomCenterLeftEighth:
-            key = "bottomCenterLeftEighth.title"
-            value = "Bottom Center Left Eighth"
+            String(localized: "Bottom Center Left 8th")
         case .bottomCenterRightEighth:
-            key = "bottomCenterRightEighth.title"
-            value = "Bottom Center Right Eighth"
+            String(localized: "Bottom Center Right 8th")
         case .bottomRightEighth:
-            key = "bottomRightEighth.title"
-            value = "Bottom Right Eighth"
-        case .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight, .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight:
-            return nil
+            String(localized: "Bottom Right 8th")
         case .tileRows:
-            key = "tileRows.title"
-            value = "Tile Windows in Rows"
+            String(localized: "Tile in Rows")
         case .tileColumns:
-            key = "tileColumns.title"
-            value = "Tile Windows in Columns"
-        case .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo, .cascadeActiveApp, .tileActiveApp:
-            return nil
-        case .centerProminently, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight:
-            return nil
-        case .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds:
-            return nil
+            String(localized: "Tile in Columns")
+        case .largerWidth:
+            String(localized: "Larger Width")
+        case .smallerWidth:
+            String(localized: "Smaller Width")
+        case .topVerticalThird:
+            String(localized: "Top Third")
+        case .middleVerticalThird:
+            String(localized: "Middle Third")
+        case .bottomVerticalThird:
+            String(localized: "Bottom Third")
+        case .topVerticalTwoThirds:
+            String(localized: "Top Two Thirds")
+        case .bottomVerticalTwoThirds:
+            String(localized: "Bottom Two Thirds")
         case .topLeftTwelfth:
-            key = "topLeftTwelfth.title"
-            value = "Top Left Twelfth"
+            String(localized: "Top Left Twelfth")
         case .topCenterLeftTwelfth:
-            key = "topCenterLeftTwelfth.title"
-            value = "Top Center Left Twelfth"
+            String(localized: "Top Center Left Twelfth")
         case .topCenterRightTwelfth:
-            key = "topCenterRightTwelfth.title"
-            value = "Top Center Right Twelfth"
+            String(localized: "Top Center Right Twelfth")
         case .topRightTwelfth:
-            key = "topRightTwelfth.title"
-            value = "Top Right Twelfth"
+            String(localized: "Top Right Twelfth")
         case .middleLeftTwelfth:
-            key = "middleLeftTwelfth.title"
-            value = "Middle Left Twelfth"
+            String(localized: "Middle Left Twelfth")
         case .middleCenterLeftTwelfth:
-            key = "middleCenterLeftTwelfth.title"
-            value = "Middle Center Left Twelfth"
+            String(localized: "Middle Center Left Twelfth")
         case .middleCenterRightTwelfth:
-            key = "middleCenterRightTwelfth.title"
-            value = "Middle Center Right Twelfth"
+            String(localized: "Middle Center Right Twelfth")
         case .middleRightTwelfth:
-            key = "middleRightTwelfth.title"
-            value = "Middle Right Twelfth"
+            String(localized: "Middle Right Twelfth")
         case .bottomLeftTwelfth:
-            key = "bottomLeftTwelfth.title"
-            value = "Bottom Left Twelfth"
+            String(localized: "Bottom Left Twelfth")
         case .bottomCenterLeftTwelfth:
-            key = "bottomCenterLeftTwelfth.title"
-            value = "Bottom Center Left Twelfth"
+            String(localized: "Bottom Center Left Twelfth")
         case .bottomCenterRightTwelfth:
-            key = "bottomCenterRightTwelfth.title"
-            value = "Bottom Center Right Twelfth"
+            String(localized: "Bottom Center Right Twelfth")
         case .bottomRightTwelfth:
-            key = "bottomRightTwelfth.title"
-            value = "Bottom Right Twelfth"
+            String(localized: "Bottom Right Twelfth")
         case .topLeftSixteenth:
-            key = "topLeftSixteenth.title"
-            value = "Top Left Sixteenth"
+            String(localized: "Top Left Sixteenth")
         case .topCenterLeftSixteenth:
-            key = "topCenterLeftSixteenth.title"
-            value = "Top Center Left Sixteenth"
+            String(localized: "Top Center Left Sixteenth")
         case .topCenterRightSixteenth:
-            key = "topCenterRightSixteenth.title"
-            value = "Top Center Right Sixteenth"
+            String(localized: "Top Center Right Sixteenth")
         case .topRightSixteenth:
-            key = "topRightSixteenth.title"
-            value = "Top Right Sixteenth"
+            String(localized: "Top Right Sixteenth")
         case .upperMiddleLeftSixteenth:
-            key = "upperMiddleLeftSixteenth.title"
-            value = "Upper Middle Left Sixteenth"
+            String(localized: "Upper Middle Left Sixteenth")
         case .upperMiddleCenterLeftSixteenth:
-            key = "upperMiddleCenterLeftSixteenth.title"
-            value = "Upper Middle Center Left Sixteenth"
+            String(localized: "Upper Middle Center Left Sixteenth")
         case .upperMiddleCenterRightSixteenth:
-            key = "upperMiddleCenterRightSixteenth.title"
-            value = "Upper Middle Center Right Sixteenth"
+            String(localized: "Upper Middle Center Right Sixteenth")
         case .upperMiddleRightSixteenth:
-            key = "upperMiddleRightSixteenth.title"
-            value = "Upper Middle Right Sixteenth"
+            String(localized: "Upper Middle Right Sixteenth")
         case .lowerMiddleLeftSixteenth:
-            key = "lowerMiddleLeftSixteenth.title"
-            value = "Lower Middle Left Sixteenth"
+            String(localized: "Lower Middle Left Sixteenth")
         case .lowerMiddleCenterLeftSixteenth:
-            key = "lowerMiddleCenterLeftSixteenth.title"
-            value = "Lower Middle Center Left Sixteenth"
+            String(localized: "Lower Middle Center Left Sixteenth")
         case .lowerMiddleCenterRightSixteenth:
-            key = "lowerMiddleCenterRightSixteenth.title"
-            value = "Lower Middle Center Right Sixteenth"
+            String(localized: "Lower Middle Center Right Sixteenth")
         case .lowerMiddleRightSixteenth:
-            key = "lowerMiddleRightSixteenth.title"
-            value = "Lower Middle Right Sixteenth"
+            String(localized: "Lower Middle Right Sixteenth")
         case .bottomLeftSixteenth:
-            key = "bottomLeftSixteenth.title"
-            value = "Bottom Left Sixteenth"
+            String(localized: "Bottom Left Sixteenth")
         case .bottomCenterLeftSixteenth:
-            key = "bottomCenterLeftSixteenth.title"
-            value = "Bottom Center Left Sixteenth"
+            String(localized: "Bottom Center Left Sixteenth")
         case .bottomCenterRightSixteenth:
-            key = "bottomCenterRightSixteenth.title"
-            value = "Bottom Center Right Sixteenth"
+            String(localized: "Bottom Center Right Sixteenth")
         case .bottomRightSixteenth:
-            key = "bottomRightSixteenth.title"
-            value = "Bottom Right Sixteenth"
-        case .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
-             .displaySix, .displaySeven, .displayEight, .displayNine:
-            return nil
-        }
+            String(localized: "Bottom Right Sixteenth")
 
-        return NSLocalizedString(key, tableName: "Main", value: value, comment: "")
+        case .topLeftThird, .topRightThird, .bottomLeftThird, .bottomRightThird,
+             .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
+             .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
+             .specified, .reverseAll, .tileAll, .cascadeAll, .leftTodo, .rightTodo,
+             .cascadeActiveApp, .tileActiveApp,
+             .centerProminently, .largerHeight, .smallerHeight,
+             .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
+             .displaySix, .displaySeven, .displayEight, .displayNine:
+            nil
+        }
+    }
+    
+    var settingsDisplayName: String? {
+        switch self {
+        case .topLeftNinth:
+            return "Ninths (3x3)"
+        case .topLeftTwelfth:
+            return "Twelfths (3x4)"
+        case .topLeftSixteenth:
+            return "Sixteenths (4x4)"
+        default: return nil
+        }
     }
 
     var notificationName: Notification.Name {

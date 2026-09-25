@@ -100,6 +100,7 @@ class Defaults {
     static let todoSidebarSide = IntEnumDefault<TodoSidebarSide>(key: "todoSidebarSide", defaultValue: .right)
     static let snapModifiers = IntDefault(key: "snapModifiers")
     static let attemptMatchOnNextPrevDisplay = OptionalBoolDefault(key: "attemptMatchOnNextPrevDisplay")
+    static let centerAcrossDisplays = OptionalBoolDefault(key: "centerAcrossDisplays")
     static let altThirdCycle = OptionalBoolDefault(key: "altThirdCycle")
     static let centerHalfCycles = OptionalBoolDefault(key: "centerHalfCycles")
     static let cyclingOverlapOffset = OptionalBoolDefault(key: "cyclingOverlapOffset")
@@ -148,6 +149,7 @@ class Defaults {
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
+    static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
@@ -217,6 +219,7 @@ class Defaults {
         todoSidebarSide,
         snapModifiers,
         attemptMatchOnNextPrevDisplay,
+        centerAcrossDisplays,
         altThirdCycle,
         centerHalfCycles,
         fullIgnoreBundleIds,
