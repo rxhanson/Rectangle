@@ -14989,6 +14989,7 @@
       }
     },
     "Keep a chosen application visible on the right of your primary screen at all times" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -15355,6 +15356,9 @@
           }
         }
       }
+    },
+    "Keep a chosen application visible on the side of your primary screen at all times" : {
+
     },
     "Landscape Snap Areas" : {
 
