@@ -253,18 +253,6 @@ struct BehaviorSettingsView: View {
                 CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
-                        HStack {
-                            Text("Keep a chosen application visible on the side of your primary screen at all times")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Button(action: { showTodoInfoPopover.toggle() }) {
-                                Image(systemName: "info.circle")
-                            }
-                            .buttonStyle(.plain)
-                            .popover(isPresented: $showTodoInfoPopover, arrowEdge: .trailing) {
-                                TodoModeInfoView()
-                            }
-                        }
                         
                         Toggle("Show Todo Mode in menu", isOn: $viewModel.todoEnabled)
                         
@@ -324,7 +312,18 @@ struct BehaviorSettingsView: View {
                     }
                     .padding(.leading, 12)
                 } label: {
-                    Label("Todo Mode", systemImage: "list.bullet.rectangle.portrait")
+                    HStack(spacing: 6) {
+                        Label("Todo Mode", systemImage: "list.bullet.rectangle.portrait")
+                        
+                        Button(action: { showTodoInfoPopover.toggle() }) {
+                            Image(systemName: "info.circle")
+                                .foregroundColor(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .popover(isPresented: $showTodoInfoPopover, arrowEdge: .trailing) {
+                            TodoModeInfoView()
+                        }
+                    }
                 }
             }
             
@@ -415,7 +414,7 @@ struct TodoModeInfoView: View {
                 .scaledToFit()
                 .frame(width: 56, height: 56)
 
-            Text("Keep a chosen application visible on the right side of your primary screen at all times")
+            Text("Keep a chosen application visible on the side of your primary screen at all times")
                 .multilineTextAlignment(.center)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
