@@ -113,10 +113,13 @@ struct BehaviorSettingsView: View {
             
             // MARK: - Todo Mode
             Section {
-                HStack {
-                    Toggle(isOn: $viewModel.todoEnabled) {
-                        HStack(spacing: 4) {
-                            Text("Show Todo Mode in menu")
+                CustomDisclosureGroup {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Divider()
+                        HStack {
+                            Text("Keep a chosen application visible on the side of your primary screen at all times")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                             Button(action: { showTodoInfoPopover.toggle() }) {
                                 Image(systemName: "info.circle")
                             }
@@ -125,67 +128,66 @@ struct BehaviorSettingsView: View {
                                 TodoModeInfoView()
                             }
                         }
-                    }
-                }
-
-                if viewModel.todoEnabled {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Keep a chosen application visible on the right of your primary screen at all times")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        HStack {
-                            Text("Todo app width")
-
-                            Spacer()
-
-                            HStack(spacing: 4) {
-                                TextField("", value: $viewModel.todoSidebarWidth, format: .number)
-                                    .frame(width: 100)
-                                    .textFieldStyle(.roundedBorder)
-                                    .onSubmit { viewModel.commitTodoWidth() }
-
-                                Picker("", selection: $viewModel.todoSidebarWidthUnit) {
-                                    Text("px").tag(TodoSidebarWidthUnit.pixels)
-                                    Text("%").tag(TodoSidebarWidthUnit.pct)
+                        
+                        Toggle("Show Todo Mode in menu", isOn: $viewModel.todoEnabled)
+                        
+                        // Dynamically show/hide the controls based on toggle state
+                        if viewModel.todoEnabled {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Text("Todo app width")
+                                    Spacer()
+                                    HStack(spacing: 4) {
+                                        TextField("", value: $viewModel.todoSidebarWidth, format: .number)
+                                            .frame(width: 100)
+                                            .textFieldStyle(.roundedBorder)
+                                            .onSubmit { viewModel.commitTodoWidth() }
+                                        
+                                        Picker("", selection: $viewModel.todoSidebarWidthUnit) {
+                                            Text("px").tag(TodoSidebarWidthUnit.pixels)
+                                            Text("%").tag(TodoSidebarWidthUnit.pct)
+                                        }
+                                        .labelsHidden()
+                                        .fixedSize()
+                                    }
                                 }
-                                .labelsHidden()
-                                .fixedSize()
+                                
+                                HStack {
+                                    Text("Todo side")
+                                    Spacer()
+                                    Picker("", selection: $viewModel.todoSidebarSide) {
+                                        Text("Left").tag(TodoSidebarSide.left)
+                                        Text("Right").tag(TodoSidebarSide.right)
+                                    }
+                                    .frame(width: 90)
+                                }
+                                
+                                HStack {
+                                    Text("Toggle Todo")
+                                    Spacer()
+                                    MASShortcutViewRepresentable(
+                                        defaultsKey: TodoManager.toggleDefaultsKey,
+                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
+                                    )
+                                    .frame(width: 130, height: 22)
+                                }
+                                
+                                HStack {
+                                    Text("Reflow Todo")
+                                    Spacer()
+                                    MASShortcutViewRepresentable(
+                                        defaultsKey: TodoManager.reflowDefaultsKey,
+                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
+                                    )
+                                    .frame(width: 130, height: 22)
+                                }
                             }
-                        }
-                        
-                        HStack {
-                            Text("Todo side")
-                            Spacer()
-                            Picker("", selection: $viewModel.todoSidebarSide) {
-                                Text("Left").tag(TodoSidebarSide.left)
-                                Text("Right").tag(TodoSidebarSide.right)
-                            }
-                            .frame(width: 90)
-                        }
-                        
-                        HStack {
-                            Text("Toggle Todo")
-                            Spacer()
-                            MASShortcutViewRepresentable(
-                                defaultsKey: TodoManager.toggleDefaultsKey,
-                                validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
-                            )
-                            .frame(width: 130, height: 22)
-                        }
-
-                        HStack {
-                            Text("Reflow Todo")
-                            Spacer()
-                            MASShortcutViewRepresentable(
-                                defaultsKey: TodoManager.reflowDefaultsKey,
-                                validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
-                            )
-                            .frame(width: 130, height: 22)
+                            .transition(.opacity)
                         }
                     }
                     .padding(.leading, 12)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                } label: {
+                    Label("Todo Mode", systemImage: "list.bullet.rectangle.portrait")
                 }
             }
             
