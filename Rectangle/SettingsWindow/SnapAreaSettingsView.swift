@@ -144,7 +144,7 @@ final class SnapAreaViewModel: ObservableObject {
 // MARK: - Main Snap Area View
 
 struct SnapAreaSettingsView: View {
-    @StateObject private var viewModel = SnapAreaViewModel()
+    @State private var viewModel = SnapAreaViewModel()
 
     private var landscapeHeaderTitle: String {
         viewModel.isPortraitConnected ? String(localized: "Landscape Snap Areas") : String(localized: "Snap Areas")

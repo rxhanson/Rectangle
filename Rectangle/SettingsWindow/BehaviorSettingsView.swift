@@ -28,7 +28,7 @@ final class BehaviorSettingsViewController: NSViewController {
 // MARK: - SwiftUI Settings View
 @MainActor
 struct BehaviorSettingsView: View {
-    @StateObject private var viewModel = BehaviorSettingsViewModel()
+    @State private var viewModel = BehaviorSettingsViewModel()
     
     // Popover state
     @State private var showTodoInfoPopover = false

@@ -26,7 +26,7 @@ class AppSettingsViewController: NSViewController {
 }
 
 struct AppSettingsView: View {
-    @StateObject private var viewModel = AppSettingsViewModel()
+    @State private var viewModel = AppSettingsViewModel()
 
     var body: some View {
         Form {
