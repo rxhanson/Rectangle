@@ -26,7 +26,7 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
             return calculateAcrossDisplays(params)
         case .resize, .resizeAndCycleQuadrants:
             return calculateResize(params)
-        case .none, .cycleMonitor:
+        case .none, .cycleMonitor, .windowsRepeat:
             let screen = usableScreens.currentScreen
             let oneHalfRect = calculateFirstRect(params.asRectParams())
             return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: params.action)
