@@ -124,7 +124,10 @@ class Defaults {
     static let internalTilingNotified = BoolDefault(key: "internalTilingNotified")
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
-    static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
+    static let greenButtonMode = IntEnumDefault<GreenButtonMode>(
+        key: "greenButtonMode",
+        defaultValue: UserDefaults.standard.bool(forKey: "greenButtonOverride") ? .rectangle : .off
+    )
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
         launchOnLogin,
@@ -230,7 +233,7 @@ class Defaults {
         cyclingOverlapMaxCascade,
         stackBadge,
         moveFixedSizeToEdge,
-        greenButtonOverride
+        greenButtonMode
     ]
 }
 
