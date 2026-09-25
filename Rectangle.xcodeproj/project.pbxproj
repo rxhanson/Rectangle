@@ -105,6 +105,7 @@
 		988D068322EB4EF3004EABD7 /* MoveUpDownCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988D068222EB4EF3004EABD7 /* MoveUpDownCalculation.swift */; };
 		98985839305C1B6400459AFF /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98985838305C1B6400459AFF /* SettingsWindowController.swift */; };
 		9898583B305C1B6400459AFF /* ShortcutsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9898583A305C1B6400459AFF /* ShortcutsViewController.swift */; };
+		98985B9B3066B0A400459AFF /* CustomDisclosureGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98985B9A3066B0A400459AFF /* CustomDisclosureGroup.swift */; };
 		98987AA42391890400BE72C4 /* LogViewer.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98987AA22391890300BE72C4 /* LogViewer.storyboard */; };
 		98987AA52391890400BE72C4 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98987AA32391890400BE72C4 /* LogViewer.swift */; };
 		989DA30E243FC0DF008C7AA4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989DA30D243FC0DF008C7AA4 /* WelcomeView.swift */; };
@@ -125,8 +126,6 @@
 		98BEFA482620DEDD00D9D54F /* NSImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BEFA472620DEDC00D9D54F /* NSImageExtension.swift */; };
 		98C1008C2305F1FA006E5344 /* SubsequentExecutionMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */; };
 		98C1008E230B9EF6006E5344 /* NextPrevDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */; };
-		AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000002 /* DisplayTransfer.swift */; };
-		AF09B1000000000000000003 /* DisplayTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000004 /* DisplayTransferTests.swift */; };
 		98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2755D231FF6A9009B9292 /* EventMonitor.swift */; };
 		98C27561231FFA5F009B9292 /* SnappingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C27560231FFA5F009B9292 /* SnappingManager.swift */; };
 		98C275672322E2DA009B9292 /* WindowHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C275662322E2DA009B9292 /* WindowHistory.swift */; };
@@ -173,6 +172,8 @@
 		AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200030000000000000002 /* WindowAnimationCurves.swift */; };
 		AF09A0000000000000000001 /* GridTiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000002 /* GridTiling.swift */; };
 		AF09A0000000000000000003 /* GridTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000004 /* GridTilingTests.swift */; };
+		AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000002 /* DisplayTransfer.swift */; };
+		AF09B1000000000000000003 /* DisplayTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000004 /* DisplayTransferTests.swift */; };
 		B4521F932BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4521F922BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift */; };
 		B4780A322BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4780A312BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift */; };
 		B6366EE24FA928086846969B /* SixteenthsRepeated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B4044DB4809116039F96EB /* SixteenthsRepeated.swift */; };
@@ -342,6 +343,7 @@
 		988D068222EB4EF3004EABD7 /* MoveUpDownCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveUpDownCalculation.swift; sourceTree = "<group>"; };
 		98985838305C1B6400459AFF /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		9898583A305C1B6400459AFF /* ShortcutsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsViewController.swift; sourceTree = "<group>"; };
+		98985B9A3066B0A400459AFF /* CustomDisclosureGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisclosureGroup.swift; sourceTree = "<group>"; };
 		98987AA22391890300BE72C4 /* LogViewer.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LogViewer.storyboard; sourceTree = "<group>"; };
 		98987AA32391890400BE72C4 /* LogViewer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		989DA30D243FC0DF008C7AA4 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
@@ -362,8 +364,6 @@
 		98BEFA472620DEDC00D9D54F /* NSImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImageExtension.swift; sourceTree = "<group>"; };
 		98C1008B2305F1FA006E5344 /* SubsequentExecutionMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsequentExecutionMode.swift; sourceTree = "<group>"; };
 		98C1008D230B9EF6006E5344 /* NextPrevDisplayCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextPrevDisplayCalculation.swift; sourceTree = "<group>"; };
-		AF09B1000000000000000002 /* DisplayTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransfer.swift; sourceTree = "<group>"; };
-		AF09B1000000000000000004 /* DisplayTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransferTests.swift; sourceTree = "<group>"; };
 		98C2755D231FF6A9009B9292 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
 		98C27560231FFA5F009B9292 /* SnappingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingManager.swift; sourceTree = "<group>"; };
 		98C275662322E2DA009B9292 /* WindowHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHistory.swift; sourceTree = "<group>"; };
@@ -408,6 +408,8 @@
 		AC0200030000000000000002 /* WindowAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurves.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000002 /* GridTiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTiling.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000004 /* GridTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTilingTests.swift; sourceTree = "<group>"; };
+		AF09B1000000000000000002 /* DisplayTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransfer.swift; sourceTree = "<group>"; };
+		AF09B1000000000000000004 /* DisplayTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransferTests.swift; sourceTree = "<group>"; };
 		B4521F922BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeWindowDimensionCalculation.swift; sourceTree = "<group>"; };
 		B4780A312BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfOrDoubleDimensionCalculation.swift; sourceTree = "<group>"; };
 		BB0000000000000000000002 /* QuartersRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuartersRepeated.swift; sourceTree = "<group>"; };
@@ -805,6 +807,7 @@
 				98ED70523062D3810077BD10 /* ExtraSettings.swift */,
 				98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */,
 				98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */,
+				98985B9A3066B0A400459AFF /* CustomDisclosureGroup.swift */,
 				98ED7049306171650077BD10 /* AppSettingsView.swift */,
 				98ED704A306171650077BD10 /* AppSettingsViewModel.swift */,
 				98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */,
@@ -1008,6 +1011,7 @@
 				74804F0B2E25521C009F1F7D /* CenterTwoThirdsCalculation.swift in Sources */,
 				988D066522EB4CB6004EABD7 /* CenterThirdCalculation.swift in Sources */,
 				D04CE30827817A9200BD47B3 /* MiddleCenterNinthCalculation.swift in Sources */,
+				98985B9B3066B0A400459AFF /* CustomDisclosureGroup.swift in Sources */,
 				98A009BD251253A000CFBF0C /* BottomCenterSixthCalculation.swift in Sources */,
 				6490B39F27BF98840056C220 /* BottomCenterRightEighthCalculation.swift in Sources */,
 				98C2755E231FF6A9009B9292 /* EventMonitor.swift in Sources */,

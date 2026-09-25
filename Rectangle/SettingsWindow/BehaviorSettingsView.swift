@@ -26,16 +26,9 @@ final class BehaviorSettingsViewController: NSViewController {
 }
 
 // MARK: - SwiftUI Settings View
+@MainActor
 struct BehaviorSettingsView: View {
     @StateObject private var viewModel = BehaviorSettingsViewModel()
-    
-    // Disclosure states
-    @State private var isMaximizeExpanded = false
-    @State private var isStackedWindowsExpanded = false
-    @State private var isSideSplitRatiosExpanded = false
-    @State private var isStageManagerExpanded = false
-    @State private var isAcrossDisplaysExpanded = false
-    @State private var isExtrasExpanded = false
     
     // Popover state
     @State private var showTodoInfoPopover = false
@@ -196,9 +189,9 @@ struct BehaviorSettingsView: View {
                 }
             }
             
-            // MARK: - Maximize (Disclosure Section)
+            // MARK: - Maximize
             Section {
-                DisclosureGroup(isExpanded: $isMaximizeExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         if viewModel.showCursorScreenDetection {
@@ -224,7 +217,7 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Across Display Settings
             Section {
-                DisclosureGroup(isExpanded: $isAcrossDisplaysExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
@@ -245,7 +238,7 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Stacked Windows
             Section {
-                DisclosureGroup(isExpanded: $isStackedWindowsExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
@@ -277,7 +270,7 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Side Split Ratios
             Section {
-                DisclosureGroup(isExpanded: $isSideSplitRatiosExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 10) {
                         Divider()
                         Text("Configure the divide between side and corner actions")
@@ -335,7 +328,7 @@ struct BehaviorSettingsView: View {
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
-                    DisclosureGroup(isExpanded: $isStageManagerExpanded) {
+                    CustomDisclosureGroup {
                         VStack(alignment: .leading, spacing: 4) {
                             Divider()
                             HStack {
@@ -364,7 +357,7 @@ struct BehaviorSettingsView: View {
             
             // MARK: - Extras
             Section {
-                DisclosureGroup(isExpanded: $isExtrasExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
@@ -390,12 +383,6 @@ struct BehaviorSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
-        .animation(.easeInOut(duration: 0.2), value: isMaximizeExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isStackedWindowsExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isSideSplitRatiosExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isStageManagerExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isAcrossDisplaysExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isExtrasExpanded)
     }
 }
 
