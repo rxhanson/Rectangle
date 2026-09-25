@@ -369,7 +369,7 @@ struct BehaviorSettingsView: View {
                         Divider()
                         Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                        Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
+                        Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
                                 Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)

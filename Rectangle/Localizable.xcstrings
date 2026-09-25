@@ -2431,7 +2431,11 @@
         }
       }
     },
+    "Animate windows" : {
+
+    },
     "Animate windows (experimental)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -26153,6 +26157,9 @@
         }
       }
     },
+    "Show *Extra* shortcuts in menu" : {
+
+    },
     "Show additional sizes in menu" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26362,6 +26369,7 @@
       }
     },
     "Show Extra shortcuts in menu" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
