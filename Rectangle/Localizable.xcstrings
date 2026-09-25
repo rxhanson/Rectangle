@@ -22005,6 +22005,23 @@
         }
       }
     },
+    "repeat direction to maximize, down to minimize" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtung wiederholen zum Maximieren, unten zum Minimieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "repeat direction to maximize, down to minimize"
+          }
+        }
+      }
+    },
     "Quit Rectangle" : {
       "extractionState" : "manual",
       "localizations" : {
