@@ -68,7 +68,7 @@ struct BehaviorSettingsView: View {
                         }
                         
                         HStack(spacing: 12) {
-                            Text("Cyclic corner shortcuts expand:")
+                            Text("Cyclic corner shortcuts expand")
                             Spacer()
                             Picker("", selection: $viewModel.cornerCycleExpansionAxis) {
                                 Text("horizontally").tag(CornerCycleExpansionAxis.horizontal)
@@ -90,7 +90,7 @@ struct BehaviorSettingsView: View {
             
             // MARK: - Gaps
             Section {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Gaps between windows")
                         Slider(
@@ -414,7 +414,7 @@ struct TodoModeInfoView: View {
                 .scaledToFit()
                 .frame(width: 56, height: 56)
 
-            Text("Keep a chosen application visible on the side of your primary screen at all times")
+            Text("Keep a chosen application visible on the right side of your primary screen at all times")
                 .multilineTextAlignment(.center)
                 .font(.subheadline)
                 .foregroundColor(.secondary)

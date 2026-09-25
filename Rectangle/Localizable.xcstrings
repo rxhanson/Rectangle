@@ -2434,35 +2434,6 @@
     "Animate windows" : {
 
     },
-    "Animate windows (experimental)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Animate windows (experimental)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ウインドウをアニメーション表示（実験的）"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "窗口动画（实验性）"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "視窗動畫（實驗性）"
-          }
-        }
-      }
-    },
     "Animation style" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7551,15 +7522,8 @@
         }
       }
     },
-    "Cyclic corner shortcuts expand:" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cyclic corner shortcuts expand:"
-          }
-        }
-      }
+    "Cyclic corner shortcuts expand" : {
+
     },
     "Dark" : {
       "localizations" : {
@@ -14988,370 +14952,185 @@
         }
       }
     },
-    "Keep a chosen application visible on the right of your primary screen at all times" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "احتفظ بالتطبيق المختار مرئيًا على يمين شاشتك الأساسية في جميع الأوقات"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Manté l'aplicació escollida visible a la dreta de la pantalla principal en tot moment"
-          }
-        },
-        "ca-ES" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Manté l'aplicació escollida visible a la dreta de la pantalla principal en tot moment"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobrazí vybranou aplikaci vždy na pravé straně vaší hlavní obrazovky"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Halte eine ausgewählte Anwendung auf der rechten Seite des Hauptbildschirms im Vordergrund."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep a chosen application visible on the right of your primary screen at all times"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantener la aplicación elegida visible a la derecha de la pantalla primaria en todo momento"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantener la aplicación elegida visible a la derecha de la pantalla primaria en todo momento"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Garder une application visible à tout moment sur la droite de votre écran principal"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Biarkan aplikasi yang dipilih terlihat di sebelah kanan layar utama Anda setiap saat"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tieni l'applicazione scelta sempre visibile sulla destra del tuo schermo principale"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "メインディスプレイの右部分に、指定されたアプリケーションを常に表示します"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "선택한 응용 프로그램을 메인 화면 오른쪽에 항상 표시합니다"
-          }
-        },
-        "lt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Laikyti pasirinktą programą nuolat matomą dešinėje pagrindinio ekrano pusėje"
-          }
-        },
-        "nb" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gjør et valgt program synlig hele tida til høgre på hovedskjermen din"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep a chosen application visible on the right of your primary screen at all times"
-          }
-        },
-        "nn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gjer eit valt program synleg heile tida til høgre på hovudskjermen din"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep a chosen application visible on the right of your primary screen at all times"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep a chosen application visible on the right of your primary screen at all times"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keep a chosen application visible on the right of your primary screen at all times"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Păstrează tot timpul o aplicație la alegere vizibilă în dreapta ecranului principal"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Держать выбранное приложение постоянно видимым в правой части основного экрана"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ponechá zvolenú aplikáciu vždy zobrazenú na pravej strane hlavnej obrazovky"
-          }
-        },
-        "sv-SE" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Behåll en vald applikation hela tiden synlig till höger på din primära skärm"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seçtiğiniz bir uygulamayı ana ekranınızın sağında her zaman görüntümenizi sağlar"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Залишати обраний додаток завжди видимим справа на головному екрані"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Luôn giữ ứng dụng được chọn hiển thị bên phải của màn hình chính"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "使所选应用程序在主屏幕右侧始终保持可见"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在主螢幕右側始終顯示所選擇的應用程式"
-          }
-        },
-        "zh-Hant-HK" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在主螢幕右側始終顯示所選擇的應用程式"
-          }
-        }
-      }
-    },
     "Keep a chosen application visible on the right side of your primary screen at all times" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "احتفظ بالتطبيق المختار مرئيًا على الجانب الأيمن من شاشتك الأساسية في جميع الأوقات"
           }
         },
         "ca" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Manté l'aplicació escollida visible al costat dret de la pantalla principal en tot moment"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Manté l'aplicació escollida visible al costat dret de la pantalla principal en tot moment"
           }
         },
         "cs" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Zobrazí vybranou aplikaci vždy na pravé straně vaší hlavní obrazovky"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Halte eine ausgewählte Anwendung auf der rechten Seite des Hauptbildschirms im Vordergrund."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keep a chosen application visible on the right side of your primary screen at all times"
+            "value" : "Keep a chosen application visible on the side of your primary screen at all times"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mantener la aplicación elegida visible en la parte derecha de la pantalla primaria en todo momento"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Mantener la aplicación elegida visible en la parte derecha de la pantalla primaria en todo momento"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Garder une application visible à tout moment sur le côté droit de votre écran principal"
           }
         },
         "id" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Biarkan aplikasi yang dipilih terlihat di sisi kanan layar utama Anda setiap saat"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Tieni l'applicazione scelta sempre visibile sulla destra del tuo schermo principale"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "メインディスプレイの右側に、指定されたアプリケーションを常に表示します"
           }
         },
         "ko" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "선택한 응용 프로그램을 메인 화면 오른쪽에 항상 표시합니다"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Laikyti pasirinktą programą nuolat matomą dešinėje pagrindinio ekrano pusėje"
           }
         },
         "nb" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Gjør et valgt program synlig hele tida til høgre på hovedskjermen din"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Keep a chosen application visible on the right side of your primary screen at all times"
           }
         },
         "nn" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Gjer eit valt program synleg heile tida til høgre på hovudskjermen din"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Keep a chosen application visible on the right side of your primary screen at all times"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Keep a chosen application visible on the right side of your primary screen at all times"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Keep a chosen application visible on the right side of your primary screen at all times"
           }
         },
         "ro" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Păstrază tot timpul o aplicație la alegere în dreapta ecranului principal"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Держать выбранное приложение постоянно видимым в правой части основного экрана"
           }
         },
         "sk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Ponechá zvolenú aplikáciu vždy zobrazenú na pravej strane hlavnej obrazovky"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Behåll en vald applikation hela tiden synlig på höger sida på din primära skärm"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Seçtiğiniz bir uygulamayı ana ekranınızın sağında her zaman görüntüleyin"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Залишати обраний застосунок завжди видимим на правому боці головного екрану"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Luôn giữ ứng dụng được chọn hiển thị bên phải của màn hình chính"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "使所选应用程序在主屏幕右侧始终保持可见"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "在主螢幕右側始終顯示所選擇的應用程式"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "在主螢幕右側始終顯示所選擇的應用程式"
           }
         }
@@ -26365,17 +26144,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "顯示所有"
-          }
-        }
-      }
-    },
-    "Show Extra shortcuts in menu" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show Extra shortcuts in menu"
           }
         }
       }
