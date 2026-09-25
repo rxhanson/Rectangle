@@ -26342,6 +26342,9 @@
         }
       }
     },
+    "Show warning when windows cannot be resized small enough" : {
+
+    },
     "Side Split Ratio" : {
       "localizations" : {
         "en" : {

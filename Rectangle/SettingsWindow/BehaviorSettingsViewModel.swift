@@ -83,6 +83,12 @@ final class BehaviorSettingsViewModel {
         }
     }
     
+    var showMinimumWindowSizeWarning: Bool {
+        didSet {
+            Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
+        }
+    }
+    
     // MARK: - Todo Mode Settings
     var todoEnabled: Bool {
         didSet {
@@ -204,6 +210,7 @@ final class BehaviorSettingsViewModel {
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
+        self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
         
         setupObservers()
     }
@@ -219,23 +226,45 @@ final class BehaviorSettingsViewModel {
     
     func reloadFromDefaults() {
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
-        self.selectedCycleSizes = Defaults.cycleSizesIsChanged.enabled ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
+        let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
+        self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
+        self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+        
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
+        
         self.moveCursorAcrossDisplays = Defaults.moveCursorAcrossDisplays.userEnabled
-        self.centerAcrossDisplays = !Defaults.centerAcrossDisplays.userDisabled
+        self.centerAcrossDisplays = Defaults.centerAcrossDisplays.userEnabled
+        self.useCursorScreenDetection = Defaults.useCursorScreenDetection.enabled
+        
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
+        self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
+        
         self.todoEnabled = Defaults.todo.userEnabled
         self.todoSidebarWidth = Defaults.todoSidebarWidth.value
         self.todoSidebarWidthUnit = Defaults.todoSidebarWidthUnit.value
         self.todoSidebarSide = Defaults.todoSidebarSide.value
-        self.stackBadge = Defaults.stackBadge.userEnabled
+        
         self.stageSize = Double(Defaults.stageSize.value)
+        
+        let hRatio = Defaults.horizontalSplitRatio.value
+        let vRatio = Defaults.verticalSplitRatio.value
+        
+        self.showAdditionalSizesInMenu = Defaults.showAdditionalSizesInMenu.userEnabled
+        self.cyclingOverlapOffset = Defaults.cyclingOverlapOffset.userEnabled
+        self.stackBadge = Defaults.stackBadge.userEnabled
+        self.horizontalSplitRatio = hRatio
+        self.verticalSplitRatio = vRatio
+        self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
+        
+        self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
+        self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
+        self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
     }
     
     // MARK: - Cycle Sizes Binding Helper

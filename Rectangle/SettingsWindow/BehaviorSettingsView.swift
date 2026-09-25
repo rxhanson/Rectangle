@@ -364,6 +364,7 @@ struct BehaviorSettingsView: View {
                         Divider()
                         Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
+                        Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
                         Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
