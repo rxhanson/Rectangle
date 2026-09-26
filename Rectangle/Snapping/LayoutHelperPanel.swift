@@ -172,13 +172,14 @@ class LayoutHelperSurface: NSPanel {
         let root = LayoutHelperDocument(frame: CGRect(origin: .zero, size: frame.size))
         let inset = LayoutHelperPreviewLayout.inset(for: frame.size)
         let blur = LayoutHelperBackground(frame: root.bounds.insetBy(dx: inset, dy: inset))
+        if drawsBackground {
+            root.addSubview(LayoutHelperShadow(frame: blur.frame, radius: min(12, inset)))
+        }
         blur.material = .fullScreenUI
         blur.blendingMode = .behindWindow
         blur.state = .active
         blur.wantsLayer = true
         blur.layer?.cornerRadius = LayoutHelperAppearance.cornerRadius
-        blur.layer?.borderWidth = 1
-        blur.layer?.borderColor = LayoutHelperAppearance.outline.cgColor
         blur.layer?.masksToBounds = true
         blur.layer?.contentsFormat = .RGBA8Uint
         if #available(macOS 26, *) { blur.layer?.preferredDynamicRange = .standard }
@@ -638,6 +639,35 @@ final class LayoutHelperPanel: LayoutHelperSurface {
 private final class LayoutHelperBackground: NSVisualEffectView {
     override var isFlipped: Bool { true }
 
+}
+
+private final class LayoutHelperShadow: NSView {
+    override var isFlipped: Bool { true }
+
+    init(frame: CGRect, radius: CGFloat) {
+        super.init(frame: frame)
+        wantsLayer = true
+        layer?.shadowColor = NSColor.black.cgColor
+        layer?.shadowRadius = radius
+        layer?.shadowOffset = .zero
+        layer?.shadowPath = CGPath(roundedRect: bounds,
+                                   cornerWidth: LayoutHelperAppearance.cornerRadius,
+                                   cornerHeight: LayoutHelperAppearance.cornerRadius,
+                                   transform: nil)
+        updateShadowOpacity()
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        updateShadowOpacity()
+    }
+
+    private func updateShadowOpacity() {
+        let dark = effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        layer?.shadowOpacity = FootprintStyle.shadowOpacity(isDark: dark) / 2
+    }
 }
 
 private final class LayoutHelperDocument: NSView {
