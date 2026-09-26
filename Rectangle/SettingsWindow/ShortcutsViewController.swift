@@ -71,7 +71,7 @@ final class ShortcutSectionCellView: NSTableCellView {
         addSubview(titleLabel)
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -4),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
@@ -151,7 +151,7 @@ final class ShortcutActionCellView: NSTableCellView {
         addSubview(shortcutView)
         addSubview(popoverButton)
         
-        let trailingConstraint = shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -66)
+        let trailingConstraint = shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -68)
         self.shortcutTrailingConstraint = trailingConstraint
         
         NSLayoutConstraint.activate([
@@ -210,13 +210,25 @@ final class ShortcutActionCellView: NSTableCellView {
     }
 }
 
+// MARK: - Custom Outline View (Frame-adjusted disclosure chevrons)
+
+final class InsetOutlineView: NSOutlineView {
+    override func frameOfOutlineCell(atRow row: Int) -> NSRect {
+        var frame = super.frameOfOutlineCell(atRow: row)
+        if row >= 0, item(atRow: row) is CategoryGroup {
+            frame.origin.x += 20
+        }
+        return frame
+    }
+}
+
 // MARK: - ShortcutsViewController
 
 class ShortcutsViewController: NSViewController {
     
     private let initialSize = NSSize(width: 500, height: 610)
     private let scrollView = NSScrollView()
-    private let outlineView = NSOutlineView()
+    private let outlineView = InsetOutlineView()
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
     private var allowAnyShortcutObserver: NSObjectProtocol?
     private var lastGroupToggleTime: TimeInterval = 0
@@ -259,7 +271,7 @@ class ShortcutsViewController: NSViewController {
         containerView.addSubview(scrollView)
         
         NSLayoutConstraint.activate([
-            scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 20),
+            scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
