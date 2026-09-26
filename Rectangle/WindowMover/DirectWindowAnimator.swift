@@ -221,7 +221,7 @@ final class DirectWindowAnimator {
             var acknowledged = false
             if observedWindow.animationResizeNotified, observedWindow.animationResizeResponse.pendingSize != nil,
                observedWindow.animationObservedFrame != nil, !observedWindow.animationNeedsRecovery,
-               !observedWindow.animationNeedsFreshGeometry, now - observedWindow.animationObservedAt < 1.0 / 20,
+               now - observedWindow.animationObservedAt < 1.0 / 20,
                let size = observedWindow.size {
                 acknowledged = observedWindow.animationResizeResponse.acknowledge(size, at: now)
                 if acknowledged {
@@ -630,8 +630,7 @@ final class DirectWindowAnimator {
         session.visualTime = priorTime + min(1.0 / 30, delta + (delta <= 0.025 ? min(0.004, debt * 0.25) : 0))
         session.lastTick = time
         let sample = session.motion.sample(at: session.visualTime)
-        var frame = sample.frame
-        frame.size = session.motion.sample(at: max(time, session.visualTime)).frame.size
+        let frame = sample.frame
         let sampled = CGRect(x: frame.minX.rounded(), y: frame.minY.rounded(),
                              width: frame.width.rounded(), height: frame.height.rounded())
         // Read the preceding frame before issuing another write, so the two
@@ -793,7 +792,6 @@ final class DirectWindowAnimator {
                                          offset: offset, curve: smoothResize && origin.size != destination.size ? WindowAnimationCurve.resizeValue : curve, maximumFrameInterval: maximumFrameInterval,
                                          maximumDuration: profile == .layoutHelper ? max(0.9, duration * 3) : max(0.6, duration * 2.5),
                                          didApplyFrame: { element.animationMotionApplied },
-                                         independentSizeProgress: profile != .layoutHelper,
                                          catchesUp: profile != .layoutHelper,
                                          write: { [weak self] frame, progress in
             element.animationMotionApplied = true

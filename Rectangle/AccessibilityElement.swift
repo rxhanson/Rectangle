@@ -369,7 +369,8 @@ class AccessibilityElement {
                                       origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil,
                                       maximumCorrection: CGFloat = 0) -> CGRect? {
         if progress < 1, let observed = animationObservedFrame {
-            return setObservedAnimationFrame(frame, observed: observed, placement: placement, origin: origin)
+            return setObservedAnimationFrame(frame, observed: observed, placement: placement, origin: origin,
+                                             previous: previousFrame ?? observed)
         }
         animationSizeDeferred = false
         var frame = frame
@@ -454,25 +455,44 @@ class AccessibilityElement {
     }
 
     private func setObservedAnimationFrame(_ requested: CGRect, observed: CGRect,
-                                          placement: WindowAnimationPlacement, origin: CGRect) -> CGRect? {
+                                          placement: WindowAnimationPlacement, origin: CGRect, previous: CGRect) -> CGRect? {
         let now = animationVerificationTime ?? ProcessInfo.processInfo.systemUptime
         animationMotionApplied = false
         animationSizeDeferred = true
+        let currentSize = animationResizeResponse.planningSize(observed: observed.size, at: now)
+        let current = CGRect(origin: observed.origin, size: currentSize)
+        let room = placement.positionBeforeGrowing(from: current, to: requested)
         var size = requested.size
-        if placement.positionBeforeGrowing(from: observed, to: requested) != nil {
-            size.width = min(size.width, max(observed.width, placement.screenFrame.maxX - observed.minX))
-            size.height = min(size.height, max(observed.height, placement.screenFrame.maxY - observed.minY))
+        if room != nil {
+            size.width = min(size.width, max(currentSize.width, placement.screenFrame.maxX - observed.minX))
+            size.height = min(size.height, max(currentSize.height, placement.screenFrame.maxY - observed.minY))
         }
+        let grows = size.width > currentSize.width + 0.5 || size.height > currentSize.height + 0.5
+        let freshSize = now - animationObservedAt <= 1.0 / 60 || animationResizeResponse.hasRecentAcceptance(at: now)
+        let resizeDue = !animationYieldRequested && (!grows || freshSize)
+            && animationResizeResponse.mayRequest(at: now)
+            && now - animationLastSizeWrite >= animationSizeInterval
         let intermediate = WindowAnimationPlacement(screenFrame: placement.screenFrame, sharedEdges: nil,
             constrainToScreen: placement.constrainToScreen, gap: placement.gap)
-        var safeSize = observed.size
+        var safeSize = CGSize(width: max(currentSize.width, size.width),
+                              height: max(currentSize.height, size.height))
         if let pending = animationResizeResponse.pendingSize {
             safeSize.width = max(safeSize.width, pending.width)
             safeSize.height = max(safeSize.height, pending.height)
         }
-        safeSize.width = max(safeSize.width, size.width)
-        safeSize.height = max(safeSize.height, size.height)
         var position = intermediate.frame(for: requested, actualSize: safeSize, origin: origin, progress: 0).origin
+        if let destination = animationDestination {
+            // A responsive resize can accompany this position write. Only hold
+            // motion for a size update that actually has to wait.
+            let coupledSize = resizeDue && animationSizeInterval <= 1.0 / 60 ? size : currentSize
+            let coordinated = placement.coordinatedPosition(position, size: coupledSize, previous: previous,
+                                                            origin: origin, destination: destination)
+            // At a screen edge, movement may be necessary before growth can fit.
+            if room?.x == nil || room?.x == observed.minX || size.width > current.width { position.x = coordinated.x }
+            if room?.y == nil || room?.y == observed.minY || size.height > current.height { position.y = coordinated.y }
+            position = intermediate.frame(for: CGRect(origin: position, size: safeSize), actualSize: safeSize,
+                                          origin: origin, progress: 0).origin
+        }
         var probe = false
         if let destination = animationDestination, placement.constrainToScreen,
            abs(requested.minX - destination.minX) <= 2, abs(requested.minY - destination.minY) <= 2,
@@ -486,8 +506,8 @@ class AccessibilityElement {
                 probe = !animationEdgeProbeSent
             }
         }
-        // Submit safe motion before a potentially slow resize. Size delivery
-        // cannot consume the position step or turn its response into a minimum.
+        // Submit safe motion before a potentially slow resize. Coupled axes
+        // advance only as far as the accepted size allows the opposite edge.
         if position != observed.origin {
             guard writeAnimationPosition(position) == .success else {
                 animationNeedsRecovery = true
@@ -496,22 +516,19 @@ class AccessibilityElement {
             animationExpectedOrigin = position
         }
         animationMotionApplied = true
-        if probe {
-            animationNeedsFreshGeometry = true
-        }
-        let achieved = CGRect(origin: position, size: observed.size)
+        if probe { animationNeedsFreshGeometry = true }
+        let achieved = CGRect(origin: position, size: currentSize)
         guard !animationYieldRequested else { return achieved }
-        let grows = size.width > observed.width + 0.5 || size.height > observed.height + 0.5
-        if grows, now - animationObservedAt > 1.0 / 60 {
+        if grows, !freshSize {
             animationNeedsFreshGeometry = true
             return achieved
         }
-        let needsSize = abs(size.width - observed.width) > 0.5 || abs(size.height - observed.height) > 0.5
+        let needsSize = abs(size.width - currentSize.width) > 0.5 || abs(size.height - currentSize.height) > 0.5
         if needsSize, (probe || animationResizeResponse.mayRequest(at: now)),
            now - animationLastSizeWrite >= animationSizeInterval {
             let result = writeAnimationSize(size)
             if probe { animationEdgeProbeSent = true }
-            animationResizeResponse.requested(size, previous: observed.size, at: now)
+            animationResizeResponse.requested(size, previous: currentSize, at: now)
             animationLastSizeWrite = now
             if result != .success { animationNeedsRecovery = true }
         }

@@ -59,6 +59,26 @@ struct WindowAnimationPlacement: Equatable {
         result.origin.y += min(limit, max(-limit, resolved.minY - result.minY))
         return result
     }
+
+    func coordinatedPosition(_ position: CGPoint, size: CGSize, previous: CGRect,
+                             origin: CGRect, destination: CGRect) -> CGPoint {
+        func coordinate(_ value: CGFloat, size: CGFloat, previous: CGFloat, previousSize: CGFloat,
+                        start: CGFloat, startSize: CGFloat, end: CGFloat, endSize: CGFloat) -> CGFloat {
+            // When the two edges move apart (or together), advancing position
+            // without the corresponding resize makes the opposite edge reverse.
+            if end < start, end + endSize >= start + startSize - 0.5, size >= previousSize {
+                return min(previous, max(min(previous + previousSize, end + endSize) - size, value))
+            }
+            if end > start, end + endSize <= start + startSize + 0.5, size <= previousSize {
+                return max(previous, min(max(previous + previousSize, end + endSize) - size, value))
+            }
+            return value
+        }
+        return CGPoint(x: coordinate(position.x, size: size.width, previous: previous.minX, previousSize: previous.width,
+                                     start: origin.minX, startSize: origin.width, end: destination.minX, endSize: destination.width),
+                       y: coordinate(position.y, size: size.height, previous: previous.minY, previousSize: previous.height,
+                                     start: origin.minY, startSize: origin.height, end: destination.minY, endSize: destination.height))
+    }
 }
 
 /// Geometry evidence is scoped to one animation. Oversized shrink responses
@@ -127,36 +147,60 @@ struct WindowAnimationResizeResponse {
         let previous: CGSize
         let sentAt: TimeInterval
         var acknowledged = false
+        var progressed = false
     }
     private var pending: Request?
+    private var accepted: (size: CGSize, time: TimeInterval)?
     private var latency: TimeInterval = 1.0 / 60
     var pendingSize: CGSize? { pending?.size }
     var responseInterval: TimeInterval { min(0.15, max(0.05, latency * 2)) }
+
+    func planningSize(observed: CGSize, at time: TimeInterval) -> CGSize {
+        guard let accepted, time - accepted.time <= 0.15 else { return observed }
+        return accepted.size
+    }
+
+    func hasRecentAcceptance(at time: TimeInterval) -> Bool {
+        accepted.map { time - $0.time <= 1.0 / 60 } ?? false
+    }
 
     mutating func requested(_ size: CGSize, previous: CGSize, at time: TimeInterval) {
         pending = Request(size: size, previous: previous, sentAt: time)
     }
     mutating func observe(_ size: CGSize, at time: TimeInterval) {
-        guard let pending, time >= pending.sentAt else { return }
-        let changed = abs(size.width - pending.previous.width) > 0.5 || abs(size.height - pending.previous.height) > 0.5
-        let matches = abs(size.width - pending.size.width) <= 0.5 && abs(size.height - pending.size.height) <= 0.5
-        guard changed || matches else { return }
+        if let accepted, matches(size, accepted.size) { self.accepted = nil }
+        guard var pending, time >= pending.sentAt else { return }
+        // A delayed intermediate size is progress, not delivery of the latest request.
+        guard matches(size, pending.size) else {
+            pending.progressed = pending.progressed || !matches(size, pending.previous)
+            self.pending = pending
+            return
+        }
         if !pending.acknowledged { latency = latency * 0.75 + min(0.15, time - pending.sentAt) * 0.25 }
         self.pending = nil
+        accepted = nil
     }
 
     mutating func acknowledge(_ size: CGSize, at time: TimeInterval) -> Bool {
         guard var pending, !pending.acknowledged, time >= pending.sentAt,
-              abs(size.width - pending.size.width) <= 0.5,
-              abs(size.height - pending.size.height) <= 0.5 else { return false }
-        latency = latency * 0.75 + min(0.15, time - pending.sentAt) * 0.25
-        pending.acknowledged = true
+              size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0 else { return false }
+        let delivered = matches(size, pending.size)
+        guard delivered || !matches(size, pending.previous) else { return false }
+        if let accepted, matches(size, accepted.size), !delivered { return false }
+        if delivered { latency = latency * 0.75 + min(0.15, time - pending.sentAt) * 0.25 }
+        pending.acknowledged = delivered
+        pending.progressed = true
         self.pending = pending
+        accepted = (size, time)
         return true
     }
 
     func mayRequest(at time: TimeInterval) -> Bool {
-        pending.map { $0.acknowledged || time - $0.sentAt >= responseInterval } ?? true
+        pending.map { $0.acknowledged || $0.progressed || time - $0.sentAt >= responseInterval } ?? true
+    }
+
+    private func matches(_ a: CGSize, _ b: CGSize) -> Bool {
+        abs(a.width - b.width) <= 0.5 && abs(a.height - b.height) <= 0.5
     }
 }
 
