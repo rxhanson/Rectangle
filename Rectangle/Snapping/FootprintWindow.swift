@@ -240,16 +240,6 @@ class FootprintWindow: NSWindow {
         boxView.wantsLayer = true
         boxView.autoresizingMask = [.width, .height]
         container.addSubview(boxView)
-        // Keep custom preview layers in SDR.
-        for view in [container, effectView, boxView] {
-            view.wantsLayer = true
-            view.layer?.contentsFormat = .RGBA8Uint
-            if #available(macOS 26, *) {
-                view.layer?.preferredDynamicRange = .standard
-            } else {
-                view.layer?.wantsExtendedDynamicRangeContent = false
-            }
-        }
         contentView = container
         container.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
