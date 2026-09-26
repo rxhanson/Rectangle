@@ -14,6 +14,72 @@ class RectangleTests: XCTestCase {
     }
 }
 
+class VerticalEighthActionTests: XCTestCase {
+
+    private let actions: [WindowAction] = [
+        .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+        .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth
+    ]
+
+    func testVerticalEighthActionsUseAvailableStableIdentifiers() {
+        XCTAssertEqual([WindowAction.tileRows.rawValue, WindowAction.tileColumns.rawValue], [129, 130])
+        XCTAssertEqual(actions.map(\.rawValue), [131, 132, 133, 134, 135, 136, 137, 138])
+        XCTAssertEqual(actions.map(\.name), [
+            "firstVerticalEighth", "secondVerticalEighth", "thirdVerticalEighth", "fourthVerticalEighth",
+            "fifthVerticalEighth", "sixthVerticalEighth", "seventhVerticalEighth", "lastVerticalEighth"
+        ])
+    }
+
+    func testVerticalEighthActionsTileVisibleFrameIntoEightFullHeightColumns() {
+        let visibleFrame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = (0..<8).map { CGRect(x: CGFloat($0 * 480), y: 40, width: 480, height: 1000) }
+
+        let actual = actions.map {
+            VerticalEighthCalculation().calculateRect(
+                RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                          visibleFrameOfScreen: visibleFrame,
+                                          action: $0,
+                                          lastAction: nil)
+            ).rect
+        }
+
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testVerticalEighthActionsAppearInExtraShortcutGroup() throws {
+        let controller = ShortcutsViewController()
+        _ = controller.view
+        let outlineView = try XCTUnwrap(findOutlineView(in: controller.view))
+        let rootCount = controller.outlineView(outlineView, numberOfChildrenOfItem: nil)
+
+        var found: [WindowAction] = []
+        func collect(from item: Any?) {
+            let count = controller.outlineView(outlineView, numberOfChildrenOfItem: item)
+            for index in 0..<count {
+                let child = controller.outlineView(outlineView, child: index, ofItem: item)
+                if let shortcut = child as? ShortcutItem, actions.contains(shortcut.action) {
+                    found.append(shortcut.action)
+                }
+                collect(from: child)
+            }
+        }
+
+        for index in 0..<rootCount {
+            collect(from: controller.outlineView(outlineView, child: index, ofItem: nil))
+        }
+
+        XCTAssertEqual(found, actions)
+    }
+
+    private func findOutlineView(in view: NSView) -> NSOutlineView? {
+        if let outlineView = view as? NSOutlineView { return outlineView }
+        for subview in view.subviews {
+            if let outlineView = findOutlineView(in: subview) { return outlineView }
+        }
+        return nil
+    }
+}
+
 class WindowActionMenuTests: XCTestCase {
 
     func testRowsAndColumnsShareOptionalSubmenu() throws {
