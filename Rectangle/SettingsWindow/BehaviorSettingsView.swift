@@ -125,8 +125,18 @@ struct BehaviorSettingsView: View {
                         Toggle("Repeated maximize restores the previous size and position", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Toggle("Green stoplight button maximizes instead of Full Screen", isOn: $viewModel.greenButtonOverride)
-                            Text("Hold any modifier key or use the window menu for default macOS behavior")
+                            HStack {
+                                Text("Green stoplight button")
+                                Spacer()
+                                Picker("", selection: $viewModel.greenButtonMode) {
+                                    Text("Off").tag(GreenButtonMode.off)
+                                    Text("Built-In").tag(GreenButtonMode.builtIn)
+                                    Text("Rectangle").tag(GreenButtonMode.rectangle)
+                                }
+                                .pickerStyle(.radioGroup)
+                                .horizontalRadioGroupLayout()
+                            }
+                            Text("Built-In: plain click fills the screen, ⌥ maximizes, ⌘ enters Full Screen. Rectangle: plain click maximizes, ⌥ fills the screen, ⌘ enters Full Screen.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
