@@ -35,7 +35,7 @@ class Defaults {
     static let windowDividerEnhanced = BoolDefault(key: "windowDividerEnhanced")
     static let fitBesideSnappedWindows = BoolDefault(key: "fitBesideSnappedWindows")
     static let showMinimumWindowSizeWarning = OptionalBoolDefault(key: "showMinimumWindowSizeWarning")
-    static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits")
+    static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits", defaultValue: true)
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let layoutHelper = OptionalBoolDefault(key: "layoutHelper")
@@ -300,9 +300,10 @@ class BoolDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Bool = false) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        enabled = UserDefaults.standard.object(forKey: key) == nil
+            ? defaultValue : UserDefaults.standard.bool(forKey: key)
         initialized = true
     }
     

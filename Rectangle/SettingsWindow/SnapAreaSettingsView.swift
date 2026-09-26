@@ -79,36 +79,6 @@ final class SnapAreaViewModel {
         }
     }
 
-    var layoutHelper = false {
-        didSet {
-            guard oldValue != layoutHelper else { return }
-            Defaults.layoutHelper.enabled = layoutHelper
-            LayoutHelperManager.shared.cancel()
-            if layoutHelper { LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() } }
-        }
-    }
-    var layoutHelperKeyboard = false {
-        didSet {
-            Defaults.layoutHelperKeyboard.enabled = layoutHelperKeyboard
-            LayoutHelperManager.shared.cancel()
-        }
-    }
-    var layoutHelperDenseGrids = false {
-        didSet {
-            Defaults.layoutHelperDenseGrids.enabled = layoutHelperDenseGrids
-            LayoutHelperManager.shared.cancel()
-        }
-    }
-    var stageManagerEnabled = false
-    var previewPermissionAllowed = false
-    private var stageObservation: NSObject?
-
-    func refreshPreviewPermission() { previewPermissionAllowed = LayoutHelperPermission.previewsAllowed }
-    func enablePreviews() {
-        LayoutHelperManager.shared.cancel()
-        LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() }
-    }
-
     // Displays / UI State
     var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
 
@@ -127,18 +97,10 @@ final class SnapAreaViewModel {
         footprintBlur = Defaults.footprintBlur.enabled
         blurAppearance = Defaults.blurAppearance.value
         missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
-        layoutHelper = Defaults.layoutHelper.userEnabled
-        layoutHelperKeyboard = Defaults.layoutHelperKeyboard.enabled
-        layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
-        stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
-        refreshPreviewPermission()
         isPortraitConnected = NSScreen.portraitDisplayConnected
     }
 
     private func setupNotificationObservers() {
-        stageObservation = StageUtil.observeEnabled { [weak self] in
-            self?.stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
-        }
         let center = NotificationCenter.default
 
         center.publisher(for: NSApplication.didChangeScreenParametersNotification)
@@ -184,7 +146,6 @@ final class SnapAreaViewModel {
 
 struct SnapAreaSettingsView: View {
     @State private var viewModel = SnapAreaViewModel()
-    @State private var showingLayoutHelperExample = false
 
     private var landscapeHeaderTitle: String {
         viewModel.isPortraitConnected ? String(localized: "Landscape Snap Areas") : String(localized: "Snap Areas")
@@ -217,48 +178,6 @@ struct SnapAreaSettingsView: View {
                 }
             }
 
-            Section {
-                HStack {
-                    Toggle("Layout Helper", isOn: $viewModel.layoutHelper)
-                        .disabled(viewModel.stageManagerEnabled)
-                        .accessibilityIdentifier("layoutHelper")
-                    Spacer()
-                    Button("See example…") { showingLayoutHelperExample = true }
-                        .popover(isPresented: $showingLayoutHelperExample) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Image("LayoutHelperExample")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    .accessibilityLabel("Layout Helper example: Notes is snapped on the left; choose Research or Tasks to fill the right side.")
-                                Text("Snap a window, then choose another to fill the remaining space. Thumbnails need Screen Recording access.")
-                            }
-                            .padding(16)
-                            .frame(width: 592)
-                        }
-                }
-                Text("Layout Helper will be disabled when Stage Manager is enabled.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Toggle("Keyboard and menu snaps", isOn: $viewModel.layoutHelperKeyboard)
-                    .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
-                Toggle("Grids with eight or more cells", isOn: $viewModel.layoutHelperDenseGrids)
-                    .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
-                if viewModel.layoutHelper {
-                    if !LayoutHelperPermission.previewsSupported {
-                        Text("Window thumbnails require macOS 14 or later.")
-                    } else if viewModel.previewPermissionAllowed {
-                        Text("Window thumbnails enabled.")
-                    } else {
-                        Button("Enable previews…") { viewModel.enablePreviews() }
-                            .disabled(viewModel.stageManagerEnabled)
-                        Text("Thumbnails need Screen Recording access. Icons and titles work without it.")
-                    }
-                }
-            } header: {
-                Label("Layout Helper", systemImage: "rectangle.on.rectangle")
-            }
-
             // Landscape Inline Section
             Section {
                 SnapAreaGridView(viewModel: viewModel, orientation: .landscape)
@@ -278,6 +197,7 @@ struct SnapAreaSettingsView: View {
                     }
                 }
             }
+
         }
         .formStyle(.grouped)
         .frame(minHeight: 400)

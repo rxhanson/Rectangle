@@ -199,6 +199,36 @@ final class BehaviorSettingsViewModel {
     var showCombinedDisplayMode: Bool { !NSScreen.screensHaveSeparateSpaces }
     var stageCapable: Bool { StageUtil.stageCapable }
 
+    var layoutHelper = false {
+        didSet {
+            guard oldValue != layoutHelper else { return }
+            Defaults.layoutHelper.enabled = layoutHelper
+            LayoutHelperManager.shared.cancel()
+            if layoutHelper { LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() } }
+        }
+    }
+    var layoutHelperKeyboard = false {
+        didSet {
+            Defaults.layoutHelperKeyboard.enabled = layoutHelperKeyboard
+            LayoutHelperManager.shared.cancel()
+        }
+    }
+    var layoutHelperDenseGrids = false {
+        didSet {
+            Defaults.layoutHelperDenseGrids.enabled = layoutHelperDenseGrids
+            LayoutHelperManager.shared.cancel()
+        }
+    }
+    var stageManagerEnabled = false
+    var previewPermissionAllowed = false
+    private var stageObservation: NSObject?
+
+    func refreshPreviewPermission() { previewPermissionAllowed = LayoutHelperPermission.previewsAllowed }
+    func enablePreviews() {
+        LayoutHelperManager.shared.cancel()
+        LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() }
+    }
+
     private var aboutTodoWindowController: NSWindowController?
 
     // MARK: - Initialization
@@ -249,10 +279,18 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
 
+        layoutHelper = Defaults.layoutHelper.userEnabled
+        layoutHelperKeyboard = Defaults.layoutHelperKeyboard.enabled
+        layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
+        stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
+        refreshPreviewPermission()
         setupObservers()
     }
 
     private func setupObservers() {
+        stageObservation = StageUtil.observeEnabled { [weak self] in
+            self?.stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
+        }
         Notification.Name.configImported.onPost { [weak self] _ in
             self?.reloadFromDefaults()
         }
@@ -306,6 +344,11 @@ final class BehaviorSettingsViewModel {
 
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
+        layoutHelper = Defaults.layoutHelper.userEnabled
+        layoutHelperKeyboard = Defaults.layoutHelperKeyboard.enabled
+        layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
+        stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
+        refreshPreviewPermission()
     }
 
     // MARK: - Cycle Sizes Binding Helper

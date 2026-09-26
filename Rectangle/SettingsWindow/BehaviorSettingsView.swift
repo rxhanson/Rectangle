@@ -32,6 +32,7 @@ struct BehaviorSettingsView: View {
     
     // Popover state
     @State private var showTodoInfoPopover = false
+    @State private var showingLayoutHelperExample = false
 
     // Cached formatter to avoid expensive re-allocations during view body updates
     private static let percentFormatter: NumberFormatter = {
@@ -327,6 +328,8 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            layoutHelperSection
+
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
@@ -357,33 +360,8 @@ struct BehaviorSettingsView: View {
                 }
             }
             
-            Section {
-                HStack {
-                    Toggle("Remember learned window size limits", isOn: $viewModel.rememberWindowSizeLimits)
-                        .accessibilityIdentifier("rememberWindowSizeLimits")
-                    Spacer()
-                    Button("Manage memory") { viewModel.showWindowSizeLimits() }
-                        .disabled(!viewModel.rememberWindowSizeLimits)
-                        .accessibilityIdentifier("showWindowSizeLimits")
-                }
-                Text("Remembers window size limits and updates them as windows change.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .accessibilityIdentifier("rememberWindowSizeLimitsDescription")
-                Toggle("Drag dividers to resize adjacent windows", isOn: $viewModel.windowDivider)
-                    .accessibilityIdentifier("windowDivider")
-                Text("Left/right and top/bottom pairs only.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Toggle("Enhanced transitions", isOn: $viewModel.windowDividerEnhanced)
-                    .disabled(!viewModel.windowDivider || !LayoutHelperPermission.previewsSupported)
-                    .accessibilityIdentifier("windowDividerEnhanced")
-                Text("Uses a temporary screenshot to hide resizing. Requires Screen Recording access.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
-                    .accessibilityIdentifier("fitBesideSnappedWindows")
-            }
+            windowSizeLimitsSection
+            adjacentWindowsSection
 
             // MARK: - Extras
             Section {
@@ -392,7 +370,6 @@ struct BehaviorSettingsView: View {
                         Divider()
                         Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                        Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
                         Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
@@ -414,6 +391,126 @@ struct BehaviorSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
+    }
+
+    private var windowSizeLimitsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Toggle("Remember learned window size limits", isOn: $viewModel.rememberWindowSizeLimits)
+                                .accessibilityIdentifier("rememberWindowSizeLimits")
+                            Spacer()
+                            Button("Manage memory") { viewModel.showWindowSizeLimits() }
+                                .disabled(!viewModel.rememberWindowSizeLimits)
+                                .accessibilityIdentifier("showWindowSizeLimits")
+                        }
+                        Text("Remembers window size limits and updates them as windows change.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .accessibilityIdentifier("rememberWindowSizeLimitsDescription")
+                    }
+                    Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label("Window Size Limits", systemImage: "ruler")
+            }
+        }
+    }
+
+    private var adjacentWindowsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
+                        .accessibilityIdentifier("fitBesideSnappedWindows")
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Drag dividers to resize adjacent windows", isOn: $viewModel.windowDivider)
+                            .accessibilityIdentifier("windowDivider")
+                        Text("Left/right and top/bottom pairs only.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Enhanced transitions", isOn: $viewModel.windowDividerEnhanced)
+                            .accessibilityIdentifier("windowDividerEnhanced")
+                        Text("Uses a temporary screenshot to hide resizing. Requires Screen Recording access.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.leading, 20)
+                    .disabled(!viewModel.windowDivider || !LayoutHelperPermission.previewsSupported)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label {
+                    Text("Adjacent Windows")
+                } icon: {
+                    Image(systemName: "rectangle.grid.1x2")
+                        .rotationEffect(.degrees(90))
+                }
+            }
+        }
+    }
+
+    private var layoutHelperSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Layout Helper", isOn: $viewModel.layoutHelper)
+                            .disabled(viewModel.stageManagerEnabled)
+                            .accessibilityIdentifier("layoutHelper")
+                        Text("Layout Helper will be disabled when Stage Manager is enabled.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Toggle("Keyboard and menu snaps", isOn: $viewModel.layoutHelperKeyboard)
+                        .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
+                    Toggle("Grids with eight or more cells", isOn: $viewModel.layoutHelperDenseGrids)
+                        .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
+                    if viewModel.layoutHelper {
+                        if !LayoutHelperPermission.previewsSupported {
+                            Text("Window thumbnails require macOS 14 or later.")
+                        } else if viewModel.previewPermissionAllowed {
+                            Text("Window thumbnails enabled.")
+                        } else {
+                            Button("Enable previews…") { viewModel.enablePreviews() }
+                                .disabled(viewModel.stageManagerEnabled)
+                            Text("Thumbnails need Screen Recording access. Icons and titles work without it.")
+                        }
+                    }
+                }
+                .padding(.leading, 12)
+            } label: {
+                HStack(spacing: 6) {
+                    Label("Layout Helper", systemImage: "rectangle.3.group")
+                    Button(action: { showingLayoutHelperExample.toggle() }) {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Layout Helper example")
+                    .popover(isPresented: $showingLayoutHelperExample, arrowEdge: .trailing) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Image("LayoutHelperExample")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .accessibilityLabel("Layout Helper example: Notes is snapped on the left; choose Research or Tasks to fill the right side.")
+                            Text("Snap a window, then choose another to fill the remaining space. Thumbnails need Screen Recording access.")
+                        }
+                        .padding(16)
+                        .frame(width: 592)
+                    }
+                }
+            }
+        }
     }
 }
 
