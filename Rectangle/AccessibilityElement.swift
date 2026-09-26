@@ -468,7 +468,8 @@ class AccessibilityElement {
             size.height = min(size.height, max(currentSize.height, placement.screenFrame.maxY - observed.minY))
         }
         let grows = size.width > currentSize.width + 0.5 || size.height > currentSize.height + 0.5
-        let freshSize = now - animationObservedAt <= 1.0 / 60 || animationResizeResponse.hasRecentAcceptance(at: now)
+        let freshSize = now - animationObservedAt <= animationResizeResponse.freshnessInterval
+            || animationResizeResponse.hasRecentAcceptance(at: now)
         let resizeDue = !animationYieldRequested && (!grows || freshSize)
             && animationResizeResponse.mayRequest(at: now)
             && now - animationLastSizeWrite >= animationSizeInterval
@@ -484,7 +485,7 @@ class AccessibilityElement {
         if let destination = animationDestination {
             // A responsive resize can accompany this position write. Only hold
             // motion for a size update that actually has to wait.
-            let coupledSize = resizeDue && animationSizeInterval <= 1.0 / 60 ? size : currentSize
+            let coupledSize = resizeDue && animationSizeInterval <= animationResizeResponse.frameInterval ? size : currentSize
             let coordinated = placement.coordinatedPosition(position, size: coupledSize, previous: previous,
                                                             origin: origin, destination: destination)
             // At a screen edge, movement may be necessary before growth can fit.
@@ -518,21 +519,34 @@ class AccessibilityElement {
         animationMotionApplied = true
         if probe { animationNeedsFreshGeometry = true }
         let achieved = CGRect(origin: position, size: currentSize)
-        guard !animationYieldRequested else { return achieved }
+        guard !animationYieldRequested else { recordAnimationWait("yield"); return achieved }
         if grows, !freshSize {
             animationNeedsFreshGeometry = true
+            recordAnimationWait("freshness")
             return achieved
         }
         let needsSize = abs(size.width - currentSize.width) > 0.5 || abs(size.height - currentSize.height) > 0.5
-        if needsSize, (probe || animationResizeResponse.mayRequest(at: now)),
-           now - animationLastSizeWrite >= animationSizeInterval {
-            let result = writeAnimationSize(size)
-            if probe { animationEdgeProbeSent = true }
-            animationResizeResponse.requested(size, previous: currentSize, at: now)
-            animationLastSizeWrite = now
-            if result != .success { animationNeedsRecovery = true }
+        if needsSize {
+            if !probe && !animationResizeResponse.mayRequest(at: now) {
+                recordAnimationWait("response")
+            } else if now - animationLastSizeWrite < animationSizeInterval {
+                recordAnimationWait("cadence")
+            } else {
+                let result = writeAnimationSize(size)
+                if probe { animationEdgeProbeSent = true }
+                animationResizeResponse.requested(size, previous: currentSize, at: now)
+                animationLastSizeWrite = now
+                if result != .success { animationNeedsRecovery = true }
+            }
         }
         return achieved
+    }
+
+    private func recordAnimationWait(_ reason: String) {
+        guard WindowAnimationDiagnostics.enabled else { return }
+        WindowAnimationDiagnostics.event("animation-feedback-wait", fields: ["windowID": windowId ?? 0,
+            "reason": reason, "frameInterval": animationResizeResponse.frameInterval,
+            "responseInterval": animationResizeResponse.responseInterval])
     }
 
     func writeAnimationPosition(_ position: CGPoint) -> AXError {

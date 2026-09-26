@@ -205,7 +205,7 @@ final class DirectWindowAnimator {
         else { finish() }
     }
 
-    func advance(at time: TimeInterval) {
+    func advance(at time: TimeInterval, presentationTime: TimeInterval? = nil) {
         guard !advancing else { return }
         advancing = true
         let observedWindow = window
@@ -218,34 +218,40 @@ final class DirectWindowAnimator {
         }
         if let observedWindow, observedWindow.animationIntermediateStep, helperDestination == nil {
             let now = observedWindow.animationVerificationTime ?? time
-            var acknowledged = false
+            if observedWindow.animationResizeResponse.pendingSize == nil { observedWindow.animationResizeNotified = false }
             if observedWindow.animationResizeNotified, observedWindow.animationResizeResponse.pendingSize != nil,
                observedWindow.animationObservedFrame != nil, !observedWindow.animationNeedsRecovery,
-               now - observedWindow.animationObservedAt < 1.0 / 20,
                let size = observedWindow.size {
-                acknowledged = observedWindow.animationResizeResponse.acknowledge(size, at: now)
-                if acknowledged {
+                if observedWindow.animationResizeResponse.acknowledge(size, at: now) {
                     // AX acceptance permits the next resize, but does not prove
                     // presentation. Retain the pending size in the safety bounds.
                     observedWindow.animationResizeNotified = false
                     WindowAnimationDiagnostics.event("animation-resize-acknowledged", fields: ["windowID": observedWindow.windowId ?? 0])
                 }
             }
-            let interval: TimeInterval = acknowledged || observedWindow.animationResizeResponse.pendingSize == nil ? 1.0 / 20 : 1.0 / 30
+            let response = observedWindow.animationResizeResponse
+            let age = now - observedWindow.animationObservedAt
+            let needsGrowth = observedWindow.animationObservedFrame.map { observed in
+                let size = response.planningSize(observed: observed.size, at: now)
+                return observedWindow.animationDestination.map { $0.width > size.width + 0.5 || $0.height > size.height + 0.5 } ?? false
+            } ?? false
+            let growthReadbackDue = needsGrowth && age > response.freshnessInterval && !response.hasRecentAcceptance(at: now)
             let resizeResponseDue = observedWindow.animationResizeNotified
-                && observedWindow.animationResizeResponse.pendingSize != nil
-                && now - observedWindow.animationObservedAt >= 1.0 / 40
+                && response.pendingSize != nil && age >= response.frameInterval
             if !observedWindow.animationYieldRequested && (observedWindow.animationObservedFrame == nil || observedWindow.animationNeedsRecovery
-                || observedWindow.animationNeedsFreshGeometry || resizeResponseDue
-                || now - observedWindow.animationObservedAt >= interval) {
+                || observedWindow.animationNeedsFreshGeometry || resizeResponseDue || growthReadbackDue
+                || age >= response.readbackInterval) {
                 if let actual = serverFrame(observedWindow), WindowAnimationGeometry.valid(actual) {
                     observedWindow.animationObservedFrame = actual
                     observedWindow.animationObservedAt = now
                     observedWindow.animationExpectedOrigin = nil
-                    observedWindow.animationResizeResponse.observe(actual.size, at: now)
+                    let progressed = observedWindow.animationResizeResponse.observe(actual.size, at: now)
                     observedWindow.animationNeedsRecovery = false
                     observedWindow.animationNeedsFreshGeometry = false
-                    observedWindow.animationResizeNotified = false
+                    // An unchanged readback must not consume a resize notification.
+                    if progressed || observedWindow.animationResizeResponse.pendingSize == nil {
+                        observedWindow.animationResizeNotified = false
+                    }
                 } else {
                     observedWindow.animationObservedFrame = nil
                 }
@@ -324,8 +330,8 @@ final class DirectWindowAnimator {
             else { pending.fallback() }
             return
         }
-        if keyboardSession != nil { advanceKeyboard(at: time) }
-        else { animation?.tick(at: time) }
+        if keyboardSession != nil { advanceKeyboard(at: time, presentationTime: presentationTime ?? time) }
+        else { animation?.tick(at: presentationTime ?? time) }
     }
 
     func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
@@ -621,7 +627,7 @@ final class DirectWindowAnimator {
             "destination": [destination.minX, destination.minY, destination.width, destination.height]])
     }
 
-    private func advanceKeyboard(at time: TimeInterval) {
+    private func advanceKeyboard(at time: TimeInterval, presentationTime: TimeInterval) {
         guard let session = keyboardSession, let window else { return }
         window.animationMotionApplied = true
         let priorTime = max(session.visualTime, session.motion.startedAt)
@@ -629,7 +635,7 @@ final class DirectWindowAnimator {
         let debt = max(0, session.lastTick - priorTime)
         session.visualTime = priorTime + min(1.0 / 30, delta + (delta <= 0.025 ? min(0.004, debt * 0.25) : 0))
         session.lastTick = time
-        let sample = session.motion.sample(at: session.visualTime)
+        let sample = session.motion.sample(at: session.visualTime + max(0, presentationTime - time))
         let frame = sample.frame
         let sampled = CGRect(x: frame.minX.rounded(), y: frame.minY.rounded(),
                              width: frame.width.rounded(), height: frame.height.rounded())
@@ -1078,11 +1084,14 @@ final class DirectWindowAnimator {
         mouseMonitor = nil
     }
 
-    private func drive() {
+    private func drive(targetTimestamp: TimeInterval? = nil) {
         let now = clock()
         if let lastDrivenAt, now - lastDrivenAt < drivingInterval * 0.9 { return }
         lastDrivenAt = now
-        advance(at: now)
+        window?.animationResizeResponse.frameInterval = drivingInterval
+        let deadline = targetTimestamp.map { now + ($0 - CACurrentMediaTime()) }
+        advance(at: now, presentationTime: WindowAnimationPacing.sampleTime(now: now, deadline: deadline,
+                                                                           displayInterval: drivingInterval))
     }
 
     private func startDriving() {
@@ -1104,7 +1113,7 @@ final class DirectWindowAnimator {
         }
         drivingInterval = 1.0 / Double(frameRate)
         if let screen {
-            let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.drive() }
+            let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.drive(targetTimestamp: $0) }
             let link = screen.displayLink(target: target, selector: #selector(WindowAnimationDisplayLinkTarget.tick(_:)))
             link.preferredFrameRateRange = CAFrameRateRange(minimum: Float(frameRate), maximum: Float(frameRate), preferred: Float(frameRate))
             link.add(to: .main, forMode: .common)
@@ -1122,9 +1131,9 @@ final class DirectWindowAnimator {
 
 @available(macOS 14.0, *)
 private final class WindowAnimationDisplayLinkTarget: NSObject {
-    private let onFrame: () -> Void
-    init(onFrame: @escaping () -> Void) { self.onFrame = onFrame }
-    @objc func tick(_ link: CADisplayLink) { onFrame() }
+    private let onFrame: (TimeInterval) -> Void
+    init(onFrame: @escaping (TimeInterval) -> Void) { self.onFrame = onFrame }
+    @objc func tick(_ link: CADisplayLink) { onFrame(link.targetTimestamp) }
 }
 
 final class WindowAnimationRequest {
@@ -1153,6 +1162,10 @@ struct WindowAnimationPacing {
     var rate: Double { Double(maximumRate) / Double(divisor) }
     // Keep lower rates aligned to whole display refresh periods, including odd rates.
     var interval: TimeInterval { Double(divisor) / Double(maximumRate) }
+    static func sampleTime(now: TimeInterval, deadline: TimeInterval?, displayInterval: TimeInterval) -> TimeInterval {
+        guard let deadline, deadline.isFinite else { return now }
+        return max(now, min(deadline, now + displayInterval))
+    }
     mutating func observe(cost: TimeInterval) {
         costs.append(cost)
         if costs.count > 8 { costs.removeFirst() }
@@ -1444,7 +1457,7 @@ final class WindowAnimationExecutor {
         guard active?.request === request else { return }
         active = nil; stopDisplay()
     }
-    private func tick() {
+    private func tick(targetTimestamp: TimeInterval? = nil) {
         guard let current = active else { return }
         if !WindowAnimator.enabled { finish(); return }
         let now = ProcessInfo.processInfo.systemUptime
@@ -1452,6 +1465,9 @@ final class WindowAnimationExecutor {
         tickPending = true
         let offset = current.offset()
         let rate = pacing.rate
+        let interval = pacing.interval
+        let displayInterval = 1 / Double(pacing.maximumRate)
+        let deadline = targetTimestamp.map { now + ($0 - CACurrentMediaTime()) }
         queue.async { [self] in
             let start = ProcessInfo.processInfo.systemUptime
             if current.request.isCurrent {
@@ -1466,7 +1482,10 @@ final class WindowAnimationExecutor {
                 }
                 workerTime = start
                 workerWindow?.animationVerificationTime = start
-                core.advance(at: workerTime)
+                workerWindow?.animationResizeResponse.frameInterval = interval
+                // Only motion samples look ahead; feedback and timeout checks use real time.
+                let sampleTime = WindowAnimationPacing.sampleTime(now: start, deadline: deadline, displayInterval: displayInterval)
+                core.advance(at: workerTime, presentationTime: sampleTime)
                 WindowAnimationDiagnostics.event("animation-executor-tick", fields: [
                     "windowID": workerWindow?.windowId ?? 0, "rate": rate,
                     "queueMilliseconds": (start - now) * 1000,
@@ -1505,7 +1524,7 @@ final class WindowAnimationExecutor {
         if let initialPacing, initialPacing.maximumRate == maximumRate { pacing = initialPacing }
         else { pacing = WindowAnimationPacing(maximumRate: maximumRate, initialRate: initialPacing?.rate) }
         if let screen {
-            let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.tick() }
+            let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.tick(targetTimestamp: $0) }
             let link = screen.displayLink(target: target, selector: #selector(WindowAnimationDisplayLinkTarget.tick(_:)))
             link.preferredFrameRateRange = CAFrameRateRange(minimum: Float(pacing.maximumRate),
                 maximum: Float(pacing.maximumRate), preferred: Float(pacing.maximumRate))

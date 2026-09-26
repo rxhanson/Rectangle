@@ -152,8 +152,12 @@ struct WindowAnimationResizeResponse {
     private var pending: Request?
     private var accepted: (size: CGSize, time: TimeInterval)?
     private var latency: TimeInterval = 1.0 / 60
+    var frameInterval: TimeInterval = 1.0 / 60
+    private var period: TimeInterval { min(0.05, max(1.0 / 120, frameInterval)) }
     var pendingSize: CGSize? { pending?.size }
-    var responseInterval: TimeInterval { min(0.15, max(0.05, latency * 2)) }
+    var freshnessInterval: TimeInterval { period * 1.25 }
+    var readbackInterval: TimeInterval { min(0.1, max(period * 2, latency)) }
+    var responseInterval: TimeInterval { min(0.15, max(period * 2, latency * 2)) }
 
     func planningSize(observed: CGSize, at time: TimeInterval) -> CGSize {
         guard let accepted, time - accepted.time <= 0.15 else { return observed }
@@ -161,24 +165,31 @@ struct WindowAnimationResizeResponse {
     }
 
     func hasRecentAcceptance(at time: TimeInterval) -> Bool {
-        accepted.map { time - $0.time <= 1.0 / 60 } ?? false
+        accepted.map { time - $0.time <= freshnessInterval } ?? false
     }
 
     mutating func requested(_ size: CGSize, previous: CGSize, at time: TimeInterval) {
+        if let pending, !pending.acknowledged, !pending.progressed {
+            // Back off when a retry still has no response, rather than stacking requests.
+            latency = max(latency, min(0.15, time - pending.sentAt))
+        }
         pending = Request(size: size, previous: previous, sentAt: time)
     }
-    mutating func observe(_ size: CGSize, at time: TimeInterval) {
+    @discardableResult
+    mutating func observe(_ size: CGSize, at time: TimeInterval) -> Bool {
         if let accepted, matches(size, accepted.size) { self.accepted = nil }
-        guard var pending, time >= pending.sentAt else { return }
+        guard var pending, time >= pending.sentAt else { return false }
         // A delayed intermediate size is progress, not delivery of the latest request.
         guard matches(size, pending.size) else {
-            pending.progressed = pending.progressed || !matches(size, pending.previous)
+            let progressed = !pending.progressed && !matches(size, pending.previous)
+            pending.progressed = pending.progressed || progressed
             self.pending = pending
-            return
+            return progressed
         }
         if !pending.acknowledged { latency = latency * 0.75 + min(0.15, time - pending.sentAt) * 0.25 }
         self.pending = nil
         accepted = nil
+        return true
     }
 
     mutating func acknowledge(_ size: CGSize, at time: TimeInterval) -> Bool {
