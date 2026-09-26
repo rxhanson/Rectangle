@@ -38,6 +38,11 @@ class AccessibilityElement {
     var animationResizeResponse = WindowAnimationResizeResponse()
     var animationMotionApplied = true
     var animationObservationElement: AXUIElement { wrappedElement }
+    func animationAllowsSizeRead(reservingMotion: Bool) -> Bool { true }
+    func animationSizeWriteIsDue(at time: TimeInterval) -> Bool {
+        let tolerance = min(animationSizeInterval, animationResizeResponse.frameInterval) * 0.1
+        return time - animationLastSizeWrite >= animationSizeInterval - tolerance
+    }
     private let knownApplication: Bool
     private var resolvedWindowID: CGWindowID?
     private(set) var messagingTimeout: Float = 0
@@ -405,7 +410,7 @@ class AccessibilityElement {
         let now = ProcessInfo.processInfo.systemUptime
         let deferred = progress < 0.85 && previousFrame != nil && preparedPosition == nil
             && animationSizeInterval > 0
-            && (now - animationLastSizeWrite < animationSizeInterval
+            && (!animationSizeWriteIsDue(at: now)
                 || (animationNeedsPositionStep && frame.origin != previousFrame?.origin))
         animationSizeDeferred = animationSizeDeferred || (deferred && !sizeUnchanged)
         animationNeedsPositionStep = !sizeUnchanged && !deferred
@@ -472,7 +477,7 @@ class AccessibilityElement {
             || animationResizeResponse.hasRecentAcceptance(at: now)
         let resizeDue = !animationYieldRequested && (!grows || freshSize)
             && animationResizeResponse.mayRequest(at: now)
-            && now - animationLastSizeWrite >= animationSizeInterval
+            && animationSizeWriteIsDue(at: now)
         let intermediate = WindowAnimationPlacement(screenFrame: placement.screenFrame, sharedEdges: nil,
             constrainToScreen: placement.constrainToScreen, gap: placement.gap)
         var safeSize = CGSize(width: max(currentSize.width, size.width),
@@ -529,7 +534,7 @@ class AccessibilityElement {
         if needsSize {
             if !probe && !animationResizeResponse.mayRequest(at: now) {
                 recordAnimationWait("response")
-            } else if now - animationLastSizeWrite < animationSizeInterval {
+            } else if !animationSizeWriteIsDue(at: now) {
                 recordAnimationWait("cadence")
             } else {
                 let result = writeAnimationSize(size)

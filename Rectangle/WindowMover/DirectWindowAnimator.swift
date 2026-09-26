@@ -111,6 +111,7 @@ final class DirectWindowAnimator {
         let started = ProcessInfo.processInfo.systemUptime
         let frame = readServerFrame(element)
         WindowAnimationDiagnostics.event("animation-operation", fields: ["operation": "server-read",
+            "windowID": element.windowId ?? 0,
             "milliseconds": (ProcessInfo.processInfo.systemUptime - started) * 1000])
         element.animationReads?.server = frame
         return frame
@@ -209,9 +210,16 @@ final class DirectWindowAnimator {
         guard !advancing else { return }
         advancing = true
         let observedWindow = window
+        var deferredResize: CGSize?
         observedWindow?.animationReads = WindowAnimationReadCache()
         observedWindow?.animationIntermediateStep = animation != nil || keyboardSession != nil
         defer {
+            if let observedWindow, window === observedWindow, let deferredResize,
+               observedWindow.animationResizeResponse.pendingSize == deferredResize,
+               observedWindow.animationResizeNotified, !observedWindow.animationNeedsRecovery,
+               observedWindow.animationAllowsSizeRead(reservingMotion: false) {
+                acknowledgeResize(observedWindow, at: time)
+            }
             observedWindow?.animationReads = nil
             observedWindow?.animationIntermediateStep = false
             advancing = false
@@ -219,16 +227,6 @@ final class DirectWindowAnimator {
         if let observedWindow, observedWindow.animationIntermediateStep, helperDestination == nil {
             let now = observedWindow.animationVerificationTime ?? time
             if observedWindow.animationResizeResponse.pendingSize == nil { observedWindow.animationResizeNotified = false }
-            if observedWindow.animationResizeNotified, observedWindow.animationResizeResponse.pendingSize != nil,
-               observedWindow.animationObservedFrame != nil, !observedWindow.animationNeedsRecovery,
-               let size = observedWindow.size {
-                if observedWindow.animationResizeResponse.acknowledge(size, at: now) {
-                    // AX acceptance permits the next resize, but does not prove
-                    // presentation. Retain the pending size in the safety bounds.
-                    observedWindow.animationResizeNotified = false
-                    WindowAnimationDiagnostics.event("animation-resize-acknowledged", fields: ["windowID": observedWindow.windowId ?? 0])
-                }
-            }
             let response = observedWindow.animationResizeResponse
             let age = now - observedWindow.animationObservedAt
             let needsGrowth = observedWindow.animationObservedFrame.map { observed in
@@ -259,6 +257,16 @@ final class DirectWindowAnimator {
                 // Successful position writes are usable between bounded samples;
                 // an unacknowledged size is never substituted for the observed size.
                 observedWindow.animationObservedFrame?.origin = position
+            }
+            if observedWindow.animationResizeNotified, let pending = observedWindow.animationResizeResponse.pendingSize,
+               observedWindow.animationObservedFrame != nil, !observedWindow.animationNeedsRecovery {
+                // Server geometry can satisfy the notification without an AX round trip.
+                // A slower fallback must leave enough time for the window to move.
+                if observedWindow.animationAllowsSizeRead(reservingMotion: true) {
+                    acknowledgeResize(observedWindow, at: now)
+                } else {
+                    deferredResize = pending
+                }
             }
         } else if var policy = observedWindow?.animationPolicy, let observedWindow {
             observedWindow.animationObservedFrame = nil
@@ -332,6 +340,13 @@ final class DirectWindowAnimator {
         }
         if keyboardSession != nil { advanceKeyboard(at: time, presentationTime: presentationTime ?? time) }
         else { animation?.tick(at: presentationTime ?? time) }
+    }
+
+    private func acknowledgeResize(_ element: AccessibilityElement, at time: TimeInterval) {
+        guard let size = element.size, element.animationResizeResponse.acknowledge(size, at: time) else { return }
+        // AX acceptance permits progress but retains pending bounds until server confirmation.
+        element.animationResizeNotified = false
+        WindowAnimationDiagnostics.event("animation-resize-acknowledged", fields: ["windowID": element.windowId ?? 0])
     }
 
     func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
@@ -1195,21 +1210,41 @@ private final class WindowAnimationElement: AccessibilityElement {
     var writeCount = 0
     var resizeCost: TimeInterval = 0
     var resizeWork: TimeInterval = 0
+    var frameBudget = WindowAnimationFrameBudget()
+    var resizeCadence = WindowAnimationResizeCadence(frameInterval: 1.0 / 60)
     private func measured<T>(_ operation: String, _ body: () -> T) -> T {
         let start = ProcessInfo.processInfo.systemUptime
         let value = body()
         let cost = ProcessInfo.processInfo.systemUptime - start
         if operation == "size-write" || operation == "size-read" { resizeWork += cost }
+        if operation == "size-read" {
+            frameBudget.observeSizeRead(cost, at: start + cost, frameInterval: resizeCadence.frameInterval)
+        }
+        if operation == "position-write" { frameBudget.observePositionWrite(cost) }
         if animationIntermediateStep && cost > 0.02 {
             animationYieldRequested = true
         }
         if operation == "size-write" {
             resizeCost = resizeCost == 0 ? cost : resizeCost * 0.75 + cost * 0.25
-            animationSizeInterval = resizeCost > 0.03 ? 1.0 / 20 : (resizeCost > 0.016 ? 1.0 / 30 : (resizeCost > 0.008 ? 1.0 / 60 : 0))
+            resizeCadence.observe(cost: resizeCost)
+            animationSizeInterval = resizeCadence.interval
         }
         WindowAnimationDiagnostics.event("animation-operation", fields: ["windowID": windowId ?? 0,
             "operation": operation, "milliseconds": cost * 1000])
         return value
+    }
+    override func animationAllowsSizeRead(reservingMotion: Bool) -> Bool {
+        guard request.isCurrent else { return false }
+        if animationReads?.size != nil { return true }
+        let now = ProcessInfo.processInfo.systemUptime
+        let allowed = frameBudget.allowsSizeRead(at: now,
+            frameInterval: resizeCadence.frameInterval, resizeCost: resizeCost, reservingMotion: reservingMotion)
+        if !allowed {
+            WindowAnimationDiagnostics.event("animation-read-deferred", fields: ["windowID": windowId ?? 0,
+                "reservingMotion": reservingMotion,
+                "estimatedMilliseconds": frameBudget.estimatedSizeReadCost(at: now, frameInterval: resizeCadence.frameInterval) * 1000])
+        }
+        return allowed
     }
     override func readAnimationGeometry() -> Bool {
         readCount += 1
@@ -1402,6 +1437,7 @@ final class WindowAnimationExecutor {
         let initialOffset = offset()
         let preferredWindow = element.animationObservationElement
         startDisplay(destination: destination, initialPacing: response?.pacing)
+        let displayInterval = 1 / Double(pacing.maximumRate)
         queue.async { [self] in
             guard request.isCurrent else { return }
             workerScreens = screens; workerNativeResize = native; workerOffset = initialOffset
@@ -1441,7 +1477,9 @@ final class WindowAnimationExecutor {
                 if active?.request === request { observation = watch }
             }
             workerTime = ProcessInfo.processInfo.systemUptime
-            window.animationSizeInterval = window.resizeCost > 0.03 ? 1.0 / 20 : (window.resizeCost > 0.016 ? 1.0 / 30 : (window.resizeCost > 0.008 ? 1.0 / 60 : 0))
+            window.frameBudget = WindowAnimationFrameBudget()
+            window.resizeCadence = WindowAnimationResizeCadence(frameInterval: displayInterval, cost: window.resizeCost)
+            window.animationSizeInterval = window.resizeCadence.interval
             core.animate(window, from: startingFrame, to: destination, duration: duration,
                 resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement, profile: profile,
                 offset: { [weak self] in self?.workerOffset ?? .zero }, curve: curve) { [weak self] frame in
@@ -1483,12 +1521,14 @@ final class WindowAnimationExecutor {
                 workerTime = start
                 workerWindow?.animationVerificationTime = start
                 workerWindow?.animationResizeResponse.frameInterval = interval
+                workerWindow?.frameBudget.deadline = deadline.map { min($0, start + displayInterval) } ?? (start + displayInterval)
                 // Only motion samples look ahead; feedback and timeout checks use real time.
                 let sampleTime = WindowAnimationPacing.sampleTime(now: start, deadline: deadline, displayInterval: displayInterval)
                 core.advance(at: workerTime, presentationTime: sampleTime)
                 WindowAnimationDiagnostics.event("animation-executor-tick", fields: [
                     "windowID": workerWindow?.windowId ?? 0, "rate": rate,
                     "queueMilliseconds": (start - now) * 1000,
+                    "sizeFrameCount": workerWindow?.resizeCadence.frames ?? 1,
                     "milliseconds": (ProcessInfo.processInfo.systemUptime - start) * 1000,
                     "reads": (workerWindow?.readCount ?? 0) - reads,
                     "writes": (workerWindow?.writeCount ?? 0) - writes])
