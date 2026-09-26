@@ -214,6 +214,31 @@ class ShortcutManager {
             return
         }
 
+        let directionalHalfActions: Set<WindowAction> = [.leftHalf, .rightHalf, .topHalf, .bottomHalf]
+        if Defaults.subsequentExecutionMode.value == .windowsRepeat,
+           directionalHalfActions.contains(parameters.action),
+           let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
+           let windowId = parameters.windowId ?? windowElement.getWindowId(),
+           !ShortcutCycle.isStale(lastAction: AppDelegate.windowHistory.lastRectangleActions[windowId], currentWindowRect: windowManager.logicalFrame(for: windowElement)),
+           isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId) {
+            if parameters.action == .bottomHalf {
+                if windowElement.minimize() {
+                    AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                } else {
+                    NSSound.beep()
+                }
+                return
+            }
+            parameters = ExecutionParameters(
+                .maximize,
+                updateRestoreRect: parameters.updateRestoreRect,
+                screen: parameters.screen,
+                windowElement: windowElement,
+                windowId: windowId,
+                source: parameters.source
+            )
+        }
+
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
            parameters.source != .titleBar,

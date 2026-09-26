@@ -1,6 +1,7 @@
 /// AccessibilityElement.swift
 
 import Foundation
+import ApplicationServices
 
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
@@ -355,6 +356,17 @@ class AccessibilityElement {
     
     var isMinimized: Bool? {
         windowElement?.wrappedElement.getValue(.minimized) as? Bool
+    }
+
+    @discardableResult
+    func minimize() -> Bool {
+        guard let windowElement,
+              windowElement.wrappedElement.isValueSettable(.minimized) == true else { return false }
+        return AXUIElementSetAttributeValue(
+            windowElement.wrappedElement,
+            NSAccessibility.Attribute.minimized.rawValue as CFString,
+            kCFBooleanTrue
+        ) == .success
     }
 
     var title: String? {
