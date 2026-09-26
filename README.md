@@ -2,11 +2,15 @@
 
 Rectangle is a window management app for macOS based on Spectacle.
 
-<img width="962" height="886" alt="image" src="https://github.com/user-attachments/assets/e8d88e5f-7d4f-43bc-a82e-146c42f92d68" />
+<img width="612" height="810" alt="image" src="https://github.com/user-attachments/assets/c088d1e2-3661-4041-ac30-95da89ac4a41" />
 
 ## System Requirements
 
-Rectangle supports macOS v10.15+. The last version that is supported for macOS 10.13 and 10.14 is https://github.com/rxhanson/Rectangle/releases/tag/v0.73.
+Rectangle supports macOS v14+. 
+
+For macOS 10.15 - 13: [v1.100](https://github.com/rxhanson/Rectangle/releases/tag/v1.100)
+
+For macOS 10.13 and 10.14: [v0.73](https://github.com/rxhanson/Rectangle/releases/tag/v0.73)
 
 ## Installation
 

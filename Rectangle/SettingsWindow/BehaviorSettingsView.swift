@@ -26,16 +26,9 @@ final class BehaviorSettingsViewController: NSViewController {
 }
 
 // MARK: - SwiftUI Settings View
+@MainActor
 struct BehaviorSettingsView: View {
-    @StateObject private var viewModel = BehaviorSettingsViewModel()
-    
-    // Disclosure states
-    @State private var isMaximizeExpanded = false
-    @State private var isStackedWindowsExpanded = false
-    @State private var isSideSplitRatiosExpanded = false
-    @State private var isStageManagerExpanded = false
-    @State private var isAcrossDisplaysExpanded = false
-    @State private var isExtrasExpanded = false
+    @State private var viewModel = BehaviorSettingsViewModel()
     
     // Popover state
     @State private var showTodoInfoPopover = false
@@ -75,7 +68,7 @@ struct BehaviorSettingsView: View {
                         }
                         
                         HStack(spacing: 12) {
-                            Text("Cyclic corner shortcuts expand:")
+                            Text("Cyclic corner shortcuts expand")
                             Spacer()
                             Picker("", selection: $viewModel.cornerCycleExpansionAxis) {
                                 Text("horizontally").tag(CornerCycleExpansionAxis.horizontal)
@@ -97,7 +90,7 @@ struct BehaviorSettingsView: View {
             
             // MARK: - Gaps
             Section {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Gaps between windows")
                         Slider(
@@ -118,87 +111,10 @@ struct BehaviorSettingsView: View {
                 }
             }
             
-            // MARK: - Todo Mode
-            Section {
-                HStack {
-                    Toggle(isOn: $viewModel.todoEnabled) {
-                        HStack(spacing: 4) {
-                            Text("Show Todo Mode in menu")
-                            Button(action: { showTodoInfoPopover.toggle() }) {
-                                Image(systemName: "info.circle")
-                            }
-                            .buttonStyle(.plain)
-                            .popover(isPresented: $showTodoInfoPopover, arrowEdge: .trailing) {
-                                TodoModeInfoView()
-                            }
-                        }
-                    }
-                }
-
-                if viewModel.todoEnabled {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Keep a chosen application visible on the right of your primary screen at all times")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-
-                        HStack {
-                            Text("Todo app width")
-
-                            Spacer()
-
-                            HStack(spacing: 4) {
-                                TextField("", value: $viewModel.todoSidebarWidth, format: .number)
-                                    .frame(width: 100)
-                                    .textFieldStyle(.roundedBorder)
-                                    .onSubmit { viewModel.commitTodoWidth() }
-
-                                Picker("", selection: $viewModel.todoSidebarWidthUnit) {
-                                    Text("px").tag(TodoSidebarWidthUnit.pixels)
-                                    Text("%").tag(TodoSidebarWidthUnit.pct)
-                                }
-                                .labelsHidden()
-                                .fixedSize()
-                            }
-                        }
-                        
-                        HStack {
-                            Text("Todo side")
-                            Spacer()
-                            Picker("", selection: $viewModel.todoSidebarSide) {
-                                Text("Left").tag(TodoSidebarSide.left)
-                                Text("Right").tag(TodoSidebarSide.right)
-                            }
-                            .frame(width: 90)
-                        }
-                        
-                        HStack {
-                            Text("Toggle Todo")
-                            Spacer()
-                            MASShortcutViewRepresentable(
-                                defaultsKey: TodoManager.toggleDefaultsKey,
-                                validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
-                            )
-                            .frame(width: 130, height: 22)
-                        }
-
-                        HStack {
-                            Text("Reflow Todo")
-                            Spacer()
-                            MASShortcutViewRepresentable(
-                                defaultsKey: TodoManager.reflowDefaultsKey,
-                                validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
-                            )
-                            .frame(width: 130, height: 22)
-                        }
-                    }
-                    .padding(.leading, 12)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                }
-            }
             
-            // MARK: - Maximize (Disclosure Section)
+            // MARK: - Maximize
             Section {
-                DisclosureGroup(isExpanded: $isMaximizeExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         if viewModel.showCursorScreenDetection {
@@ -224,7 +140,7 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Across Display Settings
             Section {
-                DisclosureGroup(isExpanded: $isAcrossDisplaysExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
@@ -245,7 +161,7 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Stacked Windows
             Section {
-                DisclosureGroup(isExpanded: $isStackedWindowsExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
@@ -277,7 +193,7 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Side Split Ratios
             Section {
-                DisclosureGroup(isExpanded: $isSideSplitRatiosExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 10) {
                         Divider()
                         Text("Configure the divide between side and corner actions")
@@ -332,10 +248,89 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            // MARK: - Todo Mode
+            Section {
+                CustomDisclosureGroup {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Divider()
+                        
+                        Toggle("Show Todo Mode in menu", isOn: $viewModel.todoEnabled)
+                        
+                        // Dynamically show/hide the controls based on toggle state
+                        if viewModel.todoEnabled {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack {
+                                    Text("Todo app width")
+                                    Spacer()
+                                    HStack(spacing: 4) {
+                                        TextField("", value: $viewModel.todoSidebarWidth, format: .number)
+                                            .frame(width: 100)
+                                            .textFieldStyle(.roundedBorder)
+                                            .onSubmit { viewModel.commitTodoWidth() }
+                                        
+                                        Picker("", selection: $viewModel.todoSidebarWidthUnit) {
+                                            Text("px").tag(TodoSidebarWidthUnit.pixels)
+                                            Text("%").tag(TodoSidebarWidthUnit.pct)
+                                        }
+                                        .labelsHidden()
+                                        .fixedSize()
+                                    }
+                                }
+                                
+                                HStack {
+                                    Text("Todo side")
+                                    Spacer()
+                                    Picker("", selection: $viewModel.todoSidebarSide) {
+                                        Text("Left").tag(TodoSidebarSide.left)
+                                        Text("Right").tag(TodoSidebarSide.right)
+                                    }
+                                    .frame(width: 90)
+                                }
+                                
+                                HStack {
+                                    Text("Toggle Todo")
+                                    Spacer()
+                                    MASShortcutViewRepresentable(
+                                        defaultsKey: TodoManager.toggleDefaultsKey,
+                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
+                                    )
+                                    .frame(width: 130, height: 22)
+                                }
+                                
+                                HStack {
+                                    Text("Reflow Todo")
+                                    Spacer()
+                                    MASShortcutViewRepresentable(
+                                        defaultsKey: TodoManager.reflowDefaultsKey,
+                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
+                                    )
+                                    .frame(width: 130, height: 22)
+                                }
+                            }
+                            .transition(.opacity)
+                        }
+                    }
+                    .padding(.leading, 12)
+                } label: {
+                    HStack(spacing: 6) {
+                        Label("Todo Mode", systemImage: "list.bullet.rectangle.portrait")
+                        
+                        Button(action: { showTodoInfoPopover.toggle() }) {
+                            Image(systemName: "info.circle")
+                                .foregroundColor(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .popover(isPresented: $showTodoInfoPopover, arrowEdge: .trailing) {
+                            TodoModeInfoView()
+                        }
+                    }
+                }
+            }
+            
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
-                    DisclosureGroup(isExpanded: $isStageManagerExpanded) {
+                    CustomDisclosureGroup {
                         VStack(alignment: .leading, spacing: 4) {
                             Divider()
                             HStack {
@@ -363,8 +358,6 @@ struct BehaviorSettingsView: View {
             }
             
             Section {
-                Toggle("Show minimum window size warning", isOn: $viewModel.showMinimumWindowSizeWarning)
-                    .accessibilityIdentifier("showMinimumWindowSizeWarning")
                 HStack {
                     Toggle("Remember learned window size limits", isOn: $viewModel.rememberWindowSizeLimits)
                         .accessibilityIdentifier("rememberWindowSizeLimits")
@@ -394,12 +387,13 @@ struct BehaviorSettingsView: View {
 
             // MARK: - Extras
             Section {
-                DisclosureGroup(isExpanded: $isExtrasExpanded) {
+                CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
+                        Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                        Toggle("Animate windows (experimental)", isOn: $viewModel.experimentalAnimations)
-                        Toggle("Show Extra shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
+                        Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
+                        Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
                                 Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
@@ -420,12 +414,6 @@ struct BehaviorSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
-        .animation(.easeInOut(duration: 0.2), value: isMaximizeExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isStackedWindowsExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isSideSplitRatiosExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isStageManagerExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isAcrossDisplaysExpanded)
-        .animation(.easeInOut(duration: 0.2), value: isExtrasExpanded)
     }
 }
 

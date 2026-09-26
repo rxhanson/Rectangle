@@ -82,6 +82,25 @@ class SettingsTabViewController: NSTabViewController {
             item.image = NSImage(imageLiteralResourceName: tab.imageName)
             addTabViewItem(item)
         }
+        
+        Notification.Name.snapAreaSettingsNeedsResize.onPost {[weak self] notification in
+            guard let self,
+                  let snapAreasIndex = Tab.allCases.firstIndex(of: .snapAreas)
+            else { return }
+
+            self.savedTabSizes.removeValue(forKey: snapAreasIndex)
+            
+            if selectedTabViewItemIndex == snapAreasIndex {
+                let viewController = tabViewItems[snapAreasIndex].viewController!
+                
+                viewController.view.layoutSubtreeIfNeeded()
+                
+                DispatchQueue.main.async {
+                    let dynamicSize = self.calculateContentSize(for: viewController)
+                    self.resizeWindow(toContentSize: dynamicSize, animated: true)
+                }
+            }
+        }
     }
     
     override var selectedTabViewItemIndex: Int {

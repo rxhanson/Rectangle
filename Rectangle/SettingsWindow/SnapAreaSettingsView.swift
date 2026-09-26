@@ -11,11 +11,11 @@ class SnapAreaSettingsViewController: NSViewController {
 
         let swiftUIView = SnapAreaSettingsView()
         hostingController = NSHostingController(rootView: swiftUIView)
-        
+
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)
-        
+
         NSLayoutConstraint.activate([
             hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -27,9 +27,10 @@ class SnapAreaSettingsViewController: NSViewController {
 
 // MARK: - ViewModel
 
-final class SnapAreaViewModel: ObservableObject {
+@Observable
+final class SnapAreaViewModel {
     // General Settings
-    @Published var windowSnapping: Bool = true {
+    var windowSnapping: Bool = true {
         didSet {
             guard oldValue != windowSnapping else { return }
             Defaults.windowSnapping.enabled = windowSnapping
@@ -39,46 +40,46 @@ final class SnapAreaViewModel: ObservableObject {
             }
         }
     }
-    
-    @Published var unsnapRestore: Bool = true {
+
+    var unsnapRestore: Bool = true {
         didSet {
             Defaults.unsnapRestore.enabled = unsnapRestore
         }
     }
-    
-    @Published var hapticFeedback: Bool = false {
+
+    var hapticFeedback: Bool = false {
         didSet {
             Defaults.hapticFeedbackOnSnap.enabled = hapticFeedback
         }
     }
-    
-    @Published var animateFootprint: Bool = true {
+
+    var animateFootprint: Bool = true {
         didSet {
             let val: Float = animateFootprint ? 0.75 : 0.0
             Defaults.footprintAnimationDurationMultiplier.value = val
         }
     }
-    
-    @Published var footprintBlur: Bool = false {
+
+    var footprintBlur: Bool = false {
         didSet {
             Defaults.footprintBlur.enabled = footprintBlur
         }
     }
 
-    @Published var blurAppearance: BlurAppearance = .system {
+    var blurAppearance: BlurAppearance = .system {
         didSet {
             Defaults.blurAppearance.value = blurAppearance
         }
     }
-    
-    @Published var missionControlDraggingDisabled: Bool = false {
+
+    var missionControlDraggingDisabled: Bool = false {
         didSet {
             Defaults.missionControlDragging.enabled = !missionControlDraggingDisabled
             Notification.Name.missionControlDragging.post(object: !missionControlDraggingDisabled)
         }
     }
 
-    @Published var layoutHelper = false {
+    var layoutHelper = false {
         didSet {
             guard oldValue != layoutHelper else { return }
             Defaults.layoutHelper.enabled = layoutHelper
@@ -86,20 +87,20 @@ final class SnapAreaViewModel: ObservableObject {
             if layoutHelper { LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() } }
         }
     }
-    @Published var layoutHelperKeyboard = false {
+    var layoutHelperKeyboard = false {
         didSet {
             Defaults.layoutHelperKeyboard.enabled = layoutHelperKeyboard
             LayoutHelperManager.shared.cancel()
         }
     }
-    @Published var layoutHelperDenseGrids = false {
+    var layoutHelperDenseGrids = false {
         didSet {
             Defaults.layoutHelperDenseGrids.enabled = layoutHelperDenseGrids
             LayoutHelperManager.shared.cancel()
         }
     }
-    @Published var stageManagerEnabled = false
-    @Published var previewPermissionAllowed = false
+    var stageManagerEnabled = false
+    var previewPermissionAllowed = false
     private var stageObservation: NSObject?
 
     func refreshPreviewPermission() { previewPermissionAllowed = LayoutHelperPermission.previewsAllowed }
@@ -109,7 +110,7 @@ final class SnapAreaViewModel: ObservableObject {
     }
 
     // Displays / UI State
-    @Published var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
+    var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -162,8 +163,8 @@ final class SnapAreaViewModel: ObservableObject {
     // Snap Area Handlers
     func getSelectedTag(for directional: Directional, orientation: DisplayOrientation) -> Int {
         let snapAreaConfig = orientation == .landscape
-            ? SnapAreaModel.instance.landscape[directional]
-            : SnapAreaModel.instance.portrait[directional]
+        ? SnapAreaModel.instance.landscape[directional]
+        : SnapAreaModel.instance.portrait[directional]
 
         return snapAreaConfig?.action?.rawValue ?? snapAreaConfig?.compound?.rawValue ?? -1
     }
@@ -182,7 +183,7 @@ final class SnapAreaViewModel: ObservableObject {
 // MARK: - Main Snap Area View
 
 struct SnapAreaSettingsView: View {
-    @StateObject private var viewModel = SnapAreaViewModel()
+    @State private var viewModel = SnapAreaViewModel()
     @State private var showingLayoutHelperExample = false
 
     private var landscapeHeaderTitle: String {
@@ -198,11 +199,10 @@ struct SnapAreaSettingsView: View {
             }
 
             // Customization Options
-             Section {
+            Section {
                 Toggle("Haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
-
 
                 if viewModel.footprintBlur {
                     Picker("Blur appearance", selection: $viewModel.blurAppearance) {
@@ -258,7 +258,7 @@ struct SnapAreaSettingsView: View {
             } header: {
                 Label("Layout Helper", systemImage: "rectangle.on.rectangle")
             }
-            
+
             // Landscape Inline Section
             Section {
                 SnapAreaGridView(viewModel: viewModel, orientation: .landscape)
@@ -267,13 +267,15 @@ struct SnapAreaSettingsView: View {
                     .font(.headline)
             }
 
-            // Portrait Inline Section (Only visible if portrait monitor connected)
-            if viewModel.isPortraitConnected {
-                Section {
-                    SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
-                } header: {
-                    Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
-                        .font(.headline)
+            // Portrait Inline Section (Wrapped in Group for proper Form structural updates)
+            Group {
+                if viewModel.isPortraitConnected {
+                    Section {
+                        SnapAreaGridView(viewModel: viewModel, orientation: .portrait)
+                    } header: {
+                        Label("Portrait Snap Areas", systemImage: "rectangle.portrait.inset.filled")
+                            .font(.headline)
+                    }
                 }
             }
         }
@@ -282,13 +284,16 @@ struct SnapAreaSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isPortraitConnected)
+        .onChange(of: viewModel.isPortraitConnected) { oldValue, isConnected in
+            Notification.Name.snapAreaSettingsNeedsResize.post(object:isConnected)
+        }
     }
 }
 
 // MARK: - Grid Snap Area Layout
 
 struct SnapAreaGridView: View {
-    @ObservedObject var viewModel: SnapAreaViewModel
+    @Bindable var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
 
     var body: some View {
@@ -323,7 +328,7 @@ struct SnapAreaGridView: View {
 // MARK: - Individual Snap Area Menu Picker
 
 struct SnapAreaPicker: View {
-    @ObservedObject var viewModel: SnapAreaViewModel
+    @Bindable var viewModel: SnapAreaViewModel
     let orientation: DisplayOrientation
     let directional: Directional
 
@@ -390,7 +395,7 @@ struct SnapAreaPicker: View {
 extension NSImage {
     func resizedForMenu(targetHeight: CGFloat = 14) -> NSImage {
         guard size.height > 0 else { return self }
-        
+
         let aspectRatio = size.width / size.height
         let copy = self.copy() as! NSImage
         copy.size = NSSize(width: targetHeight * aspectRatio, height: targetHeight)
@@ -446,7 +451,7 @@ struct MacDesktopGraphic: View {
                                 .fill(Color.primary.opacity(0.25))
                                 .frame(width: 3, height: 1.2)
                         }
-                        .padding(.horizontal, 3)
+                            .padding(.horizontal, 3)
                     )
 
                 Spacer()

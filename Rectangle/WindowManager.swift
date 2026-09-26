@@ -10,7 +10,7 @@ class WindowManager {
     private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
-    
+
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
 
@@ -21,13 +21,13 @@ class WindowManager {
             EdgeAlignmentWindowMover(),
             BestEffortWindowMover()
         ]
-        
+
         fixedSizeWindowMoverChain = [
             FixedSizeWindowMover(),
             BestEffortWindowMover()
         ]
     }
-    
+
     func logicalFrame(for element: AccessibilityElement) -> CGRect {
         windowAnimator.destination(for: element) ?? element.frame
     }
@@ -45,7 +45,7 @@ class WindowManager {
         } else {
             newCount = 1
         }
-        
+
         AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(
             action: action,
             subAction: subAction,
@@ -53,7 +53,7 @@ class WindowManager {
             count: newCount
         )
     }
-    
+
     func execute(_ parameters: ExecutionParameters) {
         var completionDeferred = false
         defer { if !completionDeferred { parameters.completion?() } }
@@ -79,7 +79,7 @@ class WindowManager {
         let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
 
         let action = parameters.action
-        
+
         if action == .restore {
             guard let windowId else {
                 NSSound.beep()
@@ -108,7 +108,7 @@ class WindowManager {
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             return
         }
-        
+
         // An explicit screen (display cycling) or the cursor screen controls the
         // calculation, but neither necessarily contains the window before it moves.
         let sourceScreens = screenDetection.detectScreens(using: frontmostWindowElement)
@@ -120,38 +120,38 @@ class WindowManager {
             ? screenDetection.detectScreensAtCursor()
             : sourceScreens
         }
-        
+
         guard let usableScreens = screens, let sourceScreens else {
             NSSound.beep()
             Logger.log("Unable to obtain usable screens")
             return
         }
-        
+
         let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
         let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
-        
+
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
         let previousAction = lastRectangleAction
         let previousRestore = windowId.flatMap { AppDelegate.windowHistory.restoreRects[$0] }
-        
+
         let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
-        
+
         if windowMovedExternally {
             lastRectangleAction = nil
             if let windowId {
                 AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             }
         }
-        
+
         if parameters.updateRestoreRect, let windowId {
             if AppDelegate.windowHistory.restoreRects[windowId] == nil
                 || windowMovedExternally {
                 AppDelegate.windowHistory.restoreRects[windowId] = currentWindowRect
             }
         }
-        
+
         let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
-        
+
         if frontmostWindowElement.isSheet == true
             || currentWindowRect.isNull
             || usableScreens.frameOfCurrentScreen.isNull
@@ -160,25 +160,25 @@ class WindowManager {
             Logger.log("Window is not snappable or usable screen is not valid")
             return
         }
-        
+
         let currentNormalizedRect = currentWindowRect.screenFlipped
         let beforeResize = frontmostWindowElement.frame
         let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
-        
+
         let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
-        
+
         let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo)
         guard var calcResult = windowCalculation?.calculate(calculationParams) else {
             NSSound.beep()
             Logger.log("Nil calculation result")
             return
         }
-        
+
         let gapsApplicable = calcResult.resultingAction.gapsApplicable
-        
+
         if Defaults.gapSize.value > 0, gapsApplicable != .none {
             let gapSharedEdges = calcResult.resultingSubAction?.gapSharedEdge ?? calcResult.resultingAction.gapSharedEdge
-            
+
             calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
         }
 
@@ -438,7 +438,7 @@ class WindowManager {
                 }
             }
     }
-    
+
     /// Move/resize a window based on the calculation results.
     /// - Returns: The rect of the window after applying the window action
     func apply(result: ResultParameters) -> CGRect {
@@ -457,10 +457,10 @@ class WindowManager {
             windowMover.moveWindow(toRect: rect, resultParameters: result)
         }
     }
-    
+
     func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {
         windowElement.bringToFront(force: true)
-        
+
         if Defaults.moveCursorAcrossDisplays.userEnabled {
             CGWarpMouseCursorPosition(resultingRect.centerPoint)
         }
@@ -470,11 +470,11 @@ class WindowManager {
         let calcResult = result.calcResult
 
         checkSizeConstraintWarning(result: result)
-        
+
         if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
             CGWarpMouseCursorPosition(resultingRect.centerPoint)
         }
-        
+
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
         LayoutHelperManager.shared.didSnap(result: result, frame: resultingRect)
         if result.allowsFitPairing { SnappedWindowFitSession.shared.record(result: result, frame: resultingRect) }
@@ -491,7 +491,7 @@ class WindowManager {
         }
         WindowAnimationDiagnostics.event("window-action-achieved", fields: evidence)
         Notification.Name.windowActionCompleted.post()
-        
+
         if Logger.logging {
             var logItems = ["\(result.action.name)",
                             "display: \(result.visibleFrameOfScreen.debugDescription)",
@@ -561,6 +561,13 @@ struct RectangleAction {
     let subAction: SubWindowAction?
     let rect: CGRect
     let count: Int
+
+    init(action: WindowAction, subAction: SubWindowAction? = nil, rect: CGRect, count: Int = 0) {
+        self.action = action
+        self.subAction = subAction
+        self.rect = rect
+        self.count = count
+    }
 }
 
 struct ExecutionParameters {

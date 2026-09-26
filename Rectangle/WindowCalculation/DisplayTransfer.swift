@@ -36,9 +36,9 @@ class DisplayTransfer {
     /// to their own grid - and with gaps turned on nothing is ever flush to begin with.
     static var edgeTolerance: CGFloat { 4 + Defaults.gapSize.cgFloat }
 
-    static func transferredRect(window: CGRect, source: CGRect, destination: CGRect, edgeTolerance: CGFloat = DisplayTransfer.edgeTolerance) -> CGRect {
+    static func transferredRect(window: CGRect, source: CGRect, destination: CGRect, edgeTolerance: CGFloat = DisplayTransfer.edgeTolerance) -> (rect: CGRect, sharedEdges: Edge) {
         guard source.width > 0, source.height > 0, destination.width > 0, destination.height > 0 else {
-            return window
+            return (window, .none)
         }
 
         var horizontal = transfer(window: (window.minX, window.width),
@@ -61,11 +61,16 @@ class DisplayTransfer {
                                          destination: (destination.minY, destination.height))
             }
         }
-
-        return CGRect(x: horizontal.span.origin,
-                      y: vertical.span.origin,
-                      width: horizontal.span.length,
-                      height: vertical.span.length)
+        
+        let touchingEdges = Edge(horizontal: horizontal.contact, vertical: vertical.contact)
+        let rect = CGRect(
+            x: horizontal.span.origin,
+            y: vertical.span.origin,
+            width: horizontal.span.length,
+            height: vertical.span.length
+        )
+        
+        return (rect, touchingEdges)
     }
 
     /// One axis of the window, the source screen and the destination screen, as a starting point
@@ -73,7 +78,7 @@ class DisplayTransfer {
     private typealias Span = (origin: CGFloat, length: CGFloat)
 
     /// Which of the two screen edges on an axis the window was against.
-    private enum Contact {
+    fileprivate enum Contact {
         case neither, start, end, both
 
         var isOneEdge: Bool { self == .start || self == .end }
@@ -124,5 +129,27 @@ class DisplayTransfer {
 
     private static func clamp(_ value: CGFloat, _ lowerBound: CGFloat, _ upperBound: CGFloat) -> CGFloat {
         return min(max(value, lowerBound), upperBound)
+    }
+}
+
+extension Edge {
+    fileprivate init(horizontal: DisplayTransfer.Contact, vertical: DisplayTransfer.Contact) {
+        var edges: Edge = []
+        
+        switch horizontal {
+        case .start:   edges.insert(.left)
+        case .end:     edges.insert(.right)
+        case .both:    edges.insert([.left, .right])
+        case .neither: break
+        }
+        
+        switch vertical {
+        case .start:   edges.insert(.top)
+        case .end:     edges.insert(.bottom)
+        case .both:    edges.insert([.top, .bottom])
+        case .neither: break
+        }
+        
+        self = edges
     }
 }

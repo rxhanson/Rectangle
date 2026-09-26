@@ -1,6 +1,6 @@
 /// WindowSizeWarning.swift
 
-import Cocoa
+import AppKit
 
 enum WindowSizeConstraint {
     static func isExceeded(requested: CGRect, actual: CGRect, action: WindowAction) -> Bool {

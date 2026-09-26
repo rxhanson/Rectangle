@@ -3,32 +3,33 @@
 import SwiftUI
 import AppKit
 
-final class AppSettingsViewModel: ObservableObject {
+@Observable
+final class AppSettingsViewModel {
     // MARK: - General Settings
-    @Published var launchOnLogin: Bool {
+     var launchOnLogin: Bool {
         didSet {
             LaunchOnLogin.isEnabled = launchOnLogin
             Defaults.launchOnLogin.enabled = launchOnLogin
         }
     }
 
-    @Published var hideMenuBarIcon: Bool {
+     var hideMenuBarIcon: Bool {
         didSet {
             Defaults.hideMenuBarIcon.enabled = hideMenuBarIcon
             RectangleStatusItem.instance.refreshVisibility()
         }
     }
 
-    @Published var checkForUpdatesAutomatically: Bool {
+     var checkForUpdatesAutomatically: Bool {
         didSet {
             AppDelegate.instance.updaterController?.updater.automaticallyChecksForUpdates = checkForUpdatesAutomatically
         }
     }
 
-    @Published var hasPendingUpdate: Bool = false
-    @Published var versionString: String = ""
+     var hasPendingUpdate: Bool = false
+     var versionString: String = ""
 
-    @Published var allowAnyShortcut: Bool {
+     var allowAnyShortcut: Bool {
         didSet {
             Defaults.allowAnyShortcut.enabled = allowAnyShortcut
             Notification.Name.allowAnyShortcut.post(object: allowAnyShortcut)

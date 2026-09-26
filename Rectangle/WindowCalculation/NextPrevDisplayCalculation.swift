@@ -17,56 +17,66 @@ class NextPrevDisplayCalculation: WindowCalculation {
             screen = usableScreens.adjacentScreens?.prev
         }
 
-        if let screen = screen {
-            let rectParams = params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo))
+        guard let screen else { return nil }
+        
+        let rectParams = params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo))
+        
+        if Defaults.attemptMatchOnNextPrevDisplay.userEnabled,
+           let lastAction = params.lastAction,
+           let calculation = WindowCalculationFactory.calculationsByAction[lastAction.action] {
             
-            if Defaults.attemptMatchOnNextPrevDisplay.userEnabled,
-               let lastAction = params.lastAction,
-               let calculation = WindowCalculationFactory.calculationsByAction[lastAction.action] {
-
-                if let windowId = params.window.id {
-                    AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                }
-
+            if let windowId = params.window.id {
+                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            }
+            
+            let newCalculationParams = RectCalculationParameters(
+                window: rectParams.window,
+                visibleFrameOfScreen: rectParams.visibleFrameOfScreen,
+                action: lastAction.action,
+                lastAction: nil)
+            let rectResult = calculation.calculateRect(newCalculationParams)
+            
+            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: lastAction.action)
+        }
+        
+        let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
+        
+        if !Defaults.centerAcrossDisplays.userEnabled {
+            
+            let transferredRect = DisplayTransfer.transferredRect(window: rectParams.window.rect,
+                                                                  source: sourceFrame,
+                                                                  destination: rectParams.visibleFrameOfScreen)
+            
+            if transferredRect.sharedEdges == .all {
+                // Window is currently deemed as maximized.
+                // Follow autoMaximize check to see if it should be maximized on next display.
                 let newCalculationParams = RectCalculationParameters(
                     window: rectParams.window,
                     visibleFrameOfScreen: rectParams.visibleFrameOfScreen,
-                    action: lastAction.action,
-                    lastAction: nil)
-                let rectResult = calculation.calculateRect(newCalculationParams)
-
-                return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: lastAction.action)
+                    action: .maximize,
+                    lastAction: RectangleAction(action: .maximize, rect: rectParams.window.rect))
+                return performBasicCalculation(params: params, rectParams: newCalculationParams, screen: screen)
             }
-
-            let sourceFrame = params.usableScreens.currentScreen.adjustedVisibleFrame(params.ignoreTodo)
-
-            if !Defaults.centerAcrossDisplays.userEnabled {
-                // A maximized window is re-maximized below instead, so that it stays recorded as
-                // maximized on the destination display and can still be restored from there.
-                let remaximizes = params.lastAction?.action == .maximize && !Defaults.autoMaximize.userDisabled
-
-                if !remaximizes {
-                    let transferredRect = DisplayTransfer.transferredRect(window: rectParams.window.rect,
-                                                                          source: sourceFrame,
-                                                                          destination: rectParams.visibleFrameOfScreen)
-                    return WindowCalculationResult(rect: transferredRect, screen: screen, resultingAction: params.action)
-                }
-            } else if Defaults.attemptMatchOnNextPrevDisplay.userEnabled {
-                // Issue #1723: opt-in ON but no replayable lastAction (e.g. a manually positioned
-                // window). Map the window proportionally from the source screen to the destination
-                // screen so it keeps its relative spot instead of jumping to the center.
-                let mappedRect = NextPrevDisplayCalculation.relativePositionedRect(window: rectParams.window.rect,
-                                                                                   source: sourceFrame,
-                                                                                   destination: rectParams.visibleFrameOfScreen)
-                return WindowCalculationResult(rect: mappedRect, screen: screen, resultingAction: params.action)
-            }
-
-            let rectResult = calculateRect(rectParams)
-            let resultingAction: WindowAction = rectResult.resultingAction ?? params.action
-            return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: resultingAction)
+            
+            return WindowCalculationResult(rect: transferredRect.rect, screen: screen, resultingAction: params.action)
+            
+        } else if Defaults.attemptMatchOnNextPrevDisplay.userEnabled {
+            // Issue #1723: opt-in ON but no replayable lastAction (e.g. a manually positioned
+            // window). Map the window proportionally from the source screen to the destination
+            // screen so it keeps its relative spot instead of jumping to the center.
+            let mappedRect = NextPrevDisplayCalculation.relativePositionedRect(window: rectParams.window.rect,
+                                                                               source: sourceFrame,
+                                                                               destination: rectParams.visibleFrameOfScreen)
+            return WindowCalculationResult(rect: mappedRect, screen: screen, resultingAction: params.action)
         }
         
-        return nil
+        return performBasicCalculation(params: params, rectParams: rectParams, screen: screen)
+    }
+    
+    private func performBasicCalculation(params: WindowCalculationParameters, rectParams: RectCalculationParameters, screen: NSScreen) -> WindowCalculationResult {
+        let rectResult = calculateRect(rectParams)
+        let action = rectResult.resultingAction ?? params.action
+        return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: action)
     }
     
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {

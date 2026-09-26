@@ -3,72 +3,73 @@
 import SwiftUI
 import AppKit
 
-final class BehaviorSettingsViewModel: ObservableObject {
+@Observable
+final class BehaviorSettingsViewModel {
     // MARK: - Window Behavior & Cycle Settings
-    @Published var subsequentExecutionMode: SubsequentExecutionMode {
+    var subsequentExecutionMode: SubsequentExecutionMode {
         didSet {
             Defaults.subsequentExecutionMode.value = subsequentExecutionMode
         }
     }
 
-    @Published var selectedCycleSizes: Set<CycleSize> = []
-    @Published var cornerCycleExpansionAxis: CornerCycleExpansionAxis {
+    var selectedCycleSizes: Set<CycleSize> = []
+    var cornerCycleExpansionAxis: CornerCycleExpansionAxis {
         didSet {
             Defaults.cornerCycleExpansionAxis.value = cornerCycleExpansionAxis
         }
     }
 
-    @Published var cooperativeCornerResize: Bool {
+    var cooperativeCornerResize: Bool {
         didSet {
             Defaults.cooperativeCornerResize.enabled = cooperativeCornerResize
         }
     }
 
-    @Published var gapSize: Double
-    @Published var skipGapTopEdge: Bool {
+    var gapSize: Double
+    var skipGapTopEdge: Bool {
         didSet {
             Defaults.skipGapTopEdge.enabled = skipGapTopEdge
         }
     }
 
-    @Published var moveCursorAcrossDisplays: Bool {
+    var moveCursorAcrossDisplays: Bool {
         didSet {
             Defaults.moveCursorAcrossDisplays.enabled = moveCursorAcrossDisplays
         }
     }
 
-    @Published var centerAcrossDisplays: Bool {
+    var centerAcrossDisplays: Bool {
         didSet {
             Defaults.centerAcrossDisplays.enabled = centerAcrossDisplays
         }
     }
 
-    @Published var useCursorScreenDetection: Bool {
+    var useCursorScreenDetection: Bool {
         didSet {
             Defaults.useCursorScreenDetection.enabled = useCursorScreenDetection
         }
     }
 
-    @Published var doubleClickTitleBar: Bool {
+    var doubleClickTitleBar: Bool {
         didSet {
             handleDoubleClickTitleBarToggle(doubleClickTitleBar)
         }
     }
 
-    @Published var autoMaximize: Bool {
+    var autoMaximize: Bool {
         didSet {
             Defaults.autoMaximize.enabled = autoMaximize
         }
     }
 
-    @Published var greenButtonOverride: Bool {
+    var greenButtonOverride: Bool {
         didSet {
             Defaults.greenButtonOverride.enabled = greenButtonOverride
             Notification.Name.greenButtonOverride.post()
         }
     }
 
-    @Published var experimentalAnimations: Bool {
+    var experimentalAnimations: Bool {
         didSet {
             guard oldValue != experimentalAnimations else { return }
             Defaults.experimentalWindowAnimations.enabled = experimentalAnimations
@@ -76,22 +77,22 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
     }
 
-    @Published var showMinimumWindowSizeWarning: Bool {
+    var showMinimumWindowSizeWarning: Bool {
         didSet {
             Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
             if !showMinimumWindowSizeWarning { WindowSizeWarning.hideCurrent() }
         }
     }
-    @Published var rememberWindowSizeLimits: Bool {
+    var rememberWindowSizeLimits: Bool {
         didSet { WindowSizeConstraints.shared.setRememberLimits(rememberWindowSizeLimits) }
     }
-    @Published var windowDivider: Bool {
+    var windowDivider: Bool {
         didSet {
             Defaults.windowDivider.enabled = windowDivider
             WindowDividerManager.shared.clear()
         }
     }
-    @Published var windowDividerEnhanced: Bool {
+    var windowDividerEnhanced: Bool {
         didSet {
             Defaults.windowDividerEnhanced.enabled = windowDividerEnhanced
             WindowDividerManager.shared.clear()
@@ -100,7 +101,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
             }
         }
     }
-    @Published var fitBesideSnappedWindows: Bool {
+    var fitBesideSnappedWindows: Bool {
         didSet {
             Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
             SnappedWindowFitSession.shared.clear()
@@ -114,27 +115,28 @@ final class BehaviorSettingsViewModel: ObservableObject {
         windowSizeLimitsController?.showWindow(nil)
     }
 
-    @Published var combinedDisplayMode: Bool {
+    var combinedDisplayMode: Bool {
         didSet {
             Defaults.combinedDisplayMode.enabled = combinedDisplayMode
         }
     }
 
+
     // MARK: - Todo Mode Settings
-    @Published var todoEnabled: Bool {
+    var todoEnabled: Bool {
         didSet {
             Defaults.todo.enabled = todoEnabled
             Notification.Name.todoMenuToggled.post()
         }
     }
 
-    @Published var todoSidebarWidth: Float {
+    var todoSidebarWidth: Float {
         didSet {
             Defaults.todoSidebarWidth.value = todoSidebarWidth
         }
     }
 
-    @Published var todoSidebarWidthUnit: TodoSidebarWidthUnit {
+    var todoSidebarWidthUnit: TodoSidebarWidthUnit {
         didSet {
             Defaults.todoSidebarWidthUnit.value = todoSidebarWidthUnit
             TodoManager.refreshTodoScreen()
@@ -144,52 +146,52 @@ final class BehaviorSettingsViewModel: ObservableObject {
         }
     }
 
-    @Published var todoSidebarSide: TodoSidebarSide {
+    var todoSidebarSide: TodoSidebarSide {
         didSet {
             Defaults.todoSidebarSide.value = todoSidebarSide
             TodoManager.moveAllIfNeeded(false)
         }
     }
 
-    @Published var showAdditionalSizesInMenu: Bool {
+    var showAdditionalSizesInMenu: Bool {
         didSet {
             Defaults.showAdditionalSizesInMenu.enabled = showAdditionalSizesInMenu
             Notification.Name.showAdditionalSizesInMenuChanged.post()
         }
     }
-    @Published var cyclingOverlapOffset: Bool {
+    var cyclingOverlapOffset: Bool {
         didSet { Defaults.cyclingOverlapOffset.enabled = cyclingOverlapOffset }
     }
-    @Published var stackBadge: Bool {
+    var stackBadge: Bool {
         didSet { Defaults.stackBadge.enabled = stackBadge }
     }
-    @Published var horizontalSplitRatio: Float {
+    var horizontalSplitRatio: Float {
         didSet {
             Defaults.horizontalSplitRatio.value = horizontalSplitRatio
             ActiveSideSplitRatios.shared.resetAll()
         }
     }
-    @Published var verticalSplitRatio: Float {
+    var verticalSplitRatio: Float {
         didSet {
             Defaults.verticalSplitRatio.value = verticalSplitRatio
             ActiveSideSplitRatios.shared.resetAll()
         }
     }
-    @Published var halvesPreserveOtherAxisSize: Bool {
+    var halvesPreserveOtherAxisSize: Bool {
         didSet { Defaults.halvesPreserveOtherAxisSize.enabled = halvesPreserveOtherAxisSize }
     }
 
     // Preset Selection States
-    @Published var selectedHSplitPreset: CycleSize?
-    @Published var selectedVSplitPreset: CycleSize?
+    var selectedHSplitPreset: CycleSize?
+    var selectedVSplitPreset: CycleSize?
 
-    
-    @Published var repeatedMaximizeRestoresPrevious: Bool {
+
+    var repeatedMaximizeRestoresPrevious: Bool {
         didSet { Defaults.repeatedMaximizeRestoresPrevious.enabled = repeatedMaximizeRestoresPrevious }
     }
 
     // MARK: - Stage Manager Settings
-    @Published var stageSize: Double
+    var stageSize: Double
 
     // MARK: - UI Conditional Flags
     var showCooperativeCornerResize: Bool { Defaults.cooperativeCornerResize.enabled }
@@ -233,7 +235,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.todoSidebarSide = Defaults.todoSidebarSide.value
 
         self.stageSize = Double(Defaults.stageSize.value)
-        
+
         let hRatio = Defaults.horizontalSplitRatio.value
         let vRatio = Defaults.verticalSplitRatio.value
 
@@ -261,12 +263,18 @@ final class BehaviorSettingsViewModel: ObservableObject {
 
     func reloadFromDefaults() {
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
-        self.selectedCycleSizes = Defaults.cycleSizesIsChanged.enabled ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
+        let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
+        self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
+        self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
+
         self.moveCursorAcrossDisplays = Defaults.moveCursorAcrossDisplays.userEnabled
-        self.centerAcrossDisplays = !Defaults.centerAcrossDisplays.userDisabled
+        self.centerAcrossDisplays = Defaults.centerAcrossDisplays.userEnabled
+        self.useCursorScreenDetection = Defaults.useCursorScreenDetection.enabled
+
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
@@ -277,12 +285,27 @@ final class BehaviorSettingsViewModel: ObservableObject {
         self.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
         self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
+        self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
+
         self.todoEnabled = Defaults.todo.userEnabled
         self.todoSidebarWidth = Defaults.todoSidebarWidth.value
         self.todoSidebarWidthUnit = Defaults.todoSidebarWidthUnit.value
         self.todoSidebarSide = Defaults.todoSidebarSide.value
-        self.stackBadge = Defaults.stackBadge.userEnabled
+
         self.stageSize = Double(Defaults.stageSize.value)
+
+        let hRatio = Defaults.horizontalSplitRatio.value
+        let vRatio = Defaults.verticalSplitRatio.value
+
+        self.showAdditionalSizesInMenu = Defaults.showAdditionalSizesInMenu.userEnabled
+        self.cyclingOverlapOffset = Defaults.cyclingOverlapOffset.userEnabled
+        self.stackBadge = Defaults.stackBadge.userEnabled
+        self.horizontalSplitRatio = hRatio
+        self.verticalSplitRatio = vRatio
+        self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
+
+        self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
+        self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
     }
 
     // MARK: - Cycle Sizes Binding Helper
@@ -356,7 +379,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         let savePanel = NSSavePanel()
         savePanel.allowedContentTypes = [.json]
         savePanel.nameFieldStringValue = "RectangleConfig"
-        
+
         if savePanel.runModal() == .OK, let url = savePanel.url {
             do {
                 if let jsonString = Defaults.encoded() {
@@ -373,7 +396,7 @@ final class BehaviorSettingsViewModel: ObservableObject {
         Notification.Name.windowSnapping.post(object: false)
         let openPanel = NSOpenPanel()
         openPanel.allowedContentTypes = [.json]
-        
+
         if openPanel.runModal() == .OK, let url = openPanel.url {
             Defaults.load(fileUrl: url)
         }

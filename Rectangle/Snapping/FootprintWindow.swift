@@ -166,9 +166,6 @@ class FootprintWindow: NSWindow {
         let root = FootprintContentView(frame: .zero)
         for view in [root, shadowView, surface, effectView] {
             view.wantsLayer = true
-            view.layer?.contentsFormat = .RGBA8Uint
-            if #available(macOS 26, *) { view.layer?.preferredDynamicRange = .standard }
-            else { view.layer?.wantsExtendedDynamicRangeContent = false }
         }
         root.layer?.opacity = 0
         shadowView.layer?.addSublayer(shadow.container)
