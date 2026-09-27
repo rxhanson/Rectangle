@@ -86,8 +86,6 @@ final class FootprintShadow {
             layer.anchorPoint = .zero
             layer.position = .zero
             layer.contentsFormat = .RGBA8Uint
-            if #available(macOS 26, *) { layer.preferredDynamicRange = .standard }
-            else { layer.wantsExtendedDynamicRangeContent = false }
         }
         let padding = FootprintStyle.shadowPadding
         container.position = CGPoint(x: -padding, y: -padding)
