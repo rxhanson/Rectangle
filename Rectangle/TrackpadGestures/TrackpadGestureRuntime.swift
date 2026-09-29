@@ -26,6 +26,8 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
         self.source = source
         self.capture = capture
         self.targeter = targeter
+        // Scroll events do not reliably identify their physical trackpad. Overlap fails open.
+        source.onDeviceOverlap = { [weak capture] in capture?.contaminateSession() }
         source.onContactCount = { [weak capture] in capture?.observeContactCount($0) }
         source.onFrame = { [weak self] in self?.handle($0) }
         capture.onHealthChange = { [weak self] _ in

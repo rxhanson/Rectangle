@@ -190,7 +190,8 @@ final class WindowDividerManager {
               infos.contains(where: { $0.id == pair.left.id && $0.pid == pair.left.app.processIdentifier }),
               infos.contains(where: { $0.id == pair.right.id && $0.pid == pair.right.app.processIdentifier }) else { return false }
         return WindowDividerGeometry.unobscured(left: pair.left.id, right: pair.right.id,
-                                                    in: infos, near: pair.hoverFrame)
+                                                    in: infos, near: pair.hoverFrame,
+                                                    ignoring: Set([panel, overlay].compactMap { CGWindowID(exactly: $0.windowNumber) }))
     }
 
     private func begin(pointerX: CGFloat? = nil) -> Bool {

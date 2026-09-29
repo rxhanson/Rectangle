@@ -286,8 +286,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
             regionEntranceOffset = nil
         }
         reconcileBackdrops(for: [frame] + remainingRegions)
-        var images = images
-        for card in cards where images[card.item.id] == nil {
+        var images = offerPermission ? [:] : images
+        for card in cards where !offerPermission && images[card.item.id] == nil {
             if let item = items.first(where: { $0.id == card.item.id }),
                item.previewKey == card.item.previewKey, item.sourceSize == card.item.sourceSize,
                let image = card.preview { images[item.id] = image }
@@ -299,7 +299,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
                 guard let item = itemsByID[card.item.id] else { continue }
                 // Keep the visible geometry stable while catalog details arrive.
                 // A changed capture identity must not keep the previous image.
-                if card.item.previewKey != item.previewKey || card.item.sourceSize != item.sourceSize {
+                if offerPermission || card.item.previewKey != item.previewKey || card.item.sourceSize != item.sourceSize {
                     card.preview = nil
                 }
                 card.state = .off
@@ -370,6 +370,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         if let scrollObserver { NotificationCenter.default.removeObserver(scrollObserver) }
         keyboardSelection = keyboardTriggered
         showingPermission = offerPermission
+        let images = offerPermission ? [:] : images
         waitsForPreviews = waitForPreviews && !offerPermission
         shownMessage = message
         let surface = prepare(in: frame, drawsBackground: !separateBackground)
@@ -451,7 +452,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     }
 
     func updateImage(_ image: NSImage, for id: CGWindowID) {
-        guard let card = cards.first(where: { $0.item.id == id }) else { return }
+        guard !showingPermission, let card = cards.first(where: { $0.item.id == id }) else { return }
         card.preview = image
         reveal(card)
     }

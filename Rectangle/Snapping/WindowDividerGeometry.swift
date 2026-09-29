@@ -83,14 +83,15 @@ struct WindowDividerGeometry {
         return limitedByMemory ? remembered : divider
     }
 
-    static func unobscured(left: CGWindowID, right: CGWindowID, in infos: [WindowInfo], near region: CGRect? = nil) -> Bool {
+    static func unobscured(left: CGWindowID, right: CGWindowID, in infos: [WindowInfo], near region: CGRect? = nil, ignoring: Set<CGWindowID> = []) -> Bool {
         guard let li = infos.firstIndex(where: { $0.id == left }),
               let ri = infos.firstIndex(where: { $0.id == right }) else { return false }
         // A floating window elsewhere on either member must not disable an
         // exposed divider. Still respect stacking order on both sides of it.
         let leftRegion = region.map { infos[li].frame.intersection($0) } ?? infos[li].frame.insetBy(dx: 2, dy: 2)
         let rightRegion = region.map { infos[ri].frame.intersection($0) } ?? infos[ri].frame.insetBy(dx: 2, dy: 2)
-        for (index, info) in infos.enumerated() where info.id != left && info.id != right && info.level == 0 {
+        for (index, info) in infos.enumerated() where info.id != left && info.id != right
+            && !ignoring.contains(info.id) && info.level >= 0 && info.isOnScreen && info.alpha > 0 {
             if index < li && info.frame.intersects(leftRegion) { return false }
             if index < ri && info.frame.intersects(rightRegion) { return false }
         }

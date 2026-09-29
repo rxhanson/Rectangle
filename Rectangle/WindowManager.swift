@@ -60,8 +60,6 @@ class WindowManager {
         hideSizeConstraintWarning()
         let fitOpportunity = SnappedWindowFitSession.shared.take()
 
-        WindowSizeConstraints.shared.cancelPendingObservations()
-        let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
         WindowDividerManager.shared.interrupt()
         let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
             windowID: parameters.windowId, screen: parameters.screen)
@@ -86,13 +84,16 @@ class WindowManager {
                 return
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+                WindowSizeConstraints.shared.cancelPendingObservations()
+                let restoreGeneration = WindowSizeConstraints.shared.observationGeneration
                 executionID &+= 1
                 let currentExecutionID = executionID
                 completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
                     windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
                         defer { parameters.completion?() }
-                        guard let self, self.executionID == currentExecutionID else { return }
+                        guard let self, self.executionID == currentExecutionID,
+                              WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
                         // A completed animation has already placed the real window.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
                     }
@@ -100,7 +101,8 @@ class WindowManager {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
                     windowAnimator.afterPendingWrites { [weak self] in
                         defer { parameters.completion?() }
-                        guard self?.executionID == currentExecutionID else { return }
+                        guard self?.executionID == currentExecutionID,
+                              WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
                         frontmostWindowElement.setFrame(restoreRect)
                     }
                 }
@@ -234,7 +236,7 @@ class WindowManager {
             }
         }
 
-        let resultParameters = ResultParameters(windowId: windowId,
+        var resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
                                                 calcResult: calcResult,
@@ -244,7 +246,7 @@ class WindowManager {
                                                 isFixedSize: isFixedSize,
                                                 layoutHelperToken: layoutHelperToken,
                                                 requestedLayoutRect: requestedLayoutRect,
-                                                observationGeneration: sizeObservationGeneration)
+                                                observationGeneration: WindowSizeConstraints.shared.observationGeneration)
 
         if cooperativeCornerPlan == nil, besidePlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
@@ -281,6 +283,9 @@ class WindowManager {
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
+        WindowSizeConstraints.shared.cancelPendingObservations()
+        let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
+        resultParameters.observationGeneration = sizeObservationGeneration
         executionID &+= 1
         let currentExecutionID = executionID
 
@@ -328,7 +333,8 @@ class WindowManager {
                         waitsForRetry = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
                             defer { parameters.completion?() }
-                            guard let self, self.executionID == currentExecutionID else { return }
+                            guard let self, self.executionID == currentExecutionID,
+                                  WindowSizeConstraints.shared.observationGeneration == sizeObservationGeneration else { return }
                             let finalRect = self.apply(result: resultParameters)
                             self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
                             self.postProcess(result: resultParameters, resultingRect: finalRect, incrementCount: !animated)

@@ -91,7 +91,10 @@ final class LayoutHelperManager {
                     let resume = self.permissionPrefetch
                     self.permissionPrefetch = nil
                     resume?()
-                } else { self.previews.clear() }
+                } else {
+                    self.cancelImageDelivery()
+                    self.previews.clear()
+                }
                 guard self.layout != nil, !self.selecting else { return }
                 self.showNext()
             })

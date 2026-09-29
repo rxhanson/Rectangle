@@ -5,6 +5,7 @@ import AppKit
 
 @Observable
 final class BehaviorSettingsViewModel {
+    private var reloadingDefaults = true
     // MARK: - Window Behavior & Cycle Settings
     var subsequentExecutionMode: SubsequentExecutionMode {
         didSet {
@@ -94,10 +95,13 @@ final class BehaviorSettingsViewModel {
     }
     var windowDividerEnhanced: Bool {
         didSet {
+            guard oldValue != windowDividerEnhanced else { return }
             Defaults.windowDividerEnhanced.enabled = windowDividerEnhanced
             WindowDividerManager.shared.clear()
-            if windowDividerEnhanced {
-                LayoutHelperPermission.guideIfNeeded(for: .windowDivider) { }
+            if windowDividerEnhanced && !reloadingDefaults {
+                LayoutHelperPermission.guideIfNeeded(for: .windowDivider) { [weak self] in
+                    self?.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
+                }
             }
         }
     }
@@ -204,7 +208,7 @@ final class BehaviorSettingsViewModel {
             guard oldValue != layoutHelper else { return }
             Defaults.layoutHelper.enabled = layoutHelper
             LayoutHelperManager.shared.cancel()
-            if layoutHelper { LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() } }
+            if layoutHelper && !reloadingDefaults { LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() } }
         }
     }
     var layoutHelperKeyboard = false {
@@ -284,6 +288,7 @@ final class BehaviorSettingsViewModel {
         layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
         stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
         refreshPreviewPermission()
+        reloadingDefaults = false
         setupObservers()
     }
 
@@ -300,6 +305,8 @@ final class BehaviorSettingsViewModel {
     }
 
     func reloadFromDefaults() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes

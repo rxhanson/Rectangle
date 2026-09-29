@@ -12,7 +12,7 @@ private func contactCallback(
     timestamp: Double,
     frame: Int32
 ) -> Int32 {
-    guard let source = activeSource else { return 0 }
+    guard let source = activeSource, let device else { return 0 }
 
     var contacts: [TrackpadTouch] = []
     contacts.reserveCapacity(Int(max(numTouches, 0)))
@@ -31,11 +31,12 @@ private func contactCallback(
         }
     }
 
-    source.deliver(TrackpadTouchFrame(timestamp: timestamp, touches: contacts))
+    source.deliver(TrackpadTouchFrame(timestamp: timestamp, touches: contacts), device: UInt(bitPattern: device))
     return 0
 }
 
 final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Sendable {
+    var onDeviceOverlap: (() -> Void)?
     var onContactCount: ((Int) -> Void)?
     var onFrame: ((TrackpadTouchFrame) -> Void)?
     private let lifecycleLock = NSRecursiveLock()
@@ -43,6 +44,8 @@ final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Senda
     private var devices: [MTDeviceRef] = []
     private var started = false
     private let deliveryStateLock = NSRecursiveLock()
+    private let contactDeliveryLock = NSLock()
+    private var deviceSession = TrackpadDeviceSession()
     // Stop closes acceptance, drains synchronous callbacks, then unregisters devices.
     private let synchronousContactCallbacks = DispatchGroup()
     private var deliveryGeneration: UInt = 0
@@ -95,6 +98,7 @@ final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Senda
         defer { lifecycleLock.unlock() }
         deliveryStateLock.lock()
         acceptingFrames = false
+        deviceSession = TrackpadDeviceSession()
         deliveryGeneration &+= 1
         deliveryStateLock.unlock()
         synchronousContactCallbacks.wait()
@@ -128,17 +132,21 @@ final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Senda
         started = false
 
     }
-    func deliver(_ frame: TrackpadTouchFrame) {
+    func deliver(_ frame: TrackpadTouchFrame, device: UInt = 0) {
+        contactDeliveryLock.lock()
+        defer { contactDeliveryLock.unlock() }
         deliveryStateLock.lock()
-        guard acceptingFrames else {
-            deliveryStateLock.unlock()
-            return
-        }
+        guard acceptingFrames else { deliveryStateLock.unlock(); return }
+        let acceptsDevice = deviceSession.accepts(device: device, contacts: frame.touches.count)
         // Publish contacts before queueing recognition so scrolling cannot leak first.
         let generation = deliveryGeneration
         synchronousContactCallbacks.enter()
         deliveryStateLock.unlock()
         defer { synchronousContactCallbacks.leave() }
+        guard acceptsDevice else {
+            if !frame.touches.isEmpty { onDeviceOverlap?() }
+            return
+        }
         onContactCount?(frame.touches.count)
         deliveryQueue.async { [weak self] in
             guard let self else { return }
@@ -158,6 +166,7 @@ final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Senda
     }
 }
 protocol TrackpadTouchSource: AnyObject {
+    var onDeviceOverlap: (() -> Void)? { get set }
     var onContactCount: ((Int) -> Void)? { get set }
     var onFrame: ((TrackpadTouchFrame) -> Void)? { get set }
     var deviceCount: Int { get }
@@ -261,4 +270,27 @@ final class TrackpadDeviceMonitor {
     }
 
     deinit { stop() }
+}
+
+// A second trackpad must lift before it can claim a fresh session after the current owner.
+struct TrackpadDeviceSession {
+    private var owner: UInt?
+    private var waitingForLift = Set<UInt>()
+
+    mutating func accepts(device: UInt, contacts: Int) -> Bool {
+        if owner == device {
+            if contacts == 0 { owner = nil }
+            return true
+        }
+        if contacts == 0 {
+            waitingForLift.remove(device)
+            return false
+        }
+        guard owner == nil, waitingForLift.isEmpty else {
+            waitingForLift.insert(device)
+            return false
+        }
+        owner = device
+        return true
+    }
 }

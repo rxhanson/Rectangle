@@ -209,7 +209,11 @@ class ShortcutManager {
         defer { if !completionForwarded { originalParameters.completion?() } }
         Notification.Name.windowActionWillExecute.post(object: parameters)
 
-        LayoutHelperManager.shared.cancel()
+        // A completed drag can reuse its prepared thumbnails; other commands dismiss the helper.
+        if parameters.source != .dragToSnap || [.reverseAll, .tileAll, .tileRows, .tileColumns,
+            .cascadeAll, .cascadeActiveApp, .tileActiveApp, .leftTodo, .rightTodo].contains(parameters.action) {
+            LayoutHelperManager.shared.cancel()
+        }
         if MultiWindowManager.execute(parameters: parameters) {
             return
         }
