@@ -90,7 +90,7 @@ class WindowManager {
                 let currentExecutionID = executionID
                 completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
                         defer { parameters.completion?() }
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
@@ -376,7 +376,7 @@ class WindowManager {
             windowAnimator.animate(frontmostWindowElement,
                                    to: calcResult.rect.screenFlipped,
                                    releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
+                                   profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { frame in
                 completeMove(!frame.isNull)
             }
         } else {
@@ -414,7 +414,7 @@ class WindowManager {
         completionDeferred = true
         WindowPlacementCoordinator.shared.place(window, from: before, to: plan.target, placement: placement,
             animated: WindowAnimator.enabled && !acrossDisplays,
-            profile: result.source == .keyboardShortcut ? .keyboard : .standard,
+            profile: result.source.usesKeyboardAnimation ? .keyboard : .standard,
             isCurrent: { [weak self] in
                 self?.executionID == requestExecutionID
                     && WindowSizeConstraints.shared.observationGeneration == generation
@@ -591,5 +591,7 @@ struct ExecutionParameters {
 }
 
 enum ExecutionSource {
-    case keyboardShortcut, dragToSnap, menuItem, url, titleBar
+    case keyboardShortcut, dragToSnap, menuItem, url, titleBar, trackpadGesture
+
+    var usesKeyboardAnimation: Bool { self == .keyboardShortcut || self == .trackpadGesture }
 }

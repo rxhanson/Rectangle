@@ -38,6 +38,7 @@ class Defaults {
     static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits", defaultValue: true)
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
+    static let trackpadGestures = JSONDefault<TrackpadGestureSettings>(key: "trackpadGestures")
     static let layoutHelper = OptionalBoolDefault(key: "layoutHelper")
     static let layoutHelperKeyboard = BoolDefault(key: "layoutHelperKeyboard")
     static let layoutHelperDenseGrids = BoolDefault(key: "layoutHelperDenseGrids")
@@ -170,6 +171,7 @@ class Defaults {
         windowDividerEnhanced,
         allowAnyShortcut,
         windowSnapping,
+        trackpadGestures,
         layoutHelper,
         layoutHelperKeyboard,
         layoutHelperDenseGrids,

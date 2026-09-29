@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E555FCA5811E655F6B5F68D2 /* TrackpadCursorWindowTargeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF8E149249C9FAA58A1FE26 /* TrackpadCursorWindowTargeter.swift */; };
+		A86642097125624F4980D470 /* TrackpadExclusiveGestureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE73798C99178A7D2C795B20 /* TrackpadExclusiveGestureCapture.swift */; };
+		D7F83DAD773AFE3835AF959A /* TrackpadExclusiveGestureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185B1648D8755B98CB8447C1 /* TrackpadExclusiveGestureGate.swift */; };
+		85CF32104911AB23208B09D6 /* TrackpadGestureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC15B4DDE354A6C5CBBA963 /* TrackpadGestureManager.swift */; };
+		FED0657F0669DE536ED1411A /* TrackpadGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D323F9B9464E88A6A04217 /* TrackpadGestureRecognizer.swift */; };
+		66C65D31E34B044BA9914290 /* TrackpadGestureRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BEF255ED964E51837C512D9 /* TrackpadGestureRuntime.swift */; };
+		405DF73325AECCC516BF703C /* TrackpadGestureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC3FCD3FD69B838BF7DF0F8 /* TrackpadGestureSettings.swift */; };
+		BA1A3DB1A86ACB859A22C4EB /* TrackpadGestureSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0505EACB6F038CD71393F60B /* TrackpadGestureSettingsView.swift */; };
+		23A5CCF7BEA33F22A71397F7 /* TrackpadMultitouchTouchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853E7C2444776C5C872F952D /* TrackpadMultitouchTouchSource.swift */; };
 		AB5100000000000000000072 /* WindowDividerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5100000000000000000071 /* WindowDividerManager.swift */; };
 		AB5100000000000000000062 /* WindowDividerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5100000000000000000061 /* WindowDividerPanel.swift */; };
 		AB5100000000000000000052 /* WindowDividerGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB5100000000000000000051 /* WindowDividerGeometry.swift */; };
@@ -253,6 +262,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FFF8E149249C9FAA58A1FE26 /* TrackpadCursorWindowTargeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadCursorWindowTargeter.swift; sourceTree = "<group>"; };
+		CE73798C99178A7D2C795B20 /* TrackpadExclusiveGestureCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadExclusiveGestureCapture.swift; sourceTree = "<group>"; };
+		185B1648D8755B98CB8447C1 /* TrackpadExclusiveGestureGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadExclusiveGestureGate.swift; sourceTree = "<group>"; };
+		8AC15B4DDE354A6C5CBBA963 /* TrackpadGestureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadGestureManager.swift; sourceTree = "<group>"; };
+		D0D323F9B9464E88A6A04217 /* TrackpadGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadGestureRecognizer.swift; sourceTree = "<group>"; };
+		1BEF255ED964E51837C512D9 /* TrackpadGestureRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadGestureRuntime.swift; sourceTree = "<group>"; };
+		1EC3FCD3FD69B838BF7DF0F8 /* TrackpadGestureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadGestureSettings.swift; sourceTree = "<group>"; };
+		0505EACB6F038CD71393F60B /* TrackpadGestureSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadGestureSettingsView.swift; sourceTree = "<group>"; };
+		853E7C2444776C5C872F952D /* TrackpadMultitouchTouchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackpadGestures/TrackpadMultitouchTouchSource.swift; sourceTree = "<group>"; };
 		AB5100000000000000000071 /* WindowDividerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDividerManager.swift; sourceTree = "<group>"; };
 		AB5100000000000000000061 /* WindowDividerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDividerPanel.swift; sourceTree = "<group>"; };
 		AB5100000000000000000051 /* WindowDividerGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDividerGeometry.swift; sourceTree = "<group>"; };
@@ -723,7 +741,16 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
-				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
+
+				FFF8E149249C9FAA58A1FE26 /* TrackpadCursorWindowTargeter.swift */,
+				CE73798C99178A7D2C795B20 /* TrackpadExclusiveGestureCapture.swift */,
+				185B1648D8755B98CB8447C1 /* TrackpadExclusiveGestureGate.swift */,
+				8AC15B4DDE354A6C5CBBA963 /* TrackpadGestureManager.swift */,
+				D0D323F9B9464E88A6A04217 /* TrackpadGestureRecognizer.swift */,
+				1BEF255ED964E51837C512D9 /* TrackpadGestureRuntime.swift */,
+				1EC3FCD3FD69B838BF7DF0F8 /* TrackpadGestureSettings.swift */,
+				0505EACB6F038CD71393F60B /* TrackpadGestureSettingsView.swift */,
+				853E7C2444776C5C872F952D /* TrackpadMultitouchTouchSource.swift */,				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
 				98ED73AD3064567B0077BD10 /* Localizable.xcstrings */,
@@ -1162,7 +1189,16 @@
 				AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */,
 				AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */,
 				AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */,
-				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
+
+				E555FCA5811E655F6B5F68D2 /* TrackpadCursorWindowTargeter.swift in Sources */,
+				A86642097125624F4980D470 /* TrackpadExclusiveGestureCapture.swift in Sources */,
+				D7F83DAD773AFE3835AF959A /* TrackpadExclusiveGestureGate.swift in Sources */,
+				85CF32104911AB23208B09D6 /* TrackpadGestureManager.swift in Sources */,
+				FED0657F0669DE536ED1411A /* TrackpadGestureRecognizer.swift in Sources */,
+				66C65D31E34B044BA9914290 /* TrackpadGestureRuntime.swift in Sources */,
+				405DF73325AECCC516BF703C /* TrackpadGestureSettings.swift in Sources */,
+				BA1A3DB1A86ACB859A22C4EB /* TrackpadGestureSettingsView.swift in Sources */,
+				23A5CCF7BEA33F22A71397F7 /* TrackpadMultitouchTouchSource.swift in Sources */,				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				98ED703A305DB1180077BD10 /* BehaviorSettingsView.swift in Sources */,
 				98A009BF251253AB00CFBF0C /* BottomRightSixthCalculation.swift in Sources */,
 				6490B39527BF96880056C220 /* TopLeftEighthCalculation.swift in Sources */,

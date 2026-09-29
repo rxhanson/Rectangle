@@ -146,7 +146,7 @@ final class LayoutHelperManager {
         guard let requestToken = result.layoutHelperToken, requestToken == token,
               Self.enabled,
               result.source == .dragToSnap || (Defaults.layoutHelperKeyboard.enabled &&
-                  (result.source == .keyboardShortcut || result.source == .menuItem)),
+                  (result.source == .keyboardShortcut || result.source == .trackpadGesture || result.source == .menuItem)),
               !result.isFixedSize,
               result.windowElement.isMinimized != true else { return }
         let screenFrame = result.visibleFrameOfScreen.screenFlipped
@@ -524,7 +524,7 @@ final class LayoutHelperManager {
 
     /// Start preparation with an accepted action, while the real window moves.
     func prefetchForSnap(result: ResultParameters) {
-        guard (result.source == .dragToSnap || ((result.source == .keyboardShortcut || result.source == .menuItem) && Defaults.layoutHelperKeyboard.enabled)),
+        guard (result.source == .dragToSnap || ((result.source == .keyboardShortcut || result.source == .trackpadGesture || result.source == .menuItem) && Defaults.layoutHelperKeyboard.enabled)),
               result.layoutHelperToken == token, !result.isFixedSize else { return }
         prefetch(on: result.calcResult.screen, action: result.calcResult.resultingAction,
                  anchor: result.calcResult.initialRect, excluding: result.windowId, delay: 0)

@@ -190,7 +190,7 @@ final class SnappedWindowFitSession {
         clear()
         let action = result.calcResult.resultingAction
         guard Defaults.fitBesideSnappedWindows.enabled, !result.isFixedSize,
-              result.source == .dragToSnap || result.source == .keyboardShortcut || result.source == .menuItem,
+              result.source == .dragToSnap || result.source == .keyboardShortcut || result.source == .trackpadGesture || result.source == .menuItem,
               WindowSplitAxis(action: action) != nil, let id = result.windowId,
               let pid = result.windowElement.pid, let launch = WindowProcessIdentity.launchTime(for: pid),
               WindowAnimationGeometry.valid(frame),
