@@ -94,6 +94,25 @@ struct LayoutHelperPreviewLayout {
         min(min(size.width, size.height) / 8, min(size.width, size.height) < 320 ? 8 : 12)
     }
 
+    static func sourceSize(for imageSize: CGSize?, fallback: CGSize) -> CGSize {
+        guard let imageSize, imageSize.width.isFinite, imageSize.height.isFinite,
+              imageSize.width > 0, imageSize.height > 0 else { return fallback }
+        // Use the screenshot's aspect ratio without making Retina captures larger cards.
+        let extent = max(fallback.width, fallback.height)
+        let scale = extent / max(imageSize.width, imageSize.height)
+        return CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+    }
+
+    static func cardFrame(for imageSize: CGSize?, in slot: CGRect) -> CGRect {
+        guard let imageSize, imageSize.width.isFinite, imageSize.height.isFinite,
+              imageSize.width > 0, imageSize.height > 0,
+              slot.width > 0, slot.height > titleHeight else { return slot }
+        let scale = min(slot.width / imageSize.width, (slot.height - titleHeight) / imageSize.height)
+        let size = CGSize(width: imageSize.width * scale, height: imageSize.height * scale + titleHeight)
+        return CGRect(x: slot.midX - size.width / 2, y: slot.midY - size.height / 2,
+                      width: size.width, height: size.height)
+    }
+
     static func arrange(sizes: [CGSize], in viewport: CGSize, compact: Bool = false) -> Result {
         let width = max(1, viewport.width)
         let height = max(1, viewport.height)
@@ -396,11 +415,12 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         let orderedItems = waitsForPreviews
             ? items.filter { images[$0.id] != nil } + items.filter { images[$0.id] == nil }
             : items
-        let arrangement = LayoutHelperPreviewLayout.arrange(sizes: orderedItems.map(\.sourceSize), in: scroll.contentSize, compact: offerPermission)
+        let sizes = orderedItems.map { LayoutHelperPreviewLayout.sourceSize(for: images[$0.id]?.size, fallback: $0.sourceSize) }
+        let arrangement = LayoutHelperPreviewLayout.arrange(sizes: sizes, in: scroll.contentSize, compact: offerPermission)
         document.frame = NSRect(x: 0, y: 0, width: scroll.contentSize.width, height: arrangement.height)
         cards = zip(orderedItems, arrangement.frames).map { item, frame in
             let card = LayoutHelperCard(item: item)
-            card.frame = frame
+            card.layoutSlot = frame
             card.preview = images[item.id]
             card.isHidden = waitsForPreviews && card.preview == nil
             card.target = self
@@ -451,13 +471,13 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     private func reveal(_ card: LayoutHelperCard) {
         guard card.isHidden else { return }
         // Reserve the next unopened slot without moving cards already on screen.
-        // Images remain aspect fitted when a ready card takes a different slot.
+        // Fit the card itself to the screenshot before its entrance begins.
         if let destination = cards.firstIndex(where: { $0.isHidden }),
            let source = cards.firstIndex(where: { $0 === card }), source != destination {
-            let slots = cards[destination...source].map(\.frame)
+            let slots = cards[destination...source].map(\.layoutSlot)
             cards.remove(at: source)
             cards.insert(card, at: destination)
-            for (offset, slot) in slots.enumerated() { cards[destination + offset].frame = slot }
+            for (offset, slot) in slots.enumerated() { cards[destination + offset].layoutSlot = slot }
         }
         card.isHidden = false
         card.layoutSubtreeIfNeeded()
@@ -710,7 +730,7 @@ private final class LayoutHelperPreviewContent: NSView {
         NSColor(srgbRed: dark ? 0.12 : 1, green: dark ? 0.12 : 1, blue: dark ? 0.12 : 1, alpha: 1).setFill()
         bounds.fill()
         if let image = preview ?? icon, image.size.width > 0, image.size.height > 0 {
-            let cap: CGFloat = preview == nil ? 48 / max(image.size.width, image.size.height) : 1
+            let cap: CGFloat = preview == nil ? 48 / max(image.size.width, image.size.height) : .greatestFiniteMagnitude
             let scale = min(bounds.width / image.size.width, bounds.height / image.size.height, cap)
             let size = NSSize(width: image.size.width * scale, height: image.size.height * scale)
             image.draw(in: NSRect(x: bounds.midX - size.width / 2, y: bounds.midY - size.height / 2,
@@ -743,11 +763,18 @@ private final class LayoutHelperCard: NSButton {
             needsDisplay = true
         }
     }
+    var layoutSlot = CGRect.zero {
+        didSet { updatePreviewFrame() }
+    }
+    private func updatePreviewFrame() {
+        frame = LayoutHelperPreviewLayout.cardFrame(for: artwork.preview?.size, in: layoutSlot)
+    }
     var preview: NSImage? {
         get { artwork.preview }
         set {
             artwork.setPreview(newValue, animated: !isHidden && window?.isVisible == true
                 && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion)
+            updatePreviewFrame()
         }
     }
     override var allowsVibrancy: Bool { false }
