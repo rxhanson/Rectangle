@@ -84,6 +84,18 @@ final class TrackpadGestureManager {
         observers.removeAll()
     }
 
+    /// Only the explicit off-to-on UI action chooses a finger count.
+    func setEnabledByUser(_ enabled: Bool) {
+        guard enabled != settings.enabled else { return }
+        var updated = settings
+        if enabled {
+            let occupied = TrackpadSystemGestures.occupiedFingerCounts()
+            updated.fingers = occupied.contains(4) && !occupied.contains(3) ? 3 : 4
+        }
+        updated.enabled = enabled
+        settings = updated
+    }
+
     func refreshStatus() {
         refresh(force: true)
     }

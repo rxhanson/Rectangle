@@ -211,6 +211,12 @@ final class BehaviorSettingsViewModel {
             if layoutHelper && !reloadingDefaults { LayoutHelperPermission.guideIfNeeded { [weak self] in self?.refreshPreviewPermission() } }
         }
     }
+    var layoutHelperTrackpad = true {
+        didSet {
+            Defaults.layoutHelperTrackpad.enabled = layoutHelperTrackpad
+            LayoutHelperManager.shared.cancel()
+        }
+    }
     var layoutHelperKeyboard = false {
         didSet {
             Defaults.layoutHelperKeyboard.enabled = layoutHelperKeyboard
@@ -285,6 +291,7 @@ final class BehaviorSettingsViewModel {
 
         layoutHelper = Defaults.layoutHelper.userEnabled
         layoutHelperKeyboard = Defaults.layoutHelperKeyboard.enabled
+        layoutHelperTrackpad = Defaults.layoutHelperTrackpad.enabled
         layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
         stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
         refreshPreviewPermission()
@@ -353,6 +360,7 @@ final class BehaviorSettingsViewModel {
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         layoutHelper = Defaults.layoutHelper.userEnabled
         layoutHelperKeyboard = Defaults.layoutHelperKeyboard.enabled
+        layoutHelperTrackpad = Defaults.layoutHelperTrackpad.enabled
         layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
         stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
         refreshPreviewPermission()

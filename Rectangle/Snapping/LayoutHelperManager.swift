@@ -138,6 +138,15 @@ final class LayoutHelperManager {
         return token
     }
 
+    static func allows(_ source: ExecutionSource) -> Bool {
+        switch source {
+        case .dragToSnap: return true
+        case .trackpadGesture: return Defaults.layoutHelperTrackpad.enabled
+        case .keyboardShortcut, .menuItem: return Defaults.layoutHelperKeyboard.enabled
+        default: return false
+        }
+    }
+
     func didSnap(result: ResultParameters, frame: CGRect) {
         WindowAnimationDiagnostics.event("helper-consider", fields: ["enabled": Defaults.layoutHelper.userEnabled,
             "keyboard": Defaults.layoutHelperKeyboard.enabled, "source": String(describing: result.source),
@@ -148,8 +157,7 @@ final class LayoutHelperManager {
         }
         guard let requestToken = result.layoutHelperToken, requestToken == token,
               Self.enabled,
-              result.source == .dragToSnap || (Defaults.layoutHelperKeyboard.enabled &&
-                  (result.source == .keyboardShortcut || result.source == .trackpadGesture || result.source == .menuItem)),
+              Self.allows(result.source),
               !result.isFixedSize,
               result.windowElement.isMinimized != true else { return }
         let screenFrame = result.visibleFrameOfScreen.screenFlipped
@@ -527,7 +535,7 @@ final class LayoutHelperManager {
 
     /// Start preparation with an accepted action, while the real window moves.
     func prefetchForSnap(result: ResultParameters) {
-        guard (result.source == .dragToSnap || ((result.source == .keyboardShortcut || result.source == .trackpadGesture || result.source == .menuItem) && Defaults.layoutHelperKeyboard.enabled)),
+        guard Self.allows(result.source),
               result.layoutHelperToken == token, !result.isFixedSize else { return }
         prefetch(on: result.calcResult.screen, action: result.calcResult.resultingAction,
                  anchor: result.calcResult.initialRect, excluding: result.windowId, delay: 0)

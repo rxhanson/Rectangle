@@ -473,6 +473,10 @@ struct BehaviorSettingsView: View {
                     }
                     Toggle("Keyboard and menu snaps", isOn: $viewModel.layoutHelperKeyboard)
                         .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
+                    Toggle("Trackpad gestures", isOn: $viewModel.layoutHelperTrackpad)
+                        .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled || !TrackpadGestureManager.shared.settings.enabled)
+                        .saturation(viewModel.layoutHelper && !viewModel.stageManagerEnabled && TrackpadGestureManager.shared.settings.enabled ? 1 : 0)
+                        .accessibilityIdentifier("layoutHelperTrackpad")
                     Toggle("Grids with eight or more cells", isOn: $viewModel.layoutHelperDenseGrids)
                         .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
                     if viewModel.layoutHelper {

@@ -40,6 +40,7 @@ class Defaults {
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let trackpadGestures = JSONDefault<TrackpadGestureSettings>(key: "trackpadGestures")
     static let layoutHelper = OptionalBoolDefault(key: "layoutHelper")
+    static let layoutHelperTrackpad = BoolDefault(key: "layoutHelperTrackpad", defaultValue: true)
     static let layoutHelperKeyboard = BoolDefault(key: "layoutHelperKeyboard")
     static let layoutHelperDenseGrids = BoolDefault(key: "layoutHelperDenseGrids")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
@@ -174,6 +175,7 @@ class Defaults {
         trackpadGestures,
         layoutHelper,
         layoutHelperKeyboard,
+        layoutHelperTrackpad,
         layoutHelperDenseGrids,
         almostMaximizeHeight,
         almostMaximizeWidth,

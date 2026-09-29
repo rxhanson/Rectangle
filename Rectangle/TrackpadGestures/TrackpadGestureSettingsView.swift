@@ -19,7 +19,8 @@ struct TrackpadGestureSettingsView: View {
             CustomDisclosureGroup {
                 VStack(alignment: .leading, spacing: 12) {
                     Divider()
-                    Toggle("Trackpad gestures", isOn: $manager.settings.enabled)
+                    Toggle("Trackpad gestures", isOn: Binding(
+                        get: { manager.settings.enabled }, set: { manager.setEnabledByUser($0) }))
                         .padding(.leading, 28)
                         .accessibilityIdentifier("trackpadGestures")
                     if showsWarning, let status = manager.status { warning(status) }
