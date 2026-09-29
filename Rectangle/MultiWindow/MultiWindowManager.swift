@@ -42,6 +42,12 @@ class MultiWindowManager {
         case .tileActiveApp:
             tileActiveAppWindowsOnScreen(windowElement: parameters.windowElement)
             return true
+        case .cycleStackedWindows:
+            StackCycleManager.cycle(forward: true, windowElement: parameters.windowElement)
+            return true
+        case .cycleStackedWindowsBackward:
+            StackCycleManager.cycle(forward: false, windowElement: parameters.windowElement)
+            return true
         default:
             return false
         }

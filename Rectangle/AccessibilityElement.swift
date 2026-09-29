@@ -420,6 +420,12 @@ class AccessibilityElement {
         wrappedElement.getValue(.windowIds) as? [CGWindowID]
     }
     
+    /// Asks the app to bring this window to the front of its own windows.
+    /// Setting AXMain alone does not do this in every app.
+    func raise() {
+        AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
+    }
+
     func bringToFront(force: Bool = false) {
         if isMainWindow != true {
             isMainWindow = true
