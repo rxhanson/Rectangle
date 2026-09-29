@@ -467,27 +467,42 @@ struct BehaviorSettingsView: View {
                         Toggle("Layout Helper", isOn: $viewModel.layoutHelper)
                             .disabled(viewModel.stageManagerEnabled)
                             .accessibilityIdentifier("layoutHelper")
-                        Text("Layout Helper will be disabled when Stage Manager is enabled.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        if viewModel.stageManagerEnabled {
+                            Text("Layout Helper is unavailable while Stage Manager is enabled.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
-                    Toggle("Keyboard and menu snaps", isOn: $viewModel.layoutHelperKeyboard)
-                        .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
-                    Toggle("Trackpad gestures", isOn: $viewModel.layoutHelperTrackpad)
-                        .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled || !TrackpadGestureManager.shared.settings.enabled)
-                        .saturation(viewModel.layoutHelper && !viewModel.stageManagerEnabled && TrackpadGestureManager.shared.settings.enabled ? 1 : 0)
-                        .accessibilityIdentifier("layoutHelperTrackpad")
-                    Toggle("Grids with eight or more cells", isOn: $viewModel.layoutHelperDenseGrids)
-                        .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Show Layout Helper for")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 12) {
+                            Toggle("Keyboard and menu snaps", isOn: $viewModel.layoutHelperKeyboard)
+                                .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
+                            Toggle("Trackpad gestures", isOn: $viewModel.layoutHelperTrackpad)
+                                .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled || !TrackpadGestureManager.shared.settings.enabled)
+                                .saturation(viewModel.layoutHelper && !viewModel.stageManagerEnabled && TrackpadGestureManager.shared.settings.enabled ? 1 : 0)
+                                .accessibilityIdentifier("layoutHelperTrackpad")
+                            Toggle("Grids with eight or more cells", isOn: $viewModel.layoutHelperDenseGrids)
+                                .disabled(!viewModel.layoutHelper || viewModel.stageManagerEnabled)
+                        }
+                    }
                     if viewModel.layoutHelper {
                         if !LayoutHelperPermission.previewsSupported {
                             Text("Window thumbnails require macOS 14 or later.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         } else if viewModel.previewPermissionAllowed {
                             Text("Window thumbnails enabled.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         } else {
                             Button("Enable previews…") { viewModel.enablePreviews() }
                                 .disabled(viewModel.stageManagerEnabled)
                             Text("Thumbnails need Screen Recording access. Icons and titles work without it.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
@@ -502,20 +517,180 @@ struct BehaviorSettingsView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel("Layout Helper example")
                     .popover(isPresented: $showingLayoutHelperExample, arrowEdge: .trailing) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Image("LayoutHelperExample")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .accessibilityLabel("Layout Helper example: Notes is snapped on the left; choose Research or Tasks to fill the right side.")
-                            Text("Snap a window, then choose another to fill the remaining space. Thumbnails need Screen Recording access.")
-                        }
-                        .padding(16)
-                        .frame(width: 592)
+                        LayoutHelperExampleView()
                     }
                 }
             }
         }
+    }
+}
+
+// MARK: - Layout Helper Example
+/// A self-contained illustration. No screen capture, input injection, or real window movement.
+private struct LayoutHelperExampleView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var scene = Scene()
+
+    private struct Scene {
+        var notes = CGRect(x: 0.27, y: 0.20, width: 0.49, height: 0.65)
+        var research = CGRect(x: 0.58, y: 0.11, width: 0.33, height: 0.35)
+        var pointer = CGPoint(x: 0.68, y: 0.76)
+        var pointerOpacity = 1.0
+        var pressOpacity = 0.0
+        var previewOpacity = 0.0
+        var helperOpacity = 0.0
+        var researchOpacity = 0.0
+        var tasksOpacity = 0.0
+        var hoverOpacity = 0.0
+    }
+
+    private let left = CGRect(x: 0.02, y: 0.04, width: 0.47, height: 0.92)
+    private let right = CGRect(x: 0.51, y: 0.04, width: 0.47, height: 0.92)
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Snap a window. Choose its neighbor.")
+                .font(.system(size: 13)).foregroundStyle(.secondary)
+            GeometryReader { geometry in
+                ZStack(alignment: .topLeading) {
+                    LinearGradient(
+                        colors: colorScheme == .dark
+                            ? [Color(red: 0.20, green: 0.24, blue: 0.33), Color(red: 0.20, green: 0.29, blue: 0.27)]
+                            : [Color(red: 0.88, green: 0.90, blue: 0.95), Color(red: 0.82, green: 0.89, blue: 0.87)],
+                        startPoint: .topTrailing, endPoint: .bottomLeading)
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(.regularMaterial)
+                        .modifier(ExamplePlacement(rect: right, size: geometry.size))
+                        .opacity(scene.helperOpacity)
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(.regularMaterial)
+                        .overlay(RoundedRectangle(cornerRadius: 9, style: .continuous)
+                            .strokeBorder(.white.opacity(0.6), lineWidth: 1))
+                        .shadow(color: .black.opacity(0.10), radius: 5, y: 2)
+                        .modifier(ExamplePlacement(rect: left, size: geometry.size))
+                        .opacity(scene.previewOpacity)
+                    window("Notes", accent: .blue)
+                        .modifier(ExamplePlacement(rect: scene.notes, size: geometry.size))
+                    window("Research", accent: .blue)
+                        .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(.blue.opacity(scene.hoverOpacity * 0.6), lineWidth: 1.5))
+                        .modifier(ExamplePlacement(rect: scene.research, size: geometry.size))
+                        .opacity(scene.researchOpacity)
+                    window("Tasks", accent: .green)
+                        .modifier(ExamplePlacement(
+                            rect: CGRect(x: 0.58, y: 0.54, width: 0.33, height: 0.35), size: geometry.size))
+                        .opacity(scene.tasksOpacity)
+                    ZStack(alignment: .topLeading) {
+                        Circle().fill(.primary.opacity(0.12))
+                            .overlay(Circle().strokeBorder(.primary.opacity(0.15), lineWidth: 1))
+                            .frame(width: 25, height: 25)
+                            .offset(x: -10, y: -10)
+                            .opacity(scene.pressOpacity)
+                        Image(nsImage: NSCursor.arrow.image)
+                    }
+                    .fixedSize()
+                    .offset(x: geometry.size.width * scene.pointer.x,
+                            y: geometry.size.height * scene.pointer.y)
+                    .opacity(scene.pointerOpacity)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+            }
+            .frame(height: 291)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Drag Notes to the left edge, then choose Research in Layout Helper to fill the right side.")
+        }
+        .padding(20)
+        .frame(width: 520)
+        .task(id: reduceMotion) { await demonstrate() }
+    }
+
+    private struct ExamplePlacement: ViewModifier {
+        let rect: CGRect
+        let size: CGSize
+        func body(content: Content) -> some View {
+            content.frame(width: size.width * rect.width, height: size.height * rect.height)
+                .offset(x: size.width * rect.minX, y: size.height * rect.minY)
+        }
+    }
+
+    private func window(_ title: LocalizedStringKey, accent: Color) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 7) {
+                HStack(spacing: 3) {
+                    ForEach(0..<3) { _ in
+                        Circle().fill(.secondary.opacity(0.4)).frame(width: 4, height: 4)
+                    }
+                }
+                Text(title).font(.system(size: 11)).lineLimit(1)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 9).frame(height: 25)
+            .background(.primary.opacity(0.025))
+            GeometryReader { geometry in
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(0..<4) { index in
+                        Capsule()
+                            .fill(index == 0 ? accent.opacity(0.55) : Color.secondary.opacity(0.12))
+                            .frame(width: max(0, geometry.size.width * (index == 0 ? 0.54 : 0.85)),
+                                   height: index == 0 ? 5 : 4)
+                    }
+                }
+            }
+            .padding(12)
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .shadow(color: .black.opacity(0.12), radius: 6, y: 3)
+    }
+
+    @MainActor private func demonstrate() async {
+        scene = Scene()
+        if reduceMotion {
+            scene.notes = left
+            scene.research = right
+            scene.researchOpacity = 1
+            scene.pointerOpacity = 0
+            return
+        }
+        // The approved 7.2-second fixture at 1.6x speed. One finite sequence, no polling.
+        let duration = 7.2 / 1.6
+        let cues: [(start: Double, length: Double, update: () -> Void)] = [
+            (0, 0.13, { scene.pointer = CGPoint(x: 0.45, y: 0.23) }),
+            (0.15, 0.03, { scene.pressOpacity = 1 }),
+            (0.19, 0.18, {
+                scene.pointer = CGPoint(x: 0.03, y: 0.23)
+                scene.notes.origin.x = -0.15
+            }),
+            (0.31, 0.06, { scene.previewOpacity = 1 }),
+            (0.40, 0.03, { scene.pressOpacity = 0 }),
+            (0.42, 0.09, { scene.notes = left }),
+            (0.49, 0.03, { scene.previewOpacity = 0 }),
+            (0.50, 0.06, { scene.helperOpacity = 1; scene.researchOpacity = 1 }),
+            (0.52, 0.06, { scene.tasksOpacity = 1 }),
+            (0.52, 0.12, { scene.pointer = CGPoint(x: 0.74, y: 0.28) }),
+            (0.62, 0.04, { scene.hoverOpacity = 1 }),
+            (0.68, 0.02, { scene.pressOpacity = 1 }),
+            (0.70, 0.05, { scene.pressOpacity = 0 }),
+            (0.72, 0.12, { scene.research = right }),
+            (0.72, 0.07, { scene.tasksOpacity = 0 }),
+            (0.73, 0.10, { scene.helperOpacity = 0 }),
+            (0.74, 0.03, { scene.hoverOpacity = 0 }),
+            (0.79, 0.08, { scene.pointerOpacity = 0 })
+        ]
+        let clock = ContinuousClock()
+        let start = clock.now
+        do {
+            for cue in cues {
+                try await clock.sleep(until: start.advanced(by: .seconds(cue.start * duration)))
+                try Task.checkCancellation()
+                withAnimation(.timingCurve(0.25, 0.1, 0.25, 1, duration: cue.length * duration)) {
+                    cue.update()
+                }
+            }
+        } catch is CancellationError {
+            // Closing the popover cancels pending cues; reopening starts from the beginning.
+        } catch { }
     }
 }
 

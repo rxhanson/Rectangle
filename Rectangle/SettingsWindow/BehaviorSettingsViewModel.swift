@@ -232,6 +232,7 @@ final class BehaviorSettingsViewModel {
     var stageManagerEnabled = false
     var previewPermissionAllowed = false
     private var stageObservation: NSObject?
+    private var previewPermissionObservers: [NSObjectProtocol] = []
 
     func refreshPreviewPermission() { previewPermissionAllowed = LayoutHelperPermission.previewsAllowed }
     func enablePreviews() {
@@ -294,12 +295,20 @@ final class BehaviorSettingsViewModel {
         layoutHelperTrackpad = Defaults.layoutHelperTrackpad.enabled
         layoutHelperDenseGrids = Defaults.layoutHelperDenseGrids.enabled
         stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
-        refreshPreviewPermission()
         reloadingDefaults = false
         setupObservers()
+        refreshPreviewPermission()
+    }
+
+    deinit {
+        for observer in previewPermissionObservers { NotificationCenter.default.removeObserver(observer) }
     }
 
     private func setupObservers() {
+        for name in [LayoutHelperPermission.changed, NSApplication.didBecomeActiveNotification] {
+            previewPermissionObservers.append(NotificationCenter.default.addObserver(forName: name,
+                object: nil, queue: .main) { [weak self] _ in self?.refreshPreviewPermission() })
+        }
         stageObservation = StageUtil.observeEnabled { [weak self] in
             self?.stageManagerEnabled = StageUtil.stageCapable && StageUtil.stageEnabled
         }
