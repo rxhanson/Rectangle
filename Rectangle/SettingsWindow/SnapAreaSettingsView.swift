@@ -30,7 +30,7 @@ class SnapAreaSettingsViewController: NSViewController {
 @Observable
 final class SnapAreaViewModel {
     // General Settings
-    var windowSnapping: Bool = true {
+    var windowSnapping: Bool {
         didSet {
             guard oldValue != windowSnapping else { return }
             Defaults.windowSnapping.enabled = windowSnapping
@@ -41,63 +41,82 @@ final class SnapAreaViewModel {
         }
     }
     
-    var unsnapRestore: Bool = true {
+    var unsnapRestore: Bool {
         didSet {
+            guard oldValue != unsnapRestore else { return }
             Defaults.unsnapRestore.enabled = unsnapRestore
         }
     }
     
-    var hapticFeedback: Bool = false {
+    var hapticFeedback: Bool {
         didSet {
+            guard oldValue != hapticFeedback else { return }
             Defaults.hapticFeedbackOnSnap.enabled = hapticFeedback
         }
     }
     
-    var animateFootprint: Bool = true {
+    var animateFootprint: Bool {
         didSet {
-            let val: Float = animateFootprint ? 0.75 : 0.0
-            Defaults.footprintAnimationDurationMultiplier.value = val
+            guard oldValue != animateFootprint else { return }
+            if animateFootprint {
+                if Defaults.footprintAnimationDurationMultiplier.value == 0.0 {
+                    Defaults.footprintAnimationDurationMultiplier.value = 0.75
+                }
+            } else {
+                Defaults.footprintAnimationDurationMultiplier.value = 0.0
+            }
         }
     }
     
-    var footprintBlur: Bool = false {
+    var footprintBlur: Bool {
         didSet {
+            guard oldValue != footprintBlur else { return }
             Defaults.footprintBlur.enabled = footprintBlur
         }
     }
     
-    var blurAppearance: BlurAppearance = .system {
+    var blurAppearance: BlurAppearance {
         didSet {
+            guard oldValue != blurAppearance else { return }
             Defaults.blurAppearance.value = blurAppearance
         }
     }
     
-    var missionControlDraggingDisabled: Bool = false {
+    var missionControlDraggingDisabled: Bool {
         didSet {
+            guard oldValue != missionControlDraggingDisabled else { return }
             Defaults.missionControlDragging.enabled = !missionControlDraggingDisabled
             Notification.Name.missionControlDragging.post(object: !missionControlDraggingDisabled)
         }
     }
     
     // Displays / UI State
-    var isPortraitConnected: Bool = NSScreen.portraitDisplayConnected
+    var isPortraitConnected: Bool
     
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        syncDefaults()
+        self.windowSnapping = !Defaults.windowSnapping.userDisabled
+        self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
+        self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
+        self.footprintBlur = Defaults.footprintBlur.enabled
+        self.blurAppearance = Defaults.blurAppearance.value
+        self.missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
+        self.isPortraitConnected = NSScreen.portraitDisplayConnected
+        
         setupNotificationObservers()
     }
     
     func syncDefaults() {
-        windowSnapping = !Defaults.windowSnapping.userDisabled
-        unsnapRestore = !Defaults.unsnapRestore.userDisabled
-        hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
-        animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
-        footprintBlur = Defaults.footprintBlur.enabled
-        blurAppearance = Defaults.blurAppearance.value
-        missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
-        isPortraitConnected = NSScreen.portraitDisplayConnected
+        self.windowSnapping = !Defaults.windowSnapping.userDisabled
+        self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
+        self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
+        self.footprintBlur = Defaults.footprintBlur.enabled
+        self.blurAppearance = Defaults.blurAppearance.value
+        self.missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
+        self.isPortraitConnected = NSScreen.portraitDisplayConnected
     }
     
     private func setupNotificationObservers() {
