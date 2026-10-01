@@ -93,10 +93,14 @@ class ChangeSizeCalculation: WindowCalculation, ChangeWindowDimensionCalculation
 
 
         if againstAllScreenEdges(windowRect: window.rect, visibleFrameOfScreen: visibleFrameOfScreen) && (sizeOffset < 0) {
-            resizedWindowRect.size.width = params.window.rect.width + sizeOffset
-            resizedWindowRect.origin.x = params.window.rect.origin.x - floor(sizeOffset / 2.0)
-            resizedWindowRect.size.height = params.window.rect.height + sizeOffset
-            resizedWindowRect.origin.y = params.window.rect.origin.y - floor(sizeOffset / 2.0)
+            if [.smaller, .smallerWidth].contains(params.action) {
+                resizedWindowRect.size.width = params.window.rect.width + sizeOffset
+                resizedWindowRect.origin.x = params.window.rect.origin.x - floor(sizeOffset / 2.0)
+            }
+            if [.smaller, .smallerHeight].contains(params.action) {
+                resizedWindowRect.size.height = params.window.rect.height + sizeOffset
+                resizedWindowRect.origin.y = params.window.rect.origin.y - floor(sizeOffset / 2.0)
+            }
         }
         
         if [.smaller, .smallerWidth, .smallerHeight].contains(params.action), resizedWindowRectIsTooSmall(windowRect: resizedWindowRect, visibleFrameOfScreen: visibleFrameOfScreen) {
