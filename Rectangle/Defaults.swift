@@ -306,6 +306,7 @@ class OptionalBoolDefault: Default {
     
     var userDisabled: Bool { enabled == false }
     var userEnabled: Bool { enabled == true }
+    var userModified: Bool { enabled != nil }
     var notSet: Bool { enabled == nil }
     
     init(key: String) {

@@ -82,15 +82,17 @@ final class SnapAreaViewModel {
         }
     }
     
-    var missionControlDraggingDisabled: Bool {
+    var preventMissionControlDragging: Bool {
         didSet {
-            guard oldValue != missionControlDraggingDisabled else { return }
-            Defaults.missionControlDragging.enabled = !missionControlDraggingDisabled
-            Notification.Name.missionControlDragging.post(object: !missionControlDraggingDisabled)
+            guard oldValue != preventMissionControlDragging else { return }
+            Defaults.missionControlDragging.enabled = !preventMissionControlDragging
+            Notification.Name.missionControlDragging.post(object: !preventMissionControlDragging)
         }
     }
     
-    // Displays / UI State
+    
+    // UI State
+    var showMissionControlDragging: Bool
     var isPortraitConnected: Bool
     
     private var cancellables = Set<AnyCancellable>()
@@ -102,7 +104,8 @@ final class SnapAreaViewModel {
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
         self.blurAppearance = Defaults.blurAppearance.value
-        self.missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
+        self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
+        self.showMissionControlDragging = Defaults.missionControlDragging.userModified
         self.isPortraitConnected = NSScreen.portraitDisplayConnected
         
         setupNotificationObservers()
@@ -115,7 +118,8 @@ final class SnapAreaViewModel {
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
         self.blurAppearance = Defaults.blurAppearance.value
-        self.missionControlDraggingDisabled = Defaults.missionControlDragging.userDisabled
+        self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
+        self.showMissionControlDragging = Defaults.missionControlDragging.userModified
         self.isPortraitConnected = NSScreen.portraitDisplayConnected
     }
     
@@ -192,8 +196,8 @@ struct SnapAreaSettingsView: View {
                     }
                 }
                 
-                if viewModel.missionControlDraggingDisabled {
-                    Toggle("Mission Control dragging", isOn: $viewModel.missionControlDraggingDisabled)
+                if viewModel.showMissionControlDragging {
+                    Toggle("Prevent Mission Control from triggering while dragging", isOn: $viewModel.preventMissionControlDragging)
                 }
             }
             
