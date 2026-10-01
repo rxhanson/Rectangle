@@ -432,7 +432,10 @@ class AccessibilityElement {
 
 extension AccessibilityElement {
     static func getFrontApplicationElement() -> AccessibilityElement? {
-        guard let app = NSWorkspace.shared.frontmostApplication else { return nil }
+        guard let app = NSWorkspace.shared.frontmostApplication,
+              app.processIdentifier != -1 else {
+            return nil
+        }
         return AccessibilityElement(app.processIdentifier)
     }
 
@@ -441,17 +444,55 @@ extension AccessibilityElement {
     }
     
     static func getFrontWindowElement() -> AccessibilityElement? {
-        guard let appElement = getFrontApplicationElement() else {
-            Logger.log("Failed to find the application that currently has focus.")
+        
+        if let appElement = getFrontApplicationElement() {
+            if let focusedWindowElement = appElement.focusedWindowElement {
+                return focusedWindowElement
+            }
+            if let firstWindowElement = appElement.windowElements?.first {
+                return firstWindowElement
+            }
+        }
+        
+        if let fallbackWindow = getSystemWideFocusedWindowElement() {
+            return fallbackWindow
+        }
+        
+        Logger.log("Failed to find frontmost window.")
+        return nil
+    }
+    
+    private static func getSystemWideFocusedWindowElement() -> AccessibilityElement? {
+        let systemWideElement = AXUIElementCreateSystemWide()
+        var focusedUIElement: CFTypeRef?
+        
+        // Get the currently focused UI element system-wide
+        let result = AXUIElementCopyAttributeValue(
+            systemWideElement,
+            kAXFocusedUIElementAttribute as CFString,
+            &focusedUIElement
+        )
+        
+        guard result == .success, let focusedElement = focusedUIElement else {
             return nil
         }
-        if let focusedWindowElement = appElement.focusedWindowElement {
-            return focusedWindowElement
+        
+        let focusedAX = focusedElement as! AXUIElement
+        
+        // Check if the focused element is already a window
+        var role: CFTypeRef?
+        if AXUIElementCopyAttributeValue(focusedAX, kAXRoleAttribute as CFString, &role) == .success,
+           (role as? String) == (kAXWindowRole as String) {
+            return AccessibilityElement(focusedAX)
         }
-        if let firstWindowElement = appElement.windowElements?.first {
-            return firstWindowElement
+        
+        // If it's a child element (e.g., button, text field), traverse up to its window
+        var windowElement: CFTypeRef?
+        if AXUIElementCopyAttributeValue(focusedAX, kAXWindowAttribute as CFString, &windowElement) == .success,
+           let window = windowElement {
+            return AccessibilityElement(window as! AXUIElement)
         }
-        Logger.log("Failed to find frontmost window.")
+        
         return nil
     }
     
