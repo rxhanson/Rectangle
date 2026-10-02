@@ -202,11 +202,6 @@ class AccessibilityElement {
     }
     
 
-
-
-
-
-
     func readAnimationGeometry() -> Bool {
         guard let cache = animationReads else { return false }
         var values: CFArray?
@@ -329,9 +324,6 @@ class AccessibilityElement {
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool {
         setAnimationFrame(frame, resizeOnly: resizeOnly, positionFirst: false)
     }
-
-    /// A divider acknowledgment step must not resend an already accepted size.
-
 
     func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false, positionFirst: Bool) -> Bool {
         if positionFirst, !resizeOnly, writeAnimationPosition(frame.origin) != .success { return false }
@@ -721,10 +713,6 @@ class AccessibilityElement {
             app.activate()
         }
     }
-
-    /// Select one window before activating its application. Front-window-only
-    /// activation preserves the stacking order of the application's siblings.
-
 
 }
 

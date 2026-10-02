@@ -6907,3 +6907,134 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
         (object as AnyObject?) === self
     }
 }
+
+
+final class WindowAnimationSettlementRoundingTests: XCTestCase {
+    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
+
+    private func target(gap: Float = 7) -> CGRect {
+        GapCalculation.applyGaps(CGRect(x: 500, y: 0, width: 500, height: 800),
+                                 sharedEdges: .left, gapSize: gap)
+    }
+
+    private func placement(gap: CGFloat = 7) -> WindowAnimationPlacement {
+        WindowAnimationPlacement(screenFrame: screen, sharedEdges: .right,
+                                 constrainToScreen: true, gap: gap)
+    }
+
+    func testOddGapCompletesAfterOneRoundedPositionWrite() {
+        let target = target()
+        let actual = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: actual, server: actual, destination: target,
+                                       placement: placement(), origin: actual, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected an exact final position write") }
+        XCTAssertEqual(requested.origin, target.origin)
+        let second = settlement.observe(ax: actual, server: actual, destination: target,
+                                        placement: placement(), origin: actual, at: 2.0 / 60)
+        guard case .complete(let achieved) = second else { return XCTFail("Rounded placement must not enter a retry loop") }
+        XCTAssertEqual(achieved, actual)
+    }
+
+    func testFractionalGapAcceptsHalfPointQuantizationAfterExactWrite() {
+        let target = target(gap: 7.5)
+        let actual = CGRect(x: 504, y: 7.5, width: 489, height: 785)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        _ = settlement.observe(ax: actual, server: actual, destination: target,
+                               placement: placement(gap: 7.5), origin: actual, at: 1.0 / 60)
+        let result = settlement.observe(ax: actual, server: actual, destination: target,
+                                        placement: placement(gap: 7.5), origin: actual, at: 2.0 / 60)
+        guard case .complete(let achieved) = result else { return XCTFail("Expected a verified rounded placement") }
+        XCTAssertEqual(achieved, actual)
+    }
+
+    func testExactFractionalPositionIsUsedWhenAppAcceptsIt() {
+        let target = target()
+        let before = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: before, server: before, destination: target,
+                                       placement: placement(), origin: before, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected exact alignment") }
+        let result = settlement.observe(ax: requested, server: requested, destination: target,
+                                        placement: placement(), origin: before, at: 2.0 / 60)
+        guard case .complete(let achieved) = result else { return XCTFail("Expected the accepted exact position") }
+        XCTAssertEqual(achieved.origin, target.origin)
+    }
+
+    func testDisagreeingServerGeometryDoesNotEstablishRounding() {
+        let target = target()
+        let actual = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: actual, server: actual, destination: target,
+                                       placement: placement(), origin: actual, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected exact alignment") }
+        let result = settlement.observe(ax: actual, server: requested, destination: target,
+                                        placement: placement(), origin: actual, at: 2.0 / 60)
+        if case .complete = result { XCTFail("Different AX and server positions can still be in flight") }
+    }
+
+    func testIntegerTargetStillRequiresExactPosition() {
+        let target = CGRect(x: 503, y: 7, width: 490, height: 786)
+        let actual = target.offsetBy(dx: 1, dy: 0)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        for step in 1...3 {
+            let result = settlement.observe(ax: actual, server: actual, destination: target,
+                                            placement: placement(), origin: actual, at: Double(step) / 60)
+            if case .complete = result { XCTFail("A full-point residual must still be corrected") }
+        }
+    }
+}
+
+final class WindowAnimationRequestCancellationTests: XCTestCase {
+    func testCancellationRunsCleanupOnceAfterInvalidatingWrites() {
+        var cancellations = 0
+        var request: WindowAnimationRequest!
+        request = WindowAnimationRequest(cancellation: {
+            XCTAssertFalse(request.isCurrent)
+            cancellations += 1
+        })
+        XCTAssertTrue(request.isCurrent)
+        request.cancel()
+        request.cancel()
+        request.complete()
+        XCTAssertEqual(cancellations, 1)
+    }
+
+    func testCompletedRequestDoesNotRunCancellationCleanup() {
+        var cancellations = 0
+        let request = WindowAnimationRequest(cancellation: { cancellations += 1 })
+        request.complete()
+        request.cancel()
+        XCTAssertFalse(request.isCurrent)
+        XCTAssertEqual(cancellations, 0)
+    }
+
+    func testCancelledPlacementDoesNotCallOrdinaryCompletion() {
+        var completions = 0
+        var dismissals = 0
+        let parameters = ExecutionParameters(.rightHalf, source: .dragToSnap,
+            completion: { completions += 1 }, cancellation: { dismissals += 1 })
+        let request = WindowAnimationRequest(cancellation: parameters.cancellation)
+        request.cancel()
+        XCTAssertEqual(dismissals, 1)
+        XCTAssertEqual(completions, 0)
+    }
+
+    func testSupersededPendingWriteRunsOnlyCancellationCleanup() {
+        let executor = WindowAnimationExecutor()
+        let workerStarted = expectation(description: "Worker is occupied")
+        let cancelled = expectation(description: "Pending placement was cancelled")
+        let release = DispatchSemaphore(value: 0)
+        executor.performPlacementWork {
+            workerStarted.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+        }
+        wait(for: [workerStarted], timeout: 1)
+        var completions = 0
+        executor.afterPendingWrites(cancellation: { cancelled.fulfill() }) { completions += 1 }
+        executor.cancel()
+        release.signal()
+        wait(for: [cancelled], timeout: 1)
+        XCTAssertEqual(completions, 0)
+    }
+}

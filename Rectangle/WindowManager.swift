@@ -82,7 +82,7 @@ class WindowManager {
                 let currentExecutionID = executionID
                 completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
+                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
                         defer { parameters.completion?() }
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
@@ -90,7 +90,7 @@ class WindowManager {
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
-                    windowAnimator.afterPendingWrites { [weak self] in
+                    windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) { [weak self] in
                         defer { parameters.completion?() }
                         guard self?.executionID == currentExecutionID else { return }
                         frontmostWindowElement.setFrame(restoreRect)
@@ -123,8 +123,6 @@ class WindowManager {
         let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
         
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
-        let previousAction = lastRectangleAction
-        let previousRestore = windowId.flatMap { AppDelegate.windowHistory.restoreRects[$0] }
         
         let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
         
@@ -198,7 +196,7 @@ class WindowManager {
             }
         }
 
-        var resultParameters = ResultParameters(windowId: windowId,
+        let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
                                                 calcResult: calcResult,
@@ -313,12 +311,13 @@ class WindowManager {
             windowAnimator.animate(frontmostWindowElement,
                                    to: calcResult.rect.screenFlipped,
                                    releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { frame in
+                                   profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard,
+                                   cancellation: parameters.cancellation) { frame in
                 completeMove(!frame.isNull)
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
-            windowAnimator.afterPendingWrites {
+            windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) {
                 completeMove(false)
             }
         }
@@ -441,8 +440,10 @@ struct ExecutionParameters {
     let windowId: CGWindowID?
     let source: ExecutionSource
     let completion: (() -> Void)?
+    // Cancellation cleanup must not run placement completion or fallback work.
+    let cancellation: (() -> Void)?
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, completion: (() -> Void)? = nil) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
@@ -450,6 +451,7 @@ struct ExecutionParameters {
         self.windowId = windowId
         self.source = source
         self.completion = completion
+        self.cancellation = cancellation
     }
 }
 

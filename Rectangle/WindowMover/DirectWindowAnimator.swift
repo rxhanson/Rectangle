@@ -1153,14 +1153,31 @@ private final class WindowAnimationDisplayLinkTarget: NSObject {
 
 final class WindowAnimationRequest {
     private let lock = NSLock()
-    private var cancelled = false
+    private var terminated = false
+    private var cancellation: (() -> Void)?
     private var changed = false
     private var resized = false
     func geometryChanged(resized: Bool = false) { lock.lock(); changed = true; self.resized = self.resized || resized; lock.unlock() }
     func consumeGeometryChange() -> Bool { lock.lock(); defer { lock.unlock() }; let result = changed; changed = false; return result }
     func consumeResizeChange() -> Bool { lock.lock(); defer { lock.unlock() }; let result = resized; resized = false; return result }
-    func cancel() { lock.lock(); cancelled = true; lock.unlock() }
-    var isCurrent: Bool { lock.lock(); defer { lock.unlock() }; return !cancelled }
+    init(cancellation: (() -> Void)? = nil) { self.cancellation = cancellation }
+    // Terminal callbacks run on main, separately from placement completion.
+    func cancel() {
+        lock.lock()
+        guard !terminated else { lock.unlock(); return }
+        terminated = true
+        let callback = cancellation
+        cancellation = nil
+        lock.unlock()
+        callback?()
+    }
+    func complete() {
+        lock.lock()
+        terminated = true
+        cancellation = nil
+        lock.unlock()
+    }
+    var isCurrent: Bool { lock.lock(); defer { lock.unlock() }; return !terminated }
 }
 
 struct WindowAnimationPacing {
@@ -1362,12 +1379,12 @@ final class WindowAnimationExecutor {
         if let active, active.element == element { return active.destination }
         return retiring.last(where: { $0.0 == element })?.1
     }
-    func afterPendingWrites(_ body: @escaping () -> Void) {
+    func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
         if active == nil && retiring.isEmpty && !tickPending && externalWork == 0 { body(); return }
         let expected = generation
         queue.async { [self] in
             DispatchQueue.main.async { [self] in
-                guard generation == expected else { return }
+                guard generation == expected else { cancellation?(); return }
                 body()
             }
         }
@@ -1386,10 +1403,10 @@ final class WindowAnimationExecutor {
     func cancel() {
         generation &+= 1
         guard let previous = active else { return }
-        previous.request.cancel()
         retiring.append((previous.element, previous.destination, previous.request))
         active = nil
         stopDisplay()
+        previous.request.cancel()
         let drained = retiring.map { $0.2 }
         queue.async { [self] in
             core.cancel(); workerWindow = nil
@@ -1405,7 +1422,7 @@ final class WindowAnimationExecutor {
         queue.async { [self] in
             guard current.request.isCurrent else { return }
             core.finish()
-            DispatchQueue.main.async { [self] in clear(current.request) }
+            DispatchQueue.main.async { [self] in clear(current.request, cancelled: true) }
         }
     }
     func mouseDown() { cancel() }
@@ -1414,7 +1431,7 @@ final class WindowAnimationExecutor {
                  duration: TimeInterval, resizeOnly: Bool, releasedSnap: Bool,
                  placement: WindowAnimationPlacement?, profile: WindowAnimationProfile,
                  offset: @escaping () -> CGPoint, curve: @escaping (Double) -> CGFloat,
-                 completion: @escaping (CGRect) -> Void) {
+                 cancellation: (() -> Void)? = nil, completion: @escaping (CGRect) -> Void) {
         guard WindowAnimator.enabled, let pid = element.pid, let id = element.windowId,
               let launch = WindowProcessIdentity.launchTime(for: pid) else { completion(.null); return }
         generation &+= 1
@@ -1424,7 +1441,7 @@ final class WindowAnimationExecutor {
             retiring.append((previous.element, previous.destination, previous.request))
         }
         let drained = retiring.map { $0.2 }
-        let request = WindowAnimationRequest()
+        let request = WindowAnimationRequest(cancellation: cancellation)
         let key = WindowAnimationResponseKey(pid: pid, window: id, launch: launch)
         let response = responses.entry(for: key, at: ProcessInfo.processInfo.systemUptime)
         active = Active(element: element, destination: destination, request: request, offset: offset, pid: pid)
@@ -1490,10 +1507,12 @@ final class WindowAnimationExecutor {
                 }
         }
     }
-    private func clear(_ request: WindowAnimationRequest) {
+    private func clear(_ request: WindowAnimationRequest, cancelled: Bool = false) {
         retiring.removeAll { $0.2 === request }
         guard active?.request === request else { return }
         active = nil; stopDisplay()
+        if cancelled { request.cancel() }
+        else { request.complete() }
     }
     private func tick(targetTimestamp: TimeInterval? = nil) {
         guard let current = active else { return }
@@ -1543,7 +1562,9 @@ final class WindowAnimationExecutor {
                 guard active?.request === current.request else { return }
                 pacing.observe(cost: movementCost); nextTick = now + pacing.interval * 0.9
                 if let key { responses.record(key, pacing: pacing, resizeCost: sizeCost, at: end) }
-                if finished { clear(current.request) }
+                // Normal completion was queued by the core before this block.
+                // A still-active request whose core stopped was cancelled instead.
+                if finished { clear(current.request, cancelled: true) }
             }
         }
     }

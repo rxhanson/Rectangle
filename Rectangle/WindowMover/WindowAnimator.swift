@@ -450,6 +450,7 @@ struct WindowAnimationSettlement {
     private var sizeRetries = 0
     private var alignment: Alignment?
     private var completionCandidate: CGRect?
+    private var lastAlignmentRequest: (frame: CGRect, observed: CGRect)?
     private var handoff: WindowAnimationHandoff.Evidence?
     private(set) var reusedHandoff = false
     private let alignmentTolerance: CGFloat
@@ -489,6 +490,17 @@ struct WindowAnimationSettlement {
         let sizeDiffers = abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1
         if !sizeDiffers, WindowAnimationGeometry.near(ax, destination, tolerance: alignmentTolerance) {
             return .complete(ax)
+        }
+        if let request = lastAlignmentRequest, !sizeDiffers || sizeRetries >= 2 {
+            let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
+            // Some apps quantize fractional gap coordinates. Accept that result
+            // only after an exact final position write leaves corroborated geometry unchanged.
+            if WindowAnimationGeometry.near(ax, server, tolerance: 0.001),
+               WindowAnimationGeometry.near(ax, request.observed, tolerance: 0.001),
+               WindowAnimationGeometry.near(request.frame, aligned, tolerance: 0.001),
+               Self.matchesPixelRoundedFrame(ax, target: aligned) {
+                return .complete(ax)
+            }
         }
         var continuingVelocity = CGPoint.zero
         var continuationElapsed: TimeInterval = 0
@@ -539,7 +551,7 @@ struct WindowAnimationSettlement {
             alignment = t >= 1 ? nil : motion
             resetObservation(at: now)
             if t >= 1, !sizeDiffers { completionCandidate = next }
-            return .align(next)
+            return requestAlignment(next, observed: ax)
         }
         guard now - verificationStartedAt < 0.2 else { return .failed }
         if sizeDiffers, sizeRetries == 0, probeConstrainedPosition, placement.constrainToScreen,
@@ -614,7 +626,7 @@ struct WindowAnimationSettlement {
             // may round back to the same pixel and create an idle tail.
             resetObservation(at: now)
             if !sizeDiffers { completionCandidate = aligned }
-            return .align(aligned)
+            return requestAlignment(aligned, observed: ax)
         }
         // Preserve the gentle constrained-size recovery. Only an ordinary
         // position residual with no size retries uses the shorter correction.
@@ -633,16 +645,33 @@ struct WindowAnimationSettlement {
             motion.expected = next
             alignment = motion.elapsed >= motion.duration ? nil : motion
             if alignment == nil { completionCandidate = next }
-            return .align(next)
+            return requestAlignment(next, observed: ax)
         }
         if !sizeDiffers, var motion = alignment {
             motion.elapsed = min(1.0 / 60, motion.duration)
             let next = alignmentFrame(motion, at: motion.elapsed, size: ax.size)
             motion.expected = next
             alignment = motion
-            return .align(next)
+            return requestAlignment(next, observed: ax)
         }
         return .waiting
+    }
+
+    private mutating func requestAlignment(_ frame: CGRect, observed: CGRect) -> Decision {
+        lastAlignmentRequest = (frame, observed)
+        return .align(frame)
+    }
+
+    private static func matchesPixelRoundedFrame(_ actual: CGRect, target: CGRect) -> Bool {
+        let values = [actual.minX, actual.minY, actual.width, actual.height]
+        let targets = [target.minX, target.minY, target.width, target.height]
+        return [CGFloat(1), 0.5].contains { pixel in
+            zip(values, targets).allSatisfy { value, target in
+                abs(value - target) <= 0.001
+                    || (abs(value - target) <= pixel / 2 + 0.001
+                        && abs(value / pixel - (value / pixel).rounded()) <= 0.001)
+            }
+        }
     }
 
     private func alignmentFrame(_ motion: Alignment, at elapsed: TimeInterval, size: CGSize) -> CGRect {
@@ -909,7 +938,9 @@ final class WindowAnimator {
     func cancel(for element: AccessibilityElement) { direct.cancel(for: element) }
     func finish() { direct.finish() }
     func prepare(_ element: AccessibilityElement) { direct.prepare(element) }
-    func afterPendingWrites(_ body: @escaping () -> Void) { direct.afterPendingWrites(body) }
+    func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
+        direct.afterPendingWrites(cancellation: cancellation, body)
+    }
     func performPlacementWork(_ body: @escaping () -> Void) { direct.performPlacementWork(body) }
     func finishForNewDrag() {
         direct.mouseDown()
@@ -923,10 +954,11 @@ final class WindowAnimator {
                  profile: WindowAnimationProfile = .standard,
                  offset: @escaping () -> CGPoint = { .zero },
                  curve: @escaping (Double) -> CGFloat = WindowAnimationCurve.value,
+                 cancellation: (() -> Void)? = nil,
                  completion: @escaping (CGRect) -> Void) {
         direct.animate(element, from: startingFrame, to: destination, duration: duration,
                        resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement, profile: profile,
-                       offset: offset, curve: curve, completion: completion)
+                       offset: offset, curve: curve, cancellation: cancellation, completion: completion)
     }
 
     static func crossesDisplays(from source: CGRect, to destination: CGRect) -> Bool {

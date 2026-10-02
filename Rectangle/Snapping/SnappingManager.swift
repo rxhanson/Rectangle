@@ -361,7 +361,6 @@ class SnappingManager {
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
-            var committedSnap = false
             nativeGesture.end()
             traceNativeInput(event, phase: "up")
             if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
@@ -374,8 +373,7 @@ class SnappingManager {
             if let currentSnapArea = self.currentSnapArea {
                 nativeSizeRestore = nil
                 let completion = snapPreviewCompletion()
-                committedSnap = true
-                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen, completion: completion)
+                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen, completion: completion, cancellation: completion)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
@@ -391,8 +389,7 @@ class SnappingManager {
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
                         if canSnap(event) {
                             let completion = snapPreviewCompletion()
-                            committedSnap = true
-                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen, completion: completion)
+                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen, completion: completion, cancellation: completion)
                         } else { box?.orderOut(nil) }
                         self.currentSnapArea = nil
                     }
@@ -445,7 +442,7 @@ class SnappingManager {
                 retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
-                                    box?.orderOut(nil)
+                        box?.orderOut(nil)
                         currentSnapArea = nil
                     }
                     return
@@ -471,7 +468,7 @@ class SnappingManager {
                     currentSnapArea = snapArea
                 } else {
                     if currentSnapArea != nil {
-                                    box?.orderOut(nil)
+                        box?.orderOut(nil)
                         currentSnapArea = nil
                     }
                 }
