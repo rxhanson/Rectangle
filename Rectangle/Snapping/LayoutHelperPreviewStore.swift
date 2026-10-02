@@ -112,10 +112,8 @@ final class LayoutHelperCaptureQueue<Key: Hashable, Value> {
 
     func replace(with keys: [Key]) {
         var seen = Set<Key>()
-        let desired = Set(keys)
-        waiting.removeAll { !desired.contains($0) }
-        seen.formUnion(waiting)
-        waiting.append(contentsOf: keys.filter { runningGeneration[$0] != generation && seen.insert($0).inserted })
+        // Scrolling changes priority even when the candidate set stays the same.
+        waiting = keys.filter { runningGeneration[$0] != generation && seen.insert($0).inserted }
         pump()
     }
     func stop(discardResults: Bool = false) {

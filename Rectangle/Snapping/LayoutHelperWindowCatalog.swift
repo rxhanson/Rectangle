@@ -117,9 +117,16 @@ final class LayoutHelperWindowCatalog {
         let physical = NSScreen.screens.first { $0 === screen || $0.frame == screen.frame }
         let display = (physical?.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
         return order.compactMap { snapshots[$0] }.filter { snapshot in
-            detection.screenContaining(snapshot.frame, screens: NSScreen.screens) == screen
+            Self.matchesScreen(detection.screenContaining(snapshot.frame, screens: NSScreen.screens), requested: screen)
                 && (!snapshot.isMinimized || display.map { snapshot.desktopDisplays.contains($0) } == true)
         }
+    }
+
+    static func matchesScreen(_ candidate: NSScreen?, requested: NSScreen) -> Bool {
+        guard let candidate else { return false }
+        // NSScreen's equality requires AppKit's internal display identity, which
+        // calculation-only screen instances do not have. Match their geometry.
+        return candidate === requested || candidate.frame == requested.frame
     }
 
     func refresh() {

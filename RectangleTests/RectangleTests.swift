@@ -7700,6 +7700,88 @@ final class LayoutHelperReviewRegressionTests: XCTestCase {
 
 
 @MainActor
+final class LayoutHelperCatalogScreenTests: XCTestCase {
+    private final class Screen: NSScreen {
+        private let rectangle: CGRect
+        init(_ rectangle: CGRect) { self.rectangle = rectangle; super.init() }
+        required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+        override var frame: CGRect { rectangle }
+        override func isEqual(_ object: Any?) -> Bool {
+            XCTFail("Catalog membership must not invoke AppKit screen equality")
+            return false
+        }
+    }
+
+    func testCalculationScreenMatchesDisplayWithoutAppKitEquality() {
+        let bounds = CGRect(x: -1440, y: 0, width: 1440, height: 900)
+        let display = Screen(bounds)
+        let calculation = Screen(bounds)
+        let other = Screen(bounds.offsetBy(dx: 1440, dy: 0))
+        XCTAssertTrue(LayoutHelperWindowCatalog.matchesScreen(display, requested: calculation))
+        XCTAssertTrue(LayoutHelperWindowCatalog.matchesScreen(display, requested: display))
+        XCTAssertFalse(LayoutHelperWindowCatalog.matchesScreen(other, requested: calculation))
+        XCTAssertFalse(LayoutHelperWindowCatalog.matchesScreen(nil, requested: calculation))
+    }
+}
+
+@MainActor
+final class LayoutHelperCapturePriorityTests: XCTestCase {
+    func testScrollingPrioritizesVisibleWindowsAlreadyWaitingForCapture() async {
+        let initialStarted = expectation(description: "Both capture slots are occupied")
+        initialStarted.expectedFulfillmentCount = 2
+        let visibleStarted = expectation(description: "Newly visible window starts next")
+        var started: [Int] = []
+        var pending: [Int: CheckedContinuation<Int?, Never>] = [:]
+        let queue = LayoutHelperCaptureQueue<Int, Int> { key in
+            await withCheckedContinuation { continuation in
+                pending[key] = continuation
+                started.append(key)
+                if key == 1 || key == 2 { initialStarted.fulfill() }
+                else { visibleStarted.fulfill() }
+            }
+        }
+        queue.replace(with: [1, 2, 3, 4, 5])
+        await fulfillment(of: [initialStarted], timeout: 2)
+
+        queue.replace(with: [5, 1, 2, 3, 4, 5])
+        pending.removeValue(forKey: 1)?.resume(returning: 1)
+        await fulfillment(of: [visibleStarted], timeout: 2)
+        XCTAssertEqual(Set(started.prefix(2)), [1, 2])
+        XCTAssertEqual(started.dropFirst(2), [5])
+        XCTAssertEqual(queue.activeCount, 2)
+
+        queue.stop()
+        for continuation in pending.values { continuation.resume(returning: nil) }
+    }
+
+    func testReplacementDropsObsoleteWaitingWindows() async {
+        let initialStarted = expectation(description: "Both capture slots are occupied")
+        initialStarted.expectedFulfillmentCount = 2
+        let replacementStarted = expectation(description: "Replacement window starts")
+        var started: [Int] = []
+        var pending: [Int: CheckedContinuation<Int?, Never>] = [:]
+        let queue = LayoutHelperCaptureQueue<Int, Int> { key in
+            await withCheckedContinuation { continuation in
+                pending[key] = continuation
+                started.append(key)
+                if key == 1 || key == 2 { initialStarted.fulfill() }
+                else { replacementStarted.fulfill() }
+            }
+        }
+        queue.replace(with: [1, 2, 3, 4])
+        await fulfillment(of: [initialStarted], timeout: 2)
+
+        queue.replace(with: [4, 4])
+        pending.removeValue(forKey: 1)?.resume(returning: 1)
+        await fulfillment(of: [replacementStarted], timeout: 2)
+        XCTAssertEqual(started.dropFirst(2), [4])
+
+        queue.stop()
+        for continuation in pending.values { continuation.resume(returning: nil) }
+    }
+}
+
+@MainActor
 final class WindowPlacementSchedulingTests: XCTestCase {
     func testIdlePlacementCompletionRunsSynchronously() {
         var completed = false
