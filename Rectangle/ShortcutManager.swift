@@ -205,6 +205,7 @@ class ShortcutManager {
 
     private func execute(_ originalParameters: ExecutionParameters) {
         var parameters = originalParameters
+        Notification.Name.windowActionWillExecute.post(object: parameters)
 
         if MultiWindowManager.execute(parameters: parameters) {
             return

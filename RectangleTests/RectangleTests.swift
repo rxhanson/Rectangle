@@ -6879,3 +6879,120 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
         (object as AnyObject?) === self
     }
 }
+
+final class TrackpadGestureRegressionTests: XCTestCase {
+    private func frame(_ count: Int, x: Double, y: Double = 0.5, time: Double) -> TrackpadTouchFrame {
+        .init(timestamp: time, touches: (0..<count).map {
+            .init(identifier: $0, position: .init(x: x, y: y), velocity: .init(x: 2, y: 0))
+        })
+    }
+
+    func testOnlyOneActionPerPhysicalContactSession() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        XCTAssertNil(recognizer.process(frame(3, x: 0.2, time: 1)))
+        XCTAssertEqual(recognizer.process(frame(3, x: 0.5, time: 1.1))?.direction, .right)
+        XCTAssertNil(recognizer.process(frame(4, x: 0.5, time: 1.2)))
+        XCTAssertNil(recognizer.process(frame(4, x: 0.9, time: 1.3)))
+        XCTAssertNil(recognizer.process(frame(0, x: 0, time: 2)))
+        XCTAssertNil(recognizer.process(frame(4, x: 0.2, time: 2.1)))
+        XCTAssertEqual(recognizer.process(frame(4, x: 0.6, time: 2.2))?.fingers, 4)
+    }
+
+    func testDroppingFourthFingerCannotBecomeThreeFingerGesture() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        XCTAssertNil(recognizer.process(frame(4, x: 0.2, time: 1)))
+        XCTAssertNil(recognizer.process(frame(3, x: 0.3, time: 1.1)))
+        XCTAssertNil(recognizer.process(frame(3, x: 0.8, time: 1.2)))
+    }
+
+    func testTwoFingerScrollingAndConflictingFingerCountPassThrough() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(2)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(3)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        gate.setEnabled(false)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+    }
+
+    func testAlreadyLeakedScrollCannotBeTakenOverMidGesture() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(3)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(4)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+    }
+
+    func testInvalidConfigCannotAssignBatchActionsToCursorWindow() {
+        var settings = TrackpadGestureSettings()
+        settings.fingers = 5
+        settings.left = WindowAction.tileAll.rawValue
+        settings.up = Int.max
+        settings.right = WindowAction.rightHalf.rawValue
+        let result = settings.validated
+        XCTAssertEqual(result.fingers, 4)
+        XCTAssertEqual(result.left, TrackpadGestureAction.none)
+        XCTAssertEqual(result.up, TrackpadGestureAction.none)
+        XCTAssertEqual(result.right, WindowAction.rightHalf.rawValue)
+    }
+}
+
+
+@MainActor
+final class TrackpadMinimizeExecutionTests: XCTestCase {
+    func testMinimizeRemainsCurrentAfterItsOwnActionNotification() {
+        let manager = TrackpadGestureManager.shared
+        manager.start()
+        let isCurrent = manager.beginAction(TrackpadGestureAction.minimize, runtimeIsCurrent: { true })
+        XCTAssertTrue(isCurrent(), "Minimize must not cancel itself before its pending AX write")
+        Notification.Name.windowActionWillExecute.post()
+        XCTAssertFalse(isCurrent(), "A later shortcut must cancel the pending minimize")
+    }
+
+    func testNewGestureCancelsThePreviousPendingAction() {
+        let manager = TrackpadGestureManager.shared
+        manager.start()
+        let previous = manager.beginAction(WindowAction.leftHalf.rawValue, runtimeIsCurrent: { true })
+        XCTAssertTrue(previous())
+        let current = manager.beginAction(WindowAction.rightHalf.rawValue, runtimeIsCurrent: { true })
+        XCTAssertFalse(previous())
+        XCTAssertTrue(current())
+    }
+
+    func testRuntimeInvalidationCancelsPendingMinimize() {
+        let manager = TrackpadGestureManager.shared
+        manager.start()
+        var healthy = true
+        let isCurrent = manager.beginAction(TrackpadGestureAction.minimize, runtimeIsCurrent: { healthy })
+        XCTAssertTrue(isCurrent())
+        healthy = false
+        XCTAssertFalse(isCurrent())
+    }
+
+    func testDownSwipeSelectsMinimizeForBothFingerCounts() {
+        let settings = TrackpadGestureSettings()
+        for fingers in [3, 4] {
+            var recognizer = TrackpadGestureRecognizer(config: .default)
+            func frame(_ y: Double, time: Double) -> TrackpadTouchFrame {
+                .init(timestamp: time, touches: (0..<fingers).map {
+                    .init(identifier: $0, position: .init(x: 0.5, y: y), velocity: .init(x: 0, y: -2))
+                })
+            }
+            XCTAssertNil(recognizer.process(frame(0.8, time: 1)))
+            let event = recognizer.process(frame(0.5, time: 1.1))
+            XCTAssertEqual(event?.direction, .down)
+            XCTAssertEqual(event?.fingers, fingers)
+            XCTAssertEqual(event.map { settings[$0.direction] }, TrackpadGestureAction.minimize)
+        }
+    }
+}
