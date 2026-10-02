@@ -3,6 +3,7 @@
 import Cocoa
 
 extension Notification.Name {
+    static let windowActionWillExecute = Notification.Name("windowActionWillExecute")
   
     static let configImported = Notification.Name("configImported")
     static let windowAnimationPreferencesChanged = Notification.Name("windowAnimationPreferencesChanged")

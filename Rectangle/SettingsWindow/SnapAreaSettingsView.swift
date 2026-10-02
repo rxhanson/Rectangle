@@ -90,7 +90,7 @@ final class SnapAreaViewModel {
         }
     }
     
-    
+
     // UI State
     var showMissionControlDragging: Bool
     var isPortraitConnected: Bool
@@ -107,7 +107,7 @@ final class SnapAreaViewModel {
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
         self.isPortraitConnected = NSScreen.portraitDisplayConnected
-        
+
         setupNotificationObservers()
     }
     

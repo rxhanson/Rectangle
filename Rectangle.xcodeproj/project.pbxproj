@@ -214,6 +214,13 @@
 		F7B6C43BB57F8064F49DDBB6 /* BottomLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */; };
 		FA34D0FF2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA34D0FE2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift */; };
 		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
+		FF6E20A111A711C6AF2E45B0 /* WindowSizeLimitsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B41354DF40078571CBC514E /* WindowSizeLimitsWindowController.swift */; };
+		1362114CF83D3D0DEA33D2E1 /* SnappedWindowFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */; };
+		D47BE7CE3C041D11A52762DB /* WindowPlacementSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */; };
+		8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */; };
+		95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */; };
+		63E626F619818124C8A5271B /* WindowSizeConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB041CC0D311D82AF624DBA /* WindowSizeConstraints.swift */; };
+		60BBFA4C470AA79917F12E5F /* WindowSizeLimitArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDEBCDABCAACB90F4DC58DF /* WindowSizeLimitArchive.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -453,6 +460,13 @@
 		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
 		de0950b8b00f40308934a523 /* JSONDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDefaultTests.swift; sourceTree = "<group>"; };
+		7B41354DF40078571CBC514E /* WindowSizeLimitsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/SettingsWindow/WindowSizeLimitsWindowController.swift; sourceTree = SOURCE_ROOT; };
+		61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/SnappedWindowFit.swift; sourceTree = SOURCE_ROOT; };
+		F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Utilities/WindowPlacementSupport.swift; sourceTree = SOURCE_ROOT; };
+		C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowGeometry.swift; sourceTree = SOURCE_ROOT; };
+		6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowPlacementCoordinator.swift; sourceTree = SOURCE_ROOT; };
+		8FB041CC0D311D82AF624DBA /* WindowSizeConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowSizeConstraints.swift; sourceTree = SOURCE_ROOT; };
+		2FDEBCDABCAACB90F4DC58DF /* WindowSizeLimitArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowSizeLimitArchive.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -694,6 +708,13 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
+				2FDEBCDABCAACB90F4DC58DF /* WindowSizeLimitArchive.swift */,
+				8FB041CC0D311D82AF624DBA /* WindowSizeConstraints.swift */,
+				6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */,
+				C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */,
+				F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */,
+				61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */,
+				7B41354DF40078571CBC514E /* WindowSizeLimitsWindowController.swift */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
@@ -984,6 +1005,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60BBFA4C470AA79917F12E5F /* WindowSizeLimitArchive.swift in Sources */,
+				63E626F619818124C8A5271B /* WindowSizeConstraints.swift in Sources */,
+				95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */,
+				8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */,
+				D47BE7CE3C041D11A52762DB /* WindowPlacementSupport.swift in Sources */,
+				1362114CF83D3D0DEA33D2E1 /* SnappedWindowFit.swift in Sources */,
+				FF6E20A111A711C6AF2E45B0 /* WindowSizeLimitsWindowController.swift in Sources */,
 				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,

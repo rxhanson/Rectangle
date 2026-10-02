@@ -5,6 +5,7 @@ import AppKit
 
 @Observable
 final class BehaviorSettingsViewModel {
+    private var reloadingDefaults = true
     // MARK: - Window Behavior & Cycle Settings
     var subsequentExecutionMode: SubsequentExecutionMode {
         didSet {
@@ -77,17 +78,37 @@ final class BehaviorSettingsViewModel {
         }
     }
     
+    var showMinimumWindowSizeWarning: Bool {
+        didSet {
+            Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
+            if !showMinimumWindowSizeWarning { WindowSizeWarning.hideCurrent() }
+        }
+    }
+    var rememberWindowSizeLimits: Bool {
+        didSet { WindowSizeConstraints.shared.setRememberLimits(rememberWindowSizeLimits) }
+    }
+
+
+    var fitBesideSnappedWindows: Bool {
+        didSet {
+            Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
+            SnappedWindowFitSession.shared.clear()
+            WindowSizeConstraints.shared.cancelPendingObservations()
+        }
+    }
+    private var windowSizeLimitsController: WindowSizeLimitsWindowController?
+
+    func showWindowSizeLimits() {
+        if windowSizeLimitsController == nil { windowSizeLimitsController = WindowSizeLimitsWindowController() }
+        windowSizeLimitsController?.showWindow(nil)
+    }
+
     var combinedDisplayMode: Bool {
         didSet {
             Defaults.combinedDisplayMode.enabled = combinedDisplayMode
         }
     }
-    
-    var showMinimumWindowSizeWarning: Bool {
-        didSet {
-            Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
-        }
-    }
+
     
     // MARK: - Todo Mode Settings
     var todoEnabled: Bool {
@@ -166,6 +187,14 @@ final class BehaviorSettingsViewModel {
     var showCombinedDisplayMode: Bool { !NSScreen.screensHaveSeparateSpaces }
     var stageCapable: Bool { StageUtil.stageCapable }
     
+
+
+
+
+
+
+
+
     private var aboutTodoWindowController: NSWindowController?
     
     // MARK: - Initialization
@@ -188,6 +217,9 @@ final class BehaviorSettingsViewModel {
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
+        self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
         
@@ -210,10 +242,12 @@ final class BehaviorSettingsViewModel {
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
-        self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
         
+        reloadingDefaults = false
         setupObservers()
     }
+
+
     
     private func setupObservers() {
         Notification.Name.configImported.onPost { [weak self] _ in
@@ -225,6 +259,8 @@ final class BehaviorSettingsViewModel {
     }
     
     func reloadFromDefaults() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
@@ -242,6 +278,9 @@ final class BehaviorSettingsViewModel {
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
         self.greenButtonOverride = Defaults.greenButtonOverride.enabled
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
+        self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
         
@@ -264,7 +303,6 @@ final class BehaviorSettingsViewModel {
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
-        self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
     }
     
     // MARK: - Cycle Sizes Binding Helper
