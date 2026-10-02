@@ -185,6 +185,34 @@ struct LayoutHelperPreviewLayout {
 /// still belong to this window, so dismissal never clicks through to another app.
 class LayoutHelperSurface: NSPanel {
     var onDismiss: (() -> Void)?
+    private var frameTransition: Timer?
+    private(set) var destinationFrame: CGRect?
+
+    func stopFrameTransition() {
+        frameTransition?.invalidate()
+        frameTransition = nil
+        destinationFrame = nil
+    }
+
+    func transitionFrame(to target: CGRect, duration: TimeInterval) {
+        stopFrameTransition()
+        let start = frame
+        guard duration > 0, start != target else { setFrame(target, display: true); return }
+        destinationFrame = target
+        let began = ProcessInfo.processInfo.systemUptime
+        let timer = Timer(timeInterval: 1 / 60, repeats: true) { [weak self] timer in
+            guard let self else { timer.invalidate(); return }
+            let t = min(1, (ProcessInfo.processInfo.systemUptime - began) / duration)
+            let progress = CGFloat(1 - pow(1 - t, 3))
+            self.setFrame(CGRect(x: start.minX + (target.minX - start.minX) * progress,
+                                 y: start.minY + (target.minY - start.minY) * progress,
+                                 width: start.width + (target.width - start.width) * progress,
+                                 height: start.height + (target.height - start.height) * progress), display: true)
+            if t == 1 { self.stopFrameTransition() }
+        }
+        frameTransition = timer
+        RunLoop.main.add(timer, forMode: .common)
+    }
     override var canBecomeMain: Bool { false }
     override var canBecomeKey: Bool { false }
 
@@ -203,6 +231,7 @@ class LayoutHelperSurface: NSPanel {
     }
 
     @discardableResult func prepare(in frame: CGRect, drawsBackground: Bool = true) -> NSView {
+        stopFrameTransition()
         setFrame(frame, display: false)
         let root = LayoutHelperDocument(frame: CGRect(origin: .zero, size: frame.size))
         let inset = LayoutHelperPreviewLayout.inset(for: frame.size)
@@ -210,6 +239,8 @@ class LayoutHelperSurface: NSPanel {
                                    cornerRadius: LayoutHelperAppearance.cornerRadius, flipped: true)
         if drawsBackground {
             let shadow = LayoutHelperShadow(frame: blur.frame, radius: min(12, inset))
+            shadow.autoresizingMask = [.width, .height]
+            blur.autoresizingMask = [.width, .height]
             root.addSubview(shadow)
             root.addSubview(blur)
 
@@ -268,6 +299,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         cards.filter { $0.superview?.visibleRect.intersects($0.frame) == true }.map { $0.item.id }
     }
     private var cards: [LayoutHelperCard] = []
+    private var reusableCards: [LayoutHelperCard] = []
     private var candidateIDs: [CGWindowID] = []
     private var footerControls: [NSView] = []
     private var scrollView: NSScrollView?
@@ -275,6 +307,11 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     private var waitsForPreviews = false
     private var shownMessage: String?
     private var backdrops: [LayoutHelperSurface] = []
+    var interactionSuspended = false
+    private var reflowUntil: TimeInterval = 0
+    var isTransitioning: Bool { interactionSuspended || ProcessInfo.processInfo.systemUptime < reflowUntil }
+    private var retiringBackdrops: [LayoutHelperSurface] = []
+    private var retiringCards: [LayoutHelperCard] = []
     private var regionEntranceOffset: CGPoint?
     var hasActiveSession: Bool { !backdrops.isEmpty }
     override var canBecomeKey: Bool { true }
@@ -290,7 +327,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     }
 
     func show(in frame: CGRect, items: [Item], offerPermission: Bool, message: String? = nil,
-              remainingRegions: [CGRect] = [], keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:], waitForPreviews: Bool = false) {
+              remainingRegions: [CGRect] = [], keyboardTriggered: Bool = false, images: [CGWindowID: NSImage] = [:], waitForPreviews: Bool = false,
+              continuing: Bool = false) {
         if hasActiveSession {
             if self.frame != frame {
                 regionEntranceOffset = Self.regionSlideOffset(from: self.frame, to: frame)
@@ -300,7 +338,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         } else {
             regionEntranceOffset = nil
         }
-        reconcileBackdrops(for: [frame] + remainingRegions)
+        reconcileBackdrops(for: [frame] + remainingRegions, continuing: continuing)
         var images = offerPermission ? [:] : images
         for card in cards where !offerPermission && images[card.item.id] == nil {
             if let item = items.first(where: { $0.id == card.item.id }),
@@ -330,25 +368,97 @@ final class LayoutHelperPanel: LayoutHelperSurface {
             }
             return
         }
-        let existingIDs = isVisible && self.frame == frame ? Set(cards.map { $0.item.id }) : []
-        let focusedID = existingIDs.isEmpty ? nil : (firstResponder as? LayoutHelperCard)?.item.id
-        let scrollPosition = existingIDs.isEmpty ? nil : scrollView?.contentView.bounds.origin
+        let reusing = isVisible && showingPermission == offerPermission && shownMessage == message
+            && (self.frame == frame || continuing)
+        let regionChanged = continuing && self.frame != frame
+        let oldCards = reusing ? cards : []
+        let existingIDs = Set(oldCards.map { $0.item.id })
+        let focusedID = (firstResponder as? LayoutHelperCard)?.item.id
+        let scrollPosition = scrollView?.contentView.bounds.origin ?? .zero
+        let scrollAnchor = oldCards.first { !$0.isHidden && $0.frame.maxY > scrollPosition.y }
+        let anchorOffset = scrollAnchor.map { $0.frame.minY - scrollPosition.y }
+        let oldFrames = Dictionary(uniqueKeysWithValues: oldCards.compactMap { card -> (CGWindowID, CGRect)? in
+            guard let parent = card.superview, !card.isHidden else { return nil }
+            let displayed = card.layer?.presentation()?.frame ?? card.frame
+            return (card.item.id, convertToScreen(parent.convert(displayed, to: nil)))
+        })
+        let departingFrames = retiringCards.compactMap { card -> (LayoutHelperCard, CGRect)? in
+            guard let parent = card.superview else { return nil }
+            return (card, convertToScreen(parent.convert(card.frame, to: nil)))
+        }
+        reusableCards = oldCards
         configure(in: frame, items: items, offerPermission: offerPermission, message: message,
                   keyboardTriggered: keyboardTriggered, images: images, waitForPreviews: waitForPreviews,
                   separateBackground: true)
         makeFirstResponder(keyboardSelection
-            ? cards.first(where: { $0.item.id == focusedID && $0.isEnabled }) ?? initialFirstResponder
+            ? cards.first(where: { $0.item.id == focusedID && $0.isEnabled && !$0.isHidden }) ?? initialFirstResponder
             : contentView)
-        if let scrollPosition, let scrollView {
-            scrollView.contentView.scroll(to: scrollPosition)
-            scrollView.reflectScrolledClipView(scrollView.contentView)
+        if reusing, let scroll = scrollView {
+            var origin = scrollPosition
+            if let anchor = scrollAnchor, let offset = anchorOffset,
+               let card = cards.first(where: { $0.item.id == anchor.item.id }) {
+                origin.y = card.frame.minY - offset
+            }
+            scroll.contentView.scroll(to: scroll.contentView.constrainBoundsRect(
+                CGRect(origin: origin, size: scroll.contentView.bounds.size)).origin)
+            scroll.reflectScrolledClipView(scroll.contentView)
+        }
+        if let document = scrollView?.documentView {
+            for (card, previous) in departingFrames {
+                document.addSubview(card)
+                card.frame = document.convert(convertFromScreen(previous), from: nil)
+            }
         }
         contentView?.layoutSubtreeIfNeeded()
-        // Render the cached thumbnails before committing the entrance, so a
-        // freshly created layer does not spend its first frames empty.
         displayIfNeeded()
         animatePresentation(excluding: existingIDs)
-        makeKeyAndOrderFront(nil)
+        if reusing { animateReflow(from: oldFrames, removed: oldCards.filter { !candidateIDs.contains($0.item.id) }, regionChanged: regionChanged) }
+        if !isVisible { makeKeyAndOrderFront(nil) }
+    }
+
+    private func animateReflow(from oldFrames: [CGWindowID: CGRect], removed: [LayoutHelperCard], regionChanged: Bool) {
+        let duration: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 0 : 0.18
+        reflowUntil = ProcessInfo.processInfo.systemUptime + duration
+        let viewport = scrollView.map { convertToScreen($0.convert($0.bounds, to: nil)) }
+        for card in cards {
+            guard let previous = oldFrames[card.item.id], let parent = card.superview,
+                  let layer = card.layer, !card.isHidden else { continue }
+            let current = convertToScreen(parent.convert(card.frame, to: nil))
+            guard current.width > 0, current.height > 0 else { continue }
+            let scaleX = previous.width / current.width, scaleY = previous.height / current.height
+            var transform = CATransform3DMakeScale(scaleX, scaleY, 1)
+            transform.m41 = previous.minX - current.minX + current.width * layer.anchorPoint.x * (scaleX - 1)
+            transform.m42 = current.maxY - previous.maxY + current.height * layer.anchorPoint.y * (scaleY - 1)
+            layer.removeAnimation(forKey: "layoutHelperReflow")
+            if duration > 0 {
+                // A card outside the new viewport cannot move from its old position
+                // without being clipped. Fade it in while the background resizes.
+                let relocates = regionChanged && viewport?.contains(previous) != true
+                let animation = CABasicAnimation(keyPath: relocates ? "opacity" : "transform")
+                animation.fromValue = relocates ? 0 : NSValue(caTransform3D: transform)
+                animation.toValue = relocates ? 1 : NSValue(caTransform3D: CATransform3DIdentity)
+                animation.duration = duration
+                animation.timingFunction = PreviewLayerTransition.deceleration
+                layer.add(animation, forKey: "layoutHelperReflow")
+            }
+        }
+        for card in removed {
+            guard duration > 0, let previous = oldFrames[card.item.id],
+                  let document = scrollView?.documentView else { card.removeFromSuperview(); continue }
+            card.isEnabled = false
+            card.setAccessibilityElement(false)
+            document.addSubview(card)
+            card.frame = document.convert(convertFromScreen(previous), from: nil)
+            retiringCards.append(card)
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = duration
+                card.animator().alphaValue = 0
+            } completionHandler: { [weak self, weak card] in
+                guard let card else { return }
+                card.removeFromSuperview()
+                self?.retiringCards.removeAll { $0 === card }
+            }
+        }
     }
 
     static func regionSlideOffset(from previous: CGRect, to next: CGRect) -> CGPoint {
@@ -360,18 +470,48 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         return CGPoint(x: dx / distance * 8, y: dy / distance * 8)
     }
 
-    private func reconcileBackdrops(for regions: [CGRect]) {
-        for backdrop in backdrops where !regions.contains(backdrop.frame) { backdrop.orderOut(nil) }
+    private func reconcileBackdrops(for regions: [CGRect], continuing: Bool = false) {
+        let duration: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 0 : 0.18
+        if continuing, backdrops.count == regions.count,
+           zip(backdrops, regions).allSatisfy({ $0.frame.intersects($1) }) {
+            for (backdrop, region) in zip(backdrops, regions) { backdrop.transitionFrame(to: region, duration: duration) }
+            return
+        }
+        for backdrop in backdrops where !regions.contains(backdrop.destinationFrame ?? backdrop.frame) {
+            backdrop.stopFrameTransition()
+            if continuing, duration > 0 {
+                backdrop.ignoresMouseEvents = true
+                retiringBackdrops.append(backdrop)
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = duration
+                    backdrop.animator().alphaValue = 0
+                } completionHandler: { [weak self, weak backdrop] in
+                    guard let backdrop else { return }
+                    backdrop.orderOut(nil)
+                    self?.retiringBackdrops.removeAll { $0 === backdrop }
+                }
+            } else { backdrop.orderOut(nil) }
+        }
         backdrops = regions.map { region in
             let backdrop: LayoutHelperSurface
-            if let existing = backdrops.first(where: { $0.frame == region }) {
+            if let existing = backdrops.first(where: { ($0.destinationFrame ?? $0.frame) == region }) {
                 backdrop = existing
             } else {
                 backdrop = LayoutHelperSurface()
                 backdrop.onDismiss = { [weak self] in self?.onDismiss?() }
                 backdrop.prepare(in: region)
+                if continuing, duration > 0 {
+                    backdrop.alphaValue = 0
+                    NSAnimationContext.runAnimationGroup { context in
+                        context.duration = duration
+                        backdrop.animator().alphaValue = 1
+                    }
+                }
             }
-            if !backdrop.isVisible { backdrop.orderFront(nil) }
+            if !backdrop.isVisible {
+                if isVisible { backdrop.order(.below, relativeTo: windowNumber) }
+                else { backdrop.orderFront(nil) }
+            }
             return backdrop
         }
     }
@@ -465,7 +605,10 @@ final class LayoutHelperPanel: LayoutHelperSurface {
                                                               expandedCards: orderedItems.map { $0.isMinimized || images[$0.id] == nil })
         document.frame = NSRect(x: 0, y: 0, width: scroll.contentSize.width, height: top + arrangement.height + bottom)
         cards = zip(orderedItems, arrangement.frames).map { item, frame in
-            let card = LayoutHelperCard(item: item)
+            let card = reusableCards.first { $0.item.id == item.id && $0.item.previewKey == item.previewKey }
+                ?? LayoutHelperCard(item: item)
+            card.item = item
+            card.state = .off
             card.layoutSlot = frame.offsetBy(dx: horizontal, dy: top)
             card.preview = images[item.id]
             card.isHidden = waitsForPreviews && card.preview == nil
@@ -474,6 +617,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
             document.addSubview(card)
             return card
         }
+        reusableCards.removeAll()
         // Keyboard traversal follows display order as previews become ready.
         self.footerControls = footerControls + (showClose ? [close] : [])
         updateKeyViews()
@@ -650,10 +794,15 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         for card in cards {
             card.layer?.removeAnimation(forKey: "layoutHelperEntrance")
             card.layer?.removeAnimation(forKey: "layoutHelperEntranceOpacity")
+            card.layer?.removeAnimation(forKey: "layoutHelperReflow")
         }
     }
 
     func dismiss() {
+        interactionSuspended = false; reflowUntil = 0
+        retiringCards.forEach { $0.removeFromSuperview() }; retiringCards.removeAll()
+        (backdrops + retiringBackdrops).forEach { $0.stopFrameTransition(); $0.orderOut(nil) }
+        retiringBackdrops.removeAll(); reusableCards.removeAll()
         finishPresentation()
         if let scrollObserver { NotificationCenter.default.removeObserver(scrollObserver) }
         scrollObserver = nil
@@ -667,6 +816,9 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     }
 
     override func sendEvent(_ event: NSEvent) {
+        if isTransitioning,
+           [.leftMouseDown, .leftMouseUp, .rightMouseDown].contains(event.type)
+            || (isTransitioning && event.type == .keyDown && [36, 76, 49].contains(event.keyCode)) { return }
         // Resolve visual and hit-test positions immediately for early input.
         // No completion callbacks can reopen a dismissed or replaced panel.
         if [.leftMouseDown, .rightMouseDown, .keyDown, .scrollWheel].contains(event.type) {
@@ -755,14 +907,23 @@ private final class LayoutHelperShadow: NSView {
         layer?.shadowColor = NSColor.black.cgColor
         layer?.shadowRadius = radius
         layer?.shadowOffset = .zero
-        layer?.shadowPath = CGPath(roundedRect: bounds,
-                                   cornerWidth: LayoutHelperAppearance.cornerRadius,
-                                   cornerHeight: LayoutHelperAppearance.cornerRadius,
-                                   transform: nil)
+        updateShadowPath()
         updateShadowOpacity()
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func layout() {
+        super.layout()
+        updateShadowPath()
+    }
+
+    private func updateShadowPath() {
+        layer?.shadowPath = CGPath(roundedRect: bounds,
+                                   cornerWidth: LayoutHelperAppearance.cornerRadius,
+                                   cornerHeight: LayoutHelperAppearance.cornerRadius,
+                                   transform: nil)
+    }
 
     override func viewDidChangeEffectiveAppearance() {
         super.viewDidChangeEffectiveAppearance()

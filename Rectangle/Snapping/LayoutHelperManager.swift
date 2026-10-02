@@ -24,6 +24,10 @@ final class LayoutHelperManager {
     private var displayedIDs: [CGWindowID] = []
     private var icons: [pid_t: NSImage] = [:]
     private var appOrder = LayoutHelperWindowOrder()
+    private var anchorWindowID: CGWindowID?
+    private var transitioning = false
+    private var transitionTimeout: DispatchWorkItem?
+    private var continuingPresentation = false
     private var keyboardTriggered = false
     private var layout: LayoutHelperLayout?
     private var screen: NSScreen?
@@ -107,8 +111,34 @@ final class LayoutHelperManager {
             })
     }
 
-    func beginSnap(source: ExecutionSource, windowID: CGWindowID?, screen: NSScreen?) -> UUID {
-        guard Self.enabled else { return cancel() }
+    func beginSnap(source: ExecutionSource, windowID: CGWindowID?, screen: NSScreen?, canPresent: Bool = true) -> UUID {
+        guard Self.enabled, canPresent else { return cancel() }
+        if Self.allows(source), source != .dragToSnap, !selecting,
+           panel.hasActiveSession, let windowID, windowID == anchorWindowID,
+           let screen, (screen === self.screen || screen.frame == self.screen?.frame), layout != nil {
+            token = UUID()
+            pending?.cancel(); pending = nil
+            transitionTimeout?.cancel()
+            refreshTimer?.invalidate(); refreshTimer = nil
+            catalog.didUpdate = nil
+            cancelImageDelivery()
+            transitioning = true
+            panel.interactionSuspended = true
+            let requestToken = token
+            // A cancelled placement may never deliver didSnap. Keep the old picker only
+            // if its retained windows still match; never leave stale targets clickable.
+            let timeout = DispatchWorkItem { [weak self] in
+                guard let self, self.token == requestToken, self.transitioning else { return }
+                guard self.retainedIsValid() else { self.cancel(); return }
+                self.transitioning = false
+                self.panel.interactionSuspended = false
+                self.resumeCatalog(for: requestToken)
+                self.showNext()
+            }
+            transitionTimeout = timeout
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: timeout)
+            return token
+        }
         if source == .dragToSnap, let windowID, windowID == prefetchWindow,
            let screen, screen == prefetchScreen, !panel.isVisible, layout == nil {
             return token
@@ -119,6 +149,9 @@ final class LayoutHelperManager {
     @discardableResult func cancel() -> UUID {
         WindowAnimationDiagnostics.event("helper-cancel", fields: ["visible": panel.isVisible, "selecting": selecting])
         token = UUID()
+        transitionTimeout?.cancel(); transitionTimeout = nil
+        transitioning = false; continuingPresentation = false; anchorWindowID = nil
+        panel.interactionSuspended = false
         stopPlacementActivationObservation()
         pendingRestore?.cancel(); pendingRestore = nil
         if let placingWindow { WindowPlacementCoordinator.shared.cancel(placingWindow) }
@@ -162,11 +195,11 @@ final class LayoutHelperManager {
             WindowDividerManager.shared.record(result.windowElement, id: result.windowId,
                                                    frame: frame, screen: result.calcResult.screen)
         }
-        guard let requestToken = result.layoutHelperToken, requestToken == token,
-              Self.enabled,
+        guard let requestToken = result.layoutHelperToken, requestToken == token else { return }
+        guard Self.enabled,
               Self.allows(result.source),
               !result.isFixedSize,
-              result.windowElement.isMinimized != true else { return }
+              result.windowElement.isMinimized != true else { cancel(); return }
         let screenFrame = result.visibleFrameOfScreen.screenFlipped
         // Reverse precisely the padding used by the originating action. Use the
         // achieved frame, including minimum-size or cooperative split adjustments.
@@ -185,7 +218,7 @@ final class LayoutHelperManager {
                                                gap: CGFloat(Defaults.gapSize.value),
                                                skipTopGap: Defaults.skipGapTopEdge.enabled,
                                                includeDenseGrids: Defaults.layoutHelperDenseGrids.enabled),
-              LayoutHelperLayout.matches(plan.target(for: plan.cells[plan.anchorIndex]), frame) else { return }
+              LayoutHelperLayout.matches(plan.target(for: plan.cells[plan.anchorIndex]), frame) else { cancel(); return }
         pending?.cancel()
         installInputMonitors()
         let work = DispatchWorkItem { [weak self] in
@@ -200,26 +233,37 @@ final class LayoutHelperManager {
                 self.cancel()
                 return
             }
+            self.continuingPresentation = self.transitioning
+            self.transitioning = false
+            self.transitionTimeout?.cancel(); self.transitionTimeout = nil
+            self.panel.interactionSuspended = false
+            self.anchorWindowID = id
+            self.completedCells.removeAll()
+            self.retainedLaunches.removeAll()
             self.keyboardTriggered = result.source == .keyboardShortcut
             self.layout = plan
             self.screen = result.calcResult.screen
             self.retained = [result.windowElement: frame]
             self.retainedLaunches[id] = result.windowElement.pid.flatMap { WindowProcessIdentity.launchTime(for: $0) }
-            self.catalog.didUpdate = { [weak self] in
-                guard let self, self.token == requestToken, !self.selecting else { return }
-                self.showNext()
-            }
-            self.catalog.refresh()
+            self.resumeCatalog(for: requestToken)
             WindowAnimationDiagnostics.event("helper-open", fields: ["candidates": self.catalog.snapshots.count])
             self.showNext()
-            if self.layout != nil {
-                self.refreshTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
-                    self?.validateSession()
-                }
-            }
+
         }
         pending = work
         DispatchQueue.main.asyncAfter(deadline: .now() + (result.source == .dragToSnap ? 0.05 : 0.08), execute: work)
+    }
+
+    private func resumeCatalog(for requestToken: UUID) {
+        catalog.didUpdate = { [weak self] in
+            guard let self, self.token == requestToken, !self.selecting, !self.transitioning else { return }
+            self.showNext()
+        }
+        catalog.refresh()
+        refreshTimer?.invalidate()
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
+            self?.validateSession()
+        }
     }
 
     private func installInputMonitors() {
@@ -281,6 +325,7 @@ final class LayoutHelperManager {
     }
 
     private func showNext(message: String? = nil) {
+        guard !transitioning else { return }
         guard Self.enabled else { cancel(); return }
         guard let layout, let screen else { return }
         if let message { statusMessage = message }
@@ -329,13 +374,15 @@ final class LayoutHelperManager {
         let usesKeyboard = panel.hasActiveSession ? panel.keyboardSelection : keyboardTriggered
         panel.show(in: target.screenFlipped, items: items, offerPermission: offerPermission, message: statusMessage,
                    remainingRegions: remaining, keyboardTriggered: usesKeyboard, images: images,
-                   waitForPreviews: LayoutHelperPermission.previewsSupported && !offerPermission)
+                   waitForPreviews: LayoutHelperPermission.previewsSupported && !offerPermission,
+                   continuing: continuingPresentation)
+        continuingPresentation = false
         refreshPreviews()
     }
 
     private func select(_ id: CGWindowID) {
         guard Self.enabled else { cancel(); return }
-        guard !selecting, let layout, let currentCell, candidates[id] != nil else { return }
+        guard !selecting, !transitioning, !panel.isTransitioning, let layout, let currentCell, candidates[id] != nil else { return }
         selecting = true
         statusMessage = nil
         panel.showSelection(inProgress: id)
@@ -535,7 +582,7 @@ final class LayoutHelperManager {
 
     private func validateSession() {
         guard Self.enabled else { cancel(); return }
-        guard !selecting else { return }
+        guard !selecting, !transitioning else { return }
         guard let layout, let screen,
               NSScreen.screens.contains(screen),
               LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, layout.screen),

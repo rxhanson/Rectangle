@@ -206,7 +206,9 @@ class ShortcutManager {
     private func execute(_ originalParameters: ExecutionParameters) {
         var parameters = originalParameters
 
-        if parameters.source != .dragToSnap || [.reverseAll, .tileAll, .tileRows, .tileColumns,
+        // These commands bypass WindowManager, which otherwise decides whether
+        // the current helper can continue after resolving the target window.
+        if [.reverseAll, .tileAll, .tileRows, .tileColumns,
             .cascadeAll, .cascadeActiveApp, .tileActiveApp, .leftTodo, .rightTodo].contains(parameters.action) {
             LayoutHelperManager.shared.cancel()
         }

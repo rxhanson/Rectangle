@@ -7809,3 +7809,145 @@ final class WindowPlacementSchedulingTests: XCTestCase {
         wait(for: [completed], timeout: 2)
     }
 }
+
+@MainActor
+final class LayoutHelperContinuityTests: XCTestCase {
+    private let region = CGRect(x: 40, y: 40, width: 480, height: 480)
+    private func views<T: NSView>(_ root: NSView, _ type: T.Type) -> [T] {
+        root.subviews.flatMap { (($0 as? T).map { [$0] } ?? []) + views($0, type) }
+    }
+    private func items(_ count: Int) -> [LayoutHelperPanel.Item] {
+        (1...count).map { .init(id: CGWindowID($0), title: "Continuity \($0)", icon: nil,
+            unavailableReason: nil, sourceSize: CGSize(width: 400, height: 600)) }
+    }
+    private func card(_ id: Int, _ panel: LayoutHelperPanel) throws -> NSButton {
+        try XCTUnwrap(views(try XCTUnwrap(panel.contentView), NSButton.self).first { $0.title == "Continuity \(id)" })
+    }
+    private func scroll(_ panel: LayoutHelperPanel) throws -> NSScrollView {
+        try XCTUnwrap(views(try XCTUnwrap(panel.contentView), NSScrollView.self).first)
+    }
+    func testCandidateAdditionPreservesCardsFocusAndScrolledViewport() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(12), offerPermission: false, keyboardTriggered: true)
+        let first = try card(1, panel)
+        panel.makeFirstResponder(first)
+        let originalScroll = try scroll(panel)
+        originalScroll.contentView.scroll(to: CGPoint(x: 0, y: 350))
+        originalScroll.reflectScrolledClipView(originalScroll.contentView)
+        let origin = originalScroll.contentView.bounds.origin
+        panel.show(in: region, items: items(13), offerPermission: false, keyboardTriggered: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        XCTAssertTrue(panel.firstResponder === first)
+        XCTAssertEqual(try scroll(panel).contentView.bounds.origin.y, origin.y, accuracy: 1)
+    }
+    func testNewCandidateWaitsForPreviewWithoutHidingExistingCards() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let image = NSImage(size: CGSize(width: 400, height: 600))
+        panel.show(in: region, items: items(1), offerPermission: false,
+                   images: [1: image], waitForPreviews: true)
+        let first = try card(1, panel)
+        panel.show(in: region, items: items(2), offerPermission: false, waitForPreviews: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        XCTAssertFalse(first.isHidden)
+        XCTAssertTrue(try card(2, panel).isHidden)
+        panel.updateImage(image, for: 2)
+        XCTAssertFalse(try card(2, panel).isHidden)
+    }
+    func testConsecutiveCandidateRemovalsKeepDepartingCardsAttached() throws {
+        guard !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else { throw XCTSkip("Removal fades respect Reduce Motion") }
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(3), offerPermission: false)
+        let third = try card(3, panel)
+        panel.show(in: region, items: items(2), offerPermission: false)
+        panel.show(in: region, items: items(1), offerPermission: false)
+        XCTAssertTrue(third.isDescendant(of: try XCTUnwrap(panel.contentView)))
+        XCTAssertFalse(third.isEnabled)
+        XCTAssertTrue(panel.isTransitioning)
+    }
+    func testDisjointContinuationUsesFadeAndRetainsCardIdentity() async throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(1), offerPermission: false)
+        let first = try card(1, panel)
+        let next = region.offsetBy(dx: 600, dy: 0)
+        panel.show(in: next, items: items(1), offerPermission: false, continuing: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        XCTAssertEqual(panel.frame, next)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        let owned = Set(NSApp.windows.filter { panel.owns($0) }.map { $0.windowNumber })
+        let ordered = (CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID) as? [[String: Any]])?
+            .compactMap { $0[kCGWindowNumber as String] as? Int }.filter { owned.contains($0) }
+        XCTAssertEqual(ordered?.first, panel.windowNumber,
+                       "Replacement backgrounds must remain below the retained cards: \(String(describing: ordered))")
+        if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            let animation = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperReflow") as? CABasicAnimation)
+            XCTAssertEqual(animation.keyPath, "opacity")
+        }
+        panel.dismiss()
+        XCTAssertFalse(panel.hasActiveSession)
+        XCTAssertFalse(panel.isTransitioning)
+    }
+    func testOverlappingShrinkFadesCardsOutsideTheNewViewport() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(1), offerPermission: false)
+        let first = try card(1, panel)
+        let smaller = CGRect(x: region.minX + 160, y: region.minY, width: 320, height: region.height)
+        panel.show(in: smaller, items: items(1), offerPermission: false, continuing: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            let animation = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperReflow") as? CABasicAnimation)
+            XCTAssertEqual(animation.keyPath, "opacity")
+        }
+    }
+
+    func testBackdropRetargetingReachesLatestFrameAndResizesShadow() async throws {
+        let surface = LayoutHelperSurface()
+        defer { surface.stopFrameTransition(); surface.close() }
+        surface.prepare(in: region)
+        let target = CGRect(x: 50, y: 50, width: 640, height: 600)
+        surface.transitionFrame(to: region.insetBy(dx: 20, dy: 20), duration: 0.18)
+        surface.transitionFrame(to: target, duration: 0.05)
+        try await Task.sleep(nanoseconds: 150_000_000)
+        XCTAssertEqual(surface.frame, target)
+        XCTAssertNil(surface.destinationFrame)
+        let root = try XCTUnwrap(surface.contentView)
+        root.layoutSubtreeIfNeeded()
+        let shadow = try XCTUnwrap(root.subviews.first { $0.layer?.shadowPath != nil })
+        XCTAssertEqual(try XCTUnwrap(shadow.layer?.shadowPath).boundingBoxOfPath, shadow.bounds)
+    }
+}
+
+@MainActor
+final class LayoutHelperShortcutEntryTests: XCTestCase {
+    private final class Bindings: ShortcutBindingStore {
+        func configure() {}
+        func registerDefaultShortcuts(_ shortcuts: [String: MASShortcut]) {}
+        func bindShortcut(withDefaultsKey defaultsKey: String, toAction action: @escaping () -> Void) {}
+        func breakBinding(withDefaultsKey defaultsKey: String) {}
+    }
+    private final class WindowManagerSpy: WindowManager {
+        var received: ExecutionParameters?
+        override func execute(_ parameters: ExecutionParameters) { received = parameters }
+    }
+    func testOrdinaryCommandsReachWindowManagerWithoutDismissingHelper() {
+        let previous = Defaults.subsequentExecutionMode.value
+        Defaults.subsequentExecutionMode.value = .none
+        defer { Defaults.subsequentExecutionMode.value = previous; LayoutHelperManager.shared.cancel() }
+        let windowManager = WindowManagerSpy()
+        let router = ShortcutManager(windowManager: windowManager, bindingStore: Bindings(),
+            notificationCenter: NotificationCenter(), workspaceNotificationCenter: NotificationCenter(),
+            shortcutsProvider: { [:] }, activeStateProvider: { false }, todoSessionStateChanged: { _ in })
+        for source: ExecutionSource in [.keyboardShortcut, .menuItem, .dragToSnap] {
+            let token = LayoutHelperManager.shared.cancel()
+            let parameters = ExecutionParameters(.leftHalf, source: source)
+            router.windowActionTriggered(notification: NSNotification(name: WindowAction.leftHalf.notificationName, object: parameters))
+            XCTAssertEqual(windowManager.received?.action, .leftHalf)
+            XCTAssertEqual(LayoutHelperManager.shared.token, token,
+                           "WindowManager must decide continuity after resolving the target window")
+        }
+    }
+}

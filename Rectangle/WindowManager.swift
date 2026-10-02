@@ -57,8 +57,6 @@ class WindowManager {
     func execute(_ parameters: ExecutionParameters) {
         Notification.Name.windowActionWillExecute.post(object: parameters)
         WindowDividerManager.shared.interrupt()
-        let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
-            windowID: parameters.windowId, screen: parameters.screen)
         var acceptedHelperPrefetch = false
         defer { if !acceptedHelperPrefetch { LayoutHelperManager.shared.cancelPrefetch() } }
         hideSizeConstraintWarning()
@@ -77,6 +75,7 @@ class WindowManager {
         let action = parameters.action
         
         if action == .restore {
+            LayoutHelperManager.shared.cancel()
             guard let windowId else {
                 NSSound.beep()
                 return
@@ -193,6 +192,12 @@ class WindowManager {
             }
         }
 
+        let helperPlan = LayoutHelperLayout.make(action: calcResult.resultingAction,
+            screen: visibleFrameOfDestinationScreen.screenFlipped, anchor: calcResult.initialRect.screenFlipped,
+            gap: CGFloat(Defaults.gapSize.value), skipTopGap: Defaults.skipGapTopEdge.enabled,
+            includeDenseGrids: Defaults.layoutHelperDenseGrids.enabled)
+        let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
+            windowID: windowId, screen: calcResult.screen, canPresent: !isFixedSize && helperPlan != nil)
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
@@ -216,6 +221,7 @@ class WindowManager {
                                                                             achievedFrame: currentNormalizedRect,
                                                                             screenFrame: cooperativeCornerPlan.screenFrame,
                                                                             gapSize: cooperativeCornerPlan.gapSize)
+                LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
                 Logger.log("Cooperative resize no-op: solved frames already match current frames")
                 recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
                 return
