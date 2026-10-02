@@ -80,17 +80,8 @@ final class WindowSizeConstraintStore<Key: Hashable> {
             return
         }
         guard verifiedClamp else { return }
-        func clamp(_ old: CGFloat, _ target: CGFloat, _ actual: CGFloat) -> CGFloat {
-            // No size progress can mean an ignored write, even when position
-            // succeeded. It is not evidence of a minimum equal to the old size.
-            target + 2 < actual && actual < old - 1 ? actual : 0
-        }
-        let learned = CGSize(width: clamp(before.width, requested.width, settled.width),
-                             height: clamp(before.height, requested.height, settled.height))
-        // Coupled dimensions may be an aspect ratio or sizing grid, not minima.
-        guard (learned.width > 0) != (learned.height > 0),
-              learned.width > 0 ? abs(requested.height - settled.height) <= 1
-                                : abs(requested.width - settled.width) <= 1 else { return }
+        guard let learned = WindowSizeResizeObservation.learnedMinimum(before: before,
+            requested: requested, settled: settled) else { return }
         let reported = Self.normalized(reported)
         let previous = observations[key]
         if previous?.operation == operation { return }
@@ -133,7 +124,54 @@ final class WindowSizeConstraintStore<Key: Hashable> {
     }
 }
 
-/// Shared by ordinary snapping, drag previews, Layout Helper and cooperative moves.
+/// Samples contain only agreeing AX/WindowServer frames. A stable oversized
+/// response is evidence only when the requested axis actually shrank.
+struct WindowSizeResizeObservation {
+    let before: CGRect
+    let requested: CGRect
+    private var previous: CGRect?
+    private var stableSince: TimeInterval?
+
+    init(before: CGRect, requested: CGRect) {
+        self.before = before
+        self.requested = requested
+    }
+
+    mutating func observe(_ frame: CGRect?, at time: TimeInterval) -> CGRect? {
+        guard let frame, WindowAnimationGeometry.valid(frame),
+              WindowAnimationGeometry.valid(before), WindowAnimationGeometry.valid(requested),
+              WindowGeometry.matches(frame, requested, tolerance: 1)
+                || (Self.learnedMinimum(before: before.size, requested: requested.size, settled: frame.size) != nil
+                    && frame.minX <= requested.minX + 1 && frame.maxX >= requested.maxX - 1
+                    && frame.minY <= requested.minY + 1 && frame.maxY >= requested.maxY - 1) else {
+            previous = nil; stableSince = nil
+            return nil
+        }
+        guard let previous, WindowGeometry.matches(frame, previous, tolerance: 1) else {
+            self.previous = frame
+            stableSince = time
+            return nil
+        }
+        guard let stableSince, time - stableSince >= 0.12 else { return nil }
+        return frame
+    }
+
+    static func learnedMinimum(before: CGSize, requested: CGSize, settled: CGSize) -> CGSize? {
+        func clamp(_ old: CGFloat, _ target: CGFloat, _ actual: CGFloat) -> CGFloat {
+            // An unchanged dimension can be an ignored write. Coupled changes
+            // can be an aspect ratio or a sizing grid rather than a minimum.
+            target + 2 < actual && actual < old - 1 ? actual : 0
+        }
+        let learned = CGSize(width: clamp(before.width, requested.width, settled.width),
+                             height: clamp(before.height, requested.height, settled.height))
+        guard (learned.width > 0) != (learned.height > 0),
+              learned.width > 0 ? abs(requested.height - settled.height) <= 1
+                                : abs(requested.width - settled.width) <= 1 else { return nil }
+        return learned
+    }
+}
+
+/// Shares window size evidence across snapping, previews, and coordinated moves.
 final class WindowSizeConstraints {
     static let shared = WindowSizeConstraints()
     static let changed = Notification.Name("windowSizeConstraintsChanged")
@@ -504,27 +542,41 @@ final class WindowSizeConstraints {
             replacesEarlierAttempt: replacesEarlierAttempt)
         pending[key] = PendingResize(token: token, before: original, requested: requested)
         guard let id = window.windowId else { pending.removeValue(forKey: key); return }
+        let generation = observationGeneration
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
             guard let self, self.pending[key]?.token == token else { return }
             self.identityQueue.addOperation { [weak self] in
-                let reader = AccessibilityReadBatch(budget: 0.15)
-                let app = AXUIElementCreateApplication(key.pid)
-                let windows = reader.value(app, kAXWindowsAttribute) as? [AXUIElement] ?? []
                 var confirmed: CGRect?
-                if let element = windows.first(where: { reader.windowID($0) == id }),
-                   let position: CGPoint = reader.wrapped(element, kAXPositionAttribute, type: .cgPoint),
-                   let size: CGSize = reader.wrapped(element, kAXSizeAttribute, type: .cgSize),
-                   reader.available, let server = WindowUtil.getWindowFrame(id: id) {
-                    let frame = CGRect(origin: position, size: size)
-                    if WindowGeometry.matches(frame, requested, tolerance: 1),
-                       WindowGeometry.matches(frame, server, tolerance: 1) { confirmed = frame }
+                if let element = WindowAccessibilityLookup.resolve(pid: key.pid, id: id, launch: key.launch,
+                    preferred: nil, isCurrent: { WindowProcessIdentity.launchTime(for: key.pid) == key.launch }) {
+                    var observation = WindowSizeResizeObservation(before: original, requested: requested)
+                    let deadline = ProcessInfo.processInfo.systemUptime + 0.45
+                    while ProcessInfo.processInfo.systemUptime < deadline,
+                          WindowProcessIdentity.launchTime(for: key.pid) == key.launch {
+                        let reader = AccessibilityReadBatch(budget: min(0.1, deadline - ProcessInfo.processInfo.systemUptime))
+                        var frame: CGRect?
+                        if reader.windowID(element) == id,
+                           let position: CGPoint = reader.wrapped(element, kAXPositionAttribute, type: .cgPoint),
+                           let size: CGSize = reader.wrapped(element, kAXSizeAttribute, type: .cgSize),
+                           reader.available, let server = WindowUtil.getWindowFrame(id: id) {
+                            let actual = CGRect(origin: position, size: size)
+                            if WindowGeometry.matches(actual, server, tolerance: 1) { frame = actual }
+                        }
+                        if let settled = observation.observe(frame, at: ProcessInfo.processInfo.systemUptime) {
+                            confirmed = settled
+                            break
+                        }
+                        Thread.sleep(forTimeInterval: 0.02)
+                    }
                 }
                 let result = confirmed
                 DispatchQueue.main.async { [weak self] in
                     guard let self, self.pending[key]?.token == token else { return }
                     self.pending.removeValue(forKey: key)
-                    guard WindowProcessIdentity.launchTime(for: key.pid) == key.launch, let result else { return }
-                    self.recordSuccessfulPlacement(window, frame: result)
+                    guard self.observationGeneration == generation,
+                          WindowProcessIdentity.launchTime(for: key.pid) == key.launch, let result else { return }
+                    self.recordSettledResize(window, before: original, requested: requested,
+                        first: result, settled: result, verifiedClamp: true, generation: generation)
                 }
             }
         }

@@ -101,8 +101,14 @@ extension WindowAnimator {
         }
     }
 
-    func afterPendingWrites(_ body: @escaping () -> Void) {
-        if Self.pendingPlacements == 0 { body(); return }
-        Self.placementQueue.async { DispatchQueue.main.async(execute: body) }
+    func afterPendingWrites(isCurrent: @escaping () -> Bool = { true },
+                            onCancelled: @escaping () -> Void = {},
+                            _ body: @escaping () -> Void) {
+        let resume = {
+            guard isCurrent() else { onCancelled(); return }
+            body()
+        }
+        if Self.pendingPlacements == 0 { resume(); return }
+        Self.placementQueue.async { DispatchQueue.main.async(execute: resume) }
     }
 }

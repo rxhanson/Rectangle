@@ -178,6 +178,15 @@ class TodoManager {
     
     static func moveAll(_ bringToFront: Bool = true) {
         WindowSizeConstraints.shared.cancelPendingObservations()
+        let generation = WindowSizeConstraints.shared.observationGeneration
+        WindowAnimator.shared.afterPendingWrites(isCurrent: {
+            WindowSizeConstraints.shared.observationGeneration == generation
+        }) {
+            performMoveAll(bringToFront)
+        }
+    }
+
+    private static func performMoveAll(_ bringToFront: Bool) {
         TodoManager.refreshTodoScreen()
 
         let pid = ProcessInfo.processInfo.processIdentifier

@@ -85,12 +85,17 @@ class WindowManager {
                 let currentExecutionID = executionID
                 completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
-                        defer { parameters.completion?() }
-                        guard let self, self.executionID == currentExecutionID,
-                              WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
-                        // A completed animation has already placed the real window.
-                        if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                    windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
+                        self?.executionID == currentExecutionID
+                            && WindowSizeConstraints.shared.observationGeneration == restoreGeneration
+                    }, onCancelled: { parameters.completion?() }) { [weak self] in
+                        self?.windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
+                            defer { parameters.completion?() }
+                            guard let self, self.executionID == currentExecutionID,
+                                  WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
+                            // A completed animation has already placed the real window.
+                            if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                        }
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
@@ -368,11 +373,16 @@ class WindowManager {
                     for: calcResult.initialRect.screenFlipped, in: visibleFrameOfDestinationScreen.screenFlipped) : nil,
                 constrainToScreen: !(action.allowedToExtendOutsideCurrentScreenArea && !NSScreen.screensHaveSeparateSpaces),
                 gap: CGFloat(Defaults.gapSize.value))
-            windowAnimator.animate(frontmostWindowElement,
-                                   to: calcResult.rect.screenFlipped,
-                                   releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { frame in
-                completeMove(!frame.isNull)
+            windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
+                self?.executionID == currentExecutionID
+                    && WindowSizeConstraints.shared.observationGeneration == sizeObservationGeneration
+            }, onCancelled: { parameters.completion?() }) {
+                self.windowAnimator.animate(frontmostWindowElement,
+                                            to: calcResult.rect.screenFlipped,
+                                            releasedSnap: parameters.source == .dragToSnap, placement: placement,
+                                            profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { frame in
+                    completeMove(!frame.isNull)
+                }
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
@@ -421,6 +431,8 @@ class WindowManager {
                 switch outcome {
                 case .placed(let frame):
                     WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
+                    WindowSizeConstraints.shared.recordSettledResize(window, before: before, requested: plan.target,
+                        first: frame, settled: frame, verifiedClamp: true, generation: generation)
                     if let id = result.windowId, previousRestore == nil || previousAction?.rect != before {
                         AppDelegate.windowHistory.restoreRects[id] = before
                     }

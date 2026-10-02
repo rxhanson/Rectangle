@@ -91,8 +91,11 @@ final class WindowPlacementCoordinator {
             }
         }
         if animated && WindowAnimator.enabled {
-            WindowAnimator.shared.animate(window, from: original, to: target, placement: placement,
-                                          profile: profile) { verify($0.isNull ? nil : $0) }
+            WindowAnimator.shared.afterPendingWrites(isCurrent: { !cancellation.isCancelled && isCurrent() },
+                onCancelled: { finish(.cancelled) }) {
+                WindowAnimator.shared.animate(window, from: original, to: target, placement: placement,
+                                              profile: profile) { verify($0.isNull ? nil : $0) }
+            }
         } else {
             WindowAnimator.shared.afterPendingWrites { verify(nil) }
         }
@@ -384,11 +387,7 @@ struct WindowPlacementAcknowledgement {
             if sizeWrites >= 2 || (directPlacement && sizeWrites == 1 && !resizeResponded && !probeAttempted) {
                 guard let placement, frame.width >= target.width - 1, frame.height >= target.height - 1 else { return .failed }
                 guard let sizeStableAt, now - sizeStableAt >= 0.12 else { return .waiting }
-                let reported = reportedMinimum.map {
-                    (frame.width <= target.width + 1 || abs($0.width - frame.width) <= 1)
-                        && (frame.height <= target.height + 1 || abs($0.height - frame.height) <= 1)
-                } ?? false
-                if !resizeResponded && !reported {
+                if !verifiedConstrainedSize(frame.size) {
                     // A successful AX return alone does not prove a resize was
                     // honored. Verify responsiveness before accepting a plateau.
                     guard !probeAttempted else { return .failed }

@@ -20,31 +20,34 @@ class MultiWindowManager {
 
     static func execute(parameters: ExecutionParameters) -> Bool {
         // TODO: Protocol and factory for all multi-window positioning algorithms
+        let operation: () -> Void
         switch parameters.action {
         case .reverseAll:
-            ReverseAllManager.reverseAll(windowElement: parameters.windowElement)
-            return true
+            operation = { ReverseAllManager.reverseAll(windowElement: parameters.windowElement) }
         case .tileAll:
-            tileAllWindowsOnScreen()
-            return true
+            operation = { tileAllWindowsOnScreen() }
         case .tileRows:
-            tileWindowsInBands(.rows)
-            return true
+            operation = { tileWindowsInBands(.rows) }
         case .tileColumns:
-            tileWindowsInBands(.columns)
-            return true
+            operation = { tileWindowsInBands(.columns) }
         case .cascadeAll:
-            cascadeAllWindowsOnScreen(windowElement: parameters.windowElement)
-            return true
+            operation = { cascadeAllWindowsOnScreen(windowElement: parameters.windowElement) }
         case .cascadeActiveApp:
-            cascadeActiveAppWindowsOnScreen(windowElement: parameters.windowElement)
-            return true
+            operation = { cascadeActiveAppWindowsOnScreen(windowElement: parameters.windowElement) }
         case .tileActiveApp:
-            tileActiveAppWindowsOnScreen(windowElement: parameters.windowElement)
-            return true
+            operation = { tileActiveAppWindowsOnScreen(windowElement: parameters.windowElement) }
         default:
             return false
         }
+        WindowSizeConstraints.shared.cancelPendingObservations()
+        let generation = WindowSizeConstraints.shared.observationGeneration
+        WindowAnimator.shared.afterPendingWrites(isCurrent: {
+            WindowSizeConstraints.shared.observationGeneration == generation
+        }, onCancelled: { parameters.completion?() }) {
+            operation()
+            parameters.completion?()
+        }
+        return true
     }
 
     private static func allWindowsOnScreen(windowElement: AccessibilityElement? = nil, sortByPID: Bool = false) -> (screens: UsableScreens, windows: [AccessibilityElement])? {
