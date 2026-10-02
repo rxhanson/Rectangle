@@ -14,7 +14,7 @@ final class DisplayTransferTests: XCTestCase {
     private func transfer(_ window: CGRect, from source: CGRect, to destination: CGRect,
                           edgeTolerance: CGFloat = 4) -> CGRect {
         DisplayTransfer.transferredRect(window: window, source: source, destination: destination,
-                                        edgeTolerance: edgeTolerance)
+                                        edgeTolerance: edgeTolerance).rect
     }
 
     private func assertRect(_ rect: CGRect, _ expected: CGRect, accuracy: CGFloat = 0.001,

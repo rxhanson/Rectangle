@@ -5,6 +5,116 @@ import MASShortcut
 import XCTest
 @testable import Rectangle
 
+final class EarlySnapEdgeTests: XCTestCase {
+    private let frame = CGRect(x: 0, y: 0, width: 1440, height: 900)
+    private let margins = NSEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+
+    private func direction(_ x: CGFloat, _ y: CGFloat, early: Bool = true,
+                           screens: [CGRect] = []) -> Directional? {
+        SnapEdgeDetection.direction(at: CGPoint(x: x, y: y), in: frame,
+                                    screens: [frame] + screens, margins: margins, cornerSize: 20, early: early)
+    }
+
+    func testDisabledKeepsExistingEdgeThresholds() {
+        XCTAssertNil(direction(10, 450, early: false))
+        XCTAssertNil(direction(1430, 450, early: false))
+        XCTAssertNil(direction(720, 890, early: false))
+        XCTAssertNil(direction(720, 10, early: false))
+        XCTAssertEqual(direction(4, 450, early: false), .l)
+        XCTAssertEqual(direction(1436, 450, early: false), .r)
+        XCTAssertEqual(direction(720, 896, early: false), .t)
+        XCTAssertEqual(direction(720, 4, early: false), .b)
+    }
+
+    func testEarlyEdgesAndWithdrawal() {
+        XCTAssertEqual(direction(19, 450), .l)
+        XCTAssertEqual(direction(1421, 450), .r)
+        XCTAssertEqual(direction(720, 881), .t)
+        XCTAssertEqual(direction(720, 19), .b)
+        XCTAssertNil(direction(20, 450))
+        XCTAssertNil(direction(1420, 450))
+        XCTAssertNil(direction(720, 880))
+        XCTAssertNil(direction(720, 20))
+        XCTAssertNil(direction(-1, 450))
+        XCTAssertNil(direction(1441, 450))
+    }
+
+    func testCornersKeepTheirOriginalSizeAndPriority() {
+        for early in [false, true] {
+            XCTAssertEqual(direction(24, 876, early: early), .tl)
+            XCTAssertEqual(direction(1416, 876, early: early), .tr)
+            XCTAssertEqual(direction(24, 24, early: early), .bl)
+            XCTAssertEqual(direction(1416, 24, early: early), .br)
+            XCTAssertNil(direction(30, 870, early: early))
+        }
+        XCTAssertEqual(direction(10, 870), .l)
+        XCTAssertEqual(direction(30, 890), .t)
+    }
+
+    func testSharedEdgesStayNarrowInAllDirections() {
+        let screens = [CGRect(x: -1440, y: 0, width: 1440, height: 900),
+                       CGRect(x: 1440, y: 0, width: 1440, height: 900),
+                       CGRect(x: 0, y: 900, width: 1440, height: 900),
+                       CGRect(x: 0, y: -900, width: 1440, height: 900)]
+        XCTAssertNil(direction(10, 450, screens: screens))
+        XCTAssertNil(direction(1430, 450, screens: screens))
+        XCTAssertNil(direction(720, 890, screens: screens))
+        XCTAssertNil(direction(720, 10, screens: screens))
+        XCTAssertEqual(direction(4, 450, screens: screens), .l)
+        XCTAssertEqual(direction(1436, 450, screens: screens), .r)
+        XCTAssertEqual(direction(720, 896, screens: screens), .t)
+        XCTAssertEqual(direction(720, 4, screens: screens), .b)
+    }
+
+    func testPartialSharedEdgeAndNegativeDisplayCoordinates() {
+        let shorter = CGRect(x: 1440, y: 200, width: 800, height: 500)
+        XCTAssertNil(direction(1430, 450, screens: [shorter]))
+        XCTAssertEqual(direction(1430, 100, screens: [shorter]), .r)
+        XCTAssertEqual(direction(1430, 800, screens: [shorter]), .r)
+        let portrait = CGRect(x: -900, y: -300, width: 900, height: 1440)
+        XCTAssertEqual(SnapEdgeDetection.direction(at: CGPoint(x: -890, y: 450), in: portrait,
+                       screens: [portrait, frame], margins: margins, cornerSize: 20, early: true), .l)
+        XCTAssertNil(SnapEdgeDetection.direction(at: CGPoint(x: -10, y: 450), in: portrait,
+                     screens: [portrait, frame], margins: margins, cornerSize: 20, early: true))
+    }
+
+    func testCustomMarginsAreNeverReduced() {
+        let custom = NSEdgeInsets(top: 40, left: 40, bottom: 40, right: 40)
+        XCTAssertEqual(SnapEdgeDetection.direction(at: CGPoint(x: 30, y: 450), in: frame,
+                       screens: [frame], margins: custom, cornerSize: 20, early: true), .l)
+    }
+
+    func testSettingsRoundTripAndLiveManagerUpdate() throws {
+        let saved = Defaults.snapBeforeReachingEdges.enabled
+        let snapping = Defaults.windowSnapping.enabled
+        let edgeDefaults = [Defaults.snapEdgeMarginTop, Defaults.snapEdgeMarginLeft,
+                            Defaults.snapEdgeMarginBottom, Defaults.snapEdgeMarginRight, Defaults.cornerSnapAreaSize]
+        let savedEdges = edgeDefaults.map(\.value)
+        defer {
+            Defaults.snapBeforeReachingEdges.enabled = saved
+            Defaults.windowSnapping.enabled = snapping
+            zip(edgeDefaults, savedEdges).forEach { $0.value = $1 }
+        }
+        edgeDefaults.forEach { $0.value = 5 }
+        Defaults.cornerSnapAreaSize.value = 20
+        Defaults.windowSnapping.enabled = false
+        Defaults.snapBeforeReachingEdges.enabled = false
+        let manager = SnappingManager()
+        let model = SnapAreaViewModel()
+        // The rightmost display has an exposed right edge regardless of which display is main.
+        let screen = try XCTUnwrap(NSScreen.screens.max { $0.frame.maxX < $1.frame.maxX })
+        let location = CGPoint(x: screen.frame.maxX - 10, y: screen.frame.midY)
+        XCTAssertNil(manager.directionalLocationOfCursor(loc: location, screen: screen))
+        model.snapBeforeReachingEdges = true
+        XCTAssertEqual(manager.directionalLocationOfCursor(loc: location, screen: screen), .r)
+        XCTAssertEqual(Defaults.array.first { $0.key == "snapBeforeReachingEdges" }?.toCodable().bool, true)
+        Defaults.snapBeforeReachingEdges.load(from: CodableDefault(bool: false))
+        model.syncDefaults()
+        XCTAssertFalse(model.snapBeforeReachingEdges)
+        XCTAssertNil(manager.directionalLocationOfCursor(loc: location, screen: screen))
+    }
+}
+
 class RectangleTests: XCTestCase {
 
     override func setUp() {
