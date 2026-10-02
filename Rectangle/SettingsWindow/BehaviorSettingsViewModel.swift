@@ -64,9 +64,9 @@ final class BehaviorSettingsViewModel {
         }
     }
     
-    var greenButtonOverride: Bool {
+    var greenButtonMode: GreenButtonMode {
         didSet {
-            Defaults.greenButtonOverride.enabled = greenButtonOverride
+            Defaults.greenButtonMode.value = greenButtonMode
             Notification.Name.greenButtonOverride.post()
         }
     }
@@ -194,7 +194,7 @@ final class BehaviorSettingsViewModel {
         
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
-        self.greenButtonOverride = Defaults.greenButtonOverride.enabled
+        self.greenButtonMode = Defaults.greenButtonMode.value
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
@@ -252,7 +252,7 @@ final class BehaviorSettingsViewModel {
         
         self.doubleClickTitleBar = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1) != nil
         self.autoMaximize = !Defaults.autoMaximize.userDisabled
-        self.greenButtonOverride = Defaults.greenButtonOverride.enabled
+        self.greenButtonMode = Defaults.greenButtonMode.value
         self.experimentalAnimations = Defaults.experimentalWindowAnimations.enabled
         self.combinedDisplayMode = Defaults.combinedDisplayMode.userEnabled
         self.repeatedMaximizeRestoresPrevious = Defaults.repeatedMaximizeRestoresPrevious.enabled
