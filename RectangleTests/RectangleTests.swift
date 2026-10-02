@@ -6933,6 +6933,59 @@ final class TrackpadGestureRegressionTests: XCTestCase {
         XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
     }
 
+    func testAlreadyLeakedTwoFingerScrollCannotBeTakenOverMidGesture() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(2)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertTrue(gate.hasLeakedScrollInSession)
+        gate.observeContactCount(4)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertTrue(gate.hasLeakedScrollInSession,
+                      "Capture must reject window actions after scrolling has already reached the app")
+        gate.observeContactCount(0)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertFalse(gate.hasLeakedScrollInSession)
+    }
+
+    func testFreshTwoFingerScrollEndsPreviousExclusiveDrain() {
+        let clock = TrackpadGestureTestClock()
+        let gate = TrackpadExclusiveGestureGate(now: { clock.time })
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+
+        clock.time = 0.02
+        gate.observeContactCount(2)
+        for time in [0.02, 0.10, 0.20, 0.30, 0.40, 0.50] {
+            clock.time = time
+            XCTAssertFalse(gate.shouldSuppressScroll(phase: .active),
+                           "A new two-finger scroll must pass through even during the old drain interval")
+        }
+    }
+
+    func testContactFreeMomentumTailStaysSuppressedUntilItEnds() {
+        let clock = TrackpadGestureTestClock()
+        let gate = TrackpadExclusiveGestureGate(now: { clock.time })
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(4)
+        gate.observeContactCount(0)
+
+        for time in [0.10, 0.20, 0.30] {
+            clock.time = time
+            XCTAssertTrue(gate.shouldSuppressScroll(phase: .active),
+                          "Contact-free momentum must extend the existing drain")
+        }
+        clock.time = 0.40
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .momentumEnded))
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .none))
+    }
+
     func testInvalidConfigCannotAssignBatchActionsToCursorWindow() {
         var settings = TrackpadGestureSettings()
         settings.fingers = 5
@@ -6947,6 +7000,9 @@ final class TrackpadGestureRegressionTests: XCTestCase {
     }
 }
 
+private final class TrackpadGestureTestClock: @unchecked Sendable {
+    var time: TimeInterval = 0
+}
 
 @MainActor
 final class TrackpadMinimizeExecutionTests: XCTestCase {

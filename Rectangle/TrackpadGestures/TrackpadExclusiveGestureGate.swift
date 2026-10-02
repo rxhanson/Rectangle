@@ -76,7 +76,11 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
             if count == 0 { state = .draining(deadline: now() + quietInterval) }
             else if count >= 3 && !allowedFingerCounts.contains(count) { state = .idle }
         case .draining:
-            if allowedFingerCounts.contains(count) && !leakedScrollInSession { state = .exclusive }
+            // New contacts start a new session; only contact-free events belong
+            // to the previous gesture's inertial tail.
+            if count > 0 {
+                state = allowedFingerCounts.contains(count) && !leakedScrollInSession ? .exclusive : .idle
+            }
         }
     }
 
@@ -95,7 +99,7 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
 
         switch state {
         case .idle:
-            if lastContactCount >= 3 { leakedScrollInSession = true }
+            if lastContactCount > 0 { leakedScrollInSession = true }
             return false
         case .exclusive:
             return true
