@@ -5,8 +5,14 @@ import Foundation
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
     
-    init(_ element: AXUIElement) {
+    private(set) var messagingTimeout: Float = 0
+    private var resolvedWindowID: CGWindowID?
+    var animationObservationElement: AXUIElement { wrappedElement }
+
+    init(_ element: AXUIElement, messagingTimeout: Float = 0, windowID: CGWindowID? = nil) {
         wrappedElement = element
+        resolvedWindowID = windowID
+        if messagingTimeout > 0 { setMessagingTimeout(messagingTimeout) }
     }
     
     convenience init(_ pid: pid_t) {
@@ -25,12 +31,12 @@ class AccessibilityElement {
     
     private func getElementValue(_ attribute: NSAccessibility.Attribute) -> AccessibilityElement? {
         guard let value = wrappedElement.getValue(attribute), CFGetTypeID(value) == AXUIElementGetTypeID() else { return nil }
-        return AccessibilityElement(value as! AXUIElement)
+        return AccessibilityElement(value as! AXUIElement, messagingTimeout: messagingTimeout)
     }
     
     private func getElementsValue(_ attribute: NSAccessibility.Attribute) -> [AccessibilityElement]? {
         guard let value = wrappedElement.getValue(attribute), let array = value as? [AXUIElement] else { return nil }
-        return array.map { AccessibilityElement($0) }
+        return array.map { AccessibilityElement($0, messagingTimeout: messagingTimeout) }
     }
     
     private var role: NSAccessibility.Role? {
@@ -141,10 +147,34 @@ class AccessibilityElement {
     }
 
     var minimumSize: CGSize? {
+        WindowSizeConstraints.shared.minimum(for: self, reported: reportedMinimumSize)
+    }
+
+    var rememberedMinimumSize: CGSize? {
+        WindowSizeConstraints.shared.rememberedMinimum(for: self)
+    }
+
+    var reportedMinimumSize: CGSize? {
         wrappedElement.getWrappedValue(.minSize)
             ?? wrappedElement.getWrappedValue(.minimumSize)
     }
     
+    /// Match size-limit records by AX structure without reading document content.
+    /// Incomplete metadata must not reuse another window's saved limits.
+    var sizeConstraintIdentity: (identifier: String?, role: String, subrole: String, structure: [String]) {
+        let identifier = wrappedElement.getValue(.identifier) as? String
+        let subrole = wrappedElement.getValue(.subrole) as? String ?? ""
+        let children = childElements
+        let structure: [String]
+        if let children, !children.isEmpty, children.count <= 32 {
+            structure = children.map {
+                [$0.role?.rawValue ?? "", $0.wrappedElement.getValue(.subrole) as? String ?? "",
+                 $0.wrappedElement.getValue(.identifier) as? String ?? ""].joined(separator: "|")
+            }.sorted()
+        } else { structure = [] }
+        return (identifier, role?.rawValue ?? "", subrole, structure)
+    }
+
     var frame: CGRect {
         guard let position = position, let size = size else { return .null }
         return .init(origin: position, size: size)
@@ -154,6 +184,12 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+        let before = self.frame
+        defer {
+            if isWindow == true, isSystemDialog != true, isResizable() {
+                WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame)
+            }
+        }
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled
             || NSWorkspace.shared.isSwitchControlEnabled
@@ -299,7 +335,7 @@ class AccessibilityElement {
     }
     
     var windowId: CGWindowID? {
-        wrappedElement.getWindowId()
+        resolvedWindowID ?? wrappedElement.getWindowId()
     }
 
     func getWindowId() -> CGWindowID? {
@@ -364,6 +400,7 @@ class AccessibilityElement {
     /// Caps how long AX calls through this element can block on an
     /// unresponsive app (the systemwide default is several seconds).
     func setMessagingTimeout(_ seconds: Float) {
+        messagingTimeout = seconds
         AXUIElementSetMessagingTimeout(wrappedElement, seconds)
     }
     

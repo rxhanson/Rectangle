@@ -327,6 +327,7 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+
             // MARK: - Stage Manager
             if viewModel.stageCapable {
                 Section {
@@ -357,6 +358,9 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            windowSizeLimitsSection
+            adjacentWindowsSection
+
             // MARK: - Extras
             Section {
                 CustomDisclosureGroup {
@@ -364,7 +368,6 @@ struct BehaviorSettingsView: View {
                         Divider()
                         Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                        Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
                         Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
@@ -387,9 +390,58 @@ struct BehaviorSettingsView: View {
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
     }
+
+    private var windowSizeLimitsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Toggle("Remember learned window size limits", isOn: $viewModel.rememberWindowSizeLimits)
+                                .accessibilityIdentifier("rememberWindowSizeLimits")
+                            Spacer()
+                            Button("Manage memory") { viewModel.showWindowSizeLimits() }
+                                .disabled(!viewModel.rememberWindowSizeLimits)
+                                .accessibilityIdentifier("showWindowSizeLimits")
+                        }
+                        Text("Remembers window size limits and updates them as windows change.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .accessibilityIdentifier("rememberWindowSizeLimitsDescription")
+                    }
+                    Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label("Window Size Limits", systemImage: "ruler")
+            }
+        }
+    }
+
+    private var adjacentWindowsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
+                        .accessibilityIdentifier("fitBesideSnappedWindows")
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label {
+                    Text("Adjacent Windows")
+                } icon: {
+                    Image(systemName: "rectangle.grid.1x2")
+                        .rotationEffect(.degrees(90))
+                }
+            }
+        }
+    }
+
+
 }
 
-// MARK: - Todo Mode Info Popover View
 struct TodoModeInfoView: View {
     // Structural data wrapper to hold LocalizedStringKey
     private struct Step: Identifiable {
