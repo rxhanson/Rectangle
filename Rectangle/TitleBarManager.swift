@@ -86,6 +86,15 @@ class TitleBarManager {
         resolvedAction.postTitleBar(windowElement: windowElement, screen: clickedScreen)
     }
 
+    static func hitTestApplication(window: CGWindowID) -> AXUIElement? {
+        guard window != 0,
+              let pid = WindowUtil.getWindowList(ids: [window], forceRefresh: true).first(where: { $0.id == window })?.pid,
+              pid > 0, pid != ProcessInfo.processInfo.processIdentifier else { return nil }
+        let application = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(application, 0.01)
+        return application
+    }
+
     static func screenForClick(at location: CGPoint, screens: [NSScreen]) -> NSScreen? {
         screens.first { $0.frame.contains(location) }
     }
@@ -202,13 +211,14 @@ private final class TitleBarTabButtonPress {
         let raw = cgEvent.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent)
         let window = CGWindowID(exactly: raw > 0 ? raw : cgEvent.getIntegerValueField(.mouseEventWindowUnderMousePointer)) ?? 0
         if event.type == .leftMouseDown {
+            // Self hit-testing can wait for SwiftUI's main thread while holding an AX lock.
+            // Resolve the clicked app before dispatching so a later focus change cannot target us.
+            guard let application = TitleBarManager.hitTestApplication(window: window) else { resetClick(); return }
             sequence.mouseDown(window: window, point: cgEvent.location, time: event.timestamp,
                                count: event.clickCount, interval: NSEvent.doubleClickInterval)
             read(at: event.timestamp) { click in
-                let system = AXUIElementCreateSystemWide()
-                AXUIElementSetMessagingTimeout(system, 0.01)
                 var element: AXUIElement?
-                guard AXUIElementCopyElementAtPosition(system, Float(click.point.x), Float(click.point.y), &element) == .success,
+                guard AXUIElementCopyElementAtPosition(application, Float(click.point.x), Float(click.point.y), &element) == .success,
                       let element else { return false }
                 return Self.isTabButton(element, click: click)
             }

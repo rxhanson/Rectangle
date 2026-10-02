@@ -6880,6 +6880,26 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
     }
 }
 
+@MainActor
+final class TitleBarHitTestApplicationTests: XCTestCase {
+    func testOwnWindowNeverStartsAnAccessibilityHitTest() throws {
+        let window = NSWindow(contentRect: CGRect(x: 100, y: 100, width: 320, height: 200),
+                              styleMask: [.titled], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.orderFront(nil)
+        defer { window.close() }
+        let id = CGWindowID(window.windowNumber)
+        let owner = try XCTUnwrap(WindowUtil.getWindowList(ids: [id], forceRefresh: true).first { $0.id == id })
+        XCTAssertEqual(owner.pid, ProcessInfo.processInfo.processIdentifier)
+        XCTAssertNil(TitleBarManager.hitTestApplication(window: id))
+    }
+
+    func testUnknownWindowDoesNotFallBackToSystemWideHitTesting() {
+        XCTAssertNil(TitleBarManager.hitTestApplication(window: 0))
+        XCTAssertNil(TitleBarManager.hitTestApplication(window: CGWindowID.max))
+    }
+}
+
 class TitleBarClickSequenceTests: XCTestCase {
     private func startedSequence() -> TitleBarClickSequence {
         let sequence = TitleBarClickSequence()
