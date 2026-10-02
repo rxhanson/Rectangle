@@ -6879,3 +6879,122 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
         (object as AnyObject?) === self
     }
 }
+
+class TitleBarClickSequenceTests: XCTestCase {
+    private func startedSequence() -> TitleBarClickSequence {
+        let sequence = TitleBarClickSequence()
+        sequence.mouseDown(window: 42, point: CGPoint(x: 20, y: 20), time: 1, count: 1, interval: 0.5)
+        return sequence
+    }
+
+    func testNotificationHandledAfterMouseUpStillVetoesTabClose() throws {
+        let sequence = startedSequence()
+        sequence.mouseDown(window: 42, point: CGPoint(x: 20, y: 20), time: 1.1, count: 2, interval: 0.5)
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 42) { result = $0 })
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.11, interval: 0.5))
+        sequence.endRead(read, positive: true)
+        XCTAssertNil(result)
+        sequence.settle(click)
+        XCTAssertEqual(result, true)
+    }
+
+    func testDecisionWaitsForClassificationStartedBeforeMouseUp() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 42) { result = $0 })
+        sequence.settle(click)
+        XCTAssertNil(result)
+        sequence.endRead(read, positive: true)
+        XCTAssertEqual(result, true)
+    }
+
+    func testOrdinaryTitleBarClickRunsOnceAfterNegativeClassification() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var results: [Bool] = []
+        let click = try XCTUnwrap(sequence.finish(window: 42) { results.append($0) })
+        sequence.settle(click)
+        sequence.endRead(read, positive: false)
+        sequence.settle(click, timedOut: true)
+        XCTAssertEqual(results, [false])
+    }
+
+    func testTimeoutDoesNotBlockTitleBarOrApplyLateResult() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var results: [Bool] = []
+        let click = try XCTUnwrap(sequence.finish(window: 42) { results.append($0) })
+        sequence.settle(click, timedOut: true)
+        sequence.endRead(read, positive: true)
+        XCTAssertEqual(results, [false])
+    }
+
+    func testNewClickCancelsOldDecisionAndIgnoresOldClassification() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var oldResult: Bool?
+        let old = try XCTUnwrap(sequence.finish(window: 42) { oldResult = $0 })
+        sequence.mouseDown(window: 43, point: .zero, time: 2, count: 1, interval: 0.5)
+        sequence.endRead(read, positive: true)
+        sequence.settle(old, timedOut: true)
+        XCTAssertNil(oldResult)
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 43) { result = $0 })
+        sequence.settle(click)
+        XCTAssertEqual(result, false)
+    }
+
+    func testResetCancelsPendingAction() throws {
+        let sequence = startedSequence()
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 42) { result = $0 })
+        sequence.reset()
+        sequence.settle(click, timedOut: true)
+        XCTAssertNil(result)
+    }
+
+    func testSecondClickOnDifferentWindowOrOutsideIntervalResetsSequence() {
+        for (window, time) in [(CGWindowID(43), 1.1), (CGWindowID(42), 1.6)] {
+            let sequence = startedSequence()
+            sequence.mouseDown(window: window, point: .zero, time: time, count: 2, interval: 0.5)
+            XCTAssertNil(sequence.beginRead(at: time, interval: 0.5))
+        }
+    }
+}
+
+class TitleBarScreenDetectionTests: XCTestCase {
+    private final class TestScreen: NSScreen {
+        let testFrame: CGRect
+        init(_ frame: CGRect) { testFrame = frame; super.init() }
+        override var frame: NSRect { testFrame }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    func testClickedScreenPreservesDisplayCountOrderingAndNeighbors() throws {
+        let left = TestScreen(CGRect(x: -1000, y: 0, width: 1000, height: 800))
+        let right = TestScreen(CGRect(x: 0, y: 0, width: 1000, height: 800))
+        let detection = ScreenDetection(screens: { [right, left] })
+        let screens = try XCTUnwrap(detection.detectScreens(at: left))
+        XCTAssertTrue(screens.currentScreen === left)
+        XCTAssertEqual(screens.numScreens, 2)
+        XCTAssertEqual(screens.screensOrdered, detection.order(screens: [right, left]))
+        XCTAssertTrue(screens.adjacentScreens?.next === right)
+        XCTAssertTrue(screens.adjacentScreens?.prev === right)
+    }
+
+    func testDisconnectedClickedScreenDoesNotBecomeSingleDisplayTopology() {
+        let screen = TestScreen(CGRect(x: 0, y: 0, width: 1000, height: 800))
+        XCTAssertNil(ScreenDetection(screens: { [] }).detectScreens(at: screen))
+    }
+
+    func testClickScreenUsesAppKitCoordinatesIncludingNegativeOrigins() {
+        let left = TestScreen(CGRect(x: -1000, y: 0, width: 1000, height: 800))
+        let above = TestScreen(CGRect(x: 0, y: 800, width: 1000, height: 800))
+        XCTAssertTrue(TitleBarManager.screenForClick(at: CGPoint(x: -50, y: 200), screens: [left, above]) === left)
+        XCTAssertTrue(TitleBarManager.screenForClick(at: CGPoint(x: 50, y: 900), screens: [left, above]) === above)
+        XCTAssertNil(TitleBarManager.screenForClick(at: CGPoint(x: 5000, y: 0), screens: [left, above]))
+    }
+}

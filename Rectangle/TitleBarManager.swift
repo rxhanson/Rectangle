@@ -29,15 +29,19 @@ class TitleBarManager {
     }
     
     private func handle(_ event: NSEvent) {
-        let pressedTabButton = tabButtonPress.handle(event)
+        let location = event.cgEvent?.location ?? NSEvent.mouseLocation.screenFlipped
+        tabButtonPress.handle(event) { [weak self] in
+            self?.handleDoubleClick(event, at: location)
+        }
+    }
+
+    private func handleDoubleClick(_ event: NSEvent, at location: CGPoint) {
         guard
             event.type == .leftMouseUp,
-            !pressedTabButton,
             event.clickCount == 2,
             event.eventNumber != lastEventNumber,
             TitleBarManager.systemSettingDisabled,
             let action = WindowAction(rawValue: Defaults.doubleClickTitleBar.value - 1),
-            case let location = NSEvent.mouseLocation.screenFlipped,
             let element = AccessibilityElement(location)?.getSelfOrChildElementRecursively(location),
             let windowElement = element.windowElement,
             var titleBarFrame = windowElement.titleBarFrame
@@ -107,21 +111,12 @@ extension TitleBarManager {
 /// Closing a tab can expose the title bar before mouse-up. Remember a confirmed
 /// tab-button press so that closing two tabs cannot trigger a title-bar double-click.
 private final class TitleBarTabButtonPress {
-    private struct Click {
-        let token = UUID()
-        let window: CGWindowID
-        let point: CGPoint
-        let time: TimeInterval
-    }
-
     private let worker = DispatchQueue(label: "com.knollsoft.Rectangle.titlebar-button", qos: .userInitiated)
     private var observer: AXObserver?
     private var observedApplication: AXUIElement?
     private var activation: NSObjectProtocol?
     private var generation = UUID()
-    private var click: Click?
-    private var held = false
-    private var confirmed = false
+    private let sequence = TitleBarClickSequence()
     private var pendingReads = 0
 
     func start() {
@@ -144,9 +139,7 @@ private final class TitleBarTabButtonPress {
     deinit { stop() }
 
     private func resetClick() {
-        click = nil
-        held = false
-        confirmed = false
+        sequence.reset()
     }
 
     private func removeObserver() {
@@ -174,7 +167,7 @@ private final class TitleBarTabButtonPress {
                 guard let context else { return }
                 let owner = Unmanaged<TitleBarTabButtonPress>.fromOpaque(context).takeUnretainedValue()
                 let received = ProcessInfo.processInfo.systemUptime
-                // Mouse and AX notifications may arrive in the same run-loop iteration.
+                // The matching mouse-down may still be queued on the main run loop.
                 DispatchQueue.main.async { [weak owner] in
                     owner?.received(element, from: observer, at: received)
                 }
@@ -203,45 +196,55 @@ private final class TitleBarTabButtonPress {
         }
     }
 
-    func handle(_ event: NSEvent) -> Bool {
+    func handle(_ event: NSEvent, completion: @escaping () -> Void) {
         guard event.type == .leftMouseDown || event.type == .leftMouseUp,
-              let cgEvent = event.cgEvent else { resetClick(); return false }
+              let cgEvent = event.cgEvent else { resetClick(); return }
         let raw = cgEvent.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent)
         let window = CGWindowID(exactly: raw > 0 ? raw : cgEvent.getIntegerValueField(.mouseEventWindowUnderMousePointer)) ?? 0
         if event.type == .leftMouseDown {
-            if event.clickCount == 1 {
-                resetClick()
-                if window != 0 { click = Click(window: window, point: cgEvent.location, time: event.timestamp) }
-            } else if event.clickCount != 2 || click?.window != window
-                        || event.timestamp - (click?.time ?? 0) > NSEvent.doubleClickInterval {
-                resetClick()
+            sequence.mouseDown(window: window, point: cgEvent.location, time: event.timestamp,
+                               count: event.clickCount, interval: NSEvent.doubleClickInterval)
+            read(at: event.timestamp) { click in
+                let system = AXUIElementCreateSystemWide()
+                AXUIElementSetMessagingTimeout(system, 0.01)
+                var element: AXUIElement?
+                guard AXUIElementCopyElementAtPosition(system, Float(click.point.x), Float(click.point.y), &element) == .success,
+                      let element else { return false }
+                return Self.isTabButton(element, click: click)
             }
-            held = true
-            return false
+        } else if event.clickCount == 2 {
+            guard let click = sequence.finish(window: window, completion: { veto in
+                if !veto { completion() }
+            }) else { completion(); return }
+            // Let queued AX notifications join the decision, without blocking input.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self] in
+                self?.sequence.settle(click)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.sequence.settle(click, timedOut: true)
+            }
         }
-        held = false
-        guard event.clickCount == 2 else { return false }
-        let veto = confirmed && click?.window == window
-        resetClick()
-        return veto
     }
 
     private func received(_ element: AXUIElement, from observer: AXObserver, at time: TimeInterval) {
-        guard let current = self.observer, CFEqual(current, observer),
-              let click, held, !confirmed, pendingReads < 4,
-              time >= click.time, time - click.time <= NSEvent.doubleClickInterval else { return }
+        guard let current = self.observer, CFEqual(current, observer) else { return }
+        read(at: time) { Self.isTabButton(element, click: $0) }
+    }
+
+    private func read(at time: TimeInterval, classify: @escaping (TitleBarClickSequence.Click) -> Bool) {
+        guard pendingReads < 4, let click = sequence.beginRead(at: time, interval: NSEvent.doubleClickInterval) else { return }
         pendingReads += 1
         worker.async { [weak self] in
-            let positive = Self.isPressedTabButton(element, click: click)
+            let positive = classify(click)
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 self.pendingReads -= 1
-                if positive, self.click?.token == click.token { self.confirmed = true }
+                self.sequence.endRead(click, positive: positive)
             }
         }
     }
 
-    private static func isPressedTabButton(_ element: AXUIElement, click: Click) -> Bool {
+    private static func isTabButton(_ element: AXUIElement, click: TitleBarClickSequence.Click) -> Bool {
         let deadline = ProcessInfo.processInfo.systemUptime + 0.04
         func value(_ element: AXUIElement, _ attribute: String) -> CFTypeRef? {
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
@@ -251,7 +254,6 @@ private final class TitleBarTabButtonPress {
             return AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success ? value : nil
         }
         guard value(element, kAXRoleAttribute) as? String == kAXButtonRole,
-              let pressed = value(element, kAXValueAttribute) as? NSNumber, pressed.intValue == 1,
               let position = value(element, kAXPositionAttribute), CFGetTypeID(position) == AXValueGetTypeID(),
               let size = value(element, kAXSizeAttribute), CFGetTypeID(size) == AXValueGetTypeID() else { return false }
         var point = CGPoint.zero, dimensions = CGSize.zero
@@ -268,5 +270,68 @@ private final class TitleBarTabButtonPress {
             node = parent as! AXUIElement
         }
         return false
+    }
+}
+
+// Classification belongs to the click sequence, even when AX replies after mouse-up.
+final class TitleBarClickSequence {
+    final class Click {
+        let window: CGWindowID
+        let point: CGPoint
+        let time: TimeInterval
+        var pendingReads = 0
+        var confirmed = false
+        var settled = false
+        var completion: ((Bool) -> Void)?
+
+        init(window: CGWindowID, point: CGPoint, time: TimeInterval) {
+            self.window = window
+            self.point = point
+            self.time = time
+        }
+    }
+
+    private var click: Click?
+
+    func reset() { click = nil }
+
+    func mouseDown(window: CGWindowID, point: CGPoint, time: TimeInterval, count: Int, interval: TimeInterval) {
+        if count == 1 {
+            click = window == 0 ? nil : Click(window: window, point: point, time: time)
+        } else if count != 2 || click?.window != window || time - (click?.time ?? 0) > interval {
+            reset()
+        }
+    }
+
+    func beginRead(at time: TimeInterval, interval: TimeInterval) -> Click? {
+        guard let click, !click.confirmed, time >= click.time, time - click.time <= interval else { return nil }
+        click.pendingReads += 1
+        return click
+    }
+
+    func endRead(_ click: Click, positive: Bool) {
+        guard self.click === click else { return }
+        click.pendingReads -= 1
+        click.confirmed = click.confirmed || positive
+        completeIfReady(click)
+    }
+
+    func finish(window: CGWindowID, completion: @escaping (Bool) -> Void) -> Click? {
+        guard let click, click.window == window else { reset(); return nil }
+        click.completion = completion
+        return click
+    }
+
+    func settle(_ click: Click, timedOut: Bool = false) {
+        guard self.click === click else { return }
+        click.settled = true
+        completeIfReady(click, timedOut: timedOut)
+    }
+
+    private func completeIfReady(_ click: Click, timedOut: Bool = false) {
+        guard click.settled, click.confirmed || click.pendingReads == 0 || timedOut,
+              let completion = click.completion else { return }
+        self.click = nil
+        completion(click.confirmed)
     }
 }
