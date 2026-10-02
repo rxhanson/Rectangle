@@ -176,6 +176,36 @@ class ShortcutRecordingObserverTests: XCTestCase {
         XCTAssertEqual(recordingChanges, [true, false])
     }
 
+    func testUnobservingARecordingViewEndsRecording() {
+        let observer = ShortcutRecordingObserver()
+        let recordingView = MASShortcutView()
+        let idleView = MASShortcutView()
+        var recordingChanges = [Bool]()
+        let notificationObserver = NotificationCenter.default.addObserver(
+            forName: .shortcutRecording,
+            object: nil,
+            queue: nil
+        ) { notification in
+            recordingChanges.append(notification.object as! Bool)
+        }
+        defer {
+            NotificationCenter.default.removeObserver(notificationObserver)
+        }
+
+        observer.observe([recordingView, idleView])
+        observer.recordingChanged(for: recordingView, isRecording: true)
+        XCTAssertEqual(recordingChanges, [true])
+
+        observer.unobserve(idleView)
+        XCTAssertEqual(recordingChanges, [true])
+
+        observer.unobserve(recordingView)
+        XCTAssertEqual(recordingChanges, [true, false])
+
+        observer.unobserve(recordingView)
+        XCTAssertEqual(recordingChanges, [true, false])
+    }
+
     func testTodoShortcutBindingsAreSuspendedAndRestored() throws {
         try withRegisteredTodoShortcuts { monitor, toggleShortcut, reflowShortcut in
             TodoManager.setShortcutBindingsSuspended(true)
