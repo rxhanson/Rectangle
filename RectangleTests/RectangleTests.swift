@@ -147,6 +147,11 @@ class BandTilingTests: XCTestCase {
         override var isHidden: Bool? { false }
         override var isSystemDialog: Bool? { false }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             setFrameCalls += 1
             let originalOrigin = acceptedFrame.origin
@@ -4563,6 +4568,11 @@ final class DragRestoreReleaseTests: XCTestCase {
         override var frame: CGRect { currentFrame }
         override func beginAnimatedAdjustment() -> () -> Void { {} }
         override func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool { true }
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame.size = frame.size
             if adjustPosition { currentFrame.origin = frame.origin }
@@ -4610,10 +4620,11 @@ final class DragRestoreReleaseTests: XCTestCase {
     }
 
     func testDirectAnimationWithoutServerIdentityCompletesOnceAndMouseUpDoesNotRepeatIt() throws {
+        let animator = DirectWindowAnimator(enabled: { true }, automaticallyAdvances: false, environmentIsSafe: { true })
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
-            WindowAnimator.shared.finish()
+            animator.finish()
             Defaults.experimentalWindowAnimations.enabled = saved
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
@@ -4621,19 +4632,19 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(window.windowId, "Direct animation does not require a WindowServer identity")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
         var completedFrames: [CGRect] = []
-        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
+        animator.animate(window, to: destination, duration: 0.18, resizeOnly: false, placement: nil, offset: { .zero }) { completedFrames.append($0) }
 
         XCTAssertTrue(completedFrames.isEmpty)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
-        WindowAnimator.shared.finish()
+        XCTAssertEqual(animator.destination(for: window), destination)
+        animator.finish()
         XCTAssertEqual(completedFrames, [destination])
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
 
         let manager = try release(dragAlreadyDetected: true)
 
         XCTAssertEqual(completedFrames, [destination], "A later native release must not repeat the completed animation")
         XCTAssertEqual(manager.restores, 0)
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
     }
 }
 
@@ -4661,6 +4672,8 @@ class SnappingManagerSessionTests: XCTestCase {
             object: nil
         )
 
+        let refreshed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !sm.isFullScreen }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [refreshed], timeout: 3), .completed)
         XCTAssertFalse(sm.isFullScreen,
             "receiveSessionNote should call checkFullScreen, re-evaluating isFullScreen")
     }
@@ -6120,6 +6133,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = frame
             if frame.size == targetSize {
@@ -6149,6 +6167,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { resizable }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = acceptedFrame(frame)
@@ -6278,6 +6301,11 @@ final class CrossDisplayResizeTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = CGRect(origin: adjustPosition ? frame.origin : currentFrame.origin, size: frame.size)
