@@ -5,6 +5,7 @@ import MASShortcut
 
 class TodoManager {
     private static var todoWindowId: CGWindowID?
+    static var cachedWindowID: CGWindowID? { todoWindowId }
     private static var shortcutBindingsSessionActive = true
 
     static var todoScreen : NSScreen?

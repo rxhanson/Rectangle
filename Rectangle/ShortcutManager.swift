@@ -206,6 +206,10 @@ class ShortcutManager {
     private func execute(_ originalParameters: ExecutionParameters) {
         var parameters = originalParameters
 
+        if parameters.source != .dragToSnap || [.reverseAll, .tileAll, .tileRows, .tileColumns,
+            .cascadeAll, .cascadeActiveApp, .tileActiveApp, .leftTodo, .rightTodo].contains(parameters.action) {
+            LayoutHelperManager.shared.cancel()
+        }
         if MultiWindowManager.execute(parameters: parameters) {
             return
         }

@@ -55,6 +55,12 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        Notification.Name.windowActionWillExecute.post(object: parameters)
+        WindowDividerManager.shared.interrupt()
+        let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
+            windowID: parameters.windowId, screen: parameters.screen)
+        var acceptedHelperPrefetch = false
+        defer { if !acceptedHelperPrefetch { LayoutHelperManager.shared.cancelPrefetch() } }
         hideSizeConstraintWarning()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
@@ -187,6 +193,17 @@ class WindowManager {
             }
         }
 
+        let resultParameters = ResultParameters(windowId: windowId,
+                                                action: action,
+                                                windowElement: frontmostWindowElement,
+                                                calcResult: calcResult,
+                                                usableScreens: sourceScreens,
+                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
+                                                source: parameters.source,
+                                                isFixedSize: isFixedSize, layoutHelperToken: layoutHelperToken)
+        acceptedHelperPrefetch = true
+        LayoutHelperManager.shared.prefetchForSnap(result: resultParameters)
+
         if cooperativeCornerPlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
                                                           targetFrame: calcResult.initialRect,
@@ -204,6 +221,7 @@ class WindowManager {
                 return
             }
         } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
+            LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
             Logger.log("Current frame is equal to new frame")
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
@@ -217,14 +235,7 @@ class WindowManager {
         executionID &+= 1
         let currentExecutionID = executionID
 
-        let resultParameters = ResultParameters(windowId: windowId,
-                                                action: action,
-                                                windowElement: frontmostWindowElement,
-                                                calcResult: calcResult,
-                                                usableScreens: sourceScreens,
-                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
-                                                source: parameters.source,
-                                                isFixedSize: isFixedSize)
+
         
         let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
@@ -343,6 +354,7 @@ class WindowManager {
         }
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
+        LayoutHelperManager.shared.didSnap(result: result, frame: resultingRect)
 
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
@@ -393,6 +405,7 @@ struct ResultParameters {
     let visibleFrameOfScreen: CGRect
     let source: ExecutionSource
     let isFixedSize: Bool
+    var layoutHelperToken: UUID? = nil
 }
 
 struct RectangleAction {

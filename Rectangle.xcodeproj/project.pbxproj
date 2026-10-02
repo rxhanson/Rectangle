@@ -214,6 +214,20 @@
 		F7B6C43BB57F8064F49DDBB6 /* BottomLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */; };
 		FA34D0FF2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA34D0FE2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift */; };
 		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
+		F5036C3F0958DE997FA66BFE /* LayoutHelperBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647D58F6DFF60DBF1E529156 /* LayoutHelperBlurView.swift */; };
+		0CD646DAC5E56C42EA153D93 /* LayoutHelperLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B79EE0375D9BD70CE09072E /* LayoutHelperLayout.swift */; };
+		BF3AD51F552869B6B6970A9A /* LayoutHelperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */; };
+		E49FF67D2B772630FA5B4806 /* LayoutHelperPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BAA95DFC6764FD279018B96 /* LayoutHelperPanel.swift */; };
+		B6CD8908A0DDA818CBEEF425 /* LayoutHelperPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B695B87A6B64BECC8636650 /* LayoutHelperPermission.swift */; };
+		86B2062AA7F2E09EE51684F2 /* LayoutHelperPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F787DB833F1722344E075A /* LayoutHelperPresentation.swift */; };
+		97CACB5873802167D43E416A /* LayoutHelperPreviewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ECA43C11C84059232320F0C /* LayoutHelperPreviewStore.swift */; };
+		B9473EAA34AB33AA90E6969B /* LayoutHelperWindowCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BE17894A74E48C5314BD31 /* LayoutHelperWindowCatalog.swift */; };
+		01EEDD05CD19D31436D17083 /* WindowDividerGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */; };
+		89F95C94D08CEB381D8854D0 /* WindowDividerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CA03F5CB4E39E47FF748FA /* WindowDividerManager.swift */; };
+		DD75A0FC41F179A61A3134D0 /* WindowDividerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA873D1FB72C44090E9D5321 /* WindowDividerPanel.swift */; };
+		D47BE7CE3C041D11A52762DB /* WindowPlacementSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */; };
+		8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */; };
+		95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -453,6 +467,20 @@
 		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
 		de0950b8b00f40308934a523 /* JSONDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDefaultTests.swift; sourceTree = "<group>"; };
+		647D58F6DFF60DBF1E529156 /* LayoutHelperBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperBlurView.swift; sourceTree = SOURCE_ROOT; };
+		8B79EE0375D9BD70CE09072E /* LayoutHelperLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperLayout.swift; sourceTree = SOURCE_ROOT; };
+		13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperManager.swift; sourceTree = SOURCE_ROOT; };
+		6BAA95DFC6764FD279018B96 /* LayoutHelperPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPanel.swift; sourceTree = SOURCE_ROOT; };
+		5B695B87A6B64BECC8636650 /* LayoutHelperPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPermission.swift; sourceTree = SOURCE_ROOT; };
+		21F787DB833F1722344E075A /* LayoutHelperPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPresentation.swift; sourceTree = SOURCE_ROOT; };
+		1ECA43C11C84059232320F0C /* LayoutHelperPreviewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPreviewStore.swift; sourceTree = SOURCE_ROOT; };
+		45BE17894A74E48C5314BD31 /* LayoutHelperWindowCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperWindowCatalog.swift; sourceTree = SOURCE_ROOT; };
+		58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerGeometry.swift; sourceTree = SOURCE_ROOT; };
+		04CA03F5CB4E39E47FF748FA /* WindowDividerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerManager.swift; sourceTree = SOURCE_ROOT; };
+		AA873D1FB72C44090E9D5321 /* WindowDividerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerPanel.swift; sourceTree = SOURCE_ROOT; };
+		F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Utilities/WindowPlacementSupport.swift; sourceTree = SOURCE_ROOT; };
+		C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowGeometry.swift; sourceTree = SOURCE_ROOT; };
+		6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowPlacementCoordinator.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -694,6 +722,20 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
+				6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */,
+				C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */,
+				F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */,
+				AA873D1FB72C44090E9D5321 /* WindowDividerPanel.swift */,
+				04CA03F5CB4E39E47FF748FA /* WindowDividerManager.swift */,
+				58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */,
+				45BE17894A74E48C5314BD31 /* LayoutHelperWindowCatalog.swift */,
+				1ECA43C11C84059232320F0C /* LayoutHelperPreviewStore.swift */,
+				21F787DB833F1722344E075A /* LayoutHelperPresentation.swift */,
+				5B695B87A6B64BECC8636650 /* LayoutHelperPermission.swift */,
+				6BAA95DFC6764FD279018B96 /* LayoutHelperPanel.swift */,
+				13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */,
+				8B79EE0375D9BD70CE09072E /* LayoutHelperLayout.swift */,
+				647D58F6DFF60DBF1E529156 /* LayoutHelperBlurView.swift */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
@@ -984,6 +1026,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */,
+				8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */,
+				D47BE7CE3C041D11A52762DB /* WindowPlacementSupport.swift in Sources */,
+				DD75A0FC41F179A61A3134D0 /* WindowDividerPanel.swift in Sources */,
+				89F95C94D08CEB381D8854D0 /* WindowDividerManager.swift in Sources */,
+				01EEDD05CD19D31436D17083 /* WindowDividerGeometry.swift in Sources */,
+				B9473EAA34AB33AA90E6969B /* LayoutHelperWindowCatalog.swift in Sources */,
+				97CACB5873802167D43E416A /* LayoutHelperPreviewStore.swift in Sources */,
+				86B2062AA7F2E09EE51684F2 /* LayoutHelperPresentation.swift in Sources */,
+				B6CD8908A0DDA818CBEEF425 /* LayoutHelperPermission.swift in Sources */,
+				E49FF67D2B772630FA5B4806 /* LayoutHelperPanel.swift in Sources */,
+				BF3AD51F552869B6B6970A9A /* LayoutHelperManager.swift in Sources */,
+				0CD646DAC5E56C42EA153D93 /* LayoutHelperLayout.swift in Sources */,
+				F5036C3F0958DE997FA66BFE /* LayoutHelperBlurView.swift in Sources */,
 				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,

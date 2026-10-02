@@ -87,6 +87,8 @@ final class DirectWindowAnimator {
         self.isNativeResizeApp = isNativeResizeApp
     }
 
+    var isAnimating: Bool { animation?.isFinished == false || keyboardSession != nil || pendingRelease != nil || pendingSettlement != nil }
+
     func destination(for element: AccessibilityElement) -> CGRect? {
         window == element ? (pendingRelease?.destination ?? pendingSettlement?.destination ?? keyboardSession?.motion.destination ?? animation?.destination) : nil
     }
