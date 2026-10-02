@@ -282,13 +282,18 @@ class SnappingManager {
     }
     
     func handle(event: NSEvent) {
+        if WindowDividerManager.shared.containsPointerEvent(event) { return }
+        if LayoutHelperManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
+            LayoutHelperManager.shared.cancelPrefetch()
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            WindowDividerManager.shared.interrupt()
+            LayoutHelperManager.shared.cancel()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -387,6 +392,7 @@ class SnappingManager {
                 retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -407,12 +413,15 @@ class SnappingManager {
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
+                        let anchor = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow, applyingGaps: false) ?? newBoxRect
+                        LayoutHelperManager.shared.prefetch(on: snapArea.screen, action: snapArea.action, anchor: anchor, excluding: windowId)
                         showSnapPreview(in: newBoxRect, snapArea: snapArea)
                     }
                     
                     currentSnapArea = snapArea
                 } else {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -628,7 +637,7 @@ class SnappingManager {
         }
     }
     
-    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window, applyingGaps: Bool = true) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
             let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
@@ -637,7 +646,7 @@ class SnappingManager {
             
             let gapsApplicable = hotSpot.action.gapsApplicable
             
-            if Defaults.gapSize.value > 0, gapsApplicable != .none {
+            if applyingGaps, Defaults.gapSize.value > 0, gapsApplicable != .none {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
 
                 return GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)

@@ -403,6 +403,8 @@ final class WindowAnimator {
             && !NSWorkspace.shared.isSwitchControlEnabled
     }
 
+    var isAnimating: Bool { direct.isAnimating }
+
     func destination(for element: AccessibilityElement) -> CGRect? { direct.destination(for: element) }
     func logicalFrame(for element: AccessibilityElement) -> CGRect? { direct.destination(for: element) }
     func cancel(for element: AccessibilityElement) { direct.cancel(for: element) }

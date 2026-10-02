@@ -11,7 +11,7 @@ class FixedSizeWindowMover: WindowMover {
         if currentWindowRect.isNull { return }
 
         let adjusted = ClampedWindowAligner.aligned(
-            window: currentWindowRect,
+            window: CGRect(origin: rect.screenFlipped.origin, size: currentWindowRect.size),
             inZone: rect.screenFlipped,
             initialRect: resultParameters.calcResult.initialRect.screenFlipped,
             screenFrame: resultParameters.visibleFrameOfScreen.screenFlipped,

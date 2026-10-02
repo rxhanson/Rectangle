@@ -5,8 +5,14 @@ import Foundation
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
     
-    init(_ element: AXUIElement) {
+    private(set) var messagingTimeout: Float = 0
+    private var resolvedWindowID: CGWindowID?
+    var animationObservationElement: AXUIElement { wrappedElement }
+
+    init(_ element: AXUIElement, messagingTimeout: Float = 0, windowID: CGWindowID? = nil) {
         wrappedElement = element
+        resolvedWindowID = windowID
+        if messagingTimeout > 0 { setMessagingTimeout(messagingTimeout) }
     }
     
     convenience init(_ pid: pid_t) {
@@ -25,12 +31,12 @@ class AccessibilityElement {
     
     private func getElementValue(_ attribute: NSAccessibility.Attribute) -> AccessibilityElement? {
         guard let value = wrappedElement.getValue(attribute), CFGetTypeID(value) == AXUIElementGetTypeID() else { return nil }
-        return AccessibilityElement(value as! AXUIElement)
+        return AccessibilityElement(value as! AXUIElement, messagingTimeout: messagingTimeout)
     }
     
     private func getElementsValue(_ attribute: NSAccessibility.Attribute) -> [AccessibilityElement]? {
         guard let value = wrappedElement.getValue(attribute), let array = value as? [AXUIElement] else { return nil }
-        return array.map { AccessibilityElement($0) }
+        return array.map { AccessibilityElement($0, messagingTimeout: messagingTimeout) }
     }
     
     private var role: NSAccessibility.Role? {
@@ -299,7 +305,7 @@ class AccessibilityElement {
     }
     
     var windowId: CGWindowID? {
-        wrappedElement.getWindowId()
+        resolvedWindowID ?? wrappedElement.getWindowId()
     }
 
     func getWindowId() -> CGWindowID? {
@@ -364,6 +370,7 @@ class AccessibilityElement {
     /// Caps how long AX calls through this element can block on an
     /// unresponsive app (the systemwide default is several seconds).
     func setMessagingTimeout(_ seconds: Float) {
+        messagingTimeout = seconds
         AXUIElementSetMessagingTimeout(wrappedElement, seconds)
     }
     
@@ -431,6 +438,72 @@ class AccessibilityElement {
 }
 
 extension AccessibilityElement {
+    func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false, positionFirst: Bool) -> Bool {
+        if positionFirst, !resizeOnly, writeAnimationPosition(frame.origin) != .success { return false }
+        return setAnimationFrame(frame, resizeOnly: resizeOnly)
+    }
+
+    func setDividerPosition(_ point: CGPoint) -> Bool {
+        guard WindowAnimator.shared.destination(for: self) == nil else { return false }
+        var point = point
+        guard let value = AXValueCreate(.cgPoint, &point) else { return false }
+        return AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, value) == .success
+    }
+
+    func activateAndRaiseWindow(isCurrent: @escaping () -> Bool,
+                                completion: @escaping (AXError, AXError, AXError) -> Void) {
+        guard let pid else { completion(.invalidUIElement, .invalidUIElement, .invalidUIElement); return }
+        let workspace = NSWorkspace.shared
+        func raiseSelected(activation: AXError) {
+            guard isCurrent() else { return }
+            guard workspace.frontmostApplication?.processIdentifier == pid else {
+                completion(activation, .cannotComplete, .cannotComplete)
+                return
+            }
+            let main = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
+            let raise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
+            completion(activation, main, raise)
+        }
+        if workspace.frontmostApplication?.processIdentifier == pid {
+            raiseSelected(activation: .success)
+            return
+        }
+        var observer: NSObjectProtocol?
+        var timeout: DispatchWorkItem?
+        var finished = false
+        var activation = AXError.success
+        let finish = {
+            guard !finished else { return }
+            finished = true
+            if let registered = observer { workspace.notificationCenter.removeObserver(registered) }
+            observer = nil
+            timeout?.cancel(); timeout = nil
+            raiseSelected(activation: activation)
+        }
+        observer = workspace.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
+            object: nil, queue: .main) { note in
+                guard (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.processIdentifier == pid else { return }
+                DispatchQueue.main.async(execute: finish)
+            }
+        let deadline = DispatchWorkItem(block: finish)
+        timeout = deadline
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: deadline)
+        let application = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(application, messagingTimeout > 0 ? min(messagingTimeout, 0.05) : 0.05)
+        let selectedMain = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
+        let selectedRaise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
+        guard isCurrent() else { finish(); return }
+        if selectedMain == .success, selectedRaise == .success,
+           let app = NSRunningApplication(processIdentifier: pid), app.activate(options: []) {
+            activation = .success
+        } else {
+            // Some applications refuse background main-window changes. Retain
+            // application activation as the fallback for an otherwise unusable selection.
+            activation = AXUIElementSetAttributeValue(application, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
+        }
+        if activation != .success || workspace.frontmostApplication?.processIdentifier == pid { finish() }
+    }
+
     static func getFrontApplicationElement() -> AccessibilityElement? {
         guard let app = NSWorkspace.shared.frontmostApplication,
               app.processIdentifier != -1 else {

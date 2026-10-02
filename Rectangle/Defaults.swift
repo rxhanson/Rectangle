@@ -3,6 +3,29 @@
 import Cocoa
 
 class Defaults {
+    // Import aliases are retained solely for settings written before the feature rename.
+    static let legacyLayoutHelperKeys = [
+        "layoutHelper": "snapAssist",
+        "layoutHelperKeyboard": "snapAssistKeyboard",
+        "layoutHelperDenseGrids": "snapAssistDenseGrids"
+    ]
+
+    static func migrateLayoutHelperPreferences(in store: UserDefaults = .standard) {
+        for (current, legacy) in legacyLayoutHelperKeys {
+            if store.object(forKey: current) == nil, let value = store.object(forKey: legacy) {
+                store.set(value, forKey: current)
+            }
+            store.removeObject(forKey: legacy)
+        }
+    }
+
+
+    static let windowDivider = BoolDefault(key: "windowDivider")
+    static let windowDividerEnhanced = BoolDefault(key: "windowDividerEnhanced")
+    static let layoutHelper = OptionalBoolDefault(key: "layoutHelper")
+    static let layoutHelperKeyboard = BoolDefault(key: "layoutHelperKeyboard")
+    static let layoutHelperCloseButton = BoolDefault(key: "layoutHelperCloseButton", defaultValue: true)
+    static let layoutHelperDenseGrids = BoolDefault(key: "layoutHelperDenseGrids")
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
     static let disabledApps = JSONDefault<Set<String>>(key: "disabledApps")
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
@@ -128,6 +151,12 @@ class Defaults {
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
+        windowDivider,
+        windowDividerEnhanced,
+        layoutHelper,
+        layoutHelperKeyboard,
+        layoutHelperCloseButton,
+        layoutHelperDenseGrids,
         launchOnLogin,
         disabledApps,
         hideMenuBarIcon,
@@ -269,9 +298,10 @@ class BoolDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Bool = false) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        enabled = UserDefaults.standard.object(forKey: key) == nil
+            ? defaultValue : UserDefaults.standard.bool(forKey: key)
         initialized = true
     }
     

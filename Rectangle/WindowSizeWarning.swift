@@ -16,6 +16,7 @@ enum WindowSizeConstraint {
 }
 
 final class WindowSizeWarning: NSPanel {
+    static let shared = WindowSizeWarning()
     private var dismissal: DispatchWorkItem?
 
     override var canBecomeKey: Bool { false }
