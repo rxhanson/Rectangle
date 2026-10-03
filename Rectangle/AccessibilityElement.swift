@@ -440,8 +440,12 @@ class AccessibilityElement {
 extension AccessibilityElement {
     func activateAndRaiseWindow(isCurrent: @escaping () -> Bool,
                                 completion: @escaping (AXError, AXError, AXError) -> Void) {
+        guard isCurrent() else { return }
         guard let pid else { completion(.invalidUIElement, .invalidUIElement, .invalidUIElement); return }
         let workspace = NSWorkspace.shared
+        func canContinue(after error: AXError) -> Bool {
+            error != .cannotComplete && error != .invalidUIElement
+        }
         func raiseSelected(activation: AXError) {
             guard isCurrent() else { return }
             guard workspace.frontmostApplication?.processIdentifier == pid else {
@@ -449,11 +453,30 @@ extension AccessibilityElement {
                 return
             }
             let main = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
+            guard isCurrent() else { return }
+            guard canContinue(after: main) else {
+                completion(activation, main, main)
+                return
+            }
             let raise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
             completion(activation, main, raise)
         }
         if workspace.frontmostApplication?.processIdentifier == pid {
             raiseSelected(activation: .success)
+            return
+        }
+        // A failed AX request to an unresponsive app must not be followed by
+        // more synchronous requests (or a later timeout that retries them).
+        let selectedMain = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
+        guard isCurrent() else { return }
+        guard canContinue(after: selectedMain) else {
+            completion(selectedMain, selectedMain, selectedMain)
+            return
+        }
+        let selectedRaise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
+        guard isCurrent() else { return }
+        guard canContinue(after: selectedRaise) else {
+            completion(selectedRaise, selectedMain, selectedRaise)
             return
         }
         var observer: NSObjectProtocol?
@@ -466,6 +489,10 @@ extension AccessibilityElement {
             if let registered = observer { workspace.notificationCenter.removeObserver(registered) }
             observer = nil
             timeout?.cancel(); timeout = nil
+            guard canContinue(after: activation) else {
+                completion(activation, .cannotComplete, .cannotComplete)
+                return
+            }
             raiseSelected(activation: activation)
         }
         observer = workspace.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
@@ -478,8 +505,6 @@ extension AccessibilityElement {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: deadline)
         let application = AXUIElementCreateApplication(pid)
         AXUIElementSetMessagingTimeout(application, messagingTimeout > 0 ? min(messagingTimeout, 0.05) : 0.05)
-        let selectedMain = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
-        let selectedRaise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
         guard isCurrent() else { finish(); return }
         if selectedMain == .success, selectedRaise == .success,
            let app = NSRunningApplication(processIdentifier: pid), app.activate(options: []) {

@@ -7052,3 +7052,200 @@ final class TrackpadMinimizeExecutionTests: XCTestCase {
         }
     }
 }
+
+final class TrackpadTargetLookupConcurrencyTests: XCTestCase {
+    func testBlockedLookupDoesNotBlockRecognitionAndDeliversWhenReady() {
+        let lookupStarted = DispatchSemaphore(value: 0)
+        let releaseLookup = DispatchSemaphore(value: 0)
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in
+            lookupStarted.signal()
+            releaseLookup.wait()
+            return target
+        }, lookupQueue: queue, now: { 0 })
+        targeter.observeFrame(contactCount: 4)
+        XCTAssertEqual(lookupStarted.wait(timeout: .now() + 1), .success)
+        defer { releaseLookup.signal(); queue.sync {} }
+
+        let registrationReturned = DispatchSemaphore(value: 0)
+        let delivered = DispatchSemaphore(value: 0)
+        DispatchQueue.global().async {
+            targeter.withPreparedWindow { selected in
+                XCTAssertTrue(selected === target)
+                delivered.signal()
+            }
+            registrationReturned.signal()
+        }
+        XCTAssertEqual(registrationReturned.wait(timeout: .now() + 1), .success,
+                       "Recognition must return while AX lookup is still blocked")
+        XCTAssertEqual(delivered.wait(timeout: .now()), .timedOut)
+        targeter.observeFrame(contactCount: 0)
+        releaseLookup.signal()
+        XCTAssertEqual(delivered.wait(timeout: .now() + 1), .success)
+    }
+
+    func testEndedSessionsAreSkippedBeforeStartingTheirQueuedAXLookup() {
+        let firstStarted = DispatchSemaphore(value: 0)
+        let releaseFirst = DispatchSemaphore(value: 0)
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let state = TrackpadLookupTestState()
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { state.nextCursor() }, findWindow: { point in
+            state.recordLookup(Int(point.x))
+            if point.x == 0 { firstStarted.signal(); releaseFirst.wait() }
+            return target
+        }, lookupQueue: queue)
+        targeter.observeFrame(contactCount: 4)
+        XCTAssertEqual(firstStarted.wait(timeout: .now() + 1), .success)
+        for _ in 0..<20 {
+            targeter.observeFrame(contactCount: 0)
+            targeter.observeFrame(contactCount: 4)
+        }
+        releaseFirst.signal()
+        queue.sync {}
+        XCTAssertEqual(state.lookups, [0, 20], "Only the newest waiting session may query the app")
+    }
+
+    func testResetAndExpiredGraceDiscardCallbacksFromAnUnfinishedLookup() {
+        for reset in [false, true] {
+            let started = DispatchSemaphore(value: 0)
+            let release = DispatchSemaphore(value: 0)
+            let queue = DispatchQueue(label: "trackpad-test.lookup")
+            let state = TrackpadLookupTestState()
+            let target = TrackpadCursorWindowShortcutTargeter.Target(
+                window: AXUIElementCreateApplication(getpid()), pid: getpid())
+            let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in
+                started.signal()
+                release.wait()
+                return target
+            }, lookupQueue: queue, now: { state.time })
+            targeter.observeFrame(contactCount: 4)
+            XCTAssertEqual(started.wait(timeout: .now() + 1), .success)
+            targeter.withPreparedWindow { _ in XCTFail("Reset or an expired grace period must discard the target") }
+            state.time = 1
+            if reset { targeter.reset() } else { targeter.observeFrame(contactCount: 0) }
+            release.signal()
+            queue.sync {}
+        }
+    }
+}
+
+private final class TrackpadLookupTestState: @unchecked Sendable {
+    private let lock = NSLock()
+    private var cursor = 0
+    private var recorded: [Int] = []
+    private var currentTime: TimeInterval = 0
+    var time: TimeInterval {
+        get { lock.lock(); defer { lock.unlock() }; return currentTime }
+        set { lock.lock(); currentTime = newValue; lock.unlock() }
+    }
+    func nextCursor() -> CGPoint {
+        lock.lock()
+        defer { lock.unlock() }
+        defer { cursor += 1 }
+        return CGPoint(x: cursor, y: 0)
+    }
+    func recordLookup(_ value: Int) {
+        lock.lock()
+        recorded.append(value)
+        lock.unlock()
+    }
+    var lookups: [Int] {
+        lock.lock()
+        defer { lock.unlock() }
+        return recorded
+    }
+}
+
+@MainActor
+final class TrackpadRuntimeQueueTests: XCTestCase {
+    func testNewestRecognizedGestureReplacesActionsWaitingOnMain() {
+        let source = TrackpadRuntimeTestSource()
+        let capture = TrackpadRuntimeTestCapture()
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in target }, lookupQueue: queue)
+        let runtime = TrackpadGestureRuntime(source: source, capture: capture, targeter: targeter)
+        var settings = TrackpadGestureSettings()
+        settings.enabled = true
+        settings.fingers = 4
+        var actions: [Int] = []
+        let delivered = expectation(description: "newest gesture delivered")
+        runtime.onAction = { action, _, _, _ in actions.append(action); delivered.fulfill() }
+        runtime.start(settings: settings, systemFingers: [])
+        defer { runtime.stop() }
+
+        source.send(x: 0.2, time: 1)
+        queue.sync {}
+        source.send(x: 0.7, time: 1.1)
+        source.lift(time: 1.2)
+        source.send(x: 0.7, time: 2)
+        queue.sync {}
+        source.send(x: 0.2, time: 2.1)
+        wait(for: [delivered], timeout: 1)
+        XCTAssertEqual(actions, [settings.left], "The old main-queued gesture must not activate or move its target")
+    }
+
+    func testStopInvalidatesActionAlreadyQueuedOnMain() {
+        let source = TrackpadRuntimeTestSource()
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in target }, lookupQueue: queue)
+        let runtime = TrackpadGestureRuntime(source: source, capture: TrackpadRuntimeTestCapture(), targeter: targeter)
+        var settings = TrackpadGestureSettings()
+        settings.enabled = true
+        settings.fingers = 4
+        runtime.onAction = { _, _, _, _ in XCTFail("Stopped runtimes must not execute queued actions") }
+        runtime.start(settings: settings, systemFingers: [])
+        source.send(x: 0.2, time: 1)
+        queue.sync {}
+        source.send(x: 0.7, time: 1.1)
+        runtime.stop()
+        let drained = expectation(description: "main action queue drained")
+        DispatchQueue.main.async { drained.fulfill() }
+        wait(for: [drained], timeout: 1)
+    }
+}
+
+private final class TrackpadRuntimeTestSource: TrackpadTouchSource {
+    var onDeviceOverlap: (() -> Void)?
+    var onContactCount: ((Int) -> Void)?
+    var onFrame: ((TrackpadTouchFrame) -> Void)?
+    var deviceCount: Int { 1 }
+    func start() {}
+    func stop() {}
+    func send(x: Double, time: Double) {
+        onContactCount?(4)
+        onFrame?(.init(timestamp: time, touches: (0..<4).map {
+            .init(identifier: $0, position: .init(x: x, y: 0.5), velocity: .init(x: x < 0.5 ? -2 : 2, y: 0))
+        }))
+    }
+    func lift(time: Double) {
+        onContactCount?(0)
+        onFrame?(.init(timestamp: time, touches: []))
+    }
+}
+
+private final class TrackpadRuntimeTestCapture: TrackpadExclusiveGestureCapturing, @unchecked Sendable {
+    var isHealthy = true
+    var onHealthChange: (@Sendable (Bool) -> Void)?
+    func start() { isHealthy = true }
+    func stop() { isHealthy = false }
+    func recheck(accessibilityTrusted: Bool) {}
+    func setAccessibilityTrusted(_ trusted: Bool) {}
+    func setEnabled(_ enabled: Bool) {}
+    func setAllowedFingerCounts(_ counts: Set<Int>) {}
+    func observeContactCount(_ count: Int) {}
+    func contaminateSession() {}
+    func performIfHealthy(_ action: () -> Void) -> Bool {
+        guard isHealthy else { return false }
+        action()
+        return true
+    }
+    func reset() {}
+}

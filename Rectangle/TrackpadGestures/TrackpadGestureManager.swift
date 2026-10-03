@@ -175,7 +175,7 @@ final class TrackpadGestureManager {
         if let bundle = app.bundleIdentifier,
            Defaults.disabledApps.typedValue?.contains(bundle) == true || Defaults.fullIgnoreBundleIds.typedValue?.contains(bundle) == true { return }
         let element = AccessibilityElement(target.window, messagingTimeout: 0.1)
-        guard let windowID = element.getWindowId(), element.isMinimized != true,
+        guard element.isMinimized == false, let windowID = element.getWindowId(),
               element.pid == target.pid else { return }
         let isCurrent = beginAction(action) { [weak self] in
             self?.runtime?.accepts(generation: generation, epoch: epoch) == true

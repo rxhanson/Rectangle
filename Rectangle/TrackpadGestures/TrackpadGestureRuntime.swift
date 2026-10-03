@@ -87,8 +87,15 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
         lock.lock()
         guard running else { lock.unlock(); return }
         let configuration = settings
-        let token = generation
         let event = recognizer.process(frame)
+        let action = event.flatMap {
+            $0.fingers == configuration.fingers && configuration[$0.direction] != TrackpadGestureAction.none
+                ? configuration[$0.direction] : nil
+        }
+        // Invalidate older work before it reaches the main queue or finishes
+        // activating an application, not only once this gesture executes.
+        if action != nil { generation &+= 1 }
+        let token = generation
         var contaminated = false
         if systemFingers.contains(3), frame.touches.count == 3 {
             let center = centroid(of: frame.touches)
@@ -102,17 +109,17 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
         // must not turn it into a Rectangle gesture.
         if contaminated { capture.contaminateSession() }
         targeter.observeFrame(contactCount: frame.touches.count)
-        guard let event, event.fingers == configuration.fingers,
-              configuration[event.direction] != TrackpadGestureAction.none,
-              let target = targeter.preparedWindow() else { return }
+        guard let action else { return }
         capture.performIfHealthy {
             epochLock.lock()
             let epoch = healthEpoch
             epochLock.unlock()
-            let action = configuration[event.direction]
-            DispatchQueue.main.async { [weak self] in
+            targeter.withPreparedWindow { [weak self] target in
                 guard let self, self.accepts(generation: token, epoch: epoch) else { return }
-                self.onAction?(action, target, token, epoch)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, self.accepts(generation: token, epoch: epoch) else { return }
+                    self.onAction?(action, target, token, epoch)
+                }
             }
         }
     }

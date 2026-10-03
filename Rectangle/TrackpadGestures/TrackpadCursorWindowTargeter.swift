@@ -12,13 +12,16 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
     }
 
     private let lock = NSLock()
-    private let lookupQueue = DispatchQueue(label: "com.rectangle.trackpad.window-lookup", qos: .userInteractive)
+    private let lookupQueue: DispatchQueue
     private let cursorLocation: @Sendable () -> CGPoint?
     private let findWindow: @Sendable (CGPoint) -> Target?
+    private let now: @Sendable () -> TimeInterval
     private var generation: UInt64 = 0
     private var inSession = false
     private var target: Target?
-    private var lookupDone = DispatchGroup()
+    private var lookupPending = false
+    private var pendingAction: ((Target) -> Void)?
+    private var pendingDeadline: TimeInterval = 0
 
     convenience init() {
         self.init(
@@ -29,15 +32,21 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
 
     init(
         cursorLocation: @escaping @Sendable () -> CGPoint?,
-        findWindow: @escaping @Sendable (CGPoint) -> Target?
+        findWindow: @escaping @Sendable (CGPoint) -> Target?,
+        lookupQueue: DispatchQueue = DispatchQueue(label: "com.rectangle.trackpad.window-lookup", qos: .userInteractive),
+        now: @escaping @Sendable () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }
     ) {
         self.cursorLocation = cursorLocation
         self.findWindow = findWindow
+        self.lookupQueue = lookupQueue
+        self.now = now
     }
     func observeFrame(contactCount: Int) {
         lock.lock()
         if contactCount == 0 {
-            generation &+= 1
+            // A recognized swipe may finish its already-started lookup after
+            // lift, within the same 40 ms grace period as synchronous lookup.
+            if pendingAction == nil { generation &+= 1 }
             inSession = false
             target = nil
             lock.unlock()
@@ -49,41 +58,47 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
         }
         inSession = true
         generation &+= 1
+        pendingAction = nil
         let session = generation
         let cursor = cursorLocation()
-        let group = DispatchGroup()
-        group.enter()
-        lookupDone = group
+        lookupPending = true
         lock.unlock()
 
         lookupQueue.async { [weak self] in
-            guard let self else {
-                group.leave()
-                return
-            }
+            guard let self else { return }
+            // A slow application must not make later gestures wait for AX
+            // lookups belonging to sessions that have already ended.
+            self.lock.lock()
+            let current = self.generation == session
+                && (self.inSession || self.pendingAction != nil && self.now() <= self.pendingDeadline)
+            self.lock.unlock()
+            guard current else { return }
             let found = cursor.flatMap { self.findWindow($0) }
             self.lock.lock()
-            if self.generation == session, self.inSession {
-                self.target = found
+            var action: ((Target) -> Void)?
+            if self.generation == session {
+                self.target = self.inSession ? found : nil
+                self.lookupPending = false
+                if self.now() <= self.pendingDeadline { action = self.pendingAction }
+                self.pendingAction = nil
             }
             self.lock.unlock()
-            group.leave()
+            if let found { action?(found) }
         }
     }
 
-    func preparedWindow() -> Target? {
+    func withPreparedWindow(_ action: @escaping (Target) -> Void) {
         lock.lock()
-        let group = lookupDone
-        let session = generation
-        let active = inSession
+        guard inSession else { lock.unlock(); return }
+        let selected = target
+        if selected == nil, lookupPending {
+            pendingAction = action
+            pendingDeadline = now() + 0.040
+        }
         lock.unlock()
-        guard active else { return nil }
-        guard group.wait(timeout: .now() + .milliseconds(40)) == .success else { return nil }
-
-        lock.lock()
-        let selected = generation == session ? target : nil
-        lock.unlock()
-        return selected
+        // Never wait for AX from the frame-delivery callback: its state lock
+        // is also needed to publish new contacts and to stop the source.
+        if let selected { action(selected) }
     }
 
     func reset() {
@@ -91,6 +106,7 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
         generation &+= 1
         inSession = false
         target = nil
+        pendingAction = nil
         lock.unlock()
     }
 
@@ -100,6 +116,7 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
         var hit: AXUIElement?
         guard AXUIElementCopyElementAtPosition(system, Float(point.x), Float(point.y), &hit) == .success,
               let hit else { return nil }
+        AXUIElementSetMessagingTimeout(hit, 0.10)
 
         var rawWindow: CFTypeRef?
         let window: AXUIElement
@@ -112,6 +129,7 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
                   (role as? String) == (kAXWindowRole as String) else { return nil }
             window = hit
         }
+        AXUIElementSetMessagingTimeout(window, 0.10)
         var role: CFTypeRef?
         var subrole: CFTypeRef?
         guard AXUIElementCopyAttributeValue(window, kAXRoleAttribute as CFString, &role) == .success,
@@ -126,7 +144,6 @@ final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
         guard AXUIElementGetPid(window, &pid) == .success,
               pid > 0,
               NSRunningApplication(processIdentifier: pid) != nil else { return nil }
-        AXUIElementSetMessagingTimeout(window, 0.10)
         return Target(window: window, pid: pid)
     }
 
