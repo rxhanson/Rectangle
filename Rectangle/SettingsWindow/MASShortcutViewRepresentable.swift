@@ -6,6 +6,9 @@ import MASShortcut
 struct MASShortcutViewRepresentable: NSViewRepresentable {
     let defaultsKey: String
     let validator: MASShortcutValidator?
+    /// Suspends the bound shortcuts while this view records, so a shortcut
+    /// already in use can be recorded instead of triggering its action.
+    var recordingObserver: ShortcutRecordingObserver? = nil
 
     func makeNSView(context: Context) -> MASShortcutView {
         let view = MASShortcutView()
@@ -13,7 +16,30 @@ struct MASShortcutViewRepresentable: NSViewRepresentable {
         if let validator = validator {
             view.shortcutValidator = validator
         }
+        recordingObserver?.observe([view])
         return view
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(recordingObserver: recordingObserver)
+    }
+
+    /// The observer keeps its views alive, so a view SwiftUI removes - when
+    /// its section collapses, say - has to be let go of here, and stopped
+    /// first if it was recording, or it would go on recording unseen with
+    /// every other shortcut suspended.
+    static func dismantleNSView(_ nsView: MASShortcutView, coordinator: Coordinator) {
+        guard let recordingObserver = coordinator.recordingObserver else { return }
+        nsView.isRecording = false
+        recordingObserver.unobserve(nsView)
+    }
+
+    final class Coordinator {
+        let recordingObserver: ShortcutRecordingObserver?
+
+        init(recordingObserver: ShortcutRecordingObserver?) {
+            self.recordingObserver = recordingObserver
+        }
     }
 
     func updateNSView(_ nsView: MASShortcutView, context: Context) {
