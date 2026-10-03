@@ -171,6 +171,7 @@
 		AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200010000000000000002 /* DirectWindowAnimator.swift */; };
 		AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200030000000000000002 /* WindowAnimationCurves.swift */; };
 		AF09A0000000000000000001 /* GridTiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000002 /* GridTiling.swift */; };
+		AF0CA11E0000000000000001 /* StackCycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0CA11E0000000000000002 /* StackCycleManager.swift */; };
 		AF09A0000000000000000003 /* GridTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000004 /* GridTilingTests.swift */; };
 		AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000002 /* DisplayTransfer.swift */; };
 		AF09B1000000000000000003 /* DisplayTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000004 /* DisplayTransferTests.swift */; };
@@ -408,6 +409,7 @@
 		AC0200010000000000000002 /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
 		AC0200030000000000000002 /* WindowAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurves.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000002 /* GridTiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTiling.swift; sourceTree = "<group>"; };
+		AF0CA11E0000000000000002 /* StackCycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackCycleManager.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000004 /* GridTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTilingTests.swift; sourceTree = "<group>"; };
 		AF09B1000000000000000002 /* DisplayTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransfer.swift; sourceTree = "<group>"; };
 		AF09B1000000000000000004 /* DisplayTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransferTests.swift; sourceTree = "<group>"; };
@@ -496,6 +498,7 @@
 				98192DDD2717201000015E66 /* ReverseAllManager.swift */,
 				FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */,
 				AF09A0000000000000000002 /* GridTiling.swift */,
+				AF0CA11E0000000000000002 /* StackCycleManager.swift */,
 			);
 			path = MultiWindow;
 			sourceTree = "<group>";
@@ -1028,6 +1031,7 @@
 				D0CFE33127A8CAED004DA47B /* TopLeftThirdCalculation.swift in Sources */,
 				FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */,
 				AF09A0000000000000000001 /* GridTiling.swift in Sources */,
+				AF0CA11E0000000000000001 /* StackCycleManager.swift in Sources */,
 				98192DDA270F606C00015E66 /* Debounce.swift in Sources */,
 				D04CE3002781794E00BD47B3 /* TopLeftNinthCalculation.swift in Sources */,
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,

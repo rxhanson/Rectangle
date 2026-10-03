@@ -137,7 +137,9 @@ enum WindowAction: Int, Codable {
          displayEight = 127,
          displayNine = 128,
          tileRows = 129,
-         tileColumns = 130
+         tileColumns = 130,
+         cycleStackedWindows = 131,
+         cycleStackedWindowsBackward = 132
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -170,7 +172,8 @@ enum WindowAction: Int, Codable {
                          leftTodo, rightTodo,
                          cascadeActiveApp, tileActiveApp,
                          displayOne, displayTwo, displayThree, displayFour, displayFive,
-                         displaySix, displaySeven, displayEight, displayNine
+                         displaySix, displaySeven, displayEight, displayNine,
+                         cycleStackedWindows, cycleStackedWindowsBackward
     ]
 
     func post() {
@@ -206,7 +209,8 @@ enum WindowAction: Int, Codable {
     
     var excludedFromMenu: Bool {
         switch self {
-        case .smallerWidth, .largerWidth, .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds: return true
+        case .smallerWidth, .largerWidth, .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds,
+             .cycleStackedWindows, .cycleStackedWindowsBackward: return true
         default: return false
         }
     }
@@ -288,6 +292,8 @@ enum WindowAction: Int, Codable {
         case .tileAll: return "tileAll"
         case .tileRows: return "tileRows"
         case .tileColumns: return "tileColumns"
+        case .cycleStackedWindows: return "cycleStackedWindows"
+        case .cycleStackedWindowsBackward: return "cycleStackedWindowsBackward"
         case .cascadeAll: return "cascadeAll"
         case .leftTodo: return "leftTodo"
         case .rightTodo: return "rightTodo"
@@ -491,6 +497,10 @@ enum WindowAction: Int, Codable {
             String(localized: "Tile in Rows")
         case .tileColumns:
             String(localized: "Tile in Columns")
+        case .cycleStackedWindows:
+            String(localized: "Cycle Stacked Windows")
+        case .cycleStackedWindowsBackward:
+            String(localized: "Cycle Stacked Windows Backward")
         case .largerWidth:
             String(localized: "Larger Width")
         case .smallerWidth:
@@ -612,6 +622,7 @@ enum WindowAction: Int, Codable {
     var isDragSnappable: Bool {
         switch self {
         case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .larger, .smaller, .largerWidth, .smallerWidth, .cascadeActiveApp, .tileActiveApp,
+            .cycleStackedWindows, .cycleStackedWindowsBackward,
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
@@ -757,6 +768,7 @@ enum WindowAction: Int, Codable {
         case .tileAll: return NSImage()
         case .tileRows: return NSImage(imageLiteralResourceName: "tileRowsTemplate")
         case .tileColumns: return NSImage(imageLiteralResourceName: "tileColumnsTemplate")
+        case .cycleStackedWindows, .cycleStackedWindowsBackward: return NSImage()
         case .cascadeAll: return NSImage()
         case .leftTodo: return NSImage()
         case .rightTodo: return NSImage()
@@ -854,6 +866,7 @@ enum WindowAction: Int, Codable {
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
         case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
+             .cycleStackedWindows, .cycleStackedWindowsBackward,
              .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
              .displaySix, .displaySeven, .displayEight, .displayNine:
             return .none
@@ -873,6 +886,7 @@ enum WindowAction: Int, Codable {
              .doubleHeightUp, .doubleHeightDown, .doubleWidthLeft, .doubleWidthRight,
              .halveHeightUp, .halveHeightDown, .halveWidthLeft, .halveWidthRight,
              .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
+             .cycleStackedWindows, .cycleStackedWindowsBackward,
              .leftTodo, .rightTodo,
              .specified:
             return false

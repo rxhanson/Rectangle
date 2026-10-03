@@ -4537,6 +4537,9 @@
         }
       }
     },
+    "Bring forward the windows snapped to the same area as the focused window, one at a time" : {
+
+    },
     "Bring your chosen todo application frontmost" : {
       "localizations" : {
         "en" : {
@@ -7521,6 +7524,18 @@
           }
         }
       }
+    },
+    "Cycle Stacked Windows" : {
+
+    },
+    "Cycle Stacked Windows Backward" : {
+
+    },
+    "Cycle stacked windows" : {
+
+    },
+    "Cycle stacked windows backward" : {
+
     },
     "Cyclic corner shortcuts expand" : {
 
@@ -11696,6 +11711,9 @@
           }
         }
       }
+    },
+    "For the window list and the cycle shortcuts. When off, windows stacked at the same top-left position count whatever their size" : {
+
     },
     "Fourths" : {
       "extractionState" : "manual",
@@ -20269,6 +20287,9 @@
           }
         }
       }
+    },
+    "Only stack windows of the same size" : {
+
     },
     "Open System Preferences" : {
       "extractionState" : "manual",
