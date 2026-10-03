@@ -7319,3 +7319,181 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
         (object as AnyObject?) === self
     }
 }
+
+
+@MainActor
+final class LiquidGlassBlurTests: XCTestCase {
+    private var previousGlass = false
+    private var previousBlur = false
+
+    override func setUp() {
+        previousGlass = Defaults.liquidGlassForBlur.enabled
+        previousBlur = Defaults.footprintBlur.enabled
+    }
+    override func tearDown() {
+        Defaults.liquidGlassForBlur.enabled = previousGlass
+        Defaults.footprintBlur.enabled = previousBlur
+        Notification.Name.blurStyleChanged.post()
+    }
+
+    func testSwitchingMaterialRetainsContentAndResizesWithoutLegacyBlur() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
+        Defaults.liquidGlassForBlur.enabled = false
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 240, height: 160), flipped: true)
+        let button = NSButton(title: "Choose", target: nil, action: nil)
+        surface.content.addSubview(button)
+        XCTAssertEqual(surface.subviews.filter { $0 is NSVisualEffectView }.count, 1)
+        for enabled in [true, false, true] {
+            Defaults.liquidGlassForBlur.enabled = enabled
+            Notification.Name.blurStyleChanged.post()
+            XCTAssertEqual(surface.usesLiquidGlass, enabled)
+            XCTAssertTrue(button.superview === surface.content)
+            XCTAssertTrue(surface.content.isFlipped)
+            if enabled {
+                let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
+                XCTAssertTrue(glass.contentView === surface.content)
+                XCTAssertNil(glass.tintColor)
+                XCTAssertEqual(glass.style, .regular)
+                XCTAssertFalse(surface.subviews.contains { $0 is NSVisualEffectView })
+                XCTAssertFalse(surface.layer?.masksToBounds ?? false)
+            } else {
+                XCTAssertTrue(surface.content.superview === surface)
+            }
+            surface.setFrameSize(CGSize(width: 360, height: 210))
+            surface.layoutSubtreeIfNeeded()
+            XCTAssertEqual(surface.content.frame, surface.bounds)
+            if enabled {
+                surface.setFrameSize(CGSize(width: 1, height: 1))
+                surface.layoutSubtreeIfNeeded()
+                let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
+                XCTAssertTrue(glass.isHidden, "Do not render native glass with degenerate animation geometry")
+                surface.setFrameSize(CGSize(width: 360, height: 210))
+            }
+        }
+    }
+
+    func testFootprintGlassIgnoresLegacyTintAndLetsSystemHandleTransparency() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: true, reduceTransparency: true) })
+        defer { window.close() }
+        XCTAssertTrue(window.usesLiquidGlass)
+        XCTAssertTrue(window.presentation.usesBlur)
+        XCTAssertEqual(window.presentation.alpha, 1)
+        XCTAssertFalse(window.presentation.fades)
+        XCTAssertFalse(window.presentation.animates)
+        window.showPreview(in: CGRect(x: 60, y: 60, width: 320, height: 260), from: nil, duration: 0)
+        window.contentView?.layoutSubtreeIfNeeded()
+        let root = try XCTUnwrap(window.contentView)
+        XCTAssertTrue(window.childWindows?.allSatisfy { !$0.isVisible } ?? true, "Custom shadow must be hidden")
+        XCTAssertFalse(root.layer?.masksToBounds ?? true)
+        XCTAssertTrue(root.subviews.compactMap { $0 as? NSBox }.allSatisfy(\.isHidden))
+        let material = try XCTUnwrap(root.subviews.compactMap { $0 as? BlurSurfaceView }.first)
+        XCTAssertTrue(material.subviews.first is NSGlassEffectView)
+        XCTAssertFalse(material.subviews.contains { $0 is NSVisualEffectView })
+        Defaults.footprintBlur.enabled = false
+        XCTAssertFalse(window.usesLiquidGlass)
+        XCTAssertFalse(window.presentation.usesBlur)
+    }
+
+
+
+    func testWarningContentSurvivesMaterialSwitch() throws {
+        guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires macOS 26 and a screen") }
+        let warningPreference = Defaults.showMinimumWindowSizeWarning.toCodable()
+        Defaults.showMinimumWindowSizeWarning.enabled = true
+        defer { Defaults.showMinimumWindowSizeWarning.load(from: warningPreference) }
+        Defaults.liquidGlassForBlur.enabled = true
+        let warning = WindowSizeWarning()
+        defer { warning.close() }
+        warning.show(on: screen)
+        let surface = try XCTUnwrap(warning.contentView as? BlurSurfaceView)
+        surface.layoutSubtreeIfNeeded()
+        XCTAssertTrue(surface.usesLiquidGlass)
+        XCTAssertTrue(surface.subviews.first is NSGlassEffectView)
+        XCTAssertGreaterThan(warning.frame.width, 100)
+        XCTAssertGreaterThan(warning.frame.height, 30)
+        let stack = try XCTUnwrap(surface.content.subviews.first as? NSStackView)
+        let labels = stack.arrangedSubviews.compactMap { $0 as? NSTextField }
+        XCTAssertEqual(labels.count, 1)
+        Defaults.liquidGlassForBlur.enabled = false
+        Notification.Name.blurStyleChanged.post()
+        warning.show(on: screen)
+        XCTAssertFalse(surface.usesLiquidGlass)
+        XCTAssertTrue(labels.first?.isDescendant(of: surface.content) == true)
+        XCTAssertGreaterThan(warning.frame.height, 30)
+    }
+
+    func testPreferenceParticipatesInConfigAndViewModel() {
+        Defaults.liquidGlassForBlur.enabled = true
+        let preference = Defaults.array.first { $0.key == "liquidGlassForBlur" }
+        XCTAssertNotNil(preference)
+        XCTAssertEqual(preference?.toCodable().bool, true)
+        let model = SnapAreaViewModel()
+        XCTAssertTrue(model.liquidGlassForBlur)
+        model.liquidGlassForBlur = false
+        XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+    }
+}
+
+@MainActor
+final class BlurDefaultSelectionTests: XCTestCase {
+    private var savedBlur = false
+    private var savedGlass = false
+    private var storedBlur: Any?
+    private var storedGlass: Any?
+    override func setUp() {
+        savedBlur = Defaults.footprintBlur.enabled
+        savedGlass = Defaults.liquidGlassForBlur.enabled
+        storedBlur = UserDefaults.standard.object(forKey: Defaults.footprintBlur.key)
+        storedGlass = UserDefaults.standard.object(forKey: Defaults.liquidGlassForBlur.key)
+        Defaults.footprintBlur.enabled = false
+        Defaults.liquidGlassForBlur.enabled = false
+        UserDefaults.standard.removeObject(forKey: Defaults.footprintBlur.key)
+        UserDefaults.standard.removeObject(forKey: Defaults.liquidGlassForBlur.key)
+    }
+    override func tearDown() {
+        Defaults.footprintBlur.enabled = savedBlur
+        Defaults.liquidGlassForBlur.enabled = savedGlass
+        for (key, value) in [(Defaults.footprintBlur.key, storedBlur), (Defaults.liquidGlassForBlur.key, storedGlass)] {
+            if let value { UserDefaults.standard.set(value, forKey: key) }
+            else { UserDefaults.standard.removeObject(forKey: key) }
+        }
+        Notification.Name.blurStyleChanged.post()
+    }
+    func testOpeningAndReloadingSettingsDoesNotCreateMaterialChoices() {
+        let model = SnapAreaViewModel()
+        model.syncDefaults()
+        XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintBlur.key))
+        XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.liquidGlassForBlur.key))
+    }
+    func testFirstUserEnablingBlurSelectsGlassOnlyOnSupportedSystems() {
+        let model = SnapAreaViewModel()
+        model.footprintBlur = true
+        XCTAssertTrue(Defaults.footprintBlur.enabled)
+        if #available(macOS 26, *) {
+            XCTAssertTrue(model.liquidGlassForBlur)
+            XCTAssertTrue(Defaults.liquidGlassForBlur.enabled)
+        } else {
+            XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+        }
+    }
+    func testExplicitlyDisabledGlassSurvivesBlurOffOnAndReload() {
+        let model = SnapAreaViewModel()
+        model.footprintBlur = true
+        model.liquidGlassForBlur = false
+        model.footprintBlur = false
+        model.syncDefaults()
+        model.footprintBlur = true
+        XCTAssertFalse(model.liquidGlassForBlur)
+        XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+    }
+    func testImportedDisabledChoiceIsRespectedBeforeFirstBlurToggle() {
+        Defaults.liquidGlassForBlur.load(from: CodableDefault(bool: false))
+        let model = SnapAreaViewModel()
+        model.footprintBlur = true
+        XCTAssertFalse(model.liquidGlassForBlur)
+        XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+    }
+}

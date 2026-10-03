@@ -70,11 +70,24 @@ final class SnapAreaViewModel {
     
     var footprintBlur: Bool {
         didSet {
-            guard oldValue != footprintBlur else { return }
+            guard !reloadingDefaults, oldValue != footprintBlur else { return }
             Defaults.footprintBlur.enabled = footprintBlur
+            // Default to glass only on the first explicit blur enable; preserve saved choices.
+            if footprintBlur, !oldValue, #available(macOS 26, *),
+               UserDefaults.standard.object(forKey: Defaults.liquidGlassForBlur.key) == nil {
+                liquidGlassForBlur = true
+            }
         }
     }
     
+    var liquidGlassForBlur: Bool {
+        didSet {
+            guard !reloadingDefaults, oldValue != liquidGlassForBlur else { return }
+            Defaults.liquidGlassForBlur.enabled = liquidGlassForBlur
+            Notification.Name.blurStyleChanged.post()
+        }
+    }
+
     var blurAppearance: BlurAppearance {
         didSet {
             guard oldValue != blurAppearance else { return }
@@ -96,6 +109,7 @@ final class SnapAreaViewModel {
     var isPortraitConnected: Bool
     
     private var cancellables = Set<AnyCancellable>()
+    private var reloadingDefaults = false
     
     init() {
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
@@ -103,6 +117,7 @@ final class SnapAreaViewModel {
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
+        self.liquidGlassForBlur = Defaults.liquidGlassForBlur.enabled
         self.blurAppearance = Defaults.blurAppearance.value
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
@@ -112,11 +127,14 @@ final class SnapAreaViewModel {
     }
     
     func syncDefaults() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
+        self.liquidGlassForBlur = Defaults.liquidGlassForBlur.enabled
         self.blurAppearance = Defaults.blurAppearance.value
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
@@ -188,7 +206,12 @@ struct SnapAreaSettingsView: View {
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
                 Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
                 
-                if viewModel.footprintBlur {
+                if #available(macOS 26, *) {
+                    Toggle("Liquid Glass for Blur", isOn: $viewModel.liquidGlassForBlur)
+                        .accessibilityIdentifier("liquidGlassForBlur")
+                }
+
+                if viewModel.footprintBlur && !BlurSurfaceView.liquidGlassEnabled {
                     Picker("Blur appearance", selection: $viewModel.blurAppearance) {
                         Text("Follow System").tag(BlurAppearance.system)
                         Text("Light").tag(BlurAppearance.light)
@@ -220,6 +243,7 @@ struct SnapAreaSettingsView: View {
                     }
                 }
             }
+
         }
         .formStyle(.grouped)
         .frame(minHeight: 400)
