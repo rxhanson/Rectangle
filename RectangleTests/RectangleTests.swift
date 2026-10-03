@@ -6986,6 +6986,96 @@ final class WindowAnimationSettlementRoundingTests: XCTestCase {
 }
 
 final class WindowAnimationRequestCancellationTests: XCTestCase {
+    private final class QueuedWindow: AccessibilityElement {
+        private(set) var minimumSizeReads = 0
+
+        init() { super.init(AXUIElementCreateApplication(getpid()), windowID: .max) }
+        override var pid: pid_t? { getpid() }
+        override var bundleIdentifier: String? { nil }
+        override var minimumSize: CGSize? {
+            minimumSizeReads += 1
+            return nil
+        }
+    }
+
+    func testTimedOutLookupCancelsWithoutMainThreadPlacementFallback() throws {
+        try assertLookupCompletion(.timedOut, cancels: true)
+    }
+
+    func testObsoleteLookupCancelsWithoutMainThreadPlacementFallback() throws {
+        try assertLookupCompletion(.cancelled, cancels: true)
+    }
+
+    func testUnavailableLookupPreservesOrdinaryPlacementFallback() throws {
+        try assertLookupCompletion(.unavailable, cancels: false)
+    }
+
+    private func assertLookupCompletion(_ result: WindowAccessibilityLookup.Result, cancels: Bool) throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+        let finished = expectation(description: "Lookup delivered its terminal callback")
+        let executor = WindowAnimationExecutor(lookupWindow: { _, _, _, _, _ in
+            XCTAssertFalse(Thread.isMainThread)
+            return result
+        })
+        let window = QueuedWindow()
+        var cancellations = 0
+        var completions = 0
+        executor.animate(window, to: CGRect(x: 100, y: 100, width: 500, height: 400),
+                         duration: 0.18, resizeOnly: false, releasedSnap: false, placement: nil,
+                         profile: .standard, offset: { .zero }, curve: WindowAnimationCurve.value,
+                         cancellation: {
+                             XCTAssertTrue(Thread.isMainThread)
+                             cancellations += 1
+                             finished.fulfill()
+                         }) { frame in
+            XCTAssertTrue(Thread.isMainThread)
+            XCTAssertTrue(frame.isNull)
+            completions += 1
+            finished.fulfill()
+        }
+        wait(for: [finished], timeout: 1)
+        XCTAssertEqual(cancellations, cancels ? 1 : 0)
+        XCTAssertEqual(completions, cancels ? 0 : 1)
+        XCTAssertNil(executor.destination(for: window))
+        XCTAssertEqual(window.minimumSizeReads, 0)
+    }
+
+    func testQueuedAnimationDoesNotReadMinimumSizeBeforeWorkerCanStart() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+
+        let executor = WindowAnimationExecutor()
+        let workerStarted = expectation(description: "Worker is occupied")
+        let workerDrained = expectation(description: "Cancelled preparation drained")
+        let release = DispatchSemaphore(value: 0)
+        executor.performPlacementWork {
+            workerStarted.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+        }
+        wait(for: [workerStarted], timeout: 1)
+        let window = QueuedWindow()
+        let destination = CGRect(x: 100, y: 100, width: 500, height: 400)
+        var cancellations = 0
+        var completions = 0
+        executor.animate(window, to: destination, duration: 0.18, resizeOnly: false, releasedSnap: false,
+                         placement: nil, profile: .standard, offset: { .zero }, curve: WindowAnimationCurve.value,
+                         cancellation: { cancellations += 1 }) { _ in completions += 1 }
+        XCTAssertEqual(executor.destination(for: window), destination)
+        XCTAssertEqual(window.minimumSizeReads, 0, "Optional AX metadata must never be queried through the main-thread handle")
+        executor.cancel()
+        executor.performPlacementWork { workerDrained.fulfill() }
+        release.signal()
+        wait(for: [workerDrained], timeout: 1)
+        XCTAssertEqual(cancellations, 1)
+        XCTAssertEqual(completions, 0)
+        XCTAssertEqual(window.minimumSizeReads, 0)
+    }
+
     func testCancellationRunsCleanupOnceAfterInvalidatingWrites() {
         var cancellations = 0
         var request: WindowAnimationRequest!

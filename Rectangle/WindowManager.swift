@@ -240,7 +240,7 @@ class WindowManager {
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
             && !Defaults.cooperativeCornerResize.enabled
         
-        let completeMove = { [self] (animationHandledPlacement: Bool) in
+        let completeMove = { [self] (animatedFrame: CGRect?) in
             var waitsForRetry = false
             defer { if !waitsForRetry { parameters.completion?() } }
             guard executionID == currentExecutionID else { return }
@@ -248,8 +248,10 @@ class WindowManager {
             if let cooperativeCornerPlan {
                 resultingRect = applyCooperativeCornerResize(result: resultParameters,
                                                              plan: cooperativeCornerPlan)
-            } else if animationHandledPlacement {
-                resultingRect = frontmostWindowElement.frame
+            } else if let animatedFrame {
+                // The worker already verified this frame. A second AX read on
+                // main can stall if the target becomes busy after completion.
+                resultingRect = animatedFrame
             } else {
                 resultingRect = apply(result: resultParameters)
             }
@@ -291,7 +293,9 @@ class WindowManager {
                                                       screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                                       currentAction: action,
                                                       lastRectangleAction: lastRectangleAction)
-                resultingRect = frontmostWindowElement.frame
+                if animatedFrame == nil || Defaults.cooperativeCornerResize.enabled {
+                    resultingRect = frontmostWindowElement.frame
+                }
             }
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
@@ -313,12 +317,12 @@ class WindowManager {
                                    releasedSnap: parameters.source == .dragToSnap, placement: placement,
                                    profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard,
                                    cancellation: parameters.cancellation) { frame in
-                completeMove(!frame.isNull)
+                completeMove(frame.isNull ? nil : frame)
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
             windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) {
-                completeMove(false)
+                completeMove(nil)
             }
         }
     }

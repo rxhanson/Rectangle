@@ -1276,6 +1276,18 @@ private final class WindowAnimationElement: AccessibilityElement {
     }
     override var bundleIdentifier: String? { bundle }
     override var pid: pid_t? { process }
+    func readMinimumSizeHint() -> CGSize? {
+        // This optional metadata must not delay main or stack two timeouts while
+        // the target is busy. Retargeting can cancel between the two attributes.
+        let reader = AccessibilityReadBatch(budget: 0.01)
+        defer { setMessagingTimeout(0.05) }
+        guard request.isCurrent else { return nil }
+        if let size: CGSize = reader.wrapped(animationObservationElement, NSAccessibility.Attribute.minSize.rawValue, type: .cgSize) {
+            return size
+        }
+        guard request.isCurrent else { return nil }
+        return reader.wrapped(animationObservationElement, NSAccessibility.Attribute.minimumSize.rawValue, type: .cgSize)
+    }
     override var frame: CGRect {
         return measured("frame-read") { super.frame }
     }
@@ -1320,6 +1332,7 @@ private final class WindowAnimationElement: AccessibilityElement {
 /// Lifecycle and display callbacks run on main; animation writes use one serial
 /// worker. When busy, the worker skips old frames and uses the latest timestamp.
 final class WindowAnimationExecutor {
+    typealias WindowLookup = (pid_t, CGWindowID, TimeInterval, AXUIElement?, () -> Bool) -> WindowAccessibilityLookup.Result
     private struct Active {
         let element: AccessibilityElement
         let destination: CGRect
@@ -1341,6 +1354,13 @@ final class WindowAnimationExecutor {
     private var observation: WindowAnimationObservation?
     private var responses = WindowAnimationResponseHistory()
     private var preparing: (WindowAnimationResponseKey, TimeInterval)?
+    private let lookupWindow: WindowLookup
+
+    init(lookupWindow: @escaping WindowLookup = { pid, id, launch, preferred, isCurrent in
+        WindowAccessibilityLookup.resolveResult(pid: pid, id: id, launch: launch, preferred: preferred, isCurrent: isCurrent)
+    }) {
+        self.lookupWindow = lookupWindow
+    }
 
     // Accessed exclusively by queue.
     private var prepared: (WindowAnimationResponseKey, AXUIElement, TimeInterval)?
@@ -1446,7 +1466,6 @@ final class WindowAnimationExecutor {
         let response = responses.entry(for: key, at: ProcessInfo.processInfo.systemUptime)
         active = Active(element: element, destination: destination, request: request, offset: offset, pid: pid)
         let screens = NSScreen.screens.map { $0.frame.screenFlipped }
-        let hint = element.minimumSize
         let bundle = element.bundleIdentifier
         let native = bundle.map { Defaults.directAnimationNativeResizeApps.typedValue?.contains($0) == true } ?? false
         let enhanced = Defaults.enhancedUI.value
@@ -1468,8 +1487,18 @@ final class WindowAnimationExecutor {
                 }
                 self.prepared = nil
                 if raw == nil {
-                    raw = WindowAccessibilityLookup.resolve(pid: pid, id: id, launch: launch,
-                        preferred: preferredWindow, isCurrent: { request.isCurrent })
+                    switch lookupWindow(pid, id, launch, preferredWindow, { request.isCurrent }) {
+                    case .found(let element): raw = element
+                    case .unavailable: break
+                    case .timedOut, .cancelled:
+                        // Do not send a stalled or obsolete target back to a
+                        // synchronous placement fallback on the main thread.
+                        DispatchQueue.main.async { [self] in
+                            retiring.removeAll { entry in drained.contains { $0 === entry.2 } }
+                            clear(request, cancelled: true)
+                        }
+                        return
+                    }
                 }
                 if let raw {
                     workerWindow = WindowAnimationElement(raw, pid: pid, id: id, launch: launch,
@@ -1488,7 +1517,9 @@ final class WindowAnimationExecutor {
                 }
                 return
             }
-            window.request = request; window.hint = hint
+            window.request = request
+            window.hint = window.readMinimumSizeHint()
+            guard request.isCurrent else { return }
             let watch = WindowAnimationObservation(pid: pid, element: window.animationObservationElement, request: request)
             DispatchQueue.main.async { [self] in
                 if active?.request === request { observation = watch }
