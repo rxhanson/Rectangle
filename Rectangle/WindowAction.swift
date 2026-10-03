@@ -219,6 +219,8 @@ enum WindowAction: Int, Codable {
     var excludedFromMenu: Bool {
         switch self {
         case .smallerWidth, .largerWidth, .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds,
+             .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+             .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
              .cycleStackedWindows, .cycleStackedWindowsBackward: return true
         default: return false
         }
@@ -656,6 +658,8 @@ enum WindowAction: Int, Codable {
         switch self {
         case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .larger, .smaller, .largerWidth, .smallerWidth, .cascadeActiveApp, .tileActiveApp,
             .cycleStackedWindows, .cycleStackedWindowsBackward,
+            .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+            .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
@@ -789,14 +793,9 @@ enum WindowAction: Int, Codable {
         case .bottomCenterLeftEighth: return NSImage(imageLiteralResourceName: "cblEighthTemplate")
         case .bottomCenterRightEighth: return NSImage(imageLiteralResourceName: "cbrEighthTemplate")
         case .bottomRightEighth: return NSImage(imageLiteralResourceName: "brEighthTemplate")
-        case .firstVerticalEighth: return NSImage(imageLiteralResourceName: "firstVerticalEighthTemplate")
-        case .secondVerticalEighth: return NSImage(imageLiteralResourceName: "secondVerticalEighthTemplate")
-        case .thirdVerticalEighth: return NSImage(imageLiteralResourceName: "thirdVerticalEighthTemplate")
-        case .fourthVerticalEighth: return NSImage(imageLiteralResourceName: "fourthVerticalEighthTemplate")
-        case .fifthVerticalEighth: return NSImage(imageLiteralResourceName: "fifthVerticalEighthTemplate")
-        case .sixthVerticalEighth: return NSImage(imageLiteralResourceName: "sixthVerticalEighthTemplate")
-        case .seventhVerticalEighth: return NSImage(imageLiteralResourceName: "seventhVerticalEighthTemplate")
-        case .lastVerticalEighth: return NSImage(imageLiteralResourceName: "lastVerticalEighthTemplate")
+        case .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+             .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth:
+            return NSImage()
         case .doubleHeightUp: return  NSImage()
         case .doubleHeightDown: return  NSImage()
         case .doubleWidthLeft: return  NSImage()
@@ -1068,6 +1067,24 @@ enum SubWindowAction {
     bottomCenterRightEighth,
     bottomRightEighth,
 
+    firstVerticalEighthLandscape,
+    secondVerticalEighthLandscape,
+    thirdVerticalEighthLandscape,
+    fourthVerticalEighthLandscape,
+    fifthVerticalEighthLandscape,
+    sixthVerticalEighthLandscape,
+    seventhVerticalEighthLandscape,
+    lastVerticalEighthLandscape,
+
+    firstVerticalEighthPortrait,
+    secondVerticalEighthPortrait,
+    thirdVerticalEighthPortrait,
+    fourthVerticalEighthPortrait,
+    fifthVerticalEighthPortrait,
+    sixthVerticalEighthPortrait,
+    seventhVerticalEighthPortrait,
+    lastVerticalEighthPortrait,
+
     topLeftTwelfth,
     topCenterLeftTwelfth,
     topCenterRightTwelfth,
@@ -1176,6 +1193,16 @@ enum SubWindowAction {
         case .bottomCenterLeftEighth: return  [.right, .left, .top]
         case .bottomCenterRightEighth: return  [.right, .left, .top]
         case .bottomRightEighth: return  [.left, .top]
+        case .firstVerticalEighthLandscape: return .right
+        case .secondVerticalEighthLandscape, .thirdVerticalEighthLandscape, .fourthVerticalEighthLandscape,
+             .fifthVerticalEighthLandscape, .sixthVerticalEighthLandscape, .seventhVerticalEighthLandscape:
+            return [.left, .right]
+        case .lastVerticalEighthLandscape: return .left
+        case .firstVerticalEighthPortrait: return .bottom
+        case .secondVerticalEighthPortrait, .thirdVerticalEighthPortrait, .fourthVerticalEighthPortrait,
+             .fifthVerticalEighthPortrait, .sixthVerticalEighthPortrait, .seventhVerticalEighthPortrait:
+            return [.top, .bottom]
+        case .lastVerticalEighthPortrait: return .top
         case .topLeftTwelfth: return [.right, .bottom]
         case .topCenterLeftTwelfth: return [.right, .left, .bottom]
         case .topCenterRightTwelfth: return [.right, .left, .bottom]
