@@ -5852,6 +5852,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.none.rawValue)),
             (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
+            (Defaults.showMinimumWindowSizeWarning, CodableDefault(int: 1)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
             (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
@@ -5996,6 +5997,18 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.action, action)
             XCTAssertEqual(AppDelegate.windowHistory.restoreRects[windowId], originalFrame)
         }
+    }
+
+    func testDisabledSizeWarningDoesNotRequestGeometry() {
+        Defaults.showMinimumWindowSizeWarning.enabled = false
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+        manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+        XCTAssertEqual(window.frame.width, 600)
+        XCTAssertEqual(manager.warningSourceRequests, 0)
+        XCTAssertTrue(manager.warningScreens.isEmpty)
     }
 
     func testSuccessfulTwoThirdsClearEarlierWarning() {
@@ -6169,10 +6182,16 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
 
     private final class TestWindowManager: WindowManager {
         private(set) var warningScreens: [NSScreen] = []
+        private(set) var warningSourceRequests = 0
         private(set) var hideCount = 0
         private(set) var warningVisible = false
         var didFinish: (() -> Void)?
         var didWarn: (() -> Void)?
+
+        override func sizeWarningObservationSource(for result: ResultParameters) -> WindowSizeWarningObservation.Source? {
+            warningSourceRequests += 1
+            return WindowSizeWarningObservation.Source(frame: { result.windowElement.frame }, isCurrent: { true })
+        }
 
         override func showSizeConstraintWarning(on screen: NSScreen) {
             warningScreens.append(screen)
@@ -7065,5 +7084,193 @@ final class WindowSizeResizeObservationTests: XCTestCase {
         let moved = clamped.offsetBy(dx: 500, dy: 0)
         XCTAssertNil(observation.observe(moved, at: 0))
         XCTAssertNil(observation.observe(moved, at: 1))
+    }
+}
+
+@MainActor
+final class SnappedWindowFitVerificationTests: XCTestCase {
+    func testSlowNeighborVerificationDoesNotBlockMainOrExposeUnverifiedAnchor() {
+        let started = expectation(description: "Background verification started")
+        let mainResponsive = expectation(description: "Main queue remains responsive")
+        let release = DispatchSemaphore(value: 0)
+        let session = SnappedWindowFitSession(observeWorkspace: false) { _, _ in
+            XCTAssertFalse(Thread.isMainThread)
+            started.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+            return true
+        }
+        session.record(opportunity(id: 1))
+        wait(for: [started], timeout: 1)
+        XCTAssertNil(session.current)
+        DispatchQueue.main.async { mainResponsive.fulfill() }
+        wait(for: [mainResponsive], timeout: 1)
+        release.signal()
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current?.id == 1 }, object: nil)
+        wait(for: [published], timeout: 2)
+    }
+
+    func testTakingPendingAnchorCancelsVerificationAndPreventsLatePublication() {
+        let started = expectation(description: "Background verification started")
+        let cancelled = expectation(description: "Worker sees cancellation")
+        let release = DispatchSemaphore(value: 0)
+        let session = SnappedWindowFitSession(observeWorkspace: false) { _, isCurrent in
+            started.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+            XCTAssertFalse(isCurrent())
+            cancelled.fulfill()
+            return true
+        }
+        session.record(opportunity(id: 1))
+        wait(for: [started], timeout: 1)
+        XCTAssertNil(session.take())
+        release.signal()
+        wait(for: [cancelled], timeout: 1)
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        published.isInverted = true
+        wait(for: [published], timeout: 0.2)
+    }
+
+    func testSupersededVerificationCannotReplaceNewAnchor() {
+        let started = expectation(description: "First verification started")
+        let release = DispatchSemaphore(value: 0)
+        let session = SnappedWindowFitSession(observeWorkspace: false) { opportunity, isCurrent in
+            if opportunity.id == 1 {
+                started.fulfill()
+                _ = release.wait(timeout: .now() + 2)
+                XCTAssertFalse(isCurrent())
+            }
+            return true
+        }
+        session.record(opportunity(id: 1))
+        wait(for: [started], timeout: 1)
+        session.record(opportunity(id: 2))
+        release.signal()
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current?.id == 2 }, object: nil)
+        wait(for: [published], timeout: 2)
+        XCTAssertEqual(session.take()?.id, 2)
+        XCTAssertNil(session.current)
+    }
+
+    private func opportunity(id: CGWindowID) -> SnappedWindowFitOpportunity {
+        SnappedWindowFitOpportunity(id: id, pid: 123, launch: 1, action: .leftHalf,
+            frame: CGRect(x: 0, y: 0, width: 400, height: 600),
+            bounds: CGRect(x: 0, y: 0, width: 1000, height: 600),
+            createdAt: ProcessInfo.processInfo.systemUptime)
+    }
+}
+
+@MainActor
+final class WindowSizeWarningObservationTests: XCTestCase {
+    func testStableWindowServerFrameCompletesWithoutAccessibilityReads() {
+        let completed = expectation(description: "Stable frame sampled")
+        let frame = CGRect(x: 0, y: 0, width: 700, height: 500)
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            return frame
+        }, isCurrent: { true }) { actual in
+            XCTAssertEqual(actual, frame)
+            XCTAssertEqual(samples, 2)
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 1)
+    }
+
+    func testSupersededWarningDoesNotReadAnotherFrame() {
+        let completed = expectation(description: "Stale warning is suppressed")
+        completed.isInverted = true
+        var current = true
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            current = false
+            return CGRect(x: 0, y: 0, width: 700, height: 500)
+        }, isCurrent: { current }) { _ in completed.fulfill() }
+        wait(for: [completed], timeout: 0.3)
+        XCTAssertEqual(samples, 1)
+    }
+
+    func testMovingWindowDoesNotShowSettledSizeWarning() {
+        let completed = expectation(description: "Unsettled warning is suppressed")
+        completed.isInverted = true
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            return CGRect(x: CGFloat(samples * 10), y: 0, width: 700, height: 500)
+        }, isCurrent: { true }) { _ in completed.fulfill() }
+        wait(for: [completed], timeout: 0.3)
+        XCTAssertEqual(samples, 2)
+    }
+}
+
+@MainActor
+final class WindowSizeHintReadTests: XCTestCase {
+    func testWindowWithoutRememberedHintDoesNotReadAXAttributes() {
+        let window = UnlearnedWindowSizeHintElement()
+        XCTAssertNil(WindowSizeConstraints.shared.rememberedMinimum(for: window))
+        XCTAssertNil(WindowSizeConstraints.shared.rememberedMinimumSnapshot(for: window))
+        XCTAssertEqual(window.attributeReads, 0)
+    }
+}
+
+private final class UnlearnedWindowSizeHintElement: AccessibilityElement {
+    var attributeReads = 0
+
+    init() { super.init(AXUIElementCreateApplication(ProcessInfo.processInfo.processIdentifier)) }
+    override var windowId: CGWindowID? { 0 }
+    override var reportedMinimumSize: CGSize? { attributeReads += 1; return nil }
+    override var size: CGSize? {
+        get { attributeReads += 1; return nil }
+        set { }
+    }
+}
+
+final class WindowSizeHintSnapshotTests: XCTestCase {
+    func testWorkerSnapshotMatchesLiveHintValidation() throws {
+        let evidence = WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 400),
+            learnedAt: 100, requested: CGSize(width: 400, height: 300), achieved: CGSize(width: 600, height: 400))
+        let reports: [CGSize?] = [nil, .zero, CGSize(width: 700, height: 0)]
+        let sizes: [CGSize] = [CGSize(width: 900, height: 600), CGSize(width: 500, height: 600),
+                              CGSize(width: 900, height: 300), CGSize(width: 500, height: 300), .zero]
+        for report in reports {
+            for current in sizes {
+                for time: TimeInterval in [100, 109, 111] {
+                    let store = WindowSizeConstraintStore<String>(lifetime: 10)
+                    store.restore(evidence, for: "window", now: 100)
+                    let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window"))
+                    XCTAssertEqual(snapshot.minimum(reported: report, current: current, now: time),
+                                   store.hint(for: "window", reported: report, current: current, now: time))
+                }
+            }
+        }
+    }
+
+    func testCapturedHintCanBeValidatedOffMainWithoutReadingStore() throws {
+        let store = WindowSizeConstraintStore<String>()
+        store.restore(WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 100, requested: CGSize(width: 400, height: 600), achieved: CGSize(width: 600, height: 600)),
+            for: "window", now: 100)
+        let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window"))
+        let completed = expectation(description: "Snapshot validated on worker")
+        DispatchQueue.global().async {
+            XCTAssertFalse(Thread.isMainThread)
+            XCTAssertEqual(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101),
+                           CGSize(width: 600, height: 0))
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 1)
+        XCTAssertEqual(store.entries["window"], snapshot.evidence)
+    }
+
+    func testSupersedingActionInvalidatesCapturedHint() throws {
+        let store = WindowSizeConstraintStore<String>()
+        store.restore(WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 100, requested: CGSize(width: 400, height: 600), achieved: CGSize(width: 600, height: 600)),
+            for: "window", now: 100)
+        let cancellation = AccessibilityReadCancellation()
+        let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window", cancellation: cancellation))
+        XCTAssertNotNil(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101))
+        cancellation.cancel()
+        XCTAssertNil(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101))
     }
 }

@@ -38,6 +38,10 @@ final class WindowSizeConstraintStore<Key: Hashable> {
         return Self.normalized(result)
     }
 
+    func hintSnapshot(for key: Key, cancellation: AccessibilityReadCancellation? = nil) -> WindowSizeHintSnapshot? {
+        entries[key].map { WindowSizeHintSnapshot(evidence: $0, lifetime: lifetime, cancellation: cancellation) }
+    }
+
     func hint(for key: Key, reported: CGSize?, current: CGSize, now: TimeInterval) -> CGSize? {
         guard var entry = entries[key] else { return nil }
         if lifetime.map({ now - entry.learnedAt > $0 }) == true || entry.reported != Self.normalized(reported) {
@@ -116,6 +120,34 @@ final class WindowSizeConstraintStore<Key: Hashable> {
     private static func valid(_ size: CGSize) -> Bool {
         size.width.isFinite && size.height.isFinite && size.width > 0 && size.height > 0
     }
+    private static func normalized(_ size: CGSize?) -> CGSize? {
+        guard let size else { return nil }
+        let width = size.width.isFinite && size.width > 0 ? size.width : 0
+        let height = size.height.isFinite && size.height > 0 ? size.height : 0
+        return width > 0 || height > 0 ? CGSize(width: width, height: height) : nil
+    }
+}
+
+/// Capture on the store's owner thread, then validate with bounded AX metadata
+/// on a worker. No mutable store or AccessibilityElement is read by this value.
+struct WindowSizeHintSnapshot {
+    let evidence: WindowSizeEvidence
+    let lifetime: TimeInterval?
+    let cancellation: AccessibilityReadCancellation?
+
+    var isCurrent: Bool { cancellation?.isCurrent != false }
+
+    func minimum(reported: CGSize?, current: CGSize, now: TimeInterval) -> CGSize? {
+        guard isCurrent, lifetime.map({ now - evidence.learnedAt > $0 }) != true,
+              evidence.reported == Self.normalized(reported) else { return nil }
+        var learned = evidence.learned
+        if current.width.isFinite, current.height.isFinite, current.width > 0, current.height > 0 {
+            if current.width + 2 < learned.width { learned.width = 0 }
+            if current.height + 2 < learned.height { learned.height = 0 }
+        }
+        return Self.normalized(learned)
+    }
+
     private static func normalized(_ size: CGSize?) -> CGSize? {
         guard let size else { return nil }
         let width = size.width.isFinite && size.width > 0 ? size.width : 0
@@ -325,6 +357,7 @@ final class WindowSizeConstraints {
     }()
     private var identityRequests: [Key: UUID] = [:]
     private var observationIdentities: [Key: WindowSizeLimitIdentity] = [:]
+    private var observationCancellation = AccessibilityReadCancellation()
 
     private func observeVerifiedClamp(_ window: AccessibilityElement, key: Key, before: CGRect,
                                       requested: CGRect, settled: CGRect, generation: UUID) {
@@ -338,8 +371,9 @@ final class WindowSizeConstraints {
         let version = [info?["CFBundleShortVersionString"] as? String, info?["CFBundleVersion"] as? String]
             .compactMap { $0 }.joined(separator: "/")
         let session = self.session
+        let cancellation = observationCancellation
         identityQueue.addOperation { [weak self] in
-            let reader = AccessibilityReadBatch(budget: 0.15)
+            let reader = AccessibilityReadBatch(budget: 0.15, isCurrent: { cancellation.isCurrent })
             let application = AXUIElementCreateApplication(key.pid)
             let elements = reader.value(application, kAXWindowsAttribute) as? [AXUIElement] ?? []
             var identity: WindowSizeLimitIdentity?
@@ -420,51 +454,83 @@ final class WindowSizeConstraints {
         guard remembers else { return nil }
         guard let key = key(for: window) else { return nil }
         if store.entries[key] == nil { restoreRememberedHint(window, key: key) }
-        let previous = store.entries[key]
+        // Most windows have no learned hint. Do not make extra AX requests on
+        // every preview just to ask an empty store for one.
+        guard let previous = store.entries[key] else { return nil }
         let result = store.hint(for: key, reported: window.reportedMinimumSize,
                                 current: window.size ?? .zero, now: Date.timeIntervalSinceReferenceDate)
         if previous != store.entries[key] { synchronizeRecord(key) }
         return result
     }
 
+    /// Main-thread snapshot for asynchronous animation setup. Identity checks
+    /// use local process metadata; missing persisted hints restore asynchronously.
+    func rememberedMinimumSnapshot(for window: AccessibilityElement) -> WindowSizeHintSnapshot? {
+        synchronizePreference()
+        guard remembers, let key = key(for: window) else { return nil }
+        if store.entries[key] == nil { restoreRememberedHint(window, key: key) }
+        return store.hintSnapshot(for: key, cancellation: observationCancellation)
+    }
+
+    /// Reconcile worker observations only if neither the action nor its evidence
+    /// changed while the optional metadata was read. Call on the main thread.
+    func reconcileRememberedMinimum(for window: AccessibilityElement, snapshot: WindowSizeHintSnapshot,
+                                    reported: CGSize?, current: CGSize) {
+        guard remembers, snapshot.isCurrent, let key = key(for: window),
+              store.entries[key] == snapshot.evidence else { return }
+        _ = store.hint(for: key, reported: reported, current: current, now: Date.timeIntervalSinceReferenceDate)
+        if store.entries[key] != snapshot.evidence { synchronizeRecord(key) }
+    }
+
     private func restoreRememberedHint(_ window: AccessibilityElement, key: Key) {
-        guard remembers, identityRequests[key] == nil, let id = window.windowId,
-              let record = archive.records.first(where: {
-                  $0.identity.pid == key.pid && $0.identity.launch == key.launch
-                      && $0.identity.session == session && $0.identity.windowID == id
-              }), let app = NSRunningApplication(processIdentifier: key.pid) else { return }
-        let info = app.bundleURL.flatMap(Bundle.init(url:))?.infoDictionary
-        let version = [info?["CFBundleShortVersionString"] as? String, info?["CFBundleVersion"] as? String]
-            .compactMap { $0 }.joined(separator: "/")
-        guard record.identity.bundleID == app.bundleIdentifier, record.identity.appVersion == version else { return }
+        guard remembers, identityRequests[key] == nil else { return }
+        let candidates = archive.records.filter {
+            $0.identity.pid == key.pid && $0.identity.launch == key.launch && $0.identity.session == session
+        }
+        guard !candidates.isEmpty, let app = NSRunningApplication(processIdentifier: key.pid) else { return }
+        let bundleID = app.bundleIdentifier
+        let bundleURL = app.bundleURL
+        let preferred = window.animationObservationElement
         let request = UUID()
         identityRequests[key] = request
+        let cancellation = observationCancellation
         identityQueue.addOperation { [weak self] in
-            let reader = AccessibilityReadBatch(budget: 0.15)
-            let elements = reader.value(AXUIElementCreateApplication(key.pid), kAXWindowsAttribute) as? [AXUIElement] ?? []
             var identity: WindowSizeLimitIdentity?
-            if let element = elements.first(where: { reader.windowID($0) == id }) {
-                var candidate = record.identity
-                candidate.identifier = reader.value(element, kAXIdentifierAttribute) as? String
-                candidate.role = reader.value(element, kAXRoleAttribute) as? String ?? ""
-                candidate.subrole = reader.value(element, kAXSubroleAttribute) as? String ?? ""
-                var structure: [String] = []
-                if let children = reader.value(element, kAXChildrenAttribute) as? [AXUIElement], children.count <= 32 {
-                    for child in children where reader.available {
-                        structure.append([kAXRoleAttribute, kAXSubroleAttribute, kAXIdentifierAttribute]
-                            .map { reader.value(child, $0) as? String ?? "" }.joined(separator: "|"))
+            var matchingRecord: WindowSizeLimitRecord?
+            let reader = AccessibilityReadBatch(budget: 0.15, isCurrent: { cancellation.isCurrent })
+            if let id = reader.windowID(preferred),
+               let record = candidates.first(where: { $0.identity.windowID == id && $0.identity.bundleID == bundleID }) {
+                // Reading another app's Info.plist is optional persistence work,
+                // and must not delay keyboard animation setup on the main queue.
+                let info = bundleURL.flatMap(Bundle.init(url:))?.infoDictionary
+                let version = [info?["CFBundleShortVersionString"] as? String, info?["CFBundleVersion"] as? String]
+                    .compactMap { $0 }.joined(separator: "/")
+                let elements = record.identity.appVersion == version
+                    ? reader.value(AXUIElementCreateApplication(key.pid), kAXWindowsAttribute) as? [AXUIElement] ?? [] : []
+                if let element = elements.first(where: { reader.windowID($0) == id }) {
+                    var candidate = record.identity
+                    candidate.identifier = reader.value(element, kAXIdentifierAttribute) as? String
+                    candidate.role = reader.value(element, kAXRoleAttribute) as? String ?? ""
+                    candidate.subrole = reader.value(element, kAXSubroleAttribute) as? String ?? ""
+                    var structure: [String] = []
+                    if let children = reader.value(element, kAXChildrenAttribute) as? [AXUIElement], children.count <= 32 {
+                        for child in children where reader.available {
+                            structure.append([kAXRoleAttribute, kAXSubroleAttribute, kAXIdentifierAttribute]
+                                .map { reader.value(child, $0) as? String ?? "" }.joined(separator: "|"))
+                        }
                     }
+                    candidate.structure = structure.sorted()
+                    if reader.available { identity = candidate; matchingRecord = record }
                 }
-                candidate.structure = structure.sorted()
-                if reader.available { identity = candidate }
             }
             let checked = identity
+            let record = matchingRecord
             DispatchQueue.main.async { [weak self] in
                 guard let self, self.identityRequests[key] == request else { return }
                 self.identityRequests.removeValue(forKey: key)
                 guard self.remembers, self.store.entries[key] == nil,
                       WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
-                      let checked, let match = self.archive.match(checked), match == record else { return }
+                      let checked, let record, let match = self.archive.match(checked), match == record else { return }
                 self.store.restore(match.evidence, for: key, now: Date.timeIntervalSinceReferenceDate)
                 self.descriptors[key] = Descriptor(record: match)
             }
@@ -543,17 +609,23 @@ final class WindowSizeConstraints {
         pending[key] = PendingResize(token: token, before: original, requested: requested)
         guard let id = window.windowId else { pending.removeValue(forKey: key); return }
         let generation = observationGeneration
+        let cancellation = observationCancellation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
             guard let self, self.pending[key]?.token == token else { return }
             self.identityQueue.addOperation { [weak self] in
                 var confirmed: CGRect?
                 if let element = WindowAccessibilityLookup.resolve(pid: key.pid, id: id, launch: key.launch,
-                    preferred: nil, isCurrent: { WindowProcessIdentity.launchTime(for: key.pid) == key.launch }) {
+                    preferred: nil, isCurrent: { cancellation.isCurrent }) {
+                    let eligibility = AccessibilityReadBatch(budget: 0.15, isCurrent: { cancellation.isCurrent })
+                    let eligible = eligibility.value(element, kAXRoleAttribute) as? String == kAXWindowRole
+                        && eligibility.value(element, kAXSubroleAttribute) as? String != kAXSystemDialogSubrole
+                        && eligibility.settable(element, kAXSizeAttribute) != false && eligibility.available
                     var observation = WindowSizeResizeObservation(before: original, requested: requested)
                     let deadline = ProcessInfo.processInfo.systemUptime + 0.45
-                    while ProcessInfo.processInfo.systemUptime < deadline,
+                    while eligible, cancellation.isCurrent, ProcessInfo.processInfo.systemUptime < deadline,
                           WindowProcessIdentity.launchTime(for: key.pid) == key.launch {
-                        let reader = AccessibilityReadBatch(budget: min(0.1, deadline - ProcessInfo.processInfo.systemUptime))
+                        let reader = AccessibilityReadBatch(budget: min(0.1, deadline - ProcessInfo.processInfo.systemUptime),
+                            isCurrent: { cancellation.isCurrent })
                         var frame: CGRect?
                         if reader.windowID(element) == id,
                            let position: CGPoint = reader.wrapped(element, kAXPositionAttribute, type: .cgPoint),
@@ -583,6 +655,8 @@ final class WindowSizeConstraints {
     }
 
     func cancelPendingObservations() {
+        observationCancellation.cancel()
+        observationCancellation = AccessibilityReadCancellation()
         pending.removeAll()
         identityRequests.removeAll()
         identityQueue.cancelAllOperations()

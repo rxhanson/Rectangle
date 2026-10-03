@@ -184,11 +184,13 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
-        let before = self.frame
+        // Evidence collection must not add synchronous AX reads to each mover
+        // write. WindowServer supplies the starting frame; the worker verifies
+        // window role and resizability before learning anything.
+        let before = Defaults.rememberWindowSizeLimits.enabled
+            ? windowId.flatMap { WindowUtil.getWindowFrame(id: $0) } : nil
         defer {
-            if isWindow == true, isSystemDialog != true, isResizable() {
-                WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame)
-            }
+            if let before { WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame) }
         }
         let appElement = applicationElement
         let builtInAssistiveTechnologyEnabled = NSWorkspace.shared.isVoiceOverEnabled

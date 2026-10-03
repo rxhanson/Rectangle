@@ -42,14 +42,9 @@ struct SnappedWindowFit: Equatable {
             windows: infos, recordedFrames: [opportunity.id: opportunity.frame],
             ignoredPID: ProcessInfo.processInfo.processIdentifier)
         guard case let .fit(plan) = resolution else { return resolution }
-        guard let neighbor = AccessibilityElement.getWindowElement(plan.neighborID),
-              neighbor.pid == plan.neighborPID, neighbor.isWindow == true,
-              neighbor.isMinimized != true, neighbor.isHidden != true, neighbor.isFullScreen != true,
-              neighbor.isSheet != true, neighbor.isSystemDialog != true,
-              WindowGeometry.matches(neighbor.frame, plan.neighborFrame) else {
-            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
-            return .unchanged
-        }
+        // The short-lived anchor was AX-verified off the main thread when it
+        // was recorded. Its live process, visibility and geometry were checked
+        // above through WindowServer; previews need no neighbor AX round trips.
         return .fit(plan)
     }
 
@@ -146,14 +141,27 @@ struct SnappedWindowFitOpportunity {
 final class SnappedWindowFitSession {
     static let shared = SnappedWindowFitSession()
     private var anchor: SnappedWindowFitOpportunity?
+    private var verified = false
+    private var verification = AccessibilityReadCancellation()
+    private let verificationQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "Rectangle.SnappedWindowFitVerification"
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInitiated
+        return queue
+    }()
+    private let verify: (SnappedWindowFitOpportunity, @escaping () -> Bool) -> Bool
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
 
     var current: SnappedWindowFitOpportunity? {
         if let anchor, ProcessInfo.processInfo.systemUptime - anchor.createdAt >= 10 { clear() }
-        return anchor
+        return verified ? anchor : nil
     }
 
-    private init() {
+    init(observeWorkspace: Bool = true,
+         verify: @escaping (SnappedWindowFitOpportunity, @escaping () -> Bool) -> Bool = SnappedWindowFitSession.verifyNeighbor) {
+        self.verify = verify
+        guard observeWorkspace else { return }
         let center = NotificationCenter.default
         let workspace = NSWorkspace.shared.notificationCenter
         for (source, names) in [
@@ -174,7 +182,47 @@ final class SnappedWindowFitSession {
         }
     }
 
-    func clear() { anchor = nil }
+    func clear() {
+        verification.cancel()
+        verificationQueue.cancelAllOperations()
+        anchor = nil
+        verified = false
+    }
+
+    /// Publish only a completed verification belonging to the latest snap.
+    /// Clearing/taking the opportunity also cancels any in-flight verification.
+    func record(_ opportunity: SnappedWindowFitOpportunity) {
+        clear()
+        let cancellation = AccessibilityReadCancellation()
+        verification = cancellation
+        anchor = opportunity
+        let verify = self.verify
+        verificationQueue.addOperation { [weak self] in
+            guard cancellation.isCurrent,
+                  verify(opportunity, { cancellation.isCurrent }), cancellation.isCurrent else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard cancellation.isCurrent else { return }
+                self?.verified = true
+            }
+        }
+    }
+
+    private static func verifyNeighbor(_ opportunity: SnappedWindowFitOpportunity,
+                                       isCurrent: @escaping () -> Bool) -> Bool {
+        guard let element = WindowAccessibilityLookup.resolve(pid: opportunity.pid, id: opportunity.id,
+            launch: opportunity.launch, preferred: nil, isCurrent: isCurrent) else { return false }
+        let reader = AccessibilityReadBatch(budget: 0.15, isCurrent: isCurrent)
+        guard reader.value(element, kAXRoleAttribute) as? String == kAXWindowRole,
+              reader.value(element, kAXSubroleAttribute) as? String != kAXSystemDialogSubrole,
+              reader.value(element, kAXMinimizedAttribute) as? Bool != true,
+              reader.value(element, "AXFullScreen") as? Bool != true,
+              reader.value(AXUIElementCreateApplication(opportunity.pid), kAXHiddenAttribute) as? Bool != true,
+              let position: CGPoint = reader.wrapped(element, kAXPositionAttribute, type: .cgPoint),
+              let size: CGSize = reader.wrapped(element, kAXSizeAttribute, type: .cgSize),
+              reader.available,
+              WindowProcessIdentity.launchTime(for: opportunity.pid) == opportunity.launch else { return false }
+        return WindowGeometry.matches(CGRect(origin: position, size: size), opportunity.frame)
+    }
 
     func invalidate(windowID: CGWindowID?) {
         if let windowID, anchor?.id == windowID { clear() }
@@ -200,7 +248,7 @@ final class SnappedWindowFitSession {
         guard WindowGeometry.matches(result.calcResult.initialRect, ordinary, tolerance: 1) else { return }
         let bounds = GapCalculation.applyGaps(result.visibleFrameOfScreen, gapSize: max(0, Defaults.gapSize.value),
             skipTopGap: Defaults.skipGapTopEdge.enabled).screenFlipped
-        anchor = SnappedWindowFitOpportunity(id: id, pid: pid, launch: launch, action: action,
-            frame: frame, bounds: bounds, createdAt: ProcessInfo.processInfo.systemUptime)
+        record(SnappedWindowFitOpportunity(id: id, pid: pid, launch: launch, action: action,
+            frame: frame, bounds: bounds, createdAt: ProcessInfo.processInfo.systemUptime))
     }
 }

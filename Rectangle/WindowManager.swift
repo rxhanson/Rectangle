@@ -515,8 +515,14 @@ class WindowManager {
     // Preserve the layout request before known minimum compensation. Read the
     // achieved frame after settling, not from an intermediate animation/retry.
     func checkSizeConstraintWarning(result: ResultParameters) {
+        guard !Defaults.showMinimumWindowSizeWarning.userDisabled, result.action.resizes,
+              let source = sizeWarningObservationSource(for: result) else { return }
         let generation = result.observationGeneration ?? WindowSizeConstraints.shared.observationGeneration
-        afterWindowSettles(result.windowElement, generation: generation) { [weak self] actual in
+        WindowSizeWarningObservation.sample(frame: source.frame, isCurrent: {
+            !Defaults.showMinimumWindowSizeWarning.userDisabled
+                && WindowSizeConstraints.shared.observationGeneration == generation
+                && source.isCurrent()
+        }) { [weak self] actual in
             if WindowSizeConstraint.isExceeded(requested: result.requestedLayoutRect ?? result.calcResult.rect,
                                                actual: actual, action: result.action) {
                 self?.showSizeConstraintWarning(on: result.calcResult.screen)
@@ -524,18 +530,12 @@ class WindowManager {
         }
     }
 
-    private func afterWindowSettles(_ window: AccessibilityElement, generation: UUID,
-                                    completion: @escaping (CGRect) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            guard WindowSizeConstraints.shared.observationGeneration == generation else { return }
-            let first = window.frame
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.06) {
-                guard WindowSizeConstraints.shared.observationGeneration == generation else { return }
-                let settled = window.frame
-                guard WindowGeometry.matches(first, settled, tolerance: 1) else { return }
-                completion(settled)
-            }
-        }
+    func sizeWarningObservationSource(for result: ResultParameters) -> WindowSizeWarningObservation.Source? {
+        guard let id = result.windowId, let pid = result.windowElement.pid,
+              let launch = WindowProcessIdentity.launchTime(for: pid) else { return nil }
+        return WindowSizeWarningObservation.Source(frame: { WindowUtil.getWindowFrame(id: id) }, isCurrent: {
+            WindowProcessIdentity.launchTime(for: pid) == launch
+        })
     }
 
     func showSizeConstraintWarning(on screen: NSScreen) {
