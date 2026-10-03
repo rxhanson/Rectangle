@@ -88,7 +88,9 @@ class TitleBarManager {
 
     static func hitTestApplication(window: CGWindowID) -> AXUIElement? {
         guard window != 0,
-              let pid = WindowUtil.getWindowList(ids: [window], forceRefresh: true).first(where: { $0.id == window })?.pid,
+              let windows = CGWindowListCopyWindowInfo(.optionIncludingWindow, window) as? [[String: Any]],
+              let info = windows.first(where: { ($0[kCGWindowNumber as String] as? NSNumber)?.uint32Value == window }),
+              let pid = (info[kCGWindowOwnerPID as String] as? NSNumber)?.int32Value,
               pid > 0, pid != ProcessInfo.processInfo.processIdentifier else { return nil }
         let application = AXUIElementCreateApplication(pid)
         AXUIElementSetMessagingTimeout(application, 0.01)
@@ -119,14 +121,21 @@ extension TitleBarManager {
 
 /// Closing a tab can expose the title bar before mouse-up. Remember a confirmed
 /// tab-button press so that closing two tabs cannot trigger a title-bar double-click.
-private final class TitleBarTabButtonPress {
-    private let worker = DispatchQueue(label: "com.knollsoft.Rectangle.titlebar-button", qos: .userInitiated)
+final class TitleBarTabButtonPress {
+    private let worker: DispatchQueue
+    private let applicationForWindow: (CGWindowID) -> AXUIElement?
     private var observer: AXObserver?
     private var observedApplication: AXUIElement?
     private var activation: NSObjectProtocol?
     private var generation = UUID()
     private let sequence = TitleBarClickSequence()
     private var pendingReads = 0
+
+    init(worker: DispatchQueue = DispatchQueue(label: "com.knollsoft.Rectangle.titlebar-button", qos: .userInitiated),
+         applicationForWindow: @escaping (CGWindowID) -> AXUIElement? = TitleBarManager.hitTestApplication) {
+        self.worker = worker
+        self.applicationForWindow = applicationForWindow
+    }
 
     func start() {
         guard activation == nil else { return }
@@ -211,12 +220,12 @@ private final class TitleBarTabButtonPress {
         let raw = cgEvent.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent)
         let window = CGWindowID(exactly: raw > 0 ? raw : cgEvent.getIntegerValueField(.mouseEventWindowUnderMousePointer)) ?? 0
         if event.type == .leftMouseDown {
-            // Self hit-testing can wait for SwiftUI's main thread while holding an AX lock.
-            // Resolve the clicked app before dispatching so a later focus change cannot target us.
-            guard let application = TitleBarManager.hitTestApplication(window: window) else { resetClick(); return }
             sequence.mouseDown(window: window, point: cgEvent.location, time: event.timestamp,
                                count: event.clickCount, interval: NSEvent.doubleClickInterval)
-            read(at: event.timestamp) { click in
+            read(at: event.timestamp) { [applicationForWindow] click in
+                // Resolve the event's window off the input thread, never the current focus.
+                // The application lookup rejects self before any AX hit-testing.
+                guard let application = applicationForWindow(click.window), !click.isCancelled else { return false }
                 var element: AXUIElement?
                 guard AXUIElementCopyElementAtPosition(application, Float(click.point.x), Float(click.point.y), &element) == .success,
                       let element else { return false }
@@ -245,7 +254,7 @@ private final class TitleBarTabButtonPress {
         guard pendingReads < 4, let click = sequence.beginRead(at: time, interval: NSEvent.doubleClickInterval) else { return }
         pendingReads += 1
         worker.async { [weak self] in
-            let positive = classify(click)
+            let positive = !click.isCancelled && classify(click)
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 self.pendingReads -= 1
@@ -258,7 +267,7 @@ private final class TitleBarTabButtonPress {
         let deadline = ProcessInfo.processInfo.systemUptime + 0.04
         func value(_ element: AXUIElement, _ attribute: String) -> CFTypeRef? {
             let remaining = deadline - ProcessInfo.processInfo.systemUptime
-            guard remaining > 0 else { return nil }
+            guard remaining > 0, !click.isCancelled else { return nil }
             AXUIElementSetMessagingTimeout(element, Float(min(0.01, remaining)))
             var value: CFTypeRef?
             return AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success ? value : nil
@@ -293,6 +302,20 @@ final class TitleBarClickSequence {
         var confirmed = false
         var settled = false
         var completion: ((Bool) -> Void)?
+        private let cancellationLock = NSLock()
+        private var cancelled = false
+
+        var isCancelled: Bool {
+            cancellationLock.lock()
+            defer { cancellationLock.unlock() }
+            return cancelled
+        }
+
+        func cancel() {
+            cancellationLock.lock()
+            cancelled = true
+            cancellationLock.unlock()
+        }
 
         init(window: CGWindowID, point: CGPoint, time: TimeInterval) {
             self.window = window
@@ -303,10 +326,14 @@ final class TitleBarClickSequence {
 
     private var click: Click?
 
-    func reset() { click = nil }
+    func reset() {
+        click?.cancel()
+        click = nil
+    }
 
     func mouseDown(window: CGWindowID, point: CGPoint, time: TimeInterval, count: Int, interval: TimeInterval) {
         if count == 1 {
+            reset()
             click = window == 0 ? nil : Click(window: window, point: point, time: time)
         } else if count != 2 || click?.window != window || time - (click?.time ?? 0) > interval {
             reset()
@@ -341,7 +368,7 @@ final class TitleBarClickSequence {
     private func completeIfReady(_ click: Click, timedOut: Bool = false) {
         guard click.settled, click.confirmed || click.pendingReads == 0 || timedOut,
               let completion = click.completion else { return }
-        self.click = nil
+        reset()
         completion(click.confirmed)
     }
 }

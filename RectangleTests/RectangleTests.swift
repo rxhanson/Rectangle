@@ -6881,6 +6881,70 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
 }
 
 @MainActor
+final class TitleBarTabButtonPressSchedulingTests: XCTestCase {
+    private func mouseEvent(_ type: CGEventType, window: CGWindowID = 42) throws -> NSEvent {
+        let event = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: type,
+                                        mouseCursorPosition: CGPoint(x: 20, y: 20), mouseButton: .left))
+        event.setIntegerValueField(.mouseEventClickState, value: 1)
+        event.setIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent, value: Int64(window))
+        return try XCTUnwrap(NSEvent(cgEvent: event))
+    }
+
+    func testWindowOwnerLookupRunsOnWorker() throws {
+        let worker = DispatchQueue(label: "titlebar-test-owner")
+        let key = DispatchSpecificKey<Bool>()
+        worker.setSpecific(key: key, value: true)
+        let lookedUp = expectation(description: "owner resolved off input thread")
+        let press = TitleBarTabButtonPress(worker: worker) { window in
+            XCTAssertEqual(window, 42)
+            XCTAssertEqual(DispatchQueue.getSpecific(key: key), true)
+            XCTAssertFalse(Thread.isMainThread)
+            lookedUp.fulfill()
+            return nil
+        }
+        press.handle(try mouseEvent(.leftMouseDown)) { XCTFail("mouse-down must not perform an action") }
+        wait(for: [lookedUp], timeout: 1)
+        press.stop()
+    }
+
+    func testDragCancelsQueuedLookupBeforeItContactsWindowServer() throws {
+        let worker = DispatchQueue(label: "titlebar-test-drag")
+        let press = TitleBarTabButtonPress(worker: worker) { _ in
+            XCTFail("cancelled click must not resolve or hit-test its window")
+            return nil
+        }
+        let down = try mouseEvent(.leftMouseDown)
+        let drag = try mouseEvent(.leftMouseDragged)
+        worker.suspend()
+        press.handle(down) {}
+        press.handle(drag) {}
+        let drained = expectation(description: "cancelled worker request drained")
+        worker.async { drained.fulfill() }
+        worker.resume()
+        wait(for: [drained], timeout: 1)
+        press.stop()
+    }
+
+    func testNewClickSkipsOldLookupAndResolvesTheNewEventWindow() throws {
+        let worker = DispatchQueue(label: "titlebar-test-replacement")
+        let lookedUp = expectation(description: "only replacement click resolved")
+        let press = TitleBarTabButtonPress(worker: worker) { window in
+            XCTAssertEqual(window, 43)
+            lookedUp.fulfill()
+            return nil
+        }
+        let oldDown = try mouseEvent(.leftMouseDown)
+        let newDown = try mouseEvent(.leftMouseDown, window: 43)
+        worker.suspend()
+        press.handle(oldDown) {}
+        press.handle(newDown) {}
+        worker.resume()
+        wait(for: [lookedUp], timeout: 1)
+        press.stop()
+    }
+}
+
+@MainActor
 final class TitleBarHitTestApplicationTests: XCTestCase {
     func testOwnWindowNeverStartsAnAccessibilityHitTest() throws {
         let window = NSWindow(contentRect: CGRect(x: 100, y: 100, width: 320, height: 200),
