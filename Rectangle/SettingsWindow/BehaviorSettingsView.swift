@@ -1,4 +1,5 @@
 import AppKit
+import MASShortcut
 import SwiftUI
 
 // MARK: - AppKit View Controller Wrapper
@@ -172,6 +173,13 @@ struct BehaviorSettingsView: View {
                         }
                         Divider()
                         VStack(alignment: .leading, spacing: 4) {
+                            Toggle("Only stack windows of the same size", isOn: $viewModel.stackSameSizeOnly)
+                            Text("For the window list and the cycle shortcuts. When off, windows stacked at the same top-left position count whatever their size")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Divider()
+                        VStack(alignment: .leading, spacing: 4) {
                             Toggle("Show stacked window list on hover", isOn: $viewModel.stackBadge)
                             Text("Hover cursor near the top left corner of a window to show the list")
                                 .font(.caption)
@@ -182,6 +190,22 @@ struct BehaviorSettingsView: View {
                             Spacer()
                             MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
                                 .frame(width: 160, height: 24)
+                        }
+                        Divider()
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text("Cycle stacked windows")
+                                Spacer()
+                                windowActionShortcutView(.cycleStackedWindows)
+                            }
+                            HStack {
+                                Text("Cycle stacked windows backward")
+                                Spacer()
+                                windowActionShortcutView(.cycleStackedWindowsBackward)
+                            }
+                            Text("Bring forward the windows snapped to the same area as the focused window, one at a time")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
                     .padding(.top, 4)
@@ -388,6 +412,17 @@ struct BehaviorSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
+    }
+
+    /// A recorder for a window action's shortcut, validated like the ones on
+    /// the Shortcuts tab.
+    private func windowActionShortcutView(_ action: WindowAction) -> some View {
+        MASShortcutViewRepresentable(
+            defaultsKey: action.name,
+            validator: viewModel.allowAnyShortcut ? PassthroughShortcutValidator() : MASShortcutValidator(),
+            recordingObserver: viewModel.shortcutRecordingObserver
+        )
+        .frame(width: 160, height: 24)
     }
 }
 

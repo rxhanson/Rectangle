@@ -231,9 +231,9 @@ class StackBadgeManager {
     private func query(corner: CGPoint, screenFrame: CGRect) {
         let cornerAX = corner.screenFlipped
         let tolerance: CGFloat = 4
-        let offsetSize = CGFloat(Defaults.cyclingOverlapOffsetSize.value)
-        let maxCascade = CGFloat(min(5, max(1, Defaults.cyclingOverlapMaxCascade.value)))
-        let cascadeRange = max(offsetSize, 1) * maxCascade + tolerance
+        let cascadeRange = StackBadgeGeometry.cascadeRange(offsetSize: CGFloat(Defaults.cyclingOverlapOffsetSize.value),
+                                                           maxCascade: Defaults.cyclingOverlapMaxCascade.value,
+                                                           tolerance: tolerance)
 
         let gap = CGFloat(Defaults.gapSize.value)
         let candidateRange = gap + cascadeRange
@@ -252,11 +252,25 @@ class StackBadgeManager {
         // window sharing the corner is in the stack whether it is maximized
         // or a sixteenth, and a maximized window covering a smaller one is
         // exactly the case where the smaller one cannot be seen any other way.
-        let stacked = StackBadgeGeometry
+        var stacked = StackBadgeGeometry
             .stackIndices(among: candidates.map { $0.frame.origin },
                           cascadeRange: cascadeRange,
                           tolerance: tolerance)
             .map { candidates[$0] }
+
+        // Unless the user has limited stacks to one size: then the list shows
+        // the stack the cycle shortcuts would cycle from the front visible
+        // window here, so the two agree.
+        if Defaults.stackSameSizeOnly.userEnabled {
+            let ownPid = ProcessInfo.processInfo.processIdentifier
+            let visible = candidates.filter { $0.alpha > 0 && $0.pid != ownPid }
+            stacked = StackBadgeGeometry
+                .sameSizeStackIndices(among: visible.map { $0.frame },
+                                      cascadeRange: cascadeRange,
+                                      tolerance: tolerance,
+                                      sizeTolerance: StackBadgeGeometry.sizeTolerance)
+                .map { visible[$0] }
+        }
 
         guard stacked.count >= 2,
               let leftMost = (stacked.min { $0.frame.origin.x < $1.frame.origin.x }),

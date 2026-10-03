@@ -169,6 +169,10 @@ class TodoManager {
     static func isTodoWindow(_ windowId: CGWindowID) -> Bool {
         return getTodoWindowElement()?.windowId == windowId
     }
+
+    static func getTodoWindowId() -> CGWindowID? {
+        return getTodoWindowElement()?.windowId
+    }
     
     static func resetTodoWindow() {
         todoWindowId = nil
