@@ -12,7 +12,6 @@ final class LayoutHelperManager {
     private var pending: DispatchWorkItem?
     private let previews = LayoutHelperPreviewStore()
     private let catalog = LayoutHelperWindowCatalog()
-    private let screenDetection = ScreenDetection()
     private var prefetchScreen: NSScreen?
     private var prefetchWindow: CGWindowID?
     private var prefetchTask: DispatchWorkItem?
@@ -193,13 +192,12 @@ final class LayoutHelperManager {
             "tokenMatches": result.layoutHelperToken == token, "fixed": result.isFixedSize])
         if !result.isFixedSize {
             WindowDividerManager.shared.record(result.windowElement, id: result.windowId,
-                                                   frame: frame, screen: result.calcResult.screen)
+                                                   frame: frame, screen: result.calcResult.screen, eligibilityConfirmed: true)
         }
         guard let requestToken = result.layoutHelperToken, requestToken == token else { return }
         guard Self.enabled,
               Self.allows(result.source),
-              !result.isFixedSize,
-              result.windowElement.isMinimized != true else { cancel(); return }
+              !result.isFixedSize else { cancel(); return }
         let screenFrame = result.visibleFrameOfScreen.screenFlipped
         // Reverse precisely the padding used by the originating action. Use the
         // achieved frame, including minimum-size or cooperative split adjustments.
@@ -224,8 +222,12 @@ final class LayoutHelperManager {
         let work = DispatchWorkItem { [weak self] in
             guard let self, self.token == requestToken else { return }
             guard Self.enabled else { self.cancel(); return }
-            guard let id = result.windowId, let actual = WindowUtil.getWindowFrame(id: id),
-                  LayoutHelperLayout.matches(actual, frame) else { self.cancel(); return }
+            // A minimized window may retain its old bounds. Check visibility
+            // in the existing WindowServer read instead of asking AX on main.
+            guard let id = result.windowId,
+                  let actual = WindowUtil.getWindowList(ids: [id], forceRefresh: true, cacheResult: false)
+                    .first(where: { $0.id == id }), actual.isOnScreen,
+                  LayoutHelperLayout.matches(actual.frame, frame) else { self.cancel(); return }
             self.existingNeighbor = self.occupiedFrontWindow(in: plan, excluding: id, on: result.calcResult.screen)
             let occupied = self.existingNeighbor.map { plan.occupiedCells(by: $0.window.frame) } ?? []
             guard !plan.remaining(excluding: occupied).isEmpty else {
@@ -427,7 +429,8 @@ final class LayoutHelperManager {
                     let restored = LayoutHelperWindowSnapshot(id: snapshot.id, pid: snapshot.pid, launch: snapshot.launch,
                         bundleID: snapshot.bundleID, title: snapshot.title, frame: frame,
                         reportedMinimum: snapshot.reportedMinimum, resizable: snapshot.resizable,
-                        element: snapshot.element, observedAt: ProcessInfo.processInfo.systemUptime)
+                        element: snapshot.element, observedAt: ProcessInfo.processInfo.systemUptime,
+                        isMainWindow: snapshot.isMainWindow)
                     self.place(window, snapshot: restored, target: target, selectionToken: selectionToken,
                                restoredFromMinimized: true, restoreFrame: original)
                 case .cancelled: self.cancel()
@@ -458,10 +461,10 @@ final class LayoutHelperManager {
         calculation.initialRect = initial.screenFlipped
         let result = ResultParameters(windowId: snapshot.id, action: .specified, windowElement: window,
             calcResult: calculation,
-            usableScreens: screenDetection.detectScreens(using: window)
+            usableScreens: ScreenDetection(logicalFrame: { _ in original }).detectScreens(using: window)
                 ?? UsableScreens(currentScreen: screen, numScreens: NSScreen.screens.count),
             visibleFrameOfScreen: bounds.screenFlipped, source: .menuItem,
-            isFixedSize: !window.isResizable() || window.isSystemDialog == true)
+            isFixedSize: snapshot.resizable == false)
         let placement = WindowAnimationPlacement(screenFrame: bounds,
             sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: initial, in: bounds),
             constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
@@ -469,8 +472,10 @@ final class LayoutHelperManager {
         // Do not start an animation at the older position.
         let animated = !restoredFromMinimized && LayoutHelperLayout.matches(historyOriginal, original)
             && WindowAnimator.enabled && !result.isFixedSize
-        let focused = AccessibilityElement.getFocusedWindowElement()
-        let deferActivation = !animated && (focused?.pid != snapshot.pid || focused?.windowId != snapshot.id)
+        // resolve() has just validated this window off-main, including its role,
+        // resize support and main-window state. Do not ask the app again here.
+        let deferActivation = !animated && (NSWorkspace.shared.frontmostApplication?.processIdentifier != snapshot.pid
+            || snapshot.isMainWindow != true)
         var expectedFrontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
         var activating = false
         let isCurrent: () -> Bool = { [weak self] in

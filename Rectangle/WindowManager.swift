@@ -10,6 +10,7 @@ class WindowManager {
     private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
+    private var dividerHandoffID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
@@ -56,7 +57,19 @@ class WindowManager {
     
     func execute(_ parameters: ExecutionParameters) {
         Notification.Name.windowActionWillExecute.post(object: parameters)
+        dividerHandoffID += 1
+        let handoff = dividerHandoffID
         WindowDividerManager.shared.interrupt()
+        if WindowDividerManager.shared.hasPendingPlacement {
+            // An AX request already sent by the divider cannot be revoked.
+            // Yield the main run loop and let only the newest command take over
+            // after that write and its Enhanced UI cleanup have returned.
+            WindowAnimator.shared.afterPendingWrites { [weak self] in
+                guard let self, self.dividerHandoffID == handoff else { return }
+                self.execute(parameters)
+            }
+            return
+        }
         var acceptedHelperPrefetch = false
         defer { if !acceptedHelperPrefetch { LayoutHelperManager.shared.cancelPrefetch() } }
         hideSizeConstraintWarning()

@@ -17,6 +17,8 @@ final class WindowDividerManager {
         let screenFrame: CGRect
         let axis: WindowSplitAxis
         var settleUntil: TimeInterval = 0
+        var observedAt: TimeInterval = 0
+        var prepared: WindowDividerPreparedPair?
         var divider: CGFloat { (axis.rect(left.frame).maxX + axis.rect(right.frame).minX) / 2 }
         var center: CGPoint { point(at: divider) }
         func point(at value: CGFloat) -> CGPoint { axis.point(value, cross: axis.rect(left.frame).midY) }
@@ -33,10 +35,17 @@ final class WindowDividerManager {
     private var shown: Pair?
     private var active: Pair?
     private var resize: WindowDividerResize?
-    private var restoreAccessibility: [() -> Void] = []
+    private var placementCancellation: WindowPlacementCoordinator.Cancellation?
+    private var pendingPlacements = 0
+    private var placementCompleted = false
+    var hasPendingPlacement: Bool { pendingPlacements > 0 }
+    private var observationRunning = false
+    private var observationGeneration = 0
+    private var recordGeneration = 0
+    private var recordRunning = false
+    private var pendingRecord: (() -> Void)?
     private var hoverTimer: Timer?
     private var pointerOffset: CGFloat = 0
-    private var settlement: DispatchWorkItem?
     private var snapshotTask: Task<Void, Never>?
     private var snapshotRequest: UUID?
     private var rememberedMinima: (left: CGFloat?, right: CGFloat?)?
@@ -92,9 +101,7 @@ final class WindowDividerManager {
     func record(_ window: AccessibilityElement, id: CGWindowID?, frame: CGRect, screen: NSScreen,
                 eligibilityConfirmed: Bool = false) {
         guard Defaults.windowDivider.enabled, let id, let pid = window.pid,
-              let app = NSRunningApplication(processIdentifier: pid),
-              eligibilityConfirmed || (window.isResizable() && window.isSystemDialog != true
-                  && window.isMinimized != true && window.isHidden != true) else {
+              let app = NSRunningApplication(processIdentifier: pid), !app.isHidden, !app.isTerminated else {
             WindowAnimationDiagnostics.event("divider-record-ineligible", fields: ["windowID": id ?? 0])
             return
         }
@@ -120,8 +127,44 @@ final class WindowDividerManager {
         entries[id] = entry
         entries = entries.filter { !$0.value.app.isTerminated }
         if entries.count > 32, let oldest = entries.keys.first(where: { $0 != id }) { entries.removeValue(forKey: oldest) }
-        let visibleOrder = WindowUtil.getWindowList(forceRefresh: true)
-        let orderedEntries = entries.values.sorted { a, b in
+        // Inventory and optional AX eligibility are copied on a worker. A newer
+        // placement replaces this entry before an old observation can pair it.
+        let candidates = Array(entries.values)
+        recordGeneration += 1
+        let generation = recordGeneration
+        pendingRecord = { [weak self] in
+            guard let self else { return }
+            self.recordRunning = true
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                let eligible = eligibilityConfirmed || WindowDividerPreparedPair.Input(id: id, pid: pid)
+                    .flatMap { WindowDividerPreparedPair.read($0) } != nil
+                let visibleOrder = eligible ? WindowUtil.getWindowList(forceRefresh: true, cacheResult: false) : []
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    self.recordRunning = false
+                    self.pumpRecord()
+                    guard eligible, self.recordGeneration == generation, Defaults.windowDivider.enabled,
+                          let current = self.entries[id], current.frame == frame,
+                          current.element == window else { return }
+                    self.recordPair(entry, candidates: candidates, visibleOrder: visibleOrder,
+                        screen: screen, axis: axis, normalized: normalized, extent: extent, area: area, gap: gap)
+                }
+            }
+        }
+        pumpRecord()
+    }
+
+    private func pumpRecord() {
+        guard !recordRunning, let work = pendingRecord else { return }
+        pendingRecord = nil
+        work()
+    }
+
+    private func recordPair(_ entry: Entry, candidates: [Entry], visibleOrder: [WindowInfo],
+                            screen: NSScreen, axis: WindowSplitAxis, normalized: CGRect,
+                            extent: CGRect, area: CGRect, gap: CGFloat) {
+        let id = entry.id
+        let orderedEntries = candidates.sorted { a, b in
             (visibleOrder.firstIndex(where: { $0.id == a.id }) ?? Int.max)
                 < (visibleOrder.firstIndex(where: { $0.id == b.id }) ?? Int.max)
         }
@@ -162,29 +205,42 @@ final class WindowDividerManager {
         let point = NSEvent.mouseLocation.screenFlipped
         guard let pair = active ?? pairs.values.first(where: { $0.hoverFrame.contains(point) }),
               !LayoutHelperManager.shared.isPresenting else { panel.hide(); shown = nil; return }
-        // AX placement and the inventory cache can disagree for a short time.
-        // Never invalidate a newly resized pair from a cached pre-resize frame.
-        let infos = WindowUtil.getWindowList(forceRefresh: true)
-        guard visible(pair, in: infos) else {
-            if shown != nil || active != nil { WindowAnimationDiagnostics.event("divider-pair-obscured") }
-            interrupt(); return
-        }
-        if active != nil && !dragging { return }
-        if active == nil || dragging {
-            guard let left = infos.first(where: { $0.id == pair.left.id }),
-                  let right = infos.first(where: { $0.id == pair.right.id }),
-                  LayoutHelperLayout.matches(left.frame, pair.left.frame),
-                  LayoutHelperLayout.matches(right.frame, pair.right.frame),
-                  LayoutHelperLayout.matches(pair.left.screen.adjustedVisibleFrame().screenFlipped, pair.screenFrame) else {
-                if !dragging, reconcile(pair) { showHandle(pair); return }
-                if !dragging && ProcessInfo.processInfo.systemUptime < pair.settleUntil { return }
-                WindowAnimationDiagnostics.event("divider-pair-invalidated", fields: ["left": pair.left.id, "right": pair.right.id])
-                pairs.removeValue(forKey: screenID(pair.left.screen)); interrupt(); return
+        // Release owns all AX I/O until placement finishes. Pointer tracking
+        // uses the proposed geometry and never waits for an app or WindowServer.
+        guard active == nil else { return }
+        guard !observationRunning,
+              let left = WindowDividerPreparedPair.Input(id: pair.left.id, pid: pair.left.app.processIdentifier),
+              let right = WindowDividerPreparedPair.Input(id: pair.right.id, pid: pair.right.app.processIdentifier) else { return }
+        observationRunning = true
+        let generation = observationGeneration
+        let prepared = pair.prepared
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let infos = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
+            let preparation = prepared ?? WindowDividerPreparedPair(left: left, right: right)
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.observationRunning = false
+                guard self.observationGeneration == generation, self.active == nil,
+                      self.pairs[self.screenID(pair.left.screen)] === pair,
+                      pair.hoverFrame.contains(NSEvent.mouseLocation.screenFlipped),
+                      !LayoutHelperManager.shared.isPresenting else { return }
+                guard let preparation, self.visible(pair, in: infos),
+                      let l = infos.first(where: { $0.id == pair.left.id })?.frame,
+                      let r = infos.first(where: { $0.id == pair.right.id })?.frame,
+                      let original = WindowDividerGeometry(left: pair.left.frame, right: pair.right.frame, axis: pair.axis),
+                      original.containsPair(left: l, right: r),
+                      LayoutHelperLayout.matches(pair.left.screen.adjustedVisibleFrame().screenFlipped, pair.screenFrame) else {
+                    if ProcessInfo.processInfo.systemUptime < pair.settleUntil { return }
+                    self.pairs.removeValue(forKey: self.screenID(pair.left.screen))
+                    self.interrupt(); return
+                }
+                pair.left.frame = l; pair.right.frame = r
+                pair.prepared = preparation
+                pair.observedAt = ProcessInfo.processInfo.systemUptime
+                self.shown = pair
+                self.showHandle(pair)
             }
         }
-        shown = pair
-        let x = dragging ? (resize?.pendingDivider ?? pair.divider) : pair.divider
-        panel.show(at: pair.point(at: x).screenFlipped, axis: pair.axis)
     }
 
     private func visible(_ pair: Pair, in infos: [WindowInfo]) -> Bool {
@@ -198,27 +254,20 @@ final class WindowDividerManager {
 
     private func begin(pointerX: CGFloat? = nil) -> Bool {
         finishMovement()
-        guard let pair = shown, visible(pair, in: WindowUtil.getWindowList(forceRefresh: true)),
-              LayoutHelperLayout.matches(frame(of: pair.left.element), pair.left.frame),
-              LayoutHelperLayout.matches(frame(of: pair.right.element), pair.right.frame) else { panel.hide(); return false }
+        guard let pair = shown, let prepared = pair.prepared,
+              ProcessInfo.processInfo.systemUptime - pair.observedAt < 0.3 else { panel.hide(); poll(); return false }
         LayoutHelperManager.shared.cancel()
         WindowAnimator.shared.finish()
         let l = pair.left.element, r = pair.right.element
         let leftHint: CGSize? = nil, rightHint: CGSize? = nil
         guard WindowAnimator.shared.destination(for: l) == nil,
               WindowAnimator.shared.destination(for: r) == nil,
-              l.isResizable(), r.isResizable(),
               let engine = WindowDividerResize(left: pair.left.frame, right: pair.right.frame, axis: pair.axis,
-                  minimumLeft: WindowDividerGeometry.minimumExtent(reported: l.minimumSize,
+                  minimumLeft: WindowDividerGeometry.minimumExtent(reported: prepared.left.minimum,
                       remembered: leftHint, current: pair.left.frame.size, axis: pair.axis),
-                  minimumRight: WindowDividerGeometry.minimumExtent(reported: r.minimumSize,
+                  minimumRight: WindowDividerGeometry.minimumExtent(reported: prepared.right.minimum,
                       remembered: rightHint, current: pair.right.frame.size, axis: pair.axis),
-                  write: { isLeft, frame, positionFirst, resizeOnly in
-                      guard WindowAnimator.shared.destination(for: l) == nil,
-                            WindowAnimator.shared.destination(for: r) == nil else { return false }
-                      return (isLeft ? l : r).setAnimationFrame(frame, resizeOnly: resizeOnly, positionFirst: positionFirst)
-                  },
-                  read: { [weak self] in self?.frame(of: $0 ? l : r) ?? .null }) else { return false }
+                  write: { _, _, _, _ in false }, read: { _ in .null }) else { return false }
         rememberedMinima = (WindowDividerGeometry.rememberedExtent(leftHint, current: pair.left.frame.size, axis: pair.axis),
                             WindowDividerGeometry.rememberedExtent(rightHint, current: pair.right.frame.size, axis: pair.axis))
         active = pair; resize = engine; dragging = true
@@ -231,18 +280,6 @@ final class WindowDividerManager {
         return true
     }
 
-    private func frame(of element: AccessibilityElement) -> CGRect {
-        let timeout = element.messagingTimeout
-        element.setMessagingTimeout(timeout > 0 ? min(timeout, 0.05) : 0.05)
-        defer { element.setMessagingTimeout(timeout) }
-        return element.frame
-    }
-
-    private func prepareAccessibility(_ pair: Pair) {
-        guard restoreAccessibility.isEmpty else { return }
-        restoreAccessibility = [pair.left.element.beginAnimatedAdjustment(), pair.right.element.beginAnimatedAdjustment()]
-    }
-
     private func transition(to x: CGFloat) {
         WindowAnimationDiagnostics.event("divider-release")
         guard let engine = resize, let pair = active,
@@ -250,24 +287,10 @@ final class WindowDividerManager {
         dragging = false
         engine.cancelPreview()
 
-        let infos = WindowUtil.getWindowList(forceRefresh: true)
-        guard visible(pair, in: infos),
-              let left = infos.first(where: { $0.id == pair.left.id })?.frame,
-              let right = infos.first(where: { $0.id == pair.right.id })?.frame else { interrupt(); return }
-        guard LayoutHelperLayout.matches(left, engine.left), LayoutHelperLayout.matches(right, engine.right) else { interrupt(); return }
-        WindowAnimationDiagnostics.event("divider-release-validated")
         snapshotRequest = nil
         snapshotTask?.cancel(); snapshotTask = nil
         snapshot.clear()
         panel.hide(animated: false)
-        if LayoutHelperLayout.matches(left, target.left, tolerance: 0.5),
-           LayoutHelperLayout.matches(right, target.right, tolerance: 0.5) {
-
-            let reference = engine.geometry.warningReference(at: x,
-                rememberedMinimumLeft: rememberedMinima?.left, rememberedMinimumRight: rememberedMinima?.right)
-            reveal(pair: pair, minimumSizeReached: abs(engine.divider - reference) > 1)
-            return
-        }
         // Keep the preview visible until both windows acknowledge placement.
         overlay.show(in: engine.geometry.outer.screenFlipped,
                      divider: pair.axis.rect(target.left).maxX + engine.geometry.gap / 2,
@@ -296,77 +319,43 @@ final class WindowDividerManager {
     }
 
     private func place(engine: WindowDividerResize, pair: Pair, divider x: CGFloat) {
+        guard let prepared = pair.prepared else { interrupt(); return }
         WindowAnimationDiagnostics.event("divider-placement-start")
-        prepareAccessibility(pair)
-        guard let placement = WindowDividerPlacement(left: engine.left, right: engine.right,
-            axis: pair.axis, divider: x, minimumLeft: engine.minimumLeft, minimumRight: engine.minimumRight,
-            rememberedMinimumLeft: rememberedMinima?.left, rememberedMinimumRight: rememberedMinima?.right,
-            write: { [weak self] isLeft, frame, attribute in
-                guard let self, self.active === pair, self.resize === engine,
-                      WindowAnimator.shared.destination(for: pair.left.element) == nil,
-                      WindowAnimator.shared.destination(for: pair.right.element) == nil else { return false }
-                let element = isLeft ? pair.left.element : pair.right.element
-                if attribute == .size { return element.setAnimationFrame(frame, resizeOnly: true) }
-                return element.setDividerPosition(frame.origin)
-            }, read: { [weak self] in self?.frame(of: $0 ? pair.left.element : pair.right.element) ?? .null },
-            acknowledged: { isLeft, expected in
-                guard let actual = WindowUtil.getWindowFrame(id: isLeft ? pair.left.id : pair.right.id) else { return false }
-                return LayoutHelperLayout.matches(actual, expected, tolerance: 1)
-            }) else { interrupt(); return }
-        advancePlacement(placement, engine: engine, pair: pair)
-    }
-
-    private func advancePlacement(_ placement: WindowDividerPlacement, engine: WindowDividerResize, pair: Pair) {
-        guard active === pair, resize === engine else { return }
-        switch placement.advance(at: ProcessInfo.processInfo.systemUptime) {
-        case .waiting:
-            let work = DispatchWorkItem { [weak self] in
-                guard let self, self.active === pair, self.resize === engine else { return }
-                self.settlement = nil
-                self.advancePlacement(placement, engine: engine, pair: pair)
+        let cancellation = WindowPlacementCoordinator.Cancellation()
+        placementCancellation = cancellation
+        pendingPlacements += 1
+        let left = engine.left, right = engine.right
+        let minimumLeft = engine.minimumLeft, minimumRight = engine.minimumRight
+        let remembered = rememberedMinima
+        let ignoring = Set([panel, overlay].compactMap { CGWindowID(exactly: $0.windowNumber) })
+        let hoverFrame = pair.hoverFrame
+        let policy = Defaults.enhancedUI.value
+        let assistive = NSWorkspace.shared.isVoiceOverEnabled || NSWorkspace.shared.isSwitchControlEnabled
+        WindowAnimator.shared.performPlacementWork { [weak self] in
+            let result = prepared.place(left: left, right: right, axis: pair.axis, divider: x,
+                minimumLeft: minimumLeft, minimumRight: minimumRight,
+                remembered: remembered, ignoring: ignoring, hoverFrame: hoverFrame,
+                policy: policy, assistive: assistive, cancellation: cancellation)
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.pendingPlacements -= 1
+                guard self.placementCancellation === cancellation, !cancellation.isCancelled,
+                      self.active === pair, self.resize === engine else { return }
+                self.placementCancellation = nil
+                guard let result else {
+                    self.pairs.removeValue(forKey: self.screenID(pair.left.screen))
+                    self.interrupt(); return
+                }
+                engine.accept(left: result.left, right: result.right)
+                pair.left.frame = result.left; pair.right.frame = result.right
+                pair.observedAt = ProcessInfo.processInfo.systemUptime
+                pair.settleUntil = pair.observedAt + 0.5
+                self.placementCompleted = true
+                self.overlay.show(in: engine.geometry.outer.screenFlipped, divider: engine.divider,
+                    gap: engine.geometry.gap, axis: pair.axis, below: self.panel)
+                WindowAnimationDiagnostics.event("divider-placement-completed")
+                self.reveal(pair: pair, minimumSizeReached: result.minimumSizeReached)
             }
-            settlement = work
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.025, execute: work)
-        case .completed, .rolledBack:
-            engine.accept(left: placement.left, right: placement.right)
-
-            overlay.show(in: engine.geometry.outer.screenFlipped, divider: engine.divider,
-                         gap: engine.geometry.gap, axis: pair.axis, below: panel)
-            WindowAnimationDiagnostics.event("divider-placement-completed")
-            awaitSettlement(engine: engine, pair: pair, minimumSizeReached: placement.minimumSizeReached,
-                gate: WindowDividerRevealGate(left: engine.left, right: engine.right,
-                    startedAt: ProcessInfo.processInfo.systemUptime, matchedSince: placement.verifiedPairSince))
-        case .failed:
-
-            pairs.removeValue(forKey: screenID(pair.left.screen))
-            interrupt()
-        }
-    }
-
-    private func awaitSettlement(engine: WindowDividerResize, pair: Pair, minimumSizeReached: Bool,
-                                 gate: WindowDividerRevealGate) {
-        guard active === pair, resize === engine else { return }
-        var gate = gate
-        let left = frame(of: pair.left.element), right = frame(of: pair.right.element)
-        switch gate.observe(left: left, right: right,
-                            at: ProcessInfo.processInfo.systemUptime) {
-        case .waiting:
-            let work = DispatchWorkItem { [weak self] in
-                guard let self, self.active === pair, self.resize === engine else { return }
-                self.settlement = nil
-                self.awaitSettlement(engine: engine, pair: pair, minimumSizeReached: minimumSizeReached, gate: gate)
-            }
-            settlement = work
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.025, execute: work)
-        case .ready:
-
-            pair.left.frame = engine.left; pair.right.frame = engine.right
-            pair.settleUntil = ProcessInfo.processInfo.systemUptime + 0.5
-            reveal(pair: pair, minimumSizeReached: minimumSizeReached)
-        case .timedOut:
-            // A stalled app must not leave a permanent mask or a stale pair.
-            pairs.removeValue(forKey: screenID(pair.left.screen))
-            interrupt()
         }
     }
 
@@ -396,37 +385,35 @@ final class WindowDividerManager {
         panel.show(at: pair.center.screenFlipped, axis: pair.axis)
     }
 
-    @discardableResult private func reconcile(_ pair: Pair) -> Bool {
-        let left = frame(of: pair.left.element), right = frame(of: pair.right.element)
-        guard let original = WindowDividerGeometry(left: pair.left.frame, right: pair.right.frame, axis: pair.axis),
-              original.containsPair(left: left, right: right),
-              LayoutHelperLayout.matches(pair.left.screen.adjustedVisibleFrame().screenFlipped, pair.screenFrame) else { return false }
-        pair.left.frame = left; pair.right.frame = right
-        return true
-    }
-
     private func finishMovement() {
         snapshotRequest = nil
         snapshotTask?.cancel(); snapshotTask = nil
         snapshot.clear()
-        settlement?.cancel(); settlement = nil
+        let wasPlacing = placementCancellation != nil
+        placementCancellation?.cancel(); placementCancellation = nil
         overlay.dismiss()
         dragging = false
-        restoreAccessibility.reversed().forEach { $0() }
-        restoreAccessibility.removeAll()
-        if let pair = active, reconcile(pair) {
+        if let pair = active, wasPlacing {
+            // A cancelled in-flight write may still finish. Rediscover a pair
+            // from a subsequent accepted snap rather than retaining stale frames.
+            pairs.removeValue(forKey: screenID(pair.left.screen))
+        }
+        if let pair = active, placementCompleted {
             for entry in [pair.left, pair.right] {
                 AppDelegate.windowHistory.lastRectangleActions[entry.id] = RectangleAction(action: .specified, subAction: nil, rect: entry.frame, count: 1)
                 entries[entry.id] = entry
             }
         }
         active = nil; resize = nil
+        placementCompleted = false
         rememberedMinima = nil
 
     }
 
     /// Called before another Rectangle command or a manual grab takes ownership.
     func interrupt(animated: Bool = true) {
+        observationGeneration += 1
+        recordGeneration += 1; pendingRecord = nil
         resize?.cancelPreview()
         finishMovement()
         panel.hide(animated: animated); shown = nil
@@ -436,5 +423,101 @@ final class WindowDividerManager {
         interrupt(animated: false)
         entries.removeAll(); pairs.removeAll()
         hoverTimer?.invalidate(); hoverTimer = nil
+    }
+}
+
+/// Owns AX references created on a worker. The main owner only reads copied
+/// minima; no shared AccessibilityElement changes its timeout during a drag.
+private struct WindowDividerPreparedPair {
+    struct Input {
+        let id: CGWindowID
+        let pid: pid_t
+        let launch: TimeInterval
+        let bundle: String?
+        init?(id: CGWindowID, pid: pid_t) {
+            guard let launch = WindowProcessIdentity.launchTime(for: pid) else { return nil }
+            self.id = id; self.pid = pid; self.launch = launch
+            bundle = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier
+        }
+        var isCurrent: Bool { WindowProcessIdentity.launchTime(for: pid) == launch }
+    }
+    struct Window {
+        let input: Input
+        let element: AXUIElement
+        let minimum: CGSize?
+    }
+    let left: Window
+    let right: Window
+
+    init?(left: Input, right: Input) {
+        guard let l = Self.read(left), let r = Self.read(right) else { return nil }
+        self.left = l; self.right = r
+    }
+
+    static func read(_ input: Input) -> Window? {
+        guard input.isCurrent else { return nil }
+        let reader = AccessibilityReadBatch(budget: 0.2)
+        guard let windows = reader.value(AXUIElementCreateApplication(input.pid), kAXWindowsAttribute) as? [AXUIElement],
+              let element = windows.first(where: { reader.windowID($0) == input.id }),
+              reader.value(element, kAXRoleAttribute) as? String == kAXWindowRole,
+              reader.value(element, kAXSubroleAttribute) as? String != kAXSystemDialogSubrole,
+              reader.value(element, kAXMinimizedAttribute) as? Bool != true,
+              reader.settable(element, kAXSizeAttribute) != false else { return nil }
+        let minimum: CGSize? = reader.wrapped(element, "AXMinSize", type: .cgSize)
+            ?? reader.wrapped(element, "AXMinimumSize", type: .cgSize)
+        guard reader.available, input.isCurrent else { return nil }
+        return Window(input: input, element: element, minimum: minimum)
+    }
+
+    func place(left originalLeft: CGRect, right originalRight: CGRect, axis: WindowSplitAxis, divider: CGFloat,
+               minimumLeft: CGFloat, minimumRight: CGFloat, remembered: (left: CGFloat?, right: CGFloat?)?,
+               ignoring: Set<CGWindowID>, hoverFrame: CGRect, policy: EnhancedUI, assistive: Bool,
+               cancellation: WindowPlacementCoordinator.Cancellation) -> WindowDividerPlacement.Result? {
+        let valid = { !cancellation.isCancelled && self.left.input.isCurrent && self.right.input.isCurrent }
+        guard valid() else { return nil }
+        let infos = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
+        guard WindowDividerGeometry.unobscured(left: left.input.id, right: right.input.id,
+            in: infos, near: hoverFrame, ignoring: ignoring),
+              LayoutHelperLayout.matches(infos.first { $0.id == left.input.id && $0.pid == left.input.pid }?.frame ?? .null, originalLeft),
+              LayoutHelperLayout.matches(infos.first { $0.id == right.input.id && $0.pid == right.input.pid }?.frame ?? .null, originalRight), valid() else { return nil }
+        let l = AccessibilityElement(left.element, messagingTimeout: 0.05, windowID: left.input.id)
+        let r = AccessibilityElement(right.element, messagingTimeout: 0.05, windowID: right.input.id)
+        guard LayoutHelperLayout.matches(l.frame, originalLeft), valid(),
+              LayoutHelperLayout.matches(r.frame, originalRight), valid() else { return nil }
+        var restores: [() -> Void] = []
+        defer { restores.reversed().forEach { $0() } }
+        // Capture AppKit policy on the main owner; AX preparation and cleanup
+        // share the placement worker and its bounded application references.
+        var preparedPIDs = Set<pid_t>()
+        for window in [left, right] where preparedPIDs.insert(window.input.pid).inserted {
+            guard valid() else { return nil }
+            let app = AXUIElementCreateApplication(window.input.pid)
+            AXUIElementSetMessagingTimeout(app, 0.05)
+            restores.append(policy.beginWindowAdjustment(bundleIdentifier: window.input.bundle,
+                builtInAssistiveTechnologyEnabled: assistive,
+                readEnhancedUI: {
+                    var value: CFTypeRef?
+                    guard AXUIElementCopyAttributeValue(app, "AXEnhancedUserInterface" as CFString, &value) == .success else { return nil }
+                    return value as? Bool
+                }, writeEnhancedUI: { enabled in
+                    _ = AXUIElementSetAttributeValue(app, "AXEnhancedUserInterface" as CFString,
+                        enabled ? kCFBooleanTrue : kCFBooleanFalse)
+                }))
+        }
+        guard valid(), let placement = WindowDividerPlacement(left: originalLeft, right: originalRight,
+            axis: axis, divider: divider, minimumLeft: minimumLeft, minimumRight: minimumRight,
+            rememberedMinimumLeft: remembered?.left, rememberedMinimumRight: remembered?.right,
+            write: { isLeft, frame, attribute in
+                guard valid() else { return false }
+                let window = isLeft ? l : r
+                return cancellation.write {
+                    attribute == .size ? window.writeAnimationSize(frame.size) : window.writeAnimationPosition(frame.origin)
+                } == .success
+            }, read: { isLeft in valid() ? (isLeft ? l : r).frame : .null },
+            acknowledged: { isLeft, expected in
+                guard valid(), let actual = WindowUtil.getWindowFrame(id: isLeft ? left.input.id : right.input.id) else { return false }
+                return LayoutHelperLayout.matches(actual, expected, tolerance: 1)
+            }) else { return nil }
+        return placement.settle(isCurrent: valid)
     }
 }

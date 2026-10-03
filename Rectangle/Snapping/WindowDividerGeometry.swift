@@ -393,3 +393,41 @@ struct WindowDividerRevealGate {
         return time - startedAt >= 0.6 ? .timedOut : .waiting
     }
 }
+
+extension WindowDividerPlacement {
+    struct Result {
+        let left: CGRect
+        let right: CGRect
+        let minimumSizeReached: Bool
+    }
+
+    /// The existing incremental placement and reveal gates run on one worker.
+    /// Check ownership between app replies; cancellation never waits on AX.
+    func settle(isCurrent: () -> Bool,
+                now: () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
+                pause: () -> Void = { Thread.sleep(forTimeInterval: 0.025) }) -> Result? {
+        let deadline = now() + 6
+        while isCurrent(), now() < deadline {
+            switch advance(at: now()) {
+            case .waiting: pause()
+            case .failed: return nil
+            case .completed, .rolledBack:
+                var gate = WindowDividerRevealGate(left: left, right: right,
+                    startedAt: now(), matchedSince: verifiedPairSince)
+                while isCurrent(), now() < deadline {
+                    let actualLeft = readFrame(true)
+                    guard isCurrent() else { return nil }
+                    let actualRight = readFrame(false)
+                    guard isCurrent() else { return nil }
+                    switch gate.observe(left: actualLeft, right: actualRight, at: now()) {
+                    case .waiting: pause()
+                    case .ready: return Result(left: left, right: right, minimumSizeReached: minimumSizeReached)
+                    case .timedOut: return nil
+                    }
+                }
+                return nil
+            }
+        }
+        return nil
+    }
+}

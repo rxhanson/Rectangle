@@ -7951,3 +7951,209 @@ final class LayoutHelperShortcutEntryTests: XCTestCase {
         }
     }
 }
+
+@MainActor
+final class LayoutHelperCatalogSchedulingTests: XCTestCase {
+    private final class Calls {
+        private let lock = NSLock()
+        private var count = 0
+        private var active = 0
+        private var maximum = 0
+        func begin() -> Int {
+            lock.lock(); defer { lock.unlock() }
+            count += 1; active += 1; maximum = max(maximum, active)
+            return count
+        }
+        func end() { lock.lock(); active -= 1; lock.unlock() }
+        var totals: (count: Int, maximum: Int) {
+            lock.lock(); defer { lock.unlock() }; return (count, maximum)
+        }
+    }
+
+    func testRepeatedRefreshAndStopResumeKeepOneWindowServerRequest() async {
+        let first = expectation(description: "First inventory is blocked")
+        let second = expectation(description: "Newest inventory starts after release")
+        let released = expectation(description: "Latest inventory completed")
+        let release = DispatchSemaphore(value: 0)
+        let calls = Calls()
+        let catalog = LayoutHelperWindowCatalog(windowList: {
+            XCTAssertFalse(Thread.isMainThread)
+            let index = calls.begin()
+            defer { calls.end() }
+            if index == 1 {
+                first.fulfill()
+                _ = release.wait(timeout: .now() + 3)
+            } else if index == 2 { second.fulfill() }
+            return []
+        }, desktopWindows: { _, _ in [:] })
+        defer { release.signal(); catalog.stop() }
+        catalog.refresh()
+        await fulfillment(of: [first], timeout: 2)
+        for _ in 0..<20 { catalog.refresh() }
+        catalog.stop()
+        catalog.didUpdate = { released.fulfill() }
+        for _ in 0..<20 { catalog.refresh() }
+        XCTAssertTrue(catalog.isRefreshing)
+        release.signal()
+        await fulfillment(of: [second, released], timeout: 3)
+        XCTAssertEqual(calls.totals.count, 2)
+        XCTAssertEqual(calls.totals.maximum, 1)
+    }
+
+    func testStoppingDropsPendingInventoryDemand() async {
+        let started = expectation(description: "Inventory started")
+        let stale = expectation(description: "Stopped inventory must not deliver")
+        stale.isInverted = true
+        let release = DispatchSemaphore(value: 0)
+        let calls = Calls()
+        let catalog = LayoutHelperWindowCatalog(windowList: {
+            let index = calls.begin()
+            defer { calls.end() }
+            if index == 1 { started.fulfill(); _ = release.wait(timeout: .now() + 3) }
+            return []
+        }, desktopWindows: { _, _ in [:] })
+        defer { release.signal(); catalog.stop() }
+        catalog.didUpdate = { stale.fulfill() }
+        catalog.refresh()
+        await fulfillment(of: [started], timeout: 2)
+        catalog.refresh()
+        catalog.stop()
+        XCTAssertFalse(catalog.isRefreshing)
+        release.signal()
+        await fulfillment(of: [stale], timeout: 0.15)
+        XCTAssertEqual(calls.totals.count, 1)
+    }
+}
+
+@MainActor
+final class LayoutHelperCancelledCaptureTests: XCTestCase {
+    func testCancelledCapturesKeepSlotsAndDiscardResultsBeforeRestartingSameKey() async {
+        let initial = expectation(description: "Both captures started")
+        initial.expectedFulfillmentCount = 2
+        let restarted = expectation(description: "Latest request starts after old slot returns")
+        let delivered = expectation(description: "Only latest capture is delivered")
+        var pending: [Int: CheckedContinuation<Int?, Never>] = [:]
+        var started: [Int] = []
+        var values: [Int] = []
+        let queue = LayoutHelperCaptureQueue<Int, Int> { key in
+            await withCheckedContinuation { continuation in
+                pending[key] = continuation
+                started.append(key)
+                if started.count <= 2 { initial.fulfill() } else { restarted.fulfill() }
+            }
+        }
+        queue.completed = { _, value in values.append(value); delivered.fulfill() }
+        queue.replace(with: [1, 2])
+        await fulfillment(of: [initial], timeout: 2)
+        queue.stop()
+        queue.replace(with: [1])
+        XCTAssertEqual(queue.activeCount, 2)
+        pending.removeValue(forKey: 1)?.resume(returning: 10)
+        await fulfillment(of: [restarted], timeout: 2)
+        XCTAssertEqual(Set(started.prefix(2)), [1, 2])
+        XCTAssertEqual(Array(started.dropFirst(2)), [1])
+        XCTAssertEqual(queue.activeCount, 2)
+        pending.removeValue(forKey: 1)?.resume(returning: 11)
+        await fulfillment(of: [delivered], timeout: 2)
+        XCTAssertEqual(values, [11])
+        queue.stop()
+        for continuation in pending.values { continuation.resume(returning: nil) }
+    }
+}
+
+final class WindowDividerWorkerSettlementTests: XCTestCase {
+    func testDelayedAcknowledgementPreservesWriteOrderAndStableReveal() throws {
+        var frames = [CGRect(x: 0, y: 0, width: 500, height: 800), CGRect(x: 510, y: 0, width: 490, height: 800)]
+        var time: TimeInterval = 0
+        var pending: (Int, CGRect, TimeInterval)?
+        var writes: [Int] = []
+        let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+            divider: 405, minimumLeft: 100, minimumRight: 100,
+            write: { isLeft, target, _ in
+                XCTAssertNil(pending, "A second property cannot replace an unacknowledged write")
+                let index = isLeft ? 0 : 1
+                writes.append(index); pending = (index, target, time + 0.12)
+                return true
+            }, read: { frames[$0 ? 0 : 1] }))
+        let result = try XCTUnwrap(placement.settle(isCurrent: { true }, now: { time }, pause: {
+            time += 0.025
+            if let update = pending, time >= update.2 { frames[update.0] = update.1; pending = nil }
+        }))
+        XCTAssertEqual(writes.first, 0, "Shrink the left window before expanding the right")
+        XCTAssertEqual(result.left, CGRect(x: 0, y: 0, width: 400, height: 800))
+        XCTAssertEqual(result.right, CGRect(x: 410, y: 0, width: 590, height: 800))
+        XCTAssertFalse(result.minimumSizeReached)
+        XCTAssertLessThan(time, 6)
+    }
+
+    @MainActor func testCancellationDoesNotWaitForSlowWriteOrSendAnotherProperty() async {
+        let started = expectation(description: "Worker is inside a slow AX write")
+        let completed = expectation(description: "Cancelled worker releases placement ownership")
+        let release = DispatchSemaphore(value: 0)
+        let cancellation = WindowPlacementCoordinator.Cancellation()
+        WindowAnimator.shared.performPlacementWork {
+            var frames = [CGRect(x: 0, y: 0, width: 500, height: 800), CGRect(x: 510, y: 0, width: 490, height: 800)]
+            var writes = 0
+            let placement = WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+                divider: 405, minimumLeft: 100, minimumRight: 100,
+                write: { isLeft, target, _ in
+                    XCTAssertFalse(Thread.isMainThread)
+                    writes += 1; started.fulfill()
+                    _ = release.wait(timeout: .now() + 3)
+                    frames[isLeft ? 0 : 1] = target
+                    return true
+                }, read: { frames[$0 ? 0 : 1] })!
+            XCTAssertNil(placement.settle(isCurrent: { !cancellation.isCancelled }))
+            XCTAssertEqual(writes, 1)
+            completed.fulfill()
+        }
+        await fulfillment(of: [started], timeout: 2)
+        cancellation.cancel()
+        XCTAssertTrue(cancellation.isCancelled, "Main-thread cancellation must not wait on the blocked writer")
+        release.signal()
+        await fulfillment(of: [completed], timeout: 2)
+        let drained = expectation(description: "Placement queue is idle before the next test")
+        WindowAnimator.shared.afterPendingWrites { drained.fulfill() }
+        await fulfillment(of: [drained], timeout: 2)
+    }
+}
+
+
+@MainActor
+final class LayoutHelperSnapResponsivenessTests: XCTestCase {
+    private final class Window: AccessibilityElement {
+        private(set) var minimizedReads = 0
+        init() { super.init(AXUIElementCreateSystemWide()) }
+        override var isMinimized: Bool? { minimizedReads += 1; return true }
+    }
+
+    func testDidSnapDefersVisibilityValidationWithoutReadingAXMinimized() throws {
+        guard !StageUtil.stageEnabled else { throw XCTSkip("Layout Helper is disabled while Stage Manager is enabled") }
+        let screen = try XCTUnwrap(NSScreen.screens.first)
+        let savedHelper = Defaults.layoutHelper.enabled
+        let savedDivider = Defaults.windowDivider.enabled
+        let savedGap = Defaults.gapSize.value
+        Defaults.layoutHelper.enabled = true
+        Defaults.windowDivider.enabled = false
+        Defaults.gapSize.value = 0
+        let manager = LayoutHelperManager.shared
+        defer {
+            manager.cancel()
+            Defaults.layoutHelper.enabled = savedHelper
+            Defaults.windowDivider.enabled = savedDivider
+            Defaults.gapSize.value = savedGap
+        }
+        let bounds = screen.adjustedVisibleFrame().screenFlipped
+        let frame = CGRect(x: bounds.minX, y: bounds.minY, width: floor(bounds.width / 2), height: bounds.height)
+        let window = Window()
+        let token = manager.cancel()
+        let calculation = WindowCalculationResult(rect: frame.screenFlipped, screen: screen, resultingAction: .leftHalf)
+        let result = ResultParameters(windowId: nil, action: .leftHalf, windowElement: window,
+            calcResult: calculation, usableScreens: UsableScreens(currentScreen: screen, numScreens: 1),
+            visibleFrameOfScreen: bounds.screenFlipped, source: .dragToSnap, isFixedSize: false,
+            layoutHelperToken: token)
+        manager.didSnap(result: result, frame: frame)
+        XCTAssertEqual(window.minimizedReads, 0, "The snap callback must not wait on the target application's AX reply")
+        XCTAssertEqual(manager.token, token, "Visibility must be checked by the deferred WindowServer observation")
+    }
+}

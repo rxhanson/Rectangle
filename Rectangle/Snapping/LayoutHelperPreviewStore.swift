@@ -49,6 +49,15 @@ enum LayoutHelperPreviewValidation {
     }
 }
 
+/// Only worker-side validation constructs images delivered to the main owner.
+struct LayoutHelperValidatedPreview {
+    let image: CGImage
+    init?(_ image: CGImage) {
+        guard LayoutHelperPreviewValidation.isValid(image) else { return nil }
+        self.image = image
+    }
+}
+
 /// Explicit decoded-byte accounting; the budget covers retained cache images,
 /// not ScreenCaptureKit's temporary buffers or views currently displaying them.
 final class LayoutHelperImageCache<Key: Hashable> {
@@ -79,7 +88,11 @@ final class LayoutHelperImageCache<Key: Hashable> {
         entries[key].map { now - $0.captured < 2 } ?? false
     }
     func insert(_ image: CGImage, for key: Key, now: TimeInterval) {
-        guard LayoutHelperPreviewValidation.isValid(image) else { return }
+        guard let preview = LayoutHelperValidatedPreview(image) else { return }
+        insert(preview, for: key, now: now)
+    }
+    func insert(_ preview: LayoutHelperValidatedPreview, for key: Key, now: TimeInterval) {
+        let image = preview.image
         let cost = image.bytesPerRow * image.height
         guard cost <= byteLimit else { return }
         remove(key)
@@ -218,17 +231,18 @@ final class LayoutHelperPreviewStore {
     private var failures: [LayoutHelperPreviewKey: TimeInterval] = [:]
     private var suspensionReasons = Set<String>()
     private var suspended: Bool { !suspensionReasons.isEmpty }
-    private lazy var queue: LayoutHelperCaptureQueue<LayoutHelperPreviewKey, CGImage> = {
-        let queue = LayoutHelperCaptureQueue<LayoutHelperPreviewKey, CGImage> { [weak self] key in
+    private lazy var queue: LayoutHelperCaptureQueue<LayoutHelperPreviewKey, LayoutHelperValidatedPreview> = {
+        let queue = LayoutHelperCaptureQueue<LayoutHelperPreviewKey, LayoutHelperValidatedPreview> { [weak self] key in
             guard #available(macOS 14, *), let self, !self.suspended,
                   Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsAllowed else { return nil }
             return await self.capture(key)
         }
-        queue.completed = { [weak self] key, image in
+        queue.completed = { [weak self] key, preview in
             guard let self, !self.suspended, Defaults.layoutHelper.userEnabled,
                   LayoutHelperPermission.previewsAllowed else { return }
             self.failures[key] = nil
-            self.cache.insert(image, for: key, now: Date.timeIntervalSinceReferenceDate)
+            self.cache.insert(preview, for: key, now: Date.timeIntervalSinceReferenceDate)
+            let image = preview.image
             if self.wanted.contains(key) {
                 self.deliver?(key, NSImage(cgImage: image, size: NSSize(width: image.width, height: image.height)))
             }
@@ -296,7 +310,7 @@ final class LayoutHelperPreviewStore {
         expiry = work
         DispatchQueue.main.asyncAfter(deadline: .now() + 120, execute: work)
     }
-    @MainActor @available(macOS 14, *) private func capture(_ key: LayoutHelperPreviewKey) async -> CGImage? {
+    @MainActor @available(macOS 14, *) private func capture(_ key: LayoutHelperPreviewKey) async -> LayoutHelperValidatedPreview? {
         while WindowAnimator.shared.isAnimating && !Task.isCancelled {
             try? await Task.sleep(nanoseconds: 16_000_000)
         }
@@ -306,7 +320,7 @@ final class LayoutHelperPreviewStore {
         if #unavailable(macOS 26) {
             let image = await Task.detached(priority: .userInitiated) {
                 LayoutHelperLegacyCapture.capture(id: key.id,
-                    limit: CGSize(width: key.captureWidth, height: key.captureHeight))
+                    limit: CGSize(width: key.captureWidth, height: key.captureHeight)).flatMap(LayoutHelperValidatedPreview.init)
             }.value
             guard !Task.isCancelled, !suspended, Defaults.layoutHelper.userEnabled,
                   LayoutHelperPermission.previewsAllowed,
@@ -337,9 +351,13 @@ final class LayoutHelperPreviewStore {
                 limit: CGSize(width: key.captureWidth, height: key.captureHeight), sourceScale: key.captureScale)
             let output = try await SCScreenshotManager.captureScreenshot(
                 contentFilter: SCContentFilter(desktopIndependentWindow: window), configuration: config)
-            guard !Task.isCancelled, let image = output.sdrImage,
-                  LayoutHelperPreviewValidation.isValid(image) else { return nil }
-            return image
+            guard !Task.isCancelled, let image = output.sdrImage else { return nil }
+            // Drawing for validation can decode the entire capture. Keep it in
+            // the occupied capture slot, away from input and card animations.
+            let preview = await Task.detached(priority: .userInitiated) {
+                LayoutHelperValidatedPreview(image)
+            }.value
+            return Task.isCancelled ? nil : preview
         } catch {
             guard !Task.isCancelled else { return nil }
             failures[key] = Date.timeIntervalSinceReferenceDate

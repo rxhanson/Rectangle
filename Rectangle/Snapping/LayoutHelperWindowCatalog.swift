@@ -15,6 +15,7 @@ struct LayoutHelperWindowSnapshot {
     let observedAt: TimeInterval
     var isMinimized = false
     var desktopDisplays = Set<CGDirectDisplayID>()
+    var isMainWindow: Bool?
 
     var previewKey: LayoutHelperPreviewKey {
         LayoutHelperPreviewKey(id: id, pid: pid, launch: launch,
@@ -57,6 +58,8 @@ final class LayoutHelperWindowCatalog {
     private var updateDelivery: DispatchWorkItem?
     private var refreshID = 0
     private var enumerating = false
+    private var enumerationRunning = false
+    private var refreshAgain = false
     private var cancellation = Cancellation()
     private final class Cancellation {
         private let lock = NSLock()
@@ -99,7 +102,7 @@ final class LayoutHelperWindowCatalog {
 
     private func discardPendingWork() {
         generation += 1
-        refreshID += 1; enumerating = false
+        refreshID += 1; enumerating = false; refreshAgain = false
         cancellation.cancel(); cancellation = Cancellation()
         updateDelivery?.cancel(); updateDelivery = nil
         waiting.removeAll(); continuations.removeAll(); demands.removeAll()
@@ -131,6 +134,10 @@ final class LayoutHelperWindowCatalog {
 
     func refresh() {
         guard !isSuspended else { return }
+        // A WindowServer request cannot be cancelled. Keep its slot until it
+        // returns, including across stop/resume, and replace follow-up demand.
+        guard !enumerationRunning else { refreshAgain = true; enumerating = true; return }
+        enumerationRunning = true
         WindowAnimationDiagnostics.event("helper-catalog-refresh")
         let ignored = Set((Defaults.disabledApps.typedValue ?? []) + (Defaults.fullIgnoreBundleIds.typedValue ?? []))
         let excludedTodo = Defaults.todo.userEnabled ? TodoManager.cachedWindowID : nil
@@ -154,20 +161,24 @@ final class LayoutHelperWindowCatalog {
         let separateSpaces = NSScreen.screensHaveSeparateSpaces
         enumerating = true
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard !cancellation.isCancelled else { return }
-            let scope = desktopWindows(displays, separateSpaces)
-            let infos = windowList().filter {
+            let scope = cancellation.isCancelled ? [:] : desktopWindows(displays, separateSpaces)
+            let infos = (cancellation.isCancelled ? [] : windowList()).filter {
                 ($0.isOnScreen || scope[$0.id] != nil) && $0.level == 0 && $0.pid != getpid() && WindowAnimationGeometry.valid($0.frame) && $0.id != excludedTodo
             }
             let applications = Dictionary(grouping: infos, by: \.pid).reduce(into: [pid_t: Application]()) { result, group in
                 guard let app = appInfo[group.key] else { return }
                 result[group.key] = Application(pid: group.key, launch: app.0, bundle: app.1, name: app.2, infos: group.value, desktopDisplays: scope)
             }
-            guard !cancellation.isCancelled else { return }
             DispatchQueue.main.async { [weak self] in
-                guard let self, self.generation == epoch, self.refreshID == request, !self.isSuspended else { return }
+                guard let self else { return }
+                self.enumerationRunning = false
                 self.enumerating = false
-                self.apply(infos: infos, applications: applications)
+                let refreshAgain = self.refreshAgain
+                self.refreshAgain = false
+                if self.generation == epoch, self.refreshID == request, !self.isSuspended {
+                    self.apply(infos: infos, applications: applications)
+                }
+                if refreshAgain { self.refresh() }
             }
         }
     }
@@ -343,12 +354,13 @@ final class LayoutHelperWindowCatalog {
             let minimum: CGSize? = reader.wrapped(element, "AXMinSize", type: .cgSize)
                 ?? reader.wrapped(element, "AXMinimumSize", type: .cgSize)
             let resizable = reader.settable(element, kAXSizeAttribute)
+            let isMainWindow = reader.value(element, kAXMainAttribute) as? Bool
             guard reader.available, !cancellation.isCancelled else { break }
             result.append(LayoutHelperWindowSnapshot(id: info.id, pid: application.pid, launch: application.launch,
                 bundleID: application.bundle, title: title.flatMap { $0.isEmpty ? nil : $0 } ?? application.name,
                 frame: frame, reportedMinimum: minimum, resizable: resizable, element: element,
                 observedAt: ProcessInfo.processInfo.systemUptime, isMinimized: minimized == true,
-                desktopDisplays: application.desktopDisplays[info.id] ?? []))
+                desktopDisplays: application.desktopDisplays[info.id] ?? [], isMainWindow: isMainWindow))
         }
         if reader.available {
             checked.formUnion(application.infos.map(\.id).filter { !matched.contains($0) })

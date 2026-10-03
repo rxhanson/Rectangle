@@ -264,6 +264,7 @@ final class WindowDividerSnapshot {
     }
 
     private var contentTask: Any?
+    private var capturing = false
 
     static var enabled: Bool {
         shouldCapture(enhanced: Defaults.windowDividerEnhanced.enabled) { LayoutHelperPermission.previewsAllowed }
@@ -274,7 +275,7 @@ final class WindowDividerSnapshot {
     }
 
     func prepare() {
-        guard #available(macOS 14, *), Self.enabled else { return }
+        guard #available(macOS 14, *), Self.enabled, !capturing, contentTask == nil else { return }
         contentTask = Task { try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true) }
     }
 
@@ -284,9 +285,13 @@ final class WindowDividerSnapshot {
     }
 
     @MainActor func capture(frame: CGRect, displayID: CGDirectDisplayID, scale: CGFloat) async -> CGImage? {
-        guard #available(macOS 14, *), Self.enabled, !Task.isCancelled else { return nil }
+        guard #available(macOS 14, *), Self.enabled, !Task.isCancelled, !capturing else { return nil }
+        if contentTask == nil { prepare() }
+        // Cancellation does not stop an outstanding ScreenCaptureKit call.
+        // A new drag uses its live guide until the old capture releases its slot.
+        capturing = true
+        defer { capturing = false }
         do {
-            if contentTask == nil { prepare() }
             guard let task = contentTask as? Task<SCShareableContent?, Never>, let content = await task.value,
                   !Task.isCancelled, Self.enabled,
                   let display = content.displays.first(where: { $0.displayID == displayID }),
