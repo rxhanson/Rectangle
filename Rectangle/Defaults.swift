@@ -17,6 +17,7 @@ class Defaults {
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
     static let showMinimumWindowSizeWarning = OptionalBoolDefault(key: "showMinimumWindowSizeWarning")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
+    static let trackpadGestures = JSONDefault<TrackpadGestureSettings>(key: "trackpadGestures")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
     static let almostMaximizeHeight = FloatDefault(key: "almostMaximizeHeight")
     static let almostMaximizeWidth = FloatDefault(key: "almostMaximizeWidth")
@@ -143,6 +144,7 @@ class Defaults {
         experimentalWindowAnimations,
         allowAnyShortcut,
         windowSnapping,
+        trackpadGestures,
         almostMaximizeHeight,
         almostMaximizeWidth,
         gapSize,
@@ -632,4 +634,3 @@ enum BlurAppearance: Int, CaseIterable {
         }
     }
 }
-

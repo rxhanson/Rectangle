@@ -7319,3 +7319,373 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
         (object as AnyObject?) === self
     }
 }
+
+final class TrackpadGestureRegressionTests: XCTestCase {
+    private func frame(_ count: Int, x: Double, y: Double = 0.5, time: Double) -> TrackpadTouchFrame {
+        .init(timestamp: time, touches: (0..<count).map {
+            .init(identifier: $0, position: .init(x: x, y: y), velocity: .init(x: 2, y: 0))
+        })
+    }
+
+    func testOnlyOneActionPerPhysicalContactSession() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        XCTAssertNil(recognizer.process(frame(3, x: 0.2, time: 1)))
+        XCTAssertEqual(recognizer.process(frame(3, x: 0.5, time: 1.1))?.direction, .right)
+        XCTAssertNil(recognizer.process(frame(4, x: 0.5, time: 1.2)))
+        XCTAssertNil(recognizer.process(frame(4, x: 0.9, time: 1.3)))
+        XCTAssertNil(recognizer.process(frame(0, x: 0, time: 2)))
+        XCTAssertNil(recognizer.process(frame(4, x: 0.2, time: 2.1)))
+        XCTAssertEqual(recognizer.process(frame(4, x: 0.6, time: 2.2))?.fingers, 4)
+    }
+
+    func testDroppingFourthFingerCannotBecomeThreeFingerGesture() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        XCTAssertNil(recognizer.process(frame(4, x: 0.2, time: 1)))
+        XCTAssertNil(recognizer.process(frame(3, x: 0.3, time: 1.1)))
+        XCTAssertNil(recognizer.process(frame(3, x: 0.8, time: 1.2)))
+    }
+
+    func testTwoFingerScrollingAndConflictingFingerCountPassThrough() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(2)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(3)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        gate.setEnabled(false)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+    }
+
+    func testAlreadyLeakedScrollCannotBeTakenOverMidGesture() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(3)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(4)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+    }
+
+    func testAlreadyLeakedTwoFingerScrollCannotBeTakenOverMidGesture() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(2)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertTrue(gate.hasLeakedScrollInSession)
+        gate.observeContactCount(4)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertTrue(gate.hasLeakedScrollInSession,
+                      "Capture must reject window actions after scrolling has already reached the app")
+        gate.observeContactCount(0)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertFalse(gate.hasLeakedScrollInSession)
+    }
+
+    func testFreshTwoFingerScrollEndsPreviousExclusiveDrain() {
+        let clock = TrackpadGestureTestClock()
+        let gate = TrackpadExclusiveGestureGate(now: { clock.time })
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(4)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+
+        clock.time = 0.02
+        gate.observeContactCount(2)
+        for time in [0.02, 0.10, 0.20, 0.30, 0.40, 0.50] {
+            clock.time = time
+            XCTAssertFalse(gate.shouldSuppressScroll(phase: .active),
+                           "A new two-finger scroll must pass through even during the old drain interval")
+        }
+    }
+
+    func testContactFreeMomentumTailStaysSuppressedUntilItEnds() {
+        let clock = TrackpadGestureTestClock()
+        let gate = TrackpadExclusiveGestureGate(now: { clock.time })
+        gate.setAllowedFingerCounts([4])
+        gate.setEnabled(true)
+        gate.observeContactCount(4)
+        gate.observeContactCount(0)
+
+        for time in [0.10, 0.20, 0.30] {
+            clock.time = time
+            XCTAssertTrue(gate.shouldSuppressScroll(phase: .active),
+                          "Contact-free momentum must extend the existing drain")
+        }
+        clock.time = 0.40
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .momentumEnded))
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .none))
+    }
+
+    func testInvalidConfigCannotAssignBatchActionsToCursorWindow() {
+        var settings = TrackpadGestureSettings()
+        settings.fingers = 5
+        settings.left = WindowAction.tileAll.rawValue
+        settings.up = Int.max
+        settings.right = WindowAction.rightHalf.rawValue
+        let result = settings.validated
+        XCTAssertEqual(result.fingers, 4)
+        XCTAssertEqual(result.left, TrackpadGestureAction.none)
+        XCTAssertEqual(result.up, TrackpadGestureAction.none)
+        XCTAssertEqual(result.right, WindowAction.rightHalf.rawValue)
+    }
+}
+
+private final class TrackpadGestureTestClock: @unchecked Sendable {
+    var time: TimeInterval = 0
+}
+
+@MainActor
+final class TrackpadMinimizeExecutionTests: XCTestCase {
+    func testMinimizeRemainsCurrentAfterItsOwnActionNotification() {
+        let manager = TrackpadGestureManager.shared
+        manager.start()
+        let isCurrent = manager.beginAction(TrackpadGestureAction.minimize, runtimeIsCurrent: { true })
+        XCTAssertTrue(isCurrent(), "Minimize must not cancel itself before its pending AX write")
+        Notification.Name.windowActionWillExecute.post()
+        XCTAssertFalse(isCurrent(), "A later shortcut must cancel the pending minimize")
+    }
+
+    func testNewGestureCancelsThePreviousPendingAction() {
+        let manager = TrackpadGestureManager.shared
+        manager.start()
+        let previous = manager.beginAction(WindowAction.leftHalf.rawValue, runtimeIsCurrent: { true })
+        XCTAssertTrue(previous())
+        let current = manager.beginAction(WindowAction.rightHalf.rawValue, runtimeIsCurrent: { true })
+        XCTAssertFalse(previous())
+        XCTAssertTrue(current())
+    }
+
+    func testRuntimeInvalidationCancelsPendingMinimize() {
+        let manager = TrackpadGestureManager.shared
+        manager.start()
+        var healthy = true
+        let isCurrent = manager.beginAction(TrackpadGestureAction.minimize, runtimeIsCurrent: { healthy })
+        XCTAssertTrue(isCurrent())
+        healthy = false
+        XCTAssertFalse(isCurrent())
+    }
+
+    func testDownSwipeSelectsMinimizeForBothFingerCounts() {
+        let settings = TrackpadGestureSettings()
+        for fingers in [3, 4] {
+            var recognizer = TrackpadGestureRecognizer(config: .default)
+            func frame(_ y: Double, time: Double) -> TrackpadTouchFrame {
+                .init(timestamp: time, touches: (0..<fingers).map {
+                    .init(identifier: $0, position: .init(x: 0.5, y: y), velocity: .init(x: 0, y: -2))
+                })
+            }
+            XCTAssertNil(recognizer.process(frame(0.8, time: 1)))
+            let event = recognizer.process(frame(0.5, time: 1.1))
+            XCTAssertEqual(event?.direction, .down)
+            XCTAssertEqual(event?.fingers, fingers)
+            XCTAssertEqual(event.map { settings[$0.direction] }, TrackpadGestureAction.minimize)
+        }
+    }
+}
+
+final class TrackpadTargetLookupConcurrencyTests: XCTestCase {
+    func testBlockedLookupDoesNotBlockRecognitionAndDeliversWhenReady() {
+        let lookupStarted = DispatchSemaphore(value: 0)
+        let releaseLookup = DispatchSemaphore(value: 0)
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in
+            lookupStarted.signal()
+            releaseLookup.wait()
+            return target
+        }, lookupQueue: queue, now: { 0 })
+        targeter.observeFrame(contactCount: 4)
+        XCTAssertEqual(lookupStarted.wait(timeout: .now() + 1), .success)
+        defer { releaseLookup.signal(); queue.sync {} }
+
+        let registrationReturned = DispatchSemaphore(value: 0)
+        let delivered = DispatchSemaphore(value: 0)
+        DispatchQueue.global().async {
+            targeter.withPreparedWindow { selected in
+                XCTAssertTrue(selected === target)
+                delivered.signal()
+            }
+            registrationReturned.signal()
+        }
+        XCTAssertEqual(registrationReturned.wait(timeout: .now() + 1), .success,
+                       "Recognition must return while AX lookup is still blocked")
+        XCTAssertEqual(delivered.wait(timeout: .now()), .timedOut)
+        targeter.observeFrame(contactCount: 0)
+        releaseLookup.signal()
+        XCTAssertEqual(delivered.wait(timeout: .now() + 1), .success)
+    }
+
+    func testEndedSessionsAreSkippedBeforeStartingTheirQueuedAXLookup() {
+        let firstStarted = DispatchSemaphore(value: 0)
+        let releaseFirst = DispatchSemaphore(value: 0)
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let state = TrackpadLookupTestState()
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { state.nextCursor() }, findWindow: { point in
+            state.recordLookup(Int(point.x))
+            if point.x == 0 { firstStarted.signal(); releaseFirst.wait() }
+            return target
+        }, lookupQueue: queue)
+        targeter.observeFrame(contactCount: 4)
+        XCTAssertEqual(firstStarted.wait(timeout: .now() + 1), .success)
+        for _ in 0..<20 {
+            targeter.observeFrame(contactCount: 0)
+            targeter.observeFrame(contactCount: 4)
+        }
+        releaseFirst.signal()
+        queue.sync {}
+        XCTAssertEqual(state.lookups, [0, 20], "Only the newest waiting session may query the app")
+    }
+
+    func testResetAndExpiredGraceDiscardCallbacksFromAnUnfinishedLookup() {
+        for reset in [false, true] {
+            let started = DispatchSemaphore(value: 0)
+            let release = DispatchSemaphore(value: 0)
+            let queue = DispatchQueue(label: "trackpad-test.lookup")
+            let state = TrackpadLookupTestState()
+            let target = TrackpadCursorWindowShortcutTargeter.Target(
+                window: AXUIElementCreateApplication(getpid()), pid: getpid())
+            let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in
+                started.signal()
+                release.wait()
+                return target
+            }, lookupQueue: queue, now: { state.time })
+            targeter.observeFrame(contactCount: 4)
+            XCTAssertEqual(started.wait(timeout: .now() + 1), .success)
+            targeter.withPreparedWindow { _ in XCTFail("Reset or an expired grace period must discard the target") }
+            state.time = 1
+            if reset { targeter.reset() } else { targeter.observeFrame(contactCount: 0) }
+            release.signal()
+            queue.sync {}
+        }
+    }
+}
+
+private final class TrackpadLookupTestState: @unchecked Sendable {
+    private let lock = NSLock()
+    private var cursor = 0
+    private var recorded: [Int] = []
+    private var currentTime: TimeInterval = 0
+    var time: TimeInterval {
+        get { lock.lock(); defer { lock.unlock() }; return currentTime }
+        set { lock.lock(); currentTime = newValue; lock.unlock() }
+    }
+    func nextCursor() -> CGPoint {
+        lock.lock()
+        defer { lock.unlock() }
+        defer { cursor += 1 }
+        return CGPoint(x: cursor, y: 0)
+    }
+    func recordLookup(_ value: Int) {
+        lock.lock()
+        recorded.append(value)
+        lock.unlock()
+    }
+    var lookups: [Int] {
+        lock.lock()
+        defer { lock.unlock() }
+        return recorded
+    }
+}
+
+@MainActor
+final class TrackpadRuntimeQueueTests: XCTestCase {
+    func testNewestRecognizedGestureReplacesActionsWaitingOnMain() {
+        let source = TrackpadRuntimeTestSource()
+        let capture = TrackpadRuntimeTestCapture()
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in target }, lookupQueue: queue)
+        let runtime = TrackpadGestureRuntime(source: source, capture: capture, targeter: targeter)
+        var settings = TrackpadGestureSettings()
+        settings.enabled = true
+        settings.fingers = 4
+        var actions: [Int] = []
+        let delivered = expectation(description: "newest gesture delivered")
+        runtime.onAction = { action, _, _, _ in actions.append(action); delivered.fulfill() }
+        runtime.start(settings: settings, systemFingers: [])
+        defer { runtime.stop() }
+
+        source.send(x: 0.2, time: 1)
+        queue.sync {}
+        source.send(x: 0.7, time: 1.1)
+        source.lift(time: 1.2)
+        source.send(x: 0.7, time: 2)
+        queue.sync {}
+        source.send(x: 0.2, time: 2.1)
+        wait(for: [delivered], timeout: 1)
+        XCTAssertEqual(actions, [settings.left], "The old main-queued gesture must not activate or move its target")
+    }
+
+    func testStopInvalidatesActionAlreadyQueuedOnMain() {
+        let source = TrackpadRuntimeTestSource()
+        let queue = DispatchQueue(label: "trackpad-test.lookup")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in target }, lookupQueue: queue)
+        let runtime = TrackpadGestureRuntime(source: source, capture: TrackpadRuntimeTestCapture(), targeter: targeter)
+        var settings = TrackpadGestureSettings()
+        settings.enabled = true
+        settings.fingers = 4
+        runtime.onAction = { _, _, _, _ in XCTFail("Stopped runtimes must not execute queued actions") }
+        runtime.start(settings: settings, systemFingers: [])
+        source.send(x: 0.2, time: 1)
+        queue.sync {}
+        source.send(x: 0.7, time: 1.1)
+        runtime.stop()
+        let drained = expectation(description: "main action queue drained")
+        DispatchQueue.main.async { drained.fulfill() }
+        wait(for: [drained], timeout: 1)
+    }
+}
+
+private final class TrackpadRuntimeTestSource: TrackpadTouchSource {
+    var onDeviceOverlap: (() -> Void)?
+    var onContactCount: ((Int) -> Void)?
+    var onFrame: ((TrackpadTouchFrame) -> Void)?
+    var deviceCount: Int { 1 }
+    func start() {}
+    func stop() {}
+    func send(x: Double, time: Double) {
+        onContactCount?(4)
+        onFrame?(.init(timestamp: time, touches: (0..<4).map {
+            .init(identifier: $0, position: .init(x: x, y: 0.5), velocity: .init(x: x < 0.5 ? -2 : 2, y: 0))
+        }))
+    }
+    func lift(time: Double) {
+        onContactCount?(0)
+        onFrame?(.init(timestamp: time, touches: []))
+    }
+}
+
+private final class TrackpadRuntimeTestCapture: TrackpadExclusiveGestureCapturing, @unchecked Sendable {
+    var isHealthy = true
+    var onHealthChange: (@Sendable (Bool) -> Void)?
+    func start() { isHealthy = true }
+    func stop() { isHealthy = false }
+    func recheck(accessibilityTrusted: Bool) {}
+    func setAccessibilityTrusted(_ trusted: Bool) {}
+    func setEnabled(_ enabled: Bool) {}
+    func setAllowedFingerCounts(_ counts: Set<Int>) {}
+    func observeContactCount(_ count: Int) {}
+    func contaminateSession() {}
+    func performIfHealthy(_ action: () -> Void) -> Bool {
+        guard isHealthy else { return false }
+        action()
+        return true
+    }
+    func reset() {}
+}

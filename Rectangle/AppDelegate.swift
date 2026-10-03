@@ -142,6 +142,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
     
+    func applicationWillTerminate(_ notification: Notification) {
+        TrackpadGestureManager.shared.stop()
+    }
+
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
         self.windowManager = WindowManager()
@@ -152,6 +156,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.titleBarManager = TitleBarManager()
         self.greenButtonManager = GreenButtonManager()
         self.initializeTodo()
+        TrackpadGestureManager.shared.start()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
     }
