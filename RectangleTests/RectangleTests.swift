@@ -6961,6 +6961,9 @@ final class LiquidGlassBlurTests: XCTestCase {
 
     func testWarningContentSurvivesMaterialSwitch() throws {
         guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires macOS 26 and a screen") }
+        let warningPreference = Defaults.showMinimumWindowSizeWarning.toCodable()
+        Defaults.showMinimumWindowSizeWarning.enabled = true
+        defer { Defaults.showMinimumWindowSizeWarning.load(from: warningPreference) }
         Defaults.liquidGlassForBlur.enabled = true
         let warning = WindowSizeWarning()
         defer { warning.close() }
