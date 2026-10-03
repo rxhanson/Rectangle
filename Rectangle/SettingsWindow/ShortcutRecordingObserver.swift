@@ -22,6 +22,18 @@ class ShortcutRecordingObserver: NSObject {
         }
     }
 
+    func unobserve(_ view: MASShortcutView) {
+        let viewId = ObjectIdentifier(view)
+        guard observedViews.removeValue(forKey: viewId) != nil else { return }
+
+        view.removeObserver(self,
+                            forKeyPath: "recording",
+                            context: &Self.recordingObservationContext)
+        if recordingViews.contains(viewId) {
+            recordingChanged(for: view, isRecording: false)
+        }
+    }
+
     deinit {
         for view in observedViews.values {
             view.removeObserver(self,

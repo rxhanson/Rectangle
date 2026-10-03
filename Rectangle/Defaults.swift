@@ -107,6 +107,7 @@ class Defaults {
     static let cyclingOverlapOffsetSize = FloatDefault(key: "cyclingOverlapOffsetSize", defaultValue: 11)
     static let cyclingOverlapMaxCascade = IntDefault(key: "cyclingOverlapMaxCascade", defaultValue: 1)
     static let stackBadge = OptionalBoolDefault(key: "stackBadge")
+    static let stackSameSizeOnly = OptionalBoolDefault(key: "stackSameSizeOnly")
     static let fullIgnoreBundleIds = JSONDefault<[String]>(key: "fullIgnoreBundleIds")
     static let notifiedOfProblemApps = BoolDefault(key: "notifiedOfProblemApps")
     static let specifiedHeight = FloatDefault(key: "specifiedHeight", defaultValue: 1050)
@@ -259,6 +260,7 @@ class Defaults {
         cyclingOverlapOffsetSize,
         cyclingOverlapMaxCascade,
         stackBadge,
+        stackSameSizeOnly,
         moveFixedSizeToEdge,
         greenButtonOverride
     ]

@@ -5,6 +5,8 @@ import AppKit
 
 @Observable
 final class BehaviorSettingsViewModel {
+    let shortcutRecordingObserver = ShortcutRecordingObserver()
+
     // MARK: - Window Behavior & Cycle Settings
     var subsequentExecutionMode: SubsequentExecutionMode {
         didSet {
@@ -132,6 +134,12 @@ final class BehaviorSettingsViewModel {
     var stackBadge: Bool {
         didSet { Defaults.stackBadge.enabled = stackBadge }
     }
+    var stackSameSizeOnly: Bool {
+        didSet { Defaults.stackSameSizeOnly.enabled = stackSameSizeOnly }
+    }
+    /// Mirrors the App Settings restriction toggle, so the window action
+    /// recorders here pick up a change made while Settings is open.
+    var allowAnyShortcut = Defaults.allowAnyShortcut.enabled
     var horizontalSplitRatio: Float {
         didSet {
             Defaults.horizontalSplitRatio.value = horizontalSplitRatio
@@ -266,6 +274,7 @@ final class BehaviorSettingsViewModel {
         self.showAdditionalSizesInMenu = Defaults.showAdditionalSizesInMenu.userEnabled
         self.cyclingOverlapOffset = Defaults.cyclingOverlapOffset.userEnabled
         self.stackBadge = Defaults.stackBadge.userEnabled
+        self.stackSameSizeOnly = Defaults.stackSameSizeOnly.userEnabled
         self.horizontalSplitRatio = hRatio
         self.verticalSplitRatio = vRatio
         self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
@@ -305,6 +314,9 @@ final class BehaviorSettingsViewModel {
         Notification.Name.stackBadgeChanged.onPost { [weak self] _ in
             self?.stackBadge = Defaults.stackBadge.userEnabled
         }
+        Notification.Name.allowAnyShortcut.onPost { [weak self] _ in
+            self?.allowAnyShortcut = Defaults.allowAnyShortcut.enabled
+        }
     }
     
     func reloadFromDefaults() {
@@ -343,6 +355,8 @@ final class BehaviorSettingsViewModel {
         self.showAdditionalSizesInMenu = Defaults.showAdditionalSizesInMenu.userEnabled
         self.cyclingOverlapOffset = Defaults.cyclingOverlapOffset.userEnabled
         self.stackBadge = Defaults.stackBadge.userEnabled
+        self.stackSameSizeOnly = Defaults.stackSameSizeOnly.userEnabled
+        self.allowAnyShortcut = Defaults.allowAnyShortcut.enabled
         self.horizontalSplitRatio = hRatio
         self.verticalSplitRatio = vRatio
         self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
