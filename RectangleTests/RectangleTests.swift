@@ -84,6 +84,32 @@ final class EarlySnapEdgeTests: XCTestCase {
                        screens: [frame], margins: custom, cornerSize: 20, early: true), .l)
     }
 
+    func testDisplayTopologyIsOnlyReadForEarlyEdgeCandidates() {
+        var topologyReads = 0
+        func screens() -> [CGRect] {
+            topologyReads += 1
+            return [frame, CGRect(x: 1440, y: 200, width: 800, height: 500)]
+        }
+        func detect(_ point: CGPoint, early: Bool = true) -> Directional? {
+            SnapEdgeDetection.direction(at: point, in: frame, screens: screens(),
+                                        margins: margins, cornerSize: 20, early: early)
+        }
+
+        for _ in 0..<100 {
+            XCTAssertEqual(detect(CGPoint(x: 1436, y: 450), early: false), .r)
+            XCTAssertNil(detect(CGPoint(x: 720, y: 450)))
+            XCTAssertNil(detect(CGPoint(x: 1450, y: 450)))
+            XCTAssertEqual(detect(CGPoint(x: 24, y: 876)), .tl)
+        }
+        XCTAssertEqual(topologyReads, 0)
+
+        // The shared portion still stays narrow; the exposed portion expands.
+        XCTAssertNil(detect(CGPoint(x: 1430, y: 450)))
+        XCTAssertEqual(topologyReads, 1)
+        XCTAssertEqual(detect(CGPoint(x: 1430, y: 100)), .r)
+        XCTAssertEqual(topologyReads, 2)
+    }
+
     func testSettingsRoundTripAndLiveManagerUpdate() throws {
         let saved = Defaults.snapBeforeReachingEdges.enabled
         let snapping = Defaults.windowSnapping.enabled

@@ -665,8 +665,9 @@ class SnappingManager {
     }
 
     func snapAreaContainingCursor(priorSnapArea: SnapArea?, at loc: CGPoint) -> SnapArea? {
-        for screen in NSScreen.screens {
-            guard let directional = directionalLocationOfCursor(loc: loc, screen: screen)
+        let screens = NSScreen.screens
+        for screen in screens {
+            guard let directional = directionalLocationOfCursor(loc: loc, screen: screen, screens: screens)
             else { continue }
             
             if let windowId = windowId, Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(windowId) {
@@ -693,9 +694,9 @@ class SnappingManager {
         return nil
     }
     
-    func directionalLocationOfCursor(loc: NSPoint, screen: NSScreen) -> Directional? {
+    func directionalLocationOfCursor(loc: NSPoint, screen: NSScreen, screens: [NSScreen]? = nil) -> Directional? {
         return SnapEdgeDetection.direction(
-            at: loc, in: screen.frame, screens: NSScreen.screens.map(\.frame),
+            at: loc, in: screen.frame, screens: (screens ?? NSScreen.screens).map(\.frame),
             margins: NSEdgeInsets(top: marginTop, left: marginLeft, bottom: marginBottom, right: marginRight),
             cornerSize: Defaults.cornerSnapAreaSize.cgFloat,
             early: Defaults.snapBeforeReachingEdges.enabled
@@ -707,7 +708,7 @@ class SnappingManager {
 enum SnapEdgeDetection {
     static let earlyDistance: CGFloat = 20
 
-    static func direction(at point: CGPoint, in frame: CGRect, screens: [CGRect],
+    static func direction(at point: CGPoint, in frame: CGRect, screens: @autoclosure () -> [CGRect],
                           margins: NSEdgeInsets, cornerSize: CGFloat, early: Bool) -> Directional? {
         // CGRect.contains excludes the maximum edges, which are valid snap targets.
         guard point.x >= frame.minX, point.x <= frame.maxX,
@@ -725,7 +726,13 @@ enum SnapEdgeDetection {
         var left = margins.left, right = margins.right
         var top = margins.top, bottom = margins.bottom
         if early {
-            let neighbors = screens.filter { $0 != frame }
+            // Most drag events are away from an edge. Resolve neighboring displays
+            // only for an early-edge candidate, using the caller's screen snapshot.
+            guard point.x < frame.minX + max(left, earlyDistance)
+                    || point.x > frame.maxX - max(right, earlyDistance)
+                    || point.y > frame.maxY - max(top, earlyDistance)
+                    || point.y < frame.minY + max(bottom, earlyDistance) else { return nil }
+            let neighbors = screens().filter { $0 != frame }
             // Check only the shared portion of an edge, including displays with different heights.
             let sharesLeft = neighbors.contains {
                 abs($0.maxX - frame.minX) <= 1 && point.y >= $0.minY && point.y <= $0.maxY
