@@ -47,6 +47,73 @@ enum StackBadgeGeometry {
         return points
     }
 
+    /// How far a window's size can differ from another's and still count as
+    /// the same size, when stacks are limited to one size. Terminals resize
+    /// in character-cell steps, so two of them snapped to the same area can
+    /// come out a cell apart.
+    static let sizeTolerance: CGFloat = 24
+
+    static func isSameSize(_ frame: CGRect, as reference: CGRect, tolerance: CGFloat = sizeTolerance) -> Bool {
+        abs(frame.width - reference.width) <= tolerance
+            && abs(frame.height - reference.height) <= tolerance
+    }
+
+    /// Where the stack holding `member` is measured from, as the cycle
+    /// shortcuts measure it: the left anchor of the densest cascade cluster
+    /// holding it, and its size. When `sizeTolerance` is given, only frames of
+    /// the member's size are clustered, so a denser group of other sizes at
+    /// the same corner can't claim it.
+    static func stackAnchor(for member: Int, among frames: [CGRect], cascadeRange: CGFloat,
+                            tolerance: CGFloat, sizeTolerance: CGFloat?) -> CGRect? {
+        guard frames.indices.contains(member) else { return nil }
+        let reference = frames[member]
+        let pool = frames.indices.filter { index in
+            guard let sizeTolerance else { return true }
+            return isSameSize(frames[index], as: reference, tolerance: sizeTolerance)
+        }
+        let origins = pool.map { frames[$0].origin }
+        guard let poolMember = pool.firstIndex(of: member),
+              let anchor = clusterAnchor(containing: poolMember, among: origins,
+                                         cascadeRange: cascadeRange, tolerance: tolerance)
+        else { return nil }
+        return CGRect(origin: origins[anchor], size: reference.size)
+    }
+
+    /// The indices of the frames stacked at `anchor`: in the cascade cluster
+    /// whose left anchor is the anchor's origin and, when `sizeTolerance` is
+    /// given, within it of the anchor's size. Without it, any size counts, so
+    /// a maximized window sharing a half's corner is stacked with the half.
+    static func stackMembers(anchor: CGRect, among frames: [CGRect], cascadeRange: CGFloat,
+                             tolerance: CGFloat, sizeTolerance: CGFloat?) -> [Int] {
+        clusterIndices(anchoredAt: anchor.origin, among: frames.map { $0.origin },
+                       cascadeRange: cascadeRange, tolerance: tolerance)
+            .filter { index in
+                guard let sizeTolerance else { return true }
+                return isSameSize(frames[index], as: anchor, tolerance: sizeTolerance)
+            }
+    }
+
+    /// With stacks limited to one size, the stack the list shows among the
+    /// frames near a corner: the one the cycle shortcuts would cycle from the
+    /// front window of the cascade there, the window the user can see.
+    static func sameSizeStackIndices(among frames: [CGRect], cascadeRange: CGFloat,
+                                     tolerance: CGFloat, sizeTolerance: CGFloat) -> [Int] {
+        let hovered = stackIndices(among: frames.map { $0.origin }, cascadeRange: cascadeRange, tolerance: tolerance)
+        guard let front = hovered.first,
+              let anchor = stackAnchor(for: front, among: frames, cascadeRange: cascadeRange,
+                                       tolerance: tolerance, sizeTolerance: sizeTolerance)
+        else { return [] }
+        return stackMembers(anchor: anchor, among: frames, cascadeRange: cascadeRange,
+                            tolerance: tolerance, sizeTolerance: sizeTolerance)
+    }
+
+    /// How far from a stack's corner a window's origin can sit and still be in
+    /// the stack: every cascade step the overlap offset can take, plus
+    /// `tolerance` for rounding.
+    static func cascadeRange(offsetSize: CGFloat, maxCascade: Int, tolerance: CGFloat) -> CGFloat {
+        max(offsetSize, 1) * CGFloat(min(5, max(1, maxCascade))) + tolerance
+    }
+
     /// The indices of the window origins (AX coordinates) that form a
     /// cascade stack. The overlap offset cascades diagonally: +x always, but
     /// y can run either way (the offset is applied in AppKit coordinates,
@@ -57,17 +124,42 @@ enum StackBadgeGeometry {
     static func stackIndices(among origins: [CGPoint], cascadeRange: CGFloat, tolerance: CGFloat) -> [Int] {
         var best = [Int]()
         for anchor in origins {
-            let cluster = origins.indices.filter { index in
-                let dx = origins[index].x - anchor.x
-                let dy = origins[index].y - anchor.y
-                return dx >= -tolerance && dx <= cascadeRange
-                    && dy >= -cascadeRange && dy <= cascadeRange
-            }
+            let cluster = clusterIndices(anchoredAt: anchor, among: origins,
+                                         cascadeRange: cascadeRange, tolerance: tolerance)
             if cluster.count > best.count {
                 best = cluster
             }
         }
         return best
+    }
+
+    /// The indices of the origins in the cascade stack whose left anchor is
+    /// `anchor`.
+    static func clusterIndices(anchoredAt anchor: CGPoint, among origins: [CGPoint],
+                               cascadeRange: CGFloat, tolerance: CGFloat) -> [Int] {
+        origins.indices.filter { index in
+            let dx = origins[index].x - anchor.x
+            let dy = origins[index].y - anchor.y
+            return dx >= -tolerance && dx <= cascadeRange
+                && dy >= -cascadeRange && dy <= cascadeRange
+        }
+    }
+
+    /// The index of the anchor of the stack `member` belongs to, chosen as
+    /// `stackIndices` chooses: the densest cluster that includes it, the
+    /// earliest anchor winning a tie.
+    static func clusterAnchor(containing member: Int, among origins: [CGPoint],
+                              cascadeRange: CGFloat, tolerance: CGFloat) -> Int? {
+        var best: (anchor: Int, count: Int)?
+        for anchor in origins.indices {
+            let cluster = clusterIndices(anchoredAt: origins[anchor], among: origins,
+                                         cascadeRange: cascadeRange, tolerance: tolerance)
+            guard cluster.contains(member) else { continue }
+            if cluster.count > best?.count ?? 0 {
+                best = (anchor, cluster.count)
+            }
+        }
+        return best?.anchor
     }
 
     /// The corner whose hover zone contains the point, or nil. The zone is a
