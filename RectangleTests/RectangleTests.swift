@@ -6949,7 +6949,16 @@ final class LiquidGlassBlurTests: XCTestCase {
         XCTAssertTrue(window.childWindows?.allSatisfy { !$0.isVisible } ?? true, "Custom shadow must be hidden")
         XCTAssertFalse(root.layer?.masksToBounds ?? true)
         XCTAssertTrue(root.subviews.compactMap { $0 as? NSBox }.allSatisfy(\.isHidden))
-        let material = try XCTUnwrap(root.subviews.compactMap { $0 as? BlurSurfaceView }.first)
+        func descendants(_ view: NSView) -> [NSView] {
+            view.subviews.flatMap { [$0] + descendants($0) }
+        }
+        let material = try XCTUnwrap(descendants(root).compactMap { $0 as? BlurSurfaceView }.first)
+        let preview = try XCTUnwrap(material.superview)
+        XCTAssertFalse(preview.layer?.masksToBounds ?? true)
+        XCTAssertTrue(preview.layer?.sublayers?.compactMap { $0 as? CAShapeLayer }.allSatisfy(\.isHidden) ?? true)
+        if preview !== root {
+            XCTAssertTrue(root.subviews.filter { $0 !== preview }.allSatisfy(\.isHidden), "Custom shadow must be hidden")
+        }
         XCTAssertTrue(material.subviews.first is NSGlassEffectView)
         XCTAssertFalse(material.subviews.contains { $0 is NSVisualEffectView })
         Defaults.footprintBlur.enabled = false
@@ -6974,8 +6983,12 @@ final class LiquidGlassBlurTests: XCTestCase {
         XCTAssertTrue(surface.subviews.first is NSGlassEffectView)
         XCTAssertGreaterThan(warning.frame.width, 100)
         XCTAssertGreaterThan(warning.frame.height, 30)
-        let stack = try XCTUnwrap(surface.content.subviews.first as? NSStackView)
-        let labels = stack.arrangedSubviews.compactMap { $0 as? NSTextField }
+        func labels(in view: NSView) -> [NSTextField] {
+            view.subviews.flatMap { child in
+                (child as? NSTextField).map { [$0] } ?? labels(in: child)
+            }
+        }
+        let labels = labels(in: surface.content)
         XCTAssertEqual(labels.count, 1)
         Defaults.liquidGlassForBlur.enabled = false
         Notification.Name.blurStyleChanged.post()
