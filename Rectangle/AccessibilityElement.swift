@@ -377,7 +377,10 @@ class AccessibilityElement {
             let windowElement,
             case let windowFrame = windowElement.frame,
             windowFrame != .null,
-            let closeButtonFrame = windowElement.getChildElement(.closeButton)?.frame,
+            // Window capture replaces the visible traffic-light children with a
+            // sharing indicator, but AXCloseButton still provides their geometry.
+            let closeButtonFrame = (windowElement.getChildElement(.closeButton)
+                ?? windowElement.getElementValue(.closeButton))?.frame,
             closeButtonFrame != .null
         else {
             return nil
