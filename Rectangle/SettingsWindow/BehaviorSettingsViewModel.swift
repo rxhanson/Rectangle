@@ -330,9 +330,15 @@ final class BehaviorSettingsViewModel {
             let conflictDescriptionText = String(localized: "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting.")
             let closeText = String(localized: "Close")
             
-            let response = AlertUtil.twoButtonAlert(question: conflictTitleText, text: conflictDescriptionText, confirmText: openSettings, cancelText: closeText)
-            if response == .alertFirstButtonReturn {
-                NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.dock")!)
+            Task {
+                await MainActor.run {
+                    let response = AlertUtil.twoButtonAlert(question: conflictTitleText, text: conflictDescriptionText, confirmText: openSettings, cancelText: closeText)
+                    if response == .alertFirstButtonReturn {
+                        if let systemSettingsURL = URL(string: "x-apple.systempreferences:com.apple.preference.dock") {
+                            NSWorkspace.shared.open(systemSettingsURL)
+                        }
+                    }
+                }
             }
         }
         Defaults.doubleClickTitleBar.value = (enabled ? WindowAction.maximize.rawValue : -1) + 1
