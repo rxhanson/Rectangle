@@ -7336,6 +7336,92 @@ final class LiquidGlassBlurTests: XCTestCase {
         Notification.Name.blurStyleChanged.post()
     }
 
+    @MainActor
+    func testGlassMaterialTracksColdAndRepeatedAnimatedPreview() async throws {
+        guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires native glass and a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let target = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        for _ in 0..<2 {
+            window.showPreview(in: target, from: CGPoint(x: target.minX + 4, y: target.midY), duration: 0.24)
+            try await assertGlassTracksSurface(window, for: 0.32)
+            window.orderOut(nil)
+            try await Task.sleep(nanoseconds: 30_000_000)
+        }
+    }
+
+    @MainActor
+    func testGlassRetargetingStyleSwitchAndCloseRetireAnimation() async throws {
+        guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires native glass and a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let left = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        let right = left.offsetBy(dx: left.width, dy: 0)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await assertGlassTracksSurface(window, for: 0.05)
+        window.movePreview(to: right, duration: 0.24)
+        try await assertGlassTracksSurface(window, for: 0.05)
+        window.orderOut(nil)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await assertGlassTracksSurface(window, for: 0.05)
+        Defaults.liquidGlassForBlur.enabled = false
+        Notification.Name.blurStyleChanged.post()
+        window.movePreview(to: right, duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        Defaults.liquidGlassForBlur.enabled = true
+        Notification.Name.blurStyleChanged.post()
+        try await assertGlassTracksSurface(window, for: 0.05)
+        window.movePreview(to: left, duration: 0.24)
+        window.close()
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertFalse(window.realIsVisible)
+    }
+
+    @MainActor
+    @available(macOS 26, *)
+    private func assertGlassTracksSurface(_ window: FootprintWindow, for duration: TimeInterval,
+                                         file: StaticString = #filePath, line: UInt = #line) async throws {
+        func material(in view: NSView) -> BlurSurfaceView? {
+            if let surface = view as? BlurSurfaceView { return surface }
+            return view.subviews.lazy.compactMap { material(in: $0) }.first
+        }
+        let surface = try XCTUnwrap(window.contentView.flatMap { material(in: $0) }, file: file, line: line)
+        let until = CACurrentMediaTime() + duration
+        var samples = 0
+        while CACurrentMediaTime() < until {
+            try await Task.sleep(nanoseconds: 8_000_000)
+            let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView, file: file, line: line)
+            let outer = surface.layer?.presentation()?.bounds ?? surface.bounds
+            let inner = glass.layer?.presentation()?.frame ?? glass.frame
+            XCTAssertEqual(inner.width, outer.width, accuracy: 1, file: file, line: line)
+            XCTAssertEqual(inner.height, outer.height, accuracy: 1, file: file, line: line)
+            samples += 1
+        }
+        XCTAssertGreaterThan(samples, 0, file: file, line: line)
+    }
+
     func testSwitchingMaterialRetainsContentAndResizesWithoutLegacyBlur() throws {
         guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
         Defaults.liquidGlassForBlur.enabled = false
