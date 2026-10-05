@@ -132,7 +132,10 @@ final class BehaviorSettingsViewModel {
         didSet { Defaults.cyclingOverlapOffset.enabled = cyclingOverlapOffset }
     }
     var stackBadge: Bool {
-        didSet { Defaults.stackBadge.enabled = stackBadge }
+        didSet {
+            Defaults.stackBadge.enabled = stackBadge
+            Notification.Name.stackBadgeChanged.post()
+        }
     }
     var stackSameSizeOnly: Bool {
         didSet { Defaults.stackSameSizeOnly.enabled = stackSameSizeOnly }
@@ -229,7 +232,10 @@ final class BehaviorSettingsViewModel {
             self?.reloadFromDefaults()
         }
         Notification.Name.stackBadgeChanged.onPost { [weak self] _ in
-            self?.stackBadge = Defaults.stackBadge.userEnabled
+            guard let self else { return }
+            if self.stackBadge != Defaults.stackBadge.userEnabled {
+                self.stackBadge = Defaults.stackBadge.userEnabled
+            }
         }
         Notification.Name.allowAnyShortcut.onPost { [weak self] _ in
             self?.allowAnyShortcut = Defaults.allowAnyShortcut.enabled
