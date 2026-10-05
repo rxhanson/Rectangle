@@ -132,6 +132,8 @@ class FootprintWindow: NSWindow {
     private var destination = CGRect.zero
     private var geometryGeneration = UUID()
     private var moving = false
+    private var geometryAnimation: WindowFrameAnimation?
+    private var geometryTimer: Timer?
     private let capturePauseID = UUID()
     private var foregroundWindowID: CGWindowID?
     private var foregroundProcessID: pid_t?
@@ -199,6 +201,7 @@ class FootprintWindow: NSWindow {
     }
 
     deinit {
+        geometryTimer?.invalidate()
         WindowAnimationCaptureGate.shared.end(capturePauseID)
         if let accessibilityObserver { NSWorkspace.shared.notificationCenter.removeObserver(accessibilityObserver) }
     }
@@ -246,16 +249,57 @@ class FootprintWindow: NSWindow {
     override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect { frameRect }
 
     private func setGeometry(_ rect: CGRect, duration: TimeInterval) {
+        let generation = UUID()
+        geometryGeneration = generation
+        moving = duration > 0
+        if moving { WindowAnimationCaptureGate.shared.begin(capturePauseID) }
+        let arrived = { [weak self] in
+            guard let self, self.geometryGeneration == generation else { return }
+            self.moving = false
+            self.updateCaptureGate()
+            self.tracePresentation("arrived")
+        }
+        if duration > 0 {
+            // Keep the surface, live material, outline and shadow on the same
+            // geometry at every frame, including material-owned child views.
+            let animation = WindowFrameAnimation(from: displayedRect, to: rect,
+                startTime: CACurrentMediaTime(), duration: duration,
+                curve: WindowPreviewDeceleration.value,
+                write: { [weak self] frame, _ in
+                    guard let self, self.geometryGeneration == generation else { return false }
+                    self.applyGeometry(frame, duration: 0)
+                    return true
+                }, cleanup: {}, completion: { [weak self] frame in
+                    guard let self, self.geometryGeneration == generation else { return }
+                    self.applyGeometry(frame, duration: 0)
+                    arrived()
+                })
+            geometryAnimation = animation
+            let rate = max(60, screen?.maximumFramesPerSecond ?? 60)
+            let timer = Timer(timeInterval: 1 / Double(rate), repeats: true) { [weak self] timer in
+                guard let self, let animation = self.geometryAnimation else { timer.invalidate(); return }
+                animation.tick(at: CACurrentMediaTime())
+                if animation.isFinished {
+                    timer.invalidate()
+                    self.geometryTimer = nil
+                    self.geometryAnimation = nil
+                }
+            }
+            geometryTimer = timer
+            RunLoop.main.add(timer, forMode: .common)
+        } else {
+            applyGeometry(rect, duration: duration, completion: arrived)
+        }
+        updateCaptureGate()
+    }
+
+    private func applyGeometry(_ rect: CGRect, duration: TimeInterval, completion: (() -> Void)? = nil) {
         let local = rect.offsetBy(dx: -frame.minX, dy: -frame.minY)
         let bounds = CGRect(origin: .zero, size: rect.size)
         let inset = decoration.lineWidth / 2
         let outline = bounds.insetBy(dx: min(inset, bounds.width / 2), dy: min(inset, bounds.height / 2))
         let radius = max(0, min(FootprintStyle.cornerRadius - inset, min(outline.width, outline.height) / 2))
         let path = CGPath(roundedRect: outline, cornerWidth: radius, cornerHeight: radius, transform: nil)
-        let generation = UUID()
-        geometryGeneration = generation
-        moving = duration > 0
-        if moving { WindowAnimationCaptureGate.shared.begin(capturePauseID) }
         NSAnimationContext.runAnimationGroup { context in
             context.duration = duration
             context.timingFunction = WindowPreviewDeceleration.timingFunction
@@ -267,24 +311,27 @@ class FootprintWindow: NSWindow {
                 surface.frame = local
                 effectView.frame = bounds
             }
+            effectView.layoutSubtreeIfNeeded()
             PreviewLayerTransition.set(decoration, "path", to: path, duration: duration)
             shadow.update(rect: local, duration: duration)
-        } completionHandler: { [weak self] in
-            guard let self, self.geometryGeneration == generation else { return }
-            self.moving = false
-            self.updateCaptureGate()
-            self.tracePresentation("arrived")
-        }
-        updateCaptureGate()
+        } completionHandler: { completion?() }
     }
 
     private func stopGeometry() {
+        cancelGeometry()
         geometryGeneration = UUID()
         moving = false
         let current = displayedRect
         surface.layer?.removeAllAnimations()
         effectView.layer?.removeAllAnimations()
         setGeometry(current, duration: 0)
+    }
+
+    private func cancelGeometry() {
+        geometryTimer?.invalidate()
+        geometryTimer = nil
+        geometryAnimation?.cancel()
+        geometryAnimation = nil
     }
 
     func showPreview(in rect: CGRect, from origin: CGPoint?, duration: TimeInterval,
@@ -393,7 +440,10 @@ class FootprintWindow: NSWindow {
 
     func refreshAccessibility() {
         updateAppearance()
-        if !presentation.animates { stopGeometry(); setGeometry(destination, duration: 0) }
+        if !presentation.animates || moving {
+            stopGeometry()
+            setGeometry(destination, duration: 0)
+        }
         if !presentation.fades {
             PreviewLayerTransition.set(shadow.container, "opacity", to: waitingForPlacement ? Float(0) : Float(1), duration: 0)
         }
@@ -407,6 +457,7 @@ class FootprintWindow: NSWindow {
     var realIsVisible: Bool { showing && super.isVisible }
 
     override func close() {
+        cancelGeometry()
         placementGeneration = nil
         closing = true
         showing = false
