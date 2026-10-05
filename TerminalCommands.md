@@ -17,6 +17,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Add an extra centering command with custom size](#add-an-extra-centering-command-with-custom-size)
 - [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
+- [Add extra "full-height eighths" sizing commands](#add-extra-full-height-eighths-sizing-commands)
 - [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
 - [Add doubling/halving window sizing commands](#add-doublinghalving-window-sizing-commands)
 - [Add additional tiling and cascading commands](#add-additional-tiling-and-cascading-commands)
@@ -238,6 +239,29 @@ For example, the command for setting the top left eighth shortcut to `ctrl opt s
 ```bash
 defaults write com.knollsoft.Rectangle topLeftEighth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
+
+## Add extra "full-height eighths" sizing commands
+
+These hidden commands divide a landscape display into 8 full-height vertical columns. On a portrait display, they automatically rotate into 8 horizontal rows.
+
+The key codes are:
+
+* firstVerticalEighth
+* secondVerticalEighth
+* thirdVerticalEighth
+* fourthVerticalEighth
+* fifthVerticalEighth
+* sixthVerticalEighth
+* seventhVerticalEighth
+* lastVerticalEighth
+
+For example, the command for setting the first vertical eighth shortcut to `ctrl opt shift 1` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle firstVerticalEighth -dict-add keyCode -float 18 modifierFlags -float 917504
+```
+
+Repeating `firstVerticalEighth` cycles forward through all 8 positions. Repeating `lastVerticalEighth` cycles through them in reverse when repeated-command behavior is enabled.
 
 ## Add additional "thirds" sizing commands 
 

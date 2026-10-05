@@ -14,6 +14,227 @@ class RectangleTests: XCTestCase {
     }
 }
 
+class VerticalEighthActionTests: XCTestCase {
+
+    private let actions: [WindowAction] = [
+        .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+        .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth
+    ]
+
+    func testVerticalEighthActionsUseAvailableStableIdentifiers() {
+        XCTAssertEqual([
+            WindowAction.tileRows.rawValue,
+            WindowAction.tileColumns.rawValue,
+            WindowAction.cycleStackedWindows.rawValue,
+            WindowAction.cycleStackedWindowsBackward.rawValue
+        ], [129, 130, 131, 132])
+        XCTAssertEqual(actions.map(\.rawValue), [133, 134, 135, 136, 137, 138, 139, 140])
+        XCTAssertEqual(actions.map(\.name), [
+            "firstVerticalEighth", "secondVerticalEighth", "thirdVerticalEighth", "fourthVerticalEighth",
+            "fifthVerticalEighth", "sixthVerticalEighth", "seventhVerticalEighth", "lastVerticalEighth"
+        ])
+    }
+
+    func testVerticalEighthActionsTileVisibleFrameIntoEightFullHeightColumns() {
+        let visibleFrame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = (0..<8).map { CGRect(x: CGFloat($0 * 480), y: 40, width: 480, height: 1000) }
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalEighthActionsUseBoundaryRoundingAcrossNonDivisibleLandscapeWidth() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected = [
+            CGRect(x: 20, y: 40, width: 125, height: 800),
+            CGRect(x: 145, y: 40, width: 125, height: 800),
+            CGRect(x: 270, y: 40, width: 126, height: 800),
+            CGRect(x: 396, y: 40, width: 125, height: 800),
+            CGRect(x: 521, y: 40, width: 125, height: 800),
+            CGRect(x: 646, y: 40, width: 126, height: 800),
+            CGRect(x: 772, y: 40, width: 125, height: 800),
+            CGRect(x: 897, y: 40, width: 126, height: 800)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalEighthActionsRotateIntoTopToBottomRowsOnPortraitDisplays() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected = [
+            CGRect(x: 20, y: 918, width: 800, height: 125),
+            CGRect(x: 20, y: 793, width: 800, height: 125),
+            CGRect(x: 20, y: 667, width: 800, height: 126),
+            CGRect(x: 20, y: 542, width: 800, height: 125),
+            CGRect(x: 20, y: 417, width: 800, height: 125),
+            CGRect(x: 20, y: 291, width: 800, height: 126),
+            CGRect(x: 20, y: 166, width: 800, height: 125),
+            CGRect(x: 20, y: 40, width: 800, height: 126)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testFirstVerticalEighthCyclesForwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let results = repeatedResults(for: .firstVerticalEighth, count: 9, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [20, 120, 220, 320, 420, 520, 620, 720, 20])
+        }
+    }
+
+    func testLastVerticalEighthCyclesBackwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let results = repeatedResults(for: .lastVerticalEighth, count: 9, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [720, 620, 520, 420, 320, 220, 120, 20, 720])
+        }
+    }
+
+    func testEndpointCyclingResetsForUnrelatedOrOppositeLastAction() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let unrelated = RectangleAction(action: .leftHalf, subAction: .leftThird, rect: .zero)
+            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 20)
+            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 720)
+
+            let lastResult = calculate(.lastVerticalEighth, visibleFrame: visibleFrame)
+            let lastEndpoint = RectangleAction(action: .lastVerticalEighth, subAction: lastResult.subAction, rect: lastResult.rect)
+            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: lastEndpoint).rect.minX, 20)
+
+            let firstResult = calculate(.firstVerticalEighth, visibleFrame: visibleFrame)
+            let firstEndpoint = RectangleAction(action: .firstVerticalEighth, subAction: firstResult.subAction, rect: firstResult.rect)
+            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: firstEndpoint).rect.minX, 720)
+        }
+    }
+
+    func testEndpointCyclingIsDisabledWhenSubsequentExecutionModeIsNone() {
+        withSubsequentExecutionMode(.none) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            XCTAssertEqual(repeatedResults(for: .firstVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [20, 20, 20])
+            XCTAssertEqual(repeatedResults(for: .lastVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [720, 720, 720])
+        }
+    }
+
+    func testMiddleVerticalEighthActionsStayAtTheirOwnOrdinalWhenRepeated() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            for (index, action) in actions.dropFirst().dropLast().enumerated() {
+                let expectedX = CGFloat(120 + index * 100)
+                let results = repeatedResults(for: action, count: 3, visibleFrame: visibleFrame)
+                XCTAssertEqual(results.map { $0.rect.minX }, [expectedX, expectedX, expectedX])
+            }
+        }
+    }
+
+    func testVerticalEighthResultingSubActionsProvideLandscapeGapEdges() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected: [Edge] = [
+            .right,
+            [.left, .right], [.left, .right], [.left, .right],
+            [.left, .right], [.left, .right], [.left, .right],
+            .left
+        ]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
+        }
+    }
+
+    func testVerticalEighthResultingSubActionsProvidePortraitGapEdges() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected: [Edge] = [
+            .bottom,
+            [.top, .bottom], [.top, .bottom], [.top, .bottom],
+            [.top, .bottom], [.top, .bottom], [.top, .bottom],
+            .top
+        ]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
+        }
+    }
+
+    func testVerticalEighthActionsRemainTerminalConfigurableThroughActiveActionNames() {
+        let suiteName = "VerticalEighthActionTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+        let shortcut = MASShortcut(keyCode: 18, modifierFlags: [.control, .option, .shift])
+        let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        userDefaults.set(transformer.reverseTransformedValue(shortcut), forKey: WindowAction.firstVerticalEighth.name)
+
+        XCTAssertTrue(WindowAction.active.contains(.firstVerticalEighth))
+        let loaded = ShortcutCycle.shortcutsByAction(userDefaults: userDefaults)[.firstVerticalEighth]
+        XCTAssertEqual(loaded?.keyCode, shortcut.keyCode)
+        XCTAssertEqual(loaded?.modifierFlags, shortcut.modifierFlags)
+    }
+
+    func testVerticalEighthActionsAreHiddenFromNormalUI() throws {
+        XCTAssertTrue(actions.allSatisfy(\.excludedFromMenu))
+        XCTAssertTrue(actions.allSatisfy { !$0.isDragSnappable })
+
+        let controller = ShortcutsViewController()
+        _ = controller.view
+        let outlineView = try XCTUnwrap(findOutlineView(in: controller.view))
+        let rootCount = controller.outlineView(outlineView, numberOfChildrenOfItem: nil)
+
+        var found: [WindowAction] = []
+        func collect(from item: Any?) {
+            let count = controller.outlineView(outlineView, numberOfChildrenOfItem: item)
+            for index in 0..<count {
+                let child = controller.outlineView(outlineView, child: index, ofItem: item)
+                if let shortcut = child as? ShortcutItem, actions.contains(shortcut.action) {
+                    found.append(shortcut.action)
+                }
+                collect(from: child)
+            }
+        }
+
+        for index in 0..<rootCount {
+            collect(from: controller.outlineView(outlineView, child: index, ofItem: nil))
+        }
+
+        XCTAssertTrue(found.isEmpty)
+    }
+
+    private func calculate(_ action: WindowAction,
+                           visibleFrame: CGRect,
+                           lastAction: RectangleAction? = nil) -> RectResult {
+        WindowCalculationFactory.calculationsByAction[action]!.calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                      visibleFrameOfScreen: visibleFrame,
+                                      action: action,
+                                      lastAction: lastAction)
+        )
+    }
+
+    private func repeatedResults(for action: WindowAction,
+                                 count: Int,
+                                 visibleFrame: CGRect) -> [RectResult] {
+        var lastAction: RectangleAction?
+        return (0..<count).map { _ in
+            let result = calculate(action, visibleFrame: visibleFrame, lastAction: lastAction)
+            lastAction = RectangleAction(action: action, subAction: result.subAction, rect: result.rect)
+            return result
+        }
+    }
+
+    private func withSubsequentExecutionMode(_ mode: SubsequentExecutionMode, _ body: () -> Void) {
+        let saved = Defaults.subsequentExecutionMode.value
+        defer { Defaults.subsequentExecutionMode.value = saved }
+        Defaults.subsequentExecutionMode.value = mode
+        body()
+    }
+
+    private func findOutlineView(in view: NSView) -> NSOutlineView? {
+        if let outlineView = view as? NSOutlineView { return outlineView }
+        for subview in view.subviews {
+            if let outlineView = findOutlineView(in: subview) { return outlineView }
+        }
+        return nil
+    }
+}
+
 class WindowActionMenuTests: XCTestCase {
 
     func testRowsAndColumnsShareOptionalSubmenu() throws {
