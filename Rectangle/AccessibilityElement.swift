@@ -112,7 +112,7 @@ class AccessibilityElement {
     
     private var position: CGPoint? {
         get {
-            wrappedElement.getWrappedValue(.position)
+            wrappedElement.getWrappedValue(.position, type: .cgPoint)
         }
         set {
             guard let newValue = newValue else { return }
@@ -131,7 +131,7 @@ class AccessibilityElement {
     
     var size: CGSize? {
         get {
-            wrappedElement.getWrappedValue(.size)
+            wrappedElement.getWrappedValue(.size, type: .cgSize)
         }
         set {
             guard let newValue = newValue else { return }
@@ -141,8 +141,8 @@ class AccessibilityElement {
     }
 
     var minimumSize: CGSize? {
-        wrappedElement.getWrappedValue(.minSize)
-            ?? wrappedElement.getWrappedValue(.minimumSize)
+        wrappedElement.getWrappedValue(.minSize, type: .cgSize)
+        ?? wrappedElement.getWrappedValue(.minimumSize, type: .cgSize)
     }
     
     var frame: CGRect {
