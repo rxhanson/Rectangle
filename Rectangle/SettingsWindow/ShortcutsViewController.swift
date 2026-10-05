@@ -251,6 +251,7 @@ class ShortcutsViewController: NSViewController {
         scrollView.hasHorizontalScroller = false
         scrollView.autohidesScrollers = true
         scrollView.drawsBackground = false
+        scrollView.scrollerStyle = .overlay
         
         outlineView.headerView = nil
         outlineView.selectionHighlightStyle = .none
