@@ -8360,6 +8360,81 @@ final class LayoutHelperColdDeliveryLayoutTests: XCTestCase {
     private func buttons(_ view: NSView) -> [NSButton] {
         view.subviews.flatMap { (($0 as? NSButton).map { [$0] } ?? []) + buttons($0) }
     }
+    func testCaptureRequestsPrioritizeMissingCardsAndKeepOffscreenPreviews() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...60).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Request \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 1201, height: 801)) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 900, height: 800), items: items,
+            offerPermission: false, waitForPreviews: true)
+        let visible = panel.visiblePreviewIDs
+        XCTAssertEqual(Array(panel.previewRequestIDs.prefix(visible.count)), visible)
+        XCTAssertFalse(visible.contains(60))
+        panel.updateImages([1: NSImage(size: CGSize(width: 779, height: 520)),
+                            60: NSImage(size: CGSize(width: 779, height: 520))])
+        XCTAssertNotEqual(panel.previewRequestIDs.first, 1, "Missing cards must precede refreshes")
+        XCTAssertTrue(panel.previewRequestIDs.contains(1))
+        XCTAssertFalse(panel.previewRequestIDs.contains(60), "Cache eviction must not enqueue an offscreen card that still owns its preview")
+        panel.updateImages(Dictionary(uniqueKeysWithValues: (2..<60).map { (CGWindowID($0), NSImage(size: CGSize(width: 779, height: 520))) }))
+        XCTAssertEqual(panel.previewRequestIDs, panel.visiblePreviewIDs)
+    }
+
+    func testPixelRoundedCapturesKeepReservedGeometry() {
+        let source = CGSize(width: 1201, height: 801)
+        XCTAssertEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 779, height: 520), fallback: source), source)
+        let wide = CGSize(width: 1916, height: 1186)
+        XCTAssertEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 840, height: 519), fallback: wide), wide)
+        let portrait = CGSize(width: 801, height: 1201)
+        XCTAssertEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 347, height: 520), fallback: portrait), portrait)
+        XCTAssertNotEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 240, height: 600), fallback: source), source)
+    }
+
+    func testRoundedDeliveryDoesNotEndEarlierCardEntrance() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...24).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Rounded \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 1201, height: 801)) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 900, height: 800), items: items,
+            offerPermission: false, waitForPreviews: true)
+        let all = buttons(try XCTUnwrap(panel.contentView)).filter { $0.title.hasPrefix("Rounded ") }
+        XCTAssertTrue(all.allSatisfy(\.isHidden), "Previews must be ready before cards appear")
+        panel.updateImage(NSImage(size: CGSize(width: 779, height: 520)), for: 1)
+        let first = try XCTUnwrap(all.first { $0.title == "Rounded 1" })
+        let frame = first.frame
+        let entrance = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperEntrance"))
+        panel.updateImages([2: NSImage(size: CGSize(width: 779, height: 520)),
+                            3: NSImage(size: CGSize(width: 779, height: 520))])
+        XCTAssertEqual(first.frame, frame)
+        XCTAssertEqual(first.layer?.animation(forKey: "layoutHelperEntrance")?.beginTime, entrance.beginTime)
+        XCTAssertEqual(all.filter { !$0.isHidden }.count, 3)
+        XCTAssertTrue(all.filter { $0.isHidden }.allSatisfy { $0.layer?.animation(forKey: "layoutHelperEntrance") == nil })
+        let scroll = try XCTUnwrap(first.enclosingScrollView)
+        scroll.contentView.scroll(to: CGPoint(x: 0, y: 100))
+        XCTAssertNil(first.layer?.animation(forKey: "layoutHelperEntrance"), "User scrolling still finishes entrances")
+    }
+
+    func testRealAspectChangesInBatchPreserveEntranceAndDoNotOverlap() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...8).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Aspect \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 1201, height: 801), isMinimized: $0 > 1) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 900, height: 800), items: items,
+            offerPermission: false, waitForPreviews: true)
+        panel.updateImage(NSImage(size: CGSize(width: 779, height: 520)), for: 1)
+        let first = try XCTUnwrap(buttons(try XCTUnwrap(panel.contentView)).first { $0.title == "Aspect 1" })
+        let entrance = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperEntrance"))
+        panel.updateImages([2: NSImage(size: CGSize(width: 240, height: 600)),
+                            3: NSImage(size: CGSize(width: 600, height: 240))])
+        XCTAssertEqual(first.layer?.animation(forKey: "layoutHelperEntrance")?.beginTime, entrance.beginTime)
+        let ready = buttons(try XCTUnwrap(panel.contentView)).filter { !$0.isHidden && $0.title.hasPrefix("Aspect ") }
+        XCTAssertEqual(ready.count, 3)
+        for a in ready.indices { for b in ready.indices where b > a {
+            XCTAssertFalse(ready[a].frame.intersects(ready[b].frame))
+        }}
+        let portrait = try XCTUnwrap(ready.first { $0.title == "Aspect 2" })
+        XCTAssertEqual(portrait.frame.width / (portrait.frame.height - LayoutHelperPreviewLayout.titleHeight), 0.4, accuracy: 0.001)
+    }
+
     func testMixedCardsNeverOverlapWhenCapturesFinishOutOfOrder() throws {
         let sizes = [CGSize(width:1000,height:600), CGSize(width:1000,height:600),
                      CGSize(width:1000,height:600), CGSize(width:1000,height:600),

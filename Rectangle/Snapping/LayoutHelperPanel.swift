@@ -95,7 +95,14 @@ struct LayoutHelperPreviewLayout {
     static func sourceSize(for imageSize: CGSize?, fallback: CGSize) -> CGSize {
         guard let imageSize, imageSize.width.isFinite, imageSize.height.isFinite,
               imageSize.width > 0, imageSize.height > 0 else { return fallback }
-        // Use the screenshot's aspect ratio without making Retina captures larger cards.
+        // Captures are scaled to whole pixels. Preserve the reserved geometry
+        // when the difference is at most one captured pixel in either dimension.
+        if fallback.width.isFinite, fallback.height.isFinite, fallback.width > 0, fallback.height > 0 {
+            let fitted = max(imageSize.width / fallback.width, imageSize.height / fallback.height)
+            if abs(imageSize.width - fallback.width * fitted) <= 1,
+               abs(imageSize.height - fallback.height * fitted) <= 1 { return fallback }
+        }
+        // Use a genuinely changed aspect without making Retina captures larger cards.
         let extent = max(fallback.width, fallback.height)
         let scale = extent / max(imageSize.width, imageSize.height)
         return CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
@@ -294,9 +301,19 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     var onVisiblePreviewsChanged: (() -> Void)?
     private(set) var keyboardSelection = false
     private var scrollObserver: NSObjectProtocol?
+    private var updatingPreviewLayout = false
     private var visibleIDs: [CGWindowID] = []
     var visiblePreviewIDs: [CGWindowID] {
         cards.filter { $0.superview?.visibleRect.intersects($0.frame) == true }.map { $0.item.id }
+    }
+    var previewRequestIDs: [CGWindowID] {
+        let visible = Set(visiblePreviewIDs)
+        let missing = cards.filter { $0.preview == nil }
+        // Keep uncaptured cards ahead of refreshes. Offscreen cards already own
+        // their image even when the bounded shared cache has evicted it.
+        return missing.filter { visible.contains($0.item.id) }.map { $0.item.id }
+            + missing.filter { !visible.contains($0.item.id) }.map { $0.item.id }
+            + cards.filter { $0.preview != nil && visible.contains($0.item.id) }.map { $0.item.id }
     }
     private var cards: [LayoutHelperCard] = []
     private var reusableCards: [LayoutHelperCard] = []
@@ -359,9 +376,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
                 }
                 card.state = .off
                 card.item = item
-                if let image = images[item.id] { updateImage(image, for: item.id) }
             }
-            if geometryChanged { arrangeUpdatedPreviews() }
+            applyImages(images, rearranging: geometryChanged)
             updateKeyViews()
             if keyboardSelection, let focused = firstResponder as? LayoutHelperCard, !focused.isEnabled {
                 makeFirstResponder(cards.first(where: { $0.isEnabled && !$0.isHidden }))
@@ -628,7 +644,7 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         scrollObserver = NotificationCenter.default.addObserver(forName: NSView.boundsDidChangeNotification,
             object: scroll.contentView, queue: .main) { [weak self] _ in
                 guard let self else { return }
-                self.finishPresentation()
+                if !self.updatingPreviewLayout { self.finishPresentation() }
                 let ids = self.visiblePreviewIDs
                 if ids != self.visibleIDs { self.visibleIDs = ids; self.onVisiblePreviewsChanged?() }
             }
@@ -642,20 +658,31 @@ final class LayoutHelperPanel: LayoutHelperSurface {
     }
 
     func updateImage(_ image: NSImage, for id: CGWindowID) {
-        guard !showingPermission, let card = cards.first(where: { $0.item.id == id }) else { return }
-        let previousSize = card.preview?.size ?? card.item.sourceSize
-        card.preview = image
-        let oldAspect = previousSize.width / max(1, previousSize.height)
-        let newAspect = image.size.width / max(1, image.size.height)
-        if abs(newAspect - oldAspect) > max(oldAspect, newAspect) * 0.000001 { arrangeUpdatedPreviews() }
-        reveal(card)
+        applyImages([id: image])
     }
 
     func updateImages(_ images: [CGWindowID: NSImage]) {
-        for card in cards {
-            if let image = images[card.item.id] { updateImage(image, for: card.item.id) }
-        }
+        applyImages(images)
         WindowAnimationDiagnostics.event("helper-preview-delivery", fields: ["count": images.count])
+    }
+
+    private func applyImages(_ images: [CGWindowID: NSImage], rearranging: Bool = false) {
+        guard !showingPermission else { return }
+        var geometryChanged = rearranging
+        var updated: [LayoutHelperCard] = []
+        for card in cards {
+            guard let image = images[card.item.id] else { continue }
+            if card.preview !== image {
+                let previous = LayoutHelperPreviewLayout.sourceSize(for: card.preview?.size, fallback: card.item.sourceSize)
+                let next = LayoutHelperPreviewLayout.sourceSize(for: image.size, fallback: card.item.sourceSize)
+                geometryChanged = geometryChanged || previous != next
+                card.preview = image
+            }
+            updated.append(card)
+        }
+        // Commit the whole delivery before arranging or revealing any card.
+        if geometryChanged { arrangeUpdatedPreviews() }
+        reveal(updated)
     }
 
     func previewFailed(for id: CGWindowID) {
@@ -666,7 +693,9 @@ final class LayoutHelperPanel: LayoutHelperSurface {
 
     private func arrangeUpdatedPreviews() {
         guard let scroll = scrollView, let document = scroll.documentView else { return }
-        finishPresentation()
+        // Programmatic bounds notifications must not end other cards' entrances.
+        updatingPreviewLayout = true
+        defer { updatingPreviewLayout = false }
         let top: CGFloat = shownMessage == nil ? 44 : 84
         let bottom: CGFloat = 24
         let horizontal: CGFloat = min(24, scroll.frame.width / 8)
@@ -683,18 +712,22 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         scroll.contentView.scroll(to: scroll.contentView.constrainBoundsRect(
             CGRect(origin: origin, size: scroll.contentView.bounds.size)).origin)
         scroll.reflectScrolledClipView(scroll.contentView)
-        visibleIDs = visiblePreviewIDs
-        onVisiblePreviewsChanged?()
+        let ids = visiblePreviewIDs
+        if ids != visibleIDs { visibleIDs = ids; onVisiblePreviewsChanged?() }
     }
 
     private func reveal(_ card: LayoutHelperCard) {
-        guard card.isHidden else { return }
-        // Reveal the card in its own slot. Swapping slots on completion
-        // can place a portrait preview in a shorter landscape row.
-        card.isHidden = false
-        card.layoutSubtreeIfNeeded()
-        card.displayIfNeeded()
-        animatePresentation(excluding: Set(cards.filter { $0 !== card }.map { $0.item.id }), preserveExisting: true)
+        reveal([card])
+    }
+
+    private func reveal(_ updated: [LayoutHelperCard]) {
+        let entering = updated.filter { $0.isHidden }
+        guard !entering.isEmpty else { return }
+        // Artwork and visibility commit together; normal AppKit drawing prepares
+        // only visible cards, without a forced layout/display for each capture.
+        entering.forEach { $0.isHidden = false }
+        let ids = Set(entering.map { $0.item.id })
+        animatePresentation(excluding: Set(cards.filter { !ids.contains($0.item.id) }.map { $0.item.id }), preserveExisting: true)
         updateKeyViews()
         if keyboardSelection, !(firstResponder is LayoutHelperCard),
            firstResponder === initialFirstResponder,

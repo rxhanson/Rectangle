@@ -600,8 +600,7 @@ final class LayoutHelperManager {
     private func refreshPreviews() {
         guard Self.enabled else { cancel(); return }
         guard panel.isVisible else { return }
-        let visible = panel.visiblePreviewIDs
-        let ids = visible + displayedIDs.filter { !visible.contains($0) }
+        let ids = panel.previewRequestIDs
         let captureToken = token
         let cell = currentCell
         previews.request(ids.compactMap { previewKeys[$0] }, onFailure: { [weak self] key in
