@@ -60,9 +60,9 @@ enum MacTilingDefaults: String {
         if !Defaults.internalTilingNotified.enabled {
             // First time running Rectangle & only has drag to top enabled in macOS
             let result = AlertUtil.twoButtonAlert(
-                question: "Top screen edge tiling in macOS is now disabled".localized,
-                text: "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows".localized,
-                cancelText: "Open System Settings".localized)
+                question: String(localized: "Top screen edge tiling in macOS is now disabled"),
+                text: String(localized: "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows"),
+                cancelText: String(localized: "Open System Settings"))
             if result == .alertSecondButtonReturn {
                 openSystemSettings()
             }
@@ -76,19 +76,19 @@ enum MacTilingDefaults: String {
     
     private static func resolveStandardTilingConflict() {
         let result = AlertUtil.threeButtonAlert(
-            question: "Conflict with macOS tiling".localized,
-            text: "Drag to screen edge tiling is enabled in both Rectangle and macOS.".localized,
-            buttonOneText: "Disable in macOS".localized,
-            buttonTwoText: "Disable in Rectangle".localized,
-            buttonThreeText: "Dismiss".localized)
+            question: String(localized: "Conflict with macOS tiling"),
+            text: String(localized: "Drag to screen edge tiling is enabled in both Rectangle and macOS."),
+            buttonOneText: String(localized: "Disable in macOS"),
+            buttonTwoText: String(localized: "Disable in Rectangle"),
+            buttonThreeText: String(localized: "Dismiss"))
         switch result {
         case .alertFirstButtonReturn:
             disableMacTiling()
 
             let result = AlertUtil.twoButtonAlert(
-                question: "Tiling in macOS has been disabled".localized,
-                text: "To re-enable it, go to System Settings → Desktop & Dock → Windows".localized,
-                cancelText: "Open System Settings".localized)
+                question: String(localized: "Tiling in macOS has been disabled"),
+                text: String(localized: "To re-enable it, go to System Settings → Desktop & Dock → Windows"),
+                cancelText: String(localized: "Open System Settings"))
             if result == .alertSecondButtonReturn {
                 openSystemSettings()
             }
@@ -97,9 +97,9 @@ enum MacTilingDefaults: String {
             Notification.Name.windowSnapping.post(object: false)
 
             let result = AlertUtil.twoButtonAlert(
-                question: "Tiling in Rectangle has been disabled".localized,
-                text: "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows".localized,
-                cancelText: "Open System Settings".localized)
+                question: String(localized: "Tiling in Rectangle has been disabled"),
+                text: String(localized: "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows"),
+                cancelText: String(localized: "Open System Settings"))
             if result == .alertSecondButtonReturn {
                 openSystemSettings()
             }
