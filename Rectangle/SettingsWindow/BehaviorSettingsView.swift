@@ -188,7 +188,8 @@ struct BehaviorSettingsView: View {
                         HStack {
                             Text("Toggle window list")
                             Spacer()
-                            MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil)
+                            MASShortcutViewRepresentable(defaultsKey: StackBadgeManager.toggleDefaultsKey, validator: nil,
+                                                         recordingObserver: viewModel.shortcutRecordingObserver)
                                 .frame(width: 160, height: 24)
                         }
                         Divider()
@@ -316,7 +317,8 @@ struct BehaviorSettingsView: View {
                                     Spacer()
                                     MASShortcutViewRepresentable(
                                         defaultsKey: TodoManager.toggleDefaultsKey,
-                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey)
+                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.toggleDefaultsKey),
+                                        recordingObserver: viewModel.shortcutRecordingObserver
                                     )
                                     .frame(width: 130, height: 22)
                                 }
@@ -326,7 +328,8 @@ struct BehaviorSettingsView: View {
                                     Spacer()
                                     MASShortcutViewRepresentable(
                                         defaultsKey: TodoManager.reflowDefaultsKey,
-                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey)
+                                        validator: TodoShortcutValidator(defaultsKey: TodoManager.reflowDefaultsKey),
+                                        recordingObserver: viewModel.shortcutRecordingObserver
                                     )
                                     .frame(width: 130, height: 22)
                                 }
@@ -390,6 +393,12 @@ struct BehaviorSettingsView: View {
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
                         Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
                         Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Toggle("Mouse button shortcuts act on the window under the pointer", isOn: $viewModel.mouseButtonShortcutsUseWindowUnderCursor)
+                            Text("Keyboard shortcuts always act on the focused window")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
                                 Toggle("Treat multiple displays as one", isOn: $viewModel.combinedDisplayMode)
@@ -418,7 +427,8 @@ struct BehaviorSettingsView: View {
         MASShortcutViewRepresentable(
             defaultsKey: action.name,
             validator: viewModel.allowAnyShortcut ? PassthroughShortcutValidator() : MASShortcutValidator(),
-            recordingObserver: viewModel.shortcutRecordingObserver
+            recordingObserver: viewModel.shortcutRecordingObserver,
+            recordsMouseButtons: true
         )
         .frame(width: 160, height: 24)
     }

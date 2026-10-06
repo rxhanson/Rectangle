@@ -127,6 +127,7 @@ class Defaults {
     static let screensOrderedByX = IntEnumDefault<ScreenOrdering>(key: "screensOrderedByX", defaultValue: .yThenMinX)
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
+    static let mouseButtonShortcutsUseWindowUnderCursor = BoolDefault(key: "mouseButtonShortcutsUseWindowUnderCursor")
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
         launchOnLogin,
@@ -233,7 +234,8 @@ class Defaults {
         stackBadge,
         stackSameSizeOnly,
         moveFixedSizeToEdge,
-        greenButtonOverride
+        greenButtonOverride,
+        mouseButtonShortcutsUseWindowUnderCursor
     ]
 }
 
