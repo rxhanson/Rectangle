@@ -8198,6 +8198,22 @@ final class WindowSizeHintReadTests: XCTestCase {
         XCTAssertNil(WindowSizeConstraints.shared.rememberedMinimumSnapshot(for: window))
         XCTAssertEqual(window.attributeReads, 0)
     }
+
+    func testDisabledLearningDoesNotReadWindowIdentity() {
+        let saved = Defaults.rememberWindowSizeLimits.enabled
+        defer { Defaults.rememberWindowSizeLimits.enabled = saved }
+        Defaults.rememberWindowSizeLimits.enabled = false
+        let window = ResizeObservationIdentityProbe()
+        XCTAssertNil(WindowSizeConstraints.frameBeforeResize(for: window))
+        XCTAssertEqual(window.identityReads, 0)
+    }
+
+    private final class ResizeObservationIdentityProbe: AccessibilityElement {
+        var identityReads = 0
+        init() { super.init(AXUIElementCreateApplication(ProcessInfo.processInfo.processIdentifier)) }
+        override var windowId: CGWindowID? { identityReads += 1; return nil }
+    }
+
 }
 
 private final class UnlearnedWindowSizeHintElement: AccessibilityElement {

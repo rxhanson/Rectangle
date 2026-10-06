@@ -2,7 +2,6 @@
 
 import Foundation
 
-
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
     var axElement: AXUIElement { wrappedElement }
@@ -41,7 +40,7 @@ class AccessibilityElement {
         return array.map { AccessibilityElement($0, messagingTimeout: messagingTimeout) }
     }
     
-    private var role: NSAccessibility.Role? {
+    var role: NSAccessibility.Role? {
         if knownApplication { return .application }
         guard let value = wrappedElement.getValue(.role) as? String else { return nil }
         return NSAccessibility.Role(rawValue: value)
@@ -157,30 +156,11 @@ class AccessibilityElement {
         WindowSizeConstraints.shared.minimum(for: self, reported: reportedMinimumSize)
     }
 
-    var rememberedMinimumSize: CGSize? {
-        WindowSizeConstraints.shared.rememberedMinimum(for: self)
-    }
-
     var reportedMinimumSize: CGSize? {
         wrappedElement.getWrappedValue(.minSize, type: .cgSize)
             ?? wrappedElement.getWrappedValue(.minimumSize, type: .cgSize)
     }
     
-    /// Match size-limit records by AX structure without reading document content.
-    /// Incomplete metadata must not reuse another window's saved limits.
-    var sizeConstraintIdentity: (identifier: String?, role: String, subrole: String, structure: [String]) {
-        let identifier = wrappedElement.getValue(.identifier) as? String
-        let subrole = wrappedElement.getValue(.subrole) as? String ?? ""
-        let children = childElements
-        let structure: [String]
-        if let children, !children.isEmpty, children.count <= 32 {
-            structure = children.map {
-                [$0.role?.rawValue ?? "", $0.wrappedElement.getValue(.subrole) as? String ?? "",
-                 $0.wrappedElement.getValue(.identifier) as? String ?? ""].joined(separator: "|")
-            }.sorted()
-        } else { structure = [] }
-        return (identifier, role?.rawValue ?? "", subrole, structure)
-    }
 
     var frame: CGRect {
         guard let position = position, let size = size else { return .null }
@@ -191,10 +171,7 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
-        // Learning must not add AX reads to each mover write. The worker checks
-        // role and resizability before accepting WindowServer evidence.
-        let before = Defaults.rememberWindowSizeLimits.enabled
-            ? windowId.flatMap { WindowUtil.getWindowFrame(id: $0) } : nil
+        let before = WindowSizeConstraints.frameBeforeResize(for: self)
         performFrameAdjustment {
             if adjustSizeFirst { size = frame.size }
             if adjustPosition { position = frame.origin }
@@ -286,7 +263,7 @@ class AccessibilityElement {
         return AXUIElementSetAttributeValue(axElement, kAXSizeAttribute as CFString, value)
     }
 
-    private var childElements: [AccessibilityElement]? {
+    var childElements: [AccessibilityElement]? {
         getElementsValue(.children)
     }
     
@@ -473,87 +450,6 @@ class AccessibilityElement {
         if let pid = pid, let app = NSRunningApplication(processIdentifier: pid), !app.isActive || force {
             app.activate()
         }
-    }
-
-    /// Select one window before activating its application. Front-window-only
-    /// activation preserves the stacking order of the application's siblings.
-    func activateAndRaiseWindow(isCurrent: @escaping () -> Bool,
-                                completion: @escaping (AXError, AXError, AXError) -> Void) {
-        guard isCurrent() else { return }
-        guard let pid else { completion(.invalidUIElement, .invalidUIElement, .invalidUIElement); return }
-        let workspace = NSWorkspace.shared
-        func canContinue(after error: AXError) -> Bool {
-            error != .cannotComplete && error != .invalidUIElement
-        }
-        func raiseSelected(activation: AXError) {
-            guard isCurrent() else { return }
-            guard workspace.frontmostApplication?.processIdentifier == pid else {
-                completion(activation, .cannotComplete, .cannotComplete)
-                return
-            }
-            let main = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
-            guard isCurrent() else { return }
-            guard canContinue(after: main) else {
-                completion(activation, main, main)
-                return
-            }
-            let raise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
-            completion(activation, main, raise)
-        }
-        if workspace.frontmostApplication?.processIdentifier == pid {
-            raiseSelected(activation: .success)
-            return
-        }
-        // A failed AX request to an unresponsive app must not be followed by
-        // more synchronous requests (or a later timeout that retries them).
-        let selectedMain = AXUIElementSetAttributeValue(wrappedElement, kAXMainAttribute as CFString, kCFBooleanTrue)
-        guard isCurrent() else { return }
-        guard canContinue(after: selectedMain) else {
-            completion(selectedMain, selectedMain, selectedMain)
-            return
-        }
-        let selectedRaise = AXUIElementPerformAction(wrappedElement, kAXRaiseAction as CFString)
-        guard isCurrent() else { return }
-        guard canContinue(after: selectedRaise) else {
-            completion(selectedRaise, selectedMain, selectedRaise)
-            return
-        }
-        var observer: NSObjectProtocol?
-        var timeout: DispatchWorkItem?
-        var finished = false
-        var activation = AXError.success
-        let finish = {
-            guard !finished else { return }
-            finished = true
-            if let registered = observer { workspace.notificationCenter.removeObserver(registered) }
-            observer = nil
-            timeout?.cancel(); timeout = nil
-            guard canContinue(after: activation) else {
-                completion(activation, .cannotComplete, .cannotComplete)
-                return
-            }
-            raiseSelected(activation: activation)
-        }
-        observer = workspace.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
-            object: nil, queue: .main) { note in
-                guard (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.processIdentifier == pid else { return }
-                DispatchQueue.main.async(execute: finish)
-            }
-        let deadline = DispatchWorkItem(block: finish)
-        timeout = deadline
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: deadline)
-        let application = AXUIElementCreateApplication(pid)
-        AXUIElementSetMessagingTimeout(application, messagingTimeout > 0 ? min(messagingTimeout, 0.05) : 0.05)
-        guard isCurrent() else { finish(); return }
-        if selectedMain == .success, selectedRaise == .success,
-           let app = NSRunningApplication(processIdentifier: pid), app.activate(options: []) {
-            activation = .success
-        } else {
-            // Some applications refuse background main-window changes. Retain
-            // application activation as the fallback for an otherwise unusable selection.
-            activation = AXUIElementSetAttributeValue(application, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
-        }
-        if activation != .success || workspace.frontmostApplication?.processIdentifier == pid { finish() }
     }
 
 }
@@ -862,108 +758,6 @@ enum EnhancedUI: Int {
            )
         return {
             if shouldRestore { writeEnhancedUI(true) }
-        }
-    }
-}
-
-enum WindowAccessibilityLookup {
-    enum Result {
-        case found(AXUIElement)
-        case unavailable
-        case timedOut
-        case cancelled
-    }
-
-    static func resolve(pid: pid_t, id: CGWindowID, launch: TimeInterval,
-                        preferred: AXUIElement?, isCurrent: @escaping () -> Bool) -> AXUIElement? {
-        if case .found(let element) = resolveResult(pid: pid, id: id, launch: launch,
-            preferred: preferred, isCurrent: isCurrent) { return element }
-        return nil
-    }
-
-    static func resolveResult(pid: pid_t, id: CGWindowID, launch: TimeInterval,
-                              preferred: AXUIElement?, isCurrent: @escaping () -> Bool) -> Result {
-        let deadline = ProcessInfo.processInfo.systemUptime + 0.25
-        func valid() -> Bool { isCurrent() && WindowProcessIdentity.launchTime(for: pid) == launch }
-        while valid(), ProcessInfo.processInfo.systemUptime < deadline {
-            let reader = AccessibilityReadBatch(budget: deadline - ProcessInfo.processInfo.systemUptime, isCurrent: valid)
-            // Activation can stall AXWindows even while the selected window responds.
-            if let preferred {
-                var owner: pid_t = 0
-                if AXUIElementGetPid(preferred, &owner) == .success, owner == pid,
-                   reader.windowID(preferred) == id, valid() { return .found(preferred) }
-            }
-            if reader.available,
-               let windows = reader.value(AXUIElementCreateApplication(pid), kAXWindowsAttribute) as? [AXUIElement],
-               let window = windows.first(where: { reader.windowID($0) == id }),
-               reader.available, valid() { return .found(window) }
-            guard valid() else { return .cancelled }
-            guard reader.timedOut else { return reader.available ? .unavailable : .timedOut }
-            let remaining = deadline - ProcessInfo.processInfo.systemUptime
-            if remaining > 0 { Thread.sleep(forTimeInterval: min(0.02, remaining)) }
-        }
-        return valid() ? .timedOut : .cancelled
-    }
-}
-
-/// Cancellation never holds its lock while an external app handles AX work.
-final class AccessibilityReadCancellation {
-    private let lock = NSLock()
-    private var cancelled = false
-
-    func cancel() { lock.lock(); cancelled = true; lock.unlock() }
-    var isCurrent: Bool { lock.lock(); defer { lock.unlock() }; return !cancelled }
-}
-
-/// All attribute reads share one deadline. Stop on timeout; skip unsupported
-/// optional attributes without extending the deadline.
-final class AccessibilityReadBatch {
-    private let deadline: TimeInterval
-    private var failed = false
-    var timedOut: Bool { failed }
-    private let isCurrent: () -> Bool
-    init(budget: TimeInterval, isCurrent: @escaping () -> Bool = { true }) {
-        deadline = ProcessInfo.processInfo.systemUptime + budget
-        self.isCurrent = isCurrent
-    }
-    var available: Bool { isCurrent() && !failed && ProcessInfo.processInfo.systemUptime < deadline }
-    private func prepare(_ element: AXUIElement) -> Bool {
-        guard available else { return false }
-        AXUIElementSetMessagingTimeout(element, Float(min(0.05, max(0.001, deadline - ProcessInfo.processInfo.systemUptime))))
-        return true
-    }
-    func value(_ element: AXUIElement, _ attribute: String) -> CFTypeRef? {
-        guard prepare(element) else { return nil }
-        var result: CFTypeRef?
-        let status = AXUIElementCopyAttributeValue(element, attribute as CFString, &result)
-        if status == .cannotComplete { failed = true }
-        return status == .success ? result : nil
-    }
-    func windowID(_ element: AXUIElement) -> CGWindowID? {
-        guard prepare(element) else { return nil }
-        var id: CGWindowID = 0
-        let status = _AXUIElementGetWindow(element, &id)
-        if status == .cannotComplete { failed = true }
-        return status == .success && id != 0 ? id : nil
-    }
-    func wrapped<T>(_ element: AXUIElement, _ attribute: String, type: AXValueType) -> T? {
-        guard let value = value(element, attribute), CFGetTypeID(value) == AXValueGetTypeID() else { return nil }
-        let pointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
-        defer { pointer.deallocate() }
-        return AXValueGetValue(value as! AXValue, type, pointer) ? pointer.pointee : nil
-    }
-    func settable(_ element: AXUIElement, _ attribute: String) -> Bool? {
-        guard prepare(element) else { return nil }
-        var result = DarwinBoolean(false)
-        let status = AXUIElementIsAttributeSettable(element, attribute as CFString, &result)
-        if status == .cannotComplete { failed = true }
-        return status == .success ? result.boolValue : nil
-    }
-    func observe(_ observer: AXObserver, _ element: AXUIElement, _ notification: String,
-                 context: UnsafeMutableRawPointer) {
-        guard prepare(element) else { return }
-        if AXObserverAddNotification(observer, element, notification as CFString, context) == .cannotComplete {
-            failed = true
         }
     }
 }

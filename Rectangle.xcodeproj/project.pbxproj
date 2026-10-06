@@ -252,8 +252,27 @@
 		1362114CF83D3D0DEA33D2E1 /* SnappedWindowFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */; };
 		8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */; };
 		95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */; };
-		63E626F619818124C8A5271B /* WindowSizeConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB041CC0D311D82AF624DBA /* WindowSizeConstraints.swift */; };
-		60BBFA4C470AA79917F12E5F /* WindowSizeLimitArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDEBCDABCAACB90F4DC58DF /* WindowSizeLimitArchive.swift */; };
+		63E626F619818124C8A5271B /* WindowSizeConstraintStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB041CC0D311D82AF624DBA /* WindowSizeConstraintStore.swift */; };
+		60BBFA4C470AA79917F12E5F /* WindowSizeEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDEBCDABCAACB90F4DC58DF /* WindowSizeEvidence.swift */; };
+		0176B53F6ADC72812404B860 /* AccessibilityElement+Activation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3342184D7BA1CC1A81BC6C /* AccessibilityElement+Activation.swift */; };
+		000278054C1670395A25C8A2 /* AccessibilityReadBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95251EB3B97C3F4796A022D8 /* AccessibilityReadBatch.swift */; };
+		1798CB8505D5C08D8CCAE9B3 /* AccessibilityReadCancellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EE14CA3F4A1D2D8C1F822F0 /* AccessibilityReadCancellation.swift */; };
+		F2635A97539409F96784ADA1 /* WindowAccessibilityLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7206213018052125577813F /* WindowAccessibilityLookup.swift */; };
+		766FAEC6E0955EC3F0AA0C24 /* WindowPlacementAcknowledgement.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65001AA114E0EAE1D1E0A1F /* WindowPlacementAcknowledgement.swift */; };
+		9A6DF4B06867E21E393EB7C3 /* WindowPlacementAnimationEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26031C3370588EB8506DF6F1 /* WindowPlacementAnimationEvidence.swift */; };
+		E049F49C2514CF782C5EB573 /* WindowPlacementWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E63A032B2807CCA212E07B4 /* WindowPlacementWorker.swift */; };
+		4A0FED16EF903FF546DBD087 /* WindowSplitAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97E614B0A93DC9344DC95B93 /* WindowSplitAxis.swift */; };
+		2B11387E37E360A734075A03 /* AccessibilityElement+WindowSizeLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71917ED3BAD2995B11F1194 /* AccessibilityElement+WindowSizeLimits.swift */; };
+		C2FE5F0D7189698DBB40F16E /* SnappedWindowFitOpportunity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 674230B8C17D360E005A7369 /* SnappedWindowFitOpportunity.swift */; };
+		3F7E154D72F9A7A95B6CDC4A /* SnappedWindowFitSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A01E0CA69552D627E2F6AD /* SnappedWindowFitSession.swift */; };
+		F2A2818C0A89B47FC3D34976 /* WindowSizeConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BA8256C0D485494D4E55B6 /* WindowSizeConstraints.swift */; };
+		3F527E1E10EB5403EC597CDB /* WindowSizeHintSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CB20E6654EAE4AFB6907F4 /* WindowSizeHintSnapshot.swift */; };
+		4DADF631CA02487752FFF34C /* WindowSizeLimitArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A447CD89A2A1D2C2309F35A /* WindowSizeLimitArchive.swift */; };
+		BB9BB4F2FA3AFB64DE22EA36 /* WindowSizeLimitIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDF2BB4C6AF41D57F8FB26FB /* WindowSizeLimitIdentity.swift */; };
+		25537ADB312B49639496195E /* WindowSizeLimitRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8495AF7BE595AC40AEFD33AF /* WindowSizeLimitRecord.swift */; };
+		B6D70842FDF3C87C0934A228 /* WindowSizeResizeObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 387979800E2D3F2FF07B19A1 /* WindowSizeResizeObservation.swift */; };
+		F6A049742F01C008E0AF0BBA /* WindowSizeWarningIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9B8E4D70BF26DCE1EF0EDB /* WindowSizeWarningIcon.swift */; };
+		AE1678CB0E674BC6832CA4A0 /* WindowSizeWarningObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA1EF34E179566F2E6C4AF2 /* WindowSizeWarningObservation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -528,11 +547,30 @@
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
 		de0950b8b00f40308934a523 /* JSONDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDefaultTests.swift; sourceTree = "<group>"; };
 		7B41354DF40078571CBC514E /* WindowSizeLimitsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/SettingsWindow/WindowSizeLimitsWindowController.swift; sourceTree = SOURCE_ROOT; };
-		61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/SnappedWindowFit.swift; sourceTree = SOURCE_ROOT; };
-		C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowGeometry.swift; sourceTree = SOURCE_ROOT; };
-		6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowPlacementCoordinator.swift; sourceTree = SOURCE_ROOT; };
-		8FB041CC0D311D82AF624DBA /* WindowSizeConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowSizeConstraints.swift; sourceTree = SOURCE_ROOT; };
-		2FDEBCDABCAACB90F4DC58DF /* WindowSizeLimitArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowSizeLimitArchive.swift; sourceTree = SOURCE_ROOT; };
+		61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/SnappedWindowFit.swift"; sourceTree = SOURCE_ROOT; };
+		C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowPlacement/WindowGeometry.swift"; sourceTree = SOURCE_ROOT; };
+		6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowPlacement/WindowPlacementCoordinator.swift"; sourceTree = SOURCE_ROOT; };
+		8FB041CC0D311D82AF624DBA /* WindowSizeConstraintStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeConstraintStore.swift"; sourceTree = SOURCE_ROOT; };
+		2FDEBCDABCAACB90F4DC58DF /* WindowSizeEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeEvidence.swift"; sourceTree = SOURCE_ROOT; };
+		9F3342184D7BA1CC1A81BC6C /* AccessibilityElement+Activation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/AccessibilityElement+Activation.swift"; sourceTree = SOURCE_ROOT; };
+		95251EB3B97C3F4796A022D8 /* AccessibilityReadBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/AccessibilityReadBatch.swift"; sourceTree = SOURCE_ROOT; };
+		7EE14CA3F4A1D2D8C1F822F0 /* AccessibilityReadCancellation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/AccessibilityReadCancellation.swift"; sourceTree = SOURCE_ROOT; };
+		A7206213018052125577813F /* WindowAccessibilityLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/WindowAccessibilityLookup.swift"; sourceTree = SOURCE_ROOT; };
+		F65001AA114E0EAE1D1E0A1F /* WindowPlacementAcknowledgement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowPlacement/WindowPlacementAcknowledgement.swift"; sourceTree = SOURCE_ROOT; };
+		26031C3370588EB8506DF6F1 /* WindowPlacementAnimationEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowPlacement/WindowPlacementAnimationEvidence.swift"; sourceTree = SOURCE_ROOT; };
+		0E63A032B2807CCA212E07B4 /* WindowPlacementWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowPlacement/WindowPlacementWorker.swift"; sourceTree = SOURCE_ROOT; };
+		97E614B0A93DC9344DC95B93 /* WindowSplitAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowPlacement/WindowSplitAxis.swift"; sourceTree = SOURCE_ROOT; };
+		E71917ED3BAD2995B11F1194 /* AccessibilityElement+WindowSizeLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/AccessibilityElement+WindowSizeLimits.swift"; sourceTree = SOURCE_ROOT; };
+		674230B8C17D360E005A7369 /* SnappedWindowFitOpportunity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/SnappedWindowFitOpportunity.swift"; sourceTree = SOURCE_ROOT; };
+		33A01E0CA69552D627E2F6AD /* SnappedWindowFitSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/SnappedWindowFitSession.swift"; sourceTree = SOURCE_ROOT; };
+		30BA8256C0D485494D4E55B6 /* WindowSizeConstraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeConstraints.swift"; sourceTree = SOURCE_ROOT; };
+		59CB20E6654EAE4AFB6907F4 /* WindowSizeHintSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeHintSnapshot.swift"; sourceTree = SOURCE_ROOT; };
+		4A447CD89A2A1D2C2309F35A /* WindowSizeLimitArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeLimitArchive.swift"; sourceTree = SOURCE_ROOT; };
+		FDF2BB4C6AF41D57F8FB26FB /* WindowSizeLimitIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeLimitIdentity.swift"; sourceTree = SOURCE_ROOT; };
+		8495AF7BE595AC40AEFD33AF /* WindowSizeLimitRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeLimitRecord.swift"; sourceTree = SOURCE_ROOT; };
+		387979800E2D3F2FF07B19A1 /* WindowSizeResizeObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeResizeObservation.swift"; sourceTree = SOURCE_ROOT; };
+		CD9B8E4D70BF26DCE1EF0EDB /* WindowSizeWarningIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeWarningIcon.swift"; sourceTree = SOURCE_ROOT; };
+		ACA1EF34E179566F2E6C4AF2 /* WindowSizeWarningObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/WindowSizeLimits/WindowSizeWarningObservation.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -815,11 +853,9 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
-				2FDEBCDABCAACB90F4DC58DF /* WindowSizeLimitArchive.swift */,
-				8FB041CC0D311D82AF624DBA /* WindowSizeConstraints.swift */,
-				6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */,
-				C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */,
-				61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */,
+				3A67A28A3FC5EF1D0F2A876C /* WindowSizeLimits */,
+				DC8D3DD4C0A3FD43F9061F09 /* WindowPlacement */,
+				62928965B9DA8FADA9903971 /* Accessibility */,
 				7B41354DF40078571CBC514E /* WindowSizeLimitsWindowController.swift */,
 				0C3C602733139D0C316B5F1B /* WindowAnimation */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
@@ -956,6 +992,51 @@
 				F1AC0DE000000000000000AB /* StackBadgeRowView.swift */,
 			);
 			path = StackBadge;
+			sourceTree = "<group>";
+		};
+		62928965B9DA8FADA9903971 /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				7EE14CA3F4A1D2D8C1F822F0 /* AccessibilityReadCancellation.swift */,
+				95251EB3B97C3F4796A022D8 /* AccessibilityReadBatch.swift */,
+				9F3342184D7BA1CC1A81BC6C /* AccessibilityElement+Activation.swift */,
+				A7206213018052125577813F /* WindowAccessibilityLookup.swift */,
+			);
+			name = Accessibility;
+			sourceTree = "<group>";
+		};
+		DC8D3DD4C0A3FD43F9061F09 /* WindowPlacement */ = {
+			isa = PBXGroup;
+			children = (
+				0E63A032B2807CCA212E07B4 /* WindowPlacementWorker.swift */,
+				26031C3370588EB8506DF6F1 /* WindowPlacementAnimationEvidence.swift */,
+				6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */,
+				97E614B0A93DC9344DC95B93 /* WindowSplitAxis.swift */,
+				C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */,
+				F65001AA114E0EAE1D1E0A1F /* WindowPlacementAcknowledgement.swift */,
+			);
+			name = WindowPlacement;
+			sourceTree = "<group>";
+		};
+		3A67A28A3FC5EF1D0F2A876C /* WindowSizeLimits */ = {
+			isa = PBXGroup;
+			children = (
+				2FDEBCDABCAACB90F4DC58DF /* WindowSizeEvidence.swift */,
+				30BA8256C0D485494D4E55B6 /* WindowSizeConstraints.swift */,
+				33A01E0CA69552D627E2F6AD /* SnappedWindowFitSession.swift */,
+				387979800E2D3F2FF07B19A1 /* WindowSizeResizeObservation.swift */,
+				4A447CD89A2A1D2C2309F35A /* WindowSizeLimitArchive.swift */,
+				59CB20E6654EAE4AFB6907F4 /* WindowSizeHintSnapshot.swift */,
+				61385DCF5BE2208BD23B9714 /* SnappedWindowFit.swift */,
+				674230B8C17D360E005A7369 /* SnappedWindowFitOpportunity.swift */,
+				8495AF7BE595AC40AEFD33AF /* WindowSizeLimitRecord.swift */,
+				8FB041CC0D311D82AF624DBA /* WindowSizeConstraintStore.swift */,
+				ACA1EF34E179566F2E6C4AF2 /* WindowSizeWarningObservation.swift */,
+				CD9B8E4D70BF26DCE1EF0EDB /* WindowSizeWarningIcon.swift */,
+				E71917ED3BAD2995B11F1194 /* AccessibilityElement+WindowSizeLimits.swift */,
+				FDF2BB4C6AF41D57F8FB26FB /* WindowSizeLimitIdentity.swift */,
+			);
+			name = WindowSizeLimits;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1112,8 +1193,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60BBFA4C470AA79917F12E5F /* WindowSizeLimitArchive.swift in Sources */,
-				63E626F619818124C8A5271B /* WindowSizeConstraints.swift in Sources */,
+				AE1678CB0E674BC6832CA4A0 /* WindowSizeWarningObservation.swift in Sources */,
+				F6A049742F01C008E0AF0BBA /* WindowSizeWarningIcon.swift in Sources */,
+				B6D70842FDF3C87C0934A228 /* WindowSizeResizeObservation.swift in Sources */,
+				25537ADB312B49639496195E /* WindowSizeLimitRecord.swift in Sources */,
+				BB9BB4F2FA3AFB64DE22EA36 /* WindowSizeLimitIdentity.swift in Sources */,
+				4DADF631CA02487752FFF34C /* WindowSizeLimitArchive.swift in Sources */,
+				3F527E1E10EB5403EC597CDB /* WindowSizeHintSnapshot.swift in Sources */,
+				F2A2818C0A89B47FC3D34976 /* WindowSizeConstraints.swift in Sources */,
+				3F7E154D72F9A7A95B6CDC4A /* SnappedWindowFitSession.swift in Sources */,
+				C2FE5F0D7189698DBB40F16E /* SnappedWindowFitOpportunity.swift in Sources */,
+				2B11387E37E360A734075A03 /* AccessibilityElement+WindowSizeLimits.swift in Sources */,
+				4A0FED16EF903FF546DBD087 /* WindowSplitAxis.swift in Sources */,
+				E049F49C2514CF782C5EB573 /* WindowPlacementWorker.swift in Sources */,
+				9A6DF4B06867E21E393EB7C3 /* WindowPlacementAnimationEvidence.swift in Sources */,
+				766FAEC6E0955EC3F0AA0C24 /* WindowPlacementAcknowledgement.swift in Sources */,
+				F2635A97539409F96784ADA1 /* WindowAccessibilityLookup.swift in Sources */,
+				1798CB8505D5C08D8CCAE9B3 /* AccessibilityReadCancellation.swift in Sources */,
+				000278054C1670395A25C8A2 /* AccessibilityReadBatch.swift in Sources */,
+				0176B53F6ADC72812404B860 /* AccessibilityElement+Activation.swift in Sources */,
+				60BBFA4C470AA79917F12E5F /* WindowSizeEvidence.swift in Sources */,
+				63E626F619818124C8A5271B /* WindowSizeConstraintStore.swift in Sources */,
 				95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */,
 				8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */,
 				1362114CF83D3D0DEA33D2E1 /* SnappedWindowFit.swift in Sources */,
