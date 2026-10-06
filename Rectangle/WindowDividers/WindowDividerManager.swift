@@ -214,9 +214,11 @@ final class WindowDividerManager {
         observationRunning = true
         let generation = observationGeneration
         let prepared = pair.prepared
+        let ownedPIDs: Set<pid_t> = [pair.left.app.processIdentifier, pair.right.app.processIdentifier, getpid()]
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let infos = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
             let preparation = prepared ?? WindowDividerPreparedPair(left: left, right: right)
+            let passive = WindowDividerPreparedPair.passiveCaptureOverlayIDs(in: infos, at: point, ownedPIDs: ownedPIDs)
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 self.observationRunning = false
@@ -224,7 +226,7 @@ final class WindowDividerManager {
                       self.pairs[self.screenID(pair.left.screen)] === pair,
                       pair.hoverFrame.contains(NSEvent.mouseLocation.screenFlipped),
                       !LayoutHelperManager.shared.isPresenting else { return }
-                guard let preparation, self.visible(pair, in: infos),
+                guard let preparation, self.visible(pair, in: infos, ignoring: passive),
                       let l = infos.first(where: { $0.id == pair.left.id })?.frame,
                       let r = infos.first(where: { $0.id == pair.right.id })?.frame,
                       let original = WindowDividerGeometry(left: pair.left.frame, right: pair.right.frame, axis: pair.axis),
@@ -243,13 +245,13 @@ final class WindowDividerManager {
         }
     }
 
-    private func visible(_ pair: Pair, in infos: [WindowInfo]) -> Bool {
+    private func visible(_ pair: Pair, in infos: [WindowInfo], ignoring: Set<CGWindowID> = []) -> Bool {
         guard !pair.left.app.isTerminated, !pair.right.app.isTerminated,
               infos.contains(where: { $0.id == pair.left.id && $0.pid == pair.left.app.processIdentifier }),
               infos.contains(where: { $0.id == pair.right.id && $0.pid == pair.right.app.processIdentifier }) else { return false }
         return WindowDividerGeometry.unobscured(left: pair.left.id, right: pair.right.id,
                                                     in: infos, near: pair.hoverFrame,
-                                                    ignoring: Set([panel, overlay].compactMap { CGWindowID(exactly: $0.windowNumber) }))
+                                                    ignoring: ignoring.union(Set([panel, overlay].compactMap { CGWindowID(exactly: $0.windowNumber) })))
     }
 
     private func begin(pointerX: CGFloat? = nil) -> Bool {

@@ -10096,3 +10096,51 @@ final class BlurDefaultSelectionTests: XCTestCase {
         XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
     }
 }
+
+final class WindowDividerSystemOverlayTests: XCTestCase {
+    private let left = WindowInfo(id: 101, level: 0, frame: CGRect(x: 0, y: 0, width: 400, height: 300), pid: 11, processName: "Left")
+    private let right = WindowInfo(id: 102, level: 0, frame: CGRect(x: 400, y: 0, width: 400, height: 300), pid: 12, processName: "Right")
+    private let point = CGPoint(x: 400, y: 150)
+    private let region = CGRect(x: 376, y: 96, width: 48, height: 108)
+
+    func testSystemCursorDoesNotHideTheDividerButSystemPopupStillDoes() {
+        let cursor = WindowInfo(id: 2, level: CGWindowLevelForKey(.cursorWindow),
+            frame: CGRect(x: 386, y: 136, width: 28, height: 28), pid: 1, processName: "Window Server")
+        XCTAssertTrue(WindowDividerGeometry.unobscured(left: left.id, right: right.id,
+            in: [cursor, left, right], near: region))
+        let popup = WindowInfo(id: 3, level: 24, frame: region, pid: 1, processName: "Window Server")
+        XCTAssertFalse(WindowDividerGeometry.unobscured(left: left.id, right: right.id,
+            in: [popup, left, right], near: region))
+    }
+
+    func testOrdinaryAppAtCursorLevelStillBlocksTheDivider() {
+        let popup = WindowInfo(id: 3, level: CGWindowLevelForKey(.cursorWindow),
+            frame: region, pid: 20, processName: "Other app")
+        XCTAssertFalse(WindowDividerGeometry.unobscured(left: left.id, right: right.id,
+            in: [popup, left, right], near: region))
+    }
+
+    func testCaptureOverlayIsPassiveOnlyWhenInputReachesThePair() {
+        let overlay = WindowInfo(id: 3, level: 24, frame: left.frame.union(right.frame), pid: 20, processName: "Screenshot")
+        let infos = [overlay, left, right]
+        let passive = WindowDividerGeometry.passiveCaptureOverlayIDs(in: infos, at: point,
+            hitPID: left.pid, ownedPIDs: [left.pid, right.pid], capturePIDs: [overlay.pid])
+        XCTAssertTrue(WindowDividerGeometry.unobscured(left: left.id, right: right.id,
+            in: infos, near: region, ignoring: passive))
+        for hitPID in [Optional(overlay.pid), nil] {
+            let blocking = WindowDividerGeometry.passiveCaptureOverlayIDs(in: infos, at: point,
+                hitPID: hitPID, ownedPIDs: [left.pid, right.pid], capturePIDs: [overlay.pid])
+            XCTAssertTrue(blocking.isEmpty)
+            XCTAssertFalse(WindowDividerGeometry.unobscured(left: left.id, right: right.id,
+                in: infos, near: region, ignoring: blocking))
+        }
+    }
+
+    func testUnknownOrDistantCaptureWindowIsNotIgnored() {
+        let overlay = WindowInfo(id: 3, level: 24, frame: region, pid: 20, processName: "Screenshot")
+        XCTAssertTrue(WindowDividerGeometry.passiveCaptureOverlayIDs(in: [overlay], at: point,
+            hitPID: left.pid, ownedPIDs: [left.pid], capturePIDs: []).isEmpty)
+        XCTAssertTrue(WindowDividerGeometry.passiveCaptureOverlayIDs(in: [overlay], at: .zero,
+            hitPID: left.pid, ownedPIDs: [left.pid], capturePIDs: [overlay.pid]).isEmpty)
+    }
+}

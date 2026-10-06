@@ -43,6 +43,23 @@ struct WindowDividerPreparedPair {
         return Window(input: input, element: element, minimum: minimum)
     }
 
+    /// Called on the placement/observation worker, never from pointer tracking.
+    static func passiveCaptureOverlayIDs(in infos: [WindowInfo], at point: CGPoint?, ownedPIDs: Set<pid_t>) -> Set<CGWindowID> {
+        guard let point else { return [] }
+        let capturePIDs = Set(infos.filter { $0.isOnScreen && $0.frame.contains(point) }.compactMap { info in
+            NSRunningApplication(processIdentifier: info.pid)?.bundleIdentifier == "com.apple.screencaptureui" ? info.pid : nil
+        })
+        guard !capturePIDs.isEmpty else { return [] }
+        let system = AXUIElementCreateSystemWide()
+        AXUIElementSetMessagingTimeout(system, 0.08)
+        var hit: AXUIElement?
+        var pid: pid_t = 0
+        guard AXUIElementCopyElementAtPosition(system, Float(point.x), Float(point.y), &hit) == .success,
+              let hit, AXUIElementGetPid(hit, &pid) == .success else { return [] }
+        return WindowDividerGeometry.passiveCaptureOverlayIDs(in: infos, at: point, hitPID: pid,
+            ownedPIDs: ownedPIDs, capturePIDs: capturePIDs)
+    }
+
     func place(left originalLeft: CGRect, right originalRight: CGRect, axis: WindowSplitAxis, divider: CGFloat,
                minimumLeft: CGFloat, minimumRight: CGFloat, remembered: (left: CGFloat?, right: CGFloat?)?,
                ignoring: Set<CGWindowID>, hoverFrame: CGRect, policy: EnhancedUI, assistive: Bool,
@@ -50,8 +67,10 @@ struct WindowDividerPreparedPair {
         let valid = { !cancellation.isCancelled && self.left.input.isCurrent && self.right.input.isCurrent }
         guard valid() else { return nil }
         let infos = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
+        let passive = Self.passiveCaptureOverlayIDs(in: infos, at: CGEvent(source: nil)?.location,
+            ownedPIDs: [left.input.pid, right.input.pid, getpid()])
         guard WindowDividerGeometry.unobscured(left: left.input.id, right: right.input.id,
-            in: infos, near: hoverFrame, ignoring: ignoring),
+            in: infos, near: hoverFrame, ignoring: ignoring.union(passive)),
               LayoutHelperLayout.matches(infos.first { $0.id == left.input.id && $0.pid == left.input.pid }?.frame ?? .null, originalLeft),
               LayoutHelperLayout.matches(infos.first { $0.id == right.input.id && $0.pid == right.input.pid }?.frame ?? .null, originalRight), valid() else { return nil }
         let l = AccessibilityElement(left.element, messagingTimeout: 0.05, windowID: left.input.id)

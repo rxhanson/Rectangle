@@ -62,6 +62,16 @@ struct WindowDividerGeometry {
         return limitedByMemory ? remembered : divider
     }
 
+    static func passiveCaptureOverlayIDs(in infos: [WindowInfo], at point: CGPoint,
+                                         hitPID: pid_t?, ownedPIDs: Set<pid_t>, capturePIDs: Set<pid_t>) -> Set<CGWindowID> {
+        // A Screenshot window can cover the display while passing input through.
+        // Keep capture selection/toolbars blocking when they actually receive input.
+        guard let hitPID, ownedPIDs.contains(hitPID) else { return [] }
+        return Set(infos.filter {
+            capturePIDs.contains($0.pid) && $0.isOnScreen && $0.alpha > 0 && $0.frame.contains(point)
+        }.map(\.id))
+    }
+
     static func unobscured(left: CGWindowID, right: CGWindowID, in infos: [WindowInfo], near region: CGRect? = nil, ignoring: Set<CGWindowID> = []) -> Bool {
         guard let li = infos.firstIndex(where: { $0.id == left }),
               let ri = infos.firstIndex(where: { $0.id == right }) else { return false }
@@ -71,6 +81,9 @@ struct WindowDividerGeometry {
         let rightRegion = region.map { infos[ri].frame.intersection($0) } ?? infos[ri].frame.insetBy(dx: 2, dy: 2)
         for (index, info) in infos.enumerated() where info.id != left && info.id != right
             && !ignoring.contains(info.id) && info.level >= 0 && info.isOnScreen && info.alpha > 0 {
+            // WindowServer exposes the cursor and sharing indicators as windows.
+            // These decorative surfaces never obscure an interactive divider.
+            if info.processName == "Window Server", info.level == CGWindowLevelForKey(.cursorWindow) { continue }
             if index < li && info.frame.intersects(leftRegion) { return false }
             if index < ri && info.frame.intersects(rightRegion) { return false }
         }
