@@ -118,7 +118,7 @@ class AccessibilityElement {
     
     private var position: CGPoint? {
         get {
-            wrappedElement.getWrappedValue(.position)
+            wrappedElement.getWrappedValue(.position, type: .cgPoint)
         }
         set {
             guard let newValue = newValue else { return }
@@ -137,7 +137,7 @@ class AccessibilityElement {
     
     var size: CGSize? {
         get {
-            wrappedElement.getWrappedValue(.size)
+            wrappedElement.getWrappedValue(.size, type: .cgSize)
         }
         set {
             guard let newValue = newValue else { return }
@@ -147,8 +147,8 @@ class AccessibilityElement {
     }
 
     var minimumSize: CGSize? {
-        wrappedElement.getWrappedValue(.minSize)
-            ?? wrappedElement.getWrappedValue(.minimumSize)
+        wrappedElement.getWrappedValue(.minSize, type: .cgSize)
+        ?? wrappedElement.getWrappedValue(.minimumSize, type: .cgSize)
     }
     
     var frame: CGRect {
@@ -384,7 +384,10 @@ class AccessibilityElement {
             let windowElement,
             case let windowFrame = windowElement.frame,
             windowFrame != .null,
-            let closeButtonFrame = windowElement.getChildElement(.closeButton)?.frame,
+            // Window capture replaces the visible traffic-light children with a
+            // sharing indicator, but AXCloseButton still provides their geometry.
+            let closeButtonFrame = (windowElement.getChildElement(.closeButton)
+                ?? windowElement.getElementValue(.closeButton))?.frame,
             closeButtonFrame != .null
         else {
             return nil
