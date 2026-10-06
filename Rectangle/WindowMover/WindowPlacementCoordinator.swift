@@ -80,7 +80,7 @@ final class WindowPlacementCoordinator {
                 WindowPlacementAnimationEvidence(frame: $0, original: original, target: target,
                     placement: placement, completedAt: ProcessInfo.processInfo.systemUptime)
             }
-            let preferred = window.animationObservationElement
+            let preferred = window.axElement
             WindowAnimator.shared.performPlacementWork {
                 let worker = WindowPlacementWorker(pid: pid, id: id, launch: launch,
                     preferred: preferred, cancellation: cancellation)
@@ -190,7 +190,7 @@ private final class WindowPlacementWorker {
             switch state.observe(frame, at: now) {
             case .complete(let frame): return frame
             case .position(let point):
-                guard let result = cancellation.write({ window.writeAnimationPosition(point) }) else { return nil }
+                guard let result = cancellation.write({ window.writePosition(point) }) else { return nil }
                 if result == .cannotComplete {
                     WindowAnimationDiagnostics.event("placement-ack-timeout", fields: ["windowID": id, "operation": "position-write"])
                     timedOut = true
@@ -199,7 +199,7 @@ private final class WindowPlacementWorker {
                 // acknowledge it before the existing bounded retry can resend.
                 guard result == .success || result == .cannotComplete else { return nil }
             case .size(let size):
-                guard let result = cancellation.write({ window.writeAnimationSize(size) }) else { return nil }
+                guard let result = cancellation.write({ window.writeSize(size) }) else { return nil }
                 if result == .cannotComplete {
                     WindowAnimationDiagnostics.event("placement-ack-timeout", fields: ["windowID": id, "operation": "size-write"])
                     timedOut = true

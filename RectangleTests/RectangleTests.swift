@@ -147,6 +147,11 @@ class BandTilingTests: XCTestCase {
         override var isHidden: Bool? { false }
         override var isSystemDialog: Bool? { false }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             setFrameCalls += 1
             let originalOrigin = acceptedFrame.origin
@@ -4997,12 +5002,17 @@ final class DragRestorePlacementTests: XCTestCase {
 }
 
 final class DragRestoreReleaseTests: XCTestCase {
-    private final class WindowElement: AccessibilityElement {
+    private final class WindowElement: WindowAnimationElement {
         var currentFrame = CGRect(x: 120, y: 120, width: 800, height: 600)
         var writes: [CGRect] = []
         override var frame: CGRect { currentFrame }
         override func beginAnimatedAdjustment() -> () -> Void { {} }
         override func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool { true }
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame.size = frame.size
             if adjustPosition { currentFrame.origin = frame.origin }
@@ -5050,10 +5060,11 @@ final class DragRestoreReleaseTests: XCTestCase {
     }
 
     func testDirectAnimationWithoutServerIdentityCompletesOnceAndMouseUpDoesNotRepeatIt() throws {
+        let animator = DirectWindowAnimator(enabled: { true }, automaticallyAdvances: false, environmentIsSafe: { true })
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
-            WindowAnimator.shared.finish()
+            animator.finish()
             Defaults.experimentalWindowAnimations.enabled = saved
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
@@ -5061,19 +5072,19 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(window.windowId, "Direct animation does not require a WindowServer identity")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
         var completedFrames: [CGRect] = []
-        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
+        animator.animate(window, to: destination, duration: 0.18, resizeOnly: false, placement: nil, offset: { .zero }) { completedFrames.append($0) }
 
         XCTAssertTrue(completedFrames.isEmpty)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
-        WindowAnimator.shared.finish()
+        XCTAssertEqual(animator.destination(for: window), destination)
+        animator.finish()
         XCTAssertEqual(completedFrames, [destination])
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
 
         let manager = try release(dragAlreadyDetected: true)
 
         XCTAssertEqual(completedFrames, [destination], "A later native release must not repeat the completed animation")
         XCTAssertEqual(manager.restores, 0)
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
     }
 }
 
@@ -5101,6 +5112,8 @@ class SnappingManagerSessionTests: XCTestCase {
             object: nil
         )
 
+        let refreshed = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !sm.isFullScreen }, object: nil)
+        XCTAssertEqual(XCTWaiter.wait(for: [refreshed], timeout: 3), .completed)
         XCTAssertFalse(sm.isFullScreen,
             "receiveSessionNote should call checkFullScreen, re-evaluating isFullScreen")
     }
@@ -6585,6 +6598,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
 
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = frame
             if frame.size == targetSize {
@@ -6614,6 +6632,11 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { resizable }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = acceptedFrame(frame)
@@ -6751,6 +6774,11 @@ final class CrossDisplayResizeTests: XCTestCase {
         override var minimumSize: CGSize? { nil }
         override func getWindowId() -> CGWindowID? { nil }
         override func isResizable() -> Bool { true }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: WindowAnimationPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
 
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame = CGRect(origin: adjustPosition ? frame.origin : currentFrame.origin, size: frame.size)
@@ -7353,6 +7381,525 @@ private final class RepeatedMaximizeTestScreen: NSScreen {
     }
 }
 
+
+final class WindowAnimationSettlementRoundingTests: XCTestCase {
+    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
+
+    private func target(gap: Float = 7) -> CGRect {
+        GapCalculation.applyGaps(CGRect(x: 500, y: 0, width: 500, height: 800),
+                                 sharedEdges: .left, gapSize: gap)
+    }
+
+    private func placement(gap: CGFloat = 7) -> WindowAnimationPlacement {
+        WindowAnimationPlacement(screenFrame: screen, sharedEdges: .right,
+                                 constrainToScreen: true, gap: gap)
+    }
+
+    func testOddGapCompletesAfterOneRoundedPositionWrite() {
+        let target = target()
+        let actual = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: actual, server: actual, destination: target,
+                                       placement: placement(), origin: actual, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected an exact final position write") }
+        XCTAssertEqual(requested.origin, target.origin)
+        let second = settlement.observe(ax: actual, server: actual, destination: target,
+                                        placement: placement(), origin: actual, at: 2.0 / 60)
+        guard case .complete(let achieved) = second else { return XCTFail("Rounded placement must not enter a retry loop") }
+        XCTAssertEqual(achieved, actual)
+    }
+
+    func testFractionalGapAcceptsHalfPointQuantizationAfterExactWrite() {
+        let target = target(gap: 7.5)
+        let actual = CGRect(x: 504, y: 7.5, width: 489, height: 785)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        _ = settlement.observe(ax: actual, server: actual, destination: target,
+                               placement: placement(gap: 7.5), origin: actual, at: 1.0 / 60)
+        let result = settlement.observe(ax: actual, server: actual, destination: target,
+                                        placement: placement(gap: 7.5), origin: actual, at: 2.0 / 60)
+        guard case .complete(let achieved) = result else { return XCTFail("Expected a verified rounded placement") }
+        XCTAssertEqual(achieved, actual)
+    }
+
+    func testExactFractionalPositionIsUsedWhenAppAcceptsIt() {
+        let target = target()
+        let before = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: before, server: before, destination: target,
+                                       placement: placement(), origin: before, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected exact alignment") }
+        let result = settlement.observe(ax: requested, server: requested, destination: target,
+                                        placement: placement(), origin: before, at: 2.0 / 60)
+        guard case .complete(let achieved) = result else { return XCTFail("Expected the accepted exact position") }
+        XCTAssertEqual(achieved.origin, target.origin)
+    }
+
+    func testDisagreeingServerGeometryDoesNotEstablishRounding() {
+        let target = target()
+        let actual = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: actual, server: actual, destination: target,
+                                       placement: placement(), origin: actual, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected exact alignment") }
+        let result = settlement.observe(ax: actual, server: requested, destination: target,
+                                        placement: placement(), origin: actual, at: 2.0 / 60)
+        if case .complete = result { XCTFail("Different AX and server positions can still be in flight") }
+    }
+
+    func testIntegerTargetStillRequiresExactPosition() {
+        let target = CGRect(x: 503, y: 7, width: 490, height: 786)
+        let actual = target.offsetBy(dx: 1, dy: 0)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        for step in 1...3 {
+            let result = settlement.observe(ax: actual, server: actual, destination: target,
+                                            placement: placement(), origin: actual, at: Double(step) / 60)
+            if case .complete = result { XCTFail("A full-point residual must still be corrected") }
+        }
+    }
+}
+
+final class WindowAnimationRequestCancellationTests: XCTestCase {
+    private final class QueuedWindow: AccessibilityElement {
+        private(set) var minimumSizeReads = 0
+
+        init() { super.init(AXUIElementCreateApplication(getpid()), windowID: .max) }
+        override var pid: pid_t? { getpid() }
+        override var bundleIdentifier: String? { nil }
+        override var minimumSize: CGSize? {
+            minimumSizeReads += 1
+            return nil
+        }
+    }
+
+    func testTimedOutLookupCancelsWithoutMainThreadPlacementFallback() throws {
+        try assertLookupCompletion(.timedOut, cancels: true)
+    }
+
+    func testObsoleteLookupCancelsWithoutMainThreadPlacementFallback() throws {
+        try assertLookupCompletion(.cancelled, cancels: true)
+    }
+
+    func testUnavailableLookupPreservesOrdinaryPlacementFallback() throws {
+        try assertLookupCompletion(.unavailable, cancels: false)
+    }
+
+    private func assertLookupCompletion(_ result: WindowAccessibilityLookup.Result, cancels: Bool) throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+        let finished = expectation(description: "Lookup delivered its terminal callback")
+        let executor = WindowAnimationExecutor(lookupWindow: { _, _, _, _, _ in
+            XCTAssertFalse(Thread.isMainThread)
+            return result
+        })
+        let window = QueuedWindow()
+        var cancellations = 0
+        var completions = 0
+        executor.animate(window, to: CGRect(x: 100, y: 100, width: 500, height: 400),
+                         duration: 0.18, resizeOnly: false, releasedSnap: false, placement: nil,
+                         profile: .standard, offset: { .zero }, curve: WindowAnimationCurve.value,
+                         cancellation: {
+                             XCTAssertTrue(Thread.isMainThread)
+                             cancellations += 1
+                             finished.fulfill()
+                         }) { frame in
+            XCTAssertTrue(Thread.isMainThread)
+            XCTAssertTrue(frame.isNull)
+            completions += 1
+            finished.fulfill()
+        }
+        wait(for: [finished], timeout: 1)
+        XCTAssertEqual(cancellations, cancels ? 1 : 0)
+        XCTAssertEqual(completions, cancels ? 0 : 1)
+        XCTAssertNil(executor.destination(for: window))
+        XCTAssertEqual(window.minimumSizeReads, 0)
+    }
+
+    func testQueuedAnimationDoesNotReadMinimumSizeBeforeWorkerCanStart() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+
+        let executor = WindowAnimationExecutor()
+        let workerStarted = expectation(description: "Worker is occupied")
+        let workerDrained = expectation(description: "Cancelled preparation drained")
+        let release = DispatchSemaphore(value: 0)
+        executor.performPlacementWork {
+            workerStarted.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+        }
+        wait(for: [workerStarted], timeout: 1)
+        let window = QueuedWindow()
+        let destination = CGRect(x: 100, y: 100, width: 500, height: 400)
+        var cancellations = 0
+        var completions = 0
+        executor.animate(window, to: destination, duration: 0.18, resizeOnly: false, releasedSnap: false,
+                         placement: nil, profile: .standard, offset: { .zero }, curve: WindowAnimationCurve.value,
+                         cancellation: { cancellations += 1 }) { _ in completions += 1 }
+        XCTAssertEqual(executor.destination(for: window), destination)
+        XCTAssertEqual(window.minimumSizeReads, 0, "Optional AX metadata must never be queried through the main-thread handle")
+        executor.cancel()
+        executor.performPlacementWork { workerDrained.fulfill() }
+        release.signal()
+        wait(for: [workerDrained], timeout: 1)
+        XCTAssertEqual(cancellations, 1)
+        XCTAssertEqual(completions, 0)
+        XCTAssertEqual(window.minimumSizeReads, 0)
+    }
+
+    func testCancellationRunsCleanupOnceAfterInvalidatingWrites() {
+        var cancellations = 0
+        var request: WindowAnimationRequest!
+        request = WindowAnimationRequest(cancellation: {
+            XCTAssertFalse(request.isCurrent)
+            cancellations += 1
+        })
+        XCTAssertTrue(request.isCurrent)
+        request.cancel()
+        request.cancel()
+        request.complete()
+        XCTAssertEqual(cancellations, 1)
+    }
+
+    func testCompletedRequestDoesNotRunCancellationCleanup() {
+        var cancellations = 0
+        let request = WindowAnimationRequest(cancellation: { cancellations += 1 })
+        request.complete()
+        request.cancel()
+        XCTAssertFalse(request.isCurrent)
+        XCTAssertEqual(cancellations, 0)
+    }
+
+    func testCancelledPlacementDoesNotCallOrdinaryCompletion() {
+        var completions = 0
+        var dismissals = 0
+        let parameters = ExecutionParameters(.rightHalf, source: .dragToSnap,
+            completion: { completions += 1 }, cancellation: { dismissals += 1 })
+        let request = WindowAnimationRequest(cancellation: parameters.cancellation)
+        request.cancel()
+        XCTAssertEqual(dismissals, 1)
+        XCTAssertEqual(completions, 0)
+    }
+
+    func testSupersededPendingWriteRunsOnlyCancellationCleanup() {
+        let executor = WindowAnimationExecutor()
+        let workerStarted = expectation(description: "Worker is occupied")
+        let cancelled = expectation(description: "Pending placement was cancelled")
+        let release = DispatchSemaphore(value: 0)
+        executor.performPlacementWork {
+            workerStarted.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+        }
+        wait(for: [workerStarted], timeout: 1)
+        var completions = 0
+        executor.afterPendingWrites(cancellation: { cancelled.fulfill() }) { completions += 1 }
+        executor.cancel()
+        release.signal()
+        wait(for: [cancelled], timeout: 1)
+        XCTAssertEqual(completions, 0)
+    }
+}
+
+@MainActor
+final class FootprintGeometrySynchronizationTests: XCTestCase {
+    func testColdAndRepeatedPreviewKeepsMaterialInsideSurface() async throws {
+        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
+        let blur = Defaults.footprintBlur.toCodable()
+        let alpha = Defaults.footprintAlpha.toCodable()
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintBlur.load(from: blur)
+            Defaults.footprintAlpha.load(from: alpha)
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.footprintAlpha.value = 0.3
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let target = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        for blurred in [true, false] {
+            Defaults.footprintBlur.enabled = blurred
+            let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+            defer { window.close() }
+            let surface = try XCTUnwrap(window.contentView?.subviews.last)
+            let material = try XCTUnwrap(surface.subviews.first)
+            for _ in 0..<2 {
+                window.showPreview(in: target, from: CGPoint(x: target.minX + 4, y: target.midY), duration: 0.24)
+                let until = CACurrentMediaTime() + 0.32
+                while CACurrentMediaTime() < until {
+                    try await Task.sleep(nanoseconds: 8_000_000)
+                    let bounds = surface.layer?.presentation()?.bounds ?? surface.bounds
+                    let inner = material.layer?.presentation()?.frame ?? material.frame
+                    XCTAssertEqual(inner.width, bounds.width, accuracy: 1)
+                    XCTAssertEqual(inner.height, bounds.height, accuracy: 1)
+                }
+                let settlementDeadline = CACurrentMediaTime() + 2
+                while WindowAnimationCaptureGate.shared.isPaused && CACurrentMediaTime() < settlementDeadline {
+                    try await Task.sleep(nanoseconds: 8_000_000)
+                }
+                XCTAssertEqual(surface.frame.width, target.width, accuracy: 1)
+                XCTAssertEqual(surface.frame.height, target.height, accuracy: 1)
+                XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+                window.orderOut(nil)
+                try await Task.sleep(nanoseconds: 30_000_000)
+            }
+        }
+    }
+
+    func testRetargetAndCloseDoNotLeavePreviewGeometryRunning() async throws {
+        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let left = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        window.movePreview(to: left.offsetBy(dx: left.width, dy: 0), duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        window.close()
+        let surface = try XCTUnwrap(window.contentView?.subviews.last)
+        let closedFrame = surface.frame
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(surface.frame, closedFrame)
+        XCTAssertFalse(window.realIsVisible)
+        XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+    }
+}
+
+
+class VerticalEighthActionTests: XCTestCase {
+
+    private let actions: [WindowAction] = [
+        .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+        .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth
+    ]
+
+    func testVerticalEighthActionsUseAvailableStableIdentifiers() {
+        XCTAssertEqual([
+            WindowAction.tileRows.rawValue,
+            WindowAction.tileColumns.rawValue,
+            WindowAction.cycleStackedWindows.rawValue,
+            WindowAction.cycleStackedWindowsBackward.rawValue
+        ], [129, 130, 131, 132])
+        XCTAssertEqual(actions.map(\.rawValue), [133, 134, 135, 136, 137, 138, 139, 140])
+        XCTAssertEqual(actions.map(\.name), [
+            "firstVerticalEighth", "secondVerticalEighth", "thirdVerticalEighth", "fourthVerticalEighth",
+            "fifthVerticalEighth", "sixthVerticalEighth", "seventhVerticalEighth", "lastVerticalEighth"
+        ])
+    }
+
+    func testVerticalEighthActionsTileVisibleFrameIntoEightFullHeightColumns() {
+        let visibleFrame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = (0..<8).map { CGRect(x: CGFloat($0 * 480), y: 40, width: 480, height: 1000) }
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalEighthActionsUseBoundaryRoundingAcrossNonDivisibleLandscapeWidth() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected = [
+            CGRect(x: 20, y: 40, width: 125, height: 800),
+            CGRect(x: 145, y: 40, width: 125, height: 800),
+            CGRect(x: 270, y: 40, width: 126, height: 800),
+            CGRect(x: 396, y: 40, width: 125, height: 800),
+            CGRect(x: 521, y: 40, width: 125, height: 800),
+            CGRect(x: 646, y: 40, width: 126, height: 800),
+            CGRect(x: 772, y: 40, width: 125, height: 800),
+            CGRect(x: 897, y: 40, width: 126, height: 800)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalEighthActionsRotateIntoTopToBottomRowsOnPortraitDisplays() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected = [
+            CGRect(x: 20, y: 918, width: 800, height: 125),
+            CGRect(x: 20, y: 793, width: 800, height: 125),
+            CGRect(x: 20, y: 667, width: 800, height: 126),
+            CGRect(x: 20, y: 542, width: 800, height: 125),
+            CGRect(x: 20, y: 417, width: 800, height: 125),
+            CGRect(x: 20, y: 291, width: 800, height: 126),
+            CGRect(x: 20, y: 166, width: 800, height: 125),
+            CGRect(x: 20, y: 40, width: 800, height: 126)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testFirstVerticalEighthCyclesForwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let results = repeatedResults(for: .firstVerticalEighth, count: 9, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [20, 120, 220, 320, 420, 520, 620, 720, 20])
+        }
+    }
+
+    func testLastVerticalEighthCyclesBackwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let results = repeatedResults(for: .lastVerticalEighth, count: 9, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [720, 620, 520, 420, 320, 220, 120, 20, 720])
+        }
+    }
+
+    func testEndpointCyclingResetsForUnrelatedOrOppositeLastAction() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let unrelated = RectangleAction(action: .leftHalf, subAction: .leftThird, rect: .zero)
+            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 20)
+            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 720)
+
+            let lastResult = calculate(.lastVerticalEighth, visibleFrame: visibleFrame)
+            let lastEndpoint = RectangleAction(action: .lastVerticalEighth, subAction: lastResult.subAction, rect: lastResult.rect)
+            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: lastEndpoint).rect.minX, 20)
+
+            let firstResult = calculate(.firstVerticalEighth, visibleFrame: visibleFrame)
+            let firstEndpoint = RectangleAction(action: .firstVerticalEighth, subAction: firstResult.subAction, rect: firstResult.rect)
+            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: firstEndpoint).rect.minX, 720)
+        }
+    }
+
+    func testEndpointCyclingIsDisabledWhenSubsequentExecutionModeIsNone() {
+        withSubsequentExecutionMode(.none) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            XCTAssertEqual(repeatedResults(for: .firstVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [20, 20, 20])
+            XCTAssertEqual(repeatedResults(for: .lastVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [720, 720, 720])
+        }
+    }
+
+    func testMiddleVerticalEighthActionsStayAtTheirOwnOrdinalWhenRepeated() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            for (index, action) in actions.dropFirst().dropLast().enumerated() {
+                let expectedX = CGFloat(120 + index * 100)
+                let results = repeatedResults(for: action, count: 3, visibleFrame: visibleFrame)
+                XCTAssertEqual(results.map { $0.rect.minX }, [expectedX, expectedX, expectedX])
+            }
+        }
+    }
+
+    func testVerticalEighthResultingSubActionsProvideLandscapeGapEdges() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected: [Edge] = [
+            .right,
+            [.left, .right], [.left, .right], [.left, .right],
+            [.left, .right], [.left, .right], [.left, .right],
+            .left
+        ]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
+        }
+    }
+
+    func testVerticalEighthResultingSubActionsProvidePortraitGapEdges() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected: [Edge] = [
+            .bottom,
+            [.top, .bottom], [.top, .bottom], [.top, .bottom],
+            [.top, .bottom], [.top, .bottom], [.top, .bottom],
+            .top
+        ]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
+        }
+    }
+
+    func testVerticalEighthActionsRemainTerminalConfigurableThroughActiveActionNames() {
+        let suiteName = "VerticalEighthActionTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+        let shortcut = MASShortcut(keyCode: 18, modifierFlags: [.control, .option, .shift])
+        let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        userDefaults.set(transformer.reverseTransformedValue(shortcut), forKey: WindowAction.firstVerticalEighth.name)
+
+        XCTAssertTrue(WindowAction.active.contains(.firstVerticalEighth))
+        let loaded = ShortcutCycle.shortcutsByAction(userDefaults: userDefaults)[.firstVerticalEighth]
+        XCTAssertEqual(loaded?.keyCode, shortcut.keyCode)
+        XCTAssertEqual(loaded?.modifierFlags, shortcut.modifierFlags)
+    }
+
+    func testVerticalEighthActionsAreHiddenFromNormalUI() throws {
+        XCTAssertTrue(actions.allSatisfy(\.excludedFromMenu))
+        XCTAssertTrue(actions.allSatisfy { !$0.isDragSnappable })
+
+        let controller = ShortcutsViewController()
+        _ = controller.view
+        let outlineView = try XCTUnwrap(findOutlineView(in: controller.view))
+        let rootCount = controller.outlineView(outlineView, numberOfChildrenOfItem: nil)
+
+        var found: [WindowAction] = []
+        func collect(from item: Any?) {
+            let count = controller.outlineView(outlineView, numberOfChildrenOfItem: item)
+            for index in 0..<count {
+                let child = controller.outlineView(outlineView, child: index, ofItem: item)
+                if let shortcut = child as? ShortcutItem, actions.contains(shortcut.action) {
+                    found.append(shortcut.action)
+                }
+                collect(from: child)
+            }
+        }
+
+        for index in 0..<rootCount {
+            collect(from: controller.outlineView(outlineView, child: index, ofItem: nil))
+        }
+
+        XCTAssertTrue(found.isEmpty)
+    }
+
+    private func calculate(_ action: WindowAction,
+                           visibleFrame: CGRect,
+                           lastAction: RectangleAction? = nil) -> RectResult {
+        WindowCalculationFactory.calculationsByAction[action]!.calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                      visibleFrameOfScreen: visibleFrame,
+                                      action: action,
+                                      lastAction: lastAction)
+        )
+    }
+
+    private func repeatedResults(for action: WindowAction,
+                                 count: Int,
+                                 visibleFrame: CGRect) -> [RectResult] {
+        var lastAction: RectangleAction?
+        return (0..<count).map { _ in
+            let result = calculate(action, visibleFrame: visibleFrame, lastAction: lastAction)
+            lastAction = RectangleAction(action: action, subAction: result.subAction, rect: result.rect)
+            return result
+        }
+    }
+
+    private func withSubsequentExecutionMode(_ mode: SubsequentExecutionMode, _ body: () -> Void) {
+        let saved = Defaults.subsequentExecutionMode.value
+        defer { Defaults.subsequentExecutionMode.value = saved }
+        Defaults.subsequentExecutionMode.value = mode
+        body()
+    }
+
+    private func findOutlineView(in view: NSView) -> NSOutlineView? {
+        if let outlineView = view as? NSOutlineView { return outlineView }
+        for subview in view.subviews {
+            if let outlineView = findOutlineView(in: subview) { return outlineView }
+        }
+        return nil
+    }
+}
+
 @MainActor
 final class WindowPlacementSchedulingTests: XCTestCase {
     func testIdlePlacementCompletionRunsSynchronously() {
@@ -7716,226 +8263,7 @@ final class WindowSizeHintSnapshotTests: XCTestCase {
 }
 
 
-class VerticalEighthActionTests: XCTestCase {
 
-    private let actions: [WindowAction] = [
-        .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
-        .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth
-    ]
-
-    func testVerticalEighthActionsUseAvailableStableIdentifiers() {
-        XCTAssertEqual([
-            WindowAction.tileRows.rawValue,
-            WindowAction.tileColumns.rawValue,
-            WindowAction.cycleStackedWindows.rawValue,
-            WindowAction.cycleStackedWindowsBackward.rawValue
-        ], [129, 130, 131, 132])
-        XCTAssertEqual(actions.map(\.rawValue), [133, 134, 135, 136, 137, 138, 139, 140])
-        XCTAssertEqual(actions.map(\.name), [
-            "firstVerticalEighth", "secondVerticalEighth", "thirdVerticalEighth", "fourthVerticalEighth",
-            "fifthVerticalEighth", "sixthVerticalEighth", "seventhVerticalEighth", "lastVerticalEighth"
-        ])
-    }
-
-    func testVerticalEighthActionsTileVisibleFrameIntoEightFullHeightColumns() {
-        let visibleFrame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
-        let expected = (0..<8).map { CGRect(x: CGFloat($0 * 480), y: 40, width: 480, height: 1000) }
-        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
-    }
-
-    func testVerticalEighthActionsUseBoundaryRoundingAcrossNonDivisibleLandscapeWidth() {
-        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
-        let expected = [
-            CGRect(x: 20, y: 40, width: 125, height: 800),
-            CGRect(x: 145, y: 40, width: 125, height: 800),
-            CGRect(x: 270, y: 40, width: 126, height: 800),
-            CGRect(x: 396, y: 40, width: 125, height: 800),
-            CGRect(x: 521, y: 40, width: 125, height: 800),
-            CGRect(x: 646, y: 40, width: 126, height: 800),
-            CGRect(x: 772, y: 40, width: 125, height: 800),
-            CGRect(x: 897, y: 40, width: 126, height: 800)
-        ]
-
-        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
-    }
-
-    func testVerticalEighthActionsRotateIntoTopToBottomRowsOnPortraitDisplays() {
-        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
-        let expected = [
-            CGRect(x: 20, y: 918, width: 800, height: 125),
-            CGRect(x: 20, y: 793, width: 800, height: 125),
-            CGRect(x: 20, y: 667, width: 800, height: 126),
-            CGRect(x: 20, y: 542, width: 800, height: 125),
-            CGRect(x: 20, y: 417, width: 800, height: 125),
-            CGRect(x: 20, y: 291, width: 800, height: 126),
-            CGRect(x: 20, y: 166, width: 800, height: 125),
-            CGRect(x: 20, y: 40, width: 800, height: 126)
-        ]
-
-        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
-    }
-
-    func testFirstVerticalEighthCyclesForwardAndWraps() {
-        withSubsequentExecutionMode(.resize) {
-            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
-            let results = repeatedResults(for: .firstVerticalEighth, count: 9, visibleFrame: visibleFrame)
-            XCTAssertEqual(results.map { $0.rect.minX }, [20, 120, 220, 320, 420, 520, 620, 720, 20])
-        }
-    }
-
-    func testLastVerticalEighthCyclesBackwardAndWraps() {
-        withSubsequentExecutionMode(.resize) {
-            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
-            let results = repeatedResults(for: .lastVerticalEighth, count: 9, visibleFrame: visibleFrame)
-            XCTAssertEqual(results.map { $0.rect.minX }, [720, 620, 520, 420, 320, 220, 120, 20, 720])
-        }
-    }
-
-    func testEndpointCyclingResetsForUnrelatedOrOppositeLastAction() {
-        withSubsequentExecutionMode(.resize) {
-            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
-            let unrelated = RectangleAction(action: .leftHalf, subAction: .leftThird, rect: .zero)
-            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 20)
-            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 720)
-
-            let lastResult = calculate(.lastVerticalEighth, visibleFrame: visibleFrame)
-            let lastEndpoint = RectangleAction(action: .lastVerticalEighth, subAction: lastResult.subAction, rect: lastResult.rect)
-            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: lastEndpoint).rect.minX, 20)
-
-            let firstResult = calculate(.firstVerticalEighth, visibleFrame: visibleFrame)
-            let firstEndpoint = RectangleAction(action: .firstVerticalEighth, subAction: firstResult.subAction, rect: firstResult.rect)
-            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: firstEndpoint).rect.minX, 720)
-        }
-    }
-
-    func testEndpointCyclingIsDisabledWhenSubsequentExecutionModeIsNone() {
-        withSubsequentExecutionMode(.none) {
-            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
-            XCTAssertEqual(repeatedResults(for: .firstVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
-                           [20, 20, 20])
-            XCTAssertEqual(repeatedResults(for: .lastVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
-                           [720, 720, 720])
-        }
-    }
-
-    func testMiddleVerticalEighthActionsStayAtTheirOwnOrdinalWhenRepeated() {
-        withSubsequentExecutionMode(.resize) {
-            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
-            for (index, action) in actions.dropFirst().dropLast().enumerated() {
-                let expectedX = CGFloat(120 + index * 100)
-                let results = repeatedResults(for: action, count: 3, visibleFrame: visibleFrame)
-                XCTAssertEqual(results.map { $0.rect.minX }, [expectedX, expectedX, expectedX])
-            }
-        }
-    }
-
-    func testVerticalEighthResultingSubActionsProvideLandscapeGapEdges() {
-        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
-        let expected: [Edge] = [
-            .right,
-            [.left, .right], [.left, .right], [.left, .right],
-            [.left, .right], [.left, .right], [.left, .right],
-            .left
-        ]
-
-        for (index, action) in actions.enumerated() {
-            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
-        }
-    }
-
-    func testVerticalEighthResultingSubActionsProvidePortraitGapEdges() {
-        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
-        let expected: [Edge] = [
-            .bottom,
-            [.top, .bottom], [.top, .bottom], [.top, .bottom],
-            [.top, .bottom], [.top, .bottom], [.top, .bottom],
-            .top
-        ]
-
-        for (index, action) in actions.enumerated() {
-            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
-        }
-    }
-
-    func testVerticalEighthActionsRemainTerminalConfigurableThroughActiveActionNames() {
-        let suiteName = "VerticalEighthActionTests.\(UUID().uuidString)"
-        let userDefaults = UserDefaults(suiteName: suiteName)!
-        defer { userDefaults.removePersistentDomain(forName: suiteName) }
-        let shortcut = MASShortcut(keyCode: 18, modifierFlags: [.control, .option, .shift])
-        let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
-        userDefaults.set(transformer.reverseTransformedValue(shortcut), forKey: WindowAction.firstVerticalEighth.name)
-
-        XCTAssertTrue(WindowAction.active.contains(.firstVerticalEighth))
-        let loaded = ShortcutCycle.shortcutsByAction(userDefaults: userDefaults)[.firstVerticalEighth]
-        XCTAssertEqual(loaded?.keyCode, shortcut.keyCode)
-        XCTAssertEqual(loaded?.modifierFlags, shortcut.modifierFlags)
-    }
-
-    func testVerticalEighthActionsAreHiddenFromNormalUI() throws {
-        XCTAssertTrue(actions.allSatisfy(\.excludedFromMenu))
-        XCTAssertTrue(actions.allSatisfy { !$0.isDragSnappable })
-
-        let controller = ShortcutsViewController()
-        _ = controller.view
-        let outlineView = try XCTUnwrap(findOutlineView(in: controller.view))
-        let rootCount = controller.outlineView(outlineView, numberOfChildrenOfItem: nil)
-
-        var found: [WindowAction] = []
-        func collect(from item: Any?) {
-            let count = controller.outlineView(outlineView, numberOfChildrenOfItem: item)
-            for index in 0..<count {
-                let child = controller.outlineView(outlineView, child: index, ofItem: item)
-                if let shortcut = child as? ShortcutItem, actions.contains(shortcut.action) {
-                    found.append(shortcut.action)
-                }
-                collect(from: child)
-            }
-        }
-
-        for index in 0..<rootCount {
-            collect(from: controller.outlineView(outlineView, child: index, ofItem: nil))
-        }
-
-        XCTAssertTrue(found.isEmpty)
-    }
-
-    private func calculate(_ action: WindowAction,
-                           visibleFrame: CGRect,
-                           lastAction: RectangleAction? = nil) -> RectResult {
-        WindowCalculationFactory.calculationsByAction[action]!.calculateRect(
-            RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
-                                      visibleFrameOfScreen: visibleFrame,
-                                      action: action,
-                                      lastAction: lastAction)
-        )
-    }
-
-    private func repeatedResults(for action: WindowAction,
-                                 count: Int,
-                                 visibleFrame: CGRect) -> [RectResult] {
-        var lastAction: RectangleAction?
-        return (0..<count).map { _ in
-            let result = calculate(action, visibleFrame: visibleFrame, lastAction: lastAction)
-            lastAction = RectangleAction(action: action, subAction: result.subAction, rect: result.rect)
-            return result
-        }
-    }
-
-    private func withSubsequentExecutionMode(_ mode: SubsequentExecutionMode, _ body: () -> Void) {
-        let saved = Defaults.subsequentExecutionMode.value
-        defer { Defaults.subsequentExecutionMode.value = saved }
-        Defaults.subsequentExecutionMode.value = mode
-        body()
-    }
-
-    private func findOutlineView(in view: NSView) -> NSOutlineView? {
-        if let outlineView = view as? NSOutlineView { return outlineView }
-        for subview in view.subviews {
-            if let outlineView = findOutlineView(in: subview) { return outlineView }
-        }
-        return nil
-    }
-}
 
 @MainActor
 final class TitleBarTabButtonPressSchedulingTests: XCTestCase {

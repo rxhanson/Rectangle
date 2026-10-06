@@ -88,8 +88,8 @@ class WindowManager {
                     windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
                         self?.executionID == currentExecutionID
                             && WindowSizeConstraints.shared.observationGeneration == restoreGeneration
-                    }, onCancelled: { parameters.completion?() }) { [weak self] in
-                        self?.windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
+                    }, onCancelled: { parameters.cancellation?() }) { [weak self] in
+                        self?.windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
                             defer { parameters.completion?() }
                             guard let self, self.executionID == currentExecutionID,
                                   WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
@@ -99,7 +99,7 @@ class WindowManager {
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
-                    windowAnimator.afterPendingWrites { [weak self] in
+                    windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) { [weak self] in
                         defer { parameters.completion?() }
                         guard self?.executionID == currentExecutionID,
                               WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
@@ -296,7 +296,7 @@ class WindowManager {
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
             && !Defaults.cooperativeCornerResize.enabled
         
-        let completeMove = { [self] (animationHandledPlacement: Bool) in
+        let completeMove = { [self] (animatedFrame: CGRect?) in
             var waitsForRetry = false
             defer { if !waitsForRetry { parameters.completion?() } }
             guard executionID == currentExecutionID,
@@ -305,8 +305,10 @@ class WindowManager {
             if let cooperativeCornerPlan {
                 resultingRect = applyCooperativeCornerResize(result: resultParameters,
                                                              plan: cooperativeCornerPlan)
-            } else if animationHandledPlacement {
-                resultingRect = frontmostWindowElement.frame
+            } else if let animatedFrame {
+                // The worker already verified this frame. A second AX read on
+                // main can stall if the target becomes busy after completion.
+                resultingRect = animatedFrame
             } else {
                 resultingRect = apply(result: resultParameters)
             }
@@ -349,11 +351,13 @@ class WindowManager {
                                                       screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                                       currentAction: action,
                                                       lastRectangleAction: lastRectangleAction)
-                resultingRect = frontmostWindowElement.frame
+                if animatedFrame == nil || Defaults.cooperativeCornerResize.enabled {
+                    resultingRect = frontmostWindowElement.frame
+                }
             }
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
-            if animationHandledPlacement, cooperativeCornerPlan == nil {
+            if animatedFrame != nil, cooperativeCornerPlan == nil {
                 WindowSizeConstraints.shared.recordSettledResize(frontmostWindowElement, before: beforeResize,
                     requested: calcResult.rect.screenFlipped, first: resultingRect, settled: resultingRect,
                     verifiedClamp: true, generation: sizeObservationGeneration)
@@ -378,18 +382,18 @@ class WindowManager {
             windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
                 self?.executionID == currentExecutionID
                     && WindowSizeConstraints.shared.observationGeneration == sizeObservationGeneration
-            }, onCancelled: { parameters.completion?() }) {
+            }, onCancelled: { parameters.cancellation?() }) {
                 self.windowAnimator.animate(frontmostWindowElement,
                                             to: calcResult.rect.screenFlipped,
                                             releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                            profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { frame in
-                    completeMove(!frame.isNull)
+                                            profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard, cancellation: parameters.cancellation) { frame in
+                    completeMove(frame.isNull ? nil : frame)
                 }
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
-            windowAnimator.afterPendingWrites {
-                completeMove(false)
+            windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) {
+                completeMove(nil)
             }
         }
     }
@@ -585,8 +589,10 @@ struct ExecutionParameters {
     let windowId: CGWindowID?
     let source: ExecutionSource
     let completion: (() -> Void)?
+    // Cancellation cleanup must not run placement completion or fallback work.
+    let cancellation: (() -> Void)?
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, completion: (() -> Void)? = nil) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
@@ -594,6 +600,7 @@ struct ExecutionParameters {
         self.windowId = windowId
         self.source = source
         self.completion = completion
+        self.cancellation = cancellation
     }
 }
 

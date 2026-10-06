@@ -490,7 +490,7 @@ final class WindowSizeConstraints {
         guard !candidates.isEmpty, let app = NSRunningApplication(processIdentifier: key.pid) else { return }
         let bundleID = app.bundleIdentifier
         let bundleURL = app.bundleURL
-        let preferred = window.animationObservationElement
+        let preferred = window.axElement
         let request = UUID()
         identityRequests[key] = request
         let cancellation = observationCancellation
