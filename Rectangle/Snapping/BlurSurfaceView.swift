@@ -18,6 +18,7 @@ final class BlurSurfaceView: NSView {
     private var observers: [NSObjectProtocol] = []
     private(set) var usesLiquidGlass = false
     var onStyleChange: (() -> Void)?
+    var onAppearanceChange: (() -> Void)?
     var blendingMode: NSVisualEffectView.BlendingMode {
         get { legacy.blendingMode }
         set { legacy.blendingMode = newValue }
@@ -39,10 +40,16 @@ final class BlurSurfaceView: NSView {
         legacy.layer?.masksToBounds = true
         legacy.layer?.cornerCurve = .continuous
         refresh()
-        for name in [Notification.Name.blurStyleChanged, .configImported] {
+        for name in [Notification.Name.blurStyleChanged, .blurAppearanceChanged, .configImported] {
             observers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                self?.refresh()
-                self?.onStyleChange?()
+                guard let self else { return }
+                if name == .blurAppearanceChanged {
+                    self.updateAppearance()
+                    self.onAppearanceChange?()
+                } else {
+                    self.refresh()
+                    self.onStyleChange?()
+                }
             })
         }
     }
@@ -51,6 +58,7 @@ final class BlurSurfaceView: NSView {
     deinit { observers.forEach { NotificationCenter.default.removeObserver($0) } }
 
     func refresh() {
+        updateAppearance()
         let enabled = Self.liquidGlassEnabled
         if enabled, #available(macOS 26, *) {
             legacy.removeFromSuperview()
@@ -81,6 +89,11 @@ final class BlurSurfaceView: NSView {
         }
         usesLiquidGlass = enabled
         layoutMaterial()
+    }
+
+    private func updateAppearance() {
+        let requested = Defaults.blurAppearance.value.appearance
+        if appearance?.name != requested?.name { appearance = requested }
     }
 
     private func layoutMaterial() {

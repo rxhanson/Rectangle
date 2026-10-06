@@ -238,6 +238,7 @@ class FootprintWindow: NSWindow {
         container.addSubview(boxView)
         contentView = container
         effectView.onStyleChange = { [weak self] in self?.refreshAccessibility() }
+        effectView.onAppearanceChange = { [weak self] in self?.updateAppearance() }
         container.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
         accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
@@ -263,7 +264,7 @@ class FootprintWindow: NSWindow {
         effectView.refresh()
         let style = presentation
         let glass = usesLiquidGlass
-        let requestedAppearance = Defaults.footprintBlur.enabled && !glass ? Defaults.blurAppearance.value.appearance : nil
+        let requestedAppearance = Defaults.footprintBlur.enabled ? Defaults.blurAppearance.value.appearance : nil
         if appearance?.name != requestedAppearance?.name {
             appearance = requestedAppearance
         }

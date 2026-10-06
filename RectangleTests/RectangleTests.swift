@@ -8021,3 +8021,68 @@ class TitleBarScreenDetectionTests: XCTestCase {
         XCTAssertNil(TitleBarManager.screenForClick(at: CGPoint(x: 5000, y: 0), screens: [left, above]))
     }
 }
+
+@MainActor
+final class BlurAppearanceLiveTests: XCTestCase {
+    func testViewModelUpdatesExistingMaterialsAndRestoresInheritedAppearance() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .system
+        let model = SnapAreaViewModel()
+        for glass in [false, true] {
+            Defaults.liquidGlassForBlur.enabled = glass
+            let parent = NSView()
+            parent.appearance = NSAppearance(named: .darkAqua)
+            let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240))
+            parent.addSubview(surface)
+            let content = surface.content
+            let material = try XCTUnwrap(surface.subviews.first)
+            var styleChanges = 0
+            var appearanceChanges = 0
+            surface.onStyleChange = { styleChanges += 1 }
+            surface.onAppearanceChange = { appearanceChanges += 1 }
+            for choice: BlurAppearance in [.light, .dark, .system] {
+                model.blurAppearance = choice
+                XCTAssertEqual(surface.appearance?.name, choice.appearance?.name)
+                XCTAssertEqual(content.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]),
+                               choice == .light ? .aqua : .darkAqua)
+                XCTAssertTrue(surface.content === content)
+                XCTAssertTrue(surface.subviews.first === material, "Appearance changes must not recreate the material")
+            }
+            XCTAssertEqual(styleChanges, 0, "Theme changes must not restart style/geometry transitions")
+            XCTAssertEqual(appearanceChanges, 3)
+        }
+    }
+
+    func testConfigImportClearsForcedMaterialAppearance() {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .dark
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240))
+        XCTAssertEqual(surface.appearance?.name, .darkAqua)
+        Defaults.blurAppearance.value = .system
+        Notification.Name.configImported.post()
+        XCTAssertNil(surface.appearance)
+    }
+
+    func testLiveGlassFootprintUsesAllThreeAppearancesWithoutChangingItsFrame() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Requires native Glass") }
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.blurAppearance.value = .system
+        let model = SnapAreaViewModel()
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        window.showPreview(in: CGRect(x: 60, y: 60, width: 400, height: 300), from: nil, duration: 0)
+        let original = window.frame
+        for choice: BlurAppearance in [.dark, .light, .system] {
+            model.blurAppearance = choice
+            XCTAssertEqual(window.appearance?.name, choice.appearance?.name)
+            XCTAssertTrue(window.usesLiquidGlass)
+            XCTAssertEqual(window.frame, original)
+            XCTAssertTrue(window.realIsVisible)
+        }
+    }
+}
