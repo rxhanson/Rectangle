@@ -1,74 +1,5 @@
 import Foundation
 
-struct TrackpadPoint: Equatable, Codable, Sendable {
-    var x: Double
-    var y: Double
-
-    init(x: Double, y: Double) {
-        self.x = x
-        self.y = y
-    }
-
-    static let zero = TrackpadPoint(x: 0, y: 0)
-
-    var magnitude: Double { (x * x + y * y).squareRoot() }
-}
-
-func centroid(of touches: [TrackpadTouch]) -> TrackpadPoint {
-    guard !touches.isEmpty else { return .zero }
-    let n = Double(touches.count)
-    let sx = touches.reduce(0.0) { $0 + $1.position.x }
-    let sy = touches.reduce(0.0) { $0 + $1.position.y }
-    return TrackpadPoint(x: sx / n, y: sy / n)
-}
-func meanVelocity(of touches: [TrackpadTouch]) -> TrackpadPoint {
-    guard !touches.isEmpty else { return .zero }
-    let n = Double(touches.count)
-    let vx = touches.reduce(0.0) { $0 + $1.velocity.x } / n
-    let vy = touches.reduce(0.0) { $0 + $1.velocity.y } / n
-    return TrackpadPoint(x: vx, y: vy)
-}
-func meanSpeed(of touches: [TrackpadTouch]) -> Double {
-    meanVelocity(of: touches).magnitude
-}
-
-struct TrackpadTouch: Equatable, Codable, Sendable {
-    var identifier: Int
-    var position: TrackpadPoint
-    var velocity: TrackpadPoint
-
-    init(identifier: Int, position: TrackpadPoint, velocity: TrackpadPoint) {
-        self.identifier = identifier
-        self.position = position
-        self.velocity = velocity
-    }
-}
-struct TrackpadTouchFrame: Equatable, Codable, Sendable {
-    var timestamp: Double
-    var touches: [TrackpadTouch]
-
-    init(timestamp: Double, touches: [TrackpadTouch]) {
-        self.timestamp = timestamp
-        self.touches = touches
-    }
-}
-
-enum TrackpadDirection: String, Codable, Sendable, CaseIterable {
-    case left, right, up, down
-}
-
-struct TrackpadGestureEvent: Equatable, Sendable {
-    var direction: TrackpadDirection
-    var fingers: Int
-    var timestamp: Double
-
-    init(direction: TrackpadDirection, timestamp: Double, fingers: Int = 3) {
-        self.direction = direction
-        self.fingers = fingers
-        self.timestamp = timestamp
-    }
-}
-
 struct TrackpadGestureRecognizer {
     private struct Session {
         var origin: TrackpadPoint
@@ -202,15 +133,4 @@ struct TrackpadGestureRecognizer {
         guard let last = lastFireTime else { return false }
         return (timestamp - last) * 1000.0 < thresholds.cooldownMs
     }
-}
-
-struct TrackpadThresholds {
-    var distance = 0.15
-    var velocity = 1.30
-    var axisRatio = 1.5
-    var cooldownMs = 300.0
-}
-struct TrackpadConfig {
-    static let `default` = TrackpadConfig()
-    var effectiveThresholds = TrackpadThresholds()
 }

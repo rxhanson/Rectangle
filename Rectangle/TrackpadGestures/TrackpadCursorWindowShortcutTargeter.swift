@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+
 final class TrackpadCursorWindowShortcutTargeter: @unchecked Sendable {
     final class Target: @unchecked Sendable {
         let window: AXUIElement
