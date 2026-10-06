@@ -1029,7 +1029,7 @@ private final class LayoutHelperCard: NSButton {
         didSet { updateAccessibilityStatus() }
     }
     private func updateAccessibilityStatus() {
-        let status = item.unavailableReason ?? (item.isMinimized ? "minimized" : item.isCurrentWindow ? "Current window".localized : nil)
+        let status = item.unavailableReason ?? (item.isMinimized ? "minimized" : item.isCurrentWindow ? String(localized: "Current window") : nil)
         let hints = [status, previewUnavailable ? "Preview unavailable" : nil].compactMap { $0 }
         toolTip = ([item.title] + hints).joined(separator: " — ")
         setAccessibilityLabel(toolTip)
@@ -1157,7 +1157,7 @@ private final class LayoutHelperCard: NSButton {
                                    y: badge.midY - size.height / 2), withAttributes: attributes)
         }
         if item.isCurrentWindow {
-            let status = "Current window".localized as NSString
+            let status = String(localized: "Current window") as NSString
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: NSFont.systemFont(ofSize: 10, weight: .medium), .foregroundColor: NSColor.labelColor,
                 .paragraphStyle: paragraph
