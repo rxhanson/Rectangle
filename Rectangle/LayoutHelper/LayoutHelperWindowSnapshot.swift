@@ -16,6 +16,7 @@ struct LayoutHelperWindowSnapshot {
     var isMinimized = false
     var desktopDisplays = Set<CGDirectDisplayID>()
     var isMainWindow: Bool?
+    var isLayoutWindow: Bool?
 
     var previewKey: LayoutHelperPreviewKey {
         LayoutHelperPreviewKey(id: id, pid: pid, launch: launch,

@@ -32,7 +32,10 @@ final class LayoutHelperManager {
     private var screen: NSScreen?
     private var retained: [AccessibilityElement: CGRect] = [:]
     private var retainedLaunches: [CGWindowID: TimeInterval] = [:]
-    private var existingNeighbor: (window: WindowInfo, launch: TimeInterval)?
+    private var existingOccupants: [WindowInfo] = []
+    private var occupancyInfos: [WindowInfo]?
+    private var selectionCover: WindowInfo?
+    private var placementActivationValidation: Timer?
     private var candidates: [CGWindowID: LayoutHelperWindowSnapshot] = [:]
     private var completedCells: Set<Int> = []
     private var currentCell: Int?
@@ -170,10 +173,10 @@ final class LayoutHelperManager {
         globalMonitor = nil; localMonitor = nil
         panel.dismiss()
         layout = nil; screen = nil; currentCell = nil
-        selecting = false
+        selecting = false; selectionCover = nil
         statusMessage = nil
         retained.removeAll(); retainedLaunches.removeAll(); candidates.removeAll()
-        existingNeighbor = nil
+        existingOccupants.removeAll(); occupancyInfos = nil
         completedCells.removeAll()
         return token
     }
@@ -228,13 +231,6 @@ final class LayoutHelperManager {
                   let actual = WindowUtil.getWindowList(ids: [id], forceRefresh: true, cacheResult: false)
                     .first(where: { $0.id == id }), actual.isOnScreen,
                   LayoutHelperLayout.matches(actual.frame, frame) else { self.cancel(); return }
-            self.existingNeighbor = self.occupiedFrontWindow(in: plan, excluding: id, on: result.calcResult.screen)
-            let occupied = self.existingNeighbor.map { plan.occupiedCells(by: $0.window.frame) } ?? []
-            guard !plan.remaining(excluding: occupied).isEmpty else {
-                WindowAnimationDiagnostics.event("helper-already-filled")
-                self.cancel()
-                return
-            }
             self.continuingPresentation = self.transitioning
             self.transitioning = false
             self.transitionTimeout?.cancel(); self.transitionTimeout = nil
@@ -291,33 +287,68 @@ final class LayoutHelperManager {
         return catalog.windows(on: screen)
     }
 
-    private func occupiedFrontWindow(in plan: LayoutHelperLayout, excluding anchorID: CGWindowID,
-                                     on screen: NSScreen) -> (window: WindowInfo, launch: TimeInterval)? {
+    /// AX qualification comes from the existing background catalog. Never query
+    /// every application's window roles synchronously on the presentation thread.
+    private func visibleOccupants(in plan: LayoutHelperLayout, on screen: NSScreen,
+                                  excluding ids: Set<CGWindowID>, requireQualification: Bool = false,
+                                  excludingOccupants: Set<CGWindowID> = []) -> [WindowInfo]? {
+        // Activation and placement can check several guards in one main-loop turn.
+        // Share that immutable scene only until the next turn; never reuse it as
+        // a long-lived occupancy or minimized-window cache.
+        if occupancyInfos == nil {
+            occupancyInfos = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
+            DispatchQueue.main.async { [weak self] in self?.occupancyInfos = nil }
+        }
+        let infos = (occupancyInfos ?? []).map { info in
+            // Keep the chosen window's initial cover through its own resize/raise.
+            // Those writes must not resurrect a tile that was hidden at selection.
+            if let cover = selectionCover, cover.id == info.id, cover.pid == info.pid,
+               excludingOccupants.contains(info.id), info.isOnScreen { return cover }
+            return info
+        }
+        let snapshots = catalog.snapshots
+        var applications: [pid_t: (active: Bool, launch: TimeInterval?)] = [:]
+        func application(_ pid: pid_t) -> (active: Bool, launch: TimeInterval?) {
+            if let cached = applications[pid] { return cached }
+            let app = NSRunningApplication(processIdentifier: pid)
+            let active = app.map { !$0.isHidden && !$0.isTerminated && $0.activationPolicy == .regular } ?? false
+            let value = (active, active ? WindowProcessIdentity.launchTime(for: pid) : nil)
+            applications[pid] = value
+            return value
+        }
+        let relevant = LayoutHelperOccupancy.relevantWindowIDs(in: plan, windows: infos, ignoring: ids, excludingOccupants: excludingOccupants)
+        // Only unresolved occupants or windows above them can delay presentation.
+        // Selection must fail closed even when a scan has timed out or is suspended.
+        if requireQualification || catalog.isRefreshing, infos.contains(where: { info in
+            relevant.contains(info.id) && info.pid != getpid() && application(info.pid).active
+                && catalog.layoutWindowQualification(for: info.id) == nil
+        }) { return nil }
+        let normalIDs = Set(infos.compactMap { info -> CGWindowID? in
+            guard let snapshot = snapshots[info.id], snapshot.pid == info.pid,
+                  snapshot.isLayoutWindow == true else { return nil }
+            let app = application(info.pid)
+            return app.active && app.launch == snapshot.launch ? info.id : nil
+        })
+        let occupants = LayoutHelperOccupancy.occupants(in: plan, windows: infos,
+            normalWindowIDs: normalIDs, ignoring: ids.union([CGWindowID(panel.windowNumber)]),
+            excludingOccupants: excludingOccupants)
         let detection = ScreenDetection()
-        let windows = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
-        guard let window = windows.first(where: {
-            guard $0.id != anchorID, $0.pid != getpid(), $0.level == 0, $0.isOnScreen, $0.alpha > 0,
-                  WindowAnimationGeometry.valid($0.frame),
-                  detection.screenContaining($0.frame, screens: NSScreen.screens) == screen,
-                  let app = NSRunningApplication(processIdentifier: $0.pid) else { return false }
-            return !app.isHidden && !app.isTerminated && app.activationPolicy == .regular
-        }) else { return nil }
-        // Consider only the frontmost eligible neighbor. A window behind it
-        // must not be treated as part of the visible layout.
-        let occupied = plan.occupiedCells(by: window.frame)
-        guard !occupied.isEmpty, !occupied.contains(plan.anchorIndex),
-              let launch = WindowProcessIdentity.launchTime(for: window.pid) else { return nil }
-        return (window, launch)
+        return occupants.filter {
+            LayoutHelperWindowCatalog.matchesScreen(detection.screenContaining($0.frame, screens: NSScreen.screens), requested: screen)
+        }
+    }
+
+    private func selectionTargetIsAvailable(_ cell: Int, excluding id: CGWindowID) -> Bool {
+        guard let layout, let screen, currentCell == cell,
+              let occupants = visibleOccupants(in: layout, on: screen,
+                excluding: Set([anchorWindowID].compactMap { $0 }), requireQualification: true,
+                excludingOccupants: Set(retained.keys.compactMap(\.windowId)).union([id])) else { return false }
+        return !occupants.contains { layout.occupiedCells(by: $0.frame).contains(cell) }
     }
 
     private func retainedIsValid() -> Bool {
-        let ids = retained.keys.compactMap(\.windowId) + (existingNeighbor.map { [$0.window.id] } ?? [])
+        let ids = retained.keys.compactMap(\.windowId)
         let live = WindowUtil.getWindowList(ids: ids, forceRefresh: true)
-        if let neighbor = existingNeighbor {
-            guard WindowProcessIdentity.launchTime(for: neighbor.window.pid) == neighbor.launch,
-                  let info = live.first(where: { $0.id == neighbor.window.id && $0.pid == neighbor.window.pid }),
-                  info.isOnScreen, LayoutHelperLayout.matches(info.frame, neighbor.window.frame) else { return false }
-        }
         return retained.allSatisfy { window, frame in
             guard let id = window.windowId, let pid = window.pid,
                   let launch = retainedLaunches[id], WindowProcessIdentity.launchTime(for: pid) == launch,
@@ -337,12 +368,16 @@ final class LayoutHelperManager {
         for frame in retained.values {
             occupied.formUnion(layout.occupiedCells(by: frame))
         }
-        if let neighbor = existingNeighbor { occupied.formUnion(layout.occupiedCells(by: neighbor.window.frame)) }
+        guard let occupants = visibleOccupants(in: layout, on: screen,
+            excluding: Set([anchorWindowID].compactMap { $0 }),
+            excludingOccupants: Set(retained.keys.compactMap(\.windowId))) else { return }
+        existingOccupants = occupants
+        for window in occupants { occupied.formUnion(layout.occupiedCells(by: window.frame)) }
         guard let next = layout.remaining(excluding: occupied).first else {
             cancel()
             return
         }
-        let occupiedIDs = Set(retained.keys.compactMap(\.windowId) + (existingNeighbor.map { [$0.window.id] } ?? []))
+        let occupiedIDs = Set(retained.keys.compactMap(\.windowId) + existingOccupants.map(\.id))
         candidates = Dictionary(uniqueKeysWithValues: windows.filter { !occupiedIDs.contains($0.id) }.map { ($0.id, $0) })
         guard !candidates.isEmpty else {
             if !catalog.isRefreshing { cancel() }
@@ -385,6 +420,7 @@ final class LayoutHelperManager {
     private func select(_ id: CGWindowID) {
         guard Self.enabled else { cancel(); return }
         guard !selecting, !transitioning, !panel.isTransitioning, let layout, let currentCell, candidates[id] != nil else { return }
+        guard selectionTargetIsAvailable(currentCell, excluding: id) else { catalog.refresh(); showNext(); return }
         selecting = true
         statusMessage = nil
         panel.showSelection(inProgress: id)
@@ -394,10 +430,16 @@ final class LayoutHelperManager {
             guard let self, self.token == selectionToken else { return }
             guard let snapshot, WindowProcessIdentity.launchTime(for: snapshot.pid) == snapshot.launch,
                   let window = snapshot.accessibilityElement(),
-                  self.retainedIsValid() else {
-                self.selecting = false
+                  self.retainedIsValid(), self.selectionTargetIsAvailable(currentCell, excluding: id) else {
+                self.selecting = false; self.selectionCover = nil
+                self.catalog.refresh()
                 self.showNext(message: snapshot == nil ? "That window is not responding. Try again." : "That window could not be placed. Try again.")
                 return
+            }
+            // Resolve can take long enough for an external move. Freeze coverage
+            // only after its fresh validation, immediately before our own writes.
+            self.selectionCover = self.occupancyInfos?.first {
+                $0.id == id && $0.pid == snapshot.pid && $0.isOnScreen
             }
             self.restorationFrames.prune(live: Set(WindowUtil.getWindowList(all: true, forceRefresh: true, cacheResult: false).map(\.id)))
             let original = self.restorationFrames.original(id: snapshot.id, pid: snapshot.pid,
@@ -419,6 +461,7 @@ final class LayoutHelperManager {
             let isCurrent = { [weak self] in
                 guard let self else { return false }
                 return Self.enabled && self.token == selectionToken && self.retainedIsValid()
+                    && self.selectionTargetIsAvailable(currentCell, excluding: id)
             }
             self.pendingRestore = LayoutHelperWindowRestoration.restore(window, target: target, original: original, isCurrent: isCurrent) { [weak self] outcome in
                 guard let self, self.token == selectionToken else { return }
@@ -435,7 +478,7 @@ final class LayoutHelperManager {
                                restoredFromMinimized: true, restoreFrame: original)
                 case .cancelled: self.cancel()
                 case .unresponsive, .failed:
-                    self.placingWindow = nil; self.selecting = false
+                    self.placingWindow = nil; self.selecting = false; self.selectionCover = nil
                     self.catalog.resumeAfterPlacement()
                     self.showNext(message: "That window could not be restored. Try again.")
                 }
@@ -485,7 +528,7 @@ final class LayoutHelperManager {
                   LayoutHelperLayout.matches(screen.adjustedVisibleFrame().screenFlipped, bounds) else { return false }
             let frontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
             if deferActivation, frontPID != expectedFrontPID && !(activating && frontPID == snapshot.pid) { return false }
-            return self.retainedIsValid()
+            return self.retainedIsValid() && self.selectionTargetIsAvailable(selectedCell, excluding: snapshot.id)
         }
         if deferActivation {
             placementActivationObserver = NSWorkspace.shared.notificationCenter.addObserver(
@@ -502,7 +545,7 @@ final class LayoutHelperManager {
             WindowAnimationDiagnostics.event("helper-placement-complete", fields: ["windowID": snapshot.id,
                 "outcome": String(describing: outcome)])
             self.stopPlacementActivationObservation()
-            self.placingWindow = nil; self.selecting = false
+            self.placingWindow = nil; self.selecting = false; self.selectionCover = nil
             switch outcome {
             case .placed(let frame):
                 self.restorationFrames.remove(id: snapshot.id, pid: snapshot.pid, launch: snapshot.launch)
@@ -540,8 +583,17 @@ final class LayoutHelperManager {
         func raiseSelected(_ completion: @escaping () -> Void) {
             guard isCurrent() else { finish(.cancelled); return }
             activating = true
+            self.placementActivationValidation?.invalidate()
+            self.placementActivationValidation = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] timer in
+                guard let self, self.token == selectionToken else { timer.invalidate(); return }
+                // Activation can abandon its callback after invalidation, before
+                // the placement coordinator has installed its cancellation timer.
+                if !isCurrent() { timer.invalidate(); self.cancel() }
+            }
             window.activateAndRaiseWindow(isCurrent: isCurrent) { activation, main, raise in
-                guard isCurrent() else { finish(.cancelled); return }
+                guard self.token == selectionToken else { return }
+                self.placementActivationValidation?.invalidate(); self.placementActivationValidation = nil
+                guard isCurrent() else { self.cancel(); return }
                 expectedFrontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
                 activating = false
                 WindowAnimationDiagnostics.event("helper-window-raise", fields: ["windowID": snapshot.id,
@@ -579,6 +631,7 @@ final class LayoutHelperManager {
     }
 
     private func stopPlacementActivationObservation() {
+        placementActivationValidation?.invalidate(); placementActivationValidation = nil
         if let placementActivationObserver {
             NSWorkspace.shared.notificationCenter.removeObserver(placementActivationObserver)
         }

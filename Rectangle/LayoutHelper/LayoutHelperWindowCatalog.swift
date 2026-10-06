@@ -87,14 +87,20 @@ final class LayoutHelperWindowCatalog {
         observers.removeAll()
     }
 
+    func layoutWindowQualification(for id: CGWindowID) -> Bool? {
+        rejected.contains(id) ? false : snapshots[id]?.isLayoutWindow
+    }
+
     func windows(on screen: NSScreen) -> [LayoutHelperWindowSnapshot] {
         let detection = ScreenDetection()
+        let ignored = Set((Defaults.disabledApps.typedValue ?? []) + (Defaults.fullIgnoreBundleIds.typedValue ?? []))
         // Only physical NSScreen instances expose device information. Synthetic
         // screens used by calculations need no minimized-window membership.
         let physical = NSScreen.screens.first { $0 === screen || $0.frame == screen.frame }
         let display = (physical?.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
         return order.compactMap { snapshots[$0] }.filter { snapshot in
-            Self.matchesScreen(detection.screenContaining(snapshot.frame, screens: NSScreen.screens), requested: screen)
+            !ignored.contains(snapshot.bundleID)
+                && Self.matchesScreen(detection.screenContaining(snapshot.frame, screens: NSScreen.screens), requested: screen)
                 && (!snapshot.isMinimized || display.map { snapshot.desktopDisplays.contains($0) } == true)
         }
     }
@@ -113,12 +119,11 @@ final class LayoutHelperWindowCatalog {
         guard !enumerationRunning else { refreshAgain = true; enumerating = true; return }
         enumerationRunning = true
         WindowAnimationDiagnostics.event("helper-catalog-refresh")
-        let ignored = Set((Defaults.disabledApps.typedValue ?? []) + (Defaults.fullIgnoreBundleIds.typedValue ?? []))
         let excludedTodo = Defaults.todo.userEnabled ? TodoManager.cachedWindowID : nil
         // AppKit state is copied on its owning thread before background enumeration.
         let appInfo = NSWorkspace.shared.runningApplications.reduce(into: [pid_t: (TimeInterval, String, String)]()) { result, app in
             guard !app.isTerminated, !app.isHidden, app.activationPolicy == .regular,
-                  !ignored.contains(app.bundleIdentifier ?? ""), let launch = WindowProcessIdentity.launchTime(for: app.processIdentifier) else { return }
+                  let launch = WindowProcessIdentity.launchTime(for: app.processIdentifier) else { return }
             result[app.processIdentifier] = (launch, app.bundleIdentifier ?? "", app.localizedName ?? "Window")
         }
         refreshID += 1
@@ -334,7 +339,8 @@ final class LayoutHelperWindowCatalog {
                 bundleID: application.bundle, title: title.flatMap { $0.isEmpty ? nil : $0 } ?? application.name,
                 frame: frame, reportedMinimum: minimum, resizable: resizable, element: element,
                 observedAt: ProcessInfo.processInfo.systemUptime, isMinimized: minimized == true,
-                desktopDisplays: application.desktopDisplays[info.id] ?? [], isMainWindow: isMainWindow))
+                desktopDisplays: application.desktopDisplays[info.id] ?? [], isMainWindow: isMainWindow,
+                isLayoutWindow: subrole == kAXStandardWindowSubrole || (subrole == nil && isMainWindow == true)))
         }
         if reader.available {
             checked.formUnion(application.infos.map(\.id).filter { !matched.contains($0) })

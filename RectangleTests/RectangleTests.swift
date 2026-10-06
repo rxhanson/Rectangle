@@ -10436,3 +10436,114 @@ final class WindowDividerGlassLineTests: XCTestCase {
         }
     }
 }
+
+final class LayoutHelperOccupancyTests: XCTestCase {
+    private let bounds = CGRect(x: -178, y: -1050, width: 1920, height: 1025)
+    private func layout(gap: CGFloat = 0, skipTop: Bool = false) throws -> LayoutHelperLayout {
+        try XCTUnwrap(LayoutHelperLayout.make(action: .topLeft, screen: bounds,
+            anchor: CGRect(x: bounds.minX, y: bounds.minY, width: 960, height: 512), gap: gap, skipTopGap: skipTop))
+    }
+    private func info(_ id: CGWindowID, _ frame: CGRect, pid: pid_t = 42,
+                      onScreen: Bool = true, alpha: CGFloat = 1, level: CGWindowLevel = 0) -> WindowInfo {
+        WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: nil, alpha: alpha, isOnScreen: onScreen)
+    }
+    private func occupants(_ plan: LayoutHelperLayout, _ windows: [WindowInfo],
+                           normal: Set<CGWindowID>? = nil) -> [WindowInfo] {
+        LayoutHelperOccupancy.occupants(in: plan, windows: windows,
+            normalWindowIDs: normal ?? Set(windows.map(\.id)), ignoring: [1])
+    }
+    private func right(_ plan: LayoutHelperLayout) -> CGRect { plan.target(for: plan.cells[1].union(plan.cells[3])) }
+    func testAuxiliaryWindowCannotHideSameApplicationHalf() throws {
+        let p = try layout()
+        let windows = [info(9, right(p)), info(1, p.target(for: p.cells[0])), info(2, right(p))]
+        let found = occupants(p, windows, normal: [1, 2])
+        XCTAssertEqual(found.map(\.id), [2], "Even a large auxiliary surface must not claim or obscure layout cells")
+        XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2])
+    }
+    func testFloatingWindowElsewhereDoesNotStopNeighborSearch() throws {
+        let p = try layout()
+        let floating = CGRect(x: bounds.minX + 40, y: bounds.minY + 70, width: 700, height: 280)
+        XCTAssertEqual(occupants(p, [info(3, floating), info(2, right(p))]).map(\.id), [2])
+    }
+    func testMultipleVisibleWindowsCompleteLayout() throws {
+        let p = try layout()
+        let found = occupants(p, [info(1, p.target(for: p.cells[0])), info(2, right(p)), info(3, p.target(for: p.cells[2]), pid: 77)])
+        XCTAssertEqual(found.map(\.id), [2, 3])
+        XCTAssertTrue(p.remaining(excluding: found.reduce(into: Set<Int>()) { $0.formUnion(p.occupiedCells(by: $1.frame)) }).isEmpty)
+    }
+    func testFullOcclusionByUnionOfFloatingWindowsReopensRegion() throws {
+        let p = try layout(), frame = right(p)
+        let top = CGRect(x: frame.minX - 5, y: frame.minY - 5, width: frame.width + 10, height: frame.height / 2 + 5)
+        let bottom = CGRect(x: frame.minX - 5, y: frame.midY, width: frame.width + 10, height: frame.height / 2 + 5)
+        XCTAssertTrue(occupants(p, [info(4, top), info(5, bottom), info(2, frame)]).isEmpty)
+        XCTAssertEqual(occupants(p, [info(4, top), info(2, frame)]).map(\.id), [2], "Partial cover preserves the whole tiled window")
+    }
+    func testFloatingOverlapNeverCountsAsOccupied() throws {
+        let p = try layout()
+        XCTAssertTrue(occupants(p, [info(3, right(p).insetBy(dx: 15, dy: 40))]).isEmpty)
+    }
+    func testHiddenTransparentAndNonNormalSurfacesDoNotOccupyOrObscure() throws {
+        let p = try layout(), frame = right(p)
+        for front in [info(3, frame, onScreen: false), info(3, frame, alpha: 0), info(3, frame, level: 1)] {
+            XCTAssertEqual(occupants(p, [front, info(2, frame)]).map(\.id), [2])
+        }
+        XCTAssertTrue(occupants(p, [info(2, frame, onScreen: false)]).isEmpty)
+    }
+    func testMovingClosingOrMinimizingNeighborReopensItsCells() throws {
+        let p = try layout(), frame = right(p)
+        for windows in [[], [info(2, frame.offsetBy(dx: -60, dy: 0))], [info(2, frame, onScreen: false)]] {
+            let found = occupants(p, windows)
+            XCTAssertEqual(p.remaining(excluding: found.reduce(into: Set<Int>()) { $0.formUnion(p.occupiedCells(by: $1.frame)) }), [1, 2, 3])
+        }
+    }
+    func testOnlyTopRightLeavesBothBottomCells() throws {
+        let p = try layout()
+        let found = occupants(p, [info(2, p.target(for: p.cells[1]))])
+        XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2, 3])
+    }
+    func testFrontmostMatchingWindowWinsWithoutDoubleCounting() throws {
+        let p = try layout()
+        XCTAssertEqual(occupants(p, [info(3, right(p)), info(2, right(p))]).map(\.id), [3])
+    }
+    func testPartiallyExposedHalfKeepsItsUnionBehindFrontQuarter() throws {
+        let p = try layout()
+        let found = occupants(p, [info(3, p.target(for: p.cells[1])), info(2, right(p))])
+        XCTAssertEqual(found.map(\.id), [3, 2])
+        XCTAssertEqual(p.remaining(excluding: found.reduce(into: Set<Int>()) { $0.formUnion(p.occupiedCells(by: $1.frame)) }), [2])
+    }
+    func testOnlyNeighborsAndTheirFrontOccludersNeedMetadata() throws {
+        let p = try layout()
+        let leftFloat = CGRect(x: bounds.minX + 20, y: bounds.minY + 60, width: 600, height: 350)
+        let rightFloat = right(p).insetBy(dx: 20, dy: 20)
+        let scene = [info(1, p.cells[0]), info(3, leftFloat), info(4, rightFloat), info(2, right(p)), info(5, bounds)]
+        XCTAssertEqual(LayoutHelperOccupancy.relevantWindowIDs(in: p, windows: scene, ignoring: [1]), [4, 2])
+        XCTAssertTrue(LayoutHelperOccupancy.relevantWindowIDs(in: p, windows: [info(5, bounds), info(3, leftFloat)], ignoring: [1]).isEmpty)
+    }
+    func testChosenFloatingWindowKeepsCoverWithoutClaimingCells() throws {
+        let p = try layout()
+        let cover = right(p).insetBy(dx: -10, dy: -10)
+        let scene = [info(3, cover), info(2, right(p))]
+        XCTAssertTrue(LayoutHelperOccupancy.occupants(in: p, windows: scene, normalWindowIDs: [2, 3],
+            ignoring: [1], excludingOccupants: [3]).isEmpty)
+        XCTAssertEqual(LayoutHelperOccupancy.occupants(in: p, windows: [info(3, p.cells[1]), info(2, right(p))],
+            normalWindowIDs: [2, 3], ignoring: [1], excludingOccupants: [3]).map(\.id), [2],
+            "After selection completes, fresh visibility can include the previously covered half")
+    }
+    func testRetainedTileStillOccludesHiddenHalf() throws {
+        let p = try layout(), half = right(p)
+        let bottomCover = CGRect(x: half.minX - 10, y: p.cells[3].minY, width: half.width + 20, height: p.cells[3].height + 10)
+        let scene = [info(3, p.target(for: p.cells[1])), info(4, bottomCover), info(2, half)]
+        XCTAssertTrue(LayoutHelperOccupancy.occupants(in: p, windows: scene, normalWindowIDs: [2, 3, 4],
+            ignoring: [1], excludingOccupants: [3]).isEmpty)
+    }
+    func testGapAndTopMarginUseExistingUnionGeometry() throws {
+        for gap: CGFloat in [0, 1, 8, 15] {
+            for skip in [false, true] {
+                let p = try layout(gap: gap, skipTop: skip)
+                let found = occupants(p, [info(2, right(p))])
+                XCTAssertEqual(found.map(\.id), [2])
+                XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2])
+            }
+        }
+    }
+}

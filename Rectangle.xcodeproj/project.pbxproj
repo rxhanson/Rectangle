@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A0E2067E5D1240D298278AA6 /* LayoutHelperOccupancy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC13203807A400BAA13908E /* LayoutHelperOccupancy.swift */; };
 		8ACFEE325BA39194B2F5E23A /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB6CDB7BF44F36B5B031B82 /* DirectWindowAnimator.swift */; };
 		F0E6D426F097AA96F5F35F71 /* PreviewLayerTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CA8D2AB8AB0AF9120CE13C /* PreviewLayerTransition.swift */; };
 		51C0597054B182702D29CFCA /* PreviewOpacityAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F20CBC0F05D5DD907C99DFC /* PreviewOpacityAnimation.swift */; };
@@ -358,6 +359,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7BC13203807A400BAA13908E /* LayoutHelperOccupancy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutHelper/LayoutHelperOccupancy.swift; sourceTree = "<group>"; };
 		AFB6CDB7BF44F36B5B031B82 /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
 		F2CA8D2AB8AB0AF9120CE13C /* PreviewLayerTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewLayerTransition.swift; sourceTree = "<group>"; };
 		5F20CBC0F05D5DD907C99DFC /* PreviewOpacityAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewOpacityAnimation.swift; sourceTree = "<group>"; };
@@ -1131,6 +1133,7 @@
 			isa = PBXGroup;
 			children = (
 				13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */,
+				7BC13203807A400BAA13908E /* LayoutHelperOccupancy.swift */,
 				1ECA43C11C84059232320F0C /* LayoutHelperPreviewValidation.swift */,
 				245705F7A97E311D94B1F31E /* LayoutHelperDesktopScope.swift */,
 				26BBC32872CE7F8CCAD4CA47 /* LayoutHelperSurface.swift */,
@@ -1462,6 +1465,7 @@
 				B6CD8908A0DDA818CBEEF425 /* LayoutHelperPermissionFlow.swift in Sources */,
 				E49FF67D2B772630FA5B4806 /* LayoutHelperAppearance.swift in Sources */,
 				BF3AD51F552869B6B6970A9A /* LayoutHelperManager.swift in Sources */,
+				A0E2067E5D1240D298278AA6 /* LayoutHelperOccupancy.swift in Sources */,
 				0CD646DAC5E56C42EA153D93 /* LayoutHelperLayout.swift in Sources */,
 				F5036C3F0958DE997FA66BFE /* LayoutHelperBlurView.swift in Sources */,
 				9704A3EC1304566252760768 /* TrackpadMultitouchTouchSource.swift in Sources */,
