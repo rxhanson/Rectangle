@@ -92,6 +92,7 @@ final class SnapAreaViewModel {
         didSet {
             guard oldValue != blurAppearance else { return }
             Defaults.blurAppearance.value = blurAppearance
+            Notification.Name.blurAppearanceChanged.post()
         }
     }
     
@@ -211,7 +212,7 @@ struct SnapAreaSettingsView: View {
                         .accessibilityIdentifier("liquidGlassForBlur")
                 }
 
-                if viewModel.footprintBlur && !BlurSurfaceView.liquidGlassEnabled {
+                if viewModel.footprintBlur {
                     Picker("Blur appearance", selection: $viewModel.blurAppearance) {
                         Text("Follow System").tag(BlurAppearance.system)
                         Text("Light").tag(BlurAppearance.light)

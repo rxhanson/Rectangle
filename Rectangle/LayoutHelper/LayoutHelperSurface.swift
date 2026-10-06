@@ -5,6 +5,7 @@ import Cocoa
 class LayoutHelperSurface: NSPanel {
     var onDismiss: (() -> Void)?
     private var frameTransition: Timer?
+    private var appearanceObservers: [NSObjectProtocol] = []
     private(set) var destinationFrame: CGRect?
 
     func stopFrameTransition() {
@@ -47,6 +48,19 @@ class LayoutHelperSurface: NSPanel {
         collectionBehavior = [.transient, .moveToActiveSpace]
         title = "Layout Helper"
         setAccessibilityLabel("Layout Helper")
+        updateAppearance()
+        for name in [Notification.Name.blurStyleChanged, .blurAppearanceChanged, .configImported] {
+            appearanceObservers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                self?.updateAppearance()
+            })
+        }
+    }
+
+    deinit { appearanceObservers.forEach { NotificationCenter.default.removeObserver($0) } }
+
+    private func updateAppearance() {
+        let requested = Defaults.blurAppearance.value.appearance
+        if appearance?.name != requested?.name { appearance = requested }
     }
 
     @discardableResult func prepare(in frame: CGRect, drawsBackground: Bool = true) -> NSView {

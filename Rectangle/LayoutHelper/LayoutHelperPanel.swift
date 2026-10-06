@@ -274,8 +274,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         close.font = .systemFont(ofSize: 22, weight: .regular)
         let showClose = Defaults.layoutHelperCloseButton.enabled
         let closeRadius: CGFloat = 15
-        let closeCenter = CGPoint(x: width - LayoutHelperAppearance.cornerRadius,
-                                  y: LayoutHelperAppearance.cornerRadius)
+        let closeCenter = CGPoint(x: width - LayoutHelperAppearance.controlInset,
+                                  y: LayoutHelperAppearance.controlInset)
         let closeSurface = LayoutHelperBlurView(frame: NSRect(x: closeCenter.x - closeRadius,
                                                         y: closeCenter.y - closeRadius, width: 30, height: 30),
                                            material: .popover, cornerRadius: 15, flipped: true)
@@ -307,8 +307,8 @@ final class LayoutHelperPanel: LayoutHelperSurface {
         scroll.drawsBackground = false
         scroll.hasVerticalScroller = true
         scroll.scrollerStyle = .overlay
-        scroll.scrollerInsets = NSEdgeInsets(top: LayoutHelperAppearance.cornerRadius, left: 0,
-                                             bottom: LayoutHelperAppearance.cornerRadius, right: 4)
+        scroll.scrollerInsets = NSEdgeInsets(top: LayoutHelperAppearance.controlInset, left: 0,
+                                             bottom: LayoutHelperAppearance.controlInset, right: 4)
         scroll.autohidesScrollers = true
         let document = LayoutHelperDocument()
         scroll.documentView = document

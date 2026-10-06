@@ -1,7 +1,8 @@
 import Cocoa
 
 enum LayoutHelperAppearance {
-    static let cornerRadius: CGFloat = 26
+    static let cornerRadius = FootprintStyle.cornerRadius
+    static let controlInset: CGFloat = 26
     static let cardCornerRadius: CGFloat = 10
     static let outline = NSColor(calibratedWhite: 0.76, alpha: 1)
     static let selection = NSColor(calibratedWhite: 0.62, alpha: 1)

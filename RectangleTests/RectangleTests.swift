@@ -8621,7 +8621,7 @@ final class LayoutHelperScrollingTests: XCTestCase {
         let hit = root.hitTest(center)
         XCTAssertTrue(hit === close || hit?.isDescendant(of: close) == true)
     }
-    func testCloseButtonIsConcentricAndCanBeHiddenWithoutLosingDismissal() throws {
+    func testCloseButtonPreservesInsetsAndCanBeHiddenWithoutLosingDismissal() throws {
         let previous = Defaults.layoutHelperCloseButton.enabled
         defer { Defaults.layoutHelperCloseButton.enabled = previous }
         let panel = LayoutHelperPanel()
@@ -8633,8 +8633,8 @@ final class LayoutHelperScrollingTests: XCTestCase {
         let close = try XCTUnwrap(views(root, of: NSButton.self).first { $0.accessibilityLabel() == "Dismiss Layout Helper" })
         let material = try XCTUnwrap(views(root, of: LayoutHelperBlurView.self).first { close.superview === $0.content })
         let surface = try XCTUnwrap(material.superview)
-        XCTAssertEqual(material.frame.midX, surface.bounds.maxX - LayoutHelperAppearance.cornerRadius)
-        XCTAssertEqual(material.frame.midY, LayoutHelperAppearance.cornerRadius)
+        XCTAssertEqual(material.frame.midX, surface.bounds.maxX - LayoutHelperAppearance.controlInset)
+        XCTAssertEqual(material.frame.midY, LayoutHelperAppearance.controlInset)
         XCTAssertEqual(material.frame.minY, surface.bounds.maxX - material.frame.maxX)
         XCTAssertGreaterThanOrEqual(material.frame.minY, 10)
         XCTAssertTrue(Defaults.array.contains { $0.key == Defaults.layoutHelperCloseButton.key })
@@ -10142,5 +10142,144 @@ final class WindowDividerSystemOverlayTests: XCTestCase {
             hitPID: left.pid, ownedPIDs: [left.pid], capturePIDs: []).isEmpty)
         XCTAssertTrue(WindowDividerGeometry.passiveCaptureOverlayIDs(in: [overlay], at: .zero,
             hitPID: left.pid, ownedPIDs: [left.pid], capturePIDs: [overlay.pid]).isEmpty)
+    }
+}
+
+@MainActor
+final class BlurAppearanceLiveTests: XCTestCase {
+    func testViewModelUpdatesExistingMaterialsAndRestoresInheritedAppearance() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .system
+        let model = SnapAreaViewModel()
+        for glass in [false, true] {
+            Defaults.liquidGlassForBlur.enabled = glass
+            let parent = NSView()
+            parent.appearance = NSAppearance(named: .darkAqua)
+            let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240))
+            parent.addSubview(surface)
+            let content = surface.content
+            let material = try XCTUnwrap(surface.subviews.first)
+            var styleChanges = 0
+            var appearanceChanges = 0
+            surface.onStyleChange = { styleChanges += 1 }
+            surface.onAppearanceChange = { appearanceChanges += 1 }
+            for choice: BlurAppearance in [.light, .dark, .system] {
+                model.blurAppearance = choice
+                XCTAssertEqual(surface.appearance?.name, choice.appearance?.name)
+                XCTAssertEqual(content.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]),
+                               choice == .light ? .aqua : .darkAqua)
+                XCTAssertTrue(surface.content === content)
+                XCTAssertTrue(surface.subviews.first === material, "Appearance changes must not recreate the material")
+            }
+            XCTAssertEqual(styleChanges, 0, "Theme changes must not restart style/geometry transitions")
+            XCTAssertEqual(appearanceChanges, 3)
+        }
+    }
+
+    func testConfigImportClearsForcedMaterialAppearance() {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .dark
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240))
+        XCTAssertEqual(surface.appearance?.name, .darkAqua)
+        Defaults.blurAppearance.value = .system
+        Notification.Name.configImported.post()
+        XCTAssertNil(surface.appearance)
+    }
+
+    func testLiveGlassFootprintUsesAllThreeAppearancesWithoutChangingItsFrame() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Requires native Glass") }
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.blurAppearance.value = .system
+        let model = SnapAreaViewModel()
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        window.showPreview(in: CGRect(x: 60, y: 60, width: 400, height: 300), from: nil, duration: 0)
+        let original = window.frame
+        for choice: BlurAppearance in [.dark, .light, .system] {
+            model.blurAppearance = choice
+            XCTAssertEqual(window.appearance?.name, choice.appearance?.name)
+            XCTAssertTrue(window.usesLiquidGlass)
+            XCTAssertEqual(window.frame, original)
+            XCTAssertTrue(window.realIsVisible)
+        }
+    }
+}
+
+@MainActor
+final class LayoutHelperWindowStyleTests: XCTestCase {
+    func testBackgroundAndShadowUseWindowRadiusInBothMaterials() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        for glass in [false, true] {
+            Defaults.liquidGlassForBlur.enabled = glass
+            let panel = LayoutHelperSurface()
+            defer { panel.close() }
+            panel.prepare(in: CGRect(x: 30, y: 30, width: 640, height: 480))
+            let root = try XCTUnwrap(panel.contentView)
+            root.layoutSubtreeIfNeeded()
+            let blur = try XCTUnwrap(root.subviews.first { !($0 is LayoutHelperShadow) })
+            func descendants(_ view: NSView) -> [NSView] { view.subviews.flatMap { [$0] + descendants($0) } }
+            if #available(macOS 26, *), let native = descendants(blur).compactMap({ $0 as? NSGlassEffectView }).first {
+                XCTAssertEqual(native.cornerRadius, FootprintStyle.cornerRadius)
+            } else {
+                let legacy = try XCTUnwrap(descendants(blur).compactMap { $0 as? NSVisualEffectView }.first)
+                XCTAssertEqual(legacy.maskImage?.capInsets.top, FootprintStyle.cornerRadius)
+                let shadow = try XCTUnwrap(root.subviews.compactMap { $0 as? LayoutHelperShadow }.first)
+                let expected = CGPath(roundedRect: shadow.bounds, cornerWidth: FootprintStyle.cornerRadius,
+                                      cornerHeight: FootprintStyle.cornerRadius, transform: nil)
+                XCTAssertEqual(shadow.layer?.shadowPath, expected)
+            }
+        }
+    }
+
+    func testSmallerWindowRadiusPreservesCloseControlAndScrollerInsets() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        let closePreference = Defaults.layoutHelperCloseButton.toCodable()
+        Defaults.layoutHelperCloseButton.enabled = true
+        defer { Defaults.layoutHelperCloseButton.load(from: closePreference) }
+        panel.configure(in: CGRect(x: 30, y: 30, width: 640, height: 480), items: [], offerPermission: false)
+        func descendants(_ view: NSView) -> [NSView] { view.subviews.flatMap { [$0] + descendants($0) } }
+        let views = descendants(try XCTUnwrap(panel.contentView))
+        let close = try XCTUnwrap(views.compactMap { $0 as? LayoutHelperCloseButton }.first)
+        let scroll = try XCTUnwrap(views.compactMap { $0 as? NSScrollView }.first)
+        let foreground = try XCTUnwrap(scroll.superview)
+        var closeSurface: NSView = close
+        while closeSurface.superview !== foreground { closeSurface = try XCTUnwrap(closeSurface.superview) }
+        XCTAssertEqual(closeSurface.frame.midX, foreground.bounds.width - 26)
+        XCTAssertEqual(closeSurface.frame.midY, 26)
+        XCTAssertEqual(scroll.scrollerInsets.top, 26)
+        XCTAssertEqual(scroll.scrollerInsets.bottom, 26)
+    }
+
+    func testSeparateHelperInteractionAndBackdropFollowLiveAppearanceAndImport() {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .system
+        let panel = LayoutHelperPanel()
+        let backdrop = LayoutHelperSurface()
+        defer { panel.close(); backdrop.close() }
+        let frame = CGRect(x: 30, y: 30, width: 640, height: 480)
+        panel.configure(in: frame, items: [], offerPermission: false, separateBackground: true)
+        backdrop.prepare(in: frame)
+        let interactionRoot = panel.contentView
+        let backdropRoot = backdrop.contentView
+        let model = SnapAreaViewModel()
+        for choice: BlurAppearance in [.light, .dark, .system] {
+            model.blurAppearance = choice
+            XCTAssertEqual(panel.appearance?.name, choice.appearance?.name)
+            XCTAssertEqual(backdrop.appearance?.name, choice.appearance?.name)
+            XCTAssertTrue(panel.contentView === interactionRoot)
+            XCTAssertTrue(backdrop.contentView === backdropRoot)
+        }
+        Defaults.blurAppearance.value = .dark
+        Notification.Name.configImported.post()
+        XCTAssertEqual(panel.appearance?.name, .darkAqua)
+        XCTAssertEqual(backdrop.appearance?.name, .darkAqua)
     }
 }

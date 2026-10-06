@@ -184,6 +184,7 @@ class FootprintWindow: NSWindow {
         if #available(macOS 26, *) { decoration.preferredDynamicRange = .standard }
         contentView = root
         effectView.onStyleChange = { [weak self] in self?.refreshAccessibility() }
+        effectView.onAppearanceChange = { [weak self] in self?.updateAppearance() }
         root.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
         accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
@@ -201,7 +202,7 @@ class FootprintWindow: NSWindow {
         let style = presentation
         effectView.refresh()
         let glass = usesLiquidGlass
-        let requested = Defaults.footprintBlur.enabled && !glass ? Defaults.blurAppearance.value.appearance : nil
+        let requested = Defaults.footprintBlur.enabled ? Defaults.blurAppearance.value.appearance : nil
         if appearance?.name != requested?.name { appearance = requested }
         let dark = (contentView?.effectiveAppearance ?? effectiveAppearance).bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
         let color = Defaults.footprintColor.typedValue?.nsColor
