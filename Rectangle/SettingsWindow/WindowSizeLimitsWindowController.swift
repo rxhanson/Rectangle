@@ -18,16 +18,16 @@ final class WindowSizeLimitsWindowController: NSWindowController, NSOutlineViewD
     private var displayedRecords: [WindowSizeLimitRecord]?
     private var displayedRememberState: Bool?
     private let outline = NSOutlineView()
-    private let resetWindow = NSButton(title: "Reset Window".localized, target: nil, action: nil)
-    private let resetApp = NSButton(title: "Reset Application".localized, target: nil, action: nil)
-    private let resetAll = NSButton(title: "Reset All".localized, target: nil, action: nil)
+    private let resetWindow = NSButton(title: String(localized: "Reset Window"), target: nil, action: nil)
+    private let resetApp = NSButton(title: String(localized: "Reset Application"), target: nil, action: nil)
+    private let resetAll = NSButton(title: String(localized: "Reset All"), target: nil, action: nil)
     private var observer: NSObjectProtocol?
     private var refreshTimer: Timer?
 
     init() {
         let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 760, height: 480),
             styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
-        window.title = "Window Size Limits".localized
+        window.title = String(localized: "Window Size Limits")
         window.isReleasedWhenClosed = false
         window.minSize = CGSize(width: 660, height: 380)
         super.init(window: window)
@@ -67,7 +67,7 @@ final class WindowSizeLimitsWindowController: NSWindowController, NSOutlineViewD
         buttons.orientation = .horizontal
         buttons.distribution = .fill
         buttons.spacing = 8
-        for (id, title, width) in [("window", "Application / Window".localized, 300.0), ("minimum", "Observed Size".localized, 130.0), ("reuse", "Observed For".localized, 240.0)] {
+        for (id, title, width) in [("window", String(localized: "Application / Window"), 300.0), ("minimum", String(localized: "Observed Size"), 130.0), ("reuse", String(localized: "Observed For"), 240.0)] {
             let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(id))
             column.title = title; column.width = width; column.minWidth = id == "window" ? 190 : 100
             outline.addTableColumn(column)
@@ -167,13 +167,13 @@ final class WindowSizeLimitsWindowController: NSWindowController, NSOutlineViewD
                 let rows = WindowProcessIdentity.launchTime(for: record.identity.pid) == record.identity.launch
                     ? CGWindowListCopyWindowInfo(.optionIncludingWindow, record.identity.windowID) as? [[String: Any]] : nil
                 let title = rows?.first?[kCGWindowName as String] as? String
-                text = title?.isEmpty == false ? title! : String(format: "Window %u".localized, record.identity.windowID)
+                text = title?.isEmpty == false ? title! : String(format: String(localized: "Window %u"), record.identity.windowID)
             case "minimum":
                 let size = record.evidence.learned
                 text = "\(size.width > 0 ? String(Int(size.width.rounded())) : "—") × \(size.height > 0 ? String(Int(size.height.rounded())) : "—") pt"
             default:
-                if !WindowSizeConstraints.shared.rememberLimits { text = "10 minutes".localized }
-                else { text = "This open window".localized }
+                if !WindowSizeConstraints.shared.rememberLimits { text = String(localized: "10 minutes") }
+                else { text = String(localized: "This open window") }
             }
         } else { return nil }
         let label = NSTextField(labelWithString: text)
