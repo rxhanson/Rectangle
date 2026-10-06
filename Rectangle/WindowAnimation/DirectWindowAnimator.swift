@@ -1,5 +1,3 @@
-/// DirectWindowAnimator.swift
-
 import Cocoa
 import QuartzCore
 
@@ -87,7 +85,7 @@ final class DirectWindowAnimator {
     private var helperPreparation: HelperPreparation?
     private var helperDestination: CGRect?
     private var settlementIsKeyboard = false
-    private var window: AccessibilityElement?
+    private var window: WindowAnimationElement?
     private var animation: WindowFrameAnimation?
     private var pendingRelease: PendingRelease?
     private var pendingSettlement: PendingSettlement?
@@ -105,8 +103,8 @@ final class DirectWindowAnimator {
     private let smoothResize: Bool
     private let automaticallyAdvances: Bool
     private let environmentIsSafe: () -> Bool
-    private let readServerFrame: (AccessibilityElement) -> CGRect?
-    private func serverFrame(_ element: AccessibilityElement) -> CGRect? {
+    private let readServerFrame: (WindowAnimationElement) -> CGRect?
+    private func serverFrame(_ element: WindowAnimationElement) -> CGRect? {
         if let cached = element.animationReads?.server { return cached }
         let started = ProcessInfo.processInfo.systemUptime
         let frame = readServerFrame(element)
@@ -117,7 +115,7 @@ final class DirectWindowAnimator {
         return frame
     }
     private let crossesDisplays: (CGRect, CGRect) -> Bool
-    private let minimumHint: (AccessibilityElement) -> CGSize?
+    private let minimumHint: (WindowAnimationElement) -> CGSize?
     private let isNativeResizeApp: (String?) -> Bool
     private var lastEnvironmentCheck: TimeInterval = 0
 
@@ -126,11 +124,11 @@ final class DirectWindowAnimator {
          automaticallyAdvances: Bool = true, smoothResize: Bool = false,
          frameInterval: TimeInterval = 1.0 / 60,
          environmentIsSafe: @escaping () -> Bool = { !WindowAnimationInterruptionPolicy.missionControlActive },
-         serverFrame: @escaping (AccessibilityElement) -> CGRect? = { element in
+         serverFrame: @escaping (WindowAnimationElement) -> CGRect? = { element in
              element.windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
          },
          crossesDisplays: @escaping (CGRect, CGRect) -> Bool = { WindowAnimator.crossesDisplays(from: $0, to: $1) },
-         minimumHint: @escaping (AccessibilityElement) -> CGSize? = { $0.minimumSize },
+         minimumHint: @escaping (WindowAnimationElement) -> CGSize? = { $0.minimumSize },
          isNativeResizeApp: @escaping (String?) -> Bool = { id in
              guard let id else { return false }
              return Defaults.directAnimationNativeResizeApps.typedValue?.contains(id) == true
@@ -147,11 +145,11 @@ final class DirectWindowAnimator {
         self.minimumHint = minimumHint
     }
 
-    func destination(for element: AccessibilityElement) -> CGRect? {
+    func destination(for element: WindowAnimationElement) -> CGRect? {
         window == element ? (helperDestination ?? pendingRelease?.destination ?? pendingSettlement?.destination ?? keyboardSession?.motion.destination ?? animation?.destination) : nil
     }
 
-    func cancel(for element: AccessibilityElement) {
+    func cancel(for element: WindowAnimationElement) {
         if window == element { cancel() }
     }
 
@@ -342,14 +340,14 @@ final class DirectWindowAnimator {
         else { animation?.tick(at: presentationTime ?? time) }
     }
 
-    private func acknowledgeResize(_ element: AccessibilityElement, at time: TimeInterval) {
+    private func acknowledgeResize(_ element: WindowAnimationElement, at time: TimeInterval) {
         guard let size = element.size, element.animationResizeResponse.acknowledge(size, at: time) else { return }
         // Keep the resize pending until WindowServer confirms it, even after AX accepts the write.
         element.animationResizeNotified = false
         WindowAnimationDiagnostics.event("animation-resize-acknowledged", fields: ["windowID": element.windowId ?? 0])
     }
 
-    func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
+    func animate(_ element: WindowAnimationElement, from startingFrame: CGRect? = nil, to destination: CGRect,
                  duration: TimeInterval = WindowAnimationCurve.duration, resizeOnly: Bool,
                  releasedSnap: Bool = false,
                  placement: WindowAnimationPlacement?, profile: WindowAnimationProfile = .standard,
@@ -412,7 +410,7 @@ final class DirectWindowAnimator {
                        resizeOnly: resizeOnly, placement: placement, profile: profile, offset: offset, curve: curve, completion: completion)
     }
 
-    private func prepareHelper(_ element: AccessibilityElement, to destination: CGRect,
+    private func prepareHelper(_ element: WindowAnimationElement, to destination: CGRect,
                                duration: TimeInterval, placement: WindowAnimationPlacement,
                                completion: @escaping (CGRect) -> Void) {
         let origin = element.frame
@@ -436,7 +434,7 @@ final class DirectWindowAnimator {
         startDriving()
     }
 
-    private func advanceHelperPreparation(_ preparation: HelperPreparation, window: AccessibilityElement,
+    private func advanceHelperPreparation(_ preparation: HelperPreparation, window: WindowAnimationElement,
                                           at time: TimeInterval) {
         guard time - preparation.startedAt < 0.65 else { finish(); return }
         let actual = window.frame
@@ -467,7 +465,7 @@ final class DirectWindowAnimator {
         startHelperMotion(window, from: actual, preparation: preparation)
     }
 
-    private func startHelperMotion(_ element: AccessibilityElement, from origin: CGRect,
+    private func startHelperMotion(_ element: WindowAnimationElement, from origin: CGRect,
                                    preparation: HelperPreparation) {
         let requested = preparation.destination
         let placement = preparation.placement
@@ -549,7 +547,7 @@ final class DirectWindowAnimator {
         startDriving()
     }
 
-    private func animateKeyboard(_ element: AccessibilityElement, to destination: CGRect,
+    private func animateKeyboard(_ element: WindowAnimationElement, to destination: CGRect,
                                  placement: WindowAnimationPlacement?, generation: UUID,
                                  completion: @escaping (CGRect) -> Void) {
         guard enabled(), environmentIsSafe(), element.isFullScreen != true,
@@ -767,7 +765,7 @@ final class DirectWindowAnimator {
         settlementIsKeyboard = true
     }
 
-    private func startAnimation(_ element: AccessibilityElement, from startingFrame: CGRect?, to destination: CGRect,
+    private func startAnimation(_ element: WindowAnimationElement, from startingFrame: CGRect?, to destination: CGRect,
                                 duration: TimeInterval, resizeOnly: Bool, placement: WindowAnimationPlacement?,
                                 profile: WindowAnimationProfile,
                                 offset: @escaping () -> CGPoint, curve: @escaping (Double) -> CGFloat,
@@ -1010,7 +1008,7 @@ final class DirectWindowAnimator {
         startDriving()
     }
 
-    private func observeResizePause(_ pause: inout WindowAnimationResizePause, window: AccessibilityElement,
+    private func observeResizePause(_ pause: inout WindowAnimationResizePause, window: WindowAnimationElement,
                                     requested: CGSize, achieved: CGRect, previous: CGRect, previousTime: TimeInterval,
                                     destination: CGRect, placement: WindowAnimationPlacement, origin: CGRect,
                                     at now: TimeInterval, endingAt: TimeInterval) {
@@ -1044,7 +1042,7 @@ final class DirectWindowAnimator {
         }
     }
 
-    private func writePausedPosition(_ window: AccessibilityElement, frame: CGRect, previous: CGRect,
+    private func writePausedPosition(_ window: WindowAnimationElement, frame: CGRect, previous: CGRect,
                                      exact: Bool = false) -> CGRect? {
         var frame = frame
         if !exact { frame.origin = CGPoint(x: frame.minX.rounded(), y: frame.minY.rounded()) }
@@ -1141,515 +1139,5 @@ final class DirectWindowAnimator {
         screenObserver = NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
             object: nil, queue: .main) { [weak self] _ in self?.finish() }
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in self?.mouseDown() }
-    }
-}
-
-@available(macOS 14.0, *)
-private final class WindowAnimationDisplayLinkTarget: NSObject {
-    private let onFrame: (TimeInterval) -> Void
-    init(onFrame: @escaping (TimeInterval) -> Void) { self.onFrame = onFrame }
-    @objc func tick(_ link: CADisplayLink) { onFrame(link.targetTimestamp) }
-}
-
-final class WindowAnimationRequest {
-    private let lock = NSLock()
-    private var terminated = false
-    private var cancellation: (() -> Void)?
-    private var changed = false
-    private var resized = false
-    func geometryChanged(resized: Bool = false) { lock.lock(); changed = true; self.resized = self.resized || resized; lock.unlock() }
-    func consumeGeometryChange() -> Bool { lock.lock(); defer { lock.unlock() }; let result = changed; changed = false; return result }
-    func consumeResizeChange() -> Bool { lock.lock(); defer { lock.unlock() }; let result = resized; resized = false; return result }
-    init(cancellation: (() -> Void)? = nil) { self.cancellation = cancellation }
-    // Terminal callbacks run on main, separately from placement completion.
-    func cancel() {
-        lock.lock()
-        guard !terminated else { lock.unlock(); return }
-        terminated = true
-        let callback = cancellation
-        cancellation = nil
-        lock.unlock()
-        callback?()
-    }
-    func complete() {
-        lock.lock()
-        terminated = true
-        cancellation = nil
-        lock.unlock()
-    }
-    var isCurrent: Bool { lock.lock(); defer { lock.unlock() }; return !terminated }
-}
-
-struct WindowAnimationPacing {
-    let maximumRate: Int
-    private var divisor = 1
-    private var slow = 0
-    private var fast = 0
-    private var costs: [TimeInterval] = []
-    init(maximumRate: Int, initialRate: Double? = nil) {
-        self.maximumRate = max(1, maximumRate > 0 ? maximumRate : 60)
-        let preferred = min(Double(self.maximumRate), initialRate ?? Double(self.maximumRate))
-        while rate > 120 || (rate > preferred && rate > 30) { divisor *= 2 }
-    }
-    var rate: Double { Double(maximumRate) / Double(divisor) }
-    // Keep lower rates aligned to whole display refresh periods, including odd rates.
-    var interval: TimeInterval { Double(divisor) / Double(maximumRate) }
-    static func sampleTime(now: TimeInterval, deadline: TimeInterval?, displayInterval: TimeInterval) -> TimeInterval {
-        guard let deadline, deadline.isFinite else { return now }
-        return max(now, min(deadline, now + displayInterval))
-    }
-    mutating func observe(cost: TimeInterval) {
-        costs.append(cost)
-        if costs.count > 8 { costs.removeFirst() }
-        let tail = costs.sorted()[max(0, Int(Double(costs.count - 1) * 0.9))]
-        if cost > interval {
-            slow += 1; fast = 0
-            if slow >= 3, rate > 30 { divisor *= 2; slow = 0; costs.removeAll() }
-        } else {
-            slow = 0
-            if divisor > 1, rate * 2 <= 120, tail < 0.65 * interval / 2 { fast += 1 } else { fast = 0 }
-            if fast >= 12 { divisor /= 2; fast = 0; costs.removeAll() }
-        }
-    }
-}
-
-/// Owns AX handles independently of main-thread caches. Cancellation is checked
-/// between properties, without holding a lock across an unresponsive AX call.
-private final class WindowAnimationElement: AccessibilityElement {
-    let process: pid_t
-    let launch: TimeInterval
-    let bundle: String?
-    let enhancedUI: EnhancedUI
-    let assistiveTechnology: Bool
-    var request: WindowAnimationRequest
-    var hint: CGSize?
-    var readCount = 0
-    var writeCount = 0
-    var resizeCost: TimeInterval = 0
-    var resizeWork: TimeInterval = 0
-    var frameBudget = WindowAnimationFrameBudget()
-    var resizeCadence = WindowAnimationResizeCadence(frameInterval: 1.0 / 60)
-    private func measured<T>(_ operation: String, _ body: () -> T) -> T {
-        let start = ProcessInfo.processInfo.systemUptime
-        let value = body()
-        let cost = ProcessInfo.processInfo.systemUptime - start
-        if operation == "size-write" || operation == "size-read" { resizeWork += cost }
-        if operation == "size-read" {
-            frameBudget.observeSizeRead(cost, at: start + cost, frameInterval: resizeCadence.frameInterval)
-        }
-        if operation == "position-write" { frameBudget.observePositionWrite(cost) }
-        if animationIntermediateStep && cost > 0.02 {
-            animationYieldRequested = true
-        }
-        if operation == "size-write" {
-            resizeCost = resizeCost == 0 ? cost : resizeCost * 0.75 + cost * 0.25
-            resizeCadence.observe(cost: resizeCost)
-            animationSizeInterval = resizeCadence.interval
-        }
-        WindowAnimationDiagnostics.event("animation-operation", fields: ["windowID": windowId ?? 0,
-            "operation": operation, "milliseconds": cost * 1000])
-        return value
-    }
-    override func animationAllowsSizeRead(reservingMotion: Bool) -> Bool {
-        guard request.isCurrent else { return false }
-        if animationReads?.size != nil { return true }
-        let now = ProcessInfo.processInfo.systemUptime
-        let allowed = frameBudget.allowsSizeRead(at: now,
-            frameInterval: resizeCadence.frameInterval, resizeCost: resizeCost, reservingMotion: reservingMotion)
-        if !allowed {
-            WindowAnimationDiagnostics.event("animation-read-deferred", fields: ["windowID": windowId ?? 0,
-                "reservingMotion": reservingMotion,
-                "estimatedMilliseconds": frameBudget.estimatedSizeReadCost(at: now, frameInterval: resizeCadence.frameInterval) * 1000])
-        }
-        return allowed
-    }
-    override func readAnimationGeometry() -> Bool {
-        readCount += 1
-        return measured("geometry-read") { super.readAnimationGeometry() }
-    }
-
-    init(_ element: AXUIElement, pid: pid_t, id: CGWindowID, launch: TimeInterval,
-         bundle: String?, enhancedUI: EnhancedUI, assistiveTechnology: Bool, request: WindowAnimationRequest) {
-        process = pid; self.launch = launch; self.bundle = bundle; self.enhancedUI = enhancedUI
-        self.assistiveTechnology = assistiveTechnology; self.request = request
-        super.init(element, messagingTimeout: 0.05, windowID: id)
-    }
-    override var bundleIdentifier: String? { bundle }
-    override var pid: pid_t? { process }
-    func readMinimumSizeHint() -> CGSize? {
-        // This optional metadata must not delay main or stack two timeouts while
-        // the target is busy. Retargeting can cancel between the two attributes.
-        let reader = AccessibilityReadBatch(budget: 0.01)
-        defer { setMessagingTimeout(0.05) }
-        guard request.isCurrent else { return nil }
-        if let size: CGSize = reader.wrapped(animationObservationElement, NSAccessibility.Attribute.minSize.rawValue, type: .cgSize) {
-            return size
-        }
-        guard request.isCurrent else { return nil }
-        return reader.wrapped(animationObservationElement, NSAccessibility.Attribute.minimumSize.rawValue, type: .cgSize)
-    }
-    override var frame: CGRect {
-        return measured("frame-read") { super.frame }
-    }
-    override var size: CGSize? {
-        get {
-            if let size = animationReads?.size { return size }
-            readCount += 1
-            return measured("size-read") { super.size }
-        }
-        set { if let newValue { _ = writeAnimationSize(newValue) } }
-    }
-    private var mayWrite: Bool {
-        request.isCurrent && WindowProcessIdentity.launchTime(for: process) == launch
-    }
-    override func writeAnimationPosition(_ position: CGPoint) -> AXError {
-        guard mayWrite else { return .cannotComplete }
-        writeCount += 1
-        return measured("position-write") { super.writeAnimationPosition(position) }
-    }
-    override func writeAnimationSize(_ size: CGSize) -> AXError {
-        guard mayWrite else { return .cannotComplete }
-        writeCount += 1
-        return measured("size-write") { super.writeAnimationSize(size) }
-    }
-    override func beginAnimatedAdjustment() -> () -> Void {
-        let application = AccessibilityElement(AXUIElementCreateApplication(process), application: true,
-                                                messagingTimeout: 0.05)
-        return measured("enhanced-ui-begin") {
-            enhancedUI.beginWindowAdjustment(bundleIdentifier: bundle,
-                builtInAssistiveTechnologyEnabled: assistiveTechnology,
-                readEnhancedUI: { application.enhancedUserInterface },
-                writeEnhancedUI: { application.enhancedUserInterface = $0 })
-        }
-    }
-    override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
-        if adjustSizeFirst, writeAnimationSize(frame.size) != .success { return }
-        if adjustPosition, writeAnimationPosition(frame.origin) != .success { return }
-        _ = writeAnimationSize(frame.size)
-    }
-}
-
-/// Lifecycle and display callbacks run on main; animation writes use one serial
-/// worker. When busy, the worker skips old frames and uses the latest timestamp.
-final class WindowAnimationExecutor {
-    typealias WindowLookup = (pid_t, CGWindowID, TimeInterval, AXUIElement?, () -> Bool) -> WindowAccessibilityLookup.Result
-    private struct Active {
-        let element: AccessibilityElement
-        let destination: CGRect
-        let request: WindowAnimationRequest
-        let offset: () -> CGPoint
-        let pid: pid_t
-    }
-    private let queue = DispatchQueue(label: "Rectangle.WindowAnimation", qos: .userInteractive)
-    private let captureID = UUID()
-    private var active: Active?
-    private var retiring: [(AccessibilityElement, CGRect, WindowAnimationRequest)] = []
-    private var displayCleanup: (() -> Void)?
-    private var generation: UInt64 = 0
-    private var externalWork = 0
-    private var tickPending = false
-    private var nextTick: TimeInterval = 0
-    private var pacing = WindowAnimationPacing(maximumRate: 60)
-    private var mouseMonitor: Any?
-    private var observation: WindowAnimationObservation?
-    private var responses = WindowAnimationResponseHistory()
-    private var preparing: (WindowAnimationResponseKey, TimeInterval)?
-    private let lookupWindow: WindowLookup
-
-    init(lookupWindow: @escaping WindowLookup = { pid, id, launch, preferred, isCurrent in
-        WindowAccessibilityLookup.resolveResult(pid: pid, id: id, launch: launch, preferred: preferred, isCurrent: isCurrent)
-    }) {
-        self.lookupWindow = lookupWindow
-    }
-
-    // Accessed exclusively by queue.
-    private var prepared: (WindowAnimationResponseKey, AXUIElement, TimeInterval)?
-    private var workerTime: TimeInterval = 0
-    private var workerWindow: WindowAnimationElement?
-    private var workerScreens: [CGRect] = []
-    private var workerNativeResize = false
-    private var workerOffset = CGPoint.zero
-    private lazy var core = DirectWindowAnimator(enabled: { true }, clock: { [weak self] in self?.workerTime ?? ProcessInfo.processInfo.systemUptime }, automaticallyAdvances: false, smoothResize: true,
-        environmentIsSafe: { !WindowAnimationInterruptionPolicy.missionControlActive },
-        crossesDisplays: { [weak self] a, b in
-            let screens = self?.workerScreens ?? []
-            return WindowDisplayTransition.display(containing: a, displays: screens)
-                != WindowDisplayTransition.display(containing: b, displays: screens)
-        }, minimumHint: { ($0 as? WindowAnimationElement)?.hint },
-        isNativeResizeApp: { [weak self] _ in self?.workerNativeResize == true })
-
-    func prepare(_ element: AccessibilityElement) {
-        guard active == nil, externalWork == 0, WindowAnimator.enabled,
-              let pid = element.pid, let id = element.windowId,
-              let launch = WindowProcessIdentity.launchTime(for: pid) else { return }
-        let key = WindowAnimationResponseKey(pid: pid, window: id, launch: launch)
-        let now = ProcessInfo.processInfo.systemUptime
-        if let preparing, now - preparing.1 < 1 { return }
-        preparing = (key, now)
-        queue.async { [self] in
-            let reader = AccessibilityReadBatch(budget: 0.04)
-            let windows = reader.value(AXUIElementCreateApplication(pid), kAXWindowsAttribute) as? [AXUIElement] ?? []
-            if let raw = windows.first(where: { reader.windowID($0) == id }), reader.available {
-                prepared = (key, raw, ProcessInfo.processInfo.systemUptime)
-            }
-        }
-    }
-
-    func destination(for element: AccessibilityElement) -> CGRect? {
-        if let active, active.element == element { return active.destination }
-        return retiring.last(where: { $0.0 == element })?.1
-    }
-    func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
-        if active == nil && retiring.isEmpty && !tickPending && externalWork == 0 { body(); return }
-        let expected = generation
-        queue.async { [self] in
-            DispatchQueue.main.async { [self] in
-                guard generation == expected else { cancellation?(); return }
-                body()
-            }
-        }
-    }
-    func performPlacementWork(_ body: @escaping () -> Void) {
-        externalWork += 1
-        queue.async { [self] in
-            body()
-            DispatchQueue.main.async { [self] in externalWork -= 1 }
-        }
-    }
-    func cancel(for element: AccessibilityElement) {
-        guard active?.element == element else { return }
-        cancel()
-    }
-    func cancel() {
-        generation &+= 1
-        guard let previous = active else { return }
-        retiring.append((previous.element, previous.destination, previous.request))
-        active = nil
-        stopDisplay()
-        previous.request.cancel()
-        let drained = retiring.map { $0.2 }
-        queue.async { [self] in
-            core.cancel(); workerWindow = nil
-            DispatchQueue.main.async { [self] in retiring.removeAll { entry in drained.contains { $0 === entry.2 } } }
-        }
-    }
-    func cancelIfTargetDiffers(from pid: pid_t?) {
-        if let pid, let active, active.pid != pid { cancel() }
-    }
-    func finish() {
-        guard let current = active else { return }
-        stopDisplay()
-        queue.async { [self] in
-            guard current.request.isCurrent else { return }
-            core.finish()
-            DispatchQueue.main.async { [self] in clear(current.request, cancelled: true) }
-        }
-    }
-    func mouseDown() { cancel() }
-
-    func animate(_ element: AccessibilityElement, from startingFrame: CGRect? = nil, to destination: CGRect,
-                 duration: TimeInterval, resizeOnly: Bool, releasedSnap: Bool,
-                 placement: WindowAnimationPlacement?, profile: WindowAnimationProfile,
-                 offset: @escaping () -> CGPoint, curve: @escaping (Double) -> CGFloat,
-                 cancellation: (() -> Void)? = nil, completion: @escaping (CGRect) -> Void) {
-        guard WindowAnimator.enabled, let pid = element.pid, let id = element.windowId,
-              let launch = WindowProcessIdentity.launchTime(for: pid) else { completion(.null); return }
-        generation &+= 1
-        let sameWindow = active?.element == element
-        if let previous = active {
-            previous.request.cancel()
-            retiring.append((previous.element, previous.destination, previous.request))
-        }
-        let drained = retiring.map { $0.2 }
-        let request = WindowAnimationRequest(cancellation: cancellation)
-        let key = WindowAnimationResponseKey(pid: pid, window: id, launch: launch)
-        let response = responses.entry(for: key, at: ProcessInfo.processInfo.systemUptime)
-        active = Active(element: element, destination: destination, request: request, offset: offset, pid: pid)
-        let screens = NSScreen.screens.map { $0.frame.screenFlipped }
-        let bundle = element.bundleIdentifier
-        let native = bundle.map { Defaults.directAnimationNativeResizeApps.typedValue?.contains($0) == true } ?? false
-        let enhanced = Defaults.enhancedUI.value
-        let assistive = NSWorkspace.shared.isVoiceOverEnabled || NSWorkspace.shared.isSwitchControlEnabled
-        let initialOffset = offset()
-        let preferredWindow = element.animationObservationElement
-        startDisplay(destination: destination, initialPacing: response?.pacing)
-        let displayInterval = 1 / Double(pacing.maximumRate)
-        queue.async { [self] in
-            guard request.isCurrent else { return }
-            workerScreens = screens; workerNativeResize = native; workerOffset = initialOffset
-            if !sameWindow || workerWindow?.windowId != id || workerWindow?.process != pid || workerWindow?.launch != launch {
-                core.cancel(); workerWindow = nil
-                var raw: AXUIElement?
-                if let prepared, prepared.0 == key,
-                   ProcessInfo.processInfo.systemUptime - prepared.2 < 2,
-                   WindowProcessIdentity.launchTime(for: pid) == launch {
-                    raw = prepared.1
-                }
-                self.prepared = nil
-                if raw == nil {
-                    switch lookupWindow(pid, id, launch, preferredWindow, { request.isCurrent }) {
-                    case .found(let element): raw = element
-                    case .unavailable: break
-                    case .timedOut, .cancelled:
-                        // Do not send a stalled or obsolete target back to a
-                        // synchronous placement fallback on the main thread.
-                        DispatchQueue.main.async { [self] in
-                            retiring.removeAll { entry in drained.contains { $0 === entry.2 } }
-                            clear(request, cancelled: true)
-                        }
-                        return
-                    }
-                }
-                if let raw {
-                    workerWindow = WindowAnimationElement(raw, pid: pid, id: id, launch: launch,
-                        bundle: bundle, enhancedUI: enhanced, assistiveTechnology: assistive, request: request)
-                    workerWindow?.resizeCost = response?.resizeCost ?? 0
-                }
-            }
-            guard request.isCurrent else { return }
-            DispatchQueue.main.async { [self] in
-                retiring.removeAll { entry in drained.contains { $0 === entry.2 } }
-            }
-            guard let window = workerWindow else {
-                DispatchQueue.main.async { [self] in
-                    guard active?.request === request else { return }
-                    clear(request); completion(.null)
-                }
-                return
-            }
-            window.request = request
-            window.hint = window.readMinimumSizeHint()
-            guard request.isCurrent else { return }
-            let watch = WindowAnimationObservation(pid: pid, element: window.animationObservationElement, request: request)
-            DispatchQueue.main.async { [self] in
-                if active?.request === request { observation = watch }
-            }
-            workerTime = ProcessInfo.processInfo.systemUptime
-            window.frameBudget = WindowAnimationFrameBudget()
-            window.resizeCadence = WindowAnimationResizeCadence(frameInterval: displayInterval, cost: window.resizeCost)
-            window.animationSizeInterval = window.resizeCadence.interval
-            core.animate(window, from: startingFrame, to: destination, duration: duration,
-                resizeOnly: resizeOnly, releasedSnap: releasedSnap, placement: placement, profile: profile,
-                offset: { [weak self] in self?.workerOffset ?? .zero }, curve: curve) { [weak self] frame in
-                    DispatchQueue.main.async { [weak self] in
-                        guard let self, self.active?.request === request, request.isCurrent else { return }
-                        self.clear(request); completion(frame)
-                    }
-                }
-        }
-    }
-    private func clear(_ request: WindowAnimationRequest, cancelled: Bool = false) {
-        retiring.removeAll { $0.2 === request }
-        guard active?.request === request else { return }
-        active = nil; stopDisplay()
-        if cancelled { request.cancel() }
-        else { request.complete() }
-    }
-    private func tick(targetTimestamp: TimeInterval? = nil) {
-        guard let current = active else { return }
-        if !WindowAnimator.enabled { finish(); return }
-        let now = ProcessInfo.processInfo.systemUptime
-        guard !tickPending, now >= nextTick else { return }
-        tickPending = true
-        let offset = current.offset()
-        let rate = pacing.rate
-        let interval = pacing.interval
-        let displayInterval = 1 / Double(pacing.maximumRate)
-        let deadline = targetTimestamp.map { now + ($0 - CACurrentMediaTime()) }
-        queue.async { [self] in
-            let start = ProcessInfo.processInfo.systemUptime
-            if current.request.isCurrent {
-                workerOffset = offset
-                workerWindow?.animationYieldRequested = false
-                workerWindow?.resizeWork = 0
-                let reads = workerWindow?.readCount ?? 0, writes = workerWindow?.writeCount ?? 0
-                if current.request.consumeGeometryChange() { workerWindow?.animationPolicy?.geometryChanged = true }
-                if current.request.consumeResizeChange() {
-                    workerWindow?.animationResizeNotified = true
-                    WindowAnimationDiagnostics.event("animation-resize-notification", fields: ["windowID": workerWindow?.windowId ?? 0])
-                }
-                workerTime = start
-                workerWindow?.animationVerificationTime = start
-                workerWindow?.animationResizeResponse.frameInterval = interval
-                workerWindow?.frameBudget.deadline = deadline.map { min($0, start + displayInterval) } ?? (start + displayInterval)
-                // Only motion samples look ahead; feedback and timeout checks use real time.
-                let sampleTime = WindowAnimationPacing.sampleTime(now: start, deadline: deadline, displayInterval: displayInterval)
-                core.advance(at: workerTime, presentationTime: sampleTime)
-                WindowAnimationDiagnostics.event("animation-executor-tick", fields: [
-                    "windowID": workerWindow?.windowId ?? 0, "rate": rate,
-                    "queueMilliseconds": (start - now) * 1000,
-                    "sizeFrameCount": workerWindow?.resizeCadence.frames ?? 1,
-                    "milliseconds": (ProcessInfo.processInfo.systemUptime - start) * 1000,
-                    "reads": (workerWindow?.readCount ?? 0) - reads,
-                    "writes": (workerWindow?.writeCount ?? 0) - writes])
-            }
-            let end = ProcessInfo.processInfo.systemUptime
-            let finished = workerWindow.map { core.destination(for: $0) == nil } ?? true
-            let sizeCost = workerWindow?.resizeCost ?? 0
-            let movementCost = max(0, end - start - (workerWindow?.resizeWork ?? 0))
-            let key = workerWindow.map { WindowAnimationResponseKey(pid: $0.process, window: $0.windowId ?? 0, launch: $0.launch) }
-            DispatchQueue.main.async { [self] in
-                tickPending = false
-                guard active?.request === current.request else { return }
-                pacing.observe(cost: movementCost); nextTick = now + pacing.interval * 0.9
-                if let key { responses.record(key, pacing: pacing, resizeCost: sizeCost, at: end) }
-                // Normal completion was queued by the core before this block.
-                // A still-active request whose core stopped was cancelled instead.
-                if finished { clear(current.request, cancelled: true) }
-            }
-        }
-    }
-    private func stopDisplay() {
-        observation = nil
-        displayCleanup?(); displayCleanup = nil
-        if let mouseMonitor { NSEvent.removeMonitor(mouseMonitor) }; mouseMonitor = nil
-        WindowAnimationCaptureGate.shared.end(captureID)
-    }
-    private func startDisplay(destination: CGRect, initialPacing: WindowAnimationPacing?) {
-        stopDisplay(); WindowAnimationCaptureGate.shared.begin(captureID)
-        nextTick = 0
-        let screen = NSScreen.screens.max {
-            let a = $0.frame.screenFlipped.intersection(destination), b = $1.frame.screenFlipped.intersection(destination)
-            return (a.isNull ? 0 : a.width * a.height) < (b.isNull ? 0 : b.width * b.height)
-        }
-        let maximumRate = screen?.maximumFramesPerSecond ?? 60
-        if let initialPacing, initialPacing.maximumRate == maximumRate { pacing = initialPacing }
-        else { pacing = WindowAnimationPacing(maximumRate: maximumRate, initialRate: initialPacing?.rate) }
-        if let screen {
-            let target = WindowAnimationDisplayLinkTarget { [weak self] in self?.tick(targetTimestamp: $0) }
-            let link = screen.displayLink(target: target, selector: #selector(WindowAnimationDisplayLinkTarget.tick(_:)))
-            link.preferredFrameRateRange = CAFrameRateRange(minimum: Float(pacing.maximumRate),
-                maximum: Float(pacing.maximumRate), preferred: Float(pacing.maximumRate))
-            link.add(to: .main, forMode: .common)
-            displayCleanup = { link.invalidate(); _ = target }
-        } else {
-            let timer = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in self?.tick() }
-            RunLoop.main.add(timer, forMode: .common); displayCleanup = { timer.invalidate() }
-        }
-        mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in self?.cancel() }
-    }
-}
-
-
-/// Notifications only schedule readback; they do not prove a frame was displayed.
-private final class WindowAnimationObservation {
-    private var observer: AXObserver?
-    private let request: WindowAnimationRequest
-    init(pid: pid_t, element: AXUIElement, request: WindowAnimationRequest) {
-        self.request = request
-        let callback: AXObserverCallback = { _, _, notification, context in
-            guard let context else { return }
-            Unmanaged<WindowAnimationRequest>.fromOpaque(context).takeUnretainedValue()
-                .geometryChanged(resized: notification as String == kAXResizedNotification)
-        }
-        guard AXObserverCreate(pid, callback, &observer) == .success, let observer else { return }
-        let context = Unmanaged.passUnretained(request).toOpaque()
-        for notification in [kAXMovedNotification, kAXResizedNotification] {
-            _ = AXObserverAddNotification(observer, element, notification as CFString, context)
-        }
-        CFRunLoopAddSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .commonModes)
-    }
-    deinit {
-        if let observer { CFRunLoopRemoveSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .commonModes) }
     }
 }

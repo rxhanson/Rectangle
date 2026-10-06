@@ -5002,7 +5002,7 @@ final class DragRestorePlacementTests: XCTestCase {
 }
 
 final class DragRestoreReleaseTests: XCTestCase {
-    private final class WindowElement: AccessibilityElement {
+    private final class WindowElement: WindowAnimationElement {
         var currentFrame = CGRect(x: 120, y: 120, width: 800, height: 600)
         var writes: [CGRect] = []
         override var frame: CGRect { currentFrame }
