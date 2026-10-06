@@ -707,7 +707,7 @@ enum LayoutHelperWindowRestoration {
             timer.invalidate(); cancellation.onCancel = nil
             completion(.failed(restored: false)); return cancellation
         }
-        let preferred = window.animationObservationElement
+        let preferred = window.axElement
         WindowAnimator.shared.performPlacementWork {
             let valid = { !cancellation.isCancelled && WindowProcessIdentity.launchTime(for: pid) == launch }
             let outcome: WindowPlacementCoordinator.Outcome
@@ -716,8 +716,8 @@ enum LayoutHelperWindowRestoration {
                 let worker = AccessibilityElement(element, messagingTimeout: 0.05, windowID: id)
                 if let target, worker.isResizable(), worker.isSystemDialog != true {
                     _ = prepare(target: target, isCurrent: valid, minimized: { worker.isMinimized },
-                        size: { requested in cancellation.write { worker.writeAnimationSize(requested) } ?? .failure },
-                        position: { requested in cancellation.write { worker.writeAnimationPosition(requested) } ?? .failure },
+                        size: { requested in cancellation.write { worker.writeSize(requested) } ?? .failure },
+                        position: { requested in cancellation.write { worker.writePosition(requested) } ?? .failure },
                         frame: { worker.frame })
                 }
                 let acknowledged = acknowledge(isCurrent: valid, minimized: { worker.isMinimized }, restore: {
@@ -732,8 +732,8 @@ enum LayoutHelperWindowRestoration {
                 case .failed, .unresponsive:
                     if let original {
                         _ = rollback(original: original, isCurrent: valid,
-                            size: { requested in cancellation.write { worker.writeAnimationSize(requested) } ?? .failure },
-                            position: { requested in cancellation.write { worker.writeAnimationPosition(requested) } ?? .failure })
+                            size: { requested in cancellation.write { worker.writeSize(requested) } ?? .failure },
+                            position: { requested in cancellation.write { worker.writePosition(requested) } ?? .failure })
                     }
                 case .placed, .cancelled: break
                 }

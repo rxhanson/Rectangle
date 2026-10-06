@@ -353,6 +353,7 @@ struct BehaviorSettingsView: View {
             }
             
             layoutHelperSection
+            TrackpadGestureSettingsView()
 
             // MARK: - Stage Manager
             if viewModel.stageCapable {

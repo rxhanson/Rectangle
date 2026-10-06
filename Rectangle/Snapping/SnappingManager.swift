@@ -147,9 +147,15 @@ class SnappingManager {
             self.startEventMonitor()
         }
         Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
+        Notification.Name.windowActionWillExecute.onPost { [weak self] notification in
+            guard let self, self.box?.waitingForPlacement == true,
+                  (notification.object as? ExecutionParameters)?.source != .dragToSnap else { return }
+            self.box?.orderOut(nil)
+        }
     }
     
     func frontAppChanged(notification: Notification) {
+        box?.cancelPlacementIfInactive()
         if ApplicationToggle.shortcutsDisabled {
             DispatchQueue.main.async {
                 if !Defaults.ignoreDragSnapToo.userDisabled {
@@ -184,12 +190,58 @@ class SnappingManager {
         checkFullScreen()
     }
     
+    private var fullScreenCheckGeneration = UUID()
+    private var fullScreenCheckRunning = false
+
     func checkFullScreen() {
-        isFullScreen = AccessibilityElement.getFrontWindowElement()?.isFullScreen == true
+        fullScreenCheckGeneration = UUID()
         toggleListening()
+        refreshFullScreenState()
+    }
+
+    private func refreshFullScreenState() {
+        guard !fullScreenCheckRunning else { return }
+        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
+              let launch = WindowProcessIdentity.launchTime(for: pid) else {
+            isFullScreen = false
+            toggleListening()
+            return
+        }
+        let generation = fullScreenCheckGeneration
+        fullScreenCheckRunning = true
+        // Activation also occurs while selecting a helper candidate. A stalled
+        // previous app must not block that handoff or enqueue repeated scans.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let reader = AccessibilityReadBatch(budget: 0.15)
+            let application = AXUIElementCreateApplication(pid)
+            let focused = reader.value(application, kAXFocusedWindowAttribute)
+            let window: AXUIElement?
+            if let focused, CFGetTypeID(focused) == AXUIElementGetTypeID() {
+                window = (focused as! AXUIElement)
+            } else {
+                window = (reader.value(application, kAXWindowsAttribute) as? [AXUIElement])?.first
+            }
+            let fullScreen = window.flatMap { reader.value($0, "AXFullScreen") as? Bool } == true
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.fullScreenCheckRunning = false
+                guard self.fullScreenCheckGeneration == generation,
+                      NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
+                      WindowProcessIdentity.launchTime(for: pid) == launch else {
+                    self.refreshFullScreenState()
+                    return
+                }
+                // An unchanged delayed reply must not reset a newer gesture.
+                if self.isFullScreen != fullScreen {
+                    self.isFullScreen = fullScreen
+                    self.toggleListening()
+                }
+            }
+        }
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         checkFullScreen()
     }
     
@@ -228,6 +280,7 @@ class SnappingManager {
     }
     
     private func disableSnapping() {
+        box?.close()
         box = nil
         stopEventMonitor()
     }
@@ -239,6 +292,7 @@ class SnappingManager {
     }
     
     private func stopEventMonitor() {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         pendingReleasedRestore = nil
         eventMonitor?.stop()
         eventMonitor = nil
@@ -286,6 +340,7 @@ class SnappingManager {
         if LayoutHelperManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
+            if box?.waitingForPlacement == true { box?.orderOut(nil) }
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
             LayoutHelperManager.shared.cancelPrefetch()
@@ -322,8 +377,8 @@ class SnappingManager {
             }
             if let currentSnapArea = self.currentSnapArea {
                 nativeSizeRestore = nil
-                dismissSnapPreviewForCommit()
-                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
+                let completion = snapPreviewCompletion()
+                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen, completion: completion, cancellation: completion)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
@@ -337,10 +392,10 @@ class SnappingManager {
                     }
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
-                        dismissSnapPreviewForCommit()
                         if canSnap(event) {
-                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
-                        }
+                            let completion = snapPreviewCompletion()
+                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen, completion: completion, cancellation: completion)
+                        } else { box?.orderOut(nil) }
                         self.currentSnapArea = nil
                     }
                 }
@@ -594,8 +649,12 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
-    private func dismissSnapPreviewForCommit() {
+    private func snapPreviewCompletion() -> (() -> Void)? {
+        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+            return box?.completionForSnap(windowID: windowId)
+        }
         box?.orderOut(nil)
+        return nil
     }
 
     private func showSnapPreview(in rect: CGRect, snapArea: SnapArea) {
@@ -605,8 +664,10 @@ class SnappingManager {
             box?.close()
             box = FootprintWindow(initialFrame: rect)
         }
+        if let windowElement { WindowAnimator.shared.prepare(windowElement) }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
-                         duration: getFootprintAnimationDuration())
+                         duration: getFootprintAnimationDuration(),
+                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {

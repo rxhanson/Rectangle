@@ -7,6 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8ACFEE325BA39194B2F5E23A /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB6CDB7BF44F36B5B031B82 /* DirectWindowAnimator.swift */; };
+		F0E6D426F097AA96F5F35F71 /* PreviewLayerTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CA8D2AB8AB0AF9120CE13C /* PreviewLayerTransition.swift */; };
+		51C0597054B182702D29CFCA /* PreviewOpacityAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F20CBC0F05D5DD907C99DFC /* PreviewOpacityAnimation.swift */; };
+		5585D2FF3B57CC0C6905079A /* WindowAnimationCaptureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6A3187366F5476CB8C083D /* WindowAnimationCaptureGate.swift */; };
+		F9F812F723C8CAB4EA1EAD5B /* WindowAnimationCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61ACC0B62BF93355C4FC1583 /* WindowAnimationCurve.swift */; };
+		9DEC7864B769370852FCCEB5 /* WindowAnimationDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4CCCB5326A8DEEFF3983C6 /* WindowAnimationDiagnostics.swift */; };
+		B9E7749A8DDA5B763DF014F5 /* WindowAnimationDisplayLinkTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBD0905665A049D799D792 /* WindowAnimationDisplayLinkTarget.swift */; };
+		5F9B146FC40A633B861CF44E /* WindowAnimationElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2DD7A296587E49261894DC /* WindowAnimationElement.swift */; };
+		B2984EB354BD3D572DF9AFDB /* WindowAnimationExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BCD4695BB2B5234208BF44E /* WindowAnimationExecutor.swift */; };
+		3280221689CE9219B35EB923 /* WindowAnimationFrameBudget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D122322937C151ABFD3F239 /* WindowAnimationFrameBudget.swift */; };
+		D7D295EC9C591772FFCEA284 /* WindowAnimationGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40471B4D14BF998C4AFB484 /* WindowAnimationGeometry.swift */; };
+		425B0B13C20D3D38CC6CFC24 /* WindowAnimationHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B53323B9982D3C2A554C9CD /* WindowAnimationHandoff.swift */; };
+		298AD841F263EDC7F822DD34 /* WindowAnimationInterruptionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3446EEFD26DB95CE430483E7 /* WindowAnimationInterruptionPolicy.swift */; };
+		74E561591B2A8C396D4EEB6B /* WindowAnimationObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F703A0E07BCC87205BF511B /* WindowAnimationObservation.swift */; };
+		6FF078AE9C75F79754F4D13D /* WindowAnimationPacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5EC1A52BB44D725C49B9F17 /* WindowAnimationPacing.swift */; };
+		BEB1764CA37FDE1B1D17860A /* WindowAnimationPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26A743995232F1A638E537 /* WindowAnimationPlacement.swift */; };
+		D1AB58AD1049771BD00BD646 /* WindowAnimationProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3F0CDF9D79F568AD589EB3 /* WindowAnimationProfile.swift */; };
+		33B9D5AE4CFE33D175A34F5C /* WindowAnimationReadCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E210F6418D4A28E7F8E86E /* WindowAnimationReadCache.swift */; };
+		5F269A8D74A8DE3C5D01D672 /* WindowAnimationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0BF137FB6F23F11E5A8BDA /* WindowAnimationRequest.swift */; };
+		EDA75137DBCCD345661F4997 /* WindowAnimationResizeCadence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2623F865E34D75614E5FEB96 /* WindowAnimationResizeCadence.swift */; };
+		0BFE19D5BCC95F10696E9831 /* WindowAnimationResizePause.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD81FBAC71418EA8DF5FAC6 /* WindowAnimationResizePause.swift */; };
+		9AAF54A782DFE59014D62147 /* WindowAnimationResizeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A1C81F4BDCC75C92D886C /* WindowAnimationResizeResponse.swift */; };
+		07996D0A5E5F0CB453EF41CA /* WindowAnimationResponseHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAB2F84400DD36BF42C8C5F /* WindowAnimationResponseHistory.swift */; };
+		4ED242F7BA23DF5016814B67 /* WindowAnimationResponseKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB8444DBC9300D9D79651F5 /* WindowAnimationResponseKey.swift */; };
+		9C71A144B7B8DB8EA29F45AA /* WindowAnimationSettlement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89BB6994345CB8B95D53162 /* WindowAnimationSettlement.swift */; };
+		1D9EC2FAD4ACF3D0CCBB69B7 /* WindowAnimationSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF9E93F8A20EB06DF8F420 /* WindowAnimationSize.swift */; };
+		7694521CEAC121F5BECEABDC /* WindowAnimationSizeFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15B3A2358FC05DD0FEA2FDD /* WindowAnimationSizeFeedback.swift */; };
+		A1F57BD2CB320DC89F0DE9D7 /* WindowAnimationWorkerElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022C7023F4608689BACB7813 /* WindowAnimationWorkerElement.swift */; };
+		74058BB58BF160E122E24F73 /* WindowAnimationWritePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778FBDDCEBCC0E612B1916D2 /* WindowAnimationWritePolicy.swift */; };
+		F686DD8E29A82A45D8D7468D /* WindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D81D6C4049063BCECA1A80 /* WindowAnimator.swift */; };
+		526F5782F466B4B158C613CE /* WindowDisplayTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A022559C91D15127A5E36074 /* WindowDisplayTransition.swift */; };
+		5EA4DF0B08254E2CB700367B /* WindowFrameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954D36C9D452A4CEC0B9F852 /* WindowFrameAnimation.swift */; };
+		E666D4E97A3C67D8DB9A37F0 /* WindowKeyboardMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DC5DBD2A20EC02F5A437C9 /* WindowKeyboardMotion.swift */; };
+		3EB1F09B0BFF4898F7BD2AEF /* WindowPreviewDeceleration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE945D30CD7F440C9052CA6A /* WindowPreviewDeceleration.swift */; };
+		11590D72225BF647DD15A1AA /* WindowProcessIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE104CC051433C5AB714508 /* WindowProcessIdentity.swift */; };
+		BDD7CF96DC7C4D1CEBCE6665 /* WindowReleasedSnapStability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A91EB275CEC4248030CA33 /* WindowReleasedSnapStability.swift */; };
 		01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = de0950b8b00f40308934a523 /* JSONDefaultTests.swift */; };
 		05DBEA44B55E6F8C5FC3D6E0 /* MiddleLeftTwelfthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEABF10E66D648DDB37DABBA /* MiddleLeftTwelfthCalculation.swift */; };
 		0F29956694B5BB31EBDAE445 /* UpperMiddleRightSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B5B09465C38F8B766B3C3C /* UpperMiddleRightSixteenthCalculation.swift */; };
@@ -167,9 +203,6 @@
 		AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA69F83B29909A95001A81AF /* RightTodoCalculation.swift */; };
 		AA69F8402992DCB1001A81AF /* LeftTodoCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA69F83F2992DCB1001A81AF /* LeftTodoCalculation.swift */; };
 		AAADE1AF28CBAB0000036331 /* WindowUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAADE1AE28CBAB0000036331 /* WindowUtil.swift */; };
-		AC0100010000000000000001 /* WindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0100010000000000000002 /* WindowAnimator.swift */; };
-		AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200010000000000000002 /* DirectWindowAnimator.swift */; };
-		AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200030000000000000002 /* WindowAnimationCurves.swift */; };
 		AF09A0000000000000000001 /* GridTiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000002 /* GridTiling.swift */; };
 		AF09A0000000000000000003 /* GridTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000004 /* GridTilingTests.swift */; };
 		AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000002 /* DisplayTransfer.swift */; };
@@ -226,9 +259,17 @@
 		01EEDD05CD19D31436D17083 /* WindowDividerGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */; };
 		89F95C94D08CEB381D8854D0 /* WindowDividerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CA03F5CB4E39E47FF748FA /* WindowDividerManager.swift */; };
 		DD75A0FC41F179A61A3134D0 /* WindowDividerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA873D1FB72C44090E9D5321 /* WindowDividerPanel.swift */; };
-		D47BE7CE3C041D11A52762DB /* WindowPlacementSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */; };
 		8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */; };
 		95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */; };
+		55580BFC9BF1EC7676821256 /* TrackpadCursorWindowTargeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowTargeter.swift */; };
+		E48A02F31B0E47C123D813B4 /* TrackpadExclusiveGestureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapture.swift */; };
+		45CD3683A015D36FAA7B5B7C /* TrackpadExclusiveGestureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9C9E825E84479A6D6D2A12 /* TrackpadExclusiveGestureGate.swift */; };
+		3F1E1CD56D52B3D30D54C856 /* TrackpadGestureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */; };
+		C5CACFA5A05F15FB1B402DD5 /* TrackpadGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A42F85366C0992150037871 /* TrackpadGestureRecognizer.swift */; };
+		06990015C362A28DF272A486 /* TrackpadGestureRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */; };
+		1271D25CFBF317E86731A934 /* TrackpadGestureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */; };
+		6B39788453C21FB85E72BA14 /* TrackpadGestureSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */; };
+		9704A3EC1304566252760768 /* TrackpadMultitouchTouchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -254,6 +295,42 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AFB6CDB7BF44F36B5B031B82 /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
+		F2CA8D2AB8AB0AF9120CE13C /* PreviewLayerTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewLayerTransition.swift; sourceTree = "<group>"; };
+		5F20CBC0F05D5DD907C99DFC /* PreviewOpacityAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewOpacityAnimation.swift; sourceTree = "<group>"; };
+		2E6A3187366F5476CB8C083D /* WindowAnimationCaptureGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCaptureGate.swift; sourceTree = "<group>"; };
+		61ACC0B62BF93355C4FC1583 /* WindowAnimationCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurve.swift; sourceTree = "<group>"; };
+		2C4CCCB5326A8DEEFF3983C6 /* WindowAnimationDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationDiagnostics.swift; sourceTree = "<group>"; };
+		4FEBD0905665A049D799D792 /* WindowAnimationDisplayLinkTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationDisplayLinkTarget.swift; sourceTree = "<group>"; };
+		FC2DD7A296587E49261894DC /* WindowAnimationElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationElement.swift; sourceTree = "<group>"; };
+		7BCD4695BB2B5234208BF44E /* WindowAnimationExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationExecutor.swift; sourceTree = "<group>"; };
+		8D122322937C151ABFD3F239 /* WindowAnimationFrameBudget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationFrameBudget.swift; sourceTree = "<group>"; };
+		D40471B4D14BF998C4AFB484 /* WindowAnimationGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationGeometry.swift; sourceTree = "<group>"; };
+		8B53323B9982D3C2A554C9CD /* WindowAnimationHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationHandoff.swift; sourceTree = "<group>"; };
+		3446EEFD26DB95CE430483E7 /* WindowAnimationInterruptionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationInterruptionPolicy.swift; sourceTree = "<group>"; };
+		9F703A0E07BCC87205BF511B /* WindowAnimationObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationObservation.swift; sourceTree = "<group>"; };
+		E5EC1A52BB44D725C49B9F17 /* WindowAnimationPacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationPacing.swift; sourceTree = "<group>"; };
+		7D26A743995232F1A638E537 /* WindowAnimationPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationPlacement.swift; sourceTree = "<group>"; };
+		6F3F0CDF9D79F568AD589EB3 /* WindowAnimationProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationProfile.swift; sourceTree = "<group>"; };
+		C9E210F6418D4A28E7F8E86E /* WindowAnimationReadCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationReadCache.swift; sourceTree = "<group>"; };
+		7C0BF137FB6F23F11E5A8BDA /* WindowAnimationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationRequest.swift; sourceTree = "<group>"; };
+		2623F865E34D75614E5FEB96 /* WindowAnimationResizeCadence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResizeCadence.swift; sourceTree = "<group>"; };
+		BAD81FBAC71418EA8DF5FAC6 /* WindowAnimationResizePause.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResizePause.swift; sourceTree = "<group>"; };
+		474A1C81F4BDCC75C92D886C /* WindowAnimationResizeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResizeResponse.swift; sourceTree = "<group>"; };
+		6EAB2F84400DD36BF42C8C5F /* WindowAnimationResponseHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResponseHistory.swift; sourceTree = "<group>"; };
+		8EB8444DBC9300D9D79651F5 /* WindowAnimationResponseKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResponseKey.swift; sourceTree = "<group>"; };
+		D89BB6994345CB8B95D53162 /* WindowAnimationSettlement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationSettlement.swift; sourceTree = "<group>"; };
+		84EF9E93F8A20EB06DF8F420 /* WindowAnimationSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationSize.swift; sourceTree = "<group>"; };
+		E15B3A2358FC05DD0FEA2FDD /* WindowAnimationSizeFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationSizeFeedback.swift; sourceTree = "<group>"; };
+		022C7023F4608689BACB7813 /* WindowAnimationWorkerElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationWorkerElement.swift; sourceTree = "<group>"; };
+		778FBDDCEBCC0E612B1916D2 /* WindowAnimationWritePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationWritePolicy.swift; sourceTree = "<group>"; };
+		86D81D6C4049063BCECA1A80 /* WindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimator.swift; sourceTree = "<group>"; };
+		A022559C91D15127A5E36074 /* WindowDisplayTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDisplayTransition.swift; sourceTree = "<group>"; };
+		954D36C9D452A4CEC0B9F852 /* WindowFrameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameAnimation.swift; sourceTree = "<group>"; };
+		31DC5DBD2A20EC02F5A437C9 /* WindowKeyboardMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowKeyboardMotion.swift; sourceTree = "<group>"; };
+		AE945D30CD7F440C9052CA6A /* WindowPreviewDeceleration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPreviewDeceleration.swift; sourceTree = "<group>"; };
+		AFE104CC051433C5AB714508 /* WindowProcessIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowProcessIdentity.swift; sourceTree = "<group>"; };
+		28A91EB275CEC4248030CA33 /* WindowReleasedSnapStability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowReleasedSnapStability.swift; sourceTree = "<group>"; };
 		16B4044DB4809116039F96EB /* SixteenthsRepeated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SixteenthsRepeated.swift; sourceTree = "<group>"; };
 		246168B345ECE6C375ACEEB7 /* BottomLeftTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftTwelfthCalculation.swift; sourceTree = "<group>"; };
 		30166BCF24F27D6A00A38608 /* SpecifiedCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecifiedCalculation.swift; sourceTree = "<group>"; };
@@ -418,9 +495,6 @@
 		AA69F83F2992DCB1001A81AF /* LeftTodoCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTodoCalculation.swift; sourceTree = "<group>"; };
 		AA84AB4DB9E7EEFCE50AA6D8 /* MiddleRightTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleRightTwelfthCalculation.swift; sourceTree = "<group>"; };
 		AAADE1AE28CBAB0000036331 /* WindowUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowUtil.swift; sourceTree = "<group>"; };
-		AC0100010000000000000002 /* WindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimator.swift; sourceTree = "<group>"; };
-		AC0200010000000000000002 /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
-		AC0200030000000000000002 /* WindowAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurves.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000002 /* GridTiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTiling.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000004 /* GridTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTilingTests.swift; sourceTree = "<group>"; };
 		AF09B1000000000000000002 /* DisplayTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransfer.swift; sourceTree = "<group>"; };
@@ -480,9 +554,17 @@
 		58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerGeometry.swift; sourceTree = SOURCE_ROOT; };
 		04CA03F5CB4E39E47FF748FA /* WindowDividerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerManager.swift; sourceTree = SOURCE_ROOT; };
 		AA873D1FB72C44090E9D5321 /* WindowDividerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerPanel.swift; sourceTree = SOURCE_ROOT; };
-		F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Utilities/WindowPlacementSupport.swift; sourceTree = SOURCE_ROOT; };
 		C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowGeometry.swift; sourceTree = SOURCE_ROOT; };
 		6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/WindowMover/WindowPlacementCoordinator.swift; sourceTree = SOURCE_ROOT; };
+		C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowTargeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadCursorWindowTargeter.swift; sourceTree = SOURCE_ROOT; };
+		9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadExclusiveGestureCapture.swift; sourceTree = SOURCE_ROOT; };
+		6E9C9E825E84479A6D6D2A12 /* TrackpadExclusiveGestureGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadExclusiveGestureGate.swift; sourceTree = SOURCE_ROOT; };
+		9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureManager.swift; sourceTree = SOURCE_ROOT; };
+		4A42F85366C0992150037871 /* TrackpadGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureRecognizer.swift; sourceTree = SOURCE_ROOT; };
+		50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureRuntime.swift; sourceTree = SOURCE_ROOT; };
+		A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureSettings.swift; sourceTree = SOURCE_ROOT; };
+		D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureSettingsView.swift; sourceTree = SOURCE_ROOT; };
+		80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadMultitouchTouchSource.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +587,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C3C602733139D0C316B5F1B /* WindowAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				AFB6CDB7BF44F36B5B031B82 /* DirectWindowAnimator.swift */,
+				F2CA8D2AB8AB0AF9120CE13C /* PreviewLayerTransition.swift */,
+				5F20CBC0F05D5DD907C99DFC /* PreviewOpacityAnimation.swift */,
+				2E6A3187366F5476CB8C083D /* WindowAnimationCaptureGate.swift */,
+				61ACC0B62BF93355C4FC1583 /* WindowAnimationCurve.swift */,
+				2C4CCCB5326A8DEEFF3983C6 /* WindowAnimationDiagnostics.swift */,
+				4FEBD0905665A049D799D792 /* WindowAnimationDisplayLinkTarget.swift */,
+				FC2DD7A296587E49261894DC /* WindowAnimationElement.swift */,
+				7BCD4695BB2B5234208BF44E /* WindowAnimationExecutor.swift */,
+				8D122322937C151ABFD3F239 /* WindowAnimationFrameBudget.swift */,
+				D40471B4D14BF998C4AFB484 /* WindowAnimationGeometry.swift */,
+				8B53323B9982D3C2A554C9CD /* WindowAnimationHandoff.swift */,
+				3446EEFD26DB95CE430483E7 /* WindowAnimationInterruptionPolicy.swift */,
+				9F703A0E07BCC87205BF511B /* WindowAnimationObservation.swift */,
+				E5EC1A52BB44D725C49B9F17 /* WindowAnimationPacing.swift */,
+				7D26A743995232F1A638E537 /* WindowAnimationPlacement.swift */,
+				6F3F0CDF9D79F568AD589EB3 /* WindowAnimationProfile.swift */,
+				C9E210F6418D4A28E7F8E86E /* WindowAnimationReadCache.swift */,
+				7C0BF137FB6F23F11E5A8BDA /* WindowAnimationRequest.swift */,
+				2623F865E34D75614E5FEB96 /* WindowAnimationResizeCadence.swift */,
+				BAD81FBAC71418EA8DF5FAC6 /* WindowAnimationResizePause.swift */,
+				474A1C81F4BDCC75C92D886C /* WindowAnimationResizeResponse.swift */,
+				6EAB2F84400DD36BF42C8C5F /* WindowAnimationResponseHistory.swift */,
+				8EB8444DBC9300D9D79651F5 /* WindowAnimationResponseKey.swift */,
+				D89BB6994345CB8B95D53162 /* WindowAnimationSettlement.swift */,
+				84EF9E93F8A20EB06DF8F420 /* WindowAnimationSize.swift */,
+				E15B3A2358FC05DD0FEA2FDD /* WindowAnimationSizeFeedback.swift */,
+				022C7023F4608689BACB7813 /* WindowAnimationWorkerElement.swift */,
+				778FBDDCEBCC0E612B1916D2 /* WindowAnimationWritePolicy.swift */,
+				86D81D6C4049063BCECA1A80 /* WindowAnimator.swift */,
+				A022559C91D15127A5E36074 /* WindowDisplayTransition.swift */,
+				954D36C9D452A4CEC0B9F852 /* WindowFrameAnimation.swift */,
+				31DC5DBD2A20EC02F5A437C9 /* WindowKeyboardMotion.swift */,
+				AE945D30CD7F440C9052CA6A /* WindowPreviewDeceleration.swift */,
+				AFE104CC051433C5AB714508 /* WindowProcessIdentity.swift */,
+				28A91EB275CEC4248030CA33 /* WindowReleasedSnapStability.swift */,
+			);
+			path = WindowAnimation;
+			sourceTree = "<group>";
+		};
 		9818E00E28B5922A004AA524 /* CompoundSnapArea */ = {
 			isa = PBXGroup;
 			children = (
@@ -660,9 +785,6 @@
 			children = (
 				9824704A22B189250037B409 /* BestEffortWindowMover.swift */,
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
-				AC0100010000000000000002 /* WindowAnimator.swift */,
-				AC0200010000000000000002 /* DirectWindowAnimator.swift */,
-				AC0200030000000000000002 /* WindowAnimationCurves.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
 				98B3559723CE025700E410E0 /* FixedSizeWindowMover.swift */,
 			);
@@ -727,7 +849,6 @@
 			children = (
 				6FC0148B13CECDF36911DCBF /* WindowPlacementCoordinator.swift */,
 				C6D04936B41F5059AA63AE0E /* WindowGeometry.swift */,
-				F0B28D59E92B10EA484D05DA /* WindowPlacementSupport.swift */,
 				AA873D1FB72C44090E9D5321 /* WindowDividerPanel.swift */,
 				04CA03F5CB4E39E47FF748FA /* WindowDividerManager.swift */,
 				58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */,
@@ -739,6 +860,16 @@
 				13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */,
 				8B79EE0375D9BD70CE09072E /* LayoutHelperLayout.swift */,
 				647D58F6DFF60DBF1E529156 /* LayoutHelperBlurView.swift */,
+				80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */,
+				D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */,
+				A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */,
+				50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */,
+				4A42F85366C0992150037871 /* TrackpadGestureRecognizer.swift */,
+				9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */,
+				6E9C9E825E84479A6D6D2A12 /* TrackpadExclusiveGestureGate.swift */,
+				9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapture.swift */,
+				C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowTargeter.swift */,
+				0C3C602733139D0C316B5F1B /* WindowAnimation */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
 				482E9E412EB1528D00D7928A /* AppIcon.icon */,
@@ -1031,7 +1162,6 @@
 			files = (
 				95B1569E7F13BB61261D070C /* WindowPlacementCoordinator.swift in Sources */,
 				8505C26377141A541D52A883 /* WindowGeometry.swift in Sources */,
-				D47BE7CE3C041D11A52762DB /* WindowPlacementSupport.swift in Sources */,
 				DD75A0FC41F179A61A3134D0 /* WindowDividerPanel.swift in Sources */,
 				89F95C94D08CEB381D8854D0 /* WindowDividerManager.swift in Sources */,
 				01EEDD05CD19D31436D17083 /* WindowDividerGeometry.swift in Sources */,
@@ -1043,6 +1173,51 @@
 				BF3AD51F552869B6B6970A9A /* LayoutHelperManager.swift in Sources */,
 				0CD646DAC5E56C42EA153D93 /* LayoutHelperLayout.swift in Sources */,
 				F5036C3F0958DE997FA66BFE /* LayoutHelperBlurView.swift in Sources */,
+				9704A3EC1304566252760768 /* TrackpadMultitouchTouchSource.swift in Sources */,
+				6B39788453C21FB85E72BA14 /* TrackpadGestureSettingsView.swift in Sources */,
+				1271D25CFBF317E86731A934 /* TrackpadGestureSettings.swift in Sources */,
+				06990015C362A28DF272A486 /* TrackpadGestureRuntime.swift in Sources */,
+				C5CACFA5A05F15FB1B402DD5 /* TrackpadGestureRecognizer.swift in Sources */,
+				3F1E1CD56D52B3D30D54C856 /* TrackpadGestureManager.swift in Sources */,
+				45CD3683A015D36FAA7B5B7C /* TrackpadExclusiveGestureGate.swift in Sources */,
+				E48A02F31B0E47C123D813B4 /* TrackpadExclusiveGestureCapture.swift in Sources */,
+				55580BFC9BF1EC7676821256 /* TrackpadCursorWindowTargeter.swift in Sources */,
+				8ACFEE325BA39194B2F5E23A /* DirectWindowAnimator.swift in Sources */,
+				F0E6D426F097AA96F5F35F71 /* PreviewLayerTransition.swift in Sources */,
+				51C0597054B182702D29CFCA /* PreviewOpacityAnimation.swift in Sources */,
+				5585D2FF3B57CC0C6905079A /* WindowAnimationCaptureGate.swift in Sources */,
+				F9F812F723C8CAB4EA1EAD5B /* WindowAnimationCurve.swift in Sources */,
+				9DEC7864B769370852FCCEB5 /* WindowAnimationDiagnostics.swift in Sources */,
+				B9E7749A8DDA5B763DF014F5 /* WindowAnimationDisplayLinkTarget.swift in Sources */,
+				5F9B146FC40A633B861CF44E /* WindowAnimationElement.swift in Sources */,
+				B2984EB354BD3D572DF9AFDB /* WindowAnimationExecutor.swift in Sources */,
+				3280221689CE9219B35EB923 /* WindowAnimationFrameBudget.swift in Sources */,
+				D7D295EC9C591772FFCEA284 /* WindowAnimationGeometry.swift in Sources */,
+				425B0B13C20D3D38CC6CFC24 /* WindowAnimationHandoff.swift in Sources */,
+				298AD841F263EDC7F822DD34 /* WindowAnimationInterruptionPolicy.swift in Sources */,
+				74E561591B2A8C396D4EEB6B /* WindowAnimationObservation.swift in Sources */,
+				6FF078AE9C75F79754F4D13D /* WindowAnimationPacing.swift in Sources */,
+				BEB1764CA37FDE1B1D17860A /* WindowAnimationPlacement.swift in Sources */,
+				D1AB58AD1049771BD00BD646 /* WindowAnimationProfile.swift in Sources */,
+				33B9D5AE4CFE33D175A34F5C /* WindowAnimationReadCache.swift in Sources */,
+				5F269A8D74A8DE3C5D01D672 /* WindowAnimationRequest.swift in Sources */,
+				EDA75137DBCCD345661F4997 /* WindowAnimationResizeCadence.swift in Sources */,
+				0BFE19D5BCC95F10696E9831 /* WindowAnimationResizePause.swift in Sources */,
+				9AAF54A782DFE59014D62147 /* WindowAnimationResizeResponse.swift in Sources */,
+				07996D0A5E5F0CB453EF41CA /* WindowAnimationResponseHistory.swift in Sources */,
+				4ED242F7BA23DF5016814B67 /* WindowAnimationResponseKey.swift in Sources */,
+				9C71A144B7B8DB8EA29F45AA /* WindowAnimationSettlement.swift in Sources */,
+				1D9EC2FAD4ACF3D0CCBB69B7 /* WindowAnimationSize.swift in Sources */,
+				7694521CEAC121F5BECEABDC /* WindowAnimationSizeFeedback.swift in Sources */,
+				A1F57BD2CB320DC89F0DE9D7 /* WindowAnimationWorkerElement.swift in Sources */,
+				74058BB58BF160E122E24F73 /* WindowAnimationWritePolicy.swift in Sources */,
+				F686DD8E29A82A45D8D7468D /* WindowAnimator.swift in Sources */,
+				526F5782F466B4B158C613CE /* WindowDisplayTransition.swift in Sources */,
+				5EA4DF0B08254E2CB700367B /* WindowFrameAnimation.swift in Sources */,
+				E666D4E97A3C67D8DB9A37F0 /* WindowKeyboardMotion.swift in Sources */,
+				3EB1F09B0BFF4898F7BD2AEF /* WindowPreviewDeceleration.swift in Sources */,
+				11590D72225BF647DD15A1AA /* WindowProcessIdentity.swift in Sources */,
+				BDD7CF96DC7C4D1CEBCE6665 /* WindowReleasedSnapStability.swift in Sources */,
 				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
@@ -1089,9 +1264,6 @@
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
 				9818E01428B5A4FD004AA524 /* SixthsCompoundCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
-				AC0100010000000000000001 /* WindowAnimator.swift in Sources */,
-				AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */,
-				AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */,
 				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
 				6490B39927BF97BB0056C220 /* TopCenterRightEighthCalculation.swift in Sources */,
 				98B3559823CE025700E410E0 /* FixedSizeWindowMover.swift in Sources */,

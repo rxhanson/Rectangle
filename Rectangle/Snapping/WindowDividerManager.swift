@@ -511,7 +511,7 @@ private struct WindowDividerPreparedPair {
                 guard valid() else { return false }
                 let window = isLeft ? l : r
                 return cancellation.write {
-                    attribute == .size ? window.writeAnimationSize(frame.size) : window.writeAnimationPosition(frame.origin)
+                    attribute == .size ? window.writeSize(frame.size) : window.writePosition(frame.origin)
                 } == .success
             }, read: { isLeft in valid() ? (isLeft ? l : r).frame : .null },
             acknowledged: { isLeft, expected in
