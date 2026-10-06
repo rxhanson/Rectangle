@@ -248,15 +248,41 @@
 		F7B6C43BB57F8064F49DDBB6 /* BottomLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */; };
 		FA34D0FF2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA34D0FE2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift */; };
 		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
-		55580BFC9BF1EC7676821256 /* TrackpadCursorWindowTargeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowTargeter.swift */; };
-		E48A02F31B0E47C123D813B4 /* TrackpadExclusiveGestureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapture.swift */; };
-		45CD3683A015D36FAA7B5B7C /* TrackpadExclusiveGestureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9C9E825E84479A6D6D2A12 /* TrackpadExclusiveGestureGate.swift */; };
+		55580BFC9BF1EC7676821256 /* TrackpadCursorWindowShortcutTargeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowShortcutTargeter.swift */; };
+		E48A02F31B0E47C123D813B4 /* TrackpadExclusiveGestureCapturing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapturing.swift */; };
+		45CD3683A015D36FAA7B5B7C /* TrackpadScrollStreamPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9C9E825E84479A6D6D2A12 /* TrackpadScrollStreamPhase.swift */; };
 		3F1E1CD56D52B3D30D54C856 /* TrackpadGestureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */; };
-		C5CACFA5A05F15FB1B402DD5 /* TrackpadGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A42F85366C0992150037871 /* TrackpadGestureRecognizer.swift */; };
+		C5CACFA5A05F15FB1B402DD5 /* TrackpadPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A42F85366C0992150037871 /* TrackpadPoint.swift */; };
 		06990015C362A28DF272A486 /* TrackpadGestureRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */; };
 		1271D25CFBF317E86731A934 /* TrackpadGestureSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */; };
 		6B39788453C21FB85E72BA14 /* TrackpadGestureSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */; };
 		9704A3EC1304566252760768 /* TrackpadMultitouchTouchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */; };
+		0176B53F6ADC72812404B860 /* AccessibilityElement+Activation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3342184D7BA1CC1A81BC6C /* AccessibilityElement+Activation.swift */; };
+		000278054C1670395A25C8A2 /* AccessibilityReadBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95251EB3B97C3F4796A022D8 /* AccessibilityReadBatch.swift */; };
+		F2635A97539409F96784ADA1 /* WindowAccessibilityLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7206213018052125577813F /* WindowAccessibilityLookup.swift */; };
+		CBB4349497A7D4C6D56D4DE4 /* QuartzScrollEventPhaseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6304809E566571BA328F960A /* QuartzScrollEventPhaseDecoder.swift */; };
+		DE0B9B2916CF7EB49AB2C34B /* QuartzScrollEventTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2111635CC235D7ABEE1CD9A /* QuartzScrollEventTap.swift */; };
+		9D17BD0E173C0DF3E4CB5EF4 /* TrackpadChoiceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D10C3893A5E047219EB7A5 /* TrackpadChoiceButton.swift */; };
+		EC2A8BD423BF7931AA4933FB /* TrackpadChoiceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11EDE70C10D55236A1DCCE41 /* TrackpadChoiceEntry.swift */; };
+		FDDCE0A4915F455A1CF66040 /* TrackpadChoiceMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC42590670F26296A5D012A6 /* TrackpadChoiceMenuItem.swift */; };
+		29E39A7686D6FC2E69A99087 /* TrackpadConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF79A53811A01123EA96A2A5 /* TrackpadConfig.swift */; };
+		8C533A5E354685C064D660DB /* TrackpadDeviceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E10E0687E7682177D85366 /* TrackpadDeviceMonitor.swift */; };
+		5389BFFCA6B152378242166B /* TrackpadDeviceSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD4350A6463C981A69652D2 /* TrackpadDeviceSession.swift */; };
+		D64F2A5C4BF548499E0EEDE8 /* TrackpadDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93A84DBC961FEABB3EB8A2D /* TrackpadDirection.swift */; };
+		52D889C06F44311BDA352FE7 /* TrackpadExclusiveGestureCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F630E92A377B1B44B7C496D /* TrackpadExclusiveGestureCapture.swift */; };
+		E844F1332240C207E1C00E2F /* TrackpadExclusiveGestureGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A41526A9AEDD4AEE7F0802 /* TrackpadExclusiveGestureGate.swift */; };
+		BA8A27F1F29468B480EFFDC0 /* TrackpadGestureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F5C09ED7ED0B64095169A6 /* TrackpadGestureAction.swift */; };
+		1276D2A6E8567D3E107DA554 /* TrackpadGestureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437D9AC7794486E7FD531FA5 /* TrackpadGestureEvent.swift */; };
+		065A3E80B7606EF51780C68F /* TrackpadGestureExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B501579E8BB0C8D8865A526 /* TrackpadGestureExampleView.swift */; };
+		21E7C98758FBEAAABAAFE67D /* TrackpadGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7C9F83715E531AF861339D /* TrackpadGestureRecognizer.swift */; };
+		B45F1DDFED4DEAEC5DF6CE53 /* TrackpadMultitouchAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A449B9A0ACBF8B27B3617162 /* TrackpadMultitouchAPI.swift */; };
+		B2CC6B687A3F4590D2CBB824 /* TrackpadScrollEventTapDriving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5621409DE90C70A050F96912 /* TrackpadScrollEventTapDriving.swift */; };
+		D8570CE8593A81647E56F943 /* TrackpadSensitivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB2D0321B0F6709D4B0D2CF /* TrackpadSensitivity.swift */; };
+		06BC56E2459A18286E560CA5 /* TrackpadSystemGestures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353979319767DE5C90598790 /* TrackpadSystemGestures.swift */; };
+		8B0C5EB084B17CF9EDF4E823 /* TrackpadThresholds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A9292B47F4D72981AB7F879 /* TrackpadThresholds.swift */; };
+		31195BEB6F0864CFA1911BF6 /* TrackpadTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E397B9AE66661DB0967286 /* TrackpadTouch.swift */; };
+		46F7505953616BA25E779756 /* TrackpadTouchFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54701732328461BBA595D59D /* TrackpadTouchFrame.swift */; };
+		4FC5154FCCBDF76ABD831E26 /* TrackpadTouchSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD408C96433B84FA931AEB9 /* TrackpadTouchSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -530,15 +556,41 @@
 		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
 		de0950b8b00f40308934a523 /* JSONDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDefaultTests.swift; sourceTree = "<group>"; };
-		C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowTargeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadCursorWindowTargeter.swift; sourceTree = SOURCE_ROOT; };
-		9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadExclusiveGestureCapture.swift; sourceTree = SOURCE_ROOT; };
-		6E9C9E825E84479A6D6D2A12 /* TrackpadExclusiveGestureGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadExclusiveGestureGate.swift; sourceTree = SOURCE_ROOT; };
-		9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureManager.swift; sourceTree = SOURCE_ROOT; };
-		4A42F85366C0992150037871 /* TrackpadGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureRecognizer.swift; sourceTree = SOURCE_ROOT; };
-		50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureRuntime.swift; sourceTree = SOURCE_ROOT; };
-		A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureSettings.swift; sourceTree = SOURCE_ROOT; };
-		D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadGestureSettingsView.swift; sourceTree = SOURCE_ROOT; };
-		80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/TrackpadGestures/TrackpadMultitouchTouchSource.swift; sourceTree = SOURCE_ROOT; };
+		C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowShortcutTargeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadCursorWindowShortcutTargeter.swift"; sourceTree = SOURCE_ROOT; };
+		9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapturing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadExclusiveGestureCapturing.swift"; sourceTree = SOURCE_ROOT; };
+		6E9C9E825E84479A6D6D2A12 /* TrackpadScrollStreamPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadScrollStreamPhase.swift"; sourceTree = SOURCE_ROOT; };
+		9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureManager.swift"; sourceTree = SOURCE_ROOT; };
+		4A42F85366C0992150037871 /* TrackpadPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadPoint.swift"; sourceTree = SOURCE_ROOT; };
+		50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureRuntime.swift"; sourceTree = SOURCE_ROOT; };
+		A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureSettings.swift"; sourceTree = SOURCE_ROOT; };
+		D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureSettingsView.swift"; sourceTree = SOURCE_ROOT; };
+		80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadMultitouchTouchSource.swift"; sourceTree = SOURCE_ROOT; };
+		9F3342184D7BA1CC1A81BC6C /* AccessibilityElement+Activation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/AccessibilityElement+Activation.swift"; sourceTree = SOURCE_ROOT; };
+		95251EB3B97C3F4796A022D8 /* AccessibilityReadBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/AccessibilityReadBatch.swift"; sourceTree = SOURCE_ROOT; };
+		A7206213018052125577813F /* WindowAccessibilityLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/Accessibility/WindowAccessibilityLookup.swift"; sourceTree = SOURCE_ROOT; };
+		6304809E566571BA328F960A /* QuartzScrollEventPhaseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/QuartzScrollEventPhaseDecoder.swift"; sourceTree = SOURCE_ROOT; };
+		E2111635CC235D7ABEE1CD9A /* QuartzScrollEventTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/QuartzScrollEventTap.swift"; sourceTree = SOURCE_ROOT; };
+		B7D10C3893A5E047219EB7A5 /* TrackpadChoiceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadChoiceButton.swift"; sourceTree = SOURCE_ROOT; };
+		11EDE70C10D55236A1DCCE41 /* TrackpadChoiceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadChoiceEntry.swift"; sourceTree = SOURCE_ROOT; };
+		CC42590670F26296A5D012A6 /* TrackpadChoiceMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadChoiceMenuItem.swift"; sourceTree = SOURCE_ROOT; };
+		AF79A53811A01123EA96A2A5 /* TrackpadConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadConfig.swift"; sourceTree = SOURCE_ROOT; };
+		D7E10E0687E7682177D85366 /* TrackpadDeviceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadDeviceMonitor.swift"; sourceTree = SOURCE_ROOT; };
+		3BD4350A6463C981A69652D2 /* TrackpadDeviceSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadDeviceSession.swift"; sourceTree = SOURCE_ROOT; };
+		B93A84DBC961FEABB3EB8A2D /* TrackpadDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadDirection.swift"; sourceTree = SOURCE_ROOT; };
+		0F630E92A377B1B44B7C496D /* TrackpadExclusiveGestureCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadExclusiveGestureCapture.swift"; sourceTree = SOURCE_ROOT; };
+		54A41526A9AEDD4AEE7F0802 /* TrackpadExclusiveGestureGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadExclusiveGestureGate.swift"; sourceTree = SOURCE_ROOT; };
+		12F5C09ED7ED0B64095169A6 /* TrackpadGestureAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureAction.swift"; sourceTree = SOURCE_ROOT; };
+		437D9AC7794486E7FD531FA5 /* TrackpadGestureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureEvent.swift"; sourceTree = SOURCE_ROOT; };
+		9B501579E8BB0C8D8865A526 /* TrackpadGestureExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureExampleView.swift"; sourceTree = SOURCE_ROOT; };
+		8F7C9F83715E531AF861339D /* TrackpadGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadGestureRecognizer.swift"; sourceTree = SOURCE_ROOT; };
+		A449B9A0ACBF8B27B3617162 /* TrackpadMultitouchAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadMultitouchAPI.swift"; sourceTree = SOURCE_ROOT; };
+		5621409DE90C70A050F96912 /* TrackpadScrollEventTapDriving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadScrollEventTapDriving.swift"; sourceTree = SOURCE_ROOT; };
+		1BB2D0321B0F6709D4B0D2CF /* TrackpadSensitivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadSensitivity.swift"; sourceTree = SOURCE_ROOT; };
+		353979319767DE5C90598790 /* TrackpadSystemGestures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadSystemGestures.swift"; sourceTree = SOURCE_ROOT; };
+		6A9292B47F4D72981AB7F879 /* TrackpadThresholds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadThresholds.swift"; sourceTree = SOURCE_ROOT; };
+		96E397B9AE66661DB0967286 /* TrackpadTouch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadTouch.swift"; sourceTree = SOURCE_ROOT; };
+		54701732328461BBA595D59D /* TrackpadTouchFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadTouchFrame.swift"; sourceTree = SOURCE_ROOT; };
+		4AD408C96433B84FA931AEB9 /* TrackpadTouchSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/TrackpadGestures/TrackpadTouchSource.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -821,15 +873,8 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
-				80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */,
-				D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */,
-				A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */,
-				50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */,
-				4A42F85366C0992150037871 /* TrackpadGestureRecognizer.swift */,
-				9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */,
-				6E9C9E825E84479A6D6D2A12 /* TrackpadExclusiveGestureGate.swift */,
-				9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapture.swift */,
-				C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowTargeter.swift */,
+				B390F08E0A52E0627DF332F0 /* TrackpadGestures */,
+				62928965B9DA8FADA9903971 /* Accessibility */,
 				0C3C602733139D0C316B5F1B /* WindowAnimation */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
@@ -965,6 +1010,55 @@
 				F1AC0DE000000000000000AB /* StackBadgeRowView.swift */,
 			);
 			path = StackBadge;
+			sourceTree = "<group>";
+		};
+		62928965B9DA8FADA9903971 /* Accessibility */ = {
+			isa = PBXGroup;
+			children = (
+				95251EB3B97C3F4796A022D8 /* AccessibilityReadBatch.swift */,
+				9F3342184D7BA1CC1A81BC6C /* AccessibilityElement+Activation.swift */,
+				A7206213018052125577813F /* WindowAccessibilityLookup.swift */,
+			);
+			name = Accessibility;
+			sourceTree = "<group>";
+		};
+		B390F08E0A52E0627DF332F0 /* TrackpadGestures */ = {
+			isa = PBXGroup;
+			children = (
+				0F630E92A377B1B44B7C496D /* TrackpadExclusiveGestureCapture.swift */,
+				11EDE70C10D55236A1DCCE41 /* TrackpadChoiceEntry.swift */,
+				12F5C09ED7ED0B64095169A6 /* TrackpadGestureAction.swift */,
+				1BB2D0321B0F6709D4B0D2CF /* TrackpadSensitivity.swift */,
+				353979319767DE5C90598790 /* TrackpadSystemGestures.swift */,
+				3BD4350A6463C981A69652D2 /* TrackpadDeviceSession.swift */,
+				437D9AC7794486E7FD531FA5 /* TrackpadGestureEvent.swift */,
+				4A42F85366C0992150037871 /* TrackpadPoint.swift */,
+				4AD408C96433B84FA931AEB9 /* TrackpadTouchSource.swift */,
+				50F62D30611C23084C7BEB27 /* TrackpadGestureRuntime.swift */,
+				54701732328461BBA595D59D /* TrackpadTouchFrame.swift */,
+				54A41526A9AEDD4AEE7F0802 /* TrackpadExclusiveGestureGate.swift */,
+				5621409DE90C70A050F96912 /* TrackpadScrollEventTapDriving.swift */,
+				6304809E566571BA328F960A /* QuartzScrollEventPhaseDecoder.swift */,
+				6A9292B47F4D72981AB7F879 /* TrackpadThresholds.swift */,
+				6E9C9E825E84479A6D6D2A12 /* TrackpadScrollStreamPhase.swift */,
+				80CFAFAE09A19538DB14BD35 /* TrackpadMultitouchTouchSource.swift */,
+				8F7C9F83715E531AF861339D /* TrackpadGestureRecognizer.swift */,
+				96E397B9AE66661DB0967286 /* TrackpadTouch.swift */,
+				9B1465299CFCB9FF253D0B22 /* TrackpadGestureManager.swift */,
+				9B501579E8BB0C8D8865A526 /* TrackpadGestureExampleView.swift */,
+				9F43E0EC5C7A9CDC080093CF /* TrackpadExclusiveGestureCapturing.swift */,
+				A440C59BB70C12467CE43937 /* TrackpadGestureSettings.swift */,
+				A449B9A0ACBF8B27B3617162 /* TrackpadMultitouchAPI.swift */,
+				AF79A53811A01123EA96A2A5 /* TrackpadConfig.swift */,
+				B7D10C3893A5E047219EB7A5 /* TrackpadChoiceButton.swift */,
+				B93A84DBC961FEABB3EB8A2D /* TrackpadDirection.swift */,
+				C187F33C6E4674CDBB5CB1C9 /* TrackpadCursorWindowShortcutTargeter.swift */,
+				CC42590670F26296A5D012A6 /* TrackpadChoiceMenuItem.swift */,
+				D1C7ED4E4248810ACDD7DCD5 /* TrackpadGestureSettingsView.swift */,
+				D7E10E0687E7682177D85366 /* TrackpadDeviceMonitor.swift */,
+				E2111635CC235D7ABEE1CD9A /* QuartzScrollEventTap.swift */,
+			);
+			name = TrackpadGestures;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1121,15 +1215,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FC5154FCCBDF76ABD831E26 /* TrackpadTouchSource.swift in Sources */,
+				46F7505953616BA25E779756 /* TrackpadTouchFrame.swift in Sources */,
+				31195BEB6F0864CFA1911BF6 /* TrackpadTouch.swift in Sources */,
+				8B0C5EB084B17CF9EDF4E823 /* TrackpadThresholds.swift in Sources */,
+				06BC56E2459A18286E560CA5 /* TrackpadSystemGestures.swift in Sources */,
+				D8570CE8593A81647E56F943 /* TrackpadSensitivity.swift in Sources */,
+				B2CC6B687A3F4590D2CBB824 /* TrackpadScrollEventTapDriving.swift in Sources */,
+				B45F1DDFED4DEAEC5DF6CE53 /* TrackpadMultitouchAPI.swift in Sources */,
+				21E7C98758FBEAAABAAFE67D /* TrackpadGestureRecognizer.swift in Sources */,
+				065A3E80B7606EF51780C68F /* TrackpadGestureExampleView.swift in Sources */,
+				1276D2A6E8567D3E107DA554 /* TrackpadGestureEvent.swift in Sources */,
+				BA8A27F1F29468B480EFFDC0 /* TrackpadGestureAction.swift in Sources */,
+				E844F1332240C207E1C00E2F /* TrackpadExclusiveGestureGate.swift in Sources */,
+				52D889C06F44311BDA352FE7 /* TrackpadExclusiveGestureCapture.swift in Sources */,
+				D64F2A5C4BF548499E0EEDE8 /* TrackpadDirection.swift in Sources */,
+				5389BFFCA6B152378242166B /* TrackpadDeviceSession.swift in Sources */,
+				8C533A5E354685C064D660DB /* TrackpadDeviceMonitor.swift in Sources */,
+				29E39A7686D6FC2E69A99087 /* TrackpadConfig.swift in Sources */,
+				FDDCE0A4915F455A1CF66040 /* TrackpadChoiceMenuItem.swift in Sources */,
+				EC2A8BD423BF7931AA4933FB /* TrackpadChoiceEntry.swift in Sources */,
+				9D17BD0E173C0DF3E4CB5EF4 /* TrackpadChoiceButton.swift in Sources */,
+				DE0B9B2916CF7EB49AB2C34B /* QuartzScrollEventTap.swift in Sources */,
+				CBB4349497A7D4C6D56D4DE4 /* QuartzScrollEventPhaseDecoder.swift in Sources */,
+				F2635A97539409F96784ADA1 /* WindowAccessibilityLookup.swift in Sources */,
+				000278054C1670395A25C8A2 /* AccessibilityReadBatch.swift in Sources */,
+				0176B53F6ADC72812404B860 /* AccessibilityElement+Activation.swift in Sources */,
 				9704A3EC1304566252760768 /* TrackpadMultitouchTouchSource.swift in Sources */,
 				6B39788453C21FB85E72BA14 /* TrackpadGestureSettingsView.swift in Sources */,
 				1271D25CFBF317E86731A934 /* TrackpadGestureSettings.swift in Sources */,
 				06990015C362A28DF272A486 /* TrackpadGestureRuntime.swift in Sources */,
-				C5CACFA5A05F15FB1B402DD5 /* TrackpadGestureRecognizer.swift in Sources */,
+				C5CACFA5A05F15FB1B402DD5 /* TrackpadPoint.swift in Sources */,
 				3F1E1CD56D52B3D30D54C856 /* TrackpadGestureManager.swift in Sources */,
-				45CD3683A015D36FAA7B5B7C /* TrackpadExclusiveGestureGate.swift in Sources */,
-				E48A02F31B0E47C123D813B4 /* TrackpadExclusiveGestureCapture.swift in Sources */,
-				55580BFC9BF1EC7676821256 /* TrackpadCursorWindowTargeter.swift in Sources */,
+				45CD3683A015D36FAA7B5B7C /* TrackpadScrollStreamPhase.swift in Sources */,
+				E48A02F31B0E47C123D813B4 /* TrackpadExclusiveGestureCapturing.swift in Sources */,
+				55580BFC9BF1EC7676821256 /* TrackpadCursorWindowShortcutTargeter.swift in Sources */,
 				8ACFEE325BA39194B2F5E23A /* DirectWindowAnimator.swift in Sources */,
 				F0E6D426F097AA96F5F35F71 /* PreviewLayerTransition.swift in Sources */,
 				51C0597054B182702D29CFCA /* PreviewOpacityAnimation.swift in Sources */,
