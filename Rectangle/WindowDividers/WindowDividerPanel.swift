@@ -37,6 +37,7 @@ final class WindowDividerPanel: NSPanel {
 
     func show(at center: CGPoint, axis: WindowSplitAxis = .horizontal) {
         self.axis = axis
+        handle.refreshStyle()
         let size = axis.size(CGSize(width: 18, height: 76))
         setFrame(CGRect(x: center.x - size.width / 2, y: center.y - size.height / 2,
                        width: size.width, height: size.height), display: true)

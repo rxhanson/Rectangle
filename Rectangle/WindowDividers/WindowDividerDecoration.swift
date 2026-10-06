@@ -16,12 +16,14 @@ final class WindowDividerDecoration: NSView {
     override func draw(_ dirtyRect: NSRect) {
         NSColor.clear.setFill()
         bounds.fill(using: .copy)
-        LayoutHelperAppearance.outline.setStroke()
-        for frame in outlines {
-            let radius = min(min(12, FootprintStyle.cornerRadius), min(frame.width, frame.height) / 2)
-            let outline = NSBezierPath(roundedRect: frame, xRadius: radius, yRadius: radius)
-            outline.lineWidth = 1
-            outline.stroke()
+        if !BlurSurfaceView.liquidGlassEnabled {
+            LayoutHelperAppearance.outline.setStroke()
+            for frame in outlines {
+                let radius = min(min(12, FootprintStyle.cornerRadius), min(frame.width, frame.height) / 2)
+                let outline = NSBezierPath(roundedRect: frame, xRadius: radius, yRadius: radius)
+                outline.lineWidth = 1
+                outline.stroke()
+            }
         }
         NSColor.black.withAlphaComponent(0.35).setFill()
         line(thickness: 4).fill()

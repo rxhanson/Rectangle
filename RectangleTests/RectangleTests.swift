@@ -10097,6 +10097,102 @@ final class BlurDefaultSelectionTests: XCTestCase {
     }
 }
 
+@MainActor
+final class WindowDividerGlassHandleTests: XCTestCase {
+    private func withSettings(_ body: () throws -> Void) rethrows {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        try body()
+    }
+
+    func testBothAxesUseNativeGlassAndKeepPointerInputOnHandle() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Requires native Glass") }
+        try withSettings {
+            Defaults.liquidGlassForBlur.enabled = true
+            let panel = WindowDividerPanel()
+            defer { panel.close() }
+            for axis: WindowSplitAxis in [.horizontal, .vertical] {
+                panel.show(at: CGPoint(x: 200, y: 200), axis: axis)
+                panel.holdVisible()
+                let handle = try XCTUnwrap(panel.contentView as? WindowDividerHandle)
+                handle.layoutSubtreeIfNeeded()
+                let material = try XCTUnwrap(handle.subviews.first as? BlurSurfaceView)
+                material.layoutSubtreeIfNeeded()
+                let glass = try XCTUnwrap(material.subviews.first as? NSGlassEffectView)
+                XCTAssertTrue(material.usesLiquidGlass)
+                XCTAssertFalse(material.isHidden)
+                XCTAssertEqual(material.frame, handle.bounds.insetBy(dx: 3, dy: 3))
+                XCTAssertEqual(glass.cornerRadius, 6)
+                XCTAssertTrue(glass.contentView === material.content)
+                let grip = try XCTUnwrap(material.content.subviews.first)
+                XCTAssertEqual(grip.frame, material.content.bounds, "Axis changes must not resize the grip twice")
+                XCTAssertEqual(grip.frame.size, material.bounds.size)
+                for point in [CGPoint(x: handle.bounds.midX, y: handle.bounds.midY), CGPoint(x: 1, y: 1)] {
+                    XCTAssertTrue(handle.hitTest(point) === handle, "Native material must not intercept dragging")
+                }
+            }
+        }
+    }
+
+    func testLiveAppearanceKeepsGlassAndGeometryWhileUpdatingGrip() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Requires native Glass") }
+        try withSettings {
+            Defaults.liquidGlassForBlur.enabled = true
+            let panel = WindowDividerPanel()
+            defer { panel.close() }
+            panel.appearance = NSAppearance(named: .darkAqua)
+            panel.show(at: CGPoint(x: 200, y: 200))
+            panel.holdVisible()
+            let handle = try XCTUnwrap(panel.contentView as? WindowDividerHandle)
+            handle.layoutSubtreeIfNeeded()
+            let material = try XCTUnwrap(handle.subviews.first as? BlurSurfaceView)
+            material.layoutSubtreeIfNeeded()
+            let glass = try XCTUnwrap(material.subviews.first as? NSGlassEffectView)
+            let grip = try XCTUnwrap(material.content.subviews.first)
+            let original = panel.frame
+            for choice: BlurAppearance in [.dark, .light, .system] {
+                Defaults.blurAppearance.value = choice
+                Notification.Name.blurAppearanceChanged.post()
+                XCTAssertEqual(handle.appearance?.name, choice.appearance?.name)
+                XCTAssertEqual(grip.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]), choice == .light ? .aqua : .darkAqua)
+                XCTAssertTrue(material.subviews.first === glass)
+                XCTAssertEqual(panel.frame, original)
+                XCTAssertTrue(panel.acceptsPointer)
+            }
+        }
+    }
+
+    func testMaterialSwitchKeepsDragAndDoubleClickCallbacks() throws {
+        try withSettings {
+            let panel = WindowDividerPanel()
+            defer { panel.close() }
+            var begins = 0, ends = 0, resets = 0
+            panel.onBegin = { _ in begins += 1; return true }
+            panel.onEnd = { ends += 1 }
+            panel.onReset = { resets += 1 }
+            for glass in [false, true, false] {
+                Defaults.liquidGlassForBlur.enabled = glass
+                Notification.Name.blurStyleChanged.post()
+                panel.show(at: CGPoint(x: 200, y: 200))
+                let handle = try XCTUnwrap(panel.contentView as? WindowDividerHandle)
+                handle.layoutSubtreeIfNeeded()
+                let material = try XCTUnwrap(handle.subviews.first as? BlurSurfaceView)
+                XCTAssertEqual(material.isHidden, !BlurSurfaceView.liquidGlassEnabled)
+                func event(_ type: NSEvent.EventType, clicks: Int) throws -> NSEvent {
+                    try XCTUnwrap(NSEvent.mouseEvent(with: type, location: CGPoint(x: 9, y: 38), modifierFlags: [], timestamp: 0,
+                        windowNumber: panel.windowNumber, context: nil, eventNumber: 0, clickCount: clicks, pressure: 1))
+                }
+                handle.mouseDown(with: try event(.leftMouseDown, clicks: 1))
+                handle.mouseUp(with: try event(.leftMouseUp, clicks: 1))
+                handle.mouseDown(with: try event(.leftMouseDown, clicks: 2))
+            }
+            XCTAssertEqual(begins, 3)
+            XCTAssertEqual(ends, 3)
+            XCTAssertEqual(resets, 3)
+        }
+    }
+}
+
 final class WindowDividerSystemOverlayTests: XCTestCase {
     private let left = WindowInfo(id: 101, level: 0, frame: CGRect(x: 0, y: 0, width: 400, height: 300), pid: 11, processName: "Left")
     private let right = WindowInfo(id: 102, level: 0, frame: CGRect(x: 400, y: 0, width: 400, height: 300), pid: 12, processName: "Right")
@@ -10281,5 +10377,62 @@ final class LayoutHelperWindowStyleTests: XCTestCase {
         Notification.Name.configImported.post()
         XCTAssertEqual(panel.appearance?.name, .darkAqua)
         XCTAssertEqual(backdrop.appearance?.name, .darkAqua)
+    }
+}
+
+@MainActor
+final class WindowDividerGlassLineTests: XCTestCase {
+    func testFullLengthLineRendersInBothMaterialsAndAxes() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        for glass in [false, true] {
+            Defaults.liquidGlassForBlur.enabled = glass
+            for axis: WindowSplitAxis in [.horizontal, .vertical] {
+                let decoration = WindowDividerDecoration(frame: CGRect(x: 0, y: 0, width: 120, height: 80))
+                decoration.axis = axis
+                decoration.dividerX = axis == .horizontal ? 60 : 40
+                let image = NSImage(size: decoration.bounds.size, flipped: false) { _ in
+                    decoration.draw(decoration.bounds)
+                    return true
+                }
+                let bitmap = try XCTUnwrap(NSBitmapImageRep(data: try XCTUnwrap(image.tiffRepresentation)))
+                // Sample near both ends, beyond the center handle's coverage.
+                for position in [5, axis == .horizontal ? 74 : 114] {
+                    let center = axis == .horizontal ? (60, position) : (position, 40)
+                    let color = try XCTUnwrap(bitmap.colorAt(x: center.0, y: center.1))
+                    XCTAssertGreaterThan(color.alphaComponent, 0.7, "Line must span the preview in either material")
+                    let outside = axis == .horizontal ? (54, position) : (position, 34)
+                    XCTAssertEqual(try XCTUnwrap(bitmap.colorAt(x: outside.0, y: outside.1)).alphaComponent, 0, accuracy: 0.01)
+                }
+            }
+        }
+    }
+
+    func testLiveAndFrozenGlassOverlayKeepLineUntilRetirement() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        let panel = WindowDividerPanel(), overlay = WindowDividerOverlay()
+        defer { overlay.dismiss(); overlay.close(); panel.close() }
+        let image = NSImage(size: CGSize(width: 120, height: 80), flipped: false) { rect in
+            NSColor.systemBlue.setFill(); rect.fill(); return true
+        }
+        let cgImage = try XCTUnwrap(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        for axis: WindowSplitAxis in [.horizontal, .vertical] {
+            Defaults.liquidGlassForBlur.enabled = true
+            Notification.Name.blurStyleChanged.post()
+            overlay.show(in: CGRect(x: 200, y: 200, width: 120, height: 80), divider: 260, gap: 0, axis: axis, below: panel)
+            XCTAssertFalse(overlay.guide.decoration.isHidden)
+            overlay.freeze(cgImage)
+            XCTAssertFalse(overlay.guide.decoration.isHidden)
+            for glass in [false, true] {
+                Defaults.liquidGlassForBlur.enabled = glass
+                Notification.Name.blurStyleChanged.post()
+                XCTAssertFalse(overlay.guide.decoration.isHidden)
+            }
+            overlay.dismiss()
+            XCTAssertTrue(overlay.guide.decoration.isHidden)
+            Notification.Name.blurStyleChanged.post()
+            XCTAssertTrue(overlay.guide.decoration.isHidden, "Changing material must not revive a retired guide")
+        }
     }
 }
