@@ -10,12 +10,18 @@ extension NSAccessibility.Attribute {
 }
 
 extension AXValue {
-    func toValue<T>() -> T? {
+    /// Safely extracts value of type `T` from an `AXValue` if the underlying `AXValueType` matches `expectedType`.
+    func toValue<T>(type expectedType: AXValueType) -> T? {
+        // Ensure the AXValue contains the expected type before attempting conversion
+        guard AXValueGetType(self) == expectedType else { return nil }
+        
+        // Allocate raw uninitialized memory suitable for T
         let pointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
-        let success = AXValueGetValue(self, AXValueGetType(self), pointer)
-        let value = pointer.pointee
-        pointer.deallocate()
-        return success ? value : nil
+        defer { pointer.deallocate() }
+        
+        // Only read pointee if AXValueGetValue returns true
+        let success = AXValueGetValue(self, expectedType, pointer)
+        return success ? pointer.pointee : nil
     }
     
     static func from<T>(value: T, type: AXValueType) -> AXValue? {
@@ -43,9 +49,10 @@ extension AXUIElement {
         return value
     }
     
-    func getWrappedValue<T>(_ attribute: NSAccessibility.Attribute) -> T? {
+    /// Helper to fetch and extract a struct value with explicit type validation.
+    func getWrappedValue<T>(_ attribute: NSAccessibility.Attribute, type: AXValueType) -> T? {
         guard let value = getValue(attribute), CFGetTypeID(value) == AXValueGetTypeID() else { return nil }
-        return (value as! AXValue).toValue()
+        return (value as! AXValue).toValue(type: type)
     }
     
     private func setValue(_ attribute: NSAccessibility.Attribute, _ value: AnyObject) {

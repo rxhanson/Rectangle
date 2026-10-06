@@ -7644,3 +7644,428 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
         XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
     }
 }
+
+
+class VerticalEighthActionTests: XCTestCase {
+
+    private let actions: [WindowAction] = [
+        .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
+        .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth
+    ]
+
+    func testVerticalEighthActionsUseAvailableStableIdentifiers() {
+        XCTAssertEqual([
+            WindowAction.tileRows.rawValue,
+            WindowAction.tileColumns.rawValue,
+            WindowAction.cycleStackedWindows.rawValue,
+            WindowAction.cycleStackedWindowsBackward.rawValue
+        ], [129, 130, 131, 132])
+        XCTAssertEqual(actions.map(\.rawValue), [133, 134, 135, 136, 137, 138, 139, 140])
+        XCTAssertEqual(actions.map(\.name), [
+            "firstVerticalEighth", "secondVerticalEighth", "thirdVerticalEighth", "fourthVerticalEighth",
+            "fifthVerticalEighth", "sixthVerticalEighth", "seventhVerticalEighth", "lastVerticalEighth"
+        ])
+    }
+
+    func testVerticalEighthActionsTileVisibleFrameIntoEightFullHeightColumns() {
+        let visibleFrame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = (0..<8).map { CGRect(x: CGFloat($0 * 480), y: 40, width: 480, height: 1000) }
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalEighthActionsUseBoundaryRoundingAcrossNonDivisibleLandscapeWidth() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected = [
+            CGRect(x: 20, y: 40, width: 125, height: 800),
+            CGRect(x: 145, y: 40, width: 125, height: 800),
+            CGRect(x: 270, y: 40, width: 126, height: 800),
+            CGRect(x: 396, y: 40, width: 125, height: 800),
+            CGRect(x: 521, y: 40, width: 125, height: 800),
+            CGRect(x: 646, y: 40, width: 126, height: 800),
+            CGRect(x: 772, y: 40, width: 125, height: 800),
+            CGRect(x: 897, y: 40, width: 126, height: 800)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalEighthActionsRotateIntoTopToBottomRowsOnPortraitDisplays() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected = [
+            CGRect(x: 20, y: 918, width: 800, height: 125),
+            CGRect(x: 20, y: 793, width: 800, height: 125),
+            CGRect(x: 20, y: 667, width: 800, height: 126),
+            CGRect(x: 20, y: 542, width: 800, height: 125),
+            CGRect(x: 20, y: 417, width: 800, height: 125),
+            CGRect(x: 20, y: 291, width: 800, height: 126),
+            CGRect(x: 20, y: 166, width: 800, height: 125),
+            CGRect(x: 20, y: 40, width: 800, height: 126)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testFirstVerticalEighthCyclesForwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let results = repeatedResults(for: .firstVerticalEighth, count: 9, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [20, 120, 220, 320, 420, 520, 620, 720, 20])
+        }
+    }
+
+    func testLastVerticalEighthCyclesBackwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let results = repeatedResults(for: .lastVerticalEighth, count: 9, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [720, 620, 520, 420, 320, 220, 120, 20, 720])
+        }
+    }
+
+    func testEndpointCyclingResetsForUnrelatedOrOppositeLastAction() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            let unrelated = RectangleAction(action: .leftHalf, subAction: .leftThird, rect: .zero)
+            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 20)
+            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: unrelated).rect.minX, 720)
+
+            let lastResult = calculate(.lastVerticalEighth, visibleFrame: visibleFrame)
+            let lastEndpoint = RectangleAction(action: .lastVerticalEighth, subAction: lastResult.subAction, rect: lastResult.rect)
+            XCTAssertEqual(calculate(.firstVerticalEighth, visibleFrame: visibleFrame, lastAction: lastEndpoint).rect.minX, 20)
+
+            let firstResult = calculate(.firstVerticalEighth, visibleFrame: visibleFrame)
+            let firstEndpoint = RectangleAction(action: .firstVerticalEighth, subAction: firstResult.subAction, rect: firstResult.rect)
+            XCTAssertEqual(calculate(.lastVerticalEighth, visibleFrame: visibleFrame, lastAction: firstEndpoint).rect.minX, 720)
+        }
+    }
+
+    func testEndpointCyclingIsDisabledWhenSubsequentExecutionModeIsNone() {
+        withSubsequentExecutionMode(.none) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            XCTAssertEqual(repeatedResults(for: .firstVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [20, 20, 20])
+            XCTAssertEqual(repeatedResults(for: .lastVerticalEighth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [720, 720, 720])
+        }
+    }
+
+    func testMiddleVerticalEighthActionsStayAtTheirOwnOrdinalWhenRepeated() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 400)
+            for (index, action) in actions.dropFirst().dropLast().enumerated() {
+                let expectedX = CGFloat(120 + index * 100)
+                let results = repeatedResults(for: action, count: 3, visibleFrame: visibleFrame)
+                XCTAssertEqual(results.map { $0.rect.minX }, [expectedX, expectedX, expectedX])
+            }
+        }
+    }
+
+    func testVerticalEighthResultingSubActionsProvideLandscapeGapEdges() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected: [Edge] = [
+            .right,
+            [.left, .right], [.left, .right], [.left, .right],
+            [.left, .right], [.left, .right], [.left, .right],
+            .left
+        ]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
+        }
+    }
+
+    func testVerticalEighthResultingSubActionsProvidePortraitGapEdges() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected: [Edge] = [
+            .bottom,
+            [.top, .bottom], [.top, .bottom], [.top, .bottom],
+            [.top, .bottom], [.top, .bottom], [.top, .bottom],
+            .top
+        ]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: visibleFrame).subAction?.gapSharedEdge, expected[index])
+        }
+    }
+
+    func testVerticalEighthActionsRemainTerminalConfigurableThroughActiveActionNames() {
+        let suiteName = "VerticalEighthActionTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+        let shortcut = MASShortcut(keyCode: 18, modifierFlags: [.control, .option, .shift])
+        let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
+        userDefaults.set(transformer.reverseTransformedValue(shortcut), forKey: WindowAction.firstVerticalEighth.name)
+
+        XCTAssertTrue(WindowAction.active.contains(.firstVerticalEighth))
+        let loaded = ShortcutCycle.shortcutsByAction(userDefaults: userDefaults)[.firstVerticalEighth]
+        XCTAssertEqual(loaded?.keyCode, shortcut.keyCode)
+        XCTAssertEqual(loaded?.modifierFlags, shortcut.modifierFlags)
+    }
+
+    func testVerticalEighthActionsAreHiddenFromNormalUI() throws {
+        XCTAssertTrue(actions.allSatisfy(\.excludedFromMenu))
+        XCTAssertTrue(actions.allSatisfy { !$0.isDragSnappable })
+
+        let controller = ShortcutsViewController()
+        _ = controller.view
+        let outlineView = try XCTUnwrap(findOutlineView(in: controller.view))
+        let rootCount = controller.outlineView(outlineView, numberOfChildrenOfItem: nil)
+
+        var found: [WindowAction] = []
+        func collect(from item: Any?) {
+            let count = controller.outlineView(outlineView, numberOfChildrenOfItem: item)
+            for index in 0..<count {
+                let child = controller.outlineView(outlineView, child: index, ofItem: item)
+                if let shortcut = child as? ShortcutItem, actions.contains(shortcut.action) {
+                    found.append(shortcut.action)
+                }
+                collect(from: child)
+            }
+        }
+
+        for index in 0..<rootCount {
+            collect(from: controller.outlineView(outlineView, child: index, ofItem: nil))
+        }
+
+        XCTAssertTrue(found.isEmpty)
+    }
+
+    private func calculate(_ action: WindowAction,
+                           visibleFrame: CGRect,
+                           lastAction: RectangleAction? = nil) -> RectResult {
+        WindowCalculationFactory.calculationsByAction[action]!.calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                      visibleFrameOfScreen: visibleFrame,
+                                      action: action,
+                                      lastAction: lastAction)
+        )
+    }
+
+    private func repeatedResults(for action: WindowAction,
+                                 count: Int,
+                                 visibleFrame: CGRect) -> [RectResult] {
+        var lastAction: RectangleAction?
+        return (0..<count).map { _ in
+            let result = calculate(action, visibleFrame: visibleFrame, lastAction: lastAction)
+            lastAction = RectangleAction(action: action, subAction: result.subAction, rect: result.rect)
+            return result
+        }
+    }
+
+    private func withSubsequentExecutionMode(_ mode: SubsequentExecutionMode, _ body: () -> Void) {
+        let saved = Defaults.subsequentExecutionMode.value
+        defer { Defaults.subsequentExecutionMode.value = saved }
+        Defaults.subsequentExecutionMode.value = mode
+        body()
+    }
+
+    private func findOutlineView(in view: NSView) -> NSOutlineView? {
+        if let outlineView = view as? NSOutlineView { return outlineView }
+        for subview in view.subviews {
+            if let outlineView = findOutlineView(in: subview) { return outlineView }
+        }
+        return nil
+    }
+}
+
+@MainActor
+final class TitleBarTabButtonPressSchedulingTests: XCTestCase {
+    private func mouseEvent(_ type: CGEventType, window: CGWindowID = 42) throws -> NSEvent {
+        let event = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: type,
+                                        mouseCursorPosition: CGPoint(x: 20, y: 20), mouseButton: .left))
+        event.setIntegerValueField(.mouseEventClickState, value: 1)
+        event.setIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent, value: Int64(window))
+        return try XCTUnwrap(NSEvent(cgEvent: event))
+    }
+
+    func testWindowOwnerLookupRunsOnWorker() throws {
+        let worker = DispatchQueue(label: "titlebar-test-owner")
+        let key = DispatchSpecificKey<Bool>()
+        worker.setSpecific(key: key, value: true)
+        let lookedUp = expectation(description: "owner resolved off input thread")
+        let press = TitleBarTabButtonPress(worker: worker) { window in
+            XCTAssertEqual(window, 42)
+            XCTAssertEqual(DispatchQueue.getSpecific(key: key), true)
+            XCTAssertFalse(Thread.isMainThread)
+            lookedUp.fulfill()
+            return nil
+        }
+        press.handle(try mouseEvent(.leftMouseDown)) { XCTFail("mouse-down must not perform an action") }
+        wait(for: [lookedUp], timeout: 1)
+        press.stop()
+    }
+
+    func testDragCancelsQueuedLookupBeforeItContactsWindowServer() throws {
+        let worker = DispatchQueue(label: "titlebar-test-drag")
+        let press = TitleBarTabButtonPress(worker: worker) { _ in
+            XCTFail("cancelled click must not resolve or hit-test its window")
+            return nil
+        }
+        let down = try mouseEvent(.leftMouseDown)
+        let drag = try mouseEvent(.leftMouseDragged)
+        worker.suspend()
+        press.handle(down) {}
+        press.handle(drag) {}
+        let drained = expectation(description: "cancelled worker request drained")
+        worker.async { drained.fulfill() }
+        worker.resume()
+        wait(for: [drained], timeout: 1)
+        press.stop()
+    }
+
+    func testNewClickSkipsOldLookupAndResolvesTheNewEventWindow() throws {
+        let worker = DispatchQueue(label: "titlebar-test-replacement")
+        let lookedUp = expectation(description: "only replacement click resolved")
+        let press = TitleBarTabButtonPress(worker: worker) { window in
+            XCTAssertEqual(window, 43)
+            lookedUp.fulfill()
+            return nil
+        }
+        let oldDown = try mouseEvent(.leftMouseDown)
+        let newDown = try mouseEvent(.leftMouseDown, window: 43)
+        worker.suspend()
+        press.handle(oldDown) {}
+        press.handle(newDown) {}
+        worker.resume()
+        wait(for: [lookedUp], timeout: 1)
+        press.stop()
+    }
+}
+
+@MainActor
+final class TitleBarHitTestApplicationTests: XCTestCase {
+    func testOwnWindowNeverStartsAnAccessibilityHitTest() throws {
+        let window = NSWindow(contentRect: CGRect(x: 100, y: 100, width: 320, height: 200),
+                              styleMask: [.titled], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.orderFront(nil)
+        defer { window.close() }
+        let id = CGWindowID(window.windowNumber)
+        let owner = try XCTUnwrap(WindowUtil.getWindowList(ids: [id], forceRefresh: true).first { $0.id == id })
+        XCTAssertEqual(owner.pid, ProcessInfo.processInfo.processIdentifier)
+        XCTAssertNil(TitleBarManager.hitTestApplication(window: id))
+    }
+
+    func testUnknownWindowDoesNotFallBackToSystemWideHitTesting() {
+        XCTAssertNil(TitleBarManager.hitTestApplication(window: 0))
+        XCTAssertNil(TitleBarManager.hitTestApplication(window: CGWindowID.max))
+    }
+}
+
+class TitleBarClickSequenceTests: XCTestCase {
+    private func startedSequence() -> TitleBarClickSequence {
+        let sequence = TitleBarClickSequence()
+        sequence.mouseDown(window: 42, point: CGPoint(x: 20, y: 20), time: 1, count: 1, interval: 0.5)
+        return sequence
+    }
+
+    func testNotificationHandledAfterMouseUpStillVetoesTabClose() throws {
+        let sequence = startedSequence()
+        sequence.mouseDown(window: 42, point: CGPoint(x: 20, y: 20), time: 1.1, count: 2, interval: 0.5)
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 42) { result = $0 })
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.11, interval: 0.5))
+        sequence.endRead(read, positive: true)
+        XCTAssertNil(result)
+        sequence.settle(click)
+        XCTAssertEqual(result, true)
+    }
+
+    func testDecisionWaitsForClassificationStartedBeforeMouseUp() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 42) { result = $0 })
+        sequence.settle(click)
+        XCTAssertNil(result)
+        sequence.endRead(read, positive: true)
+        XCTAssertEqual(result, true)
+    }
+
+    func testOrdinaryTitleBarClickRunsOnceAfterNegativeClassification() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var results: [Bool] = []
+        let click = try XCTUnwrap(sequence.finish(window: 42) { results.append($0) })
+        sequence.settle(click)
+        sequence.endRead(read, positive: false)
+        sequence.settle(click, timedOut: true)
+        XCTAssertEqual(results, [false])
+    }
+
+    func testTimeoutDoesNotBlockTitleBarOrApplyLateResult() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var results: [Bool] = []
+        let click = try XCTUnwrap(sequence.finish(window: 42) { results.append($0) })
+        sequence.settle(click, timedOut: true)
+        sequence.endRead(read, positive: true)
+        XCTAssertEqual(results, [false])
+    }
+
+    func testNewClickCancelsOldDecisionAndIgnoresOldClassification() throws {
+        let sequence = startedSequence()
+        let read = try XCTUnwrap(sequence.beginRead(at: 1.01, interval: 0.5))
+        var oldResult: Bool?
+        let old = try XCTUnwrap(sequence.finish(window: 42) { oldResult = $0 })
+        sequence.mouseDown(window: 43, point: .zero, time: 2, count: 1, interval: 0.5)
+        sequence.endRead(read, positive: true)
+        sequence.settle(old, timedOut: true)
+        XCTAssertNil(oldResult)
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 43) { result = $0 })
+        sequence.settle(click)
+        XCTAssertEqual(result, false)
+    }
+
+    func testResetCancelsPendingAction() throws {
+        let sequence = startedSequence()
+        var result: Bool?
+        let click = try XCTUnwrap(sequence.finish(window: 42) { result = $0 })
+        sequence.reset()
+        sequence.settle(click, timedOut: true)
+        XCTAssertNil(result)
+    }
+
+    func testSecondClickOnDifferentWindowOrOutsideIntervalResetsSequence() {
+        for (window, time) in [(CGWindowID(43), 1.1), (CGWindowID(42), 1.6)] {
+            let sequence = startedSequence()
+            sequence.mouseDown(window: window, point: .zero, time: time, count: 2, interval: 0.5)
+            XCTAssertNil(sequence.beginRead(at: time, interval: 0.5))
+        }
+    }
+}
+
+class TitleBarScreenDetectionTests: XCTestCase {
+    private final class TestScreen: NSScreen {
+        let testFrame: CGRect
+        init(_ frame: CGRect) { testFrame = frame; super.init() }
+        override var frame: NSRect { testFrame }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    func testClickedScreenPreservesDisplayCountOrderingAndNeighbors() throws {
+        let left = TestScreen(CGRect(x: -1000, y: 0, width: 1000, height: 800))
+        let right = TestScreen(CGRect(x: 0, y: 0, width: 1000, height: 800))
+        let detection = ScreenDetection(screens: { [right, left] })
+        let screens = try XCTUnwrap(detection.detectScreens(at: left))
+        XCTAssertTrue(screens.currentScreen === left)
+        XCTAssertEqual(screens.numScreens, 2)
+        XCTAssertEqual(screens.screensOrdered, detection.order(screens: [right, left]))
+        XCTAssertTrue(screens.adjacentScreens?.next === right)
+        XCTAssertTrue(screens.adjacentScreens?.prev === right)
+    }
+
+    func testDisconnectedClickedScreenDoesNotBecomeSingleDisplayTopology() {
+        let screen = TestScreen(CGRect(x: 0, y: 0, width: 1000, height: 800))
+        XCTAssertNil(ScreenDetection(screens: { [] }).detectScreens(at: screen))
+    }
+
+    func testClickScreenUsesAppKitCoordinatesIncludingNegativeOrigins() {
+        let left = TestScreen(CGRect(x: -1000, y: 0, width: 1000, height: 800))
+        let above = TestScreen(CGRect(x: 0, y: 800, width: 1000, height: 800))
+        XCTAssertTrue(TitleBarManager.screenForClick(at: CGPoint(x: -50, y: 200), screens: [left, above]) === left)
+        XCTAssertTrue(TitleBarManager.screenForClick(at: CGPoint(x: 50, y: 900), screens: [left, above]) === above)
+        XCTAssertNil(TitleBarManager.screenForClick(at: CGPoint(x: 5000, y: 0), screens: [left, above]))
+    }
+}
