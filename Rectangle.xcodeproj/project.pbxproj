@@ -253,7 +253,6 @@
 		BF3AD51F552869B6B6970A9A /* LayoutHelperManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */; };
 		E49FF67D2B772630FA5B4806 /* LayoutHelperPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BAA95DFC6764FD279018B96 /* LayoutHelperPanel.swift */; };
 		B6CD8908A0DDA818CBEEF425 /* LayoutHelperPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B695B87A6B64BECC8636650 /* LayoutHelperPermission.swift */; };
-		86B2062AA7F2E09EE51684F2 /* LayoutHelperPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F787DB833F1722344E075A /* LayoutHelperPresentation.swift */; };
 		97CACB5873802167D43E416A /* LayoutHelperPreviewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ECA43C11C84059232320F0C /* LayoutHelperPreviewStore.swift */; };
 		B9473EAA34AB33AA90E6969B /* LayoutHelperWindowCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BE17894A74E48C5314BD31 /* LayoutHelperWindowCatalog.swift */; };
 		01EEDD05CD19D31436D17083 /* WindowDividerGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */; };
@@ -549,7 +548,6 @@
 		13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperManager.swift; sourceTree = SOURCE_ROOT; };
 		6BAA95DFC6764FD279018B96 /* LayoutHelperPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPanel.swift; sourceTree = SOURCE_ROOT; };
 		5B695B87A6B64BECC8636650 /* LayoutHelperPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPermission.swift; sourceTree = SOURCE_ROOT; };
-		21F787DB833F1722344E075A /* LayoutHelperPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPresentation.swift; sourceTree = SOURCE_ROOT; };
 		1ECA43C11C84059232320F0C /* LayoutHelperPreviewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperPreviewStore.swift; sourceTree = SOURCE_ROOT; };
 		45BE17894A74E48C5314BD31 /* LayoutHelperWindowCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/LayoutHelperWindowCatalog.swift; sourceTree = SOURCE_ROOT; };
 		58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/WindowDividerGeometry.swift; sourceTree = SOURCE_ROOT; };
@@ -856,7 +854,6 @@
 				58DC24D3D7DE6D78522B51F3 /* WindowDividerGeometry.swift */,
 				45BE17894A74E48C5314BD31 /* LayoutHelperWindowCatalog.swift */,
 				1ECA43C11C84059232320F0C /* LayoutHelperPreviewStore.swift */,
-				21F787DB833F1722344E075A /* LayoutHelperPresentation.swift */,
 				5B695B87A6B64BECC8636650 /* LayoutHelperPermission.swift */,
 				6BAA95DFC6764FD279018B96 /* LayoutHelperPanel.swift */,
 				13A4954C9B41FE42F65B5921 /* LayoutHelperManager.swift */,
@@ -1170,7 +1167,6 @@
 				01EEDD05CD19D31436D17083 /* WindowDividerGeometry.swift in Sources */,
 				B9473EAA34AB33AA90E6969B /* LayoutHelperWindowCatalog.swift in Sources */,
 				97CACB5873802167D43E416A /* LayoutHelperPreviewStore.swift in Sources */,
-				86B2062AA7F2E09EE51684F2 /* LayoutHelperPresentation.swift in Sources */,
 				B6CD8908A0DDA818CBEEF425 /* LayoutHelperPermission.swift in Sources */,
 				E49FF67D2B772630FA5B4806 /* LayoutHelperPanel.swift in Sources */,
 				BF3AD51F552869B6B6970A9A /* LayoutHelperManager.swift in Sources */,

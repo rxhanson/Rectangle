@@ -311,9 +311,7 @@ final class LayoutHelperPreviewStore {
         DispatchQueue.main.asyncAfter(deadline: .now() + 120, execute: work)
     }
     @MainActor @available(macOS 14, *) private func capture(_ key: LayoutHelperPreviewKey) async -> LayoutHelperValidatedPreview? {
-        while WindowAnimator.shared.isAnimating && !Task.isCancelled {
-            try? await Task.sleep(nanoseconds: 16_000_000)
-        }
+        await WindowAnimationCaptureGate.shared.waitUntilIdle()
         guard !Task.isCancelled, !suspended, Defaults.layoutHelper.userEnabled,
               LayoutHelperPermission.previewsAllowed,
               WindowProcessIdentity.launchTime(for: key.pid) == key.launch else { return nil }
@@ -339,9 +337,7 @@ final class LayoutHelperPreviewStore {
               let window = content.windows.first(where: { $0.windowID == key.id && $0.owningApplication?.processID == key.pid }),
               WindowProcessIdentity.launchTime(for: key.pid) == key.launch,
               !Task.isCancelled, !suspended, Defaults.layoutHelper.userEnabled, LayoutHelperPermission.previewsAllowed else { return nil }
-        while WindowAnimator.shared.isAnimating && !Task.isCancelled {
-            try? await Task.sleep(nanoseconds: 16_000_000)
-        }
+        await WindowAnimationCaptureGate.shared.waitUntilIdle()
         guard !Task.isCancelled, !suspended, Defaults.layoutHelper.userEnabled,
               LayoutHelperPermission.previewsAllowed else { return nil }
         guard LayoutHelperPreviewValidation.validSourceSize(window.frame.size) else { return nil }
