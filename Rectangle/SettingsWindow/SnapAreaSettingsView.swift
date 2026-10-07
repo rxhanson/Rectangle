@@ -101,10 +101,12 @@ final class SnapAreaViewModel {
     // UI State
     var showMissionControlDragging: Bool
     var isPortraitConnected: Bool
-    
+    private(set) var reduceTransparency: Bool
+
     private var cancellables = Set<AnyCancellable>()
     
     init() {
+        self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
         self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.enabled
@@ -134,7 +136,14 @@ final class SnapAreaViewModel {
     
     private func setupNotificationObservers() {
         let center = NotificationCenter.default
-        
+
+        NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+            }
+            .store(in: &cancellables)
+
         center.publisher(for: NSApplication.didChangeScreenParametersNotification)
             .sink { [weak self] _ in
                 self?.isPortraitConnected = NSScreen.portraitDisplayConnected
@@ -178,7 +187,7 @@ final class SnapAreaViewModel {
 
 struct SnapAreaSettingsView: View {
     @State private var viewModel = SnapAreaViewModel()
-    
+
     private var landscapeHeaderTitle: String {
         viewModel.isPortraitConnected ? String(localized: "Landscape Snap Areas") : String(localized: "Snap Areas")
     }
@@ -195,13 +204,15 @@ struct SnapAreaSettingsView: View {
             Section {
                 Toggle("Haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
-                Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
-                
-                if viewModel.footprintBlur {
-                    Picker("Blur appearance", selection: $viewModel.blurAppearance) {
-                        Text("Follow System").tag(BlurAppearance.system)
-                        Text("Light").tag(BlurAppearance.light)
-                        Text("Dark").tag(BlurAppearance.dark)
+                if !viewModel.reduceTransparency {
+                    Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
+
+                    if viewModel.footprintBlur {
+                        Picker("Blur appearance", selection: $viewModel.blurAppearance) {
+                            Text("Follow System").tag(BlurAppearance.system)
+                            Text("Light").tag(BlurAppearance.light)
+                            Text("Dark").tag(BlurAppearance.dark)
+                        }
                     }
                 }
                 
@@ -237,6 +248,9 @@ struct SnapAreaSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isPortraitConnected)
+        .onChange(of: viewModel.reduceTransparency) { _, _ in
+            Notification.Name.snapAreaSettingsNeedsResize.post()
+        }
         .onChange(of: viewModel.isPortraitConnected) { oldValue, isConnected in
             Notification.Name.snapAreaSettingsNeedsResize.post(object:isConnected)
         }
