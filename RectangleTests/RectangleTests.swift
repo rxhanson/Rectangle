@@ -8038,7 +8038,7 @@ final class WindowSizeResizeObservationTests: XCTestCase {
         XCTAssertTrue(evidence.isValid)
         var archive = WindowSizeLimitArchive()
         let identity = WindowSizeLimitIdentity(bundleID: "test", appVersion: "1", pid: 1,
-            launch: 1, session: UUID(), windowID: 1, identifier: nil,
+            launch: 1, session: UUID().uuidString, windowID: 1, identifier: nil,
             role: kAXWindowRole, subrole: "", structure: [])
         archive.upsert(WindowSizeLimitRecord(id: UUID(), identity: identity, appName: "Test", evidence: evidence))
         let restored = try XCTUnwrap(WindowSizeLimitArchive.decode(JSONEncoder().encode(archive)))
