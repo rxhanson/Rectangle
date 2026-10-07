@@ -481,7 +481,12 @@ extension AccessibilityElement {
         if let fallbackWindow = getSystemWideFocusedWindowElement() {
             return fallbackWindow
         }
-
+        
+        if let firstWindowInfo = WindowUtil.getWindowList().first(where: { NSRunningApplication(processIdentifier: $0.pid) != nil }),
+            let firstWindowElement = getWindowElement(firstWindowInfo.id) {
+            return firstWindowElement
+        }
+        
         Logger.log("Failed to find frontmost window.")
         return nil
     }
