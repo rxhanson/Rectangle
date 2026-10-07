@@ -96,14 +96,10 @@ final class SnapAreaViewModel {
     var isPortraitConnected: Bool
     private(set) var reduceTransparency: Bool
 
-    private let shouldReduceTransparency: () -> Bool
     private var cancellables = Set<AnyCancellable>()
     
-    init(reduceTransparency: @escaping () -> Bool = {
-        NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
-    }) {
-        self.shouldReduceTransparency = reduceTransparency
-        self.reduceTransparency = reduceTransparency()
+    init() {
+        self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
@@ -135,8 +131,7 @@ final class SnapAreaViewModel {
         NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                guard let self else { return }
-                self.reduceTransparency = self.shouldReduceTransparency()
+                self?.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
             }
             .store(in: &cancellables)
 
@@ -182,11 +177,7 @@ final class SnapAreaViewModel {
 // MARK: - Main Snap Area View
 
 struct SnapAreaSettingsView: View {
-    @State private var viewModel: SnapAreaViewModel
-
-    init(viewModel: SnapAreaViewModel = SnapAreaViewModel()) {
-        _viewModel = State(initialValue: viewModel)
-    }
+    @State private var viewModel = SnapAreaViewModel()
 
     private var landscapeHeaderTitle: String {
         viewModel.isPortraitConnected ? String(localized: "Landscape Snap Areas") : String(localized: "Snap Areas")
