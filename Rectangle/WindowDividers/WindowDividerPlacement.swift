@@ -197,7 +197,15 @@ extension WindowDividerPlacement {
                     guard isCurrent() else { return nil }
                     let actualRight = readFrame(false)
                     guard isCurrent() else { return nil }
-                    switch gate.observe(left: actualLeft, right: actualRight, at: now()) {
+                    // The fast per-attribute acknowledgment is optional, but a
+                    // supplied verifier must agree with both final frames before
+                    // they can be revealed or retained as size-limit evidence.
+                    let leftVerified = acknowledged?(true, actualLeft) ?? true
+                    guard isCurrent() else { return nil }
+                    let rightVerified = acknowledged?(false, actualRight) ?? true
+                    guard isCurrent() else { return nil }
+                    switch gate.observe(left: leftVerified ? actualLeft : .null,
+                                        right: rightVerified ? actualRight : .null, at: now()) {
                     case .waiting: pause()
                     case .ready: return Result(left: left, right: right, minimumSizeReached: minimumSizeReached,
                         minimumLeft: terminal == .completed ? learnedMinima[0] : nil,

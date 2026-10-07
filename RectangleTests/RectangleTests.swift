@@ -9222,6 +9222,28 @@ final class WindowDividerWorkerSettlementTests: XCTestCase {
         XCTAssertFalse(result.minimumSizeReached)
     }
 
+    func testAXClampRequiresMatchingFinalWindowServerFrames() throws {
+        for serverDelay in [TimeInterval(0.3), 10] {
+            var frames = [CGRect(x: 0, y: 0, width: 700, height: 800),
+                          CGRect(x: 700, y: 0, width: 700, height: 800)]
+            var time: TimeInterval = 0
+            let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+                divider: 250, minimumLeft: 120, minimumRight: 120,
+                write: { isLeft, target, attribute in
+                    let index = isLeft ? 0 : 1
+                    if attribute == .size { frames[index].size = CGSize(width: isLeft ? max(500, target.width) : target.width, height: target.height) }
+                    else { frames[index].origin = target.origin }
+                    return true
+                }, read: { frames[$0 ? 0 : 1] },
+                acknowledged: { _, _ in time >= serverDelay }))
+            let result = placement.settle(isCurrent: { true }, now: { time }, pause: { time += 0.025 })
+            if serverDelay < 1 {
+                XCTAssertEqual(result?.minimumLeft, 500)
+                XCTAssertGreaterThanOrEqual(time, serverDelay + 0.05)
+            } else { XCTAssertNil(result) }
+        }
+    }
+
     @MainActor func testCancellationDoesNotWaitForSlowWriteOrSendAnotherProperty() async {
         let started = expectation(description: "Worker is inside a slow AX write")
         let completed = expectation(description: "Cancelled worker releases placement ownership")
