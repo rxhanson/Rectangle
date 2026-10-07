@@ -81,8 +81,11 @@ class Defaults {
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
     static let footprintAlpha = DoubleDefault(key: "footprintAlpha")
     static var effectiveFootprintAlpha: Double {
+        effectiveFootprintAlpha(usesBlur: footprintBlur.enabled)
+    }
+    static func effectiveFootprintAlpha(usesBlur: Bool) -> Double {
         if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
-            return footprintBlur.enabled ? 0 : 0.3
+            return usesBlur ? 0 : 0.3
         }
         return footprintAlpha.value
     }
