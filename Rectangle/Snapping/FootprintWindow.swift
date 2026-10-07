@@ -19,10 +19,10 @@ struct FootprintPresentation {
     let animates: Bool
 
     init(blurRequested: Bool, alpha: CGFloat, fadeRequested: Bool,
-         animationRequested: Bool, accessibility: FootprintAccessibility, nativeGlass: Bool = false) {
-        usesBlur = blurRequested && (nativeGlass || !accessibility.reduceTransparency)
+         animationRequested: Bool, accessibility: FootprintAccessibility) {
+        usesBlur = blurRequested && !accessibility.reduceTransparency
         // AppKit blur needs full window opacity; configured alpha controls its tint.
-        self.alpha = usesBlur || accessibility.reduceTransparency ? 1 : min(1, max(0, alpha))
+        self.alpha = usesBlur ? 1 : min(1, max(0, alpha))
         fades = fadeRequested && !accessibility.reduceMotion && !accessibility.reduceTransparency
         animates = animationRequested && !accessibility.reduceMotion
     }
@@ -185,18 +185,20 @@ class FootprintWindow: NSWindow {
     }
 
     var presentation: FootprintPresentation {
-        FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
-                              alpha: CGFloat(Defaults.effectiveFootprintAlpha),
+        let options = accessibility()
+        let usesBlur = Defaults.footprintBlur.enabled && !options.reduceTransparency
+        return FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
+                              alpha: CGFloat(Defaults.effectiveFootprintAlpha(usesBlur: usesBlur)),
                               fadeRequested: !Defaults.footprintFade.userDisabled,
                               animationRequested: Defaults.footprintAnimationDurationMultiplier.value > 0,
-                              accessibility: accessibility(), nativeGlass: usesLiquidGlass)
+                              accessibility: options)
     }
 
 
-    var usesLiquidGlass: Bool { Defaults.footprintBlur.enabled && BlurSurfaceView.liquidGlassEnabled }
+    var usesLiquidGlass: Bool { presentation.usesBlur && BlurSurfaceView.liquidGlassEnabled }
 
     private var cornerRadius: CGFloat {
-        Defaults.footprintBlur.enabled ? 12 : FootprintStyle.cornerRadius
+        presentation.usesBlur ? 12 : FootprintStyle.cornerRadius
     }
 
     init(initialFrame: CGRect = .zero,
@@ -264,11 +266,11 @@ class FootprintWindow: NSWindow {
         effectView.refresh()
         let style = presentation
         let glass = usesLiquidGlass
-        let requestedAppearance = Defaults.footprintBlur.enabled ? Defaults.blurAppearance.value.appearance : nil
+        let requestedAppearance = style.usesBlur ? Defaults.blurAppearance.value.appearance : nil
         if appearance?.name != requestedAppearance?.name {
             appearance = requestedAppearance
         }
-        let windowStyle: NSWindow.StyleMask = Defaults.footprintBlur.enabled ? .borderless : [.titled, .fullSizeContentView]
+        let windowStyle: NSWindow.StyleMask = style.usesBlur ? .borderless : [.titled, .fullSizeContentView]
         if styleMask != windowStyle {
             styleMask = windowStyle
             titleVisibility = .hidden
@@ -294,12 +296,10 @@ class FootprintWindow: NSWindow {
             boxView.borderWidth = FootprintStyle.borderWidth
         }
         let customColor = Defaults.footprintColor.typedValue?.nsColor
-        let defaultTint: NSColor = Defaults.footprintBlur.enabled && !isDark ? .white : .black
+        let defaultTint: NSColor = style.usesBlur && !isDark ? .white : .black
         let color = customColor ?? defaultTint
         boxView.alphaValue = 1
-        if accessibility().reduceTransparency {
-            boxView.fillColor = color.withAlphaComponent(1)
-        } else if style.usesBlur {
+        if style.usesBlur {
             let tintAlpha = min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha)))
             boxView.fillColor = color.withAlphaComponent(tintAlpha)
         } else {

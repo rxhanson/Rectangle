@@ -7462,7 +7462,7 @@ final class LiquidGlassBlurTests: XCTestCase {
         guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
         Defaults.liquidGlassForBlur.enabled = true
         Defaults.footprintBlur.enabled = true
-        let window = FootprintWindow(accessibility: { .init(reduceMotion: true, reduceTransparency: true) })
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: true, reduceTransparency: false) })
         defer { window.close() }
         XCTAssertTrue(window.usesLiquidGlass)
         XCTAssertTrue(window.presentation.usesBlur)
