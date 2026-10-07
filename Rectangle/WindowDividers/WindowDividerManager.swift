@@ -19,6 +19,16 @@ final class WindowDividerManager {
         var settleUntil: TimeInterval = 0
         var observedAt: TimeInterval = 0
         var prepared: WindowDividerPreparedPair?
+        var minimumLeft: CGSize?
+        var minimumRight: CGSize?
+        func discardDisprovedMinimums() {
+            if WindowDividerGeometry.rememberedExtent(minimumLeft, current: left.frame.size, axis: axis) == nil {
+                minimumLeft = nil
+            }
+            if WindowDividerGeometry.rememberedExtent(minimumRight, current: right.frame.size, axis: axis) == nil {
+                minimumRight = nil
+            }
+        }
         var divider: CGFloat { (axis.rect(left.frame).maxX + axis.rect(right.frame).minX) / 2 }
         var center: CGPoint { point(at: divider) }
         func point(at value: CGFloat) -> CGPoint { axis.point(value, cross: axis.rect(left.frame).midY) }
@@ -237,6 +247,7 @@ final class WindowDividerManager {
                     self.interrupt(); return
                 }
                 pair.left.frame = l; pair.right.frame = r
+                pair.discardDisprovedMinimums()
                 pair.prepared = preparation
                 pair.observedAt = ProcessInfo.processInfo.systemUptime
                 self.shown = pair
@@ -266,12 +277,15 @@ final class WindowDividerManager {
               WindowAnimator.shared.destination(for: r) == nil,
               let engine = WindowDividerResize(left: pair.left.frame, right: pair.right.frame, axis: pair.axis,
                   minimumLeft: WindowDividerGeometry.minimumExtent(reported: prepared.left.minimum,
-                      remembered: leftHint, current: pair.left.frame.size, axis: pair.axis),
+                      remembered: leftHint, acknowledged: pair.minimumLeft, current: pair.left.frame.size, axis: pair.axis),
                   minimumRight: WindowDividerGeometry.minimumExtent(reported: prepared.right.minimum,
-                      remembered: rightHint, current: pair.right.frame.size, axis: pair.axis),
+                      remembered: rightHint, acknowledged: pair.minimumRight, current: pair.right.frame.size, axis: pair.axis),
                   write: { _, _, _, _ in false }, read: { _ in .null }) else { return false }
-        rememberedMinima = (WindowDividerGeometry.rememberedExtent(leftHint, current: pair.left.frame.size, axis: pair.axis),
-                            WindowDividerGeometry.rememberedExtent(rightHint, current: pair.right.frame.size, axis: pair.axis))
+        rememberedMinima = ([leftHint, pair.minimumLeft].compactMap {
+            WindowDividerGeometry.rememberedExtent($0, current: pair.left.frame.size, axis: pair.axis)
+        }.max(), [rightHint, pair.minimumRight].compactMap {
+            WindowDividerGeometry.rememberedExtent($0, current: pair.right.frame.size, axis: pair.axis)
+        }.max())
         active = pair; resize = engine; dragging = true
         panel.holdVisible()
         let captureEnabled = WindowDividerSnapshot.enabled
@@ -349,6 +363,14 @@ final class WindowDividerManager {
                     self.interrupt(); return
                 }
                 engine.accept(left: result.left, right: result.right)
+                // Carry a verified clamp into the next drag without waiting for
+                // optional persistent learning or asynchronous identity reads.
+                if let minimum = result.minimumLeft {
+                    pair.minimumLeft = pair.axis.size(CGSize(width: minimum, height: 0))
+                }
+                if let minimum = result.minimumRight {
+                    pair.minimumRight = pair.axis.size(CGSize(width: minimum, height: 0))
+                }
                 pair.left.frame = result.left; pair.right.frame = result.right
                 pair.observedAt = ProcessInfo.processInfo.systemUptime
                 pair.settleUntil = pair.observedAt + 0.5

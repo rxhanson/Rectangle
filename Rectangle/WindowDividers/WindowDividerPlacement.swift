@@ -22,6 +22,7 @@ final class WindowDividerPlacement {
     private let originals: [CGRect]
     private var targets: [CGRect]
     private var minima: [CGFloat]
+    private var learnedMinima: [CGFloat?] = [nil, nil]
     private let write: (Bool, CGRect, Attribute) -> Bool
     private let readFrame: (Bool) -> CGRect
     private let acknowledged: ((Bool, CGRect) -> Bool)?
@@ -150,6 +151,7 @@ final class WindowDividerPlacement {
         var updated = minima; updated[pending.index] = max(updated[pending.index], actual.width)
         guard let corrected = geometry.frames(at: requested, minimumLeft: updated[0], minimumRight: updated[1]) else { return false }
         minima = updated; targets = [corrected.left, corrected.right]
+        learnedMinima[pending.index] = actual.width
         verifiedPairSince = nil
         return true
     }
@@ -173,6 +175,8 @@ extension WindowDividerPlacement {
         let left: CGRect
         let right: CGRect
         let minimumSizeReached: Bool
+        let minimumLeft: CGFloat?
+        let minimumRight: CGFloat?
     }
 
     /// The existing incremental placement and reveal gates run on one worker.
@@ -195,7 +199,9 @@ extension WindowDividerPlacement {
                     guard isCurrent() else { return nil }
                     switch gate.observe(left: actualLeft, right: actualRight, at: now()) {
                     case .waiting: pause()
-                    case .ready: return Result(left: left, right: right, minimumSizeReached: minimumSizeReached)
+                    case .ready: return Result(left: left, right: right, minimumSizeReached: minimumSizeReached,
+                        minimumLeft: terminal == .completed ? learnedMinima[0] : nil,
+                        minimumRight: terminal == .completed ? learnedMinima[1] : nil)
                     case .timedOut: return nil
                     }
                 }

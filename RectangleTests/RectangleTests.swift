@@ -9171,6 +9171,57 @@ final class WindowDividerWorkerSettlementTests: XCTestCase {
         XCTAssertLessThan(time, 6)
     }
 
+    func testFirstVerifiedClampBoundsTheNextDragOnEitherAxis() throws {
+        for axis in [WindowSplitAxis.horizontal, .vertical] {
+            var frames = [axis.rect(CGRect(x: 0, y: 0, width: 700, height: 800)),
+                          axis.rect(CGRect(x: 700, y: 0, width: 700, height: 800))]
+            var time: TimeInterval = 0
+            let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: axis,
+                divider: 250, minimumLeft: 120, minimumRight: 120,
+                write: { isLeft, target, attribute in
+                    let index = isLeft ? 0 : 1
+                    if attribute == .size {
+                        var size = axis.size(target.size)
+                        if isLeft { size.width = max(500, size.width) }
+                        frames[index].size = axis.size(size)
+                    } else { frames[index].origin = target.origin }
+                    return true
+                }, read: { frames[$0 ? 0 : 1] }))
+            let result = try XCTUnwrap(placement.settle(isCurrent: { true }, now: { time }, pause: { time += 0.025 }))
+            XCTAssertEqual(result.minimumLeft, 500)
+            XCTAssertNil(result.minimumRight)
+            let hint = axis.size(CGSize(width: try XCTUnwrap(result.minimumLeft), height: 0))
+            let minimum = WindowDividerGeometry.minimumExtent(reported: nil, remembered: nil,
+                acknowledged: hint, current: result.left.size, axis: axis)
+            let next = try XCTUnwrap(WindowDividerResize(left: result.left, right: result.right, axis: axis,
+                minimumLeft: minimum, minimumRight: 120, write: { _, _, _, _ in false }, read: { _ in .null }))
+            XCTAssertEqual(next.preview(to: 250), 500)
+            XCTAssertEqual(WindowDividerGeometry.minimumExtent(reported: nil, remembered: nil,
+                acknowledged: hint, current: axis.size(CGSize(width: 400, height: 800)), axis: axis), 120)
+        }
+    }
+
+    func testRollbackDoesNotReturnAClampLearnedBeforeTheFailure() throws {
+        var frames = [CGRect(x: 0, y: 0, width: 700, height: 800),
+                      CGRect(x: 700, y: 0, width: 700, height: 800)]
+        var time: TimeInterval = 0
+        let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+            divider: 250, minimumLeft: 120, minimumRight: 120,
+            write: { isLeft, target, attribute in
+                let index = isLeft ? 0 : 1
+                if !isLeft, target.width > 700 { return false }
+                if attribute == .size { frames[index].size = CGSize(width: isLeft ? max(500, target.width) : target.width, height: target.height) }
+                else { frames[index].origin = target.origin }
+                return true
+            }, read: { frames[$0 ? 0 : 1] }))
+        let result = try XCTUnwrap(placement.settle(isCurrent: { true }, now: { time }, pause: { time += 0.025 }))
+        XCTAssertEqual(result.left.width, 700)
+        XCTAssertEqual(result.right.width, 700)
+        XCTAssertNil(result.minimumLeft)
+        XCTAssertNil(result.minimumRight)
+        XCTAssertFalse(result.minimumSizeReached)
+    }
+
     @MainActor func testCancellationDoesNotWaitForSlowWriteOrSendAnotherProperty() async {
         let started = expectation(description: "Worker is inside a slow AX write")
         let completed = expectation(description: "Cancelled worker releases placement ownership")

@@ -6,12 +6,13 @@ struct WindowDividerGeometry {
     let gap: CGFloat
     let axis: WindowSplitAxis
 
-    static func minimumExtent(reported: CGSize?, remembered: CGSize?, current: CGSize,
+    static func minimumExtent(reported: CGSize?, remembered: CGSize?, acknowledged: CGSize? = nil, current: CGSize,
                               axis: WindowSplitAxis) -> CGFloat {
         let extent = axis.size(current).width
         let reported = reported.map { axis.size($0).width } ?? 0
         let baseline = reported.isFinite && reported > 0 ? reported : min(120, extent)
-        return max(baseline, rememberedExtent(remembered, current: current, axis: axis) ?? 0)
+        return max(baseline, max(rememberedExtent(remembered, current: current, axis: axis) ?? 0,
+                                rememberedExtent(acknowledged, current: current, axis: axis) ?? 0))
     }
 
     static func rememberedExtent(_ size: CGSize?, current: CGSize, axis: WindowSplitAxis) -> CGFloat? {
