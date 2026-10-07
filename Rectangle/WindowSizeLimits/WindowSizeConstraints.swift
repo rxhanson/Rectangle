@@ -166,9 +166,11 @@ final class WindowSizeConstraints {
     private func observeVerifiedClamp(_ window: AccessibilityElement, key: Key, before: CGRect,
                                       requested: CGRect, settled: CGRect, generation: UUID) {
         guard remembers else { return }
-        guard identityRequests[key] == nil, let id = window.windowId,
+        guard let id = window.windowId,
               let app = NSRunningApplication(processIdentifier: key.pid), let bundleID = app.bundleIdentifier else { return }
         let request = UUID()
+        // A verified resize supersedes a pending archive restore. Its old
+        // completion token must not discard or overwrite this newer evidence.
         identityRequests[key] = request
         let name = app.localizedName ?? bundleID
         let info = app.bundleURL.flatMap(Bundle.init(url:))?.infoDictionary
