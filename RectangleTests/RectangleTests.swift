@@ -8516,3 +8516,62 @@ class TitleBarScreenDetectionTests: XCTestCase {
         XCTAssertNil(TitleBarManager.screenForClick(at: CGPoint(x: 5000, y: 0), screens: [left, above]))
     }
 }
+
+final class SnappedWindowFitOcclusionTests: XCTestCase {
+    private let bounds = CGRect(x: 0, y: 29, width: 1440, height: 878)
+    private let neighbor = CGRect(x: 0, y: 29, width: 840, height: 878)
+    private let target = CGRect(x: 720, y: 29, width: 720, height: 878)
+    private func window(_ id: CGWindowID, _ frame: CGRect, alpha: CGFloat = 1,
+                        onScreen: Bool = true) -> WindowInfo {
+        WindowInfo(id: id, level: 0, frame: frame, pid: 123, processName: "Fixture",
+                   alpha: alpha, isOnScreen: onScreen)
+    }
+    private func resolve(_ front: [WindowInfo], vertical: Bool = false) -> SnappedWindowFit.Resolution {
+        let axis: WindowSplitAxis = vertical ? .vertical : .horizontal
+        return SnappedWindowFit.resolve(enabled: true, action: vertical ? .bottomHalf : .rightHalf,
+            movingWindowID: 2, target: axis.rect(target), bounds: axis.rect(bounds), gap: 0, minimum: nil,
+            windows: (front + [window(1, neighbor)]).map {
+                WindowInfo(id: $0.id, level: $0.level, frame: axis.rect($0.frame), pid: $0.pid,
+                           processName: $0.processName, alpha: $0.alpha, isOnScreen: $0.isOnScreen)
+            }, recordedFrames: [1: axis.rect(neighbor)], ignoredPID: 999)
+    }
+    private func assertFit(_ result: SnappedWindowFit.Resolution, vertical: Bool = false,
+                           file: StaticString = #filePath, line: UInt = #line) {
+        guard case let .fit(plan) = result else { return XCTFail("Visible recent neighbor must fit", file: file, line: line) }
+        let axis: WindowSplitAxis = vertical ? .vertical : .horizontal
+        XCTAssertEqual(plan.target, axis.rect(CGRect(x: 840, y: 29, width: 600, height: 878)), file: file, line: line)
+        XCTAssertEqual(plan.neighborFrame, axis.rect(neighbor), file: file, line: line)
+    }
+    func testTitleBarOverlayDoesNotHideTheSnappedNeighbor() {
+        assertFit(resolve([window(3, CGRect(x: 6, y: 35, width: 66, height: 20))]))
+    }
+    func testPartiallyCoveredRecentNeighborStillFits() {
+        assertFit(resolve([window(3, CGRect(x: 0, y: 29, width: 420, height: 878))]))
+    }
+    func testFullyCoveredNeighborDoesNotFit() {
+        XCTAssertEqual(resolve([window(3, neighbor)]), .unchanged)
+    }
+    func testUnionOfFrontWindowsCanHideTheNeighbor() {
+        XCTAssertEqual(resolve([window(3, CGRect(x: 0, y: 29, width: 420, height: 878)),
+                                window(4, CGRect(x: 420, y: 29, width: 420, height: 878))]), .unchanged)
+    }
+    func testOnlyPerimeterExposureDoesNotQualify() {
+        XCTAssertEqual(resolve([window(3, neighbor.insetBy(dx: 1, dy: 1))]), .unchanged)
+    }
+    func testInvisibleWindowsDoNotHideNeighborOnEitherAxis() {
+        for vertical in [false, true] {
+            assertFit(resolve([window(3, neighbor, alpha: 0)], vertical: vertical), vertical: vertical)
+            assertFit(resolve([window(3, neighbor, onScreen: false)], vertical: vertical), vertical: vertical)
+        }
+    }
+    func testIncomingWindowCanCoverItsProspectiveNeighbor() {
+        assertFit(resolve([window(2, neighbor)]))
+    }
+    func testNeighborMustRemainOnScreenAndVisible() {
+        for info in [window(1, neighbor, alpha: 0), window(1, neighbor, onScreen: false)] {
+            XCTAssertEqual(SnappedWindowFit.resolve(enabled: true, action: .rightHalf, movingWindowID: 2,
+                target: target, bounds: bounds, gap: 0, minimum: nil, windows: [info],
+                recordedFrames: [1: neighbor], ignoredPID: 999), .unchanged)
+        }
+    }
+}

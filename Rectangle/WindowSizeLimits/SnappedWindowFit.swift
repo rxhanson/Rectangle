@@ -56,7 +56,8 @@ struct SnappedWindowFit: Equatable {
             let result = resolve(enabled: enabled, action: action == .topHalf ? .leftHalf : .rightHalf,
                 movingWindowID: movingWindowID, target: axis.rect(target), bounds: axis.rect(bounds),
                 gap: gap, minimum: minimum.map { axis.size($0) },
-                windows: windows.map { WindowInfo(id: $0.id, level: $0.level, frame: axis.rect($0.frame), pid: $0.pid, processName: $0.processName) },
+                windows: windows.map { WindowInfo(id: $0.id, level: $0.level, frame: axis.rect($0.frame), pid: $0.pid,
+                    processName: $0.processName, alpha: $0.alpha, isOnScreen: $0.isOnScreen) },
                 recordedFrames: recordedFrames.mapValues { axis.rect($0) }, ignoredPID: ignoredPID)
             if case let .fit(plan) = result {
                 return .fit(Self(target: axis.rect(plan.target), neighborID: plan.neighborID,
@@ -70,7 +71,7 @@ struct SnappedWindowFit: Equatable {
               abs((action == .rightHalf ? target.maxX - bounds.maxX : target.minX - bounds.minX)) <= 3
         else { return .unchanged }
         let candidates = windows.enumerated().filter { index, info in
-            guard info.id != movingWindowID, info.pid != ignoredPID, info.level == 0,
+            guard info.id != movingWindowID, info.pid != ignoredPID, info.level == 0, info.isOnScreen, info.alpha > 0,
                   let recorded = recordedFrames[info.id],
                   WindowGeometry.matches(info.frame, recorded),
                   fullHeight(info.frame, in: bounds),
@@ -78,12 +79,14 @@ struct SnappedWindowFit: Equatable {
                   info.frame.minX >= bounds.minX - 3, info.frame.maxX <= bounds.maxX + 3,
                   abs((action == .rightHalf ? info.frame.minX - bounds.minX : info.frame.maxX - bounds.maxX)) <= 3
             else { return false }
-            // The incoming window can cover its prospective neighbor while it
-            // is dragged. Other normal windows covering that neighbor disqualify it.
-            return !windows.prefix(index).contains { covering in
-                covering.id != movingWindowID && covering.pid != ignoredPID && covering.level == 0
-                    && covering.frame.intersects(info.frame.insetBy(dx: 2, dy: 2))
-            }
+            // Small overlays and partial overlap do not hide the recent snap.
+            // Ignore the incoming window, but reject complete occlusion by the
+            // union of other visible normal windows. Exclude perimeter rounding.
+            let covering = windows.prefix(index).filter {
+                $0.id != movingWindowID && $0.pid != ignoredPID && $0.level == 0
+                    && $0.isOnScreen && $0.alpha > 0
+            }.map(\.frame)
+            return hasExposedArea(info.frame.insetBy(dx: 2, dy: 2), behind: covering)
         }
         guard candidates.count == 1, let neighbor = candidates.first?.element else { return .unchanged }
         let left = action == .rightHalf ? neighbor.frame.maxX + gap : bounds.minX
@@ -93,6 +96,23 @@ struct SnappedWindowFit: Equatable {
         // The incoming window may overlap its neighbor; the neighbor stays unchanged.
         guard fitted.width > 0 else { return .noRoom }
         return .fit(Self(target: fitted, neighborID: neighbor.id, neighborPID: neighbor.pid, neighborFrame: neighbor.frame))
+    }
+
+    private static func hasExposedArea(_ frame: CGRect, behind covering: [CGRect]) -> Bool {
+        var exposed = [frame]
+        for other in covering {
+            exposed = exposed.flatMap { piece -> [CGRect] in
+                let cut = piece.intersection(other)
+                guard !cut.isNull, !cut.isEmpty else { return [piece] }
+                return [CGRect(x: piece.minX, y: piece.minY, width: piece.width, height: cut.minY - piece.minY),
+                        CGRect(x: piece.minX, y: cut.maxY, width: piece.width, height: piece.maxY - cut.maxY),
+                        CGRect(x: piece.minX, y: cut.minY, width: cut.minX - piece.minX, height: cut.height),
+                        CGRect(x: cut.maxX, y: cut.minY, width: piece.maxX - cut.maxX, height: cut.height)]
+                    .filter { $0.width > 0 && $0.height > 0 }
+            }
+            if exposed.isEmpty { return false }
+        }
+        return !exposed.isEmpty
     }
 
     private static func fullHeight(_ frame: CGRect, in bounds: CGRect) -> Bool {
