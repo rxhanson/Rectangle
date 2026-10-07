@@ -4,7 +4,7 @@ struct WindowSizeEvidence: Codable, Equatable {
     var reported: CGSize?
     var learned: CGSize
     var learnedAt: TimeInterval
-    var confirmations: Int = 2
+    var confirmations: Int = 1
     var requested: CGSize = .zero
     var achieved: CGSize = .zero
     var source: String = "verified-placement"
@@ -12,7 +12,7 @@ struct WindowSizeEvidence: Codable, Equatable {
     var isValid: Bool {
         learned.width.isFinite && learned.height.isFinite && learned.width >= 0 && learned.height >= 0
             && (learned.width > 0 || learned.height > 0)
-            && learnedAt.isFinite && confirmations >= 2
+            && learnedAt.isFinite && confirmations >= 1
             && requested.width.isFinite && requested.height.isFinite
             && achieved.width.isFinite && achieved.height.isFinite
             && requested.width > 0 && requested.height > 0 && achieved.width > 0 && achieved.height > 0

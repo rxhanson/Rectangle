@@ -8024,27 +8024,60 @@ final class WindowSizeResizeObservationTests: XCTestCase {
     private let requested = CGRect(x: 0, y: 0, width: 400, height: 600)
     private let clamped = CGRect(x: 0, y: 0, width: 600, height: 600)
 
-    func testTwoStableDirectResizeOperationsLearnMinimum() throws {
+    func testFirstStableDirectResizeLearnsMinimum() throws {
         let store = WindowSizeConstraintStore<String>()
-        for attempt in 0..<2 {
-            var observation = WindowSizeResizeObservation(before: before, requested: requested)
-            XCTAssertNil(observation.observe(clamped, at: 0))
-            XCTAssertNil(observation.observe(clamped, at: 0.08))
-            let settled = try XCTUnwrap(observation.observe(clamped, at: 0.14))
-            let operation = UUID()
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        XCTAssertNil(observation.observe(clamped, at: 0))
+        XCTAssertNil(observation.observe(clamped, at: 0.08))
+        let settled = try XCTUnwrap(observation.observe(clamped, at: 0.14))
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: settled.size, settled: settled.size, now: 1, verifiedClamp: true)
+        let evidence = try XCTUnwrap(store.entries["window"])
+        XCTAssertEqual(evidence.learned, CGSize(width: 600, height: 0))
+        XCTAssertEqual(evidence.confirmations, 1)
+        XCTAssertTrue(evidence.isValid)
+        var archive = WindowSizeLimitArchive()
+        let identity = WindowSizeLimitIdentity(bundleID: "test", appVersion: "1", pid: 1,
+            launch: 1, session: UUID(), windowID: 1, identifier: nil,
+            role: kAXWindowRole, subrole: "", structure: [])
+        archive.upsert(WindowSizeLimitRecord(id: UUID(), identity: identity, appName: "Test", evidence: evidence))
+        let restored = try XCTUnwrap(WindowSizeLimitArchive.decode(JSONEncoder().encode(archive)))
+        XCTAssertEqual(restored.records.first?.evidence, evidence)
+    }
+
+    func testOneVerifiedResizeUpdatesAnExistingLimitInEitherDirection() throws {
+        let store = WindowSizeConstraintStore<String>()
+        for (time, width) in [CGFloat(600), 700, 500].enumerated() {
+            let settled = CGSize(width: width, height: 600)
             store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
-                first: settled.size, settled: settled.size, now: Double(attempt),
-                verifiedClamp: true, operation: operation)
-            if attempt == 0 {
-                XCTAssertNil(store.entries["window"])
-                // Re-reading one command is not a second independent confirmation.
-                store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
-                    first: settled.size, settled: settled.size, now: 0.2,
-                    verifiedClamp: true, operation: operation)
-                XCTAssertNil(store.entries["window"])
-            }
+                first: settled, settled: settled, now: Double(time), verifiedClamp: true)
+            XCTAssertEqual(store.entries["window"]?.learned, CGSize(width: width, height: 0))
         }
-        XCTAssertEqual(store.entries["window"]?.learned, CGSize(width: 600, height: 0))
+        store.recordSuccess(for: "window", size: requested.size)
+        XCTAssertNil(store.entries["window"])
+    }
+
+    func testUnverifiedUnstableAndRefusedResizesCannotLearn() {
+        let store = WindowSizeConstraintStore<String>()
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: clamped.size, settled: clamped.size, now: 1)
+        XCTAssertNil(store.entries["window"])
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: clamped.size, settled: CGSize(width: 650, height: 600), now: 2, verifiedClamp: true)
+        XCTAssertNil(store.entries["window"])
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: before.size, settled: before.size, now: 3, verifiedClamp: true)
+        XCTAssertNil(store.entries["window"])
+    }
+
+    func testLegacyTwoConfirmationEvidenceRemainsValid() throws {
+        var evidence = WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 1, requested: requested.size, achieved: clamped.size)
+        evidence.confirmations = 2
+        let restored = try JSONDecoder().decode(WindowSizeEvidence.self, from: JSONEncoder().encode(evidence))
+        XCTAssertTrue(restored.isValid)
+        evidence.confirmations = 0
+        XCTAssertFalse(evidence.isValid)
     }
 
     func testDisagreementOrChangingFrameRestartsStability() {

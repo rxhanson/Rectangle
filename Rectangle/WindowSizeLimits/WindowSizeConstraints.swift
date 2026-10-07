@@ -224,7 +224,7 @@ final class WindowSizeConstraints {
                 }
                 let previous = self.store.entries[key]
                 self.store.observe(for: key, reported: verifiedReported, before: before.size, requested: requested.size,
-                    first: settled.size, settled: settled.size, now: now, verifiedClamp: true, operation: generation)
+                    first: settled.size, settled: settled.size, now: now, verifiedClamp: true)
                 guard previous != self.store.entries[key], let evidence = self.store.entries[key] else { return }
                 let id = self.archive.match(identity)?.id ?? self.descriptors[key]?.record.id ?? UUID()
                 self.descriptors[key] = Descriptor(record: WindowSizeLimitRecord(id: id, identity: identity,
