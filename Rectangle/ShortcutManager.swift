@@ -209,6 +209,13 @@ class ShortcutManager {
         defer { if !completionForwarded { originalParameters.completion?() } }
         Notification.Name.windowActionWillExecute.post(object: parameters)
 
+        // These commands bypass WindowManager, which otherwise decides whether
+        // the current helper can continue after resolving the target window.
+        if [.reverseAll, .tileAll, .tileRows, .tileColumns,
+            .cascadeAll, .cascadeActiveApp, .tileActiveApp, .cycleStackedWindows,
+            .cycleStackedWindowsBackward, .leftTodo, .rightTodo].contains(parameters.action) {
+            LayoutHelperManager.shared.cancel()
+        }
         if MultiWindowManager.execute(parameters: parameters) {
             return
         }

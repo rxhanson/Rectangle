@@ -54,6 +54,8 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        var acceptedHelperPrefetch = false
+        defer { if !acceptedHelperPrefetch { LayoutHelperManager.shared.cancelPrefetch() } }
         var completionDeferred = false
         defer { if !completionDeferred { parameters.completion?() } }
         hideSizeConstraintWarning()
@@ -72,6 +74,7 @@ class WindowManager {
         let action = parameters.action
         
         if action == .restore {
+            LayoutHelperManager.shared.cancel()
             guard let windowId else {
                 NSSound.beep()
                 return
@@ -206,6 +209,12 @@ class WindowManager {
             }
         }
 
+        let helperPlan = LayoutHelperLayout.make(action: calcResult.resultingAction,
+            screen: visibleFrameOfDestinationScreen.screenFlipped, anchor: calcResult.initialRect.screenFlipped,
+            gap: CGFloat(Defaults.gapSize.value), skipTopGap: Defaults.skipGapTopEdge.enabled,
+            includeDenseGrids: Defaults.layoutHelperDenseGrids.enabled)
+        let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
+            windowID: windowId, screen: calcResult.screen, canPresent: !isFixedSize && helperPlan != nil)
         var resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
@@ -213,7 +222,9 @@ class WindowManager {
                                                 usableScreens: sourceScreens,
                                                 visibleFrameOfScreen: visibleFrameOfDestinationScreen,
                                                 source: parameters.source,
-                                                isFixedSize: isFixedSize, requestedLayoutRect: requestedLayoutRect)
+                                                isFixedSize: isFixedSize, requestedLayoutRect: requestedLayoutRect, layoutHelperToken: layoutHelperToken)
+        acceptedHelperPrefetch = true
+        LayoutHelperManager.shared.prefetchForSnap(result: resultParameters)
 
         if cooperativeCornerPlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
@@ -227,11 +238,13 @@ class WindowManager {
                                                                             achievedFrame: currentNormalizedRect,
                                                                             screenFrame: cooperativeCornerPlan.screenFrame,
                                                                             gapSize: cooperativeCornerPlan.gapSize)
+                LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
                 Logger.log("Cooperative resize no-op: solved frames already match current frames")
                 recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
                 return
             }
         } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
+            LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
             Logger.log("Current frame is equal to new frame")
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
@@ -388,6 +401,7 @@ class WindowManager {
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
 
+        LayoutHelperManager.shared.didSnap(result: result, frame: resultingRect)
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
                                       "achieved": [resultingRect.minX, resultingRect.minY, resultingRect.width, resultingRect.height],
@@ -461,6 +475,7 @@ struct ResultParameters {
     let isFixedSize: Bool
     var requestedLayoutRect: CGRect? = nil
     var observationGeneration: UUID? = nil
+    var layoutHelperToken: UUID? = nil
 }
 
 struct RectangleAction {

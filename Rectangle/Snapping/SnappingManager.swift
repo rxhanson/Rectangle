@@ -291,14 +291,17 @@ class SnappingManager {
     }
     
     func handle(event: NSEvent) {
+        if LayoutHelperManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
             if box?.waitingForPlacement == true { box?.orderOut(nil) }
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
+            LayoutHelperManager.shared.cancelPrefetch()
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            LayoutHelperManager.shared.cancel()
             WindowSizeConstraints.shared.cancelPendingObservations()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
@@ -398,6 +401,7 @@ class SnappingManager {
                 retryNativeSizeRestore(cursor: event.cgEvent?.location)
                 if !canSnap(event) {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }
@@ -418,12 +422,15 @@ class SnappingManager {
                     let currentWindow = Window(id: windowId, rect: currentRect)
                     
                     if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
+                        let anchor = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow, applyingGaps: false) ?? newBoxRect
+                        LayoutHelperManager.shared.prefetch(on: snapArea.screen, action: snapArea.action, anchor: anchor, excluding: windowId)
                         showSnapPreview(in: newBoxRect, snapArea: snapArea)
                     }
                     
                     currentSnapArea = snapArea
                 } else {
                     if currentSnapArea != nil {
+                        LayoutHelperManager.shared.cancelPrefetch()
                         box?.orderOut(nil)
                         currentSnapArea = nil
                     }

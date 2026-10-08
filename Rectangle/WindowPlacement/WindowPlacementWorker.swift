@@ -25,7 +25,7 @@ final class WindowPlacementWorker {
     func place(_ target: CGRect, original: CGRect, placement: ImmediateWindowPlacement,
                animationEvidence: WindowPlacementAnimationEvidence? = nil,
                directPlacement: Bool = false, minimumHint: CGSize? = nil,
-               acknowledgementTimeout: TimeInterval = 3.4, restoreOnFailure: Bool = true) -> WindowPlacementCoordinator.Outcome {
+               acknowledgementTimeout: TimeInterval = 3.4, restoreOnFailure: Bool = true, acceptsSettledSize: Bool = false) -> WindowPlacementCoordinator.Outcome {
         guard valid else { return .cancelled }
         if let element = WindowAccessibilityLookup.resolve(pid: pid, id: id, launch: launch,
             preferred: preferred, isCurrent: { self.valid }) {
@@ -40,7 +40,7 @@ final class WindowPlacementWorker {
         let start = ProcessInfo.processInfo.systemUptime
         if let frame = settle(target, bounds: placement.screenFrame, deadline: start + acknowledgementTimeout,
                               placement: placement, original: original, animationEvidence: animationEvidence,
-                              directPlacement: directPlacement, minimumHint: minimumHint) {
+                              directPlacement: directPlacement, minimumHint: minimumHint, acceptsSettledSize: acceptsSettledSize) {
             return .placed(frame)
         }
         guard valid else { return .cancelled }
@@ -75,16 +75,19 @@ final class WindowPlacementWorker {
     private func settle(_ target: CGRect, bounds: CGRect, deadline: TimeInterval,
                         placement: ImmediateWindowPlacement? = nil, original: CGRect? = nil,
                         animationEvidence: WindowPlacementAnimationEvidence? = nil,
-                        directPlacement: Bool = false, minimumHint: CGSize? = nil) -> CGRect? {
+                        directPlacement: Bool = false, minimumHint: CGSize? = nil, acceptsSettledSize: Bool = false) -> CGRect? {
         guard let window else { return nil }
         var state = WindowPlacementAcknowledgement(target: target, startedAt: ProcessInfo.processInfo.systemUptime,
                                                     pendingWrite: false, bounds: bounds, placement: placement, original: original,
                                                     reportedMinimum: window.reportedMinimumSize, animationEvidence: animationEvidence,
                                                     directPlacement: directPlacement, minimumHint: minimumHint)
+        var alignment = WindowPlacementAlignment(target: target, startedAt: ProcessInfo.processInfo.systemUptime,
+            pendingWrite: false, bounds: bounds, placement: placement)
         while valid && ProcessInfo.processInfo.systemUptime < deadline {
             let now = ProcessInfo.processInfo.systemUptime
             let frame = agreedFrame()
-            switch state.observe(frame, at: now) {
+            let decision = acceptsSettledSize ? alignment.observe(frame, at: now) : state.observe(frame, at: now)
+            switch decision {
             case .complete(let frame): return frame
             case .position(let point):
                 guard let result = cancellation.write({ window.writePosition(point) }) else { return nil }

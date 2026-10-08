@@ -3,6 +3,23 @@
 import Cocoa
 
 class Defaults {
+    static let legacyLayoutHelperKeys = [
+        "layoutHelper": "snapAssist",
+        "layoutHelperKeyboard": "snapAssistKeyboard",
+        "layoutHelperDenseGrids": "snapAssistDenseGrids"
+    ]
+
+    static func migrateLayoutHelperPreferences(in store: UserDefaults = .standard) {
+        for (current, legacy) in legacyLayoutHelperKeys {
+            if store.object(forKey: current) == nil, let value = store.object(forKey: legacy) {
+                store.set(value, forKey: current)
+            }
+            store.removeObject(forKey: legacy)
+        }
+    }
+
+
+
     static let launchOnLogin = BoolDefault(key: "launchOnLogin")
     static let disabledApps = JSONDefault<Set<String>>(key: "disabledApps")
     static let hideMenuBarIcon = BoolDefault(key: "hideMenubarIcon")
@@ -13,6 +30,10 @@ class Defaults {
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
+    static let layoutHelper = OptionalBoolDefault(key: "layoutHelper")
+    static let layoutHelperKeyboard = BoolDefault(key: "layoutHelperKeyboard")
+    static let layoutHelperCloseButton = BoolDefault(key: "layoutHelperCloseButton", defaultValue: true)
+    static let layoutHelperDenseGrids = BoolDefault(key: "layoutHelperDenseGrids")
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
     static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits", defaultValue: true)
@@ -145,6 +166,7 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        layoutHelper, layoutHelperKeyboard, layoutHelperCloseButton, layoutHelperDenseGrids,
         experimentalWindowAnimations,
         rememberWindowSizeLimits,
         showMinimumWindowSizeWarning,
