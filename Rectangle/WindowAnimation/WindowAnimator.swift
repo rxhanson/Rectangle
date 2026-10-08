@@ -17,7 +17,7 @@ final class WindowAnimator {
     func finishForNewDrag() { cancel() }
 
 
-    typealias WindowLookup = (pid_t, CGWindowID, TimeInterval, AXUIElement?, () -> Bool) -> WindowAccessibilityLookup.Result
+    typealias WindowLookup = (pid_t, CGWindowID, TimeInterval, AXUIElement?, @escaping () -> Bool) -> WindowAccessibilityLookup.Result
     private struct Active {
         let element: AccessibilityElement
         let destination: CGRect
@@ -94,6 +94,15 @@ final class WindowAnimator {
         if let active, active.element == element { return active.destination }
         return retiring.last(where: { $0.0 == element })?.1
     }
+    func afterPendingWrites(isCurrent: @escaping () -> Bool,
+                            onCancelled: @escaping () -> Void = {},
+                            _ body: @escaping () -> Void) {
+        afterPendingWrites(cancellation: onCancelled) {
+            guard isCurrent() else { onCancelled(); return }
+            body()
+        }
+    }
+
     func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
         if active == nil && retiring.isEmpty && !tickPending { body(); return }
         let expected = generation
@@ -156,6 +165,7 @@ final class WindowAnimator {
         let response = responses.entry(for: key, at: ProcessInfo.processInfo.systemUptime)
         active = Active(element: element, destination: destination, request: request, offset: offset, pid: pid)
         let screens = NSScreen.screens.map { $0.frame.screenFlipped }
+        let hintSnapshot = WindowSizeConstraints.shared.rememberedMinimumSnapshot(for: element)
         let bundle = element.bundleIdentifier
         let native = bundle.map { Defaults.directAnimationNativeResizeApps.typedValue?.contains($0) == true } ?? false
         let enhanced = Defaults.enhancedUI.value
@@ -203,7 +213,7 @@ final class WindowAnimator {
                 return
             }
             window.request = request
-            window.hint = window.readMinimumSizeHint()
+            window.hint = window.readMinimumSizeHint(hintSnapshot)
             guard request.isCurrent else { return }
             let watch = WindowAnimationObservation(pid: pid, element: window.axElement, request: request)
             DispatchQueue.main.async { [self] in

@@ -15,6 +15,7 @@ class Defaults {
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
+    static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits", defaultValue: true)
     static let showMinimumWindowSizeWarning = OptionalBoolDefault(key: "showMinimumWindowSizeWarning")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
@@ -144,6 +145,8 @@ class Defaults {
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
         experimentalWindowAnimations,
+        rememberWindowSizeLimits,
+        showMinimumWindowSizeWarning,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,
@@ -274,9 +277,9 @@ class BoolDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Bool = false) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        enabled = UserDefaults.standard.object(forKey: key) == nil ? defaultValue : UserDefaults.standard.bool(forKey: key)
         initialized = true
     }
     
