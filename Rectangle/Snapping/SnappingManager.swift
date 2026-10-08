@@ -665,8 +665,9 @@ class SnappingManager {
     }
 
     func snapAreaContainingCursor(priorSnapArea: SnapArea?, at loc: CGPoint) -> SnapArea? {
-        for screen in NSScreen.screens {
-            guard let directional = directionalLocationOfCursor(loc: loc, screen: screen)
+        let screens = NSScreen.screens
+        for screen in screens {
+            guard let directional = directionalLocationOfCursor(loc: loc, screen: screen, screens: screens)
             else { continue }
             
             if let windowId = windowId, Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(windowId) {
@@ -693,48 +694,12 @@ class SnappingManager {
         return nil
     }
     
-    func directionalLocationOfCursor(loc: NSPoint, screen: NSScreen) -> Directional? {
-        let frame = screen.frame
-        let cornerSize = Defaults.cornerSnapAreaSize.cgFloat
-        
-        /// cgrect contains doesn't include max edges, so manually compare
-        guard loc.x >= frame.minX,
-              loc.x <= frame.maxX,
-              loc.y >= frame.minY,
-              loc.y <= frame.maxY
-        else { return nil }
-        
-        if loc.x < frame.minX + marginLeft + cornerSize {
-            if loc.y >= frame.maxY - marginTop - cornerSize {
-                return .tl
-            }
-            if loc.y <= frame.minY + marginBottom + cornerSize {
-                return .bl
-            }
-            if loc.x < frame.minX + marginLeft {
-                return .l
-            }
-        }
-        
-        if loc.x > frame.maxX - marginRight - cornerSize {
-            if loc.y >= frame.maxY - marginTop - cornerSize {
-                return .tr
-            }
-            if loc.y <= frame.minY + marginBottom + cornerSize {
-                return .br
-            }
-            if loc.x > frame.maxX - marginRight {
-                return .r
-            }
-        }
-        
-        if loc.y > frame.maxY - marginTop {
-            return .t
-        }
-        if loc.y < frame.minY + marginBottom {
-            return .b
-        }
-        
-        return nil
+    func directionalLocationOfCursor(loc: NSPoint, screen: NSScreen, screens: [NSScreen]? = nil) -> Directional? {
+        return SnapEdgeDetection.direction(
+            at: loc, in: screen.frame, screens: (screens ?? NSScreen.screens).map(\.frame),
+            margins: NSEdgeInsets(top: marginTop, left: marginLeft, bottom: marginBottom, right: marginRight),
+            cornerSize: Defaults.cornerSnapAreaSize.cgFloat,
+            early: Defaults.snapBeforeReachingEdges.enabled
+        )
     }
 }
