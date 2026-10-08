@@ -4,7 +4,11 @@ import ScreenCaptureKit
 /// Owns one assist sequence. Tokens prevent late animation/capture callbacks from
 /// reviving a dismissed picker or placing a window into a newer layout.
 final class LayoutHelperManager {
-    static let shared = LayoutHelperManager()
+    private static let instance = LayoutHelperManager()
+    static var shared: LayoutHelperManager {
+        instance.updateMonitoring()
+        return instance
+    }
     static var enabled: Bool {
         Defaults.layoutHelper.userEnabled && !(StageUtil.stageCapable && StageUtil.stageEnabled)
     }
@@ -59,7 +63,29 @@ final class LayoutHelperManager {
 
     var isPresenting: Bool { panel.isVisible || selecting }
 
-    private init() {
+    private var monitoring = false
+    private init() {}
+
+    private func updateMonitoring() {
+        if Defaults.layoutHelper.userEnabled {
+            if !monitoring { startMonitoring() }
+        } else if monitoring {
+            monitoring = false
+            cancel()
+            stageObservation = nil
+            for token in observers {
+                NotificationCenter.default.removeObserver(token)
+                NSWorkspace.shared.notificationCenter.removeObserver(token)
+            }
+            observers.removeAll()
+            for token in lockObservers { DistributedNotificationCenter.default().removeObserver(token) }
+            lockObservers.removeAll()
+        }
+    }
+
+    private func startMonitoring() {
+        monitoring = true
+
         WindowFeatureInteraction.helperIsPresenting = { [weak self] in self?.isPresenting == true }
         WindowFeatureInteraction.cancelHelper = { [weak self] in self?.cancel() }
 
