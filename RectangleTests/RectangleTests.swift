@@ -8952,3 +8952,82 @@ final class WindowDividerGlassLineTests: XCTestCase {
     }
 }
 
+
+@MainActor
+final class FootprintGeometrySynchronizationTests: XCTestCase {
+    func testColdAndRepeatedPreviewKeepsMaterialInsideSurface() async throws {
+        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
+        let blur = Defaults.footprintBlur.toCodable()
+        let alpha = Defaults.footprintAlpha.toCodable()
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintBlur.load(from: blur)
+            Defaults.footprintAlpha.load(from: alpha)
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.footprintAlpha.value = 0.3
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let target = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        for blurred in [true, false] {
+            Defaults.footprintBlur.enabled = blurred
+            let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+            defer { window.close() }
+            let surface = try XCTUnwrap(window.contentView?.subviews.last)
+            let material = try XCTUnwrap(surface.subviews.first)
+            for _ in 0..<2 {
+                window.showPreview(in: target, from: CGPoint(x: target.minX + 4, y: target.midY), duration: 0.24)
+                let until = CACurrentMediaTime() + 0.32
+                while CACurrentMediaTime() < until {
+                    try await Task.sleep(nanoseconds: 8_000_000)
+                    let bounds = surface.layer?.presentation()?.bounds ?? surface.bounds
+                    let inner = material.layer?.presentation()?.frame ?? material.frame
+                    XCTAssertEqual(inner.width, bounds.width, accuracy: 1)
+                    XCTAssertEqual(inner.height, bounds.height, accuracy: 1)
+                }
+                let settlementDeadline = CACurrentMediaTime() + 2
+                while WindowAnimationCaptureGate.shared.isPaused && CACurrentMediaTime() < settlementDeadline {
+                    try await Task.sleep(nanoseconds: 8_000_000)
+                }
+                XCTAssertEqual(surface.frame.width, target.width, accuracy: 1)
+                XCTAssertEqual(surface.frame.height, target.height, accuracy: 1)
+                XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+                window.orderOut(nil)
+                try await Task.sleep(nanoseconds: 30_000_000)
+            }
+        }
+    }
+
+    func testRetargetAndCloseDoNotLeavePreviewGeometryRunning() async throws {
+        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let left = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        window.movePreview(to: left.offsetBy(dx: left.width, dy: 0), duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        window.close()
+        let surface = try XCTUnwrap(window.contentView?.subviews.last)
+        let closedFrame = surface.frame
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(surface.frame, closedFrame)
+        XCTAssertFalse(window.realIsVisible)
+        XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+    }
+}
+
+
+
