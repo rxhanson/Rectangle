@@ -5,6 +5,7 @@ import Cocoa
 extension Notification.Name {
     static let blurStyleChanged = Notification.Name("blurStyleChanged")
     static let blurAppearanceChanged = Notification.Name("blurAppearanceChanged")
+    static let windowActionWillExecute = Notification.Name("windowActionWillExecute")
   
     static let configImported = Notification.Name("configImported")
     static let windowAnimationPreferencesChanged = Notification.Name("windowAnimationPreferencesChanged")
