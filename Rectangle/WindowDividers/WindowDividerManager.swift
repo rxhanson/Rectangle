@@ -2,7 +2,11 @@ import Cocoa
 
 /// Resizes one left/right or top/bottom pair per display independently of Layout Helper.
 final class WindowDividerManager {
-    static let shared = WindowDividerManager()
+    private static let instance = WindowDividerManager()
+    static var shared: WindowDividerManager {
+        instance.updateMonitoring()
+        return instance
+    }
 
     private struct Entry {
         let id: CGWindowID
@@ -67,7 +71,27 @@ final class WindowDividerManager {
     private var observations: [NSObjectProtocol] = []
     private var mouseMonitor: Any?
 
-    private init() {
+    private var monitoring = false
+    private init() {}
+
+    private func updateMonitoring() {
+        if Defaults.windowDivider.enabled {
+            if !monitoring { startMonitoring() }
+        } else if monitoring {
+            monitoring = false
+            clear()
+            for token in observations {
+                NotificationCenter.default.removeObserver(token)
+                NSWorkspace.shared.notificationCenter.removeObserver(token)
+            }
+            observations.removeAll()
+            if let mouseMonitor { NSEvent.removeMonitor(mouseMonitor); self.mouseMonitor = nil }
+        }
+    }
+
+    private func startMonitoring() {
+        monitoring = true
+
         WindowFeatureInteraction.recordPlacement = { [weak self] window, id, frame, screen, confirmed in
             self?.record(window, id: id, frame: frame, screen: screen, eligibilityConfirmed: confirmed)
         }
