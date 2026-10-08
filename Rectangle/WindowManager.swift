@@ -82,7 +82,7 @@ class WindowManager {
                 let currentExecutionID = executionID
                 completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
+                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
                         defer { parameters.completion?() }
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
@@ -319,7 +319,7 @@ class WindowManager {
             windowAnimator.animate(frontmostWindowElement,
                                    to: calcResult.rect.screenFlipped,
                                    releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard,
+                                   profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard,
                                    cancellation: parameters.cancellation) { frame in
                 completeMove(frame.isNull ? nil : frame)
             }
@@ -467,6 +467,8 @@ struct ExecutionParameters {
 }
 
 enum ExecutionSource {
-    case keyboardShortcut, dragToSnap, menuItem, url, titleBar
+    case keyboardShortcut, dragToSnap, menuItem, url, titleBar, trackpadGesture
+
+    var usesKeyboardAnimation: Bool { self == .keyboardShortcut || self == .trackpadGesture }
 
 }
