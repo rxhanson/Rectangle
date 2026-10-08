@@ -224,6 +224,17 @@ class WindowManager {
             }
         }
 
+        var resultParameters = ResultParameters(windowId: windowId,
+                                                action: action,
+                                                windowElement: frontmostWindowElement,
+                                                calcResult: calcResult,
+                                                usableScreens: sourceScreens,
+                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
+                                                source: parameters.source,
+                                                isFixedSize: isFixedSize,
+                                                requestedLayoutRect: requestedLayoutRect,
+                                                observationGeneration: WindowSizeConstraints.shared.observationGeneration)
+        
         if cooperativeCornerPlan == nil, besidePlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
                                                           targetFrame: calcResult.initialRect,
@@ -242,6 +253,8 @@ class WindowManager {
             }
         } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
+            checkSizeConstraintWarning(result: resultParameters)
+            if besidePlan == nil { SnappedWindowFitSession.shared.record(result: resultParameters, frame: currentWindowRect) }
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
 
@@ -253,21 +266,11 @@ class WindowManager {
         // A matching logical target is still pending, so it continues through here.
         WindowSizeConstraints.shared.cancelPendingObservations()
         let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
+        resultParameters.observationGeneration = sizeObservationGeneration
         let beforeResize = frontmostWindowElement.frame
         executionID &+= 1
         let currentExecutionID = executionID
 
-        let resultParameters = ResultParameters(windowId: windowId,
-                                                action: action,
-                                                windowElement: frontmostWindowElement,
-                                                calcResult: calcResult,
-                                                usableScreens: sourceScreens,
-                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
-                                                source: parameters.source,
-                                                isFixedSize: isFixedSize,
-                                                requestedLayoutRect: requestedLayoutRect,
-                                                observationGeneration: sizeObservationGeneration)
-        
         if let besidePlan {
             placeBesideSnappedWindow(result: resultParameters, plan: besidePlan, before: beforeResize,
                 previousAction: previousAction, previousRestore: previousRestore, generation: sizeObservationGeneration,
