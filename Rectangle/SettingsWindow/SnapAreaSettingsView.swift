@@ -82,6 +82,13 @@ final class SnapAreaViewModel {
         }
     }
     
+    var snapBeforeReachingEdges: Bool {
+        didSet {
+            guard oldValue != snapBeforeReachingEdges else { return }
+            Defaults.snapBeforeReachingEdges.enabled = snapBeforeReachingEdges
+        }
+    }
+
     var preventMissionControlDragging: Bool {
         didSet {
             guard oldValue != preventMissionControlDragging else { return }
@@ -102,6 +109,7 @@ final class SnapAreaViewModel {
         self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.enabled
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
@@ -116,6 +124,7 @@ final class SnapAreaViewModel {
     func syncDefaults() {
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.enabled
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
@@ -207,6 +216,8 @@ struct SnapAreaSettingsView: View {
                     }
                 }
                 
+                Toggle("Snap before reaching screen edges", isOn: $viewModel.snapBeforeReachingEdges)
+
                 if viewModel.showMissionControlDragging {
                     Toggle("Prevent Mission Control from triggering while dragging", isOn: $viewModel.preventMissionControlDragging)
                 }
