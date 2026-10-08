@@ -9,6 +9,7 @@ class WindowManager {
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowAnimator: WindowAnimator
     private var executionID = 0
+    private var dividerHandoffID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
@@ -54,6 +55,17 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        Notification.Name.windowActionWillExecute.post(object: parameters)
+        dividerHandoffID += 1
+        let handoff = dividerHandoffID
+        WindowDividerManager.shared.interrupt()
+        if WindowDividerManager.shared.hasPendingPlacement {
+            windowAnimator.afterPendingWrites { [weak self] in
+                guard let self, self.dividerHandoffID == handoff else { return }
+                self.execute(parameters)
+            }
+            return
+        }
         hideSizeConstraintWarning()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
@@ -373,6 +385,10 @@ class WindowManager {
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
 
+        if !result.isFixedSize {
+            WindowDividerManager.shared.record(result.windowElement, id: result.windowId, frame: resultingRect,
+                screen: calcResult.screen, eligibilityConfirmed: true)
+        }
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
                                       "achieved": [resultingRect.minX, resultingRect.minY, resultingRect.width, resultingRect.height],

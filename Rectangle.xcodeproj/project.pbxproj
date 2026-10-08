@@ -246,6 +246,22 @@
 		3257A0A699053D9150F67BFF /* WindowSplitAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE461FCD4165468515C222FB /* WindowSplitAxis.swift */; };
 		A9E7E89B255FAE56B0AA4F45 /* BlurSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AB7904D39AA0726009CF28 /* BlurSurfaceView.swift */; };
 		21B924FC30836722BD56641B /* BlurExampleSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A4C229371585C105A6EA4D /* BlurExampleSurface.swift */; };
+		F916F3FC9B91B29C419058C9 /* WindowCapturePermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B7E39A01138960E64D56BC8 /* WindowCapturePermission.swift */; };
+		1EB50B808DD2CBEA89297081 /* WindowFeatureInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B0CE2A31E74A8D76F6A5A5 /* WindowFeatureInteraction.swift */; };
+		F9ABB82070C509879F6786BA /* WindowDividerPreparedPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52266A6410A2FAF4B86BC680 /* WindowDividerPreparedPair.swift */; };
+		D777185FDFC893880C9785F0 /* WindowDividerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639889D0B7B7783B7656201A /* WindowDividerPanel.swift */; };
+		DFF5CE08F6104A7AC4A8379C /* WindowDividerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D1938A42AC66042D293FA5 /* WindowDividerOverlay.swift */; };
+		7FB0A701798F9311C2570436 /* WindowDividerDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979A9E0DE9C6A8D3D2BC3E10 /* WindowDividerDecoration.swift */; };
+		80A1C351915239FF803EF58B /* WindowDividerGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9286D1009C99FF011D1E4744 /* WindowDividerGuide.swift */; };
+		A25DFDA890794455BC4F9859 /* WindowDividerHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62BE1236B10F5747E06C87D /* WindowDividerHandle.swift */; };
+		D92A43C28C6C45A729CC6FF9 /* WindowDividerRevealGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69526092454B066DB0DAB31A /* WindowDividerRevealGate.swift */; };
+		38998D6DA0CDF0DDEE0DE205 /* WindowDividerSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = D07F4E81F7D1C3CE4534ACC2 /* WindowDividerSnapshot.swift */; };
+		B71F31F6243144C881207818 /* WindowDividerPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5EBE822EBCF6A86AB04701 /* WindowDividerPlacement.swift */; };
+		086C16A285CFBCA59167B345 /* WindowDividerResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DDA3C2C5DB7C9068287AAE3 /* WindowDividerResize.swift */; };
+		9CDDB7281006C0E5CB32D5C3 /* WindowDividerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57CDEA31FAF2BF6BE2D9CB74 /* WindowDividerManager.swift */; };
+		704CB7FA9B58AB83E6C6B4FD /* WindowDividerGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BFE4C836491C1CFE8C07A26 /* WindowDividerGeometry.swift */; };
+		A226A71AFA733E94548F9D10 /* WindowDividerBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FCE2C70E4E47F0DCD69B7F /* WindowDividerBackdrop.swift */; };
+		A974F9FEF0044DD8D0266B76 /* PreviewTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FF81474B96CD2F9FE93D82 /* PreviewTransition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -517,6 +533,22 @@
 		DE461FCD4165468515C222FB /* WindowSplitAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowSplitAxis.swift"; sourceTree = "<group>"; };
 		45AB7904D39AA0726009CF28 /* BlurSurfaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle/Snapping/BlurSurfaceView.swift; sourceTree = SOURCE_ROOT; };
 		C1A4C229371585C105A6EA4D /* BlurExampleSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rectangle/SettingsWindow/BlurExampleSurface.swift"; sourceTree = SOURCE_ROOT; };
+		0B7E39A01138960E64D56BC8 /* WindowCapturePermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowCapturePermission.swift"; sourceTree = "<group>"; };
+		B9B0CE2A31E74A8D76F6A5A5 /* WindowFeatureInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowFeatureInteraction.swift"; sourceTree = "<group>"; };
+		52266A6410A2FAF4B86BC680 /* WindowDividerPreparedPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerPreparedPair.swift"; sourceTree = "<group>"; };
+		639889D0B7B7783B7656201A /* WindowDividerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerPanel.swift"; sourceTree = "<group>"; };
+		F1D1938A42AC66042D293FA5 /* WindowDividerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerOverlay.swift"; sourceTree = "<group>"; };
+		979A9E0DE9C6A8D3D2BC3E10 /* WindowDividerDecoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerDecoration.swift"; sourceTree = "<group>"; };
+		9286D1009C99FF011D1E4744 /* WindowDividerGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerGuide.swift"; sourceTree = "<group>"; };
+		C62BE1236B10F5747E06C87D /* WindowDividerHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerHandle.swift"; sourceTree = "<group>"; };
+		69526092454B066DB0DAB31A /* WindowDividerRevealGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerRevealGate.swift"; sourceTree = "<group>"; };
+		D07F4E81F7D1C3CE4534ACC2 /* WindowDividerSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerSnapshot.swift"; sourceTree = "<group>"; };
+		1F5EBE822EBCF6A86AB04701 /* WindowDividerPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerPlacement.swift"; sourceTree = "<group>"; };
+		0DDA3C2C5DB7C9068287AAE3 /* WindowDividerResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerResize.swift"; sourceTree = "<group>"; };
+		57CDEA31FAF2BF6BE2D9CB74 /* WindowDividerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerManager.swift"; sourceTree = "<group>"; };
+		7BFE4C836491C1CFE8C07A26 /* WindowDividerGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerGeometry.swift"; sourceTree = "<group>"; };
+		D3FCE2C70E4E47F0DCD69B7F /* WindowDividerBackdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowDividerBackdrop.swift"; sourceTree = "<group>"; };
+		41FF81474B96CD2F9FE93D82 /* PreviewTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewTransition.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -757,6 +789,8 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
+				A86BA0AD106D2969BAF1018A /* WindowDividers */,
+				93D736D7FCFDF8F8C1C80024 /* WindowCapture */,
 				AD98157F2789FD0D20D9ADB5 /* Accessibility */,
 				AF34C11266D4F3B51536C801 /* WindowPlacement */,
 				4D49FD46832389AADBAE5A9D /* WindowSizeLimits */,
@@ -851,6 +885,7 @@
 		98C2755F231FF6AE009B9292 /* Snapping */ = {
 			isa = PBXGroup;
 			children = (
+				41FF81474B96CD2F9FE93D82 /* PreviewTransition.swift */,
 				98C27560231FFA5F009B9292 /* SnappingManager.swift */,
 				983BBD6E253B609D000D223E /* FootprintWindow.swift */,
 				983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */,
@@ -939,6 +974,7 @@
 		AF34C11266D4F3B51536C801 /* WindowPlacement */ = {
 			isa = PBXGroup;
 			children = (
+				B9B0CE2A31E74A8D76F6A5A5 /* WindowFeatureInteraction.swift */,
 				126D36C45A130DB47795E173 /* WindowWriteQueue.swift */,
 				9C06A7D3BB78FF79F209DE75 /* WindowPlacementWorker.swift */,
 				2CA6C18BAC863026630174A6 /* WindowPlacementAcknowledgement.swift */,
@@ -956,6 +992,34 @@
 				080E8082F159D7F7E40DA33D /* AccessibilityReadCancellation.swift */,
 			);
 			path = "Accessibility";
+			sourceTree = "<group>";
+		};
+		93D736D7FCFDF8F8C1C80024 /* WindowCapture */ = {
+			isa = PBXGroup;
+			children = (
+				0B7E39A01138960E64D56BC8 /* WindowCapturePermission.swift */,
+			);
+			path = "WindowCapture";
+			sourceTree = "<group>";
+		};
+		A86BA0AD106D2969BAF1018A /* WindowDividers */ = {
+			isa = PBXGroup;
+			children = (
+				52266A6410A2FAF4B86BC680 /* WindowDividerPreparedPair.swift */,
+				639889D0B7B7783B7656201A /* WindowDividerPanel.swift */,
+				F1D1938A42AC66042D293FA5 /* WindowDividerOverlay.swift */,
+				979A9E0DE9C6A8D3D2BC3E10 /* WindowDividerDecoration.swift */,
+				9286D1009C99FF011D1E4744 /* WindowDividerGuide.swift */,
+				C62BE1236B10F5747E06C87D /* WindowDividerHandle.swift */,
+				69526092454B066DB0DAB31A /* WindowDividerRevealGate.swift */,
+				D07F4E81F7D1C3CE4534ACC2 /* WindowDividerSnapshot.swift */,
+				1F5EBE822EBCF6A86AB04701 /* WindowDividerPlacement.swift */,
+				0DDA3C2C5DB7C9068287AAE3 /* WindowDividerResize.swift */,
+				57CDEA31FAF2BF6BE2D9CB74 /* WindowDividerManager.swift */,
+				7BFE4C836491C1CFE8C07A26 /* WindowDividerGeometry.swift */,
+				D3FCE2C70E4E47F0DCD69B7F /* WindowDividerBackdrop.swift */,
+			);
+			path = "WindowDividers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1112,6 +1176,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A974F9FEF0044DD8D0266B76 /* PreviewTransition.swift in Sources */,
+				A226A71AFA733E94548F9D10 /* WindowDividerBackdrop.swift in Sources */,
+				704CB7FA9B58AB83E6C6B4FD /* WindowDividerGeometry.swift in Sources */,
+				9CDDB7281006C0E5CB32D5C3 /* WindowDividerManager.swift in Sources */,
+				086C16A285CFBCA59167B345 /* WindowDividerResize.swift in Sources */,
+				B71F31F6243144C881207818 /* WindowDividerPlacement.swift in Sources */,
+				38998D6DA0CDF0DDEE0DE205 /* WindowDividerSnapshot.swift in Sources */,
+				D92A43C28C6C45A729CC6FF9 /* WindowDividerRevealGate.swift in Sources */,
+				A25DFDA890794455BC4F9859 /* WindowDividerHandle.swift in Sources */,
+				80A1C351915239FF803EF58B /* WindowDividerGuide.swift in Sources */,
+				7FB0A701798F9311C2570436 /* WindowDividerDecoration.swift in Sources */,
+				DFF5CE08F6104A7AC4A8379C /* WindowDividerOverlay.swift in Sources */,
+				D777185FDFC893880C9785F0 /* WindowDividerPanel.swift in Sources */,
+				F9ABB82070C509879F6786BA /* WindowDividerPreparedPair.swift in Sources */,
+				1EB50B808DD2CBEA89297081 /* WindowFeatureInteraction.swift in Sources */,
+				F916F3FC9B91B29C419058C9 /* WindowCapturePermission.swift in Sources */,
 				3257A0A699053D9150F67BFF /* WindowSplitAxis.swift in Sources */,
 				76C12D939961755653F8AEB3 /* WindowPlacementCoordinator.swift in Sources */,
 				E3E9640E82D20B72DEC4A725 /* WindowPlacementAnimationEvidence.swift in Sources */,

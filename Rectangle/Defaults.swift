@@ -13,6 +13,8 @@ class Defaults {
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
+    static let windowDivider = BoolDefault(key: "windowDivider")
+    static let windowDividerEnhanced = BoolDefault(key: "windowDividerEnhanced")
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
     static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits", defaultValue: true)
@@ -145,6 +147,7 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        windowDivider, windowDividerEnhanced,
         experimentalWindowAnimations,
         rememberWindowSizeLimits,
         showMinimumWindowSizeWarning,

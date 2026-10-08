@@ -282,6 +282,7 @@ class SnappingManager {
     }
     
     func handle(event: NSEvent) {
+        if WindowDividerManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
             guard event.keyCode == 53, nativeGesture.held else { return }
@@ -289,6 +290,7 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            WindowDividerManager.shared.interrupt()
             WindowSizeConstraints.shared.cancelPendingObservations()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
