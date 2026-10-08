@@ -37,8 +37,10 @@ enum WindowAnimationProfile {
     }
 }
 
+
+/// Shared geometry timing for target-zone previews and window enlargement.
 enum WindowPreviewDeceleration {
-    static let duration: TimeInterval = 0.26
+    static let duration: TimeInterval = 0.20
 
     static var timingFunction: CAMediaTimingFunction {
         CAMediaTimingFunction(controlPoints: 0.1, 0.9, 0.2, 1)
