@@ -167,9 +167,6 @@
 		AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA69F83B29909A95001A81AF /* RightTodoCalculation.swift */; };
 		AA69F8402992DCB1001A81AF /* LeftTodoCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA69F83F2992DCB1001A81AF /* LeftTodoCalculation.swift */; };
 		AAADE1AF28CBAB0000036331 /* WindowUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAADE1AE28CBAB0000036331 /* WindowUtil.swift */; };
-		AC0100010000000000000001 /* WindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0100010000000000000002 /* WindowAnimator.swift */; };
-		AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200010000000000000002 /* DirectWindowAnimator.swift */; };
-		AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200030000000000000002 /* WindowAnimationCurves.swift */; };
 		AF09A0000000000000000001 /* GridTiling.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000002 /* GridTiling.swift */; };
 		AF09A0000000000000000003 /* GridTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000004 /* GridTilingTests.swift */; };
 		AF09B1000000000000000001 /* DisplayTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09B1000000000000000002 /* DisplayTransfer.swift */; };
@@ -215,6 +212,23 @@
 		F7B6C43BB57F8064F49DDBB6 /* BottomLeftSixteenthCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */; };
 		FA34D0FF2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA34D0FE2F7E896E00EEBEF1 /* SpecificDisplayCalculation.swift */; };
 		FDE8FCE027C2950400EACCAA /* MultiWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */; };
+		289A31409B0E53587282CECF /* DirectWindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2402C85757B45264FD22A56D /* DirectWindowAnimator.swift */; };
+		6CC120F4A5FAD525090190EF /* WindowAnimationCurve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14502612092EF37CC89CE646 /* WindowAnimationCurve.swift */; };
+		42BCD7CED5BEC19A6A3433C6 /* WindowAnimationDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D25EA1A86F09797B63CF3B /* WindowAnimationDiagnostics.swift */; };
+		8B63E8C1A2CA7B0D4C17D27F /* WindowAnimationElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD44E6B952F0AA5466EEB3F /* WindowAnimationElement.swift */; };
+		297448F10F408A96EC89D978 /* WindowAnimationInterruptionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E08ED97CFDD4522F4C107B5 /* WindowAnimationInterruptionPolicy.swift */; };
+		2ED81ED4F498A99A2C7D9C94 /* WindowAnimationLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806D9A88972874F88E95A149 /* WindowAnimationLookup.swift */; };
+		C081EADE4A93290A8BF3720C /* WindowAnimationPacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3463F10DC1278083D60DD7FB /* WindowAnimationPacing.swift */; };
+		BC9CB5121B3AA0658F367753 /* WindowAnimationPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = B310EE5C1C23A2E515DCFB47 /* WindowAnimationPlacement.swift */; };
+		D1F7299DC08F03E4B9C5E4BC /* WindowAnimationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C95CE3090C1220508F13B6 /* WindowAnimationRequest.swift */; };
+		0242FE5DB7F0688BA9A854FE /* WindowAnimationResizePause.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8273BC2FCCC192ACD2504A /* WindowAnimationResizePause.swift */; };
+		11055AF36533CB1833C10BE1 /* WindowAnimationResizeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F516A1C3F04AD934DFCD8C1E /* WindowAnimationResizeResponse.swift */; };
+		9D8BD0BD479524F9AA471F35 /* WindowAnimationSettlement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74A2214EDD3BD6D374EA730 /* WindowAnimationSettlement.swift */; };
+		49CE355AA4C9B145A6DC745B /* WindowAnimationWritePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74D239F24325FFCCA6B001 /* WindowAnimationWritePolicy.swift */; };
+		08692EBE9A828781B2BC521C /* WindowAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB3DFAFAAD4EB1DF18F88F /* WindowAnimator.swift */; };
+		758065A0E2A5EC821CF01BEF /* WindowDisplayTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CD3344BB6B11EDEBCF9E98 /* WindowDisplayTransition.swift */; };
+		B28F5289FADB9F07DCADCB0A /* WindowFrameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */; };
+		196F08301B312AD386ACC153 /* WindowKeyboardMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -404,9 +418,6 @@
 		AA69F83F2992DCB1001A81AF /* LeftTodoCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftTodoCalculation.swift; sourceTree = "<group>"; };
 		AA84AB4DB9E7EEFCE50AA6D8 /* MiddleRightTwelfthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiddleRightTwelfthCalculation.swift; sourceTree = "<group>"; };
 		AAADE1AE28CBAB0000036331 /* WindowUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowUtil.swift; sourceTree = "<group>"; };
-		AC0100010000000000000002 /* WindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimator.swift; sourceTree = "<group>"; };
-		AC0200010000000000000002 /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
-		AC0200030000000000000002 /* WindowAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurves.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000002 /* GridTiling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTiling.swift; sourceTree = "<group>"; };
 		AF09A0000000000000000004 /* GridTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTilingTests.swift; sourceTree = "<group>"; };
 		AF09B1000000000000000002 /* DisplayTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransfer.swift; sourceTree = "<group>"; };
@@ -455,6 +466,23 @@
 		FDE8FCDF27C2950400EACCAA /* MultiWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiWindowManager.swift; sourceTree = "<group>"; };
 		FEE147786B2CD7350FAFB700 /* BottomLeftSixteenthCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomLeftSixteenthCalculation.swift; sourceTree = "<group>"; };
 		de0950b8b00f40308934a523 /* JSONDefaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONDefaultTests.swift; sourceTree = "<group>"; };
+		2402C85757B45264FD22A56D /* DirectWindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectWindowAnimator.swift; sourceTree = "<group>"; };
+		14502612092EF37CC89CE646 /* WindowAnimationCurve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationCurve.swift; sourceTree = "<group>"; };
+		A5D25EA1A86F09797B63CF3B /* WindowAnimationDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationDiagnostics.swift; sourceTree = "<group>"; };
+		DCD44E6B952F0AA5466EEB3F /* WindowAnimationElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationElement.swift; sourceTree = "<group>"; };
+		6E08ED97CFDD4522F4C107B5 /* WindowAnimationInterruptionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationInterruptionPolicy.swift; sourceTree = "<group>"; };
+		806D9A88972874F88E95A149 /* WindowAnimationLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationLookup.swift; sourceTree = "<group>"; };
+		3463F10DC1278083D60DD7FB /* WindowAnimationPacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationPacing.swift; sourceTree = "<group>"; };
+		B310EE5C1C23A2E515DCFB47 /* WindowAnimationPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationPlacement.swift; sourceTree = "<group>"; };
+		00C95CE3090C1220508F13B6 /* WindowAnimationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationRequest.swift; sourceTree = "<group>"; };
+		2A8273BC2FCCC192ACD2504A /* WindowAnimationResizePause.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResizePause.swift; sourceTree = "<group>"; };
+		F516A1C3F04AD934DFCD8C1E /* WindowAnimationResizeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationResizeResponse.swift; sourceTree = "<group>"; };
+		A74A2214EDD3BD6D374EA730 /* WindowAnimationSettlement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationSettlement.swift; sourceTree = "<group>"; };
+		5F74D239F24325FFCCA6B001 /* WindowAnimationWritePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationWritePolicy.swift; sourceTree = "<group>"; };
+		75CB3DFAFAAD4EB1DF18F88F /* WindowAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimator.swift; sourceTree = "<group>"; };
+		A4CD3344BB6B11EDEBCF9E98 /* WindowDisplayTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDisplayTransition.swift; sourceTree = "<group>"; };
+		EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameAnimation.swift; sourceTree = "<group>"; };
+		40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowKeyboardMotion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -632,9 +660,6 @@
 			children = (
 				9824704A22B189250037B409 /* BestEffortWindowMover.swift */,
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
-				AC0100010000000000000002 /* WindowAnimator.swift */,
-				AC0200010000000000000002 /* DirectWindowAnimator.swift */,
-				AC0200030000000000000002 /* WindowAnimationCurves.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
 				98B3559723CE025700E410E0 /* FixedSizeWindowMover.swift */,
 			);
@@ -735,6 +760,7 @@
 				F1AC0DE000000000000000A5 /* StackBadge */,
 				98D4B6C925B625B6009C7BF6 /* TodoMode */,
 				985B9BFA22BE218C00A2E8F0 /* Popover */,
+				F1D226BE0EAC598E1F123E97 /* WindowAnimation */,
 				982140EA22B7DB0400ABFB3F /* WindowMover */,
 				982140E922B7DA3100ABFB3F /* WindowCalculation */,
 				98192DDF2717201E00015E66 /* MultiWindow */,
@@ -831,6 +857,30 @@
 				F1AC0DE000000000000000AB /* StackBadgeRowView.swift */,
 			);
 			path = StackBadge;
+			sourceTree = "<group>";
+		};
+		F1D226BE0EAC598E1F123E97 /* WindowAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				2402C85757B45264FD22A56D /* DirectWindowAnimator.swift */,
+				14502612092EF37CC89CE646 /* WindowAnimationCurve.swift */,
+				A5D25EA1A86F09797B63CF3B /* WindowAnimationDiagnostics.swift */,
+				DCD44E6B952F0AA5466EEB3F /* WindowAnimationElement.swift */,
+				6E08ED97CFDD4522F4C107B5 /* WindowAnimationInterruptionPolicy.swift */,
+				806D9A88972874F88E95A149 /* WindowAnimationLookup.swift */,
+				3463F10DC1278083D60DD7FB /* WindowAnimationPacing.swift */,
+				B310EE5C1C23A2E515DCFB47 /* WindowAnimationPlacement.swift */,
+				00C95CE3090C1220508F13B6 /* WindowAnimationRequest.swift */,
+				2A8273BC2FCCC192ACD2504A /* WindowAnimationResizePause.swift */,
+				F516A1C3F04AD934DFCD8C1E /* WindowAnimationResizeResponse.swift */,
+				A74A2214EDD3BD6D374EA730 /* WindowAnimationSettlement.swift */,
+				5F74D239F24325FFCCA6B001 /* WindowAnimationWritePolicy.swift */,
+				75CB3DFAFAAD4EB1DF18F88F /* WindowAnimator.swift */,
+				A4CD3344BB6B11EDEBCF9E98 /* WindowDisplayTransition.swift */,
+				EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */,
+				40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */,
+			);
+			path = WindowAnimation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -987,6 +1037,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				289A31409B0E53587282CECF /* DirectWindowAnimator.swift in Sources */,
+				6CC120F4A5FAD525090190EF /* WindowAnimationCurve.swift in Sources */,
+				42BCD7CED5BEC19A6A3433C6 /* WindowAnimationDiagnostics.swift in Sources */,
+				8B63E8C1A2CA7B0D4C17D27F /* WindowAnimationElement.swift in Sources */,
+				297448F10F408A96EC89D978 /* WindowAnimationInterruptionPolicy.swift in Sources */,
+				2ED81ED4F498A99A2C7D9C94 /* WindowAnimationLookup.swift in Sources */,
+				C081EADE4A93290A8BF3720C /* WindowAnimationPacing.swift in Sources */,
+				BC9CB5121B3AA0658F367753 /* WindowAnimationPlacement.swift in Sources */,
+				D1F7299DC08F03E4B9C5E4BC /* WindowAnimationRequest.swift in Sources */,
+				0242FE5DB7F0688BA9A854FE /* WindowAnimationResizePause.swift in Sources */,
+				11055AF36533CB1833C10BE1 /* WindowAnimationResizeResponse.swift in Sources */,
+				9D8BD0BD479524F9AA471F35 /* WindowAnimationSettlement.swift in Sources */,
+				49CE355AA4C9B145A6DC745B /* WindowAnimationWritePolicy.swift in Sources */,
+				08692EBE9A828781B2BC521C /* WindowAnimator.swift in Sources */,
+				758065A0E2A5EC821CF01BEF /* WindowDisplayTransition.swift in Sources */,
+				B28F5289FADB9F07DCADCB0A /* WindowFrameAnimation.swift in Sources */,
+				196F08301B312AD386ACC153 /* WindowKeyboardMotion.swift in Sources */,
 				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
@@ -1033,9 +1100,6 @@
 				9821403122B38A0500ABFB3F /* TopHalfCalculation.swift in Sources */,
 				9818E01428B5A4FD004AA524 /* SixthsCompoundCalculation.swift in Sources */,
 				9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */,
-				AC0100010000000000000001 /* WindowAnimator.swift in Sources */,
-				AC0200010000000000000001 /* DirectWindowAnimator.swift in Sources */,
-				AC0200030000000000000001 /* WindowAnimationCurves.swift in Sources */,
 				9821402722B3888100ABFB3F /* ChangeSizeCalculation.swift in Sources */,
 				6490B39927BF97BB0056C220 /* TopCenterRightEighthCalculation.swift in Sources */,
 				98B3559823CE025700E410E0 /* FixedSizeWindowMover.swift in Sources */,
