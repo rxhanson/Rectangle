@@ -8269,3 +8269,135 @@ final class WindowPlacementAcknowledgementTests: XCTestCase {
     }
 }
 
+
+@MainActor
+final class SnappedWindowFitVerificationTests: XCTestCase {
+    func testSlowNeighborVerificationDoesNotBlockMainOrExposeUnverifiedAnchor() {
+        let started = expectation(description: "Background verification started")
+        let mainResponsive = expectation(description: "Main queue remains responsive")
+        let release = DispatchSemaphore(value: 0)
+        let session = SnappedWindowFitSession(observeWorkspace: false) { _, _ in
+            XCTAssertFalse(Thread.isMainThread)
+            started.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+            return true
+        }
+        session.record(opportunity(id: 1))
+        wait(for: [started], timeout: 1)
+        XCTAssertNil(session.current)
+        DispatchQueue.main.async { mainResponsive.fulfill() }
+        wait(for: [mainResponsive], timeout: 1)
+        release.signal()
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current?.id == 1 }, object: nil)
+        wait(for: [published], timeout: 2)
+    }
+
+    func testTakingPendingAnchorCancelsVerificationAndPreventsLatePublication() {
+        let started = expectation(description: "Background verification started")
+        let cancelled = expectation(description: "Worker sees cancellation")
+        let release = DispatchSemaphore(value: 0)
+        let session = SnappedWindowFitSession(observeWorkspace: false) { _, isCurrent in
+            started.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+            XCTAssertFalse(isCurrent())
+            cancelled.fulfill()
+            return true
+        }
+        session.record(opportunity(id: 1))
+        wait(for: [started], timeout: 1)
+        XCTAssertNil(session.take())
+        release.signal()
+        wait(for: [cancelled], timeout: 1)
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        published.isInverted = true
+        wait(for: [published], timeout: 0.2)
+    }
+
+    func testSupersededVerificationCannotReplaceNewAnchor() {
+        let started = expectation(description: "First verification started")
+        let release = DispatchSemaphore(value: 0)
+        let session = SnappedWindowFitSession(observeWorkspace: false) { opportunity, isCurrent in
+            if opportunity.id == 1 {
+                started.fulfill()
+                _ = release.wait(timeout: .now() + 2)
+                XCTAssertFalse(isCurrent())
+            }
+            return true
+        }
+        session.record(opportunity(id: 1))
+        wait(for: [started], timeout: 1)
+        session.record(opportunity(id: 2))
+        release.signal()
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current?.id == 2 }, object: nil)
+        wait(for: [published], timeout: 2)
+        XCTAssertEqual(session.take()?.id, 2)
+        XCTAssertNil(session.current)
+    }
+
+    private func opportunity(id: CGWindowID) -> SnappedWindowFitOpportunity {
+        SnappedWindowFitOpportunity(id: id, pid: 123, launch: 1, action: .leftHalf,
+            frame: CGRect(x: 0, y: 0, width: 400, height: 600),
+            bounds: CGRect(x: 0, y: 0, width: 1000, height: 600),
+            createdAt: ProcessInfo.processInfo.systemUptime)
+    }
+}
+
+
+final class SnappedWindowFitOcclusionTests: XCTestCase {
+    private let bounds = CGRect(x: 0, y: 29, width: 1440, height: 878)
+    private let neighbor = CGRect(x: 0, y: 29, width: 840, height: 878)
+    private let target = CGRect(x: 720, y: 29, width: 720, height: 878)
+    private func window(_ id: CGWindowID, _ frame: CGRect, alpha: CGFloat = 1,
+                        onScreen: Bool = true) -> WindowInfo {
+        WindowInfo(id: id, level: 0, frame: frame, pid: 123, processName: "Fixture",
+                   alpha: alpha, isOnScreen: onScreen)
+    }
+    private func resolve(_ front: [WindowInfo], vertical: Bool = false) -> SnappedWindowFit.Resolution {
+        let axis: WindowSplitAxis = vertical ? .vertical : .horizontal
+        return SnappedWindowFit.resolve(enabled: true, action: vertical ? .bottomHalf : .rightHalf,
+            movingWindowID: 2, target: axis.rect(target), bounds: axis.rect(bounds), gap: 0, minimum: nil,
+            windows: (front + [window(1, neighbor)]).map {
+                WindowInfo(id: $0.id, level: $0.level, frame: axis.rect($0.frame), pid: $0.pid,
+                           processName: $0.processName, alpha: $0.alpha, isOnScreen: $0.isOnScreen)
+            }, recordedFrames: [1: axis.rect(neighbor)], ignoredPID: 999)
+    }
+    private func assertFit(_ result: SnappedWindowFit.Resolution, vertical: Bool = false,
+                           file: StaticString = #filePath, line: UInt = #line) {
+        guard case let .fit(plan) = result else { return XCTFail("Visible recent neighbor must fit", file: file, line: line) }
+        let axis: WindowSplitAxis = vertical ? .vertical : .horizontal
+        XCTAssertEqual(plan.target, axis.rect(CGRect(x: 840, y: 29, width: 600, height: 878)), file: file, line: line)
+        XCTAssertEqual(plan.neighborFrame, axis.rect(neighbor), file: file, line: line)
+    }
+    func testTitleBarOverlayDoesNotHideTheSnappedNeighbor() {
+        assertFit(resolve([window(3, CGRect(x: 6, y: 35, width: 66, height: 20))]))
+    }
+    func testPartiallyCoveredRecentNeighborStillFits() {
+        assertFit(resolve([window(3, CGRect(x: 0, y: 29, width: 420, height: 878))]))
+    }
+    func testFullyCoveredNeighborDoesNotFit() {
+        XCTAssertEqual(resolve([window(3, neighbor)]), .unchanged)
+    }
+    func testUnionOfFrontWindowsCanHideTheNeighbor() {
+        XCTAssertEqual(resolve([window(3, CGRect(x: 0, y: 29, width: 420, height: 878)),
+                                window(4, CGRect(x: 420, y: 29, width: 420, height: 878))]), .unchanged)
+    }
+    func testOnlyPerimeterExposureDoesNotQualify() {
+        XCTAssertEqual(resolve([window(3, neighbor.insetBy(dx: 1, dy: 1))]), .unchanged)
+    }
+    func testInvisibleWindowsDoNotHideNeighborOnEitherAxis() {
+        for vertical in [false, true] {
+            assertFit(resolve([window(3, neighbor, alpha: 0)], vertical: vertical), vertical: vertical)
+            assertFit(resolve([window(3, neighbor, onScreen: false)], vertical: vertical), vertical: vertical)
+        }
+    }
+    func testIncomingWindowCanCoverItsProspectiveNeighbor() {
+        assertFit(resolve([window(2, neighbor)]))
+    }
+    func testNeighborMustRemainOnScreenAndVisible() {
+        for info in [window(1, neighbor, alpha: 0), window(1, neighbor, onScreen: false)] {
+            XCTAssertEqual(SnappedWindowFit.resolve(enabled: true, action: .rightHalf, movingWindowID: 2,
+                target: target, bounds: bounds, gap: 0, minimum: nil, windows: [info],
+                recordedFrames: [1: neighbor], ignoredPID: 999), .unchanged)
+        }
+    }
+}

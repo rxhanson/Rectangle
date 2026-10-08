@@ -244,6 +244,8 @@
 		E3E9640E82D20B72DEC4A725 /* WindowPlacementAnimationEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE6EE590142F1137F02B30A /* WindowPlacementAnimationEvidence.swift */; };
 		76C12D939961755653F8AEB3 /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AE793361A88603178D27DF /* WindowPlacementCoordinator.swift */; };
 		3257A0A699053D9150F67BFF /* WindowSplitAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE461FCD4165468515C222FB /* WindowSplitAxis.swift */; };
+		01473D82128BF361178FE359 /* SnappedWindowFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA69B1DAAA34350D93AFC0D /* SnappedWindowFit.swift */; };
+		ADFDC8F3D68CBF51F8C75CD3 /* SnappedWindowFitSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E248D5F6F6CC3EF02E6468C9 /* SnappedWindowFitSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -513,6 +515,8 @@
 		BAE6EE590142F1137F02B30A /* WindowPlacementAnimationEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowPlacementAnimationEvidence.swift"; sourceTree = "<group>"; };
 		D1AE793361A88603178D27DF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowPlacementCoordinator.swift"; sourceTree = "<group>"; };
 		DE461FCD4165468515C222FB /* WindowSplitAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowSplitAxis.swift"; sourceTree = "<group>"; };
+		9AA69B1DAAA34350D93AFC0D /* SnappedWindowFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnappedWindowFit.swift"; sourceTree = "<group>"; };
+		E248D5F6F6CC3EF02E6468C9 /* SnappedWindowFitSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnappedWindowFitSession.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -753,6 +757,7 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
+				B3C80D35E1BD2C2E79ECB876 /* SnappedWindowFit */,
 				AD98157F2789FD0D20D9ADB5 /* Accessibility */,
 				AF34C11266D4F3B51536C801 /* WindowPlacement */,
 				4D49FD46832389AADBAE5A9D /* WindowSizeLimits */,
@@ -952,6 +957,15 @@
 			path = "Accessibility";
 			sourceTree = "<group>";
 		};
+		B3C80D35E1BD2C2E79ECB876 /* SnappedWindowFit */ = {
+			isa = PBXGroup;
+			children = (
+				9AA69B1DAAA34350D93AFC0D /* SnappedWindowFit.swift */,
+				E248D5F6F6CC3EF02E6468C9 /* SnappedWindowFitSession.swift */,
+			);
+			path = "SnappedWindowFit";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1106,6 +1120,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADFDC8F3D68CBF51F8C75CD3 /* SnappedWindowFitSession.swift in Sources */,
+				01473D82128BF361178FE359 /* SnappedWindowFit.swift in Sources */,
 				3257A0A699053D9150F67BFF /* WindowSplitAxis.swift in Sources */,
 				76C12D939961755653F8AEB3 /* WindowPlacementCoordinator.swift in Sources */,
 				E3E9640E82D20B72DEC4A725 /* WindowPlacementAnimationEvidence.swift in Sources */,

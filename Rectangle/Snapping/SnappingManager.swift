@@ -376,11 +376,13 @@ class SnappingManager {
                 currentRect = geometry.currentFrame
                 if geometry.isMoving {
                     windowMoving = true
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     if let windowId {
                         unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
                 else if geometry.isResizing, let windowId {
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -655,6 +657,16 @@ class SnappingManager {
                 let previewMinimum = CGSize(width: max(minimum?.width ?? 0, size.width),
                                             height: max(minimum?.height ?? 0, size.height))
                 return WindowSizeConstraints.fitting(requested, minimum: previewMinimum, in: bounds) ?? requested
+            }
+            if windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
+                switch SnappedWindowFit.resolve(action: hotSpot.action, window: currentWindow,
+                    initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen,
+                    minimum: minimum) {
+                case let .fit(plan):
+                    return predictedPreview(applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target))
+                case .noRoom: return nil
+                case .unchanged: break
+                }
             }
             if !applyingGaps { target = rectResult.rect }
             return predictedPreview(target)

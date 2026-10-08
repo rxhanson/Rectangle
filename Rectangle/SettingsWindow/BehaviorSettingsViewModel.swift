@@ -92,6 +92,14 @@ final class BehaviorSettingsViewModel {
         }
     }
     
+    var fitBesideSnappedWindows: Bool {
+        didSet {
+            Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
+            SnappedWindowFitSession.shared.clear()
+            WindowSizeConstraints.shared.cancelPendingObservations()
+        }
+    }
+
     var rememberWindowSizeLimits: Bool {
         didSet { WindowSizeConstraints.shared.setRememberLimits(rememberWindowSizeLimits) }
     }
@@ -233,6 +241,7 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
         
         setupObservers()
@@ -296,6 +305,7 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
     }
     

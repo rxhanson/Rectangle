@@ -382,6 +382,7 @@ struct BehaviorSettingsView: View {
             }
             
             windowSizeLimitsSection
+            adjacentWindowsSection
 
             // MARK: - Extras
             Section {
@@ -440,6 +441,27 @@ struct BehaviorSettingsView: View {
             }
         }
     }
+
+    private var adjacentWindowsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
+                        .accessibilityIdentifier("fitBesideSnappedWindows")
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label {
+                    Text("Adjacent Windows")
+                } icon: {
+                    Image(systemName: "rectangle.grid.1x2")
+                        .rotationEffect(.degrees(90))
+                }
+            }
+        }
+    }
+
 
     /// A recorder for a window action's shortcut, validated like the ones on
     /// the Shortcuts tab.
