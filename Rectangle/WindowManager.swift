@@ -81,21 +81,29 @@ class WindowManager {
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 WindowSizeConstraints.shared.cancelPendingObservations()
+                let restoreGeneration = WindowSizeConstraints.shared.observationGeneration
                 executionID &+= 1
                 let currentExecutionID = executionID
                 completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
-                        defer { parameters.completion?() }
-                        guard let self, self.executionID == currentExecutionID else { return }
-                        // A completed animation has already placed the real window.
-                        if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                    windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
+                        self?.executionID == currentExecutionID
+                            && WindowSizeConstraints.shared.observationGeneration == restoreGeneration
+                    }, onCancelled: { parameters.cancellation?() }) { [weak self] in
+                        self?.windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
+                            defer { parameters.completion?() }
+                            guard let self, self.executionID == currentExecutionID,
+                                  WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
+                            // A completed animation has already placed the real window.
+                            if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                        }
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
                     windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) { [weak self] in
                         defer { parameters.completion?() }
-                        guard self?.executionID == currentExecutionID else { return }
+                        guard self?.executionID == currentExecutionID,
+                              WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
                         frontmostWindowElement.setFrame(restoreRect)
                     }
                 }
