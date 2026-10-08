@@ -238,6 +238,12 @@
 		3A696116C7C1A960D0C2DB32 /* WindowGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8A609694C9F97FF7B9F2507 /* WindowGeometry.swift */; };
 		C5834D5B85E111B1542FCD61 /* AccessibilityReadCancellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080E8082F159D7F7E40DA33D /* AccessibilityReadCancellation.swift */; };
 		57D557BAFB47E23D017CE1B6 /* WindowSizeLimitsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517CC9DD512EA8133C239BC9 /* WindowSizeLimitsWindowController.swift */; };
+		6EE441781BD8FC86477FEC53 /* WindowWriteQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126D36C45A130DB47795E173 /* WindowWriteQueue.swift */; };
+		9C58E264EB575629A721133F /* WindowPlacementWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C06A7D3BB78FF79F209DE75 /* WindowPlacementWorker.swift */; };
+		80B5AE6FFC4E5BFF1EF816CA /* WindowPlacementAcknowledgement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6C18BAC863026630174A6 /* WindowPlacementAcknowledgement.swift */; };
+		E3E9640E82D20B72DEC4A725 /* WindowPlacementAnimationEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE6EE590142F1137F02B30A /* WindowPlacementAnimationEvidence.swift */; };
+		76C12D939961755653F8AEB3 /* WindowPlacementCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AE793361A88603178D27DF /* WindowPlacementCoordinator.swift */; };
+		3257A0A699053D9150F67BFF /* WindowSplitAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE461FCD4165468515C222FB /* WindowSplitAxis.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -501,6 +507,12 @@
 		E8A609694C9F97FF7B9F2507 /* WindowGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowGeometry.swift"; sourceTree = "<group>"; };
 		080E8082F159D7F7E40DA33D /* AccessibilityReadCancellation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccessibilityReadCancellation.swift"; sourceTree = "<group>"; };
 		517CC9DD512EA8133C239BC9 /* WindowSizeLimitsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowSizeLimitsWindowController.swift"; sourceTree = "<group>"; };
+		126D36C45A130DB47795E173 /* WindowWriteQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowWriteQueue.swift"; sourceTree = "<group>"; };
+		9C06A7D3BB78FF79F209DE75 /* WindowPlacementWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowPlacementWorker.swift"; sourceTree = "<group>"; };
+		2CA6C18BAC863026630174A6 /* WindowPlacementAcknowledgement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowPlacementAcknowledgement.swift"; sourceTree = "<group>"; };
+		BAE6EE590142F1137F02B30A /* WindowPlacementAnimationEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowPlacementAnimationEvidence.swift"; sourceTree = "<group>"; };
+		D1AE793361A88603178D27DF /* WindowPlacementCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowPlacementCoordinator.swift"; sourceTree = "<group>"; };
+		DE461FCD4165468515C222FB /* WindowSplitAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowSplitAxis.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -921,6 +933,12 @@
 		AF34C11266D4F3B51536C801 /* WindowPlacement */ = {
 			isa = PBXGroup;
 			children = (
+				126D36C45A130DB47795E173 /* WindowWriteQueue.swift */,
+				9C06A7D3BB78FF79F209DE75 /* WindowPlacementWorker.swift */,
+				2CA6C18BAC863026630174A6 /* WindowPlacementAcknowledgement.swift */,
+				BAE6EE590142F1137F02B30A /* WindowPlacementAnimationEvidence.swift */,
+				D1AE793361A88603178D27DF /* WindowPlacementCoordinator.swift */,
+				DE461FCD4165468515C222FB /* WindowSplitAxis.swift */,
 				E8A609694C9F97FF7B9F2507 /* WindowGeometry.swift */,
 			);
 			path = "WindowPlacement";
@@ -1088,6 +1106,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3257A0A699053D9150F67BFF /* WindowSplitAxis.swift in Sources */,
+				76C12D939961755653F8AEB3 /* WindowPlacementCoordinator.swift in Sources */,
+				E3E9640E82D20B72DEC4A725 /* WindowPlacementAnimationEvidence.swift in Sources */,
+				80B5AE6FFC4E5BFF1EF816CA /* WindowPlacementAcknowledgement.swift in Sources */,
+				9C58E264EB575629A721133F /* WindowPlacementWorker.swift in Sources */,
+				6EE441781BD8FC86477FEC53 /* WindowWriteQueue.swift in Sources */,
 				57D557BAFB47E23D017CE1B6 /* WindowSizeLimitsWindowController.swift in Sources */,
 				C5834D5B85E111B1542FCD61 /* AccessibilityReadCancellation.swift in Sources */,
 				3A696116C7C1A960D0C2DB32 /* WindowGeometry.swift in Sources */,

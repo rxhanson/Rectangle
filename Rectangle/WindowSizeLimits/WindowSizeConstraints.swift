@@ -467,6 +467,7 @@ final class WindowSizeConstraints {
         identityRequests.removeAll()
         identityQueue.cancelAllOperations()
         observationGeneration = UUID()
+        WindowPlacementCoordinator.shared.cancelAll()
         WindowSizeWarning.hideCurrent()
     }
 

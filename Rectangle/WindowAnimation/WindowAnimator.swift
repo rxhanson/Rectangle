@@ -64,7 +64,7 @@ final class WindowAnimator {
 
     private let lookupWindow: WindowLookup
 
-    init(queue: DispatchQueue = DispatchQueue(label: "Rectangle.WindowAnimation", qos: .userInteractive),
+    init(queue: DispatchQueue = WindowWriteQueue.shared.queue,
          lookupWindow: @escaping WindowLookup = { pid, id, launch, preferred, isCurrent in
         WindowAccessibilityLookup.resolveResult(pid: pid, id: id, launch: launch, preferred: preferred, isCurrent: isCurrent)
     }) {
@@ -104,7 +104,7 @@ final class WindowAnimator {
     }
 
     func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
-        if active == nil && retiring.isEmpty && !tickPending { body(); return }
+        if active == nil && retiring.isEmpty && !tickPending && WindowWriteQueue.shared.pending == 0 { body(); return }
         let expected = generation
         queue.async { [self] in
             DispatchQueue.main.async { [self] in

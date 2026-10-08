@@ -8202,3 +8202,70 @@ final class WindowSizeHintSnapshotTests: XCTestCase {
 
 
 
+
+final class WindowPlacementAcknowledgementTests: XCTestCase {
+    func testHeightResponseDoesNotVerifyIgnoredWidth() {
+        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+                                  target: CGSize(width: 400, height: 600), ignoredWidth: true)
+    }
+
+    func testWidthResponseDoesNotVerifyIgnoredHeight() {
+        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+                                  target: CGSize(width: 400, height: 300), ignoredWidth: false)
+    }
+
+    func testResponsiveMinimumIsAcceptedAfterGrowthProbe() {
+        let target = CGRect(x: 0, y: 0, width: 400, height: 600)
+        var frame = CGRect(x: 0, y: 0, width: 700, height: 500)
+        var state = acknowledgement(original: frame, target: target)
+        var completed: CGRect?
+        var probed = false
+        for time in [0.0, 0.02, 0.2, 0.66, 0.8, 1.32, 1.36, 1.4, 1.6, 1.64] {
+            switch state.observe(frame, at: time) {
+            case .size(let size):
+                if size.width > 700 { probed = true }
+                frame.size = CGSize(width: max(700, size.width), height: size.height)
+            case .position(let point): frame.origin = point
+            case .complete(let result): completed = result
+            case .failed: XCTFail("A responsive minimum should be accepted")
+            case .waiting: break
+            }
+        }
+        XCTAssertTrue(probed)
+        XCTAssertEqual(completed?.size, CGSize(width: 700, height: 600))
+    }
+
+    private func assertIgnoredAxisIsProbed(original: CGSize, target: CGSize, ignoredWidth: Bool,
+                                           file: StaticString = #filePath, line: UInt = #line) {
+        var frame = CGRect(origin: .zero, size: original)
+        var state = acknowledgement(original: frame, target: CGRect(origin: .zero, size: target))
+        var probed = false
+        var failed = false
+        for time in [0.0, 0.02, 0.2, 0.66, 0.8, 1.32, 1.36, 2.0] {
+            switch state.observe(frame, at: time) {
+            case .size(let size):
+                if ignoredWidth {
+                    probed = probed || size.width > original.width
+                    frame.size.height = size.height
+                } else {
+                    probed = probed || size.height > original.height
+                    frame.size.width = size.width
+                }
+            case .position(let point): frame.origin = point
+            case .complete: XCTFail("An ignored axis is not a verified minimum", file: file, line: line)
+            case .failed: failed = true
+            case .waiting: break
+            }
+        }
+        XCTAssertTrue(probed, file: file, line: line)
+        XCTAssertTrue(failed, file: file, line: line)
+    }
+
+    private func acknowledgement(original: CGRect, target: CGRect) -> WindowPlacementAcknowledgement {
+        let bounds = CGRect(x: 0, y: 0, width: 1400, height: 900)
+        return WindowPlacementAcknowledgement(target: target, startedAt: 0, pendingWrite: false,
+            bounds: bounds, placement: ImmediateWindowPlacement(screenFrame: bounds, sharedEdges: nil,
+                constrainToScreen: false, gap: 0), original: original, directPlacement: true)
+    }
+}
+
