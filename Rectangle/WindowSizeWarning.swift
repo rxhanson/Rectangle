@@ -50,24 +50,8 @@ final class WindowSizeWarning: NSPanel {
         ignoresMouseEvents = true
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
 
-        let container = NSVisualEffectView()
-        container.material = .hudWindow
-        container.blendingMode = .behindWindow
-        container.state = .active
-        container.wantsLayer = true
-        let radius: CGFloat = 14
-        container.layer?.cornerRadius = radius
-        container.layer?.masksToBounds = true
-
-        // Mask the material itself so its blur does not bleed outside the rounded corners.
-        let mask = NSImage(size: NSSize(width: radius * 2 + 1, height: radius * 2 + 1), flipped: false) { rect in
-            NSColor.white.setFill()
-            NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
-            return true
-        }
-        mask.capInsets = NSEdgeInsets(top: radius, left: radius, bottom: radius, right: radius)
-        mask.resizingMode = .stretch
-        container.maskImage = mask
+        let surface = BlurSurfaceView(material: .hudWindow, cornerRadius: 14)
+        let container = surface.content
 
         let icon = WindowSizeWarningIcon()
         icon.translatesAutoresizingMaskIntoConstraints = false
@@ -90,7 +74,7 @@ final class WindowSizeWarning: NSPanel {
             title.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -Self.padding),
             title.centerYAnchor.constraint(equalTo: icon.centerYAnchor)
         ])
-        contentView = container
+        contentView = surface
     }
 
     func show(on screen: NSScreen, duration: TimeInterval = 3) {
@@ -98,7 +82,7 @@ final class WindowSizeWarning: NSPanel {
         guard !Defaults.showMinimumWindowSizeWarning.userDisabled else { return }
         guard let contentView else { return }
         let visibleFrame = screen.adjustedVisibleFrame()
-        let fittingSize = contentView.fittingSize
+        let fittingSize = (contentView as? BlurSurfaceView)?.content.fittingSize ?? contentView.fittingSize
         let width = min(fittingSize.width, visibleFrame.width - 32)
         guard width > Self.padding * 2, visibleFrame.height > 0 else { return }
         let height = min(fittingSize.height, visibleFrame.height)
