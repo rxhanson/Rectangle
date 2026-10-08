@@ -29,11 +29,11 @@ struct FootprintPresentation {
 }
 
 enum FootprintAnimationGeometry {
-    static func initialFrame(in destination: CGRect, from origin: CGPoint) -> CGRect {
+    static func initialFrame(in destination: CGRect, from origin: CGPoint, minimumExtent: CGFloat = 1) -> CGRect {
         // A zero-sized frame on a shared edge can attach to the neighboring
         // display's Space. Keep the first visible pixel inside the destination.
-        let width = min(1, destination.width)
-        let height = min(1, destination.height)
+        let width = min(max(1, minimumExtent), destination.width)
+        let height = min(max(1, minimumExtent), destination.height)
         return CGRect(x: min(max(origin.x, destination.minX), destination.maxX - width),
                       y: min(max(origin.y, destination.minY), destination.maxY - height),
                       width: width, height: height)
@@ -167,9 +167,8 @@ private final class FootprintShadowWindow: NSWindow {
 
 class FootprintWindow: NSWindow {
     private let boxView = NSBox()
-    private let effectView = NSVisualEffectView()
+    private let effectView = BlurSurfaceView(cornerRadius: 12)
     private var shadowWindow: FootprintShadowWindow?
-    private var blurMaskRadius: CGFloat?
     private let accessibility: () -> FootprintAccessibility
     private let clock: () -> TimeInterval
     private var accessibilityObserver: NSObjectProtocol?
@@ -195,6 +194,8 @@ class FootprintWindow: NSWindow {
                               accessibility: options)
     }
 
+
+    var usesLiquidGlass: Bool { presentation.usesBlur && BlurSurfaceView.liquidGlassEnabled }
 
     private var cornerRadius: CGFloat {
         presentation.usesBlur ? 12 : FootprintStyle.cornerRadius
@@ -230,9 +231,6 @@ class FootprintWindow: NSWindow {
         let radius = cornerRadius
         container.layer?.cornerRadius = radius
         container.layer?.masksToBounds = true
-        effectView.material = .fullScreenUI
-        effectView.blendingMode = .behindWindow
-        effectView.state = .active
         effectView.autoresizingMask = [.width, .height]
         container.addSubview(effectView)
         boxView.boxType = .custom
@@ -241,6 +239,8 @@ class FootprintWindow: NSWindow {
         boxView.autoresizingMask = [.width, .height]
         container.addSubview(boxView)
         contentView = container
+        effectView.onStyleChange = { [weak self] in self?.refreshAccessibility() }
+        effectView.onAppearanceChange = { [weak self] in self?.updateAppearance() }
         container.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
         accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
@@ -263,7 +263,9 @@ class FootprintWindow: NSWindow {
     }
 
     private func updateAppearance() {
+        effectView.refresh()
         let style = presentation
+        let glass = usesLiquidGlass
         let requestedAppearance = style.usesBlur ? Defaults.blurAppearance.value.appearance : nil
         if appearance?.name != requestedAppearance?.name {
             appearance = requestedAppearance
@@ -282,18 +284,8 @@ class FootprintWindow: NSWindow {
         let radius = cornerRadius
         contentView?.layer?.cornerRadius = radius
         boxView.cornerRadius = radius
-        if style.usesBlur, blurMaskRadius != radius {
-            // Clip the material itself to prevent bright corners outside the tint mask.
-            let mask = NSImage(size: NSSize(width: radius * 2 + 1, height: radius * 2 + 1), flipped: false) { rect in
-                NSColor.white.setFill()
-                NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
-                return true
-            }
-            mask.capInsets = NSEdgeInsets(top: radius, left: radius, bottom: radius, right: radius)
-            mask.resizingMode = .stretch
-            effectView.maskImage = mask
-            blurMaskRadius = radius
-        }
+        contentView?.layer?.masksToBounds = !glass
+        boxView.isHidden = glass
         effectView.isHidden = !style.usesBlur
         effectView.alphaValue = 1
         boxView.borderColor = style.usesBlur
@@ -319,7 +311,7 @@ class FootprintWindow: NSWindow {
 
 
     private func updateShadow() {
-        guard presentation.usesBlur, super.isVisible, !frame.isEmpty else {
+        guard presentation.usesBlur, !usesLiquidGlass, super.isVisible, !frame.isEmpty else {
             shadowWindow?.orderOut(nil)
             return
         }
@@ -396,7 +388,7 @@ class FootprintWindow: NSWindow {
         frameAnimation?.cancel()
         updateAppearance()
         if !super.isVisible || alphaValue == 0 {
-            let initial = presentation.animates ? origin.map { FootprintAnimationGeometry.initialFrame(in: rect, from: $0) } : nil
+            let initial = presentation.animates ? origin.map { FootprintAnimationGeometry.initialFrame(in: rect, from: $0, minimumExtent: usesLiquidGlass ? cornerRadius * 2 + 8 : 1) } : nil
             setFrame(initial ?? rect, display: false)
         }
         orderFront(nil)
