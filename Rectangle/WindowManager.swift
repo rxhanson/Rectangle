@@ -77,18 +77,26 @@ class WindowManager {
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 WindowSizeConstraints.shared.cancelPendingObservations()
+                let restoreGeneration = WindowSizeConstraints.shared.observationGeneration
                 executionID &+= 1
                 let currentExecutionID = executionID
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
-                        guard let self, self.executionID == currentExecutionID else { return }
-                        // A completed animation has already placed the real window.
-                        if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                    windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
+                        self?.executionID == currentExecutionID
+                            && WindowSizeConstraints.shared.observationGeneration == restoreGeneration
+                    }) { [weak self] in
+                        self?.windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                            guard let self, self.executionID == currentExecutionID,
+                                  WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
+                            // A completed animation has already placed the real window.
+                            if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                        }
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
                     windowAnimator.afterPendingWrites { [weak self] in
-                        guard self?.executionID == currentExecutionID else { return }
+                        guard self?.executionID == currentExecutionID,
+                              WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
                         frontmostWindowElement.setFrame(restoreRect)
                     }
                 }
