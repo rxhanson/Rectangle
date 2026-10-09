@@ -4,6 +4,7 @@ import Foundation
 
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
+    var axElement: AXUIElement { wrappedElement }
     
     init(_ element: AXUIElement) {
         wrappedElement = element
@@ -177,85 +178,6 @@ class AccessibilityElement {
         )
     }
 
-    /// Holds the Enhanced UI policy for the transition; returns its cleanup closure.
-    func beginAnimatedAdjustment() -> () -> Void {
-        let appElement = applicationElement
-        let restore = Defaults.enhancedUI.value.beginWindowAdjustment(
-            bundleIdentifier: appElement?.bundleIdentifier,
-            builtInAssistiveTechnologyEnabled: NSWorkspace.shared.isVoiceOverEnabled
-                || NSWorkspace.shared.isSwitchControlEnabled,
-            readEnhancedUI: { appElement?.enhancedUserInterface },
-            writeEnhancedUI: { appElement?.enhancedUserInterface = $0 }
-        )
-        // Bound AX calls so an unresponsive app cannot stall the animation.
-        setMessagingTimeout(0.05)
-        return { [self] in
-            setMessagingTimeout(0)
-            restore()
-        }
-    }
-
-    /// Writes one frame without readback; completion handles the final placement.
-    func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool {
-        var size = frame.size
-        var position = frame.origin
-        guard let sizeValue = AXValueCreate(.cgSize, &size),
-              let positionValue = AXValueCreate(.cgPoint, &position) else { return false }
-        guard AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, sizeValue) == .success else { return false }
-        // Native dragging owns position during size restoration.
-        if !resizeOnly {
-            guard AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, positionValue) == .success else { return false }
-        }
-        return true
-    }
-
-    func setConstrainedAnimationFrame(_ frame: CGRect, placement: WindowAnimationPlacement,
-                                      origin: CGRect, progress: CGFloat, previousFrame: CGRect? = nil,
-                                      maximumCorrection: CGFloat = 0) -> CGRect? {
-        var preparedPosition: CGPoint?
-        if let previousFrame,
-           let position = placement.positionBeforeGrowing(from: previousFrame, to: frame),
-           writeAnimationPosition(position) == .success {
-            preparedPosition = position
-        }
-        // Resize before moving on shrinking axes: a refused shrink must not carry the wider window
-        // to the narrower frame's origin and leave it behind the Dock until completion.
-        let sizeUnchanged = progress < 1 && previousFrame?.size == frame.size
-        let resized = sizeUnchanged || writeAnimationSize(frame.size) == .success
-        let actualSize = size.flatMap { size -> CGSize? in
-            guard size.width.isFinite, size.height.isFinite,
-                  size.width > 0, size.height > 0 else { return nil }
-            return size
-        }
-        // Finish positioning with the size the app reports. Shrinking axes must
-        // not move to the requested origin and then move back after a delayed
-        // Chromium readback. Continue moving even if resizing failed;
-        // native display settlement must not stall every intermediate position.
-        var resolved = placement.frame(for: frame, actualSize: actualSize ?? frame.size,
-                                       origin: origin, progress: progress)
-        if progress < 1, let previousFrame {
-            let previous = CGRect(origin: preparedPosition ?? previousFrame.origin, size: previousFrame.size)
-            resolved = placement.intermediateFrame(resolved, requested: frame, previous: previous, maximumCorrection: maximumCorrection)
-        }
-        if (preparedPosition ?? previousFrame?.origin) != resolved.origin {
-            guard writeAnimationPosition(resolved.origin) == .success else { return nil }
-        }
-        guard resized, actualSize != nil else { return nil }
-        return resolved
-    }
-
-    func writeAnimationPosition(_ position: CGPoint) -> AXError {
-        var position = position
-        guard let value = AXValueCreate(.cgPoint, &position) else { return .failure }
-        return AXUIElementSetAttributeValue(wrappedElement, kAXPositionAttribute as CFString, value)
-    }
-
-    func writeAnimationSize(_ size: CGSize) -> AXError {
-        var size = size
-        guard let value = AXValueCreate(.cgSize, &size) else { return .failure }
-        return AXUIElementSetAttributeValue(wrappedElement, kAXSizeAttribute as CFString, value)
-    }
-    
     private var childElements: [AccessibilityElement]? {
         getElementsValue(.children)
     }

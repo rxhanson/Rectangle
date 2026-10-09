@@ -5218,12 +5218,13 @@ final class DragRestorePlacementTests: XCTestCase {
 }
 
 final class DragRestoreReleaseTests: XCTestCase {
-    private final class WindowElement: AccessibilityElement {
+    private final class WindowElement: WindowAnimationElement {
         var currentFrame = CGRect(x: 120, y: 120, width: 800, height: 600)
         var writes: [CGRect] = []
         override var frame: CGRect { currentFrame }
         override func beginAnimatedAdjustment() -> () -> Void { {} }
         override func setAnimationFrame(_ frame: CGRect, resizeOnly: Bool = false) -> Bool { true }
+
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             currentFrame.size = frame.size
             if adjustPosition { currentFrame.origin = frame.origin }
@@ -5271,10 +5272,11 @@ final class DragRestoreReleaseTests: XCTestCase {
     }
 
     func testDirectAnimationWithoutServerIdentityCompletesOnceAndMouseUpDoesNotRepeatIt() throws {
+        let animator = DirectWindowAnimator(enabled: { true }, automaticallyAdvances: false, environmentIsSafe: { true })
         let saved = Defaults.experimentalWindowAnimations.enabled
         Defaults.experimentalWindowAnimations.enabled = true
         defer {
-            WindowAnimator.shared.finish()
+            animator.finish()
             Defaults.experimentalWindowAnimations.enabled = saved
         }
         try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
@@ -5282,19 +5284,19 @@ final class DragRestoreReleaseTests: XCTestCase {
         XCTAssertNil(window.windowId, "Direct animation does not require a WindowServer identity")
         let destination = CGRect(x: 300, y: 120, width: 500, height: 400)
         var completedFrames: [CGRect] = []
-        WindowAnimator.shared.animate(window, to: destination, duration: 0.18) { completedFrames.append($0) }
+        animator.animate(window, to: destination, duration: 0.18, resizeOnly: false, placement: nil, offset: { .zero }) { completedFrames.append($0) }
 
         XCTAssertTrue(completedFrames.isEmpty)
-        XCTAssertEqual(WindowAnimator.shared.destination(for: window), destination)
-        WindowAnimator.shared.finish()
+        XCTAssertEqual(animator.destination(for: window), destination)
+        animator.finish()
         XCTAssertEqual(completedFrames, [destination])
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
 
         let manager = try release(dragAlreadyDetected: true)
 
         XCTAssertEqual(completedFrames, [destination], "A later native release must not repeat the completed animation")
         XCTAssertEqual(manager.restores, 0)
-        XCTAssertNil(WindowAnimator.shared.destination(for: window))
+        XCTAssertNil(animator.destination(for: window))
     }
 }
 
@@ -7743,3 +7745,224 @@ class TitleBarScreenDetectionTests: XCTestCase {
         XCTAssertNil(TitleBarManager.screenForClick(at: CGPoint(x: 5000, y: 0), screens: [left, above]))
     }
 }
+
+final class WindowAnimationSettlementRoundingTests: XCTestCase {
+    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
+
+    private func target(gap: Float = 7) -> CGRect {
+        GapCalculation.applyGaps(CGRect(x: 500, y: 0, width: 500, height: 800),
+                                 sharedEdges: .left, gapSize: gap)
+    }
+
+    private func placement(gap: CGFloat = 7) -> WindowAnimationPlacement {
+        WindowAnimationPlacement(screenFrame: screen, sharedEdges: .right,
+                                 constrainToScreen: true, gap: gap)
+    }
+
+    func testOddGapCompletesAfterOneRoundedPositionWrite() {
+        let target = target()
+        let actual = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: actual, server: actual, destination: target,
+                                       placement: placement(), origin: actual, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected an exact final position write") }
+        XCTAssertEqual(requested.origin, target.origin)
+        let second = settlement.observe(ax: actual, server: actual, destination: target,
+                                        placement: placement(), origin: actual, at: 2.0 / 60)
+        guard case .complete(let achieved) = second else { return XCTFail("Rounded placement must not enter a retry loop") }
+        XCTAssertEqual(achieved, actual)
+    }
+
+    func testFractionalGapAcceptsHalfPointQuantizationAfterExactWrite() {
+        let target = target(gap: 7.5)
+        let actual = CGRect(x: 504, y: 7.5, width: 489, height: 785)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        _ = settlement.observe(ax: actual, server: actual, destination: target,
+                               placement: placement(gap: 7.5), origin: actual, at: 1.0 / 60)
+        let result = settlement.observe(ax: actual, server: actual, destination: target,
+                                        placement: placement(gap: 7.5), origin: actual, at: 2.0 / 60)
+        guard case .complete(let achieved) = result else { return XCTFail("Expected a verified rounded placement") }
+        XCTAssertEqual(achieved, actual)
+    }
+
+    func testExactFractionalPositionIsUsedWhenAppAcceptsIt() {
+        let target = target()
+        let before = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: before, server: before, destination: target,
+                                       placement: placement(), origin: before, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected exact alignment") }
+        let result = settlement.observe(ax: requested, server: requested, destination: target,
+                                        placement: placement(), origin: before, at: 2.0 / 60)
+        guard case .complete(let achieved) = result else { return XCTFail("Expected the accepted exact position") }
+        XCTAssertEqual(achieved.origin, target.origin)
+    }
+
+    func testDisagreeingServerGeometryDoesNotEstablishRounding() {
+        let target = target()
+        let actual = CGRect(x: 504, y: 7, width: 490, height: 786)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        let first = settlement.observe(ax: actual, server: actual, destination: target,
+                                       placement: placement(), origin: actual, at: 1.0 / 60)
+        guard case .align(let requested) = first else { return XCTFail("Expected exact alignment") }
+        let result = settlement.observe(ax: actual, server: requested, destination: target,
+                                        placement: placement(), origin: actual, at: 2.0 / 60)
+        if case .complete = result { XCTFail("Different AX and server positions can still be in flight") }
+    }
+
+    func testIntegerTargetStillRequiresExactPosition() {
+        let target = CGRect(x: 503, y: 7, width: 490, height: 786)
+        let actual = target.offsetBy(dx: 1, dy: 0)
+        var settlement = WindowAnimationSettlement(startedAt: 0, alignmentTolerance: 0.001)
+        for step in 1...3 {
+            let result = settlement.observe(ax: actual, server: actual, destination: target,
+                                            placement: placement(), origin: actual, at: Double(step) / 60)
+            if case .complete = result { XCTFail("A full-point residual must still be corrected") }
+        }
+    }
+}
+
+
+final class WindowAnimationRequestCancellationTests: XCTestCase {
+    private final class QueuedWindow: AccessibilityElement {
+        private(set) var minimumSizeReads = 0
+
+        init() { super.init(AXUIElementCreateApplication(getpid())) }
+        override var windowId: CGWindowID? { .max }
+        override var pid: pid_t? { getpid() }
+        override var bundleIdentifier: String? { nil }
+        override var minimumSize: CGSize? {
+            minimumSizeReads += 1
+            return nil
+        }
+    }
+
+    func testTimedOutLookupCancelsWithoutMainThreadPlacementFallback() throws {
+        try assertLookupCompletion(.timedOut, cancels: true)
+    }
+
+    func testObsoleteLookupCancelsWithoutMainThreadPlacementFallback() throws {
+        try assertLookupCompletion(.cancelled, cancels: true)
+    }
+
+    func testUnavailableLookupPreservesOrdinaryPlacementFallback() throws {
+        try assertLookupCompletion(.unavailable, cancels: false)
+    }
+
+    private func assertLookupCompletion(_ result: WindowAccessibilityLookup.Result, cancels: Bool) throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+        let finished = expectation(description: "Lookup delivered its terminal callback")
+        let executor = WindowAnimator(lookupWindow: { _, _, _, _, _ in
+            XCTAssertFalse(Thread.isMainThread)
+            return result
+        })
+        let window = QueuedWindow()
+        var cancellations = 0
+        var completions = 0
+        executor.animate(window, to: CGRect(x: 100, y: 100, width: 500, height: 400),
+                         duration: 0.18, resizeOnly: false, releasedSnap: false, placement: nil,
+                         profile: .standard, offset: { .zero }, curve: WindowAnimationCurve.value,
+                         cancellation: {
+                             XCTAssertTrue(Thread.isMainThread)
+                             cancellations += 1
+                             finished.fulfill()
+                         }) { frame in
+            XCTAssertTrue(Thread.isMainThread)
+            XCTAssertTrue(frame.isNull)
+            completions += 1
+            finished.fulfill()
+        }
+        wait(for: [finished], timeout: 1)
+        XCTAssertEqual(cancellations, cancels ? 1 : 0)
+        XCTAssertEqual(completions, cancels ? 0 : 1)
+        XCTAssertNil(executor.destination(for: window))
+        XCTAssertEqual(window.minimumSizeReads, 0)
+    }
+
+    func testQueuedAnimationDoesNotReadMinimumSizeBeforeWorkerCanStart() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+
+        let queue = DispatchQueue(label: "RectangleTests.Animation")
+        let executor = WindowAnimator(queue: queue)
+        let workerStarted = expectation(description: "Worker is occupied")
+        let workerDrained = expectation(description: "Cancelled preparation drained")
+        let release = DispatchSemaphore(value: 0)
+        queue.async {
+            workerStarted.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+        }
+        wait(for: [workerStarted], timeout: 1)
+        let window = QueuedWindow()
+        let destination = CGRect(x: 100, y: 100, width: 500, height: 400)
+        var cancellations = 0
+        var completions = 0
+        executor.animate(window, to: destination, duration: 0.18, resizeOnly: false, releasedSnap: false,
+                         placement: nil, profile: .standard, offset: { .zero }, curve: WindowAnimationCurve.value,
+                         cancellation: { cancellations += 1 }) { _ in completions += 1 }
+        XCTAssertEqual(executor.destination(for: window), destination)
+        XCTAssertEqual(window.minimumSizeReads, 0, "Optional AX metadata must never be queried through the main-thread handle")
+        executor.cancel()
+        queue.async { workerDrained.fulfill() }
+        release.signal()
+        wait(for: [workerDrained], timeout: 1)
+        XCTAssertEqual(cancellations, 1)
+        XCTAssertEqual(completions, 0)
+        XCTAssertEqual(window.minimumSizeReads, 0)
+    }
+
+    func testCancellationRunsCleanupOnceAfterInvalidatingWrites() {
+        var cancellations = 0
+        var request: WindowAnimationRequest!
+        request = WindowAnimationRequest(cancellation: {
+            XCTAssertFalse(request.isCurrent)
+            cancellations += 1
+        })
+        XCTAssertTrue(request.isCurrent)
+        request.cancel()
+        request.cancel()
+        request.complete()
+        XCTAssertEqual(cancellations, 1)
+    }
+
+    func testCompletedRequestDoesNotRunCancellationCleanup() {
+        var cancellations = 0
+        let request = WindowAnimationRequest(cancellation: { cancellations += 1 })
+        request.complete()
+        request.cancel()
+        XCTAssertFalse(request.isCurrent)
+        XCTAssertEqual(cancellations, 0)
+    }
+
+    func testSupersededPendingWriteRunsOnlyCancellationCleanup() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Animations disabled by accessibility settings")
+        let queue = DispatchQueue(label: "RectangleTests.Animation")
+        let executor = WindowAnimator(queue: queue)
+        let workerStarted = expectation(description: "Worker is occupied")
+        let cancelled = expectation(description: "Pending placement was cancelled")
+        let release = DispatchSemaphore(value: 0)
+        queue.async {
+            workerStarted.fulfill()
+            _ = release.wait(timeout: .now() + 2)
+        }
+        wait(for: [workerStarted], timeout: 1)
+        var completions = 0
+        executor.animate(QueuedWindow(), to: CGRect(x: 20, y: 20, width: 600, height: 400)) { _ in
+            XCTFail("A superseded animation must not complete")
+        }
+        executor.afterPendingWrites(cancellation: { cancelled.fulfill() }) { completions += 1 }
+        executor.cancel()
+        release.signal()
+        wait(for: [cancelled], timeout: 1)
+        XCTAssertEqual(completions, 0)
+    }
+}
+
