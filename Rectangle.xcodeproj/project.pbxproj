@@ -229,6 +229,7 @@
 		758065A0E2A5EC821CF01BEF /* WindowDisplayTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CD3344BB6B11EDEBCF9E98 /* WindowDisplayTransition.swift */; };
 		B28F5289FADB9F07DCADCB0A /* WindowFrameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */; };
 		196F08301B312AD386ACC153 /* WindowKeyboardMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */; };
+		212A5B7088F376DAAB80D83D /* ImmediateWindowPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86951EE306D7872356ECEBE9 /* ImmediateWindowPlacement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -483,6 +484,7 @@
 		A4CD3344BB6B11EDEBCF9E98 /* WindowDisplayTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDisplayTransition.swift; sourceTree = "<group>"; };
 		EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameAnimation.swift; sourceTree = "<group>"; };
 		40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowKeyboardMotion.swift; sourceTree = "<group>"; };
+		86951EE306D7872356ECEBE9 /* ImmediateWindowPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateWindowPlacement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -658,6 +660,7 @@
 		982140EA22B7DB0400ABFB3F /* WindowMover */ = {
 			isa = PBXGroup;
 			children = (
+				86951EE306D7872356ECEBE9 /* ImmediateWindowPlacement.swift */,
 				9824704A22B189250037B409 /* BestEffortWindowMover.swift */,
 				9824704622B189240037B409 /* StandardWindowMover.swift */,
 				9824704722B189240037B409 /* WindowMover.swift */,
@@ -1054,6 +1057,7 @@
 				758065A0E2A5EC821CF01BEF /* WindowDisplayTransition.swift in Sources */,
 				B28F5289FADB9F07DCADCB0A /* WindowFrameAnimation.swift in Sources */,
 				196F08301B312AD386ACC153 /* WindowKeyboardMotion.swift in Sources */,
+				212A5B7088F376DAAB80D83D /* ImmediateWindowPlacement.swift in Sources */,
 				98A009B32512536900CFBF0C /* LastFourthCalculation.swift in Sources */,
 				98A009BB2512539900CFBF0C /* BottomLeftSixthCalculation.swift in Sources */,
 				9821402322B3886100ABFB3F /* CenterCalculation.swift in Sources */,
