@@ -61,6 +61,16 @@ When several windows are snapped to the same area, such as three windows on the 
 
 A window is in the stack when it sits at the same position as the window focused at the first press, or is offset from it by **Offset window position on overlap**, whatever its size. With **Only stack windows of the same size** on, it must also be the same size (within 24 points in width and height, so terminal windows that snap to whole character cells still count), so a maximized window that shares a corner with a half is not in that half's stack. The stacked window list follows the same setting. **Cycle stacked windows** first brings forward the window at the back of the stack; **Cycle stacked windows backward** first brings forward the window just behind the front one. Repeated presses visit every window in the stack. Pressing either shortcut while a window outside the stack is focused starts over from that window's stack. When the focused window has nothing stacked with it, Rectangle beeps.
 
+### Mouse button shortcuts
+
+A window action's shortcut can be a mouse button instead of a key, such as one of the side buttons found on many mice. The side buttons pair well with **Cycle stacked windows** and **Cycle stacked windows backward**. To assign one, click the action's shortcut field in Settings, either on the **Shortcuts** tab or in **Behavior** > **Stacked Windows**, then press the middle button or an extra button with the pointer over the Settings window. Hold any of ⌃, ⌥, ⇧ and ⌘ while pressing to include them, just as in a keyboard shortcut. Each action has one shortcut, so a mouse button replaces the action's keyboard shortcut. Left and right clicks can't be assigned.
+
+A press of an assigned button goes only to Rectangle, so the app under the pointer doesn't also act on it, for example by going back in a browser. Buttons that aren't assigned work as usual. Like keyboard shortcuts, mouse button shortcuts are off while an ignored app is frontmost or a shortcut is being recorded, and assigning one button to several actions cycles through them.
+
+Mouse button shortcuts act on the focused window, as keyboard shortcuts do. To have them act on the window under the pointer instead, turn on **Mouse button shortcuts act on the window under the pointer** in **Behavior** > **Extras**. Focus stays where it is, except with actions that work by bringing windows forward, such as the cycle actions. When there's no window under the pointer, Rectangle beeps.
+
+If pressing a button doesn't record it, other software, such as your mouse's own utility, may be remapping the button before Rectangle sees it.
+
 ### Ignore an app
 
 Ignoring an app means that when the app is frontmost, keyboard shortcuts are un-registered from macOS. When the app is no longer frontmost, keyboard shortcuts are re-registered with macOS. This is useful for apps that have the same shortcuts like Rectangle and you do not want to change them.

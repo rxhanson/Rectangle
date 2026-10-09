@@ -122,6 +122,57 @@ class ShortcutRecordingObserverTests: XCTestCase {
         XCTAssertEqual(recordingChanges, [true, false, true, false])
     }
 
+    func testPostsRecordingChangesForWindowActionShortcutViews() {
+        let observer = ShortcutRecordingObserver()
+        let shortcutView = WindowActionShortcutView()
+        var recordingChanges = [Bool]()
+        let notificationObserver = NotificationCenter.default.addObserver(
+            forName: .shortcutRecording,
+            object: nil,
+            queue: nil
+        ) { notification in
+            recordingChanges.append(notification.object as! Bool)
+        }
+        defer {
+            NotificationCenter.default.removeObserver(notificationObserver)
+            shortcutView.isRecording = false
+        }
+
+        observer.observe([shortcutView])
+
+        shortcutView.isRecording = true
+        shortcutView.isRecording = false
+
+        XCTAssertEqual(recordingChanges, [true, false])
+    }
+
+    func testRecordingAMouseButtonEndsRecording() throws {
+        let observer = ShortcutRecordingObserver()
+        let shortcutView = WindowActionShortcutView()
+        var recordingChanges = [Bool]()
+        let notificationObserver = NotificationCenter.default.addObserver(
+            forName: .shortcutRecording,
+            object: nil,
+            queue: nil
+        ) { notification in
+            recordingChanges.append(notification.object as! Bool)
+        }
+        defer {
+            NotificationCenter.default.removeObserver(notificationObserver)
+            shortcutView.isRecording = false
+        }
+        let cgEvent = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .otherMouseDown,
+                                            mouseCursorPosition: .zero, mouseButton: .center))
+        cgEvent.setIntegerValueField(.mouseEventButtonNumber, value: 3)
+        let buttonPress = try XCTUnwrap(NSEvent(cgEvent: cgEvent))
+
+        observer.observe([shortcutView])
+        shortcutView.setValue(true, forKey: "recording")
+
+        XCTAssertTrue(shortcutView.recordMouseButton(buttonPress))
+        XCTAssertEqual(recordingChanges, [true, false])
+    }
+
     func testObservingSameShortcutViewTwiceDoesNotDuplicateNotifications() {
         let observer = ShortcutRecordingObserver()
         let shortcutView = MASShortcutView()

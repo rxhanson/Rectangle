@@ -75,6 +75,7 @@
 		9824703722B0F3200037B409 /* WindowAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703622B0F3200037B409 /* WindowAction.swift */; };
 		982470382EFA00010037B409 /* WindowActionCooperativeResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */; };
 		9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703822B0F37C0037B409 /* ShortcutManager.swift */; };
+		AF0CB0770000000000000001 /* MouseButtonShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0CB0770000000000000002 /* MouseButtonShortcut.swift */; };
 		9824703B22B139780037B409 /* CUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703A22B139780037B409 /* CUtil.swift */; };
 		9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703C22B13C7E0037B409 /* AccessibilityElement.swift */; };
 		9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703E22B13FBC0037B409 /* ScreenDetection.swift */; };
@@ -136,6 +137,7 @@
 		98ED703A305DB1180077BD10 /* BehaviorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */; };
 		98ED703C305DB20A0077BD10 /* BehaviorSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */; };
 		98ED703E305DC12D0077BD10 /* MASShortcutViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */; };
+		AF0CB0770000000000000003 /* WindowActionShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0CB0770000000000000004 /* WindowActionShortcutView.swift */; };
 		98ED704B306171650077BD10 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED7049306171650077BD10 /* AppSettingsView.swift */; };
 		98ED704C306171650077BD10 /* AppSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704A306171650077BD10 /* AppSettingsViewModel.swift */; };
 		98ED704F306180AD0077BD10 /* SnapAreaSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */; };
@@ -331,6 +333,7 @@
 		9824703622B0F3200037B409 /* WindowAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAction.swift; sourceTree = "<group>"; };
 		982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowActionCooperativeResize.swift; sourceTree = "<group>"; };
 		9824703822B0F37C0037B409 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
+		AF0CB0770000000000000002 /* MouseButtonShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseButtonShortcut.swift; sourceTree = "<group>"; };
 		9824703A22B139780037B409 /* CUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CUtil.swift; sourceTree = "<group>"; };
 		9824703C22B13C7E0037B409 /* AccessibilityElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityElement.swift; sourceTree = "<group>"; };
 		9824703E22B13FBC0037B409 /* ScreenDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenDetection.swift; sourceTree = "<group>"; };
@@ -390,6 +393,7 @@
 		98ED7039305DB1180077BD10 /* BehaviorSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorSettingsView.swift; sourceTree = "<group>"; };
 		98ED703B305DB20A0077BD10 /* BehaviorSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorSettingsViewModel.swift; sourceTree = "<group>"; };
 		98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MASShortcutViewRepresentable.swift; sourceTree = "<group>"; };
+		AF0CB0770000000000000004 /* WindowActionShortcutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowActionShortcutView.swift; sourceTree = "<group>"; };
 		98ED7049306171650077BD10 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		98ED704A306171650077BD10 /* AppSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsViewModel.swift; sourceTree = "<group>"; };
 		98ED704E306180AD0077BD10 /* SnapAreaSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapAreaSettingsView.swift; sourceTree = "<group>"; };
@@ -747,6 +751,7 @@
 				982470372EFA00010037B409 /* WindowActionCooperativeResize.swift */,
 				98A6EDEB2528FFC100F74B10 /* WindowActionCategory.swift */,
 				9824703822B0F37C0037B409 /* ShortcutManager.swift */,
+				AF0CB0770000000000000002 /* MouseButtonShortcut.swift */,
 				9824703C22B13C7E0037B409 /* AccessibilityElement.swift */,
 				9824703E22B13FBC0037B409 /* ScreenDetection.swift */,
 				98C275662322E2DA009B9292 /* WindowHistory.swift */,
@@ -846,6 +851,7 @@
 				944F25CE2CE5A144004B2FD2 /* ShortcutRecordingObserver.swift */,
 				98ED73A93062FCD20077BD10 /* PopoverButton.swift */,
 				98ED703D305DC12D0077BD10 /* MASShortcutViewRepresentable.swift */,
+				AF0CB0770000000000000004 /* WindowActionShortcutView.swift */,
 				98ED73DB30657D7D0077BD10 /* Config.swift */,
 			);
 			path = SettingsWindow;
@@ -1152,6 +1158,7 @@
 				9824703722B0F3200037B409 /* WindowAction.swift in Sources */,
 				982470382EFA00010037B409 /* WindowActionCooperativeResize.swift in Sources */,
 				98ED703E305DC12D0077BD10 /* MASShortcutViewRepresentable.swift in Sources */,
+				AF0CB0770000000000000003 /* WindowActionShortcutView.swift in Sources */,
 				B4521F932BD7CEFB00FD43CC /* ChangeWindowDimensionCalculation.swift in Sources */,
 				9821402922B3889100ABFB3F /* LowerLeftCalculation.swift in Sources */,
 				98ED73AA3062FCD20077BD10 /* PopoverButton.swift in Sources */,
@@ -1188,6 +1195,7 @@
 				9824704F22B189250037B409 /* BestEffortWindowMover.swift in Sources */,
 				30166BD024F27D6A00A38608 /* SpecifiedCalculation.swift in Sources */,
 				9824703922B0F37C0037B409 /* ShortcutManager.swift in Sources */,
+				AF0CB0770000000000000001 /* MouseButtonShortcut.swift in Sources */,
 				98D16A492592B460005228CB /* NotificationExtension.swift in Sources */,
 				AA0AC000291C1B5E00D125D2 /* CGExtension.swift in Sources */,
 				BB0B80492EFB0AF900A9B165 /* TopVerticalTwoThirdsCalculation.swift in Sources */,
