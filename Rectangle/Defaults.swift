@@ -13,8 +13,11 @@ class Defaults {
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionAxis>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
+    static let windowDivider = BoolDefault(key: "windowDivider")
+    static let windowDividerEnhanced = BoolDefault(key: "windowDividerEnhanced")
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
+    static let rememberWindowSizeLimits = BoolDefault(key: "rememberWindowSizeLimits", defaultValue: true)
     static let showMinimumWindowSizeWarning = OptionalBoolDefault(key: "showMinimumWindowSizeWarning")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
     static let windowSnapping = OptionalBoolDefault(key: "windowSnapping")
@@ -68,6 +71,7 @@ class Defaults {
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
+    static let liquidGlassForBlur = BoolDefault(key: "liquidGlassForBlur")
     static let footprintBlur = BoolDefault(key: "footprintBlur")
     static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
 
@@ -143,7 +147,10 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        windowDivider, windowDividerEnhanced,
         experimentalWindowAnimations,
+        rememberWindowSizeLimits,
+        showMinimumWindowSizeWarning,
         allowAnyShortcut,
         windowSnapping,
         almostMaximizeHeight,
@@ -182,6 +189,7 @@ class Defaults {
         footprintFade,
         footprintColor,
         footprintBlur,
+        liquidGlassForBlur,
         blurAppearance,
         SUEnableAutomaticChecks,
         todo,
@@ -274,9 +282,9 @@ class BoolDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Bool = false) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        enabled = UserDefaults.standard.object(forKey: key) == nil ? defaultValue : UserDefaults.standard.bool(forKey: key)
         initialized = true
     }
     

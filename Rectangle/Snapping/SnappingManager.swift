@@ -147,9 +147,15 @@ class SnappingManager {
             self.startEventMonitor()
         }
         Notification.Name.frontAppChanged.onPost(using: frontAppChanged)
+        Notification.Name.windowActionWillExecute.onPost { [weak self] notification in
+            guard let self, self.box?.waitingForPlacement == true,
+                  (notification.object as? ExecutionParameters)?.source != .dragToSnap else { return }
+            self.box?.orderOut(nil)
+        }
     }
     
     func frontAppChanged(notification: Notification) {
+        box?.cancelPlacementIfInactive()
         if ApplicationToggle.shortcutsDisabled {
             DispatchQueue.main.async {
                 if !Defaults.ignoreDragSnapToo.userDisabled {
@@ -190,6 +196,7 @@ class SnappingManager {
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         checkFullScreen()
     }
     
@@ -228,6 +235,7 @@ class SnappingManager {
     }
     
     private func disableSnapping() {
+        box?.close()
         box = nil
         stopEventMonitor()
     }
@@ -239,6 +247,7 @@ class SnappingManager {
     }
     
     private func stopEventMonitor() {
+        if box?.waitingForPlacement == true { box?.orderOut(nil) }
         pendingReleasedRestore = nil
         eventMonitor?.stop()
         eventMonitor = nil
@@ -282,13 +291,17 @@ class SnappingManager {
     }
     
     func handle(event: NSEvent) {
+        if WindowDividerManager.shared.containsPointerEvent(event) { return }
         switch event.type {
         case .keyDown:
+            if box?.waitingForPlacement == true { box?.orderOut(nil) }
             guard event.keyCode == 53, nativeGesture.held else { return }
             nativeGesture.cancel()
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            WindowDividerManager.shared.interrupt()
+            WindowSizeConstraints.shared.cancelPendingObservations()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -317,8 +330,8 @@ class SnappingManager {
             }
             if let currentSnapArea = self.currentSnapArea {
                 nativeSizeRestore = nil
-                dismissSnapPreviewForCommit()
-                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen)
+                let completion = snapPreviewCompletion()
+                currentSnapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: currentSnapArea.screen, completion: completion, cancellation: completion)
                 self.currentSnapArea = nil
             } else {
                 // it's possible that the window has moved, but the mouse dragged events are not getting the updated window position
@@ -332,10 +345,10 @@ class SnappingManager {
                     }
                     
                     if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event)  {
-                        dismissSnapPreviewForCommit()
                         if canSnap(event) {
-                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen)
-                        }
+                            let completion = snapPreviewCompletion()
+                            snapArea.action.postSnap(windowElement: windowElement, windowId: windowId, screen: snapArea.screen, completion: completion, cancellation: completion)
+                        } else { box?.orderOut(nil) }
                         self.currentSnapArea = nil
                     }
                 }
@@ -585,8 +598,12 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
-    private func dismissSnapPreviewForCommit() {
+    private func snapPreviewCompletion() -> (() -> Void)? {
+        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+            return box?.completionForSnap(windowID: windowId)
+        }
         box?.orderOut(nil)
+        return nil
     }
 
     private func showSnapPreview(in rect: CGRect, snapArea: SnapArea) {
@@ -597,7 +614,8 @@ class SnappingManager {
             box = FootprintWindow(initialFrame: rect)
         }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
-                         duration: getFootprintAnimationDuration())
+                         duration: getFootprintAnimationDuration(),
+                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {
@@ -628,7 +646,7 @@ class SnappingManager {
         }
     }
     
-    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window, applyingGaps: Bool = true) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
             let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
@@ -636,14 +654,27 @@ class SnappingManager {
             let rectResult = calculation.calculateRect(rectCalcParams)
             
             let gapsApplicable = hotSpot.action.gapsApplicable
+            var target = rectResult.rect
             
             if Defaults.gapSize.value > 0, gapsApplicable != .none {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
 
-                return GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                target = GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
             }
-            
-            return rectResult.rect
+            let minimum = windowElement?.minimumSize
+            let bounds = applyingGaps
+                ? GapCalculation.applyGaps(rectCalcParams.visibleFrameOfScreen, dimension: gapsApplicable,
+                    gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                : rectCalcParams.visibleFrameOfScreen
+            let hint = windowElement?.rememberedMinimumSize
+            func predictedPreview(_ requested: CGRect) -> CGRect {
+                let size = WindowSizeConstraints.animationSize(requested.size, origin: currentWindow.rect.size, hint: hint)
+                let previewMinimum = CGSize(width: max(minimum?.width ?? 0, size.width),
+                                            height: max(minimum?.height ?? 0, size.height))
+                return WindowSizeConstraints.fitting(requested, minimum: previewMinimum, in: bounds) ?? requested
+            }
+            if !applyingGaps { target = rectResult.rect }
+            return predictedPreview(target)
         }
         return nil
     }

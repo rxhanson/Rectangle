@@ -381,6 +381,9 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            windowSizeLimitsSection
+            adjacentWindowsSection
+
             // MARK: - Extras
             Section {
                 CustomDisclosureGroup {
@@ -388,7 +391,6 @@ struct BehaviorSettingsView: View {
                         Divider()
                         Toggle("Animate windows", isOn: $viewModel.experimentalAnimations)
                         Toggle("Preserve side axis size for half actions, similar to Windows", isOn: $viewModel.halvesPreserveOtherAxisSize)
-                        Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
                         Toggle("Show *Extra* shortcuts in menu", isOn: $viewModel.showAdditionalSizesInMenu)
                         if viewModel.showCombinedDisplayMode {
                             VStack(alignment: .leading, spacing: 2) {
@@ -410,6 +412,68 @@ struct BehaviorSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
+    }
+
+    private var windowSizeLimitsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Toggle("Remember learned window size limits", isOn: $viewModel.rememberWindowSizeLimits)
+                                .accessibilityIdentifier("rememberWindowSizeLimits")
+                            Spacer()
+                            Button("Manage memory") { viewModel.showWindowSizeLimits() }
+                                .disabled(!viewModel.rememberWindowSizeLimits)
+                                .accessibilityIdentifier("showWindowSizeLimits")
+                        }
+                        Text("Remembers window size limits and updates them as windows change.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .accessibilityIdentifier("rememberWindowSizeLimitsDescription")
+                    }
+                    Toggle("Show warning when windows cannot be resized small enough", isOn: $viewModel.showMinimumWindowSizeWarning)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label("Window Size Limits", systemImage: "ruler")
+            }
+        }
+    }
+
+    private var adjacentWindowsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Drag dividers to resize adjacent windows", isOn: $viewModel.windowDivider)
+                            .accessibilityIdentifier("windowDivider")
+                        Text("Left/right and top/bottom pairs only.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Enhanced transitions", isOn: $viewModel.windowDividerEnhanced)
+                            .accessibilityIdentifier("windowDividerEnhanced")
+                        Text("Uses a temporary screenshot to hide resizing. Requires Screen Recording access.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.leading, 20)
+                    .disabled(!viewModel.windowDivider || !WindowCapturePermission.previewsSupported)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label {
+                    Text("Adjacent Windows")
+                } icon: {
+                    Image(systemName: "rectangle.grid.1x2")
+                        .rotationEffect(.degrees(90))
+                }
+            }
+        }
     }
 
     /// A recorder for a window action's shortcut, validated like the ones on
