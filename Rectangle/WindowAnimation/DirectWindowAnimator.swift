@@ -92,7 +92,7 @@ final class DirectWindowAnimator {
              element.windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
          },
          crossesDisplays: @escaping (CGRect, CGRect) -> Bool = { WindowDisplayTransition.crossesDisplays(from: $0, to: $1) },
-         minimumHint: @escaping (WindowAnimationElement) -> CGSize? = { $0.minimumSize },
+         minimumHint: @escaping (WindowAnimationElement) -> CGSize? = { $0.rememberedMinimumSize },
          isNativeResizeApp: @escaping (String?) -> Bool = { id in
              guard let id else { return false }
              return Defaults.directAnimationNativeResizeApps.typedValue?.contains(id) == true

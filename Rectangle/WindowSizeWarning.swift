@@ -1,9 +1,14 @@
+/// WindowSizeWarning.swift
+
 import AppKit
 
 enum WindowSizeConstraint {
     static func isExceeded(requested: CGRect, actual: CGRect, action: WindowAction) -> Bool {
         guard action.resizes, isValid(requested), isValid(actual) else { return false }
 
+        // Ignore rounding differences, and windows limited by a maximum size.
+        // AX minimum-size attributes are unavailable for many apps, so use the
+        // achieved size after all of the window mover's attempts have finished.
         return actual.width > requested.width + 1 || actual.height > requested.height + 1
     }
 
@@ -16,6 +21,16 @@ enum WindowSizeConstraint {
 }
 
 final class WindowSizeWarning: NSPanel {
+    private static var current: WindowSizeWarning?
+    static var shared: WindowSizeWarning {
+        if let current { return current }
+        let warning = WindowSizeWarning()
+        current = warning
+        return warning
+    }
+    static func hideCurrent() { current?.hide() }
+
+    private static let padding: CGFloat = 16.8
     private var dismissal: DispatchWorkItem?
 
     override var canBecomeKey: Bool { false }
@@ -26,7 +41,6 @@ final class WindowSizeWarning: NSPanel {
                    styleMask: [.borderless, .nonactivatingPanel],
                    backing: .buffered,
                    defer: false)
-
         isOpaque = false
         backgroundColor = .clear
         level = .floating
@@ -41,55 +55,56 @@ final class WindowSizeWarning: NSPanel {
         container.blendingMode = .behindWindow
         container.state = .active
         container.wantsLayer = true
-        container.layer?.cornerRadius = 14
+        let radius: CGFloat = 14
+        container.layer?.cornerRadius = radius
         container.layer?.masksToBounds = true
 
-        let iconConfig = NSImage.SymbolConfiguration(pointSize: 24, weight: .regular)
-        let iconImage = NSImage(systemSymbolName: "arrow.down.forward.and.arrow.up.backward.rectangle", accessibilityDescription: nil)?
-            .withSymbolConfiguration(iconConfig)
+        // Mask the material itself so its blur does not bleed outside the rounded corners.
+        let mask = NSImage(size: NSSize(width: radius * 2 + 1, height: radius * 2 + 1), flipped: false) { rect in
+            NSColor.white.setFill()
+            NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
+            return true
+        }
+        mask.capInsets = NSEdgeInsets(top: radius, left: radius, bottom: radius, right: radius)
+        mask.resizingMode = .stretch
+        container.maskImage = mask
 
-        let imageView = NSImageView(image: iconImage ?? NSImage())
-        imageView.contentTintColor = .labelColor
-        imageView.setContentHuggingPriority(.required, for: .horizontal)
+        let icon = WindowSizeWarningIcon()
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(icon)
 
-        let title = NSTextField(labelWithString: String(localized: "Minimum window size reached", comment: "Title of the on-screen message when a window cannot fit its requested size"))
-        title.font = .systemFont(ofSize: 14, weight: .medium)
-        title.textColor = .labelColor
+        let title = NSTextField(labelWithString: NSLocalizedString("windowSizeWarningTitle", tableName: "Main", value: "Minimum size reached", comment: "Window size warning title"))
+        title.font = .systemFont(ofSize: 14.7, weight: .semibold)
+        title.maximumNumberOfLines = 1
+        title.lineBreakMode = .byTruncatingTail
 
-        let stackView = NSStackView(views: [imageView, title])
-        stackView.orientation = .horizontal
-        stackView.alignment = .centerY
-        stackView.spacing = 10
-        stackView.edgeInsets = NSEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-
-        container.addSubview(stackView)
+        title.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(title)
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: container.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            
-            container.heightAnchor.constraint(equalToConstant: 48)
+            icon.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: Self.padding),
+            icon.topAnchor.constraint(equalTo: container.topAnchor, constant: Self.padding),
+            icon.widthAnchor.constraint(equalToConstant: 33.6),
+            icon.heightAnchor.constraint(equalToConstant: 25.2),
+            icon.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -Self.padding),
+            title.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 9.8),
+            title.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -Self.padding),
+            title.centerYAnchor.constraint(equalTo: icon.centerYAnchor)
         ])
-
         contentView = container
     }
 
     func show(on screen: NSScreen, duration: TimeInterval = 3) {
         hide()
+        guard !Defaults.showMinimumWindowSizeWarning.userDisabled else { return }
         guard let contentView else { return }
-        let visibleFrame = screen.visibleFrame
-
-        let targetWidth = min(contentView.fittingSize.width, visibleFrame.width - 32)
-        let targetHeight: CGFloat = 48
-
-        let frame = NSRect(x: visibleFrame.midX - targetWidth / 2,
-                           y: min(visibleFrame.minY + 32, visibleFrame.maxY - targetHeight),
-                           width: targetWidth,
-                           height: targetHeight)
-
-        setFrame(frame, display: true)
+        let visibleFrame = screen.adjustedVisibleFrame()
+        let fittingSize = contentView.fittingSize
+        let width = min(fittingSize.width, visibleFrame.width - 32)
+        guard width > Self.padding * 2, visibleFrame.height > 0 else { return }
+        let height = min(fittingSize.height, visibleFrame.height)
+        setFrame(NSRect(x: visibleFrame.midX - width / 2,
+                        y: min(visibleFrame.minY + 32, visibleFrame.maxY - height),
+                        width: width, height: height), display: true)
         orderFrontRegardless()
 
         let dismissal = DispatchWorkItem { [weak self] in self?.hide() }

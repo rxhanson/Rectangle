@@ -8,7 +8,6 @@ class WindowManager {
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowAnimator: WindowAnimator
-    private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
@@ -56,6 +55,7 @@ class WindowManager {
     
     func execute(_ parameters: ExecutionParameters) {
         hideSizeConstraintWarning()
+        let fitOpportunity = SnappedWindowFitSession.shared.take()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
@@ -76,18 +76,27 @@ class WindowManager {
                 return
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+                WindowSizeConstraints.shared.cancelPendingObservations()
+                let restoreGeneration = WindowSizeConstraints.shared.observationGeneration
                 executionID &+= 1
                 let currentExecutionID = executionID
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
-                        guard let self, self.executionID == currentExecutionID else { return }
-                        // A completed animation has already placed the real window.
-                        if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                    windowAnimator.afterPendingWrites(isCurrent: { [weak self] in
+                        self?.executionID == currentExecutionID
+                            && WindowSizeConstraints.shared.observationGeneration == restoreGeneration
+                    }) { [weak self] in
+                        self?.windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                            guard let self, self.executionID == currentExecutionID,
+                                  WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
+                            // A completed animation has already placed the real window.
+                            if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
+                        }
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
                     windowAnimator.afterPendingWrites { [weak self] in
-                        guard self?.executionID == currentExecutionID else { return }
+                        guard self?.executionID == currentExecutionID,
+                              WindowSizeConstraints.shared.observationGeneration == restoreGeneration else { return }
                         frontmostWindowElement.setFrame(restoreRect)
                     }
                 }
@@ -121,6 +130,8 @@ class WindowManager {
         
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
         
+        let previousAction = lastRectangleAction
+        let previousRestore = windowId.flatMap { AppDelegate.windowHistory.restoreRects[$0] }
         let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
         
         if windowMovedExternally {
@@ -176,7 +187,26 @@ class WindowManager {
         let isFixedSize = (!frontmostWindowElement.isResizable() && willResize) || frontmostWindowElement.isSystemDialog == true
         let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
         let isMovedAcrossDisplays = sourceScreens.currentScreen != calcResult.screen
-        let cooperativeCornerPlan = cooperativeCornerResizePlan(focusedWindowId: windowId,
+        var requestedLayoutRect = calcResult.rect
+        var besidePlan: SnappedWindowFit?
+        if willResize, !isFixedSize, !action.allowedToExtendOutsideCurrentScreenArea {
+            switch SnappedWindowFit.resolve(action: calcResult.resultingAction, window: currentWindow,
+                initialTarget: calcResult.initialRect, target: calcResult.rect,
+                screenFrame: visibleFrameOfDestinationScreen, minimum: frontmostWindowElement.minimumSize,
+                opportunity: fitOpportunity) {
+            case .fit(let plan):
+                besidePlan = plan
+                calcResult.rect = plan.target.screenFlipped
+                requestedLayoutRect = calcResult.rect
+            case .noRoom: NSSound.beep(); return
+            case .unchanged: break
+            }
+            let bounds = GapCalculation.applyGaps(visibleFrameOfDestinationScreen, dimension: gapsApplicable,
+                gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+            if besidePlan == nil, let feasible = WindowSizeConstraints.fitting(calcResult.rect,
+                minimum: frontmostWindowElement.minimumSize, in: bounds) { calcResult.rect = feasible }
+        }
+        let cooperativeCornerPlan = besidePlan == nil ? cooperativeCornerResizePlan(focusedWindowId: windowId,
                                                                 focusedWindowIsFixedSize: isFixedSize,
                                                                 focusedWindowMinimumSize: frontmostWindowElement.minimumSize,
                                                                 action: action,
@@ -185,15 +215,27 @@ class WindowManager {
                                                                 newFocusedFrame: calcResult.rect,
                                                                 screenFrame: visibleFrameOfDestinationScreen,
                                                                 destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                                                                lastRectangleAction: lastRectangleAction)
+                                                                lastRectangleAction: lastRectangleAction) : nil
         if let cooperativeCornerPlan {
             calcResult.rect = cooperativeCornerPlan.focusedFrame
+            requestedLayoutRect = calcResult.rect
             if let sideSplitRecordingFrame = cooperativeCornerPlan.sideSplitRecordingFrame {
                 calcResult.initialRect = sideSplitRecordingFrame
             }
         }
 
-        if cooperativeCornerPlan == nil {
+        var resultParameters = ResultParameters(windowId: windowId,
+                                                action: action,
+                                                windowElement: frontmostWindowElement,
+                                                calcResult: calcResult,
+                                                usableScreens: sourceScreens,
+                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
+                                                source: parameters.source,
+                                                isFixedSize: isFixedSize,
+                                                requestedLayoutRect: requestedLayoutRect,
+                                                observationGeneration: WindowSizeConstraints.shared.observationGeneration)
+        
+        if cooperativeCornerPlan == nil, besidePlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
                                                           targetFrame: calcResult.initialRect,
                                                           screenFrame: visibleFrameOfDestinationScreen)
@@ -211,6 +253,8 @@ class WindowManager {
             }
         } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
             Logger.log("Current frame is equal to new frame")
+            checkSizeConstraintWarning(result: resultParameters)
+            if besidePlan == nil { SnappedWindowFitSession.shared.record(result: resultParameters, frame: currentWindowRect) }
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
 
@@ -220,24 +264,25 @@ class WindowManager {
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
+        WindowSizeConstraints.shared.cancelPendingObservations()
+        let sizeObservationGeneration = WindowSizeConstraints.shared.observationGeneration
+        resultParameters.observationGeneration = sizeObservationGeneration
+        let beforeResize = frontmostWindowElement.frame
         executionID &+= 1
         let currentExecutionID = executionID
 
-        let resultParameters = ResultParameters(windowId: windowId,
-                                                action: action,
-                                                windowElement: frontmostWindowElement,
-                                                calcResult: calcResult,
-                                                usableScreens: sourceScreens,
-                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
-                                                source: parameters.source,
-                                                isFixedSize: isFixedSize)
-        
+        if let besidePlan {
+            placeBesideSnappedWindow(result: resultParameters, plan: besidePlan, before: beforeResize,
+                previousAction: previousAction, previousRestore: previousRestore, generation: sizeObservationGeneration,
+                acrossDisplays: isMovedAcrossDisplays)
+            return
+        }
         let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
             && !Defaults.cooperativeCornerResize.enabled
         
         let completeMove = { [self] (animatedFrame: CGRect?) in
-            guard executionID == currentExecutionID else { return }
+            guard executionID == currentExecutionID, WindowSizeConstraints.shared.observationGeneration == sizeObservationGeneration else { return }
             var resultingRect: CGRect
             if let cooperativeCornerPlan {
                 resultingRect = applyCooperativeCornerResize(result: resultParameters,
@@ -265,7 +310,7 @@ class WindowManager {
                     if calcResult.rect.size != resultingRect.size {
                         Logger.log("Final attempt to adjust across displays.")
                         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
-                            guard let self, self.executionID == currentExecutionID else { return }
+                            guard let self, self.executionID == currentExecutionID, WindowSizeConstraints.shared.observationGeneration == sizeObservationGeneration else { return }
                             let finalRect = self.apply(result: resultParameters)
                             self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
                             self.postProcess(result: resultParameters, resultingRect: finalRect, incrementCount: !animated)
@@ -290,6 +335,15 @@ class WindowManager {
             }
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
+            if animatedFrame != nil, cooperativeCornerPlan == nil {
+                WindowSizeConstraints.shared.recordSettledResize(frontmostWindowElement, before: beforeResize,
+                    requested: calcResult.rect.screenFlipped, first: resultingRect, settled: resultingRect,
+                    verifiedClamp: true, generation: sizeObservationGeneration)
+            }
+            if willResize, !isFixedSize, cooperativeCornerPlan == nil {
+                WindowSizeConstraints.shared.observeResize(frontmostWindowElement, before: beforeResize,
+                    requested: calcResult.rect.screenFlipped, replacesEarlierAttempt: true)
+            }
         }
         
         if animated {
@@ -311,6 +365,58 @@ class WindowManager {
             windowAnimator.cancel(for: frontmostWindowElement)
             windowAnimator.afterPendingWrites { completeMove(nil) }
         }
+    }
+    
+    private func placeBesideSnappedWindow(result: ResultParameters, plan: SnappedWindowFit, before: CGRect,
+                                         previousAction: RectangleAction?, previousRestore: CGRect?, generation: UUID, acrossDisplays: Bool,
+                                         completion: (() -> Void)? = nil) {
+        var completionDeferred = false
+        defer { if !completionDeferred { completion?() } }
+        var result = result
+        result.allowsFitPairing = false
+        let window = result.windowElement
+        let requestExecutionID = executionID
+        if let id = result.windowId {
+            AppDelegate.windowHistory.restoreRects[id] = previousRestore
+            AppDelegate.windowHistory.lastRectangleActions[id] = previousAction
+        }
+        guard plan.neighborIsUnchanged() else { NSSound.beep(); return }
+        if WindowGeometry.matches(before, plan.target, tolerance: 1) {
+            postProcess(result: result, resultingRect: before)
+            return
+        }
+        let bounds = result.visibleFrameOfScreen.screenFlipped
+        let placement = ImmediateWindowPlacement(screenFrame: bounds,
+            sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: plan.target, in: bounds),
+            constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
+        completionDeferred = true
+        WindowPlacementCoordinator.shared.place(window, from: before, to: plan.target, placement: placement,
+            animated: WindowAnimator.enabled && !acrossDisplays,
+            profile: result.source == .keyboardShortcut ? .keyboard : .standard,
+            isCurrent: { [weak self] in
+                self?.executionID == requestExecutionID
+                    && WindowSizeConstraints.shared.observationGeneration == generation
+                    && WindowGeometry.matches(result.calcResult.screen.adjustedVisibleFrame().screenFlipped, bounds)
+                    && plan.neighborIsUnchanged()
+            }) { [weak self] outcome in
+                defer { completion?() }
+                guard let self else { return }
+                switch outcome {
+                case .placed(let frame):
+                    WindowSizeConstraints.shared.recordSuccessfulPlacement(window, frame: frame)
+                    WindowSizeConstraints.shared.recordSettledResize(window, before: before, requested: plan.target,
+                        first: frame, settled: frame, verifiedClamp: true, generation: generation)
+                    if let id = result.windowId, previousRestore == nil || previousAction?.rect != before {
+                        AppDelegate.windowHistory.restoreRects[id] = before
+                    }
+                    if acrossDisplays { self.windowMovedAcrossDisplays(windowElement: window, resultingRect: frame) }
+                    self.postProcess(result: result, resultingRect: frame)
+                case .failed, .unresponsive:
+                    NSSound.beep()
+                    Logger.log("Window placement could not be verified")
+                case .cancelled: break
+                }
+            }
     }
     
     /// Move/resize a window based on the calculation results.
@@ -343,9 +449,7 @@ class WindowManager {
     func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
         let calcResult = result.calcResult
 
-        if WindowSizeConstraint.isExceeded(requested: calcResult.rect, actual: resultingRect, action: result.action) {
-            showSizeConstraintWarning(on: calcResult.screen)
-        }
+        checkSizeConstraintWarning(result: result)
         
         if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
             CGWarpMouseCursorPosition(resultingRect.centerPoint)
@@ -353,6 +457,7 @@ class WindowManager {
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
 
+        if result.allowsFitPairing { SnappedWindowFitSession.shared.record(result: result, frame: resultingRect) }
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
                                       "achieved": [resultingRect.minX, resultingRect.minY, resultingRect.width, resultingRect.height],
@@ -380,16 +485,38 @@ class WindowManager {
         }
     }
 
-    func showSizeConstraintWarning(on screen: NSScreen) {
-        guard Defaults.showMinimumWindowSizeWarning.userEnabled else { return }
-        if windowSizeWarning == nil {
-            windowSizeWarning = WindowSizeWarning()
+    // Preserve the layout request before known minimum compensation. Read the
+    // achieved frame after settling, not from an intermediate animation/retry.
+    func checkSizeConstraintWarning(result: ResultParameters) {
+        guard !Defaults.showMinimumWindowSizeWarning.userDisabled, result.action.resizes,
+              let source = sizeWarningObservationSource(for: result) else { return }
+        let generation = result.observationGeneration ?? WindowSizeConstraints.shared.observationGeneration
+        WindowSizeWarningObservation.sample(frame: source.frame, isCurrent: {
+            !Defaults.showMinimumWindowSizeWarning.userDisabled
+                && WindowSizeConstraints.shared.observationGeneration == generation
+                && source.isCurrent()
+        }) { [weak self] actual in
+            if WindowSizeConstraint.isExceeded(requested: result.requestedLayoutRect ?? result.calcResult.rect,
+                                               actual: actual, action: result.action) {
+                self?.showSizeConstraintWarning(on: result.calcResult.screen)
+            }
         }
-        windowSizeWarning?.show(on: screen)
+    }
+
+    func sizeWarningObservationSource(for result: ResultParameters) -> WindowSizeWarningObservation.Source? {
+        guard let id = result.windowId, let pid = result.windowElement.pid,
+              let launch = WindowProcessIdentity.launchTime(for: pid) else { return nil }
+        return WindowSizeWarningObservation.Source(frame: { WindowUtil.getWindowFrame(id: id) }, isCurrent: {
+            WindowProcessIdentity.launchTime(for: pid) == launch
+        })
+    }
+
+    func showSizeConstraintWarning(on screen: NSScreen) {
+        WindowSizeWarning.shared.show(on: screen)
     }
 
     func hideSizeConstraintWarning() {
-        windowSizeWarning?.hide()
+        WindowSizeWarning.hideCurrent()
     }
 }
 
@@ -402,6 +529,9 @@ struct ResultParameters {
     let visibleFrameOfScreen: CGRect
     let source: ExecutionSource
     let isFixedSize: Bool
+    var requestedLayoutRect: CGRect? = nil
+    var observationGeneration: UUID? = nil
+    var allowsFitPairing = true
 }
 
 struct RectangleAction {
