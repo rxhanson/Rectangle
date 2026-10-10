@@ -230,6 +230,9 @@
 		B28F5289FADB9F07DCADCB0A /* WindowFrameAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */; };
 		196F08301B312AD386ACC153 /* WindowKeyboardMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */; };
 		212A5B7088F376DAAB80D83D /* ImmediateWindowPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86951EE306D7872356ECEBE9 /* ImmediateWindowPlacement.swift */; };
+		FE0197E104CE466C69337B89 /* BlurExampleSurface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BFA0F42F712FAA9171EE0A /* BlurExampleSurface.swift */; };
+		36C787815618B020D418E40D /* BlurSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D213D80F60380AD1CB2FA787 /* BlurSurfaceView.swift */; };
+		A974F9FEF0044DD8D0266B76 /* PreviewTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FF81474B96CD2F9FE93D82 /* PreviewTransition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -485,6 +488,9 @@
 		EA5AF55AD6A9C0F2BE0B6DDD /* WindowFrameAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameAnimation.swift; sourceTree = "<group>"; };
 		40F9A124A18C13EEEFE2E2DD /* WindowKeyboardMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowKeyboardMotion.swift; sourceTree = "<group>"; };
 		86951EE306D7872356ECEBE9 /* ImmediateWindowPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateWindowPlacement.swift; sourceTree = "<group>"; };
+		79BFA0F42F712FAA9171EE0A /* BlurExampleSurface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BlurExampleSurface.swift"; sourceTree = "<group>"; };
+		D213D80F60380AD1CB2FA787 /* BlurSurfaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BlurSurfaceView.swift"; sourceTree = "<group>"; };
+		41FF81474B96CD2F9FE93D82 /* PreviewTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreviewTransition.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -815,6 +821,8 @@
 		98C2755F231FF6AE009B9292 /* Snapping */ = {
 			isa = PBXGroup;
 			children = (
+				D213D80F60380AD1CB2FA787 /* BlurSurfaceView.swift */,
+				41FF81474B96CD2F9FE93D82 /* PreviewTransition.swift */,
 				98C27560231FFA5F009B9292 /* SnappingManager.swift */,
 				983BBD6E253B609D000D223E /* FootprintWindow.swift */,
 				983DD04328B0639E00BF1EEE /* SnapAreaModel.swift */,
@@ -834,6 +842,7 @@
 		98ED704D306179160077BD10 /* SettingsWindow */ = {
 			isa = PBXGroup;
 			children = (
+				79BFA0F42F712FAA9171EE0A /* BlurExampleSurface.swift */,
 				98985838305C1B6400459AFF /* SettingsWindowController.swift */,
 				9898583A305C1B6400459AFF /* ShortcutsViewController.swift */,
 				98ED70523062D3810077BD10 /* ExtraSettings.swift */,
@@ -1040,6 +1049,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A974F9FEF0044DD8D0266B76 /* PreviewTransition.swift in Sources */,
+				36C787815618B020D418E40D /* BlurSurfaceView.swift in Sources */,
+				FE0197E104CE466C69337B89 /* BlurExampleSurface.swift in Sources */,
 				289A31409B0E53587282CECF /* DirectWindowAnimator.swift in Sources */,
 				6CC120F4A5FAD525090190EF /* WindowAnimationCurve.swift in Sources */,
 				42BCD7CED5BEC19A6A3433C6 /* WindowAnimationDiagnostics.swift in Sources */,
