@@ -397,18 +397,17 @@ final class WindowAnimationWorkerElement: WindowAnimationElement {
     }
     override var bundleIdentifier: String? { bundle }
     override var pid: pid_t? { process }
-    func readMinimumSizeHint() -> CGSize? {
-        // This optional metadata must not delay main or stack two timeouts while
-        // the target is busy. Retargeting can cancel between the two attributes.
-        let reader = AccessibilityReadBatch(budget: 0.01)
+    func readMinimumSizeHint(_ snapshot: WindowSizeHintSnapshot?) -> CGSize? {
+        guard let snapshot, request.isCurrent else { return nil }
+        let reader = AccessibilityReadBatch(budget: 0.01, isCurrent: { [request] in request.isCurrent })
         defer { setMessagingTimeout(0.05) }
-        guard request.isCurrent else { return nil }
-        if let size: CGSize = reader.wrapped(axElement, NSAccessibility.Attribute.minSize.rawValue, type: .cgSize) {
-            return size
-        }
-        guard request.isCurrent else { return nil }
-        return reader.wrapped(axElement, NSAccessibility.Attribute.minimumSize.rawValue, type: .cgSize)
+        let reported: CGSize? = reader.wrapped(axElement, NSAccessibility.Attribute.minSize.rawValue, type: .cgSize)
+            ?? reader.wrapped(axElement, NSAccessibility.Attribute.minimumSize.rawValue, type: .cgSize)
+        guard let current: CGSize = reader.wrapped(axElement, kAXSizeAttribute, type: .cgSize),
+              reader.available else { return nil }
+        return snapshot.minimum(reported: reported, current: current, now: Date.timeIntervalSinceReferenceDate)
     }
+
     override var frame: CGRect {
         return measured("frame-read") { super.frame }
     }

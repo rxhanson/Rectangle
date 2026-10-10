@@ -336,21 +336,21 @@ class BandTilingTests: XCTestCase {
         let minimumHeightAtOrigin: (CGFloat) -> CGFloat
         let testWindowId: CGWindowID?
         var testIdentity: CFHashCode
-        let reportedMinimumSize: CGSize?
+        let testMinimumSize: CGSize?
         let canResize: Bool
         let ordinaryWindow: Bool
 
         init(frame: CGRect = .zero, minimumHeight: CGFloat = 0, maximumWidth: CGFloat = .greatestFiniteMagnitude,
              minimumHeightAtOrigin: @escaping (CGFloat) -> CGFloat = { _ in 0 },
              windowId: CGWindowID? = nil, identity: CFHashCode = 0,
-             reportedMinimumSize: CGSize? = .zero, canResize: Bool = true, ordinaryWindow: Bool = true) {
+             testMinimumSize: CGSize? = .zero, canResize: Bool = true, ordinaryWindow: Bool = true) {
             acceptedFrame = frame
             self.minimumHeight = minimumHeight
             self.maximumWidth = maximumWidth
             self.minimumHeightAtOrigin = minimumHeightAtOrigin
             testWindowId = windowId
             testIdentity = identity
-            self.reportedMinimumSize = reportedMinimumSize
+            self.testMinimumSize = testMinimumSize
             self.canResize = canResize
             self.ordinaryWindow = ordinaryWindow
             super.init(identity == 0 ? AXUIElementCreateSystemWide()
@@ -360,7 +360,7 @@ class BandTilingTests: XCTestCase {
         override var frame: CGRect { acceptedFrame }
         override var windowId: CGWindowID? { testWindowId }
         override var pid: pid_t? { 42 }
-        override var minimumSize: CGSize? { reportedMinimumSize }
+        override var minimumSize: CGSize? { testMinimumSize }
         override func isResizable() -> Bool { canResize }
         override var isWindow: Bool? { ordinaryWindow }
         override var isSheet: Bool? { false }
@@ -803,7 +803,7 @@ class BandTilingTests: XCTestCase {
                 : CGSize(width: minimumPoints, height: 0)
             let fixed = TestElement(frame: fixedFrame, windowId: 501, identity: 1, canResize: false)
             let minimum = TestElement(frame: laterFrame, windowId: 502, identity: 2,
-                                      reportedMinimumSize: reportedMinimum)
+                                      testMinimumSize: reportedMinimum)
             let flexible = TestElement(frame: laterFrame.offsetBy(dx: 30, dy: 30), windowId: 503, identity: 3)
             let elements = [fixed, minimum, flexible]
             Manager.tileWindowsInBands(direction, focusedWindow: fixed, windows: elements,
@@ -6515,6 +6515,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.none.rawValue)),
             (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
+            (Defaults.showMinimumWindowSizeWarning, CodableDefault(int: 1)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
             (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
@@ -6544,6 +6545,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
     }
 
     override func tearDown() {
+        WindowSizeConstraints.shared.cancelPendingObservations()
         savedDefaults.forEach { $0.0.load(from: $0.1) }
         AppDelegate.windowHistory.restoreRects = savedRestoreRects
         AppDelegate.windowHistory.lastRectangleActions = savedActions
@@ -6646,6 +6648,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             manager.execute(ExecutionParameters(action, screen: screen, windowElement: window,
                                                 windowId: windowId, source: .menuItem))
 
+            waitForWarning(manager)
             XCTAssertEqual(window.resizeAttempts, 1)
             XCTAssertEqual(window.frame.width, 600)
             XCTAssertEqual(window.frame.height, 900)
@@ -6659,12 +6662,25 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         }
     }
 
+    func testDisabledSizeWarningDoesNotRequestGeometry() {
+        Defaults.showMinimumWindowSizeWarning.enabled = false
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+        manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+        XCTAssertEqual(window.frame.width, 600)
+        XCTAssertEqual(manager.warningSourceRequests, 0)
+        XCTAssertTrue(manager.warningScreens.isEmpty)
+    }
+
     func testSuccessfulTwoThirdsClearEarlierWarning() {
         let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
         let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
         let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
         manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
                                             windowId: windowId, source: .menuItem))
+        waitForWarning(manager)
         XCTAssertTrue(manager.warningVisible)
 
         manager.execute(ExecutionParameters(.firstTwoThirds, screen: screen, windowElement: window,
@@ -6712,6 +6728,14 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.action, .firstTwoThirds)
     }
 
+    private func waitForWarning(_ manager: TestWindowManager) {
+        guard !manager.warningVisible else { return }
+        let appeared = expectation(description: "Size warning appeared")
+        manager.didWarn = { appeared.fulfill() }
+        defer { manager.didWarn = nil }
+        wait(for: [appeared], timeout: 1)
+    }
+
     private func assertCrossDisplayWarning(clampedAttempts: Int?, expectsWarning: Bool) {
         let source = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
         let destination = TestScreen(frame: CGRect(x: 1512, y: 0, width: 1512, height: 900))
@@ -6729,6 +6753,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         XCTAssertNil(AppDelegate.windowHistory.lastRectangleActions[windowId])
 
         wait(for: [finished], timeout: 1)
+        if expectsWarning { waitForWarning(manager) }
         XCTAssertEqual(window.resizeAttempts, 3)
         XCTAssertEqual(window.frame.width, expectsWarning ? 600 : 504)
         XCTAssertEqual(window.frame.maxX, destination.frame.maxX)
@@ -6830,13 +6855,21 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
 
     private final class TestWindowManager: WindowManager {
         private(set) var warningScreens: [NSScreen] = []
+        private(set) var warningSourceRequests = 0
         private(set) var hideCount = 0
         private(set) var warningVisible = false
         var didFinish: (() -> Void)?
+        var didWarn: (() -> Void)?
+
+        override func sizeWarningObservationSource(for result: ResultParameters) -> WindowSizeWarningObservation.Source? {
+            warningSourceRequests += 1
+            return WindowSizeWarningObservation.Source(frame: { result.windowElement.frame }, isCurrent: { true })
+        }
 
         override func showSizeConstraintWarning(on screen: NSScreen) {
             warningScreens.append(screen)
             warningVisible = true
+            didWarn?()
         }
 
         override func hideSizeConstraintWarning() {
@@ -7981,3 +8014,2174 @@ final class WindowAnimationRequestCancellationTests: XCTestCase {
     }
 }
 
+
+final class WindowSizeResizeObservationTests: XCTestCase {
+    private let before = CGRect(x: 0, y: 0, width: 900, height: 600)
+    private let requested = CGRect(x: 0, y: 0, width: 400, height: 600)
+    private let clamped = CGRect(x: 0, y: 0, width: 600, height: 600)
+
+    func testFirstStableDirectResizeLearnsMinimum() throws {
+        let store = WindowSizeConstraintStore<String>()
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        XCTAssertNil(observation.observe(clamped, at: 0))
+        XCTAssertNil(observation.observe(clamped, at: 0.08))
+        let settled = try XCTUnwrap(observation.observe(clamped, at: 0.14))
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: settled.size, settled: settled.size, now: 1, verifiedClamp: true)
+        let evidence = try XCTUnwrap(store.entries["window"])
+        XCTAssertEqual(evidence.learned, CGSize(width: 600, height: 0))
+        XCTAssertEqual(evidence.confirmations, 1)
+        XCTAssertTrue(evidence.isValid)
+        var archive = WindowSizeLimitArchive()
+        let identity = WindowSizeLimitIdentity(bundleID: "test", appVersion: "1", pid: 1,
+            launch: 1, session: UUID().uuidString, windowID: 1, identifier: nil,
+            role: kAXWindowRole, subrole: "", structure: [])
+        archive.upsert(WindowSizeLimitRecord(id: UUID(), identity: identity, appName: "Test", evidence: evidence))
+        let restored = try XCTUnwrap(WindowSizeLimitArchive.decode(JSONEncoder().encode(archive)))
+        XCTAssertEqual(restored.records.first?.evidence, evidence)
+    }
+
+    func testOneVerifiedResizeUpdatesAnExistingLimitInEitherDirection() throws {
+        let store = WindowSizeConstraintStore<String>()
+        for (time, width) in [CGFloat(600), 700, 500].enumerated() {
+            let settled = CGSize(width: width, height: 600)
+            store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+                first: settled, settled: settled, now: Double(time), verifiedClamp: true)
+            XCTAssertEqual(store.entries["window"]?.learned, CGSize(width: width, height: 0))
+        }
+        store.recordSuccess(for: "window", size: requested.size)
+        XCTAssertNil(store.entries["window"])
+    }
+
+    func testUnverifiedUnstableAndRefusedResizesCannotLearn() {
+        let store = WindowSizeConstraintStore<String>()
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: clamped.size, settled: clamped.size, now: 1)
+        XCTAssertNil(store.entries["window"])
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: clamped.size, settled: CGSize(width: 650, height: 600), now: 2, verifiedClamp: true)
+        XCTAssertNil(store.entries["window"])
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: before.size, settled: before.size, now: 3, verifiedClamp: true)
+        XCTAssertNil(store.entries["window"])
+    }
+
+    func testLegacyTwoConfirmationEvidenceRemainsValid() throws {
+        var evidence = WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 1, requested: requested.size, achieved: clamped.size)
+        evidence.confirmations = 2
+        let restored = try JSONDecoder().decode(WindowSizeEvidence.self, from: JSONEncoder().encode(evidence))
+        XCTAssertTrue(restored.isValid)
+        evidence.confirmations = 0
+        XCTAssertFalse(evidence.isValid)
+    }
+
+    func testDisagreementOrChangingFrameRestartsStability() {
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        XCTAssertNil(observation.observe(clamped, at: 0))
+        XCTAssertNil(observation.observe(nil, at: 0.1))
+        XCTAssertNil(observation.observe(clamped, at: 0.2))
+        let changed = CGRect(x: 0, y: 0, width: 550, height: 600)
+        XCTAssertNil(observation.observe(changed, at: 0.3))
+        XCTAssertNil(observation.observe(changed, at: 0.4))
+        XCTAssertEqual(observation.observe(changed, at: 0.44), changed)
+    }
+
+    func testIgnoredWidthAndCoupledDimensionsDoNotBecomeEvidence() {
+        for frame in [before, CGRect(x: 0, y: 0, width: 600, height: 500)] {
+            var observation = WindowSizeResizeObservation(before: before, requested: requested)
+            XCTAssertNil(observation.observe(frame, at: 0))
+            XCTAssertNil(observation.observe(frame, at: 1))
+        }
+    }
+
+    func testClampAtUnrelatedPositionDoesNotBecomeEvidence() {
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        let moved = clamped.offsetBy(dx: 500, dy: 0)
+        XCTAssertNil(observation.observe(moved, at: 0))
+        XCTAssertNil(observation.observe(moved, at: 1))
+    }
+}
+
+
+@MainActor
+final class WindowSizeWarningObservationTests: XCTestCase {
+    func testStableWindowServerFrameCompletesWithoutAccessibilityReads() {
+        let completed = expectation(description: "Stable frame sampled")
+        let frame = CGRect(x: 0, y: 0, width: 700, height: 500)
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            return frame
+        }, isCurrent: { true }) { actual in
+            XCTAssertEqual(actual, frame)
+            XCTAssertEqual(samples, 2)
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 1)
+    }
+
+    func testSupersededWarningDoesNotReadAnotherFrame() {
+        let completed = expectation(description: "Stale warning is suppressed")
+        completed.isInverted = true
+        var current = true
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            current = false
+            return CGRect(x: 0, y: 0, width: 700, height: 500)
+        }, isCurrent: { current }) { _ in completed.fulfill() }
+        wait(for: [completed], timeout: 0.3)
+        XCTAssertEqual(samples, 1)
+    }
+
+    func testMovingWindowDoesNotShowSettledSizeWarning() {
+        let completed = expectation(description: "Unsettled warning is suppressed")
+        completed.isInverted = true
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            return CGRect(x: CGFloat(samples * 10), y: 0, width: 700, height: 500)
+        }, isCurrent: { true }) { _ in completed.fulfill() }
+        wait(for: [completed], timeout: 0.3)
+        XCTAssertEqual(samples, 2)
+    }
+}
+
+
+final class WindowSizeHintSnapshotTests: XCTestCase {
+    func testWorkerSnapshotMatchesLiveHintValidation() throws {
+        let evidence = WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 400),
+            learnedAt: 100, requested: CGSize(width: 400, height: 300), achieved: CGSize(width: 600, height: 400))
+        let reports: [CGSize?] = [nil, .zero, CGSize(width: 700, height: 0)]
+        let sizes: [CGSize] = [CGSize(width: 900, height: 600), CGSize(width: 500, height: 600),
+                              CGSize(width: 900, height: 300), CGSize(width: 500, height: 300), .zero]
+        for report in reports {
+            for current in sizes {
+                for time: TimeInterval in [100, 109, 111] {
+                    let store = WindowSizeConstraintStore<String>(lifetime: 10)
+                    store.restore(evidence, for: "window", now: 100)
+                    let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window"))
+                    XCTAssertEqual(snapshot.minimum(reported: report, current: current, now: time),
+                                   store.hint(for: "window", reported: report, current: current, now: time))
+                }
+            }
+        }
+    }
+
+    func testCapturedHintCanBeValidatedOffMainWithoutReadingStore() throws {
+        let store = WindowSizeConstraintStore<String>()
+        store.restore(WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 100, requested: CGSize(width: 400, height: 600), achieved: CGSize(width: 600, height: 600)),
+            for: "window", now: 100)
+        let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window"))
+        let completed = expectation(description: "Snapshot validated on worker")
+        DispatchQueue.global().async {
+            XCTAssertFalse(Thread.isMainThread)
+            XCTAssertEqual(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101),
+                           CGSize(width: 600, height: 0))
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 1)
+        XCTAssertEqual(store.entries["window"], snapshot.evidence)
+    }
+
+    func testSupersedingActionInvalidatesCapturedHint() throws {
+        let store = WindowSizeConstraintStore<String>()
+        store.restore(WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 100, requested: CGSize(width: 400, height: 600), achieved: CGSize(width: 600, height: 600)),
+            for: "window", now: 100)
+        let cancellation = AccessibilityReadCancellation()
+        let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window", cancellation: cancellation))
+        XCTAssertNotNil(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101))
+        cancellation.cancel()
+        XCTAssertNil(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101))
+    }
+}
+
+
+
+
+
+final class WindowPlacementAcknowledgementTests: XCTestCase {
+    func testHeightResponseDoesNotVerifyIgnoredWidth() {
+        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+                                  target: CGSize(width: 400, height: 600), ignoredWidth: true)
+    }
+
+    func testWidthResponseDoesNotVerifyIgnoredHeight() {
+        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+                                  target: CGSize(width: 400, height: 300), ignoredWidth: false)
+    }
+
+    func testResponsiveMinimumIsAcceptedAfterGrowthProbe() {
+        let target = CGRect(x: 0, y: 0, width: 400, height: 600)
+        var frame = CGRect(x: 0, y: 0, width: 700, height: 500)
+        var state = acknowledgement(original: frame, target: target)
+        var completed: CGRect?
+        var probed = false
+        for time in [0.0, 0.02, 0.2, 0.66, 0.8, 1.32, 1.36, 1.4, 1.6, 1.64] {
+            switch state.observe(frame, at: time) {
+            case .size(let size):
+                if size.width > 700 { probed = true }
+                frame.size = CGSize(width: max(700, size.width), height: size.height)
+            case .position(let point): frame.origin = point
+            case .complete(let result): completed = result
+            case .failed: XCTFail("A responsive minimum should be accepted")
+            case .waiting: break
+            }
+        }
+        XCTAssertTrue(probed)
+        XCTAssertEqual(completed?.size, CGSize(width: 700, height: 600))
+    }
+
+    private func assertIgnoredAxisIsProbed(original: CGSize, target: CGSize, ignoredWidth: Bool,
+                                           file: StaticString = #filePath, line: UInt = #line) {
+        var frame = CGRect(origin: .zero, size: original)
+        var state = acknowledgement(original: frame, target: CGRect(origin: .zero, size: target))
+        var probed = false
+        var failed = false
+        for time in [0.0, 0.02, 0.2, 0.66, 0.8, 1.32, 1.36, 2.0] {
+            switch state.observe(frame, at: time) {
+            case .size(let size):
+                if ignoredWidth {
+                    probed = probed || size.width > original.width
+                    frame.size.height = size.height
+                } else {
+                    probed = probed || size.height > original.height
+                    frame.size.width = size.width
+                }
+            case .position(let point): frame.origin = point
+            case .complete: XCTFail("An ignored axis is not a verified minimum", file: file, line: line)
+            case .failed: failed = true
+            case .waiting: break
+            }
+        }
+        XCTAssertTrue(probed, file: file, line: line)
+        XCTAssertTrue(failed, file: file, line: line)
+    }
+
+    private func acknowledgement(original: CGRect, target: CGRect) -> WindowPlacementAcknowledgement {
+        let bounds = CGRect(x: 0, y: 0, width: 1400, height: 900)
+        return WindowPlacementAcknowledgement(target: target, startedAt: 0, pendingWrite: false,
+            bounds: bounds, placement: ImmediateWindowPlacement(screenFrame: bounds, sharedEdges: nil,
+                constrainToScreen: false, gap: 0), original: original, directPlacement: true)
+    }
+}
+
+
+@MainActor
+final class LayoutHelperKeyboardEntryTests: XCTestCase {
+    private let region = CGRect(x: 40, y: 40, width: 640, height: 520)
+    private var items: [LayoutHelperPanel.Item] {
+        [.init(id: 1, title: "First", icon: nil, unavailableReason: nil),
+         .init(id: 2, title: "Second", icon: nil, unavailableReason: nil)]
+    }
+
+    private func buttons(in view: NSView) -> [NSButton] {
+        view.subviews.flatMap { (($0 as? NSButton).map { [$0] } ?? []) + buttons(in: $0) }
+    }
+
+    private func press(_ code: UInt16, in panel: LayoutHelperPanel) throws {
+        let event = try XCTUnwrap(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
+            timestamp: 0, windowNumber: panel.windowNumber, context: nil, characters: "",
+            charactersIgnoringModifiers: "", isARepeat: false, keyCode: code))
+        panel.sendEvent(event)
+    }
+
+    func testPointerEntryFirstNavigationSelectsFirst() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        for code: UInt16 in [48, 123, 124, 125, 126] {
+            panel.configure(in: region, items: items, offerPermission: false)
+            panel.makeFirstResponder(panel.initialFirstResponder)
+            XCTAssertTrue(panel.initialFirstResponder === panel.contentView)
+            XCTAssertFalse(panel.keyboardSelection)
+            try press(code, in: panel)
+            XCTAssertTrue(panel.keyboardSelection)
+            XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "First")
+        }
+        try press(124, in: panel)
+        XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "Second")
+    }
+
+    func testKeyboardTriggeredNavigationAdvancesImmediately() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        panel.configure(in: region, items: items, offerPermission: false, keyboardTriggered: true)
+        panel.makeFirstResponder(panel.initialFirstResponder)
+        XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "First")
+        try press(124, in: panel)
+        XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "Second")
+    }
+
+    func testPointerActivationSelectsFirstDespiteStaleResponder() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        var selected: CGWindowID?
+        panel.onSelect = { selected = $0 }
+        for code: UInt16 in [36, 76, 49] {
+            panel.configure(in: region, items: items, offerPermission: false)
+            let root = try XCTUnwrap(panel.contentView)
+            let staleResponder = try XCTUnwrap(buttons(in: root).first { $0.title == "Second" })
+            XCTAssertTrue(panel.makeFirstResponder(staleResponder))
+            selected = nil
+            try press(code, in: panel)
+            XCTAssertEqual(selected, 1)
+        }
+    }
+
+    func testFirstNavigationSkipsDisabledAndHiddenCards() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        let candidates: [LayoutHelperPanel.Item] = [
+            .init(id: 1, title: "Disabled", icon: nil, unavailableReason: "Unavailable"),
+            .init(id: 2, title: "Hidden", icon: nil, unavailableReason: nil),
+            .init(id: 3, title: "Ready", icon: nil, unavailableReason: nil)]
+        let image = NSImage(size: NSSize(width: 80, height: 50))
+        panel.configure(in: region, items: candidates, offerPermission: false,
+                        images: [1: image, 3: image], waitForPreviews: true)
+        panel.makeFirstResponder(panel.initialFirstResponder)
+        try press(124, in: panel)
+        XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "Ready")
+    }
+
+    func testMouseInputRestartsKeyboardSelection() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        panel.configure(in: region, items: items, offerPermission: false, keyboardTriggered: true)
+        panel.makeFirstResponder(panel.initialFirstResponder)
+        try press(124, in: panel)
+        let event = try XCTUnwrap(NSEvent.mouseEvent(with: .leftMouseDown, location: CGPoint(x: 1, y: 1),
+            modifierFlags: [], timestamp: 0, windowNumber: panel.windowNumber, context: nil,
+            eventNumber: 0, clickCount: 1, pressure: 1))
+        panel.sendEvent(event)
+        XCTAssertFalse(panel.keyboardSelection)
+        XCTAssertFalse(panel.firstResponder is NSButton)
+        try press(124, in: panel)
+        XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "First")
+    }
+}
+
+
+final class LayoutHelperSnapPlacementTests: XCTestCase {
+    private final class Window: AccessibilityElement {
+        var actual: CGRect
+        let canResize: Bool
+        let minimum: CGSize
+        let maximum: CGSize
+        let aspectRatio: CGFloat?
+        var resizeRequests = 0
+
+        init(frame: CGRect, canResize: Bool = true, minimum: CGSize = .zero,
+             maximum: CGSize = CGSize(width: 420, height: 360), aspectRatio: CGFloat? = nil) {
+            actual = frame; self.canResize = canResize; self.minimum = minimum
+            self.maximum = maximum; self.aspectRatio = aspectRatio
+            super.init(AXUIElementCreateSystemWide())
+        }
+        override var frame: CGRect { actual }
+        override var minimumSize: CGSize? { minimum }
+        override func isResizable() -> Bool { canResize }
+        override var isSystemDialog: Bool? { false }
+        override var isWindow: Bool? { false }
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: ImmediateWindowPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+        override func setFrame(_ target: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            let before = actual
+            if adjustPosition { actual.origin = target.origin }
+            if canResize, target.size != before.size {
+                resizeRequests += 1
+                actual.size = CGSize(width: min(maximum.width, max(minimum.width, target.width)),
+                                     height: min(maximum.height, max(minimum.height, target.height)))
+                if let aspectRatio { actual.size.height = actual.width / aspectRatio }
+            }
+        }
+    }
+    private var savedAlignment: EdgeAlignment!
+    private var savedGap: Float!
+
+    override func setUp() {
+        super.setUp()
+        savedAlignment = Defaults.moveFixedSizeToEdge.value
+        savedGap = Defaults.gapSize.value
+        Defaults.moveFixedSizeToEdge.value = .edgesAndCorners
+        Defaults.gapSize.value = 0
+    }
+    override func tearDown() {
+        Defaults.moveFixedSizeToEdge.value = savedAlignment
+        Defaults.gapSize.value = savedGap
+        super.tearDown()
+    }
+
+    private func snap(_ window: Window, to target: CGRect, initial: CGRect, bounds: CGRect) throws -> CGRect {
+        let screen = try XCTUnwrap(NSScreen.screens.first)
+        var calculation = WindowCalculationResult(rect: target.screenFlipped, screen: screen, resultingAction: .specified)
+        calculation.initialRect = initial.screenFlipped
+        let result = ResultParameters(windowId: nil, action: .specified, windowElement: window,
+            calcResult: calculation, usableScreens: UsableScreens(currentScreen: screen, numScreens: 1),
+            visibleFrameOfScreen: bounds.screenFlipped, source: .menuItem, isFixedSize: !window.canResize)
+        return WindowManager().apply(result: result)
+    }
+    private func acknowledge(_ frame: CGRect, target: CGRect, initial: CGRect, bounds: CGRect,
+                             file: StaticString = #filePath, line: UInt = #line) {
+        let placement = ImmediateWindowPlacement(screenFrame: bounds,
+            sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: initial, in: bounds),
+            constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
+        var state = WindowPlacementAlignment(target: target, startedAt: 0, pendingWrite: false,
+            bounds: bounds, placement: placement)
+        guard case .waiting = state.observe(frame, at: 0) else {
+            return XCTFail("A regular snap's accepted frame should settle without another resize", file: file, line: line)
+        }
+        guard case .complete(let actual) = state.observe(frame, at: 0.04) else {
+            return XCTFail("An aligned size-limited window is a successful placement", file: file, line: line)
+        }
+        XCTAssertEqual(actual, frame, file: file, line: line)
+    }
+
+    func testMaximumSizeWindowUsesRegularRightSnapPlacement() throws {
+        let bounds = CGRect(x: 0, y: 29, width: 1400, height: 900)
+        let target = CGRect(x: 700, y: 29, width: 700, height: 900)
+        let window = Window(frame: CGRect(x: 100, y: 100, width: 420, height: 360))
+        let actual = try snap(window, to: target, initial: target, bounds: bounds)
+        XCTAssertEqual(actual.maxX, bounds.maxX)
+        XCTAssertEqual(actual.midY, target.midY, accuracy: 0.5)
+        acknowledge(actual, target: target, initial: target, bounds: bounds)
+    }
+
+    func testFixedSizeWindowIsPlacedWithoutAnyResizeRequest() throws {
+        let bounds = CGRect(x: 0, y: 29, width: 1400, height: 900)
+        let target = CGRect(x: 700, y: 29, width: 700, height: 900)
+        let window = Window(frame: CGRect(x: 100, y: 100, width: 420, height: 360), canResize: false)
+        let actual = try snap(window, to: target, initial: target, bounds: bounds)
+        XCTAssertEqual(window.resizeRequests, 0)
+        XCTAssertEqual(actual.maxX, bounds.maxX)
+        acknowledge(actual, target: target, initial: target, bounds: bounds)
+    }
+
+    func testFixedSizeWindowMovesWhenEitherDimensionAlreadyMatchesTheZone() throws {
+        let bounds = CGRect(x: 0, y: 29, width: 1400, height: 900)
+        let target = CGRect(x: 700, y: 29, width: 700, height: 900)
+        for size in [CGSize(width: 700, height: 360), CGSize(width: 420, height: 900), target.size] {
+            let window = Window(frame: CGRect(origin: CGPoint(x: 100, y: 100), size: size), canResize: false)
+            let actual = try snap(window, to: target, initial: target, bounds: bounds)
+            XCTAssertEqual(actual.maxX, bounds.maxX)
+            XCTAssertEqual(actual.midY, target.midY, accuracy: 0.5)
+            acknowledge(actual, target: target, initial: target, bounds: bounds)
+        }
+    }
+
+    func testMinimumMaximumAndAspectRatioWindowsUseRegularSnapAlignment() throws {
+        let bounds = CGRect(x: -2400, y: -600, width: 2400, height: 1400)
+        let zones = [CGRect(x: bounds.midX, y: bounds.minY, width: 1200, height: 1400),
+                     CGRect(x: bounds.minX, y: bounds.minY, width: 1200, height: 700),
+                     CGRect(x: bounds.midX, y: bounds.midY, width: 1200, height: 700),
+                     CGRect(x: bounds.minX, y: bounds.midY, width: 2400, height: 700)]
+        for alignment in [EdgeAlignment.edgesAndCorners, .corners, .centered, .leadingCorner] {
+            Defaults.moveFixedSizeToEdge.value = alignment
+            for target in zones {
+                for kind in 0..<4 {
+                    let window = Window(frame: CGRect(x: -2000, y: -400, width: 500, height: 400),
+                        minimum: kind == 0 ? CGSize(width: 1300, height: 800) : (kind == 3 ? CGSize(width: 2500, height: 1500) : .zero),
+                        maximum: kind == 0 ? CGSize(width: 2000, height: 1200) : (kind == 3 ? CGSize(width: 3000, height: 2000) : CGSize(width: 900, height: 600)),
+                        aspectRatio: kind == 2 ? 16.0 / 9.0 : nil)
+                    let actual = try snap(window, to: target, initial: target, bounds: bounds)
+                    acknowledge(actual, target: target, initial: target, bounds: bounds)
+                }
+            }
+        }
+    }
+
+    func testGappedRightSnapKeepsTheScreenEdgeAlignment() throws {
+        Defaults.gapSize.value = 12
+        let bounds = CGRect(x: -1600, y: -870, width: 1600, height: 900)
+        let initial = CGRect(x: -800, y: -870, width: 800, height: 900)
+        let target = CGRect(x: -794, y: -870, width: 782, height: 888)
+        let window = Window(frame: CGRect(x: -1400, y: -700, width: 420, height: 360))
+        let actual = try snap(window, to: target, initial: initial, bounds: bounds)
+        XCTAssertEqual(actual.maxX, bounds.maxX - 12)
+        acknowledge(actual, target: target, initial: initial, bounds: bounds)
+    }
+
+    func testIgnoredPositionRequestStillFailsAfterBoundedRetries() {
+        let bounds = CGRect(x: 0, y: 29, width: 1400, height: 900)
+        let target = CGRect(x: 700, y: 29, width: 700, height: 900)
+        let placement = ImmediateWindowPlacement(screenFrame: bounds,
+            sharedEdges: target.sharedEdges(withRect: bounds), constrainToScreen: true, gap: 0)
+        let misplaced = CGRect(x: 100, y: 100, width: 420, height: 360)
+        var state = WindowPlacementAlignment(target: target, startedAt: 0, pendingWrite: false,
+            bounds: bounds, placement: placement)
+        for time: TimeInterval in [0, 0.7] {
+            guard case .position = state.observe(misplaced, at: time) else { return XCTFail("Retry the refused move") }
+        }
+        guard case .failed = state.observe(misplaced, at: 1.4) else { return XCTFail("A refused move must not become success") }
+    }
+
+    func testRollbackRequiresTheOriginalSizeRatherThanAcceptingAClamp() {
+        let original = CGRect(x: 100, y: 100, width: 420, height: 360)
+        let refused = CGRect(x: 100, y: 100, width: 700, height: 878)
+        var state = WindowPlacementAlignment(target: original, startedAt: 0, pendingWrite: false,
+            bounds: CGRect(x: 0, y: 29, width: 1440, height: 878))
+        for time: TimeInterval in [0, 0.7] {
+            guard case .size(let requested) = state.observe(refused, at: time) else { return XCTFail("Rollback must retry the original size") }
+            XCTAssertEqual(requested, original.size)
+        }
+        guard case .failed = state.observe(refused, at: 1.4) else { return XCTFail("An inexact rollback must not be reported as restored") }
+    }
+
+    func testRelayoutNeedsAStableFrameAndMissingReadbackNeverSucceeds() {
+        let bounds = CGRect(x: 0, y: 29, width: 1400, height: 900)
+        let target = CGRect(x: 700, y: 29, width: 700, height: 900)
+        let placement = ImmediateWindowPlacement(screenFrame: bounds,
+            sharedEdges: target.sharedEdges(withRect: bounds), constrainToScreen: true, gap: 0)
+        var state = WindowPlacementAlignment(target: target, startedAt: 0, pendingWrite: false,
+            bounds: bounds, placement: placement)
+        let first = placement.frame(for: target, actualSize: CGSize(width: 300, height: 200))
+        let second = placement.frame(for: target, actualSize: CGSize(width: 420, height: 360))
+        guard case .waiting = state.observe(nil, at: 0),
+              case .waiting = state.observe(first, at: 0.01),
+              case .waiting = state.observe(second, at: 0.06),
+              case .complete(let actual) = state.observe(second, at: 0.10) else {
+            return XCTFail("A changed size must settle again before committing")
+        }
+        XCTAssertEqual(actual, second)
+    }
+}
+
+
+
+final class LayoutHelperMinimizedWindowTests: XCTestCase {
+    private func desktop(_ display: String, id: UInt64, type: Int = 0) -> [String: Any] {
+        ["Display Identifier": display, "Current Space": ["id64": NSNumber(value: id), "type": type],
+         "Spaces": [["id64": NSNumber(value: id + 100), "type": 0]]]
+    }
+
+    func testDesktopScopeUsesOnlyEachDisplaysCurrentDesktop() {
+        let result = LayoutHelperDesktopScope.activeDesktops([desktop("left", id: 11), desktop("right", id: 22)],
+            displays: ["left": 1, "right": 2], separateSpaces: true)
+        XCTAssertEqual(result, [11: [1], 22: [2]])
+        XCTAssertNil(result[111], "Other desktops in the Spaces list are not candidates")
+    }
+
+    func testSharedDesktopCoversBothDisplaysAndFullscreenIsExcluded() {
+        let displays: [String: CGDirectDisplayID] = ["left": 1, "right": 2]
+        XCTAssertEqual(LayoutHelperDesktopScope.activeDesktops([desktop("left", id: 11)],
+            displays: displays, separateSpaces: false), [11: [1, 2]])
+        XCTAssertEqual(LayoutHelperDesktopScope.activeDesktops([desktop("Main", id: 11)],
+            displays: displays, separateSpaces: true), [11: [1, 2]])
+        XCTAssertTrue(LayoutHelperDesktopScope.activeDesktops([desktop("left", id: 11, type: 4)],
+            displays: displays, separateSpaces: true).isEmpty)
+    }
+
+    func testUnknownDesktopMetadataDoesNotAdmitMinimizedWindows() {
+        let invalid: [[String: Any]] = [desktop("disconnected", id: 11), desktop("left", id: 0),
+            ["Display Identifier": "left", "Current Space": ["id64": 33]], [:]]
+        XCTAssertTrue(LayoutHelperDesktopScope.activeDesktops(invalid, displays: ["left": 1], separateSpaces: true).isEmpty)
+        XCTAssertFalse(LayoutHelperWindowCatalog.admits(onScreen: false, minimized: true, desktopDisplays: []))
+        XCTAssertTrue(LayoutHelperWindowCatalog.admits(onScreen: false, minimized: true, desktopDisplays: [1]))
+        XCTAssertFalse(LayoutHelperWindowCatalog.admits(onScreen: false, minimized: false, desktopDisplays: [1]))
+        XCTAssertFalse(LayoutHelperWindowCatalog.admits(onScreen: false, minimized: nil, desktopDisplays: [1]))
+        XCTAssertTrue(LayoutHelperWindowCatalog.admits(onScreen: true, minimized: nil, desktopDisplays: []))
+    }
+
+    func testRestoreWaitsForUnminimizedStateAndFreshGeometry() {
+        var time: TimeInterval = 0, writes = 0, pauses = 0, frameReads = 0
+        let actual = CGRect(x: 130, y: 80, width: 470, height: 290)
+        let outcome = LayoutHelperWindowRestoration.acknowledge(isCurrent: { true },
+            minimized: { pauses < 2 }, restore: { writes += 1; return .success },
+            frame: { frameReads += 1; return pauses < 3 ? nil : actual },
+            now: { time }, pause: { pauses += 1; time += 0.1 })
+        guard case .placed(let frame) = outcome else { return XCTFail("Restoration must acknowledge actual state") }
+        XCTAssertEqual(frame, actual)
+        XCTAssertEqual(writes, 1)
+        XCTAssertEqual(pauses, 3)
+        XCTAssertEqual(frameReads, 2)
+    }
+
+    func testRestoreRefusalDoesNotReadPlacementGeometry() {
+        var reads = 0
+        let outcome = LayoutHelperWindowRestoration.acknowledge(isCurrent: { true }, minimized: { true },
+            restore: { .attributeUnsupported }, frame: { reads += 1; return .zero })
+        guard case .failed = outcome else { return XCTFail("Refused restoration must fail") }
+        XCTAssertEqual(reads, 0)
+    }
+
+    func testCancelledRestoreAndAlreadyRestoredWindowDoNotWrite() {
+        var writes = 0
+        let rect = CGRect(x: 100, y: 100, width: 400, height: 300)
+        let cancelled = LayoutHelperWindowRestoration.acknowledge(isCurrent: { false }, minimized: { true },
+            restore: { writes += 1; return .success }, frame: { rect })
+        guard case .cancelled = cancelled else { return XCTFail("Cancelled selection must not restore") }
+        let restored = LayoutHelperWindowRestoration.acknowledge(isCurrent: { true }, minimized: { false },
+            restore: { writes += 1; return .success }, frame: { rect })
+        guard case .placed = restored else { return XCTFail("An externally restored window remains selectable") }
+        XCTAssertEqual(writes, 0)
+    }
+
+    func testUnacknowledgedRestorationTimesOutWithoutPlacement() {
+        var time: TimeInterval = 0, frameReads = 0, writes = 0
+        let outcome = LayoutHelperWindowRestoration.acknowledge(isCurrent: { true }, minimized: { true },
+            restore: { writes += 1; return .success }, frame: { frameReads += 1; return .zero },
+            now: { time }, pause: { time += 0.1 })
+        guard case .unresponsive = outcome else { return XCTFail("An accepted write is not completed restoration") }
+        XCTAssertEqual(writes, 1)
+        XCTAssertEqual(frameReads, 0)
+        XCTAssertLessThan(time, 1.7)
+    }
+
+    @MainActor func testMinimizedFallbackAppearsOnlyAfterCaptureFailure() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let minimized = LayoutHelperPanel.Item(id: 7, title: "Small minimized window", icon: nil,
+            unavailableReason: nil, sourceSize: CGSize(width: 90, height: 60), isMinimized: true)
+        panel.configure(in: CGRect(x: 30, y: 30, width: 640, height: 480),
+            items: [minimized, .init(id: 8, title: "Visible window", icon: nil, unavailableReason: nil)],
+            offerPermission: false, waitForPreviews: true)
+        func buttons(_ view: NSView) -> [NSButton] {
+            view.subviews.flatMap { (($0 as? NSButton).map { [$0] } ?? []) + buttons($0) }
+        }
+        let cards = buttons(try XCTUnwrap(panel.contentView))
+        let card = try XCTUnwrap(cards.first { $0.title == minimized.title })
+        XCTAssertTrue(card.isHidden, "A pending minimized capture must not expose the white icon fallback")
+        panel.previewFailed(for: 7)
+        XCTAssertFalse(card.isHidden, "A failed capture must reveal a selectable fallback")
+        XCTAssertTrue(card.accessibilityLabel()?.contains("Preview unavailable") == true)
+        XCTAssertTrue(card.isEnabled)
+        XCTAssertTrue(card.accessibilityLabel()?.contains("minimized") == true)
+        XCTAssertTrue(cards.first { $0.title == "Visible window" }?.isHidden == true)
+        var selected: CGWindowID?
+        panel.onSelect = { selected = $0 }
+        card.performClick(nil)
+        XCTAssertEqual(selected, 7)
+        panel.updateImage(NSImage(size: CGSize(width: 180, height: 120)), for: 7)
+        XCTAssertFalse(card.accessibilityLabel()?.contains("Preview unavailable") == true)
+    }
+}
+
+
+@MainActor
+final class LayoutHelperMinimizedAspectTests: XCTestCase {
+    private func cards(in view: NSView) -> [NSButton] {
+        view.subviews.flatMap { (($0 as? NSButton).map { [$0] } ?? []) + cards(in: $0) }
+    }
+    private func card(in panel: LayoutHelperPanel, title: String) throws -> NSButton {
+        try XCTUnwrap(cards(in: try XCTUnwrap(panel.contentView)).first { $0.title == title })
+    }
+    private func image(_ size: CGSize) -> NSImage { NSImage(size: size) }
+    private func assertAspect(_ frame: CGRect, source: CGSize, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(frame.width / (frame.height - LayoutHelperPreviewLayout.titleHeight), source.width / source.height,
+                       accuracy: 0.001, file: file, line: line)
+    }
+    func testPortraitMinimizedWindowKeepsItsAspectOnFirstAndCachedLoads() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let source = CGSize(width: 240, height: 600)
+        let item = LayoutHelperPanel.Item(id: 7, title: "Portrait minimized", icon: nil,
+            unavailableReason: nil, sourceSize: source, isMinimized: true)
+        let region = CGRect(x: 30, y: 30, width: 640, height: 480)
+        panel.configure(in: region, items: [item], offerPermission: false, waitForPreviews: true)
+        let cold = try card(in: panel, title: item.title)
+        let initial = cold.frame
+        XCTAssertTrue(cold.isHidden, "Reserve geometry without showing a white placeholder")
+        XCTAssertGreaterThanOrEqual(initial.width, 200)
+        assertAspect(initial, source: source)
+        let preview = image(CGSize(width: 480, height: 1200))
+        panel.updateImage(preview, for: 7)
+        XCTAssertFalse(cold.isHidden)
+        assertAspect(cold.frame, source: source)
+        XCTAssertEqual(cold.frame, initial, "First preview delivery must not change an accurately reserved card")
+        panel.configure(in: region, items: [item], offerPermission: false, images: [7: preview])
+        let warm = try card(in: panel, title: item.title)
+        XCTAssertFalse(warm.isHidden, "Cached captures should appear immediately")
+        assertAspect(warm.frame, source: source)
+        XCTAssertEqual(warm.frame, initial, "Cached and cold captures must reserve the same geometry")
+        var selected: CGWindowID?
+        panel.onSelect = { selected = $0 }
+        warm.performClick(nil)
+        XCTAssertEqual(selected, 7)
+    }
+    func testFirstMinimizedPreviewRevealsWithoutFadingFromWhite() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let item = LayoutHelperPanel.Item(id: 7, title: "Pending minimized", icon: nil,
+            unavailableReason: nil, sourceSize: CGSize(width: 300, height: 200), isMinimized: true)
+        panel.configure(in: CGRect(x: 30, y: 30, width: 640, height: 480), items: [item],
+            offerPermission: false, waitForPreviews: true)
+        panel.orderFront(nil)
+        let pending = try card(in: panel, title: item.title)
+        XCTAssertTrue(panel.isVisible)
+        XCTAssertTrue(pending.isHidden)
+        panel.updateImage(image(CGSize(width: 600, height: 400)), for: 7)
+        XCTAssertFalse(pending.isHidden)
+        let artwork = try XCTUnwrap(pending.subviews.first { String(describing: type(of: $0)) == "LayoutHelperPreviewContent" })
+        XCTAssertNil(artwork.layer?.animation(forKey: kCATransition), "The first image must be rendered before card entrance")
+    }
+    func testWidthFloorPreservesMixedWindowAspectsWhenRowsShrinkOrOverflow() {
+        let sizes = [CGSize(width: 240, height: 600), CGSize(width: 900, height: 300), CGSize(width: 400, height: 400)]
+        for width: CGFloat in [180, 640, 900] {
+            let result = LayoutHelperPreviewLayout.arrange(sizes: sizes, in: CGSize(width: width, height: 180),
+                expandedCards: [true, true, true])
+            for (source, frame) in zip(sizes, result.frames) {
+                XCTAssertGreaterThanOrEqual(frame.width, min(width, 200))
+                assertAspect(frame, source: source)
+                XCTAssertGreaterThanOrEqual(frame.minX, 0)
+                XCTAssertLessThanOrEqual(frame.maxX, width + 0.001)
+            }
+            XCTAssertGreaterThan(result.height, 180, "Portrait cards overflow by scrolling instead of changing aspect")
+        }
+    }
+    func testScreenshotRoundingFitsTheSlotUntilItsAspectIsRearranged() {
+        let source = CGSize(width: 240, height: 601)
+        let slot = LayoutHelperPreviewLayout.arrange(sizes: [source], in: CGSize(width: 600, height: 600),
+            expandedCards: [true]).frames[0]
+        let imageSize = CGSize(width: 207, height: 520)
+        let frame = LayoutHelperPreviewLayout.cardFrame(for: imageSize, in: slot, isMinimized: true)
+        XCTAssertTrue(slot.contains(frame), "Preview updates must never exceed their reserved geometry")
+        assertAspect(frame, source: imageSize)
+        let refreshedSlot = LayoutHelperPreviewLayout.arrange(sizes: [imageSize], in: CGSize(width: 600, height: 600),
+            expandedCards: [true]).frames[0]
+        let refreshed = LayoutHelperPreviewLayout.cardFrame(for: imageSize, in: refreshedSlot, isMinimized: true)
+        XCTAssertGreaterThanOrEqual(refreshed.width, 200)
+        assertAspect(refreshed, source: imageSize)
+    }
+    func testNoPermissionPortraitFallbackStillUsesCompactReadableCard() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let item = LayoutHelperPanel.Item(id: 7, title: "Portrait without permission", icon: nil,
+            unavailableReason: nil, sourceSize: CGSize(width: 240, height: 600), isMinimized: true)
+        panel.configure(in: CGRect(x: 30, y: 30, width: 640, height: 480), items: [item],
+            offerPermission: true, images: [7: image(CGSize(width: 480, height: 1200))])
+        let fallback = try card(in: panel, title: item.title)
+        XCTAssertEqual(fallback.frame.size, CGSize(width: 200, height: 150))
+        XCTAssertTrue(fallback.isEnabled)
+        XCTAssertFalse(fallback.isHidden)
+    }
+}
+
+
+@MainActor
+final class LayoutHelperColdDeliveryLayoutTests: XCTestCase {
+    private func buttons(_ view: NSView) -> [NSButton] {
+        view.subviews.flatMap { (($0 as? NSButton).map { [$0] } ?? []) + buttons($0) }
+    }
+    func testCaptureRequestsPrioritizeMissingCardsAndKeepOffscreenPreviews() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...60).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Request \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 1201, height: 801)) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 900, height: 800), items: items,
+            offerPermission: false, waitForPreviews: true)
+        let visible = panel.visiblePreviewIDs
+        XCTAssertEqual(Array(panel.previewRequestIDs.prefix(visible.count)), visible)
+        XCTAssertFalse(visible.contains(60))
+        panel.updateImages([1: NSImage(size: CGSize(width: 779, height: 520)),
+                            60: NSImage(size: CGSize(width: 779, height: 520))])
+        XCTAssertNotEqual(panel.previewRequestIDs.first, 1, "Missing cards must precede refreshes")
+        XCTAssertTrue(panel.previewRequestIDs.contains(1))
+        XCTAssertFalse(panel.previewRequestIDs.contains(60), "Cache eviction must not enqueue an offscreen card that still owns its preview")
+        panel.updateImages(Dictionary(uniqueKeysWithValues: (2..<60).map { (CGWindowID($0), NSImage(size: CGSize(width: 779, height: 520))) }))
+        XCTAssertEqual(panel.previewRequestIDs, panel.visiblePreviewIDs)
+    }
+
+    func testPixelRoundedCapturesKeepReservedGeometry() {
+        let source = CGSize(width: 1201, height: 801)
+        XCTAssertEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 779, height: 520), fallback: source), source)
+        let wide = CGSize(width: 1916, height: 1186)
+        XCTAssertEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 840, height: 519), fallback: wide), wide)
+        let portrait = CGSize(width: 801, height: 1201)
+        XCTAssertEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 347, height: 520), fallback: portrait), portrait)
+        XCTAssertNotEqual(LayoutHelperPreviewLayout.sourceSize(for: CGSize(width: 240, height: 600), fallback: source), source)
+    }
+
+    func testRoundedDeliveryDoesNotEndEarlierCardEntrance() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...24).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Rounded \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 1201, height: 801)) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 900, height: 800), items: items,
+            offerPermission: false, waitForPreviews: true)
+        let all = buttons(try XCTUnwrap(panel.contentView)).filter { $0.title.hasPrefix("Rounded ") }
+        XCTAssertTrue(all.allSatisfy(\.isHidden), "Previews must be ready before cards appear")
+        panel.updateImage(NSImage(size: CGSize(width: 779, height: 520)), for: 1)
+        let first = try XCTUnwrap(all.first { $0.title == "Rounded 1" })
+        let frame = first.frame
+        let entrance = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperEntrance"))
+        panel.updateImages([2: NSImage(size: CGSize(width: 779, height: 520)),
+                            3: NSImage(size: CGSize(width: 779, height: 520))])
+        XCTAssertEqual(first.frame, frame)
+        XCTAssertEqual(first.layer?.animation(forKey: "layoutHelperEntrance")?.beginTime, entrance.beginTime)
+        XCTAssertEqual(all.filter { !$0.isHidden }.count, 3)
+        XCTAssertTrue(all.filter { $0.isHidden }.allSatisfy { $0.layer?.animation(forKey: "layoutHelperEntrance") == nil })
+        let scroll = try XCTUnwrap(first.enclosingScrollView)
+        scroll.contentView.scroll(to: CGPoint(x: 0, y: 100))
+        XCTAssertNil(first.layer?.animation(forKey: "layoutHelperEntrance"), "User scrolling still finishes entrances")
+    }
+
+    func testRealAspectChangesInBatchPreserveEntranceAndDoNotOverlap() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...8).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Aspect \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 1201, height: 801), isMinimized: $0 > 1) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 900, height: 800), items: items,
+            offerPermission: false, waitForPreviews: true)
+        panel.updateImage(NSImage(size: CGSize(width: 779, height: 520)), for: 1)
+        let first = try XCTUnwrap(buttons(try XCTUnwrap(panel.contentView)).first { $0.title == "Aspect 1" })
+        let entrance = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperEntrance"))
+        panel.updateImages([2: NSImage(size: CGSize(width: 240, height: 600)),
+                            3: NSImage(size: CGSize(width: 600, height: 240))])
+        XCTAssertEqual(first.layer?.animation(forKey: "layoutHelperEntrance")?.beginTime, entrance.beginTime)
+        let ready = buttons(try XCTUnwrap(panel.contentView)).filter { !$0.isHidden && $0.title.hasPrefix("Aspect ") }
+        XCTAssertEqual(ready.count, 3)
+        for a in ready.indices { for b in ready.indices where b > a {
+            XCTAssertFalse(ready[a].frame.intersects(ready[b].frame))
+        }}
+        let portrait = try XCTUnwrap(ready.first { $0.title == "Aspect 2" })
+        XCTAssertEqual(portrait.frame.width / (portrait.frame.height - LayoutHelperPreviewLayout.titleHeight), 0.4, accuracy: 0.001)
+    }
+
+    func testMixedCardsNeverOverlapWhenCapturesFinishOutOfOrder() throws {
+        let sizes = [CGSize(width:1000,height:600), CGSize(width:1000,height:600),
+                     CGSize(width:1000,height:600), CGSize(width:1000,height:600),
+                     CGSize(width:240,height:600), CGSize(width:1000,height:600)]
+        let items = sizes.enumerated().map { index,size in
+            LayoutHelperPanel.Item(id: CGWindowID(index+1),title: "Window \(index)",icon:nil,
+                unavailableReason:nil,sourceSize:size,isMinimized:index==4 || index==0 || index==5)
+        }
+        for width: CGFloat in [480,640,900] {
+            for delivery in [[4,0,1,3,2,5],[5,4,3,2,1,0],[0,1,2,3,4,5]] {
+                let panel = LayoutHelperPanel()
+                defer { panel.dismiss() }
+                panel.configure(in:CGRect(x:30,y:30,width:width,height:800),items:items,
+                    offerPermission:false,waitForPreviews:true)
+                for index in delivery {
+                    let visibleBefore = buttons(try XCTUnwrap(panel.contentView)).filter { !$0.isHidden }
+                    let framesBefore = Dictionary(uniqueKeysWithValues:visibleBefore.map { ($0.title,$0.frame) })
+                    panel.updateImage(NSImage(size:sizes[index]),for:CGWindowID(index+1))
+                    let ready = buttons(try XCTUnwrap(panel.contentView)).filter { !$0.isHidden && $0.title.hasPrefix("Window ") }
+                    for card in ready {
+                        if let previous=framesBefore[card.title] { XCTAssertEqual(card.frame,previous,"New captures must not move cards already displayed") }
+                    }
+                    for a in ready.indices { for b in ready.indices where b>a {
+                        XCTAssertFalse(ready[a].frame.intersects(ready[b].frame),"Cold delivery \(delivery), width \(width): \(ready[a].title) overlaps \(ready[b].title)")
+                    }}
+                }
+            }
+        }
+    }
+}
+
+
+final class LayoutHelperPreviewContentValidationTests: XCTestCase {
+    private func image(_ width: Int=32,_ height: Int=32,color: CGColor? = nil) throws -> CGImage {
+        let context = try XCTUnwrap(CGContext(data:nil,width:width,height:height,bitsPerComponent:8,
+            bytesPerRow:width*4,space:CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo:CGImageAlphaInfo.premultipliedLast.rawValue))
+        if let color { context.setFillColor(color);context.fill(CGRect(x:0,y:0,width:width,height:height)) }
+        return try XCTUnwrap(context.makeImage())
+    }
+    func testRejectsTransparentAndDegenerateCapturesButAcceptsSolidWindows() throws {
+        XCTAssertFalse(LayoutHelperPreviewValidation.isValid(try image()))
+        XCTAssertFalse(LayoutHelperPreviewValidation.isValid(try image(1,1,color:NSColor.gray.cgColor)))
+        for color in [NSColor.white,NSColor.gray,NSColor.black] {
+            XCTAssertTrue(LayoutHelperPreviewValidation.isValid(try image(color:color.cgColor)),"Solid content is not an empty capture")
+        }
+        XCTAssertFalse(LayoutHelperPreviewValidation.validSourceSize(CGSize(width:1,height:1)))
+        XCTAssertFalse(LayoutHelperPreviewValidation.validSourceSize(CGSize(width:CGFloat.nan,height:600)))
+        XCTAssertTrue(LayoutHelperPreviewValidation.validSourceSize(CGSize(width:240,height:600)))
+    }
+    func testBadRefreshKeepsLastGoodPreviewWithoutExtendingItsLifetime() throws {
+        let cache = LayoutHelperImageCache<Int>()
+        let good = try image(color:NSColor.blue.cgColor)
+        cache.insert(good,for:7,now:0)
+        let bytes=cache.byteCount
+        cache.insert(try image(),for:7,now:100)
+        XCTAssertTrue(cache.image(for:7,now:100) === good)
+        XCTAssertEqual(cache.byteCount,bytes)
+        cache.insert(try image(1,1,color:NSColor.gray.cgColor),for:7,now:110)
+        XCTAssertTrue(cache.image(for:7,now:110) === good)
+        XCTAssertNil(cache.image(for:7,now:121),"A failed refresh must not renew stale content")
+    }
+    func testLastGoodPreviewIdentityDoesNotCrossProcessRelaunchOrExpiry() throws {
+        let cache=LayoutHelperImageCache<LayoutHelperPreviewKey>()
+        let old=LayoutHelperPreviewKey(id:7,pid:42,launch:1,width:240,height:600)
+        let current=LayoutHelperPreviewKey(id:7,pid:42,launch:1,width:1,height:1)
+        let good=try image(color:NSColor.white.cgColor)
+        cache.insert(good,for:old,now:0)
+        func cached(_ key:LayoutHelperPreviewKey,now:TimeInterval)->CGImage? {
+            cache.image(matching:{$0.id==key.id && $0.pid==key.pid && $0.launch==key.launch},now:now)
+        }
+        XCTAssertTrue(cached(current,now:20) === good)
+        XCTAssertNil(cached(.init(id:7,pid:42,launch:2,width:1,height:1),now:20))
+        XCTAssertNil(cached(.init(id:7,pid:43,launch:1,width:1,height:1),now:20))
+        XCTAssertNil(cached(current,now:121))
+    }
+    func testScreenshotPreservesPortraitBudgetWithoutWindowFraming() {
+        if #available(macOS 26, *) {
+            let config = LayoutHelperPreviewStore.screenshotConfiguration(for: CGSize(width: 240, height: 600),
+                limit: CGSize(width: 840, height: 520), sourceScale: 2)
+            XCTAssertEqual(CGFloat(config.width) / CGFloat(config.height), 0.4, accuracy: 0.002)
+            XCTAssertLessThanOrEqual(config.width, 840)
+            XCTAssertLessThanOrEqual(config.height, 520)
+            XCTAssertFalse(config.showsCursor)
+            XCTAssertTrue(config.ignoreShadows)
+            XCTAssertTrue(config.ignoreClipping)
+        }
+    }
+}
+
+
+final class LayoutHelperMinimizedPreparationTests: XCTestCase {
+    private let target=CGRect(x:720,y:29,width:720,height:878)
+    func testGeometryIsPreparedBeforeRestoreWhileWindowStaysMinimized() {
+        var actual=CGRect(x:10,y:10,width:240,height:600)
+        var order:[String]=[]
+        let prepared=LayoutHelperWindowRestoration.prepare(target:target,isCurrent:{true},minimized:{true},
+            size:{actual.size=$0;order.append("size");return .success},
+            position:{actual.origin=$0;order.append("position");return .success},frame:{actual})
+        XCTAssertTrue(prepared)
+        XCTAssertEqual(actual,target)
+        XCTAssertEqual(order,["size","position","size"])
+    }
+    func testRefusingApplicationFallsBackWithoutAdditionalWrites() {
+        var positions=0
+        XCTAssertFalse(LayoutHelperWindowRestoration.prepare(target:target,isCurrent:{true},minimized:{true},
+            size:{_ in .attributeUnsupported},position:{_ in positions+=1;return .success},frame:{nil}))
+        XCTAssertEqual(positions,0)
+    }
+    func testCancellationOrExternalRestoreStopsPreparation() {
+        for cancel in [true,false] {
+            var active=true,minimized=true,positions=0
+            XCTAssertFalse(LayoutHelperWindowRestoration.prepare(target:target,isCurrent:{active},minimized:{minimized},
+                size:{_ in if cancel {active=false}else{minimized=false};return .success},
+                position:{_ in positions+=1;return .success},frame:{nil}))
+            XCTAssertEqual(positions,0)
+        }
+    }
+    func testSlowGeometryAcknowledgementIsBounded() {
+        var time:TimeInterval=0
+        XCTAssertFalse(LayoutHelperWindowRestoration.prepare(target:target,isCurrent:{true},minimized:{true},
+            size:{_ in .success},position:{_ in .success},frame:{nil},now:{time},pause:{time+=0.025}))
+        XCTAssertGreaterThanOrEqual(time,0.3)
+        XCTAssertLessThan(time,0.4)
+    }
+}
+
+
+
+@MainActor
+final class LayoutHelperScrollingTests: XCTestCase {
+    private func views<T: NSView>(_ root: NSView, of type: T.Type) -> [T] {
+        root.subviews.flatMap { (($0 as? T).map { [$0] } ?? []) + views($0, of: type) }
+    }
+    func testOverflowMarginsScrollAwayAndLastCardIsFullyReachable() throws {
+        let previousClose = Defaults.layoutHelperCloseButton.enabled
+        Defaults.layoutHelperCloseButton.enabled = true
+        defer { Defaults.layoutHelperCloseButton.enabled = previousClose }
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...24).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Window \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 600, height: 400)) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 640, height: 480), items: items, offerPermission: false)
+        let root = try XCTUnwrap(panel.contentView)
+        root.layoutSubtreeIfNeeded()
+        let scroll = try XCTUnwrap(views(root, of: NSScrollView.self).first)
+        let document = try XCTUnwrap(scroll.documentView)
+        let cards = views(document, of: NSButton.self)
+        let first = try XCTUnwrap(cards.first)
+        let last = try XCTUnwrap(cards.last)
+        XCTAssertEqual(scroll.frame, try XCTUnwrap(scroll.superview).bounds, "The viewport must not have fixed padding strips")
+        XCTAssertGreaterThan(document.frame.height, scroll.contentSize.height)
+        XCTAssertGreaterThanOrEqual(scroll.scrollerInsets.top, LayoutHelperAppearance.cornerRadius)
+        XCTAssertGreaterThanOrEqual(scroll.scrollerInsets.bottom, LayoutHelperAppearance.cornerRadius)
+        XCTAssertGreaterThan(scroll.scrollerInsets.right, 0)
+        XCTAssertGreaterThanOrEqual(first.frame.minY, 40)
+        XCTAssertGreaterThanOrEqual(cards.map { $0.frame.minX }.min()!, 20, "Side shadows need space inside the clip view")
+        XCTAssertGreaterThanOrEqual(document.bounds.maxY - cards.map { $0.frame.maxY }.max()!, 20)
+        scroll.contentView.scroll(to: CGPoint(x: 0, y: 100))
+        scroll.reflectScrolledClipView(scroll.contentView)
+        XCTAssertLessThan(document.convert(first.frame.origin, to: scroll).y, 0,
+            "The initial top margin must move with content")
+        scroll.contentView.scroll(to: CGPoint(x: 0, y: document.bounds.height - scroll.contentSize.height))
+        scroll.reflectScrolledClipView(scroll.contentView)
+        XCTAssertTrue(document.visibleRect.contains(last.frame), "The final card must be completely reachable")
+        XCTAssertGreaterThanOrEqual(document.visibleRect.maxY - last.frame.maxY, 20)
+        let close = try XCTUnwrap(views(root, of: NSButton.self).first { $0.accessibilityLabel() == "Dismiss Layout Helper" })
+        let center = close.convert(CGPoint(x: close.bounds.midX, y: close.bounds.midY), to: root.superview)
+        let hit = root.hitTest(center)
+        XCTAssertTrue(hit === close || hit?.isDescendant(of: close) == true, "The expanded viewport must not intercept the fixed close button")
+    }
+    func testCloseBlurPreservesHitTargetAboveCards() throws {
+        let previousClose = Defaults.layoutHelperCloseButton.enabled
+        Defaults.layoutHelperCloseButton.enabled = true
+        defer { Defaults.layoutHelperCloseButton.enabled = previousClose }
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 640, height: 480), items: [], offerPermission: false)
+        let root = try XCTUnwrap(panel.contentView)
+        let close = try XCTUnwrap(views(root, of: NSButton.self).first { $0.accessibilityLabel() == "Dismiss Layout Helper" })
+        let material = try XCTUnwrap(views(root, of: LayoutHelperBlurView.self).first { close.superview === $0.content })
+        XCTAssertEqual(material.blendingMode, .withinWindow)
+        root.layoutSubtreeIfNeeded()
+        XCTAssertEqual(close.frame, material.content.bounds)
+        XCTAssertNotNil(material.subviews.first as? NSVisualEffectView)
+        let center = close.convert(CGPoint(x: close.bounds.midX, y: close.bounds.midY), to: root.superview)
+        let hit = root.hitTest(center)
+        XCTAssertTrue(hit === close || hit?.isDescendant(of: close) == true)
+    }
+    func testCloseButtonPreservesInsetsAndCanBeHiddenWithoutLosingDismissal() throws {
+        let previous = Defaults.layoutHelperCloseButton.enabled
+        defer { Defaults.layoutHelperCloseButton.enabled = previous }
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        Defaults.layoutHelperCloseButton.enabled = true
+        let region = CGRect(x: 0, y: 0, width: 640, height: 480)
+        panel.configure(in: region, items: [], offerPermission: false, keyboardTriggered: true)
+        let root = try XCTUnwrap(panel.contentView)
+        let close = try XCTUnwrap(views(root, of: NSButton.self).first { $0.accessibilityLabel() == "Dismiss Layout Helper" })
+        let material = try XCTUnwrap(views(root, of: LayoutHelperBlurView.self).first { close.superview === $0.content })
+        let surface = try XCTUnwrap(material.superview)
+        XCTAssertEqual(material.frame.midX, surface.bounds.maxX - LayoutHelperAppearance.controlInset)
+        XCTAssertEqual(material.frame.midY, LayoutHelperAppearance.controlInset)
+        XCTAssertEqual(material.frame.minY, surface.bounds.maxX - material.frame.maxX)
+        XCTAssertGreaterThanOrEqual(material.frame.minY, 10)
+        XCTAssertTrue(Defaults.array.contains { $0.key == Defaults.layoutHelperCloseButton.key })
+        Defaults.layoutHelperCloseButton.enabled = false
+        panel.configure(in: region, items: [], offerPermission: false, keyboardTriggered: true)
+        let hiddenRoot = try XCTUnwrap(panel.contentView)
+        XCTAssertFalse(views(hiddenRoot, of: NSButton.self).contains { $0.accessibilityLabel() == "Dismiss Layout Helper" })
+        XCTAssertFalse(panel.initialFirstResponder is NSButton)
+        var dismissed = false
+        panel.onDismiss = { dismissed = true }
+        panel.cancelOperation(nil)
+        XCTAssertTrue(dismissed)
+        XCTAssertTrue(panel.isBackground(at: .zero))
+    }
+    func testPermissionFooterRemainsOutsideScrollingContent() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...24).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Window \($0)", icon: nil, unavailableReason: nil) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 640, height: 480), items: items, offerPermission: true)
+        let root = try XCTUnwrap(panel.contentView)
+        let scroll = try XCTUnwrap(views(root, of: NSScrollView.self).first)
+        let permission = try XCTUnwrap(views(root, of: NSButton.self).first { $0.toolTip?.contains("Screen Recording") == true })
+        XCTAssertFalse(permission.isDescendant(of: try XCTUnwrap(scroll.documentView)))
+        XCTAssertGreaterThanOrEqual(permission.frame.minY, scroll.frame.maxY)
+    }
+}
+
+
+
+final class LayoutHelperReviewRegressionTests: XCTestCase {
+    private func views<T: NSView>(_ root: NSView, _ type: T.Type) -> [T] {
+        root.subviews.flatMap { (($0 as? T).map { [$0] } ?? []) + views($0, type) }
+    }
+
+    @MainActor func testStaleLandscapeCacheRefreshedToPortraitReservesNewRows() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...3).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Review window \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 240, height: 600), isMinimized: true) }
+        panel.configure(in: CGRect(x: 30, y: 30, width: 480, height: 480), items: items,
+            offerPermission: false, images: [1: NSImage(size: CGSize(width: 1000, height: 600))], waitForPreviews: true)
+        panel.updateImage(NSImage(size: CGSize(width: 240, height: 600)), for: 1)
+        panel.updateImage(NSImage(size: CGSize(width: 240, height: 600)), for: 2)
+        panel.updateImage(NSImage(size: CGSize(width: 240, height: 600)), for: 3)
+        let root = try XCTUnwrap(panel.contentView)
+        let cards = views(root, NSButton.self).filter { $0.title.hasPrefix("Review window") }
+        let document = try XCTUnwrap(views(root, NSScrollView.self).first?.documentView)
+        XCTAssertEqual(cards.count, 3)
+        for a in cards.indices {
+            XCTAssertGreaterThanOrEqual(cards[a].frame.width, 200 - 0.001)
+            XCTAssertTrue(document.bounds.contains(cards[a].frame))
+            for b in cards.indices where b > a { XCTAssertFalse(cards[a].frame.intersects(cards[b].frame)) }
+        }
+        let card = try XCTUnwrap(cards.first { $0.title == "Review window 1" })
+        XCTAssertEqual(card.frame.width / (card.frame.height - 40), 0.4, accuracy: 0.001)
+    }
+
+    @MainActor func testOffscreenFirstCompletionDoesNotFocusOrScroll() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let items = (1...6).map { LayoutHelperPanel.Item(id: CGWindowID($0), title: "Review window \($0)",
+            icon: nil, unavailableReason: nil, sourceSize: CGSize(width: 240, height: 600), isMinimized: true) }
+        panel.configure(in: CGRect(x: 0, y: 0, width: 320, height: 480), items: items,
+            offerPermission: false, keyboardTriggered: true, waitForPreviews: true, separateBackground: true)
+        panel.makeFirstResponder(panel.initialFirstResponder)
+        let scroll = try XCTUnwrap(views(try XCTUnwrap(panel.contentView), NSScrollView.self).first)
+        let origin = scroll.contentView.bounds.origin
+        let focus = panel.firstResponder
+        panel.updateImage(NSImage(size: CGSize(width: 240, height: 600)), for: 2)
+        XCTAssertEqual(scroll.contentView.bounds.origin, origin)
+        XCTAssertTrue(panel.firstResponder === focus)
+        panel.updateImage(NSImage(size: CGSize(width: 240, height: 600)), for: 1)
+        XCTAssertEqual((panel.firstResponder as? NSButton)?.title, "Review window 1")
+        XCTAssertEqual(scroll.contentView.bounds.origin, origin)
+    }
+
+    func testSparseAndEdgeCapturesRemainValidAcrossTileBoundaries() throws {
+        for rect in [CGRect(x: 0, y: 0, width: 1, height: 1),
+                     CGRect(x: 256, y: 256, width: 1, height: 1),
+                     CGRect(x: 839, y: 519, width: 1, height: 1),
+                     CGRect(x: 411, y: 0, width: 2, height: 520)] {
+            let context = try XCTUnwrap(CGContext(data: nil, width: 840, height: 520, bitsPerComponent: 8,
+                bytesPerRow: 840 * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+            context.setFillColor(NSColor.white.withAlphaComponent(1.0 / 255).cgColor)
+            context.fill(rect)
+            XCTAssertTrue(LayoutHelperPreviewValidation.isValid(try XCTUnwrap(context.makeImage())), "Visible source alpha at \(rect)")
+        }
+        let transparent = try XCTUnwrap(CGContext(data: nil, width: 840, height: 520, bitsPerComponent: 8,
+            bytesPerRow: 840 * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        XCTAssertFalse(LayoutHelperPreviewValidation.isValid(try XCTUnwrap(transparent.makeImage())))
+    }
+
+    func testFailedRestoreRollsBackAndRetryRetainsOriginalGeometry() {
+        let original = CGRect(x: 100, y: 100, width: 400, height: 600)
+        let target = CGRect(x: 720, y: 29, width: 720, height: 878)
+        var actual = original
+        var remembered = LayoutHelperRestorationFrames()
+        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: original, remember: true), original)
+        XCTAssertTrue(LayoutHelperWindowRestoration.prepare(target: target, isCurrent: { true }, minimized: { true },
+            size: { actual.size = $0; return .success }, position: { actual.origin = $0; return .success }, frame: { actual }))
+        let outcome = LayoutHelperWindowRestoration.acknowledge(isCurrent: { true }, minimized: { true },
+            restore: { .cannotComplete }, frame: { actual })
+        guard case .unresponsive = outcome else { return XCTFail("Expected failed restore") }
+        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: actual, remember: true), original)
+        XCTAssertTrue(LayoutHelperWindowRestoration.rollback(original: original, isCurrent: { true },
+            size: { actual.size = $0; return .success }, position: { actual.origin = $0; return .success }))
+        XCTAssertEqual(actual, original)
+        remembered.remove(id: 7, pid: 42, launch: 1)
+        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: target, remember: false), target)
+    }
+
+    func testCancellationPreventsRollbackWritesAndKeepsOriginalForRetry() {
+        let original = CGRect(x: 100, y: 100, width: 400, height: 600)
+        let prepared = CGRect(x: 720, y: 29, width: 720, height: 878)
+        var remembered = LayoutHelperRestorationFrames()
+        _ = remembered.original(id: 7, pid: 42, launch: 1, frame: original, remember: true)
+        var writes = 0
+        XCTAssertFalse(LayoutHelperWindowRestoration.rollback(original: original, isCurrent: { false },
+            size: { _ in writes += 1; return .success }, position: { _ in writes += 1; return .success }))
+        XCTAssertEqual(writes, 0)
+        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: prepared, remember: false), original)
+        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 2, frame: prepared, remember: false), prepared)
+        XCTAssertEqual(remembered.original(id: 7, pid: 43, launch: 1, frame: prepared, remember: false), prepared)
+        var current = true
+        XCTAssertFalse(LayoutHelperWindowRestoration.rollback(original: original, isCurrent: { current },
+            size: { _ in writes += 1; current = false; return .success }, position: { _ in writes += 1; return .success }))
+        XCTAssertEqual(writes, 1)
+    }
+}
+
+
+
+@MainActor
+final class LayoutHelperCatalogScreenTests: XCTestCase {
+    private final class Screen: NSScreen {
+        private let rectangle: CGRect
+        init(_ rectangle: CGRect) { self.rectangle = rectangle; super.init() }
+        required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+        override var frame: CGRect { rectangle }
+        override func isEqual(_ object: Any?) -> Bool {
+            XCTFail("Catalog membership must not invoke AppKit screen equality")
+            return false
+        }
+    }
+
+    func testCalculationScreenMatchesDisplayWithoutAppKitEquality() {
+        let bounds = CGRect(x: -1440, y: 0, width: 1440, height: 900)
+        let display = Screen(bounds)
+        let calculation = Screen(bounds)
+        let other = Screen(bounds.offsetBy(dx: 1440, dy: 0))
+        XCTAssertTrue(LayoutHelperWindowCatalog.matchesScreen(display, requested: calculation))
+        XCTAssertTrue(LayoutHelperWindowCatalog.matchesScreen(display, requested: display))
+        XCTAssertFalse(LayoutHelperWindowCatalog.matchesScreen(other, requested: calculation))
+        XCTAssertFalse(LayoutHelperWindowCatalog.matchesScreen(nil, requested: calculation))
+    }
+}
+
+
+@MainActor
+final class LayoutHelperCapturePriorityTests: XCTestCase {
+    func testScrollingPrioritizesVisibleWindowsAlreadyWaitingForCapture() async {
+        let initialStarted = expectation(description: "Both capture slots are occupied")
+        initialStarted.expectedFulfillmentCount = 2
+        let visibleStarted = expectation(description: "Newly visible window starts next")
+        var started: [Int] = []
+        var pending: [Int: CheckedContinuation<Int?, Never>] = [:]
+        let queue = LayoutHelperCaptureQueue<Int, Int> { key in
+            await withCheckedContinuation { continuation in
+                pending[key] = continuation
+                started.append(key)
+                if key == 1 || key == 2 { initialStarted.fulfill() }
+                else { visibleStarted.fulfill() }
+            }
+        }
+        queue.replace(with: [1, 2, 3, 4, 5])
+        await fulfillment(of: [initialStarted], timeout: 2)
+
+        queue.replace(with: [5, 1, 2, 3, 4, 5])
+        pending.removeValue(forKey: 1)?.resume(returning: 1)
+        await fulfillment(of: [visibleStarted], timeout: 2)
+        XCTAssertEqual(Set(started.prefix(2)), [1, 2])
+        XCTAssertEqual(started.dropFirst(2), [5])
+        XCTAssertEqual(queue.activeCount, 2)
+
+        queue.stop()
+        for continuation in pending.values { continuation.resume(returning: nil) }
+    }
+
+    func testReplacementDropsObsoleteWaitingWindows() async {
+        let initialStarted = expectation(description: "Both capture slots are occupied")
+        initialStarted.expectedFulfillmentCount = 2
+        let replacementStarted = expectation(description: "Replacement window starts")
+        var started: [Int] = []
+        var pending: [Int: CheckedContinuation<Int?, Never>] = [:]
+        let queue = LayoutHelperCaptureQueue<Int, Int> { key in
+            await withCheckedContinuation { continuation in
+                pending[key] = continuation
+                started.append(key)
+                if key == 1 || key == 2 { initialStarted.fulfill() }
+                else { replacementStarted.fulfill() }
+            }
+        }
+        queue.replace(with: [1, 2, 3, 4])
+        await fulfillment(of: [initialStarted], timeout: 2)
+
+        queue.replace(with: [4, 4])
+        pending.removeValue(forKey: 1)?.resume(returning: 1)
+        await fulfillment(of: [replacementStarted], timeout: 2)
+        XCTAssertEqual(started.dropFirst(2), [4])
+
+        queue.stop()
+        for continuation in pending.values { continuation.resume(returning: nil) }
+    }
+}
+
+
+@MainActor
+final class LayoutHelperContinuityTests: XCTestCase {
+    private let region = CGRect(x: 40, y: 40, width: 480, height: 480)
+    private func views<T: NSView>(_ root: NSView, _ type: T.Type) -> [T] {
+        root.subviews.flatMap { (($0 as? T).map { [$0] } ?? []) + views($0, type) }
+    }
+    private func items(_ count: Int) -> [LayoutHelperPanel.Item] {
+        (1...count).map { .init(id: CGWindowID($0), title: "Continuity \($0)", icon: nil,
+            unavailableReason: nil, sourceSize: CGSize(width: 400, height: 600)) }
+    }
+    private func card(_ id: Int, _ panel: LayoutHelperPanel) throws -> NSButton {
+        try XCTUnwrap(views(try XCTUnwrap(panel.contentView), NSButton.self).first { $0.title == "Continuity \(id)" })
+    }
+    private func scroll(_ panel: LayoutHelperPanel) throws -> NSScrollView {
+        try XCTUnwrap(views(try XCTUnwrap(panel.contentView), NSScrollView.self).first)
+    }
+    func testCandidateAdditionPreservesCardsFocusAndScrolledViewport() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(12), offerPermission: false, keyboardTriggered: true)
+        let first = try card(1, panel)
+        panel.makeFirstResponder(first)
+        let originalScroll = try scroll(panel)
+        originalScroll.contentView.scroll(to: CGPoint(x: 0, y: 350))
+        originalScroll.reflectScrolledClipView(originalScroll.contentView)
+        let origin = originalScroll.contentView.bounds.origin
+        panel.show(in: region, items: items(13), offerPermission: false, keyboardTriggered: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        XCTAssertTrue(panel.firstResponder === first)
+        XCTAssertEqual(try scroll(panel).contentView.bounds.origin.y, origin.y, accuracy: 1)
+    }
+    func testNewCandidateWaitsForPreviewWithoutHidingExistingCards() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        let image = NSImage(size: CGSize(width: 400, height: 600))
+        panel.show(in: region, items: items(1), offerPermission: false,
+                   images: [1: image], waitForPreviews: true)
+        let first = try card(1, panel)
+        panel.show(in: region, items: items(2), offerPermission: false, waitForPreviews: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        XCTAssertFalse(first.isHidden)
+        XCTAssertTrue(try card(2, panel).isHidden)
+        panel.updateImage(image, for: 2)
+        XCTAssertFalse(try card(2, panel).isHidden)
+    }
+    func testConsecutiveCandidateRemovalsKeepDepartingCardsAttached() throws {
+        guard !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else { throw XCTSkip("Removal fades respect Reduce Motion") }
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(3), offerPermission: false)
+        let third = try card(3, panel)
+        panel.show(in: region, items: items(2), offerPermission: false)
+        panel.show(in: region, items: items(1), offerPermission: false)
+        XCTAssertTrue(third.isDescendant(of: try XCTUnwrap(panel.contentView)))
+        XCTAssertFalse(third.isEnabled)
+        XCTAssertTrue(panel.isTransitioning)
+    }
+    func testDisjointContinuationUsesFadeAndRetainsCardIdentity() async throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(1), offerPermission: false)
+        let first = try card(1, panel)
+        let next = region.offsetBy(dx: 600, dy: 0)
+        panel.show(in: next, items: items(1), offerPermission: false, continuing: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        XCTAssertEqual(panel.frame, next)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        let owned = Set(NSApp.windows.filter { panel.owns($0) }.map { $0.windowNumber })
+        let ordered = (CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID) as? [[String: Any]])?
+            .compactMap { $0[kCGWindowNumber as String] as? Int }.filter { owned.contains($0) }
+        XCTAssertEqual(ordered?.first, panel.windowNumber,
+                       "Replacement backgrounds must remain below the retained cards: \(String(describing: ordered))")
+        if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            let animation = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperReflow") as? CABasicAnimation)
+            XCTAssertEqual(animation.keyPath, "opacity")
+        }
+        panel.dismiss()
+        XCTAssertFalse(panel.hasActiveSession)
+        XCTAssertFalse(panel.isTransitioning)
+    }
+    func testOverlappingShrinkFadesCardsOutsideTheNewViewport() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.dismiss() }
+        panel.show(in: region, items: items(1), offerPermission: false)
+        let first = try card(1, panel)
+        let smaller = CGRect(x: region.minX + 160, y: region.minY, width: 320, height: region.height)
+        panel.show(in: smaller, items: items(1), offerPermission: false, continuing: true)
+        XCTAssertTrue(try card(1, panel) === first)
+        if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            let animation = try XCTUnwrap(first.layer?.animation(forKey: "layoutHelperReflow") as? CABasicAnimation)
+            XCTAssertEqual(animation.keyPath, "opacity")
+        }
+    }
+
+    func testBackdropRetargetingReachesLatestFrameAndResizesShadow() async throws {
+        let surface = LayoutHelperSurface()
+        defer { surface.stopFrameTransition(); surface.close() }
+        surface.prepare(in: region)
+        let target = CGRect(x: 50, y: 50, width: 640, height: 600)
+        surface.transitionFrame(to: region.insetBy(dx: 20, dy: 20), duration: 0.18)
+        surface.transitionFrame(to: target, duration: 0.05)
+        try await Task.sleep(nanoseconds: 150_000_000)
+        XCTAssertEqual(surface.frame, target)
+        XCTAssertNil(surface.destinationFrame)
+        let root = try XCTUnwrap(surface.contentView)
+        root.layoutSubtreeIfNeeded()
+        let shadow = try XCTUnwrap(root.subviews.first { $0.layer?.shadowPath != nil })
+        XCTAssertEqual(try XCTUnwrap(shadow.layer?.shadowPath).boundingBoxOfPath, shadow.bounds)
+    }
+}
+
+
+@MainActor
+final class LayoutHelperShortcutEntryTests: XCTestCase {
+    private final class Bindings: ShortcutBindingStore {
+        func configure() {}
+        func registerDefaultShortcuts(_ shortcuts: [String: MASShortcut]) {}
+        func bindShortcut(withDefaultsKey defaultsKey: String, toAction action: @escaping () -> Void) {}
+        func breakBinding(withDefaultsKey defaultsKey: String) {}
+    }
+    private final class WindowManagerSpy: WindowManager {
+        var received: ExecutionParameters?
+        override func execute(_ parameters: ExecutionParameters) { received = parameters }
+    }
+    private final class MissingStackWindow: AccessibilityElement {
+        init() { super.init(AXUIElementCreateApplication(getpid())) }
+        override func getWindowId() -> CGWindowID? { nil }
+    }
+    func testStackCycleCommandsDismissHelperBeforeBypassingWindowManager() {
+        let helper = LayoutHelperManager.shared
+        defer { helper.cancel() }
+        let manager = WindowManagerSpy()
+        let router = ShortcutManager(windowManager: manager, bindingStore: Bindings(),
+            notificationCenter: NotificationCenter(), workspaceNotificationCenter: NotificationCenter(),
+            shortcutsProvider: { [:] }, activeStateProvider: { false }, todoSessionStateChanged: { _ in })
+        for action: WindowAction in [.cycleStackedWindows, .cycleStackedWindowsBackward] {
+            let token = helper.cancel()
+            let parameters = ExecutionParameters(action, windowElement: MissingStackWindow(), source: .keyboardShortcut)
+            router.windowActionTriggered(notification: NSNotification(name: action.notificationName, object: parameters))
+            XCTAssertNotEqual(helper.token, token, "Stack cycling must invalidate the previous Helper session")
+            XCTAssertNil(manager.received, "Stack cycling is handled by MultiWindowManager")
+        }
+    }
+    func testOrdinaryCommandsReachWindowManagerWithoutDismissingHelper() {
+        let previous = Defaults.subsequentExecutionMode.value
+        Defaults.subsequentExecutionMode.value = .none
+        defer { Defaults.subsequentExecutionMode.value = previous; LayoutHelperManager.shared.cancel() }
+        let windowManager = WindowManagerSpy()
+        let router = ShortcutManager(windowManager: windowManager, bindingStore: Bindings(),
+            notificationCenter: NotificationCenter(), workspaceNotificationCenter: NotificationCenter(),
+            shortcutsProvider: { [:] }, activeStateProvider: { false }, todoSessionStateChanged: { _ in })
+        for source: ExecutionSource in [.keyboardShortcut, .menuItem, .dragToSnap] {
+            let token = LayoutHelperManager.shared.cancel()
+            let parameters = ExecutionParameters(.leftHalf, source: source)
+            router.windowActionTriggered(notification: NSNotification(name: WindowAction.leftHalf.notificationName, object: parameters))
+            XCTAssertEqual(windowManager.received?.action, .leftHalf)
+            XCTAssertEqual(LayoutHelperManager.shared.token, token,
+                           "WindowManager must decide continuity after resolving the target window")
+        }
+    }
+}
+
+
+@MainActor
+final class LayoutHelperCatalogSchedulingTests: XCTestCase {
+    private final class Calls {
+        private let lock = NSLock()
+        private var count = 0
+        private var active = 0
+        private var maximum = 0
+        func begin() -> Int {
+            lock.lock(); defer { lock.unlock() }
+            count += 1; active += 1; maximum = max(maximum, active)
+            return count
+        }
+        func end() { lock.lock(); active -= 1; lock.unlock() }
+        var totals: (count: Int, maximum: Int) {
+            lock.lock(); defer { lock.unlock() }; return (count, maximum)
+        }
+    }
+
+    func testRepeatedRefreshAndStopResumeKeepOneWindowServerRequest() async {
+        let first = expectation(description: "First inventory is blocked")
+        let second = expectation(description: "Newest inventory starts after release")
+        let released = expectation(description: "Latest inventory completed")
+        let release = DispatchSemaphore(value: 0)
+        let calls = Calls()
+        let catalog = LayoutHelperWindowCatalog(windowList: {
+            XCTAssertFalse(Thread.isMainThread)
+            let index = calls.begin()
+            defer { calls.end() }
+            if index == 1 {
+                first.fulfill()
+                _ = release.wait(timeout: .now() + 3)
+            } else if index == 2 { second.fulfill() }
+            return []
+        }, desktopWindows: { _, _ in [:] })
+        defer { release.signal(); catalog.stop() }
+        catalog.refresh()
+        await fulfillment(of: [first], timeout: 2)
+        for _ in 0..<20 { catalog.refresh() }
+        catalog.stop()
+        catalog.didUpdate = { released.fulfill() }
+        for _ in 0..<20 { catalog.refresh() }
+        XCTAssertTrue(catalog.isRefreshing)
+        release.signal()
+        await fulfillment(of: [second, released], timeout: 3)
+        XCTAssertEqual(calls.totals.count, 2)
+        XCTAssertEqual(calls.totals.maximum, 1)
+    }
+
+    func testStoppingDropsPendingInventoryDemand() async {
+        let started = expectation(description: "Inventory started")
+        let stale = expectation(description: "Stopped inventory must not deliver")
+        stale.isInverted = true
+        let release = DispatchSemaphore(value: 0)
+        let calls = Calls()
+        let catalog = LayoutHelperWindowCatalog(windowList: {
+            let index = calls.begin()
+            defer { calls.end() }
+            if index == 1 { started.fulfill(); _ = release.wait(timeout: .now() + 3) }
+            return []
+        }, desktopWindows: { _, _ in [:] })
+        defer { release.signal(); catalog.stop() }
+        catalog.didUpdate = { stale.fulfill() }
+        catalog.refresh()
+        await fulfillment(of: [started], timeout: 2)
+        catalog.refresh()
+        catalog.stop()
+        XCTAssertFalse(catalog.isRefreshing)
+        release.signal()
+        await fulfillment(of: [stale], timeout: 0.15)
+        XCTAssertEqual(calls.totals.count, 1)
+    }
+}
+
+
+@MainActor
+final class LayoutHelperCancelledCaptureTests: XCTestCase {
+    func testCancelledCapturesKeepSlotsAndDiscardResultsBeforeRestartingSameKey() async {
+        let initial = expectation(description: "Both captures started")
+        initial.expectedFulfillmentCount = 2
+        let restarted = expectation(description: "Latest request starts after old slot returns")
+        let delivered = expectation(description: "Only latest capture is delivered")
+        var pending: [Int: CheckedContinuation<Int?, Never>] = [:]
+        var started: [Int] = []
+        var values: [Int] = []
+        let queue = LayoutHelperCaptureQueue<Int, Int> { key in
+            await withCheckedContinuation { continuation in
+                pending[key] = continuation
+                started.append(key)
+                if started.count <= 2 { initial.fulfill() } else { restarted.fulfill() }
+            }
+        }
+        queue.completed = { _, value in values.append(value); delivered.fulfill() }
+        queue.replace(with: [1, 2])
+        await fulfillment(of: [initial], timeout: 2)
+        queue.stop()
+        queue.replace(with: [1])
+        XCTAssertEqual(queue.activeCount, 2)
+        pending.removeValue(forKey: 1)?.resume(returning: 10)
+        await fulfillment(of: [restarted], timeout: 2)
+        XCTAssertEqual(Set(started.prefix(2)), [1, 2])
+        XCTAssertEqual(Array(started.dropFirst(2)), [1])
+        XCTAssertEqual(queue.activeCount, 2)
+        pending.removeValue(forKey: 1)?.resume(returning: 11)
+        await fulfillment(of: [delivered], timeout: 2)
+        XCTAssertEqual(values, [11])
+        queue.stop()
+        for continuation in pending.values { continuation.resume(returning: nil) }
+    }
+}
+
+
+@MainActor
+final class LayoutHelperSnapResponsivenessTests: XCTestCase {
+    private final class Window: AccessibilityElement {
+        private(set) var minimizedReads = 0
+        init() { super.init(AXUIElementCreateSystemWide()) }
+        override var isMinimized: Bool? { minimizedReads += 1; return true }
+    }
+
+    func testDidSnapDefersVisibilityValidationWithoutReadingAXMinimized() throws {
+        guard !StageUtil.stageEnabled else { throw XCTSkip("Layout Helper is disabled while Stage Manager is enabled") }
+        let screen = try XCTUnwrap(NSScreen.screens.first)
+        let savedHelper = Defaults.layoutHelper.enabled
+        let savedGap = Defaults.gapSize.value
+        Defaults.layoutHelper.enabled = true
+        Defaults.gapSize.value = 0
+        let manager = LayoutHelperManager.shared
+        defer {
+            manager.cancel()
+            Defaults.layoutHelper.enabled = savedHelper
+            Defaults.gapSize.value = savedGap
+        }
+        let bounds = screen.adjustedVisibleFrame().screenFlipped
+        let frame = CGRect(x: bounds.minX, y: bounds.minY, width: floor(bounds.width / 2), height: bounds.height)
+        let window = Window()
+        let token = manager.cancel()
+        let calculation = WindowCalculationResult(rect: frame.screenFlipped, screen: screen, resultingAction: .leftHalf)
+        let result = ResultParameters(windowId: nil, action: .leftHalf, windowElement: window,
+            calcResult: calculation, usableScreens: UsableScreens(currentScreen: screen, numScreens: 1),
+            visibleFrameOfScreen: bounds.screenFlipped, source: .dragToSnap, isFixedSize: false,
+            layoutHelperToken: token)
+        manager.didSnap(result: result, frame: frame)
+        XCTAssertEqual(window.minimizedReads, 0, "The snap callback must not wait on the target application's AX reply")
+        XCTAssertEqual(manager.token, token, "Visibility must be checked by the deferred WindowServer observation")
+    }
+}
+
+
+
+
+
+@MainActor
+final class LayoutHelperWindowStyleTests: XCTestCase {
+    func testBackgroundAndShadowUseWindowRadiusInBothMaterials() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        for glass in [false, true] {
+            Defaults.liquidGlassForBlur.enabled = glass
+            let panel = LayoutHelperSurface()
+            defer { panel.close() }
+            panel.prepare(in: CGRect(x: 30, y: 30, width: 640, height: 480))
+            let root = try XCTUnwrap(panel.contentView)
+            root.layoutSubtreeIfNeeded()
+            let blur = try XCTUnwrap(root.subviews.first { !($0 is LayoutHelperShadow) })
+            func descendants(_ view: NSView) -> [NSView] { view.subviews.flatMap { [$0] + descendants($0) } }
+            if #available(macOS 26, *), let native = descendants(blur).compactMap({ $0 as? NSGlassEffectView }).first {
+                XCTAssertEqual(native.cornerRadius, FootprintStyle.cornerRadius)
+            } else {
+                let legacy = try XCTUnwrap(descendants(blur).compactMap { $0 as? NSVisualEffectView }.first)
+                XCTAssertEqual(legacy.maskImage?.capInsets.top, FootprintStyle.cornerRadius)
+                let shadow = try XCTUnwrap(root.subviews.compactMap { $0 as? LayoutHelperShadow }.first)
+                let expected = CGPath(roundedRect: shadow.bounds, cornerWidth: FootprintStyle.cornerRadius,
+                                      cornerHeight: FootprintStyle.cornerRadius, transform: nil)
+                XCTAssertEqual(shadow.layer?.shadowPath, expected)
+            }
+        }
+    }
+
+    func testSmallerWindowRadiusPreservesCloseControlAndScrollerInsets() throws {
+        let panel = LayoutHelperPanel()
+        defer { panel.close() }
+        let closePreference = Defaults.layoutHelperCloseButton.toCodable()
+        Defaults.layoutHelperCloseButton.enabled = true
+        defer { Defaults.layoutHelperCloseButton.load(from: closePreference) }
+        panel.configure(in: CGRect(x: 30, y: 30, width: 640, height: 480), items: [], offerPermission: false)
+        func descendants(_ view: NSView) -> [NSView] { view.subviews.flatMap { [$0] + descendants($0) } }
+        let views = descendants(try XCTUnwrap(panel.contentView))
+        let close = try XCTUnwrap(views.compactMap { $0 as? LayoutHelperCloseButton }.first)
+        let scroll = try XCTUnwrap(views.compactMap { $0 as? NSScrollView }.first)
+        let foreground = try XCTUnwrap(scroll.superview)
+        var closeSurface: NSView = close
+        while closeSurface.superview !== foreground { closeSurface = try XCTUnwrap(closeSurface.superview) }
+        XCTAssertEqual(closeSurface.frame.midX, foreground.bounds.width - 26)
+        XCTAssertEqual(closeSurface.frame.midY, 26)
+        XCTAssertEqual(scroll.scrollerInsets.top, 26)
+        XCTAssertEqual(scroll.scrollerInsets.bottom, 26)
+    }
+
+    func testSeparateHelperInteractionAndBackdropFollowLiveAppearanceAndImport() {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .system
+        let notifications = NotificationCenter()
+        let panel = LayoutHelperPanel(notifications: notifications)
+        let backdrop = LayoutHelperSurface(notifications: notifications)
+        defer { panel.close(); backdrop.close() }
+        let frame = CGRect(x: 30, y: 30, width: 640, height: 480)
+        panel.configure(in: frame, items: [], offerPermission: false, separateBackground: true)
+        backdrop.prepare(in: frame)
+        let interactionRoot = panel.contentView
+        let backdropRoot = backdrop.contentView
+        let model = SnapAreaViewModel()
+        for choice: BlurAppearance in [.light, .dark, .system] {
+            model.blurAppearance = choice
+            notifications.post(name: .blurAppearanceChanged, object: nil)
+            XCTAssertEqual(panel.appearance?.name, choice.appearance?.name)
+            XCTAssertEqual(backdrop.appearance?.name, choice.appearance?.name)
+            XCTAssertTrue(panel.contentView === interactionRoot)
+            XCTAssertTrue(backdrop.contentView === backdropRoot)
+        }
+        Defaults.blurAppearance.value = .dark
+        notifications.post(name: .configImported, object: nil)
+        XCTAssertEqual(panel.appearance?.name, .darkAqua)
+        XCTAssertEqual(backdrop.appearance?.name, .darkAqua)
+    }
+}
+
+
+final class LayoutHelperOccupancyTests: XCTestCase {
+    private let bounds = CGRect(x: -178, y: -1050, width: 1920, height: 1025)
+    private func layout(gap: CGFloat = 0, skipTop: Bool = false) throws -> LayoutHelperLayout {
+        try XCTUnwrap(LayoutHelperLayout.make(action: .topLeft, screen: bounds,
+            anchor: CGRect(x: bounds.minX, y: bounds.minY, width: 960, height: 512), gap: gap, skipTopGap: skipTop))
+    }
+    private func info(_ id: CGWindowID, _ frame: CGRect, pid: pid_t = 42,
+                      onScreen: Bool = true, alpha: CGFloat = 1, level: CGWindowLevel = 0) -> WindowInfo {
+        WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: nil, alpha: alpha, isOnScreen: onScreen)
+    }
+    private func occupants(_ plan: LayoutHelperLayout, _ windows: [WindowInfo],
+                           normal: Set<CGWindowID>? = nil) -> [WindowInfo] {
+        LayoutHelperOccupancy.occupants(in: plan, windows: windows,
+            normalWindowIDs: normal ?? Set(windows.map(\.id)), ignoring: [1])
+    }
+    private func right(_ plan: LayoutHelperLayout) -> CGRect { plan.target(for: plan.cells[1].union(plan.cells[3])) }
+    func testAuxiliaryWindowCannotHideSameApplicationHalf() throws {
+        let p = try layout()
+        let windows = [info(9, right(p)), info(1, p.target(for: p.cells[0])), info(2, right(p))]
+        let found = occupants(p, windows, normal: [1, 2])
+        XCTAssertEqual(found.map(\.id), [2], "Even a large auxiliary surface must not claim or obscure layout cells")
+        XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2])
+    }
+    func testFloatingWindowElsewhereDoesNotStopNeighborSearch() throws {
+        let p = try layout()
+        let floating = CGRect(x: bounds.minX + 40, y: bounds.minY + 70, width: 700, height: 280)
+        XCTAssertEqual(occupants(p, [info(3, floating), info(2, right(p))]).map(\.id), [2])
+    }
+    func testMultipleVisibleWindowsCompleteLayout() throws {
+        let p = try layout()
+        let found = occupants(p, [info(1, p.target(for: p.cells[0])), info(2, right(p)), info(3, p.target(for: p.cells[2]), pid: 77)])
+        XCTAssertEqual(found.map(\.id), [2, 3])
+        XCTAssertTrue(p.remaining(excluding: found.reduce(into: Set<Int>()) { $0.formUnion(p.occupiedCells(by: $1.frame)) }).isEmpty)
+    }
+    func testFullOcclusionByUnionOfFloatingWindowsReopensRegion() throws {
+        let p = try layout(), frame = right(p)
+        let top = CGRect(x: frame.minX - 5, y: frame.minY - 5, width: frame.width + 10, height: frame.height / 2 + 5)
+        let bottom = CGRect(x: frame.minX - 5, y: frame.midY, width: frame.width + 10, height: frame.height / 2 + 5)
+        XCTAssertTrue(occupants(p, [info(4, top), info(5, bottom), info(2, frame)]).isEmpty)
+        XCTAssertEqual(occupants(p, [info(4, top), info(2, frame)]).map(\.id), [2], "Partial cover preserves the whole tiled window")
+    }
+    func testFloatingOverlapNeverCountsAsOccupied() throws {
+        let p = try layout()
+        XCTAssertTrue(occupants(p, [info(3, right(p).insetBy(dx: 15, dy: 40))]).isEmpty)
+    }
+    func testHiddenTransparentAndNonNormalSurfacesDoNotOccupyOrObscure() throws {
+        let p = try layout(), frame = right(p)
+        for front in [info(3, frame, onScreen: false), info(3, frame, alpha: 0), info(3, frame, level: 1)] {
+            XCTAssertEqual(occupants(p, [front, info(2, frame)]).map(\.id), [2])
+        }
+        XCTAssertTrue(occupants(p, [info(2, frame, onScreen: false)]).isEmpty)
+    }
+    func testMovingClosingOrMinimizingNeighborReopensItsCells() throws {
+        let p = try layout(), frame = right(p)
+        for windows in [[], [info(2, frame.offsetBy(dx: -60, dy: 0))], [info(2, frame, onScreen: false)]] {
+            let found = occupants(p, windows)
+            XCTAssertEqual(p.remaining(excluding: found.reduce(into: Set<Int>()) { $0.formUnion(p.occupiedCells(by: $1.frame)) }), [1, 2, 3])
+        }
+    }
+    func testOnlyTopRightLeavesBothBottomCells() throws {
+        let p = try layout()
+        let found = occupants(p, [info(2, p.target(for: p.cells[1]))])
+        XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2, 3])
+    }
+    func testFrontmostMatchingWindowWinsWithoutDoubleCounting() throws {
+        let p = try layout()
+        XCTAssertEqual(occupants(p, [info(3, right(p)), info(2, right(p))]).map(\.id), [3])
+    }
+    func testPartiallyExposedHalfKeepsItsUnionBehindFrontQuarter() throws {
+        let p = try layout()
+        let found = occupants(p, [info(3, p.target(for: p.cells[1])), info(2, right(p))])
+        XCTAssertEqual(found.map(\.id), [3, 2])
+        XCTAssertEqual(p.remaining(excluding: found.reduce(into: Set<Int>()) { $0.formUnion(p.occupiedCells(by: $1.frame)) }), [2])
+    }
+    func testOnlyNeighborsAndTheirFrontOccludersNeedMetadata() throws {
+        let p = try layout()
+        let leftFloat = CGRect(x: bounds.minX + 20, y: bounds.minY + 60, width: 600, height: 350)
+        let rightFloat = right(p).insetBy(dx: 20, dy: 20)
+        let scene = [info(1, p.cells[0]), info(3, leftFloat), info(4, rightFloat), info(2, right(p)), info(5, bounds)]
+        XCTAssertEqual(LayoutHelperOccupancy.relevantWindowIDs(in: p, windows: scene, ignoring: [1]), [4, 2])
+        XCTAssertTrue(LayoutHelperOccupancy.relevantWindowIDs(in: p, windows: [info(5, bounds), info(3, leftFloat)], ignoring: [1]).isEmpty)
+    }
+    func testChosenFloatingWindowKeepsCoverWithoutClaimingCells() throws {
+        let p = try layout()
+        let cover = right(p).insetBy(dx: -10, dy: -10)
+        let scene = [info(3, cover), info(2, right(p))]
+        XCTAssertTrue(LayoutHelperOccupancy.occupants(in: p, windows: scene, normalWindowIDs: [2, 3],
+            ignoring: [1], excludingOccupants: [3]).isEmpty)
+        XCTAssertEqual(LayoutHelperOccupancy.occupants(in: p, windows: [info(3, p.cells[1]), info(2, right(p))],
+            normalWindowIDs: [2, 3], ignoring: [1], excludingOccupants: [3]).map(\.id), [2],
+            "After selection completes, fresh visibility can include the previously covered half")
+    }
+    func testRetainedTileStillOccludesHiddenHalf() throws {
+        let p = try layout(), half = right(p)
+        let bottomCover = CGRect(x: half.minX - 10, y: p.cells[3].minY, width: half.width + 20, height: p.cells[3].height + 10)
+        let scene = [info(3, p.target(for: p.cells[1])), info(4, bottomCover), info(2, half)]
+        XCTAssertTrue(LayoutHelperOccupancy.occupants(in: p, windows: scene, normalWindowIDs: [2, 3, 4],
+            ignoring: [1], excludingOccupants: [3]).isEmpty)
+    }
+    func testGapAndTopMarginUseExistingUnionGeometry() throws {
+        for gap: CGFloat in [0, 1, 8, 15] {
+            for skip in [false, true] {
+                let p = try layout(gap: gap, skipTop: skip)
+                let found = occupants(p, [info(2, right(p))])
+                XCTAssertEqual(found.map(\.id), [2])
+                XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2])
+            }
+        }
+    }
+}
+
+@MainActor
+final class FootprintGeometrySynchronizationTests: XCTestCase {
+    func testColdAndRepeatedPreviewKeepsMaterialInsideSurface() async throws {
+        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
+        let blur = Defaults.footprintBlur.toCodable()
+        let alpha = Defaults.footprintAlpha.toCodable()
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintBlur.load(from: blur)
+            Defaults.footprintAlpha.load(from: alpha)
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.footprintAlpha.value = 0.3
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let target = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        for blurred in [true, false] {
+            Defaults.footprintBlur.enabled = blurred
+            let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+            defer { window.close() }
+            let surface = try XCTUnwrap(window.contentView?.subviews.last)
+            let material = try XCTUnwrap(surface.subviews.first)
+            for _ in 0..<2 {
+                window.showPreview(in: target, from: CGPoint(x: target.minX + 4, y: target.midY), duration: 0.24)
+                let until = CACurrentMediaTime() + 0.32
+                while CACurrentMediaTime() < until {
+                    try await Task.sleep(nanoseconds: 8_000_000)
+                    let bounds = surface.layer?.presentation()?.bounds ?? surface.bounds
+                    let inner = material.layer?.presentation()?.frame ?? material.frame
+                    XCTAssertEqual(inner.width, bounds.width, accuracy: 1)
+                    XCTAssertEqual(inner.height, bounds.height, accuracy: 1)
+                }
+                let settlementDeadline = CACurrentMediaTime() + 2
+                while WindowAnimationCaptureGate.shared.isPaused && CACurrentMediaTime() < settlementDeadline {
+                    try await Task.sleep(nanoseconds: 8_000_000)
+                }
+                XCTAssertEqual(surface.frame.width, target.width, accuracy: 1)
+                XCTAssertEqual(surface.frame.height, target.height, accuracy: 1)
+                XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+                window.orderOut(nil)
+                try await Task.sleep(nanoseconds: 30_000_000)
+            }
+        }
+    }
+
+    func testRetargetAndCloseDoNotLeavePreviewGeometryRunning() async throws {
+        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let left = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        window.movePreview(to: left.offsetBy(dx: left.width, dy: 0), duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        window.close()
+        let surface = try XCTUnwrap(window.contentView?.subviews.last)
+        let closedFrame = surface.frame
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(surface.frame, closedFrame)
+        XCTAssertFalse(window.realIsVisible)
+        XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+    }
+}
+
+
+
+@MainActor
+final class LiquidGlassBlurTests: XCTestCase {
+    private var previousGlass = false
+    private var previousBlur = false
+
+    override func setUp() {
+        previousGlass = Defaults.liquidGlassForBlur.enabled
+        previousBlur = Defaults.footprintBlur.enabled
+    }
+    override func tearDown() {
+        Defaults.liquidGlassForBlur.enabled = previousGlass
+        Defaults.footprintBlur.enabled = previousBlur
+        Notification.Name.blurStyleChanged.post()
+    }
+
+    @MainActor
+    func testGlassMaterialTracksColdAndRepeatedAnimatedPreview() async throws {
+        guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires native glass and a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let target = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        for _ in 0..<2 {
+            window.showPreview(in: target, from: CGPoint(x: target.minX + 4, y: target.midY), duration: 0.24)
+            try await assertGlassTracksSurface(window, for: 0.32)
+            window.orderOut(nil)
+            try await Task.sleep(nanoseconds: 30_000_000)
+        }
+    }
+
+    @MainActor
+    func testGlassRetargetingStyleSwitchAndCloseRetireAnimation() async throws {
+        guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires native glass and a screen") }
+        let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
+        let fade = Defaults.footprintFade.toCodable()
+        defer {
+            Defaults.footprintAnimationDurationMultiplier.load(from: duration)
+            Defaults.footprintFade.load(from: fade)
+        }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.footprintAnimationDurationMultiplier.value = 1
+        Defaults.footprintFade.enabled = false
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
+        let left = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
+        let right = left.offsetBy(dx: left.width, dy: 0)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await assertGlassTracksSurface(window, for: 0.05)
+        window.movePreview(to: right, duration: 0.24)
+        try await assertGlassTracksSurface(window, for: 0.05)
+        window.orderOut(nil)
+        window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
+        try await assertGlassTracksSurface(window, for: 0.05)
+        Defaults.liquidGlassForBlur.enabled = false
+        Notification.Name.blurStyleChanged.post()
+        window.movePreview(to: right, duration: 0.24)
+        try await Task.sleep(nanoseconds: 50_000_000)
+        Defaults.liquidGlassForBlur.enabled = true
+        Notification.Name.blurStyleChanged.post()
+        try await assertGlassTracksSurface(window, for: 0.05)
+        window.movePreview(to: left, duration: 0.24)
+        window.close()
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertFalse(window.realIsVisible)
+    }
+
+    @MainActor
+    @available(macOS 26, *)
+    private func assertGlassTracksSurface(_ window: FootprintWindow, for duration: TimeInterval,
+                                         file: StaticString = #filePath, line: UInt = #line) async throws {
+        func material(in view: NSView) -> BlurSurfaceView? {
+            if let surface = view as? BlurSurfaceView { return surface }
+            return view.subviews.lazy.compactMap { material(in: $0) }.first
+        }
+        let surface = try XCTUnwrap(window.contentView.flatMap { material(in: $0) }, file: file, line: line)
+        let until = CACurrentMediaTime() + duration
+        var samples = 0
+        while CACurrentMediaTime() < until {
+            try await Task.sleep(nanoseconds: 8_000_000)
+            let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView, file: file, line: line)
+            let outer = surface.layer?.presentation()?.bounds ?? surface.bounds
+            let inner = glass.layer?.presentation()?.frame ?? glass.frame
+            XCTAssertEqual(inner.width, outer.width, accuracy: 1, file: file, line: line)
+            XCTAssertEqual(inner.height, outer.height, accuracy: 1, file: file, line: line)
+            samples += 1
+        }
+        XCTAssertGreaterThan(samples, 0, file: file, line: line)
+    }
+
+    func testSwitchingMaterialRetainsContentAndResizesWithoutLegacyBlur() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
+        Defaults.liquidGlassForBlur.enabled = false
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 240, height: 160), flipped: true)
+        let button = NSButton(title: "Choose", target: nil, action: nil)
+        surface.content.addSubview(button)
+        XCTAssertEqual(surface.subviews.filter { $0 is NSVisualEffectView }.count, 1)
+        for enabled in [true, false, true] {
+            Defaults.liquidGlassForBlur.enabled = enabled
+            Notification.Name.blurStyleChanged.post()
+            XCTAssertEqual(surface.usesLiquidGlass, enabled)
+            XCTAssertTrue(button.superview === surface.content)
+            XCTAssertTrue(surface.content.isFlipped)
+            if enabled {
+                let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
+                XCTAssertTrue(glass.contentView === surface.content)
+                XCTAssertNil(glass.tintColor)
+                XCTAssertEqual(glass.style, .regular)
+                XCTAssertFalse(surface.subviews.contains { $0 is NSVisualEffectView })
+                XCTAssertFalse(surface.layer?.masksToBounds ?? false)
+            } else {
+                XCTAssertTrue(surface.content.superview === surface)
+            }
+            surface.setFrameSize(CGSize(width: 360, height: 210))
+            surface.layoutSubtreeIfNeeded()
+            XCTAssertEqual(surface.content.frame, surface.bounds)
+            if enabled {
+                surface.setFrameSize(CGSize(width: 1, height: 1))
+                surface.layoutSubtreeIfNeeded()
+                let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
+                XCTAssertTrue(glass.isHidden, "Do not render native glass with degenerate animation geometry")
+                surface.setFrameSize(CGSize(width: 360, height: 210))
+            }
+        }
+    }
+
+    func testFootprintGlassIgnoresLegacyTintAndLetsSystemHandleTransparency() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: true, reduceTransparency: false) })
+        defer { window.close() }
+        XCTAssertTrue(window.usesLiquidGlass)
+        XCTAssertTrue(window.presentation.usesBlur)
+        XCTAssertEqual(window.presentation.alpha, 1)
+        XCTAssertFalse(window.presentation.fades)
+        XCTAssertFalse(window.presentation.animates)
+        window.showPreview(in: CGRect(x: 60, y: 60, width: 320, height: 260), from: nil, duration: 0)
+        window.contentView?.layoutSubtreeIfNeeded()
+        let root = try XCTUnwrap(window.contentView)
+        XCTAssertTrue(window.childWindows?.allSatisfy { !$0.isVisible } ?? true, "Custom shadow must be hidden")
+        XCTAssertFalse(root.layer?.masksToBounds ?? true)
+        XCTAssertTrue(root.subviews.compactMap { $0 as? NSBox }.allSatisfy(\.isHidden))
+        func descendants(_ view: NSView) -> [NSView] {
+            view.subviews.flatMap { [$0] + descendants($0) }
+        }
+        let material = try XCTUnwrap(descendants(root).compactMap { $0 as? BlurSurfaceView }.first)
+        let preview = try XCTUnwrap(material.superview)
+        XCTAssertFalse(preview.layer?.masksToBounds ?? true)
+        XCTAssertTrue(preview.layer?.sublayers?.compactMap { $0 as? CAShapeLayer }.allSatisfy(\.isHidden) ?? true)
+        if preview !== root {
+            XCTAssertTrue(root.subviews.filter { $0 !== preview }.allSatisfy(\.isHidden), "Custom shadow must be hidden")
+        }
+        XCTAssertTrue(material.subviews.first is NSGlassEffectView)
+        XCTAssertFalse(material.subviews.contains { $0 is NSVisualEffectView })
+        Defaults.footprintBlur.enabled = false
+        XCTAssertFalse(window.usesLiquidGlass)
+        XCTAssertFalse(window.presentation.usesBlur)
+    }
+
+
+
+    func testWarningContentSurvivesMaterialSwitch() throws {
+        guard #available(macOS 26, *), let screen = NSScreen.main else { throw XCTSkip("Requires macOS 26 and a screen") }
+        let warningPreference = Defaults.showMinimumWindowSizeWarning.toCodable()
+        Defaults.showMinimumWindowSizeWarning.enabled = true
+        defer { Defaults.showMinimumWindowSizeWarning.load(from: warningPreference) }
+        Defaults.liquidGlassForBlur.enabled = true
+        let warning = WindowSizeWarning()
+        defer { warning.close() }
+        warning.show(on: screen)
+        let surface = try XCTUnwrap(warning.contentView as? BlurSurfaceView)
+        surface.layoutSubtreeIfNeeded()
+        XCTAssertTrue(surface.usesLiquidGlass)
+        XCTAssertTrue(surface.subviews.first is NSGlassEffectView)
+        XCTAssertGreaterThan(warning.frame.width, 100)
+        XCTAssertGreaterThan(warning.frame.height, 30)
+        func labels(in view: NSView) -> [NSTextField] {
+            view.subviews.flatMap { child in
+                (child as? NSTextField).map { [$0] } ?? labels(in: child)
+            }
+        }
+        let labels = labels(in: surface.content)
+        XCTAssertEqual(labels.count, 1)
+        Defaults.liquidGlassForBlur.enabled = false
+        Notification.Name.blurStyleChanged.post()
+        warning.show(on: screen)
+        XCTAssertFalse(surface.usesLiquidGlass)
+        XCTAssertTrue(labels.first?.isDescendant(of: surface.content) == true)
+        XCTAssertGreaterThan(warning.frame.height, 30)
+    }
+
+    func testPreferenceParticipatesInConfigAndViewModel() {
+        Defaults.liquidGlassForBlur.enabled = true
+        let preference = Defaults.array.first { $0.key == "liquidGlassForBlur" }
+        XCTAssertNotNil(preference)
+        XCTAssertEqual(preference?.toCodable().bool, true)
+        let model = SnapAreaViewModel()
+        XCTAssertTrue(model.liquidGlassForBlur)
+        model.liquidGlassForBlur = false
+        XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+    }
+}
+
+
+
+@MainActor
+final class BlurDefaultSelectionTests: XCTestCase {
+    private var savedBlur = false
+    private var savedGlass = false
+    private var storedBlur: Any?
+    private var storedGlass: Any?
+    override func setUp() {
+        savedBlur = Defaults.footprintBlur.enabled
+        savedGlass = Defaults.liquidGlassForBlur.enabled
+        storedBlur = UserDefaults.standard.object(forKey: Defaults.footprintBlur.key)
+        storedGlass = UserDefaults.standard.object(forKey: Defaults.liquidGlassForBlur.key)
+        Defaults.footprintBlur.enabled = false
+        Defaults.liquidGlassForBlur.enabled = false
+        UserDefaults.standard.removeObject(forKey: Defaults.footprintBlur.key)
+        UserDefaults.standard.removeObject(forKey: Defaults.liquidGlassForBlur.key)
+    }
+    override func tearDown() {
+        Defaults.footprintBlur.enabled = savedBlur
+        Defaults.liquidGlassForBlur.enabled = savedGlass
+        for (key, value) in [(Defaults.footprintBlur.key, storedBlur), (Defaults.liquidGlassForBlur.key, storedGlass)] {
+            if let value { UserDefaults.standard.set(value, forKey: key) }
+            else { UserDefaults.standard.removeObject(forKey: key) }
+        }
+        Notification.Name.blurStyleChanged.post()
+    }
+    func testOpeningAndReloadingSettingsDoesNotCreateMaterialChoices() {
+        let model = SnapAreaViewModel()
+        model.syncDefaults()
+        XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintBlur.key))
+        XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.liquidGlassForBlur.key))
+    }
+    func testFirstUserEnablingBlurSelectsGlassOnlyOnSupportedSystems() {
+        let model = SnapAreaViewModel()
+        model.footprintBlur = true
+        XCTAssertTrue(Defaults.footprintBlur.enabled)
+        if #available(macOS 26, *) {
+            XCTAssertTrue(model.liquidGlassForBlur)
+            XCTAssertTrue(Defaults.liquidGlassForBlur.enabled)
+        } else {
+            XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+        }
+    }
+    func testExplicitlyDisabledGlassSurvivesBlurOffOnAndReload() {
+        let model = SnapAreaViewModel()
+        model.footprintBlur = true
+        model.liquidGlassForBlur = false
+        model.footprintBlur = false
+        model.syncDefaults()
+        model.footprintBlur = true
+        XCTAssertFalse(model.liquidGlassForBlur)
+        XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+    }
+    func testImportedDisabledChoiceIsRespectedBeforeFirstBlurToggle() {
+        Defaults.liquidGlassForBlur.load(from: CodableDefault(bool: false))
+        let model = SnapAreaViewModel()
+        model.footprintBlur = true
+        XCTAssertFalse(model.liquidGlassForBlur)
+        XCTAssertFalse(Defaults.liquidGlassForBlur.enabled)
+    }
+}
+
+
+
+
+@MainActor
+final class BlurAppearanceLiveTests: XCTestCase {
+    func testViewModelUpdatesExistingMaterialsAndRestoresInheritedAppearance() throws {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .system
+        let model = SnapAreaViewModel()
+        for glass in [false, true] {
+            Defaults.liquidGlassForBlur.enabled = glass
+            let parent = NSView()
+            parent.appearance = NSAppearance(named: .darkAqua)
+            let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240))
+            parent.addSubview(surface)
+            let content = surface.content
+            let material = try XCTUnwrap(surface.subviews.first)
+            var styleChanges = 0
+            var appearanceChanges = 0
+            surface.onStyleChange = { styleChanges += 1 }
+            surface.onAppearanceChange = { appearanceChanges += 1 }
+            for choice: BlurAppearance in [.light, .dark, .system] {
+                model.blurAppearance = choice
+                XCTAssertEqual(surface.appearance?.name, choice.appearance?.name)
+                XCTAssertEqual(content.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]),
+                               choice == .light ? .aqua : .darkAqua)
+                XCTAssertTrue(surface.content === content)
+                XCTAssertTrue(surface.subviews.first === material, "Appearance changes must not recreate the material")
+            }
+            XCTAssertEqual(styleChanges, 0, "Theme changes must not restart style/geometry transitions")
+            XCTAssertEqual(appearanceChanges, 3)
+        }
+    }
+
+    func testConfigImportClearsForcedMaterialAppearance() {
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.blurAppearance.value = .dark
+        let notifications = NotificationCenter()
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240), notifications: notifications)
+        XCTAssertEqual(surface.appearance?.name, .darkAqua)
+        Defaults.blurAppearance.value = .system
+        notifications.post(name: .configImported, object: nil)
+        XCTAssertNil(surface.appearance)
+    }
+
+    func testLiveGlassFootprintUsesAllThreeAppearancesWithoutChangingItsFrame() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Requires native Glass") }
+        let saved = Defaults.array.map { ($0, $0.toCodable()) }
+        defer { saved.forEach { $0.0.load(from: $0.1) }; Notification.Name.blurStyleChanged.post() }
+        Defaults.liquidGlassForBlur.enabled = true
+        Defaults.footprintBlur.enabled = true
+        Defaults.blurAppearance.value = .system
+        let model = SnapAreaViewModel()
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
+        defer { window.close() }
+        window.showPreview(in: CGRect(x: 60, y: 60, width: 400, height: 300), from: nil, duration: 0)
+        let original = window.frame
+        for choice: BlurAppearance in [.dark, .light, .system] {
+            model.blurAppearance = choice
+            XCTAssertEqual(window.appearance?.name, choice.appearance?.name)
+            XCTAssertTrue(window.usesLiquidGlass)
+            XCTAssertEqual(window.frame, original)
+            XCTAssertTrue(window.realIsVisible)
+        }
+    }
+}

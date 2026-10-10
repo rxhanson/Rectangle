@@ -9,18 +9,18 @@ enum WindowAccessibilityLookup {
     }
 
     static func resolve(pid: pid_t, id: CGWindowID, launch: TimeInterval,
-                        preferred: AXUIElement?, isCurrent: () -> Bool) -> AXUIElement? {
+                        preferred: AXUIElement?, isCurrent: @escaping () -> Bool) -> AXUIElement? {
         if case .found(let element) = resolveResult(pid: pid, id: id, launch: launch,
             preferred: preferred, isCurrent: isCurrent) { return element }
         return nil
     }
 
     static func resolveResult(pid: pid_t, id: CGWindowID, launch: TimeInterval,
-                              preferred: AXUIElement?, isCurrent: () -> Bool) -> Result {
+                              preferred: AXUIElement?, isCurrent: @escaping () -> Bool) -> Result {
         let deadline = ProcessInfo.processInfo.systemUptime + 0.25
         func valid() -> Bool { isCurrent() && WindowProcessIdentity.launchTime(for: pid) == launch }
         while valid(), ProcessInfo.processInfo.systemUptime < deadline {
-            let reader = AccessibilityReadBatch(budget: deadline - ProcessInfo.processInfo.systemUptime)
+            let reader = AccessibilityReadBatch(budget: deadline - ProcessInfo.processInfo.systemUptime, isCurrent: valid)
             // Activation can stall AXWindows even while the selected window responds.
             if let preferred {
                 var owner: pid_t = 0
@@ -40,14 +40,20 @@ enum WindowAccessibilityLookup {
     }
 }
 
+import Cocoa
+
 /// All attribute reads share one deadline. Stop on timeout; skip unsupported
 /// optional attributes without extending the deadline.
 final class AccessibilityReadBatch {
     private let deadline: TimeInterval
     private var failed = false
     var timedOut: Bool { failed }
-    init(budget: TimeInterval) { deadline = ProcessInfo.processInfo.systemUptime + budget }
-    var available: Bool { !failed && ProcessInfo.processInfo.systemUptime < deadline }
+    private let isCurrent: () -> Bool
+    init(budget: TimeInterval, isCurrent: @escaping () -> Bool = { true }) {
+        deadline = ProcessInfo.processInfo.systemUptime + budget
+        self.isCurrent = isCurrent
+    }
+    var available: Bool { isCurrent() && !failed && ProcessInfo.processInfo.systemUptime < deadline }
     private func prepare(_ element: AXUIElement) -> Bool {
         guard available else { return false }
         AXUIElementSetMessagingTimeout(element, Float(min(0.05, max(0.001, deadline - ProcessInfo.processInfo.systemUptime))))

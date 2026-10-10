@@ -142,6 +142,10 @@ class AccessibilityElement {
     }
 
     var minimumSize: CGSize? {
+        WindowSizeConstraints.shared.minimum(for: self, reported: reportedMinimumSize)
+    }
+
+    var reportedMinimumSize: CGSize? {
         wrappedElement.getWrappedValue(.minSize, type: .cgSize)
         ?? wrappedElement.getWrappedValue(.minimumSize, type: .cgSize)
     }
@@ -155,11 +159,13 @@ class AccessibilityElement {
     /// To handle moving to different displays, we have to adjust the size then the position, then the size again since macOS will enforce sizes that fit on the current display.
     /// When windows take a long time to adjust size & position, there is some visual stutter with doing each of these actions. The stutter can be slightly reduced by removing the initial size adjustment, which can make unsnap restore appear smoother.
     func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+        let before = WindowSizeConstraints.frameBeforeResize(for: self)
         performFrameAdjustment {
             if adjustSizeFirst { size = frame.size }
             if adjustPosition { position = frame.origin }
             size = frame.size
         }
+        if let before { WindowSizeConstraints.shared.observeResize(self, before: before, requested: frame) }
     }
 
     /// A move can release a size restriction imposed by the old screen or Dock edge.
@@ -206,6 +212,9 @@ class AccessibilityElement {
                 if before.origin != target.origin { position = target.origin }
                 if before.size != target.size { size = target.size }
             }
+        }
+        if before.size != target.size {
+            WindowSizeConstraints.shared.observeResize(self, before: before, requested: target)
         }
     }
 
