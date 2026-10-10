@@ -79,7 +79,7 @@ class WindowManager {
                 executionID &+= 1
                 let currentExecutionID = executionID
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { [weak self] frame in
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
@@ -304,7 +304,7 @@ class WindowManager {
             windowAnimator.animate(frontmostWindowElement,
                                    to: calcResult.rect.screenFlipped,
                                    releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
+                                   profile: parameters.source.usesKeyboardAnimation ? .keyboard : .standard) { frame in
                 completeMove(frame.isNull ? nil : frame)
             }
         } else {
@@ -437,5 +437,7 @@ struct ExecutionParameters {
 }
 
 enum ExecutionSource {
-    case keyboardShortcut, dragToSnap, menuItem, url, titleBar
+    case keyboardShortcut, dragToSnap, menuItem, url, titleBar, trackpadGesture
+
+    var usesKeyboardAnimation: Bool { self == .keyboardShortcut || self == .trackpadGesture }
 }
