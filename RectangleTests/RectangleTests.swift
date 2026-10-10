@@ -336,21 +336,21 @@ class BandTilingTests: XCTestCase {
         let minimumHeightAtOrigin: (CGFloat) -> CGFloat
         let testWindowId: CGWindowID?
         var testIdentity: CFHashCode
-        let reportedMinimumSize: CGSize?
+        let testMinimumSize: CGSize?
         let canResize: Bool
         let ordinaryWindow: Bool
 
         init(frame: CGRect = .zero, minimumHeight: CGFloat = 0, maximumWidth: CGFloat = .greatestFiniteMagnitude,
              minimumHeightAtOrigin: @escaping (CGFloat) -> CGFloat = { _ in 0 },
              windowId: CGWindowID? = nil, identity: CFHashCode = 0,
-             reportedMinimumSize: CGSize? = .zero, canResize: Bool = true, ordinaryWindow: Bool = true) {
+             testMinimumSize: CGSize? = .zero, canResize: Bool = true, ordinaryWindow: Bool = true) {
             acceptedFrame = frame
             self.minimumHeight = minimumHeight
             self.maximumWidth = maximumWidth
             self.minimumHeightAtOrigin = minimumHeightAtOrigin
             testWindowId = windowId
             testIdentity = identity
-            self.reportedMinimumSize = reportedMinimumSize
+            self.testMinimumSize = testMinimumSize
             self.canResize = canResize
             self.ordinaryWindow = ordinaryWindow
             super.init(identity == 0 ? AXUIElementCreateSystemWide()
@@ -360,7 +360,7 @@ class BandTilingTests: XCTestCase {
         override var frame: CGRect { acceptedFrame }
         override var windowId: CGWindowID? { testWindowId }
         override var pid: pid_t? { 42 }
-        override var minimumSize: CGSize? { reportedMinimumSize }
+        override var minimumSize: CGSize? { testMinimumSize }
         override func isResizable() -> Bool { canResize }
         override var isWindow: Bool? { ordinaryWindow }
         override var isSheet: Bool? { false }
@@ -803,7 +803,7 @@ class BandTilingTests: XCTestCase {
                 : CGSize(width: minimumPoints, height: 0)
             let fixed = TestElement(frame: fixedFrame, windowId: 501, identity: 1, canResize: false)
             let minimum = TestElement(frame: laterFrame, windowId: 502, identity: 2,
-                                      reportedMinimumSize: reportedMinimum)
+                                      testMinimumSize: reportedMinimum)
             let flexible = TestElement(frame: laterFrame.offsetBy(dx: 30, dy: 30), windowId: 503, identity: 3)
             let elements = [fixed, minimum, flexible]
             Manager.tileWindowsInBands(direction, focusedWindow: fixed, windows: elements,
@@ -6515,6 +6515,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.none.rawValue)),
             (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
+            (Defaults.showMinimumWindowSizeWarning, CodableDefault(int: 1)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
             (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
@@ -6544,6 +6545,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
     }
 
     override func tearDown() {
+        WindowSizeConstraints.shared.cancelPendingObservations()
         savedDefaults.forEach { $0.0.load(from: $0.1) }
         AppDelegate.windowHistory.restoreRects = savedRestoreRects
         AppDelegate.windowHistory.lastRectangleActions = savedActions
@@ -6646,6 +6648,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             manager.execute(ExecutionParameters(action, screen: screen, windowElement: window,
                                                 windowId: windowId, source: .menuItem))
 
+            waitForWarning(manager)
             XCTAssertEqual(window.resizeAttempts, 1)
             XCTAssertEqual(window.frame.width, 600)
             XCTAssertEqual(window.frame.height, 900)
@@ -6659,12 +6662,25 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         }
     }
 
+    func testDisabledSizeWarningDoesNotRequestGeometry() {
+        Defaults.showMinimumWindowSizeWarning.enabled = false
+        let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
+        let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
+        manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
+                                            windowId: windowId, source: .menuItem))
+        XCTAssertEqual(window.frame.width, 600)
+        XCTAssertEqual(manager.warningSourceRequests, 0)
+        XCTAssertTrue(manager.warningScreens.isEmpty)
+    }
+
     func testSuccessfulTwoThirdsClearEarlierWarning() {
         let screen = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
         let window = ClampingWindow(targetSize: CGSize(width: 504, height: 900))
         let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen))
         manager.execute(ExecutionParameters(.firstThird, screen: screen, windowElement: window,
                                             windowId: windowId, source: .menuItem))
+        waitForWarning(manager)
         XCTAssertTrue(manager.warningVisible)
 
         manager.execute(ExecutionParameters(.firstTwoThirds, screen: screen, windowElement: window,
@@ -6712,6 +6728,14 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.action, .firstTwoThirds)
     }
 
+    private func waitForWarning(_ manager: TestWindowManager) {
+        guard !manager.warningVisible else { return }
+        let appeared = expectation(description: "Size warning appeared")
+        manager.didWarn = { appeared.fulfill() }
+        defer { manager.didWarn = nil }
+        wait(for: [appeared], timeout: 1)
+    }
+
     private func assertCrossDisplayWarning(clampedAttempts: Int?, expectsWarning: Bool) {
         let source = TestScreen(frame: CGRect(x: 0, y: 0, width: 1512, height: 900))
         let destination = TestScreen(frame: CGRect(x: 1512, y: 0, width: 1512, height: 900))
@@ -6729,6 +6753,7 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         XCTAssertNil(AppDelegate.windowHistory.lastRectangleActions[windowId])
 
         wait(for: [finished], timeout: 1)
+        if expectsWarning { waitForWarning(manager) }
         XCTAssertEqual(window.resizeAttempts, 3)
         XCTAssertEqual(window.frame.width, expectsWarning ? 600 : 504)
         XCTAssertEqual(window.frame.maxX, destination.frame.maxX)
@@ -6830,13 +6855,21 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
 
     private final class TestWindowManager: WindowManager {
         private(set) var warningScreens: [NSScreen] = []
+        private(set) var warningSourceRequests = 0
         private(set) var hideCount = 0
         private(set) var warningVisible = false
         var didFinish: (() -> Void)?
+        var didWarn: (() -> Void)?
+
+        override func sizeWarningObservationSource(for result: ResultParameters) -> WindowSizeWarningObservation.Source? {
+            warningSourceRequests += 1
+            return WindowSizeWarningObservation.Source(frame: { result.windowElement.frame }, isCurrent: { true })
+        }
 
         override func showSizeConstraintWarning(on screen: NSScreen) {
             warningScreens.append(screen)
             warningVisible = true
+            didWarn?()
         }
 
         override func hideSizeConstraintWarning() {
@@ -7980,4 +8013,192 @@ final class WindowAnimationRequestCancellationTests: XCTestCase {
         XCTAssertEqual(completions, 0)
     }
 }
+
+
+final class WindowSizeResizeObservationTests: XCTestCase {
+    private let before = CGRect(x: 0, y: 0, width: 900, height: 600)
+    private let requested = CGRect(x: 0, y: 0, width: 400, height: 600)
+    private let clamped = CGRect(x: 0, y: 0, width: 600, height: 600)
+
+    func testFirstStableDirectResizeLearnsMinimum() throws {
+        let store = WindowSizeConstraintStore<String>()
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        XCTAssertNil(observation.observe(clamped, at: 0))
+        XCTAssertNil(observation.observe(clamped, at: 0.08))
+        let settled = try XCTUnwrap(observation.observe(clamped, at: 0.14))
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: settled.size, settled: settled.size, now: 1, verifiedClamp: true)
+        let evidence = try XCTUnwrap(store.entries["window"])
+        XCTAssertEqual(evidence.learned, CGSize(width: 600, height: 0))
+        XCTAssertEqual(evidence.confirmations, 1)
+        XCTAssertTrue(evidence.isValid)
+        var archive = WindowSizeLimitArchive()
+        let identity = WindowSizeLimitIdentity(bundleID: "test", appVersion: "1", pid: 1,
+            launch: 1, session: UUID().uuidString, windowID: 1, identifier: nil,
+            role: kAXWindowRole, subrole: "", structure: [])
+        archive.upsert(WindowSizeLimitRecord(id: UUID(), identity: identity, appName: "Test", evidence: evidence))
+        let restored = try XCTUnwrap(WindowSizeLimitArchive.decode(JSONEncoder().encode(archive)))
+        XCTAssertEqual(restored.records.first?.evidence, evidence)
+    }
+
+    func testOneVerifiedResizeUpdatesAnExistingLimitInEitherDirection() throws {
+        let store = WindowSizeConstraintStore<String>()
+        for (time, width) in [CGFloat(600), 700, 500].enumerated() {
+            let settled = CGSize(width: width, height: 600)
+            store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+                first: settled, settled: settled, now: Double(time), verifiedClamp: true)
+            XCTAssertEqual(store.entries["window"]?.learned, CGSize(width: width, height: 0))
+        }
+        store.recordSuccess(for: "window", size: requested.size)
+        XCTAssertNil(store.entries["window"])
+    }
+
+    func testUnverifiedUnstableAndRefusedResizesCannotLearn() {
+        let store = WindowSizeConstraintStore<String>()
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: clamped.size, settled: clamped.size, now: 1)
+        XCTAssertNil(store.entries["window"])
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: clamped.size, settled: CGSize(width: 650, height: 600), now: 2, verifiedClamp: true)
+        XCTAssertNil(store.entries["window"])
+        store.observe(for: "window", reported: nil, before: before.size, requested: requested.size,
+            first: before.size, settled: before.size, now: 3, verifiedClamp: true)
+        XCTAssertNil(store.entries["window"])
+    }
+
+    func testLegacyTwoConfirmationEvidenceRemainsValid() throws {
+        var evidence = WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 1, requested: requested.size, achieved: clamped.size)
+        evidence.confirmations = 2
+        let restored = try JSONDecoder().decode(WindowSizeEvidence.self, from: JSONEncoder().encode(evidence))
+        XCTAssertTrue(restored.isValid)
+        evidence.confirmations = 0
+        XCTAssertFalse(evidence.isValid)
+    }
+
+    func testDisagreementOrChangingFrameRestartsStability() {
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        XCTAssertNil(observation.observe(clamped, at: 0))
+        XCTAssertNil(observation.observe(nil, at: 0.1))
+        XCTAssertNil(observation.observe(clamped, at: 0.2))
+        let changed = CGRect(x: 0, y: 0, width: 550, height: 600)
+        XCTAssertNil(observation.observe(changed, at: 0.3))
+        XCTAssertNil(observation.observe(changed, at: 0.4))
+        XCTAssertEqual(observation.observe(changed, at: 0.44), changed)
+    }
+
+    func testIgnoredWidthAndCoupledDimensionsDoNotBecomeEvidence() {
+        for frame in [before, CGRect(x: 0, y: 0, width: 600, height: 500)] {
+            var observation = WindowSizeResizeObservation(before: before, requested: requested)
+            XCTAssertNil(observation.observe(frame, at: 0))
+            XCTAssertNil(observation.observe(frame, at: 1))
+        }
+    }
+
+    func testClampAtUnrelatedPositionDoesNotBecomeEvidence() {
+        var observation = WindowSizeResizeObservation(before: before, requested: requested)
+        let moved = clamped.offsetBy(dx: 500, dy: 0)
+        XCTAssertNil(observation.observe(moved, at: 0))
+        XCTAssertNil(observation.observe(moved, at: 1))
+    }
+}
+
+
+@MainActor
+final class WindowSizeWarningObservationTests: XCTestCase {
+    func testStableWindowServerFrameCompletesWithoutAccessibilityReads() {
+        let completed = expectation(description: "Stable frame sampled")
+        let frame = CGRect(x: 0, y: 0, width: 700, height: 500)
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            return frame
+        }, isCurrent: { true }) { actual in
+            XCTAssertEqual(actual, frame)
+            XCTAssertEqual(samples, 2)
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 1)
+    }
+
+    func testSupersededWarningDoesNotReadAnotherFrame() {
+        let completed = expectation(description: "Stale warning is suppressed")
+        completed.isInverted = true
+        var current = true
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            current = false
+            return CGRect(x: 0, y: 0, width: 700, height: 500)
+        }, isCurrent: { current }) { _ in completed.fulfill() }
+        wait(for: [completed], timeout: 0.3)
+        XCTAssertEqual(samples, 1)
+    }
+
+    func testMovingWindowDoesNotShowSettledSizeWarning() {
+        let completed = expectation(description: "Unsettled warning is suppressed")
+        completed.isInverted = true
+        var samples = 0
+        WindowSizeWarningObservation.sample(frame: {
+            samples += 1
+            return CGRect(x: CGFloat(samples * 10), y: 0, width: 700, height: 500)
+        }, isCurrent: { true }) { _ in completed.fulfill() }
+        wait(for: [completed], timeout: 0.3)
+        XCTAssertEqual(samples, 2)
+    }
+}
+
+
+final class WindowSizeHintSnapshotTests: XCTestCase {
+    func testWorkerSnapshotMatchesLiveHintValidation() throws {
+        let evidence = WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 400),
+            learnedAt: 100, requested: CGSize(width: 400, height: 300), achieved: CGSize(width: 600, height: 400))
+        let reports: [CGSize?] = [nil, .zero, CGSize(width: 700, height: 0)]
+        let sizes: [CGSize] = [CGSize(width: 900, height: 600), CGSize(width: 500, height: 600),
+                              CGSize(width: 900, height: 300), CGSize(width: 500, height: 300), .zero]
+        for report in reports {
+            for current in sizes {
+                for time: TimeInterval in [100, 109, 111] {
+                    let store = WindowSizeConstraintStore<String>(lifetime: 10)
+                    store.restore(evidence, for: "window", now: 100)
+                    let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window"))
+                    XCTAssertEqual(snapshot.minimum(reported: report, current: current, now: time),
+                                   store.hint(for: "window", reported: report, current: current, now: time))
+                }
+            }
+        }
+    }
+
+    func testCapturedHintCanBeValidatedOffMainWithoutReadingStore() throws {
+        let store = WindowSizeConstraintStore<String>()
+        store.restore(WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 100, requested: CGSize(width: 400, height: 600), achieved: CGSize(width: 600, height: 600)),
+            for: "window", now: 100)
+        let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window"))
+        let completed = expectation(description: "Snapshot validated on worker")
+        DispatchQueue.global().async {
+            XCTAssertFalse(Thread.isMainThread)
+            XCTAssertEqual(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101),
+                           CGSize(width: 600, height: 0))
+            completed.fulfill()
+        }
+        wait(for: [completed], timeout: 1)
+        XCTAssertEqual(store.entries["window"], snapshot.evidence)
+    }
+
+    func testSupersedingActionInvalidatesCapturedHint() throws {
+        let store = WindowSizeConstraintStore<String>()
+        store.restore(WindowSizeEvidence(reported: nil, learned: CGSize(width: 600, height: 0),
+            learnedAt: 100, requested: CGSize(width: 400, height: 600), achieved: CGSize(width: 600, height: 600)),
+            for: "window", now: 100)
+        let cancellation = AccessibilityReadCancellation()
+        let snapshot = try XCTUnwrap(store.hintSnapshot(for: "window", cancellation: cancellation))
+        XCTAssertNotNil(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101))
+        cancellation.cancel()
+        XCTAssertNil(snapshot.minimum(reported: nil, current: CGSize(width: 900, height: 600), now: 101))
+    }
+}
+
+
+
 

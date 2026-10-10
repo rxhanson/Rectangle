@@ -88,9 +88,19 @@ final class BehaviorSettingsViewModel {
     var showMinimumWindowSizeWarning: Bool {
         didSet {
             Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
+            if !showMinimumWindowSizeWarning { WindowSizeWarning.hideCurrent() }
         }
     }
     
+    var rememberWindowSizeLimits: Bool {
+        didSet { WindowSizeConstraints.shared.setRememberLimits(rememberWindowSizeLimits) }
+    }
+    private var windowSizeLimitsController: WindowSizeLimitsWindowController?
+    func showWindowSizeLimits() {
+        if windowSizeLimitsController == nil { windowSizeLimitsController = WindowSizeLimitsWindowController() }
+        windowSizeLimitsController?.showWindow(nil)
+    }
+
     // MARK: - Todo Mode Settings
     var todoEnabled: Bool {
         didSet {
@@ -222,7 +232,8 @@ final class BehaviorSettingsViewModel {
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
-        self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
+        self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
         
         setupObservers()
     }
@@ -284,7 +295,8 @@ final class BehaviorSettingsViewModel {
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
-        self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
+        self.showMinimumWindowSizeWarning = !Defaults.showMinimumWindowSizeWarning.userDisabled
+        self.rememberWindowSizeLimits = Defaults.rememberWindowSizeLimits.enabled
     }
     
     // MARK: - Cycle Sizes Binding Helper
