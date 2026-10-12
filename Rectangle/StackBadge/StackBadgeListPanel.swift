@@ -29,24 +29,18 @@ struct StackBadgeStackedWindow {
             }
         }
 
-        return listOrder(windows.map { info in
-            StackBadgeStackedWindow(windowId: info.id,
-                                    pid: info.pid,
-                                    title: displayTitle(for: info, axTitle: titles[info.id]))
-        })
-    }
-
-    /// Alphabetical, so a window keeps its row from one hover to the next:
-    /// front-to-back order reshuffles the list every time a window is raised,
-    /// which is what makes a long list hard to scan. Window id breaks ties
-    /// between identical titles so their order is stable too.
-    static func listOrder(_ windows: [StackBadgeStackedWindow]) -> [StackBadgeStackedWindow] {
-        windows.sorted { lhs, rhs in
-            switch lhs.title.localizedStandardCompare(rhs.title) {
-            case .orderedAscending: return true
-            case .orderedDescending: return false
-            case .orderedSame: return lhs.windowId < rhs.windowId
+        return windows.map { info in
+            StackBadgeStackedWindow(
+                windowId: info.id,
+                pid: info.pid,
+                title: displayTitle(for: info, axTitle: titles[info.id])
+            )
+        }.sorted { lhs, rhs in
+            let comparison = lhs.title.localizedStandardCompare(rhs.title)
+            if comparison != .orderedSame {
+                return comparison == .orderedAscending
             }
+            return lhs.windowId < rhs.windowId
         }
     }
 
