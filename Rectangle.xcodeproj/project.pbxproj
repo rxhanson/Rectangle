@@ -995,6 +995,7 @@
 				nb,
 				nn,
 				"en-GB",
+				fa,
 			);
 			mainGroup = 9824700022AF9B7D0037B409;
 			packageReferences = (
