@@ -4569,6 +4569,9 @@
         }
       }
     },
+    "Button %lld" : {
+      "comment" : "A numbered mouse button in a shortcut. The side buttons on most mice are 4 and 5."
+    },
     "Cancel" : {
       "localizations" : {
         "ar" : {
@@ -15221,6 +15224,9 @@
         }
       }
     },
+    "Keyboard shortcuts always act on the focused window" : {
+
+    },
     "Landscape Snap Areas" : {
 
     },
@@ -17791,6 +17797,9 @@
         }
       }
     },
+    "Middle Button" : {
+      "comment" : "The middle mouse button in a shortcut"
+    },
     "Middle Center Left Twelfth" : {
       "localizations" : {
         "en" : {
@@ -18095,6 +18104,9 @@
           }
         }
       }
+    },
+    "Mouse button shortcuts act on the window under the pointer" : {
+
     },
     "Move cursor along with window across displays" : {
       "localizations" : {

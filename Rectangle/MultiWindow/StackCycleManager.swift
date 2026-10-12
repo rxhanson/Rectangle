@@ -40,7 +40,9 @@ enum StackCycleManager {
     private static var latestRaise = 0
     private static var finishedRaise = 0
 
-    static func cycle(forward: Bool, windowElement: AccessibilityElement? = nil) {
+    /// `windowElement` picks the stack. It's taken to be the focused window
+    /// unless `windowIsFocused` is false, as for the window under the pointer.
+    static func cycle(forward: Bool, windowElement: AccessibilityElement? = nil, windowIsFocused: Bool = true) {
         guard let windowElement = windowElement ?? AccessibilityElement.getFrontWindowElement(),
               let focusedId = windowElement.getWindowId()
         else {
@@ -74,7 +76,8 @@ enum StackCycleManager {
         guard let focusedIndex = (windows.firstIndex { $0.id == focusedId }),
               let anchor = StackBadgeGeometry.stackAnchor(for: focusedIndex, among: frames, cascadeRange: cascadeRange,
                                                           tolerance: tolerance, sizeTolerance: sizeTolerance),
-              let next = nextSession(focused: focusedId, freshAnchor: anchor,
+              let focus = sessionFocus(window: focusedId, isFocused: windowIsFocused, stack: stackFor(anchor)),
+              let next = nextSession(focused: focus, freshAnchor: anchor,
                                      previous: session, forward: forward,
                                      raiseInFlight: isRaiseInFlight(), stackFor: stackFor),
               let targetWindow = (windows.first { $0.id == next.cursor })
@@ -86,6 +89,14 @@ enum StackCycleManager {
         session = next
         let ringPids = Set(windows.filter { next.ring.contains($0.id) }.map { $0.pid })
         raise(targetWindow, cycleApps: ringPids)
+    }
+
+    /// The window a press counts as focused. A window under the pointer stays
+    /// under it while the walk raises the others, so if it counted, the walk
+    /// would skip it as already in front; the front window of its stack
+    /// counts instead.
+    static func sessionFocus(window: CGWindowID, isFocused: Bool, stack: @autoclosure () -> [CGWindowID]) -> CGWindowID? {
+        isFocused ? window : stack().first
     }
 
     private static func fail() {

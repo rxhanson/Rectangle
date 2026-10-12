@@ -158,6 +158,9 @@ final class BehaviorSettingsViewModel {
     var halvesPreserveOtherAxisSize: Bool {
         didSet { Defaults.halvesPreserveOtherAxisSize.enabled = halvesPreserveOtherAxisSize }
     }
+    var mouseButtonShortcutsUseWindowUnderCursor: Bool {
+        didSet { Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled = mouseButtonShortcutsUseWindowUnderCursor }
+    }
     
     // Preset Selection States
     var selectedHSplitPreset: CycleSize?
@@ -219,6 +222,7 @@ final class BehaviorSettingsViewModel {
         self.horizontalSplitRatio = hRatio
         self.verticalSplitRatio = vRatio
         self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
+        self.mouseButtonShortcutsUseWindowUnderCursor = Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
@@ -281,6 +285,7 @@ final class BehaviorSettingsViewModel {
         self.horizontalSplitRatio = hRatio
         self.verticalSplitRatio = vRatio
         self.halvesPreserveOtherAxisSize = Defaults.halvesPreserveOtherAxisSize.enabled
+        self.mouseButtonShortcutsUseWindowUnderCursor = Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled
         
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)

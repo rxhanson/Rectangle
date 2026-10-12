@@ -108,7 +108,7 @@ final class ShortcutActionCellView: NSTableCellView {
     
     let iconImageView = NSImageView()
     let titleLabel = NSTextField(labelWithString: "")
-    let shortcutView = MASShortcutView()
+    let shortcutView = WindowActionShortcutView()
     let popoverButton = PopoverButton()
     
     private var shortcutTrailingConstraint: NSLayoutConstraint?

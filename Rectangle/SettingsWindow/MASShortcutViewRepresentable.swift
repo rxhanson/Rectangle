@@ -8,15 +8,17 @@ struct MASShortcutViewRepresentable: NSViewRepresentable {
     let validator: MASShortcutValidator?
     /// Suspends the bound shortcuts while this view records, so a shortcut
     /// already in use can be recorded instead of triggering its action.
-    var recordingObserver: ShortcutRecordingObserver? = nil
+    let recordingObserver: ShortcutRecordingObserver
+    /// Lets a window action's recorder take a mouse button as well as a key.
+    var recordsMouseButtons = false
 
     func makeNSView(context: Context) -> MASShortcutView {
-        let view = MASShortcutView()
+        let view = recordsMouseButtons ? WindowActionShortcutView() : MASShortcutView()
         view.setAssociatedUserDefaultsKey(defaultsKey, withTransformerName: MASDictionaryTransformerName)
         if let validator = validator {
             view.shortcutValidator = validator
         }
-        recordingObserver?.observe([view])
+        recordingObserver.observe([view])
         return view
     }
 
@@ -29,15 +31,14 @@ struct MASShortcutViewRepresentable: NSViewRepresentable {
     /// first if it was recording, or it would go on recording unseen with
     /// every other shortcut suspended.
     static func dismantleNSView(_ nsView: MASShortcutView, coordinator: Coordinator) {
-        guard let recordingObserver = coordinator.recordingObserver else { return }
         nsView.isRecording = false
-        recordingObserver.unobserve(nsView)
+        coordinator.recordingObserver.unobserve(nsView)
     }
 
     final class Coordinator {
-        let recordingObserver: ShortcutRecordingObserver?
+        let recordingObserver: ShortcutRecordingObserver
 
-        init(recordingObserver: ShortcutRecordingObserver?) {
+        init(recordingObserver: ShortcutRecordingObserver) {
             self.recordingObserver = recordingObserver
         }
     }

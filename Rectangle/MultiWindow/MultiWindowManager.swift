@@ -25,13 +25,13 @@ class MultiWindowManager {
             ReverseAllManager.reverseAll(windowElement: parameters.windowElement)
             return true
         case .tileAll:
-            tileAllWindowsOnScreen()
+            tileAllWindowsOnScreen(windowElement: parameters.windowElement)
             return true
         case .tileRows:
-            tileWindowsInBands(.rows)
+            tileWindowsInBands(.rows, windowElement: parameters.windowElement)
             return true
         case .tileColumns:
-            tileWindowsInBands(.columns)
+            tileWindowsInBands(.columns, windowElement: parameters.windowElement)
             return true
         case .cascadeAll:
             cascadeAllWindowsOnScreen(windowElement: parameters.windowElement)
@@ -43,10 +43,10 @@ class MultiWindowManager {
             tileActiveAppWindowsOnScreen(windowElement: parameters.windowElement)
             return true
         case .cycleStackedWindows:
-            StackCycleManager.cycle(forward: true, windowElement: parameters.windowElement)
+            StackCycleManager.cycle(forward: true, windowElement: parameters.windowElement, windowIsFocused: !parameters.preservesFocus)
             return true
         case .cycleStackedWindowsBackward:
-            StackCycleManager.cycle(forward: false, windowElement: parameters.windowElement)
+            StackCycleManager.cycle(forward: false, windowElement: parameters.windowElement, windowIsFocused: !parameters.preservesFocus)
             return true
         default:
             return false
@@ -132,9 +132,9 @@ class MultiWindowManager {
         return screens.map { (eligibleFocus, $0) }
     }
 
-    private static func tileWindowsInBands(_ direction: BandDirection) {
+    private static func tileWindowsInBands(_ direction: BandDirection, windowElement: AccessibilityElement?) {
         let screenDetection = ScreenDetection()
-        guard let context = tilingContext(focusedWindow: AccessibilityElement.getFocusedWindowElement(),
+        guard let context = tilingContext(focusedWindow: windowElement ?? AccessibilityElement.getFocusedWindowElement(),
                                           screenDetection: screenDetection) else { return }
 
         // Reuse this new on-screen snapshot for AX app discovery and for Space
@@ -309,9 +309,9 @@ class MultiWindowManager {
         }
     }
 
-    static func tileAllWindowsOnScreen() {
+    static func tileAllWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
         let screenDetection = ScreenDetection()
-        guard let context = tilingContext(focusedWindow: AccessibilityElement.getFocusedWindowElement(),
+        guard let context = tilingContext(focusedWindow: windowElement ?? AccessibilityElement.getFocusedWindowElement(),
                                           screenDetection: screenDetection) else { return }
         let windows = windowsOnScreen(screens: context.screens,
                                       windows: AccessibilityElement.getAllWindowElements(),
@@ -380,7 +380,7 @@ class MultiWindowManager {
 
     static func cascadeActiveAppWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
         guard let (screens, windows) = allWindowsOnScreen(windowElement: windowElement, sortByPID: true),
-              let frontWindowElement = AccessibilityElement.getFrontWindowElement()
+              let frontWindowElement = windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
             return
         }
@@ -395,11 +395,11 @@ class MultiWindowManager {
         // parameters for cascading active app windows
         var cascadeParameters: CascadeActiveAppParameters?
 
-        if let first = filtered.first {
+        if let first = filtered.first, let size = first.size {
             // move the first to become the last (top)
             filtered.append(filtered.removeFirst())
             // set up parameters
-            cascadeParameters = CascadeActiveAppParameters(windowFrame: first.frame, screenFrame: screenFrame, numWindows: filtered.count, size: first.size!, delta: delta)
+            cascadeParameters = CascadeActiveAppParameters(windowFrame: first.frame, screenFrame: screenFrame, numWindows: filtered.count, size: size, delta: delta)
         }
 
         // cascade the filtered windows
@@ -439,26 +439,14 @@ class MultiWindowManager {
 
     static func tileActiveAppWindowsOnScreen(windowElement: AccessibilityElement? = nil) {
         guard let (screens, windows) = allWindowsOnScreen(windowElement: windowElement, sortByPID: true),
-              let frontWindowElement = AccessibilityElement.getFrontWindowElement()
+              let frontWindowElement = windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
             return
         }
 
-        let screenFrame = screens.currentScreen.adjustedVisibleFrame().screenFlipped
-
         // keep windows with a pid equal to the front window's pid
         let filtered = windows.filter { $0.pid == frontWindowElement.pid }
 
-        let count = filtered.count
-
-        let columns = Int(ceil(sqrt(CGFloat(count))))
-        let rows = Int(ceil(CGFloat(count) / CGFloat(columns)))
-        let size = CGSize(width: (screenFrame.maxX - screenFrame.minX) / CGFloat(columns), height: (screenFrame.maxY - screenFrame.minY) / CGFloat(rows))
-
-        for (ind, w) in filtered.enumerated() {
-            let column = ind % Int(columns)
-            let row = ind / Int(columns)
-            tileWindow(w, screenFrame: screenFrame, size: size, column: column, row: row)
-        }
+        tileAllWindowsOnScreen(windows: filtered, screen: screens.currentScreen)
     }
 }

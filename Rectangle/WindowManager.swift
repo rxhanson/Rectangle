@@ -267,13 +267,15 @@ class WindowManager {
                         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
                             guard let self, self.executionID == currentExecutionID else { return }
                             let finalRect = self.apply(result: resultParameters)
-                            self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect)
+                            self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect,
+                                                           preservesFocus: parameters.preservesFocus)
                             self.postProcess(result: resultParameters, resultingRect: finalRect, incrementCount: !animated)
                         }
                         return
                     }
                 }
-                windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect)
+                windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect,
+                                          preservesFocus: parameters.preservesFocus)
             }
 
             if !isMovedAcrossDisplays {
@@ -332,8 +334,10 @@ class WindowManager {
         }
     }
     
-    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect) {
-        windowElement.bringToFront(force: true)
+    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {
+        if !preservesFocus {
+            windowElement.bringToFront(force: true)
+        }
         
         if Defaults.moveCursorAcrossDisplays.userEnabled {
             CGWarpMouseCursorPosition(resultingRect.centerPoint)
@@ -425,14 +429,18 @@ struct ExecutionParameters {
     let windowElement: AccessibilityElement?
     let windowId: CGWindowID?
     let source: ExecutionSource
+    /// For a window that needn't be the focused one, which acting on it
+    /// mustn't bring forward.
+    let preservesFocus: Bool
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
         self.windowElement = windowElement
         self.windowId = windowId
         self.source = source
+        self.preservesFocus = preservesFocus
     }
 }
 

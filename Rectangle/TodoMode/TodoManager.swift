@@ -296,7 +296,7 @@ class TodoManager {
     
     static func execute(parameters: ExecutionParameters) -> Bool {
         if [.leftTodo, .rightTodo].contains(parameters.action) {
-            moveAll()
+            moveAll(!parameters.preservesFocus)
             return true
         }
         return false

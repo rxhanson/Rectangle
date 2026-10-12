@@ -36,10 +36,12 @@ class ShortcutManager {
     let windowManager: WindowManager
     private let screenDetection: ScreenDetection
     private let bindingStore: ShortcutBindingStore
+    private let mouseButtonBindingStore: MouseButtonBindingStore
     private let notificationCenter: NotificationCenter
     private let workspaceNotificationCenter: NotificationCenter
     private let shortcutsProvider: () -> [WindowAction: MASShortcut]
     private let appDisabledProvider: () -> Bool
+    private let windowUnderCursorProvider: (MouseButtonPress) -> AccessibilityElement?
     private let scheduler: ShortcutRebindScheduler
     private let todoSessionStateChanged: (Bool) -> Void
     private var boundShortcutActions = Set<WindowAction>()
@@ -54,6 +56,7 @@ class ShortcutManager {
         windowManager: WindowManager,
         screenDetection: ScreenDetection = ScreenDetection(),
         bindingStore: ShortcutBindingStore = MASShortcutBindingStore(),
+        mouseButtonBindingStore: MouseButtonBindingStore = MouseButtonShortcutMonitor(),
         notificationCenter: NotificationCenter = .default,
         workspaceNotificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter,
         shortcutsProvider: @escaping () -> [WindowAction: MASShortcut] = { ShortcutCycle.shortcutsByAction() },
@@ -62,6 +65,9 @@ class ShortcutManager {
             return session?[kCGSessionOnConsoleKey] as? Bool ?? true
         },
         appDisabledProvider: @escaping () -> Bool = { ApplicationToggle.shortcutsDisabled },
+        windowUnderCursorProvider: @escaping (MouseButtonPress) -> AccessibilityElement? = { press in
+            AccessibilityElement.getWindowElementUnderCursor(at: press.location, eventWindowID: press.windowId)
+        },
         scheduler: @escaping ShortcutRebindScheduler = { action in
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100), execute: action)
         },
@@ -73,10 +79,12 @@ class ShortcutManager {
         self.windowManager = windowManager
         self.screenDetection = screenDetection
         self.bindingStore = bindingStore
+        self.mouseButtonBindingStore = mouseButtonBindingStore
         self.notificationCenter = notificationCenter
         self.workspaceNotificationCenter = workspaceNotificationCenter
         self.shortcutsProvider = shortcutsProvider
         self.appDisabledProvider = appDisabledProvider
+        self.windowUnderCursorProvider = windowUnderCursorProvider
         self.scheduler = scheduler
         self.todoSessionStateChanged = todoSessionStateChanged
         self.sessionIsActive = activeStateProvider()
@@ -119,6 +127,14 @@ class ShortcutManager {
 
         for group in groups {
             let representativeAction = group.representativeAction
+
+            if MouseButtonShortcut.isMouseButton(group.shortcut) {
+                mouseButtonBindingStore.bindShortcut(group.shortcut, toAction: { [weak self] press in
+                    self?.executeMouseButtonShortcut(group, press: press)
+                })
+                continue
+            }
+
             boundShortcutActions.insert(representativeAction)
 
             if group.isCycle {
@@ -140,10 +156,13 @@ class ShortcutManager {
         }
 
         boundShortcutActions.removeAll()
+        mouseButtonBindingStore.breakAllBindings()
     }
 
     public func getKeyEquivalent(action: WindowAction) -> (String?, NSEvent.ModifierFlags)? {
-        guard let masShortcut = ShortcutCycle.shortcut(for: action) else { return nil }
+        guard let masShortcut = ShortcutCycle.shortcut(for: action),
+              !MouseButtonShortcut.isMouseButton(masShortcut)
+        else { return nil }
         return (masShortcut.keyCodeStringForKeyEquivalent, masShortcut.modifierFlags)
     }
 
@@ -229,7 +248,7 @@ class ShortcutManager {
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
                RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowManager.logicalFrame(for: windowElement)) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
-                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source)
+                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus)
                     // Bypass any other subsequent action by removing the last action
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
@@ -239,8 +258,33 @@ class ShortcutManager {
         windowManager.execute(parameters)
     }
 
-    private func executeCycle(_ group: ShortcutCycle.Group) {
-        guard let windowElement = AccessibilityElement.getFrontWindowElement(),
+    /// Mouse buttons work on the focused window, like keys, unless they've
+    /// been set to work on the window under the pointer.
+    private func executeMouseButtonShortcut(_ group: ShortcutCycle.Group, press: MouseButtonPress) {
+        guard Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled else {
+            if group.isCycle {
+                executeCycle(group)
+            } else {
+                execute(ExecutionParameters(group.representativeAction))
+            }
+            return
+        }
+
+        guard let windowElement = windowUnderCursorProvider(press) else {
+            NSSound.beep()
+            return
+        }
+
+        if group.isCycle {
+            executeCycle(group, windowUnderCursor: windowElement)
+        } else {
+            execute(ExecutionParameters(group.representativeAction, windowElement: windowElement,
+                                        windowId: windowElement.getWindowId(), preservesFocus: true))
+        }
+    }
+
+    private func executeCycle(_ group: ShortcutCycle.Group, windowUnderCursor: AccessibilityElement? = nil) {
+        guard let windowElement = windowUnderCursor ?? AccessibilityElement.getFrontWindowElement(),
               let windowId = windowElement.getWindowId()
         else {
             NSSound.beep()
@@ -258,7 +302,8 @@ class ShortcutManager {
             lastAction: AppDelegate.windowHistory.lastRectangleActions[windowId],
             currentWindowRect: logicalFrame
         )
-        execute(ExecutionParameters(selectedAction, windowElement: windowElement, windowId: windowId))
+        execute(ExecutionParameters(selectedAction, windowElement: windowElement, windowId: windowId,
+                                    preservesFocus: windowUnderCursor != nil))
     }
 
     @objc private func defaultShortcutsChanged() {
