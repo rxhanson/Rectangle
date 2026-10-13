@@ -1433,6 +1433,107 @@ final class DockVisibleFrameTests: XCTestCase {
     }
 }
 
+final class ScreenEdgeGapTests: XCTestCase {
+    private let notchedScreen = TestScreen(notchHeight: 32)
+    private let screenWithoutNotch = TestScreen(notchHeight: 0)
+    private var savedDefaults: [(Default, CodableDefault)] = []
+
+    override func setUp() {
+        super.setUp()
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
+            (Defaults.screenEdgeGapsOnMainScreenOnly, CodableDefault(bool: false)),
+            (Defaults.screenEdgeGapTop, CodableDefault(float: 30)),
+            (Defaults.screenEdgeGapTopNotch, CodableDefault())
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        super.tearDown()
+    }
+
+    func testUnsetNotchGapFallsBackToTopGap() {
+        XCTAssertEqual(topGap(on: notchedScreen), 30)
+        XCTAssertEqual(topGap(on: screenWithoutNotch), 30)
+    }
+
+    func testZeroNotchGapRemovesTopGapOnNotchedScreensOnly() {
+        Defaults.screenEdgeGapTopNotch.value = 0
+
+        XCTAssertEqual(topGap(on: notchedScreen), 0)
+        XCTAssertEqual(topGap(on: screenWithoutNotch), 30)
+    }
+
+    func testNotchGapReplacesTopGapOnNotchedScreensOnly() {
+        Defaults.screenEdgeGapTopNotch.value = 10
+
+        XCTAssertEqual(topGap(on: notchedScreen), 10)
+        XCTAssertEqual(topGap(on: screenWithoutNotch), 30)
+    }
+
+    func testUnsetAndZeroNotchGapSurviveReloadAndConfigRoundTrip() throws {
+        let notchGap = Defaults.screenEdgeGapTopNotch
+        XCTAssertNil(UserDefaults.standard.object(forKey: notchGap.key))
+        XCTAssertNil(OptionalDoubleDefault(key: notchGap.key).value)
+        let exportedUnset = try exportedNotchGap()
+        XCTAssertNil(exportedUnset.double)
+
+        notchGap.value = 0
+        XCTAssertEqual(OptionalDoubleDefault(key: notchGap.key).value, 0)
+        let exportedZero = try exportedNotchGap()
+        XCTAssertEqual(exportedZero.double, 0)
+
+        notchGap.load(from: exportedUnset)
+        XCTAssertNil(notchGap.value)
+        XCTAssertNil(UserDefaults.standard.object(forKey: notchGap.key))
+
+        notchGap.load(from: exportedZero)
+        XCTAssertEqual(notchGap.value, 0)
+        XCTAssertEqual(OptionalDoubleDefault(key: notchGap.key).value, 0)
+    }
+
+    func testLegacyFloatZeroStillFallsBackToTopGap() {
+        let notchGap = Defaults.screenEdgeGapTopNotch
+        notchGap.value = 10
+
+        notchGap.load(from: CodableDefault(float: 0))
+        XCTAssertNil(notchGap.value)
+        XCTAssertEqual(topGap(on: notchedScreen), 30)
+
+        notchGap.load(from: CodableDefault(float: 5))
+        XCTAssertEqual(notchGap.value, 5)
+        XCTAssertEqual(topGap(on: notchedScreen), 5)
+    }
+
+    private func topGap(on screen: NSScreen) -> CGFloat {
+        screen.visibleFrame.maxY - screen.adjustedVisibleFrame().maxY
+    }
+
+    private func exportedNotchGap() throws -> CodableDefault {
+        let json = try XCTUnwrap(Defaults.encoded())
+        let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+        return try XCTUnwrap(config.defaults[Defaults.screenEdgeGapTopNotch.key])
+    }
+
+    private final class TestScreen: NSScreen {
+        private let notchHeight: CGFloat
+
+        init(notchHeight: CGFloat) {
+            self.notchHeight = notchHeight
+            super.init()
+        }
+
+        override var frame: NSRect { CGRect(x: 0, y: 0, width: 1512, height: 982) }
+        override var visibleFrame: NSRect { CGRect(x: 0, y: 0, width: 1512, height: 950) }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsets(top: notchHeight, left: 0, bottom: 0, right: 0) }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+}
+
 class DefaultsExportTests: XCTestCase {
 
     func testOverlapDefaultsInExportArray() {

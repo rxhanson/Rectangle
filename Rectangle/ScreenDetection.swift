@@ -452,8 +452,8 @@ extension NSScreen {
         newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
         newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
         
-        if self.safeAreaInsets.top != 0, Defaults.screenEdgeGapTopNotch.value != 0 {
-            newFrame.size.height -= (Defaults.screenEdgeGapTopNotch.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
+        if self.safeAreaInsets.top != 0, let notchGap = Defaults.screenEdgeGapTopNotch.cgFloat {
+            newFrame.size.height -= (notchGap + Defaults.screenEdgeGapBottom.cgFloat)
         } else {
             newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
         }
