@@ -2,10 +2,8 @@ import Cocoa
 
 /// Keeps corner targets and shared display boundaries unchanged when early snapping is enabled.
 enum SnapEdgeDetection {
-    static let earlyDistance: CGFloat = 20
-
     static func direction(at point: CGPoint, in frame: CGRect, screens: @autoclosure () -> [CGRect],
-                          margins: NSEdgeInsets, cornerSize: CGFloat, early: Bool) -> Directional? {
+                          margins: NSEdgeInsets, cornerSize: CGFloat, earlyDistance: CGFloat) -> Directional? {
         // CGRect.contains excludes the maximum edges, which are valid snap targets.
         guard point.x >= frame.minX, point.x <= frame.maxX,
               point.y >= frame.minY, point.y <= frame.maxY else { return nil }
@@ -21,9 +19,10 @@ enum SnapEdgeDetection {
 
         var left = margins.left, right = margins.right
         var top = margins.top, bottom = margins.bottom
-        if early {
+        if earlyDistance > 0 {
             // Most drag events are away from an edge. Resolve neighboring displays
-            // only for an early-edge candidate, using the caller's screen snapshot.
+            // only for an edge candidate, using the caller's screen snapshot.
+            // Include the original margins because shared edges still use them.
             guard point.x < frame.minX + max(left, earlyDistance)
                     || point.x > frame.maxX - max(right, earlyDistance)
                     || point.y > frame.maxY - max(top, earlyDistance)
@@ -42,10 +41,10 @@ enum SnapEdgeDetection {
             let sharesBottom = neighbors.contains {
                 abs($0.maxY - frame.minY) <= 1 && point.x >= $0.minX && point.x <= $0.maxX
             }
-            if !sharesLeft { left = max(left, earlyDistance) }
-            if !sharesRight { right = max(right, earlyDistance) }
-            if !sharesTop { top = max(top, earlyDistance) }
-            if !sharesBottom { bottom = max(bottom, earlyDistance) }
+            if !sharesLeft { left = earlyDistance }
+            if !sharesRight { right = earlyDistance }
+            if !sharesTop { top = earlyDistance }
+            if !sharesBottom { bottom = earlyDistance }
         }
 
         if point.x < frame.minX + left { return .l }

@@ -85,7 +85,9 @@ final class SnapAreaViewModel {
     var snapBeforeReachingEdges: Bool {
         didSet {
             guard oldValue != snapBeforeReachingEdges else { return }
-            Defaults.snapBeforeReachingEdges.enabled = snapBeforeReachingEdges
+            // Syncing an imported distance must not replace it with the toggle preset.
+            guard snapBeforeReachingEdges != (Defaults.snapBeforeReachingEdges.value > 0) else { return }
+            Defaults.snapBeforeReachingEdges.value = snapBeforeReachingEdges ? 20 : 0
         }
     }
 
@@ -109,7 +111,7 @@ final class SnapAreaViewModel {
         self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
-        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.enabled
+        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
@@ -124,7 +126,7 @@ final class SnapAreaViewModel {
     func syncDefaults() {
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
-        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.enabled
+        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled

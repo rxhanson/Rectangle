@@ -699,7 +699,7 @@ class SnappingManager {
             at: loc, in: screen.frame, screens: (screens ?? NSScreen.screens).map(\.frame),
             margins: NSEdgeInsets(top: marginTop, left: marginLeft, bottom: marginBottom, right: marginRight),
             cornerSize: Defaults.cornerSnapAreaSize.cgFloat,
-            early: Defaults.snapBeforeReachingEdges.enabled
+            earlyDistance: CGFloat(Defaults.snapBeforeReachingEdges.value)
         )
     }
 }

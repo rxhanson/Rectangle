@@ -453,6 +453,16 @@ defaults write com.knollsoft.Rectangle snapEdgeMarginLeft -int 10
 defaults write com.knollsoft.Rectangle snapEdgeMarginRight -int 10
 ```
 
+## Snapping before reaching screen edges
+
+The “Snap before reaching screen edges” toggle sets `snapBeforeReachingEdges` to 20 points when enabled and 0 when disabled. A custom distance can be set with:
+
+```bash
+defaults write com.knollsoft.Rectangle snapBeforeReachingEdges -float 30
+```
+
+Restart Rectangle after changing the value. A positive distance overrides the `snapEdgeMargin` values on exposed outer edges, even when those margins are larger. Shared display boundaries and corner targets retain their existing margins. Set the distance to 0 to return to the configured edge margins.
+
 ## Setting gaps at the screen edges
 
 You can specify gaps at the edges of your screen that will be left uncovered by window resizing operations. This is useful if, for example, you use a dock replacement that should not have windows overlapping it.
