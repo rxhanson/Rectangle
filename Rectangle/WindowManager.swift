@@ -55,6 +55,8 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        var completionDeferred = false
+        defer { if !completionDeferred { parameters.completion?() } }
         hideSizeConstraintWarning()
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
@@ -78,15 +80,18 @@ class WindowManager {
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
                 executionID &+= 1
                 let currentExecutionID = executionID
+                completionDeferred = true
                 if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { [weak self] frame in
+                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
+                        defer { parameters.completion?() }
                         guard let self, self.executionID == currentExecutionID else { return }
                         // A completed animation has already placed the real window.
                         if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
                     }
                 } else {
                     WindowAnimator.shared.cancel(for: frontmostWindowElement)
-                    windowAnimator.afterPendingWrites { [weak self] in
+                    windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) { [weak self] in
+                        defer { parameters.completion?() }
                         guard self?.executionID == currentExecutionID else { return }
                         frontmostWindowElement.setFrame(restoreRect)
                     }
@@ -193,6 +198,15 @@ class WindowManager {
             }
         }
 
+        let resultParameters = ResultParameters(windowId: windowId,
+                                                action: action,
+                                                windowElement: frontmostWindowElement,
+                                                calcResult: calcResult,
+                                                usableScreens: sourceScreens,
+                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
+                                                source: parameters.source,
+                                                isFixedSize: isFixedSize)
+
         if cooperativeCornerPlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
                                                           targetFrame: calcResult.initialRect,
@@ -217,33 +231,28 @@ class WindowManager {
             return
         }
 
+
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
         executionID &+= 1
         let currentExecutionID = executionID
 
-        let resultParameters = ResultParameters(windowId: windowId,
-                                                action: action,
-                                                windowElement: frontmostWindowElement,
-                                                calcResult: calcResult,
-                                                usableScreens: sourceScreens,
-                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
-                                                source: parameters.source,
-                                                isFixedSize: isFixedSize)
-        
         let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
             && !Defaults.cooperativeCornerResize.enabled
         
         let completeMove = { [self] (animatedFrame: CGRect?) in
+            var waitsForRetry = false
+            defer { if !waitsForRetry { parameters.completion?() } }
             guard executionID == currentExecutionID else { return }
             var resultingRect: CGRect
             if let cooperativeCornerPlan {
                 resultingRect = applyCooperativeCornerResize(result: resultParameters,
                                                              plan: cooperativeCornerPlan)
             } else if let animatedFrame {
-                // The animation worker already verified this frame off the main thread.
+                // The worker already verified this frame. A second AX read on
+                // main can stall if the target becomes busy after completion.
                 resultingRect = animatedFrame
             } else {
                 resultingRect = apply(result: resultParameters)
@@ -264,7 +273,9 @@ class WindowManager {
 
                     if calcResult.rect.size != resultingRect.size {
                         Logger.log("Final attempt to adjust across displays.")
+                        waitsForRetry = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
+                            defer { parameters.completion?() }
                             guard let self, self.executionID == currentExecutionID else { return }
                             let finalRect = self.apply(result: resultParameters)
                             self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect,
@@ -292,8 +303,10 @@ class WindowManager {
             }
 
             postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
+
         }
         
+        completionDeferred = true
         if animated {
             recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
@@ -306,14 +319,18 @@ class WindowManager {
             windowAnimator.animate(frontmostWindowElement,
                                    to: calcResult.rect.screenFlipped,
                                    releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard) { frame in
+                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard,
+                                   cancellation: parameters.cancellation) { frame in
                 completeMove(frame.isNull ? nil : frame)
             }
         } else {
             windowAnimator.cancel(for: frontmostWindowElement)
-            windowAnimator.afterPendingWrites { completeMove(nil) }
+            windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) {
+                completeMove(nil)
+            }
         }
     }
+
     
     /// Move/resize a window based on the calculation results.
     /// - Returns: The rect of the window after applying the window action
@@ -432,8 +449,11 @@ struct ExecutionParameters {
     /// For a window that needn't be the focused one, which acting on it
     /// mustn't bring forward.
     let preservesFocus: Bool
+    let completion: (() -> Void)?
+    // Cancellation cleanup must not run placement completion or fallback work.
+    let cancellation: (() -> Void)?
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil) {
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
@@ -441,9 +461,12 @@ struct ExecutionParameters {
         self.windowId = windowId
         self.source = source
         self.preservesFocus = preservesFocus
+        self.completion = completion
+        self.cancellation = cancellation
     }
 }
 
 enum ExecutionSource {
     case keyboardShortcut, dragToSnap, menuItem, url, titleBar
+
 }
