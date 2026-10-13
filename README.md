@@ -1,5 +1,6 @@
 # Rectangle
 
+[![Featured on AppWK](https://appwk.cn/badges/featured-dark.svg)](https://appwk.cn/apps/rectangle)
 Rectangle is a window management app for macOS based on Spectacle.
 
 <img width="612" height="810" alt="image" src="https://github.com/user-attachments/assets/c088d1e2-3661-4041-ac30-95da89ac4a41" />
