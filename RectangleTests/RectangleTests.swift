@@ -9066,17 +9066,24 @@ final class LiquidGlassBlurTests: XCTestCase {
         }
         let surface = try XCTUnwrap(window.contentView.flatMap { material(in: $0) }, file: file, line: line)
         let until = CACurrentMediaTime() + duration
-        var samples = 0
-        while CACurrentMediaTime() < until {
+        let presentationDeadline = until + 0.5
+        var presentationSamples = 0
+        repeat {
             try await Task.sleep(nanoseconds: 8_000_000)
             let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView, file: file, line: line)
-            let outer = surface.layer?.presentation()?.bounds ?? surface.bounds
-            let inner = glass.layer?.presentation()?.frame ?? glass.frame
-            XCTAssertEqual(inner.width, outer.width, accuracy: 1, file: file, line: line)
-            XCTAssertEqual(inner.height, outer.height, accuracy: 1, file: file, line: line)
-            samples += 1
-        }
-        XCTAssertGreaterThan(samples, 0, file: file, line: line)
+            XCTAssertEqual(glass.frame.width, surface.bounds.width, accuracy: 1, file: file, line: line)
+            XCTAssertEqual(glass.frame.height, surface.bounds.height, accuracy: 1, file: file, line: line)
+            // A newly installed material may not have a presentation layer yet.
+            // Never compare its model geometry with its parent's previous rendered frame.
+            if let outer = surface.layer?.presentation()?.bounds,
+               let inner = glass.layer?.presentation()?.frame {
+                XCTAssertEqual(inner.width, outer.width, accuracy: 1, file: file, line: line)
+                XCTAssertEqual(inner.height, outer.height, accuracy: 1, file: file, line: line)
+                presentationSamples += 1
+            }
+        } while CACurrentMediaTime() < until
+            || (presentationSamples == 0 && CACurrentMediaTime() < presentationDeadline)
+        XCTAssertGreaterThan(presentationSamples, 0, "Glass must produce a rendered frame", file: file, line: line)
     }
 
     func testSwitchingMaterialRetainsContentAndResizesWithoutLegacyBlur() throws {
