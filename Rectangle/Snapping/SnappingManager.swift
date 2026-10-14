@@ -385,11 +385,13 @@ class SnappingManager {
                 currentRect = geometry.currentFrame
                 if geometry.isMoving {
                     windowMoving = true
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     if let windowId {
                         unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
                 else if geometry.isResizing, let windowId {
+                    SnappedWindowFitSession.shared.invalidate(windowID: windowId)
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -643,7 +645,7 @@ class SnappingManager {
         }
     }
     
-    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
+    func getBoxRect(hotSpot: SnapArea, currentWindow: Window, applyingGaps: Bool = true) -> CGRect? {
         if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
             
             let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
@@ -651,14 +653,25 @@ class SnappingManager {
             let rectResult = calculation.calculateRect(rectCalcParams)
             
             let gapsApplicable = hotSpot.action.gapsApplicable
+            var target = rectResult.rect
             
             if Defaults.gapSize.value > 0, gapsApplicable != .none {
                 let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
 
-                return GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+                target = GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
             }
-            
-            return rectResult.rect
+            if windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
+                switch SnappedWindowFit.resolve(action: hotSpot.action, window: currentWindow,
+                    initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen,
+                    minimum: windowElement?.minimumSize) {
+                case let .fit(plan):
+                    return applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target)
+                case .noRoom: return nil
+                case .unchanged: break
+                }
+            }
+            if !applyingGaps { target = rectResult.rect }
+            return target
         }
         return nil
     }

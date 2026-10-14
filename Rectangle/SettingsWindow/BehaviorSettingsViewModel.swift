@@ -85,6 +85,14 @@ final class BehaviorSettingsViewModel {
         }
     }
     
+    var fitBesideSnappedWindows: Bool {
+        didSet {
+            Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
+            SnappedWindowFitSession.shared.clear()
+            WindowPlacementCoordinator.shared.cancelAll()
+        }
+    }
+
     var showMinimumWindowSizeWarning: Bool {
         didSet {
             Defaults.showMinimumWindowSizeWarning.enabled = showMinimumWindowSizeWarning
@@ -227,6 +235,7 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         
         setupObservers()
     }
@@ -290,6 +299,7 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
     }
     
     // MARK: - Cycle Sizes Binding Helper

@@ -242,6 +242,8 @@
 		45168ECD476DA26D892D08D2 /* WindowSplitAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900D0ADF979F93B04110B0C6 /* WindowSplitAxis.swift */; };
 		43D5D4386C521C0CA01F2C4D /* WindowWriteQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052CD31D833B599BEA5A780B /* WindowWriteQueue.swift */; };
 		6F8BC6DDB0749E07089B7243 /* AccessibilityReadCancellation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76839C83A5F4DBB5CDF8350 /* AccessibilityReadCancellation.swift */; };
+		C4A3F737228535B87A132145 /* SnappedWindowFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F342773F47BF73CB6879D1 /* SnappedWindowFit.swift */; };
+		11C895E2BF1485B212E008B5 /* SnappedWindowFitSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CB9A56517DCCAEA64B6286 /* SnappedWindowFitSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -509,6 +511,8 @@
 		900D0ADF979F93B04110B0C6 /* WindowSplitAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSplitAxis.swift; sourceTree = "<group>"; };
 		052CD31D833B599BEA5A780B /* WindowWriteQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowWriteQueue.swift; sourceTree = "<group>"; };
 		C76839C83A5F4DBB5CDF8350 /* AccessibilityReadCancellation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityReadCancellation.swift; sourceTree = "<group>"; };
+		45F342773F47BF73CB6879D1 /* SnappedWindowFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappedWindowFit.swift; sourceTree = "<group>"; };
+		33CB9A56517DCCAEA64B6286 /* SnappedWindowFitSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappedWindowFitSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -749,6 +753,7 @@
 		9824700B22AF9B7D0037B409 /* Rectangle */ = {
 			isa = PBXGroup;
 			children = (
+				795E7A15EB738A6800152F09 /* SnappedWindowFit */,
 				AF72CD7E95B83F433DAE68C9 /* WindowPlacement */,
 				9824700C22AF9B7D0037B409 /* AppDelegate.swift */,
 				9824701022AF9B7E0037B409 /* Assets.xcassets */,
@@ -930,6 +935,15 @@
 			path = WindowPlacement;
 			sourceTree = "<group>";
 		};
+		795E7A15EB738A6800152F09 /* SnappedWindowFit */ = {
+			isa = PBXGroup;
+			children = (
+				45F342773F47BF73CB6879D1 /* SnappedWindowFit.swift */,
+				33CB9A56517DCCAEA64B6286 /* SnappedWindowFitSession.swift */,
+			);
+			path = SnappedWindowFit;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1085,6 +1099,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4A3F737228535B87A132145 /* SnappedWindowFit.swift in Sources */,
+				11C895E2BF1485B212E008B5 /* SnappedWindowFitSession.swift in Sources */,
 				9CA539385CA695B78DF5605C /* WindowGeometry.swift in Sources */,
 				F78D595BB4261EC0AEE782F8 /* WindowPlacementAcknowledgement.swift in Sources */,
 				5798B96A8B3A1F7BB99A4F5A /* WindowPlacementAnimationEvidence.swift in Sources */,
