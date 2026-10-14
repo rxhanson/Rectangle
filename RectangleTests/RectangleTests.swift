@@ -8977,6 +8977,44 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
 }
 
 final class WindowPlacementAcknowledgementTests: XCTestCase {
+    func testResponsiveRoundedDownSizesCompleteForShrinkAndGrowth() {
+        for size in [CGSize(width: 700, height: 900), CGSize(width: 200, height: 200)] {
+            var frame = CGRect(origin: .zero, size: size)
+            let target = CGRect(x: 0, y: 0, width: 400, height: 623)
+            var state = acknowledgement(original: frame, target: target)
+            var completed: CGRect?
+            for tick in 0...160 {
+                switch state.observe(frame, at: Double(tick) * 0.025) {
+                case .size(let size): frame.size = CGSize(width: floor(size.width / 17) * 17, height: floor(size.height / 15) * 15)
+                case .position(let point): frame.origin = point
+                case .complete(let result): completed = result
+                case .failed: XCTFail("A responsive grid size must be accepted"); return
+                case .waiting: break
+                }
+                if completed != nil { break }
+            }
+            XCTAssertEqual(completed?.size, CGSize(width: 391, height: 615))
+        }
+    }
+
+    func testSmallerIgnoredAxisCannotBorrowOtherAxisResponse() {
+        let original = CGRect(x: 0, y: 0, width: 200, height: 200)
+        var frame = original
+        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 600))
+        var failed = false
+        for tick in 0...160 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
+            case .size(let size): frame.size.height = size.height
+            case .position(let point): frame.origin = point
+            case .complete: XCTFail("An unchanged width is not a maximum-size response"); return
+            case .failed: failed = true
+            case .waiting: break
+            }
+            if failed { break }
+        }
+        XCTAssertTrue(failed)
+    }
+
     func testHeightResponseDoesNotVerifyIgnoredWidth() {
         assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 600), ignoredWidth: true)
@@ -9044,6 +9082,30 @@ final class WindowPlacementAcknowledgementTests: XCTestCase {
 
 @MainActor
 final class SnappedWindowFitVerificationTests: XCTestCase {
+    func testPreviewLeaseSurvivesExpiryOnlyForDragRelease() {
+        var time = ProcessInfo.processInfo.systemUptime
+        let session = SnappedWindowFitSession(observeWorkspace: false, now: { time }) { _, _ in true }
+        session.record(opportunity(id: 1))
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        wait(for: [published], timeout: 2)
+        session.beginPreview()
+        time += 20
+        XCTAssertNotNil(session.take(allowPreview: true))
+        XCTAssertNil(session.current)
+    }
+
+    func testLeavingPreviewDoesNotExtendNextShortcutOpportunity() {
+        var time = ProcessInfo.processInfo.systemUptime
+        let session = SnappedWindowFitSession(observeWorkspace: false, now: { time }) { _, _ in true }
+        session.record(opportunity(id: 1))
+        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        wait(for: [published], timeout: 2)
+        session.beginPreview()
+        time += 20
+        session.endPreview()
+        XCTAssertNil(session.take())
+    }
+
     func testSlowNeighborVerificationDoesNotBlockMainOrExposeUnverifiedAnchor() {
         let started = expectation(description: "Background verification started")
         let mainResponsive = expectation(description: "Main queue remains responsive")

@@ -74,7 +74,7 @@ final class WindowPlacementCoordinator {
 
     @discardableResult func place(_ window: AccessibilityElement, from original: CGRect, to target: CGRect,
                                  placement: ImmediateWindowPlacement, animated: Bool,
-                                 profile: WindowAnimationProfile = .standard,
+                                 profile: WindowAnimationProfile = .standard, resolvedWindowID: CGWindowID? = nil,
                                  acknowledgementTimeout: TimeInterval = 3.4, restoreOnFailure: Bool = true,
                                  isCurrent: @escaping () -> Bool,
                                  completion: @escaping (Outcome) -> Void) -> Cancellation {
@@ -82,7 +82,7 @@ final class WindowPlacementCoordinator {
         let cancellation = Cancellation()
         active[window] = cancellation
         cancellation.onCancel = { completion(.cancelled) }
-        guard let pid = window.pid, let id = window.windowId,
+        guard let pid = window.pid, let id = resolvedWindowID ?? window.windowId,
               let launch = WindowProcessIdentity.launchTime(for: pid),
               WindowGeometry.valid(original), WindowGeometry.valid(target) else {
             active.removeValue(forKey: window)

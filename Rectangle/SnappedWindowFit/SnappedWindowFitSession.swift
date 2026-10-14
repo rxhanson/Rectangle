@@ -4,6 +4,8 @@ final class SnappedWindowFitSession {
     static let shared = SnappedWindowFitSession()
     private var anchor: SnappedWindowFitOpportunity?
     private var verified = false
+    private var previewing = false
+    private let now: () -> TimeInterval
     private var verification = AccessibilityReadCancellation()
     private let verificationQueue: OperationQueue = {
         let queue = OperationQueue()
@@ -16,12 +18,17 @@ final class SnappedWindowFitSession {
     private var observers: [(NotificationCenter, NSObjectProtocol)] = []
 
     var current: SnappedWindowFitOpportunity? {
-        if let anchor, ProcessInfo.processInfo.systemUptime - anchor.createdAt >= 10 { clear() }
+        if previewing, verified, let anchor {
+            return SnappedWindowFitOpportunity(id: anchor.id, pid: anchor.pid, launch: anchor.launch,
+                action: anchor.action, frame: anchor.frame, bounds: anchor.bounds, createdAt: now())
+        }
+        if let anchor, now() - anchor.createdAt >= 10 { clear() }
         return verified ? anchor : nil
     }
 
-    init(observeWorkspace: Bool = true,
+    init(observeWorkspace: Bool = true, now: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
          verify: @escaping (SnappedWindowFitOpportunity, @escaping () -> Bool) -> Bool = SnappedWindowFitSession.verifyNeighbor) {
+        self.now = now
         self.verify = verify
         guard observeWorkspace else { return }
         let center = NotificationCenter.default
@@ -49,6 +56,7 @@ final class SnappedWindowFitSession {
         verificationQueue.cancelAllOperations()
         anchor = nil
         verified = false
+        previewing = false
     }
 
     /// Publish only a completed verification belonging to the latest snap.
@@ -90,7 +98,11 @@ final class SnappedWindowFitSession {
         if let windowID, anchor?.id == windowID { clear() }
     }
 
-    func take() -> SnappedWindowFitOpportunity? {
+    func beginPreview() { if current != nil { previewing = true } }
+    func endPreview() { previewing = false }
+
+    func take(allowPreview: Bool = false) -> SnappedWindowFitOpportunity? {
+        if !allowPreview { previewing = false }
         let opportunity = current
         clear()
         return opportunity

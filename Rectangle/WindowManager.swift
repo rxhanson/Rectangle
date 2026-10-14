@@ -10,6 +10,7 @@ class WindowManager {
     private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
+    private var fittingWindowID: CGWindowID?
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
@@ -58,7 +59,7 @@ class WindowManager {
         var completionDeferred = false
         defer { if !completionDeferred { parameters.completion?() } }
         hideSizeConstraintWarning()
-        let fitOpportunity = SnappedWindowFitSession.shared.take()
+        let fitOpportunity = SnappedWindowFitSession.shared.take(allowPreview: parameters.source == .dragToSnap)
 
         guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
         else {
@@ -130,7 +131,8 @@ class WindowManager {
         
         let previousAction = lastRectangleAction
         let previousRestore = windowId.flatMap { AppDelegate.windowHistory.restoreRects[$0] }
-        let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
+        let windowMovedExternally = !(windowId != nil && fittingWindowID == windowId)
+            && currentWindowRect != lastRectangleAction?.rect
         
         if windowMovedExternally {
             lastRectangleAction = nil
@@ -189,10 +191,11 @@ class WindowManager {
         if willResize, !isFixedSize, !action.allowedToExtendOutsideCurrentScreenArea {
             switch SnappedWindowFit.resolve(action: calcResult.resultingAction, window: currentWindow,
                 initialTarget: calcResult.initialRect, target: calcResult.rect,
-                screenFrame: visibleFrameOfDestinationScreen, minimum: frontmostWindowElement.minimumSize,
+                screenFrame: visibleFrameOfDestinationScreen,
                 opportunity: fitOpportunity) {
             case .fit(let plan):
                 besidePlan = plan
+                calcResult.initialRect = plan.unpaddedTarget(initial: calcResult.initialRect, padded: calcResult.rect)
                 calcResult.rect = plan.target.screenFlipped
             case .noRoom: NSSound.beep(); return
             case .unchanged: break
@@ -368,10 +371,6 @@ class WindowManager {
         result.allowsFitPairing = false
         let window = result.windowElement
         let requestExecutionID = executionID
-        if let id = result.windowId {
-            AppDelegate.windowHistory.restoreRects[id] = previousRestore
-            AppDelegate.windowHistory.lastRectangleActions[id] = previousAction
-        }
         guard plan.neighborIsUnchanged() else { NSSound.beep(); return }
         if WindowGeometry.matches(before, plan.target, tolerance: 1) {
             postProcess(result: result, resultingRect: before)
@@ -379,30 +378,55 @@ class WindowManager {
         }
         let bounds = result.visibleFrameOfScreen.screenFlipped
         let placement = ImmediateWindowPlacement(screenFrame: bounds,
-            sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: plan.target, in: bounds),
+            sharedEdges: Defaults.moveFixedSizeToEdge.value.alignmentEdges(for: result.calcResult.initialRect.screenFlipped, in: bounds),
             constrainToScreen: true, gap: CGFloat(Defaults.gapSize.value))
+        // Publish the logical action while writes are pending, just as ordinary
+        // animations do. This also suppresses a competing native drag restore.
+        recordAction(windowId: result.windowId, resultingRect: plan.target,
+                     action: result.calcResult.resultingAction, subAction: result.calcResult.resultingSubAction)
+        fittingWindowID = result.windowId
+        var checkedAt: TimeInterval = 0
+        var neighborValid = true
         completionDeferred = true
         WindowPlacementCoordinator.shared.place(window, from: before, to: plan.target, placement: placement,
             animated: WindowAnimator.enabled && !acrossDisplays,
-            profile: result.source == .keyboardShortcut ? .keyboard : .standard,
+            profile: result.source == .keyboardShortcut ? .keyboard : .standard, resolvedWindowID: result.windowId,
             isCurrent: { [weak self] in
-                self?.executionID == requestExecutionID
-                    && WindowGeometry.matches(result.calcResult.screen.adjustedVisibleFrame().screenFlipped, bounds)
-                    && plan.neighborIsUnchanged()
+                guard self?.executionID == requestExecutionID else { return false }
+                // Screen/Space changes cancel through the coordinator observers.
+                // Avoid Dock AX and a desktop-wide refresh on every timer tick.
+                let now = ProcessInfo.processInfo.systemUptime
+                if now - checkedAt >= 0.12 {
+                    checkedAt = now
+                    neighborValid = plan.neighborIsUnchanged()
+                }
+                return neighborValid
             }) { [weak self] outcome in
                 defer { completion?() }
                 guard let self else { return }
+                if self.executionID == requestExecutionID { self.fittingWindowID = nil }
                 switch outcome {
                 case .placed(let frame):
-                    if let id = result.windowId, previousRestore == nil || previousAction?.rect != before {
-                        AppDelegate.windowHistory.restoreRects[id] = before
-                    }
                     if acrossDisplays { self.windowMovedAcrossDisplays(windowElement: window, resultingRect: frame, preservesFocus: preservesFocus) }
-                    self.postProcess(result: result, resultingRect: frame)
-                case .failed, .unresponsive:
+                    self.postProcess(result: result, resultingRect: frame, incrementCount: false)
+                case .failed(let restored):
+                    if restored, let id = result.windowId {
+                        AppDelegate.windowHistory.restoreRects[id] = previousRestore
+                        AppDelegate.windowHistory.lastRectangleActions[id] = previousAction
+                    }
                     NSSound.beep()
                     Logger.log("Window placement could not be verified")
-                case .cancelled: break
+                case .unresponsive:
+                    NSSound.beep()
+                    Logger.log("Window placement could not be verified")
+                case .cancelled:
+                    // A following command can arrive before cancelled writes drain.
+                    // Retire the cycle action at the same logical/readback frame
+                    // execute() will use, preserving the original restore rect.
+                    if self.executionID == requestExecutionID, let id = result.windowId,
+                       let frame = self.windowAnimator.destination(for: window) ?? WindowUtil.getWindowFrame(id: id) {
+                        AppDelegate.windowHistory.lastRectangleActions[id] = RectangleAction(action: .specified, rect: frame, count: 1)
+                    }
                 }
             }
     }

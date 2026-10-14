@@ -15,7 +15,7 @@ struct SnappedWindowFit: Equatable {
     }
 
     static func resolve(action: WindowAction, window: Window, initialTarget: CGRect,
-                        target: CGRect, screenFrame: CGRect, minimum: CGSize?,
+                        target: CGRect, screenFrame: CGRect,
                         opportunity: SnappedWindowFitOpportunity? = SnappedWindowFitSession.shared.current) -> Resolution {
         guard Defaults.fitBesideSnappedWindows.enabled, let id = window.id, let opportunity,
               WindowSplitAxis(action: action) != nil,
@@ -38,7 +38,7 @@ struct SnappedWindowFit: Equatable {
             return .unchanged
         }
         let resolution = resolve(enabled: true, action: action, movingWindowID: id,
-            target: target.screenFlipped, bounds: bounds, gap: gap, minimum: minimum,
+            target: target.screenFlipped, bounds: bounds, gap: gap, minimum: nil,
             windows: infos, recordedFrames: [opportunity.id: opportunity.frame],
             ignoredPID: ProcessInfo.processInfo.processIdentifier)
         guard case let .fit(plan) = resolution else { return resolution }
@@ -120,7 +120,7 @@ struct SnappedWindowFit: Equatable {
     }
 
     func neighborIsUnchanged() -> Bool {
-        WindowUtil.getWindowList(forceRefresh: true).contains {
+        WindowUtil.getWindowList(ids: [neighborID], forceRefresh: true, cacheResult: false).contains {
             $0.id == neighborID && $0.pid == neighborPID && WindowGeometry.matches($0.frame, neighborFrame)
         }
     }

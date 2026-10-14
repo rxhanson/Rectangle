@@ -114,7 +114,9 @@ class SnappingManager {
         var lastAttemptOrigin: CGPoint
     }
     private var nativeSizeRestore: NativeSizeRestore?
-    var currentSnapArea: SnapArea?
+    var currentSnapArea: SnapArea? {
+        didSet { if currentSnapArea == nil { SnappedWindowFitSession.shared.endPreview() } }
+    }
     var dragPrevY: Double?
     var dragRestrictionExpirationTimestamp: UInt64 = 0
     var dragRestrictionExpired: Bool { DispatchTime.now().uptimeMilliseconds > dragRestrictionExpirationTimestamp }
@@ -299,6 +301,7 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            SnappedWindowFitSession.shared.endPreview()
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -660,11 +663,12 @@ class SnappingManager {
 
                 target = GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
             }
-            if windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
+            if Defaults.fitBesideSnappedWindows.enabled, SnappedWindowFitSession.shared.current != nil,
+               windowElement?.isResizable() == true, windowElement?.isSystemDialog != true {
                 switch SnappedWindowFit.resolve(action: hotSpot.action, window: currentWindow,
-                    initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen,
-                    minimum: windowElement?.minimumSize) {
+                    initialTarget: rectResult.rect, target: target, screenFrame: rectCalcParams.visibleFrameOfScreen) {
                 case let .fit(plan):
+                    SnappedWindowFitSession.shared.beginPreview()
                     return applyingGaps ? plan.target.screenFlipped : plan.unpaddedTarget(initial: rectResult.rect, padded: target)
                 case .noRoom: return nil
                 case .unchanged: break
