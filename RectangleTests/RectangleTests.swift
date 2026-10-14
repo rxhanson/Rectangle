@@ -1444,7 +1444,7 @@ final class ScreenEdgeGapTests: XCTestCase {
             (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
             (Defaults.screenEdgeGapsOnMainScreenOnly, CodableDefault(bool: false)),
             (Defaults.screenEdgeGapTop, CodableDefault(float: 30)),
-            (Defaults.screenEdgeGapTopNotch, CodableDefault())
+            (Defaults.screenEdgeGapTopNotch, CodableDefault(double: -1))
         ]
         savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
         settings.forEach { $0.0.load(from: $0.1) }
@@ -1474,25 +1474,33 @@ final class ScreenEdgeGapTests: XCTestCase {
         XCTAssertEqual(topGap(on: screenWithoutNotch), 30)
     }
 
+    func testFreshInstallTreatsNotchGapAsUnset() {
+        let key = Defaults.screenEdgeGapTopNotch.key
+        let stored = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(stored, forKey: key) }
+
+        UserDefaults.standard.removeObject(forKey: key)
+        XCTAssertEqual(DoubleDefault(key: key, defaultValue: -1).value, -1)
+    }
+
     func testUnsetAndZeroNotchGapSurviveReloadAndConfigRoundTrip() throws {
         let notchGap = Defaults.screenEdgeGapTopNotch
-        XCTAssertNil(UserDefaults.standard.object(forKey: notchGap.key))
-        XCTAssertNil(OptionalDoubleDefault(key: notchGap.key).value)
+        XCTAssertEqual(DoubleDefault(key: notchGap.key, defaultValue: -1).value, -1)
         let exportedUnset = try exportedNotchGap()
-        XCTAssertNil(exportedUnset.double)
+        XCTAssertEqual(exportedUnset.double, -1)
 
         notchGap.value = 0
-        XCTAssertEqual(OptionalDoubleDefault(key: notchGap.key).value, 0)
+        XCTAssertEqual(DoubleDefault(key: notchGap.key, defaultValue: -1).value, 0)
         let exportedZero = try exportedNotchGap()
         XCTAssertEqual(exportedZero.double, 0)
 
         notchGap.load(from: exportedUnset)
-        XCTAssertNil(notchGap.value)
-        XCTAssertNil(UserDefaults.standard.object(forKey: notchGap.key))
+        XCTAssertEqual(notchGap.value, -1)
+        XCTAssertEqual(topGap(on: notchedScreen), 30)
 
         notchGap.load(from: exportedZero)
         XCTAssertEqual(notchGap.value, 0)
-        XCTAssertEqual(OptionalDoubleDefault(key: notchGap.key).value, 0)
+        XCTAssertEqual(topGap(on: notchedScreen), 0)
     }
 
     func testLegacyFloatZeroStillFallsBackToTopGap() {
@@ -1500,7 +1508,7 @@ final class ScreenEdgeGapTests: XCTestCase {
         notchGap.value = 10
 
         notchGap.load(from: CodableDefault(float: 0))
-        XCTAssertNil(notchGap.value)
+        XCTAssertEqual(notchGap.value, -1)
         XCTAssertEqual(topGap(on: notchedScreen), 30)
 
         notchGap.load(from: CodableDefault(float: 5))

@@ -49,7 +49,7 @@ class Defaults {
     static let screenEdgeGapLeft = FloatDefault(key: "screenEdgeGapLeft", defaultValue: 0)
     static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 0)
     static let screenEdgeGapsOnMainScreenOnly = BoolDefault(key: "screenEdgeGapsOnMainScreenOnly")
-    static let screenEdgeGapTopNotch = OptionalDoubleDefault(key: "screenEdgeGapTopNotch")
+    static let screenEdgeGapTopNotch = DoubleDefault(key: "screenEdgeGapTopNotch", defaultValue: -1)
     static let lastVersion = StringDefault(key: "lastVersion")
     static let installVersion = StringDefault(key: "installVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
@@ -437,49 +437,6 @@ class DoubleDefault: Default {
             // Legacy float-backed defaults could not distinguish an absent value
             // from zero; preserve their effective default when migrating.
             value = float == 0 && defaultValue != 0 ? defaultValue : Double(float)
-        }
-    }
-
-    func toCodable() -> CodableDefault {
-        CodableDefault(double: value)
-    }
-}
-
-class OptionalDoubleDefault: Default {
-    public private(set) var key: String
-    private var initialized = false
-
-    var value: Double? {
-        didSet {
-            if initialized {
-                if let value {
-                    UserDefaults.standard.set(value, forKey: key)
-                } else {
-                    UserDefaults.standard.removeObject(forKey: key)
-                }
-            }
-        }
-    }
-
-    var cgFloat: CGFloat? { value.map { CGFloat($0) } }
-
-    init(key: String) {
-        self.key = key
-        if UserDefaults.standard.object(forKey: key) != nil {
-            value = UserDefaults.standard.double(forKey: key)
-        }
-        initialized = true
-    }
-
-    func load(from codable: CodableDefault) {
-        if let double = codable.double {
-            value = double
-        } else if let float = codable.float {
-            // Legacy float-backed defaults exported 0 when no value was set,
-            // so keep treating a legacy 0 as not set.
-            value = float == 0 ? nil : Double(float)
-        } else {
-            value = nil
         }
     }
 
