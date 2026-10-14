@@ -150,7 +150,7 @@ final class WindowDividerManager {
         }
         let normalized = axis.rect(frame), extent = axis.rect(bounds)
         guard abs(normalized.minX - extent.minX) <= 3 || abs(normalized.maxX - extent.maxX) <= 3 else { return }
-        // Start asynchronous identity validation before a divider drag needs a restored hint.
+        // Validate identity asynchronously before this placement can form a pair.
         let entry = Entry(id: id, element: window, app: app, screen: screen, frame: frame)
         entries[id] = entry
         entries = entries.filter { !$0.value.app.isTerminated }
@@ -241,11 +241,12 @@ final class WindowDividerManager {
               let right = WindowDividerPreparedPair.Input(id: pair.right.id, pid: pair.right.app.processIdentifier) else { return }
         observationRunning = true
         let generation = observationGeneration
-        let prepared = pair.prepared
         let ownedPIDs: Set<pid_t> = [pair.left.app.processIdentifier, pair.right.app.processIdentifier, getpid()]
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let infos = WindowUtil.getWindowList(forceRefresh: true, cacheResult: false)
-            let preparation = prepared ?? WindowDividerPreparedPair(left: left, right: right)
+            // Refresh reported constraints for the next drag; a previous preparation
+            // must not keep an app's old minimum after the app changes it.
+            let preparation = WindowDividerPreparedPair(left: left, right: right)
             let passive = WindowDividerPreparedPair.passiveCaptureOverlayIDs(in: infos, at: point, ownedPIDs: ownedPIDs)
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
