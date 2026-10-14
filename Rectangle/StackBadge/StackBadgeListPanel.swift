@@ -30,9 +30,17 @@ struct StackBadgeStackedWindow {
         }
 
         return windows.map { info in
-            StackBadgeStackedWindow(windowId: info.id,
-                                    pid: info.pid,
-                                    title: displayTitle(for: info, axTitle: titles[info.id]))
+            StackBadgeStackedWindow(
+                windowId: info.id,
+                pid: info.pid,
+                title: displayTitle(for: info, axTitle: titles[info.id])
+            )
+        }.sorted { lhs, rhs in
+            let comparison = lhs.title.localizedStandardCompare(rhs.title)
+            if comparison != .orderedSame {
+                return comparison == .orderedAscending
+            }
+            return lhs.windowId < rhs.windowId
         }
     }
 
