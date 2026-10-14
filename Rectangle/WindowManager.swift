@@ -78,6 +78,7 @@ class WindowManager {
                 return
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+                WindowPlacementCoordinator.shared.cancelAll()
                 executionID &+= 1
                 let currentExecutionID = executionID
                 completionDeferred = true
@@ -235,6 +236,7 @@ class WindowManager {
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
+        WindowPlacementCoordinator.shared.cancelAll()
         executionID &+= 1
         let currentExecutionID = executionID
 
