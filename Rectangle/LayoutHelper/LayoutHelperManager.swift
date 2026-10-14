@@ -412,7 +412,7 @@ final class LayoutHelperManager {
             cancel()
             return
         }
-        let occupiedIDs = Set(retained.keys.compactMap(\.windowId) + existingOccupants.map(\.id))
+        let occupiedIDs = Set(retainedIdentities.values.map(\.id) + existingOccupants.map(\.id))
         candidates = Dictionary(uniqueKeysWithValues: windows.filter { !occupiedIDs.contains($0.id) }.map { ($0.id, $0) })
         guard !candidates.isEmpty else {
             if !catalog.isRefreshing { cancel() }
@@ -478,7 +478,7 @@ final class LayoutHelperManager {
             }
             self.restorationFrames.prune(live: Set(WindowUtil.getWindowList(all: true, forceRefresh: true, cacheResult: false).map(\.id)))
             let original = self.restorationFrames.original(id: snapshot.id, pid: snapshot.pid,
-                launch: snapshot.launch, frame: snapshot.frame, remember: snapshot.isMinimized)
+                launch: snapshot.launch, frame: snapshot.frame, remember: snapshot.isMinimized, prepared: snapshot.isMinimized ? target : nil)
             guard snapshot.isMinimized else {
                 self.place(window, snapshot: snapshot, target: target, selectionToken: selectionToken, restoreFrame: original)
                 return

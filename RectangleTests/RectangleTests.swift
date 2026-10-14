@@ -8977,6 +8977,44 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
 }
 
 final class WindowPlacementAcknowledgementTests: XCTestCase {
+    func testResponsiveRoundedDownSizesCompleteForShrinkAndGrowth() {
+        for size in [CGSize(width: 700, height: 900), CGSize(width: 200, height: 200)] {
+            var frame = CGRect(origin: .zero, size: size)
+            let target = CGRect(x: 0, y: 0, width: 400, height: 623)
+            var state = acknowledgement(original: frame, target: target)
+            var completed: CGRect?
+            for tick in 0...160 {
+                switch state.observe(frame, at: Double(tick) * 0.025) {
+                case .size(let size): frame.size = CGSize(width: floor(size.width / 17) * 17, height: floor(size.height / 15) * 15)
+                case .position(let point): frame.origin = point
+                case .complete(let result): completed = result
+                case .failed: XCTFail("A responsive grid size must be accepted"); return
+                case .waiting: break
+                }
+                if completed != nil { break }
+            }
+            XCTAssertEqual(completed?.size, CGSize(width: 391, height: 615))
+        }
+    }
+
+    func testSmallerIgnoredAxisCannotBorrowOtherAxisResponse() {
+        let original = CGRect(x: 0, y: 0, width: 200, height: 200)
+        var frame = original
+        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 600))
+        var failed = false
+        for tick in 0...160 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
+            case .size(let size): frame.size.height = size.height
+            case .position(let point): frame.origin = point
+            case .complete: XCTFail("An unchanged width is not a maximum-size response"); return
+            case .failed: failed = true
+            case .waiting: break
+            }
+            if failed { break }
+        }
+        XCTAssertTrue(failed)
+    }
+
     func testHeightResponseDoesNotVerifyIgnoredWidth() {
         assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 600), ignoredWidth: true)
@@ -10260,7 +10298,7 @@ final class LayoutHelperReviewRegressionTests: XCTestCase {
         let target = CGRect(x: 720, y: 29, width: 720, height: 878)
         var actual = original
         var remembered = LayoutHelperRestorationFrames()
-        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: original, remember: true), original)
+        XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: original, remember: true, prepared: target), original)
         XCTAssertTrue(LayoutHelperWindowRestoration.prepare(target: target, isCurrent: { true }, minimized: { true },
             size: { actual.size = $0; return .success }, position: { actual.origin = $0; return .success }, frame: { actual }))
         let outcome = LayoutHelperWindowRestoration.acknowledge(isCurrent: { true }, minimized: { true },
@@ -10274,11 +10312,22 @@ final class LayoutHelperReviewRegressionTests: XCTestCase {
         XCTAssertEqual(remembered.original(id: 7, pid: 42, launch: 1, frame: target, remember: false), target)
     }
 
+    func testUserMoveSupersedesAbandonedRestorationFrame() {
+        let original = CGRect(x: 100, y: 100, width: 400, height: 600)
+        let prepared = CGRect(x: 720, y: 29, width: 720, height: 878)
+        let moved = CGRect(x: 80, y: 80, width: 600, height: 500)
+        var frames = LayoutHelperRestorationFrames()
+        _ = frames.original(id: 7, pid: 42, launch: 1, frame: original, remember: true, prepared: prepared)
+        XCTAssertEqual(frames.original(id: 7, pid: 42, launch: 1, frame: moved, remember: false), moved)
+        XCTAssertEqual(frames.original(id: 7, pid: 42, launch: 1, frame: prepared, remember: false), prepared)
+    }
+
     func testCancellationPreventsRollbackWritesAndKeepsOriginalForRetry() {
+
         let original = CGRect(x: 100, y: 100, width: 400, height: 600)
         let prepared = CGRect(x: 720, y: 29, width: 720, height: 878)
         var remembered = LayoutHelperRestorationFrames()
-        _ = remembered.original(id: 7, pid: 42, launch: 1, frame: original, remember: true)
+        _ = remembered.original(id: 7, pid: 42, launch: 1, frame: original, remember: true, prepared: prepared)
         var writes = 0
         XCTAssertFalse(LayoutHelperWindowRestoration.rollback(original: original, isCurrent: { false },
             size: { _ in writes += 1; return .success }, position: { _ in writes += 1; return .success }))
@@ -10878,5 +10927,45 @@ final class LayoutHelperOccupancyTests: XCTestCase {
                 XCTAssertEqual(p.remaining(excluding: p.occupiedCells(by: found[0].frame)), [2])
             }
         }
+    }
+}
+
+@MainActor
+final class LayoutHelperPlacementCancellationTests: XCTestCase {
+    private final class Window: AccessibilityElement {
+        init() { super.init(AXUIElementCreateApplication(getpid())) }
+        override var pid: pid_t? { getpid() }
+        override var windowId: CGWindowID? { .max }
+        override var bundleIdentifier: String? { nil }
+    }
+
+    func testAnimatorCancellationCompletesHelperExactlyOnce() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved; WindowAnimator.shared.cancel() }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by accessibility settings")
+        let screen = try XCTUnwrap(NSScreen.screens.first)
+        let original = CGRect(x: 100, y: 100, width: 500, height: 400)
+        let target = CGRect(x: 0, y: 0, width: 400, height: 700)
+        let bounds = CGRect(x: 0, y: 0, width: 1400, height: 900)
+        let window = Window()
+        let calculation = WindowCalculationResult(rect: target.screenFlipped, screen: screen, resultingAction: .specified)
+        let result = ResultParameters(windowId: .max, action: .specified, windowElement: window,
+            calcResult: calculation, usableScreens: UsableScreens(currentScreen: screen, numScreens: 1),
+            visibleFrameOfScreen: bounds.screenFlipped, source: .menuItem, isFixedSize: false)
+        let service = LayoutHelperPlacement()
+        var outcomes = 0
+        let token = service.place(result, from: original,
+            placement: ImmediateWindowPlacement(screenFrame: bounds, sharedEdges: nil, constrainToScreen: true, gap: 0),
+            animated: true, isCurrent: { true }) { outcome in
+                guard case .cancelled = outcome else { return XCTFail("Expected cancellation") }
+                outcomes += 1
+            }
+        WindowAnimator.shared.cancel()
+        XCTAssertEqual(outcomes, 1)
+        XCTAssertFalse(token.timer?.isValid ?? false)
+        service.cancelAll()
+        WindowAnimator.shared.cancel()
+        XCTAssertEqual(outcomes, 1)
     }
 }

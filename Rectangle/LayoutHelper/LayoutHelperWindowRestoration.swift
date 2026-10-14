@@ -117,11 +117,19 @@ struct LayoutHelperRestorationFrames {
         let pid: pid_t
         let launch: TimeInterval
     }
-    private var frames: [Identity: CGRect] = [:]
-    mutating func original(id: CGWindowID, pid: pid_t, launch: TimeInterval, frame: CGRect, remember: Bool) -> CGRect {
+    private var frames: [Identity: (original: CGRect, prepared: CGRect)] = [:]
+    mutating func original(id: CGWindowID, pid: pid_t, launch: TimeInterval, frame: CGRect, remember: Bool, prepared: CGRect? = nil) -> CGRect {
         let key = Identity(id: id, pid: pid, launch: launch)
-        if let original = frames[key] { return original }
-        if remember { frames[key] = frame }
+        if let stored = frames[key] {
+            if WindowGeometry.matches(frame, stored.prepared, tolerance: 1)
+                || WindowGeometry.matches(frame, stored.original, tolerance: 1) {
+                if let prepared { frames[key] = (stored.original, prepared) }
+                return stored.original
+            }
+            // A later user move supersedes an abandoned restoration.
+            frames.removeValue(forKey: key)
+        }
+        if remember { frames[key] = (frame, prepared ?? frame) }
         return frame
     }
     mutating func remove(id: CGWindowID, pid: pid_t, launch: TimeInterval) {

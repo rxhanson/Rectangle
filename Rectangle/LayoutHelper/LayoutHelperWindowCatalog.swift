@@ -185,8 +185,20 @@ final class LayoutHelperWindowCatalog {
             applications[pid] != nil && !running.contains(pid) && seen.insert(pid).inserted
                 && (failures[pid]?.retryAt ?? 0) <= now
         }
+        failMissingDemands()
         scheduleUpdate()
         pump()
+    }
+
+    private func failMissingDemands() {
+        let missing = demands.keys.filter { id in
+            guard let snapshot = snapshots[id], let app = applications[snapshot.pid],
+                  app.launch == snapshot.launch else { return true }
+            return !app.infos.contains { $0.id == id }
+        }
+        // Remove all entries before invoking callbacks, which may suspend us.
+        let callbacks = missing.flatMap { demands.removeValue(forKey: $0) ?? [] }
+        callbacks.forEach { $0(nil) }
     }
 
     /// A click gets one fresh batch for its application, never a desktop rescan.
@@ -219,7 +231,7 @@ final class LayoutHelperWindowCatalog {
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
                     self.running.remove(pid)
-                    guard self.applications[pid]?.launch == application.launch else { self.pump(); return }
+                    guard self.applications[pid]?.launch == application.launch else { self.failMissingDemands(); self.pump(); return }
                     guard epoch == self.generation else {
                         if !self.isSuspended, self.didUpdate != nil, !self.waiting.contains(pid) { self.waiting.append(pid) }
                         self.pump()

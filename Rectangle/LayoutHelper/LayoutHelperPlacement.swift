@@ -76,12 +76,12 @@ final class LayoutHelperPlacement {
         if animated && WindowAnimator.enabled && !result.isFixedSize {
             WindowAnimator.shared.animate(window, from: original, to: target, placement: WindowAnimationPlacement(screenFrame: placement.screenFrame,
                     sharedEdges: placement.sharedEdges, constrainToScreen: placement.constrainToScreen, gap: placement.gap),
-                                          profile: profile) { frame in
-                if frame.isNull { WindowAnimator.shared.afterPendingWrites(snap) }
+                                          profile: profile, cancellation: { finish(.cancelled) }) { frame in
+                if frame.isNull { WindowAnimator.shared.afterPendingWrites(cancellation: { finish(.cancelled) }, snap) }
                 else { verify() }
             }
         } else {
-            WindowAnimator.shared.afterPendingWrites(snap)
+            WindowAnimator.shared.afterPendingWrites(cancellation: { finish(.cancelled) }, snap)
         }
         return cancellation
     }
