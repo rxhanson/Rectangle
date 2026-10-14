@@ -184,7 +184,7 @@ final class BehaviorSettingsViewModel {
         didSet {
             guard oldValue != windowDividerEnhanced else { return }
             Defaults.windowDividerEnhanced.enabled = windowDividerEnhanced
-            WindowDividerManager.shared.clear()
+            WindowDividerManager.shared.interrupt(animated: false)
             if windowDividerEnhanced && !reloadingDefaults {
                 WindowCapturePermission.guideIfNeeded(for: .windowDivider, onDecline: { Defaults.windowDividerEnhanced.enabled = false }) { [weak self] in
                     self?.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled

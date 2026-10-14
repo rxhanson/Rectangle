@@ -12,7 +12,6 @@ struct WindowPlacementAnimationEvidence {
           completedAt: TimeInterval) {
         guard WindowGeometry.valid(frame), WindowGeometry.valid(original),
               WindowGeometry.valid(target), completedAt.isFinite,
-              frame.width >= target.width - 1, frame.height >= target.height - 1,
               WindowGeometry.near(frame,
                 placement.frame(for: target, actualSize: frame.size), tolerance: 1),
               WindowGeometry.near(frame, target, tolerance: 1)

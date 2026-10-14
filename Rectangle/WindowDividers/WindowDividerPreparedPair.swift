@@ -50,14 +50,19 @@ struct WindowDividerPreparedPair {
             NSRunningApplication(processIdentifier: info.pid)?.bundleIdentifier == "com.apple.screencaptureui" ? info.pid : nil
         })
         guard !capturePIDs.isEmpty else { return [] }
-        let system = AXUIElementCreateSystemWide()
-        AXUIElementSetMessagingTimeout(system, 0.08)
-        var hit: AXUIElement?
-        var pid: pid_t = 0
-        guard AXUIElementCopyElementAtPosition(system, Float(point.x), Float(point.y), &hit) == .success,
-              let hit, AXUIElementGetPid(hit, &pid) == .success else { return [] }
-        return WindowDividerGeometry.passiveCaptureOverlayIDs(in: infos, at: point, hitPID: pid,
-            ownedPIDs: ownedPIDs, capturePIDs: capturePIDs)
+        // A timeout on a system-wide element changes the default for every AX
+        // request in Rectangle. Scope hit testing to private application elements.
+        for candidate in capturePIDs.sorted() + ownedPIDs.sorted() {
+            let application = AXUIElementCreateApplication(candidate)
+            AXUIElementSetMessagingTimeout(application, 0.08)
+            var hit: AXUIElement?
+            var pid: pid_t = 0
+            guard AXUIElementCopyElementAtPosition(application, Float(point.x), Float(point.y), &hit) == .success,
+                  let hit, AXUIElementGetPid(hit, &pid) == .success else { continue }
+            return WindowDividerGeometry.passiveCaptureOverlayIDs(in: infos, at: point, hitPID: pid,
+                ownedPIDs: ownedPIDs, capturePIDs: capturePIDs)
+        }
+        return []
     }
 
     func place(left originalLeft: CGRect, right originalRight: CGRect, axis: WindowSplitAxis, divider: CGFloat,
@@ -110,6 +115,6 @@ struct WindowDividerPreparedPair {
                 guard valid(), let actual = WindowUtil.getWindowFrame(id: isLeft ? left.input.id : right.input.id) else { return false }
                 return WindowGeometry.matches(actual, expected, tolerance: 1)
             }) else { return nil }
-        return placement.settle(isCurrent: valid)
+        return placement.settle(isCurrent: valid, shouldRollback: { cancellation.rollbackRequested })
     }
 }

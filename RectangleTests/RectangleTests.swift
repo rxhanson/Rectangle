@@ -8977,6 +8977,44 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
 }
 
 final class WindowPlacementAcknowledgementTests: XCTestCase {
+    func testResponsiveRoundedDownSizesCompleteForShrinkAndGrowth() {
+        for size in [CGSize(width: 700, height: 900), CGSize(width: 200, height: 200)] {
+            var frame = CGRect(origin: .zero, size: size)
+            let target = CGRect(x: 0, y: 0, width: 400, height: 623)
+            var state = acknowledgement(original: frame, target: target)
+            var completed: CGRect?
+            for tick in 0...160 {
+                switch state.observe(frame, at: Double(tick) * 0.025) {
+                case .size(let size): frame.size = CGSize(width: floor(size.width / 17) * 17, height: floor(size.height / 15) * 15)
+                case .position(let point): frame.origin = point
+                case .complete(let result): completed = result
+                case .failed: XCTFail("A responsive grid size must be accepted"); return
+                case .waiting: break
+                }
+                if completed != nil { break }
+            }
+            XCTAssertEqual(completed?.size, CGSize(width: 391, height: 615))
+        }
+    }
+
+    func testSmallerIgnoredAxisCannotBorrowOtherAxisResponse() {
+        let original = CGRect(x: 0, y: 0, width: 200, height: 200)
+        var frame = original
+        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 600))
+        var failed = false
+        for tick in 0...160 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
+            case .size(let size): frame.size.height = size.height
+            case .position(let point): frame.origin = point
+            case .complete: XCTFail("An unchanged width is not a maximum-size response"); return
+            case .failed: failed = true
+            case .waiting: break
+            }
+            if failed { break }
+        }
+        XCTAssertTrue(failed)
+    }
+
     func testHeightResponseDoesNotVerifyIgnoredWidth() {
         assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 600), ignoredWidth: true)
@@ -9391,6 +9429,60 @@ final class BlurAppearanceLiveTests: XCTestCase {
 }
 
 final class WindowDividerWorkerSettlementTests: XCTestCase {
+    func testReportedMinimumStillWarnsWhenItBoundsTheRequestedDivider() throws {
+        var frames = [CGRect(x: 0, y: 0, width: 500, height: 800), CGRect(x: 510, y: 0, width: 490, height: 800)]
+        var time: TimeInterval = 0
+        let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+            divider: 205, minimumLeft: 350, minimumRight: 100,
+            write: { left, frame, _ in frames[left ? 0 : 1] = frame; return true }, read: { frames[$0 ? 0 : 1] }))
+        let result = try XCTUnwrap(placement.settle(isCurrent: { true }, now: { time }, pause: { time += 0.025 }))
+        XCTAssertEqual(result.left.width, 350)
+        XCTAssertTrue(result.minimumSizeReached)
+    }
+
+    func testRoundedDownMemberKeepsGapAndBothOuterEdgesOnEitherAxis() throws {
+        for axis in [WindowSplitAxis.horizontal, .vertical] {
+            var frames = [axis.rect(CGRect(x: 0, y: 0, width: 510, height: 800)),
+                          axis.rect(CGRect(x: 520, y: 0, width: 480, height: 800))]
+            var time: TimeInterval = 0
+            let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: axis,
+                divider: 405, minimumLeft: 100, minimumRight: 100,
+                write: { left, requested, attribute in
+                    let i = left ? 0 : 1
+                    if attribute == .size {
+                        var size = axis.size(requested.size)
+                        if left { size.width = floor(size.width / 17) * 17 }
+                        frames[i].size = axis.size(size)
+                    } else { frames[i].origin = requested.origin }
+                    return true
+                }, read: { frames[$0 ? 0 : 1] }))
+            let result = try XCTUnwrap(placement.settle(isCurrent: { true }, now: { time }, pause: { time += 0.025 }))
+            XCTAssertEqual(axis.rect(result.left).width, 391)
+            XCTAssertEqual(axis.rect(result.left).minX, 0)
+            XCTAssertEqual(axis.rect(result.right).minX, 401)
+            XCTAssertEqual(axis.rect(result.right).maxX, 1000)
+            XCTAssertFalse(result.minimumSizeReached)
+            XCTAssertLessThan(time, 0.6)
+        }
+    }
+
+    func testEscapeAfterFirstWriteRollsBothWindowsBack() throws {
+        let originals = [CGRect(x: 0, y: 0, width: 500, height: 800), CGRect(x: 510, y: 0, width: 490, height: 800)]
+        var frames = originals
+        var time: TimeInterval = 0
+        var writes = 0
+        let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+            divider: 405, minimumLeft: 100, minimumRight: 100,
+            write: { left, target, _ in writes += 1; frames[left ? 0 : 1] = target; return true },
+            read: { frames[$0 ? 0 : 1] }))
+        let result = try XCTUnwrap(placement.settle(isCurrent: { true }, shouldRollback: { writes > 0 },
+            now: { time }, pause: { time += 0.025 }))
+        XCTAssertGreaterThan(writes, 1)
+        XCTAssertEqual(result.left, originals[0]); XCTAssertEqual(result.right, originals[1])
+        XCTAssertEqual(frames, originals)
+        XCTAssertFalse(result.minimumSizeReached)
+    }
+
     func testDelayedAcknowledgementPreservesWriteOrderAndStableReveal() throws {
         var frames = [CGRect(x: 0, y: 0, width: 500, height: 800), CGRect(x: 510, y: 0, width: 490, height: 800)]
         var time: TimeInterval = 0

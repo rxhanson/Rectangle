@@ -36,6 +36,8 @@ final class WindowDividerPlacement {
     private var cursor = 0
     private var pending: Pending?
     private var rollingBack = false
+    private var corrections = 0
+    private var hitMinimum = false
     private var rollbackIncomplete = false
     private var terminal: State?
     private var unreadableSince: TimeInterval?
@@ -45,7 +47,7 @@ final class WindowDividerPlacement {
     var minimumSizeReached: Bool {
         guard terminal == .completed else { return false }
         let actual = (geometry.axis.rect(left).maxX + geometry.axis.rect(right).minX) / 2
-        return abs(actual - requested) > 1
+        return hitMinimum && abs(actual - requested) > 1
     }
 
     var left: CGRect { targets[0] }
@@ -58,7 +60,16 @@ final class WindowDividerPlacement {
         guard let geometry = WindowDividerGeometry(left: left, right: right, axis: axis),
               let target = geometry.frames(at: divider, minimumLeft: minimumLeft, minimumRight: minimumRight) else { return nil }
         self.geometry = geometry; requested = divider
+        hitMinimum = abs((axis.rect(target.left).maxX + axis.rect(target.right).minX) / 2 - divider) > 1
         originals = [left, right]; targets = [target.left, target.right]
+        // Eligibility allows small cross-axis differences. Resizing the split
+        // must not force an already rounded height/width to the union's extent.
+        for index in 0...1 {
+            var target = axis.rect(targets[index])
+            let original = axis.rect(originals[index])
+            target.origin.y = original.minY; target.size.height = original.height
+            targets[index] = axis.rect(target)
+        }
         minima = [minimumLeft, minimumRight]; self.write = write; self.readFrame = read; self.acknowledged = acknowledged
         order = axis.rect(target.left).width < axis.rect(left).width ? [0, 1] : [1, 0]
     }
@@ -138,13 +149,39 @@ final class WindowDividerPlacement {
     private func acceptClamp(_ actual: CGRect, pending: Pending) -> Bool {
         let axis = geometry.axis
         let actual = axis.rect(actual), expected = axis.rect(pending.expected), before = axis.rect(pending.before)
-        // An unchanged/refused write is not evidence of an app's minimum.
-        guard !actual.isNull, abs(actual.minX - expected.minX) <= 1,
-              abs(actual.minY - expected.minY) <= 1, abs(actual.height - expected.height) <= 1,
-              actual.width > expected.width + 1, actual.width < before.width - 1 else { return false }
-        var updated = minima; updated[pending.index] = max(updated[pending.index], actual.width)
-        guard let corrected = geometry.frames(at: requested, minimumLeft: updated[0], minimumRight: updated[1]) else { return false }
-        minima = updated; targets = [corrected.left, corrected.right]
+        // A plateau is evidence only after this axis responded. Quantized
+        // sizes may land on either side; keep a bounded number of corrections
+        // when two applications cannot share an exact split.
+        guard corrections < 4, !actual.isNull, actual.width > 0,
+              abs(actual.minX - expected.minX) <= 1,
+              abs(actual.minY - expected.minY) <= 1, abs(actual.height - expected.height) <= 3,
+              abs(actual.width - expected.width) > 1,
+              (before.width > expected.width + 1 && actual.width < before.width - 1)
+                || (before.width < expected.width - 1 && actual.width > before.width + 1) else { return false }
+        var updated = minima
+        if actual.width > expected.width + 1, actual.width < before.width - 1 {
+            updated[pending.index] = max(updated[pending.index], actual.width)
+            hitMinimum = true
+        }
+        let outer = axis.rect(geometry.outer)
+        let achieved = pending.index == 0 ? outer.minX + actual.width + geometry.gap / 2
+            : outer.maxX - actual.width - geometry.gap / 2
+        guard let corrected = geometry.frames(at: achieved, minimumLeft: updated[0], minimumRight: updated[1]) else { return false }
+        minima = updated
+        let priorTargets = targets
+        targets = [corrected.left, corrected.right]
+        for index in 0...1 {
+            var target = axis.rect(targets[index])
+            let prior = axis.rect(priorTargets[index])
+            target.origin.y = prior.minY; target.size.height = prior.height
+            targets[index] = axis.rect(target)
+        }
+        corrections += 1
+        // Small cross-axis rounding was already accepted when the pair formed.
+        var accepted = axis.rect(targets[pending.index])
+        accepted.size.height = actual.height
+        targets[pending.index] = axis.rect(accepted)
+        cursor = 0
         verifiedPairSince = nil
         return true
     }
@@ -172,11 +209,12 @@ extension WindowDividerPlacement {
 
     /// The existing incremental placement and reveal gates run on one worker.
     /// Check ownership between app replies; cancellation never waits on AX.
-    func settle(isCurrent: () -> Bool,
+    func settle(isCurrent: () -> Bool, shouldRollback: () -> Bool = { false },
                 now: () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
                 pause: () -> Void = { Thread.sleep(forTimeInterval: 0.025) }) -> Result? {
         let deadline = now() + 6
         while isCurrent(), now() < deadline {
+            if shouldRollback(), !rollingBack { terminal = nil; failCurrent() }
             switch advance(at: now()) {
             case .waiting: pause()
             case .failed: return nil
@@ -184,6 +222,7 @@ extension WindowDividerPlacement {
                 var gate = WindowDividerRevealGate(left: left, right: right,
                     startedAt: now(), matchedSince: verifiedPairSince)
                 while isCurrent(), now() < deadline {
+                    if shouldRollback(), !rollingBack { terminal = nil; failCurrent(); break }
                     let actualLeft = readFrame(true)
                     guard isCurrent() else { return nil }
                     let actualRight = readFrame(false)
@@ -202,6 +241,7 @@ extension WindowDividerPlacement {
                     case .timedOut: return nil
                     }
                 }
+                if rollingBack && terminal == nil { continue }
                 return nil
             }
         }

@@ -14,6 +14,7 @@ final class WindowDividerManager {
         let app: NSRunningApplication
         let screen: NSScreen
         var frame: CGRect
+        var recordedAt = ProcessInfo.processInfo.systemUptime
     }
     private final class Pair {
         var left: Entry
@@ -59,6 +60,7 @@ final class WindowDividerManager {
     private let overlay = WindowDividerOverlay()
     private var observations: [NSObjectProtocol] = []
     private var mouseMonitor: Any?
+    private var localMonitor: Any?
 
     private var monitoring = false
     private init() {}
@@ -74,12 +76,14 @@ final class WindowDividerManager {
                 NSWorkspace.shared.notificationCenter.removeObserver(token)
             }
             observations.removeAll()
+            if let localMonitor { NSEvent.removeMonitor(localMonitor); self.localMonitor = nil }
             if let mouseMonitor { NSEvent.removeMonitor(mouseMonitor); self.mouseMonitor = nil }
         }
     }
 
     private func startMonitoring() {
         monitoring = true
+        if Defaults.windowDividerEnhanced.enabled { _ = WindowCapturePermission.previewsAllowed }
 
         WindowFeatureInteraction.recordPlacement = { [weak self] window, id, frame, screen, confirmed in
             self?.record(window, id: id, frame: frame, screen: screen, eligibilityConfirmed: confirmed)
@@ -100,7 +104,11 @@ final class WindowDividerManager {
         panel.onEnd = { [weak self] in self?.endDrag() }
         panel.onReset = { [weak self] in self?.reset() }
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
-            if event.type != .keyDown || event.keyCode == 53 { self?.interrupt() }
+            self?.handleInterruption(event)
+        }
+        localMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
+            if event.type == .keyDown || self?.panel.containsPointerEvent(event) != true { self?.handleInterruption(event) }
+            return event
         }
         let center = NotificationCenter.default
         for name in [NSApplication.didChangeScreenParametersNotification, .configImported, NSApplication.willTerminateNotification] {
@@ -108,7 +116,7 @@ final class WindowDividerManager {
         }
         let workspace = NSWorkspace.shared.notificationCenter
         for name in [NSWorkspace.sessionDidResignActiveNotification, NSWorkspace.screensDidSleepNotification] {
-            observations.append(workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in self?.clear() })
+            observations.append(workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in self?.interrupt(animated: false) })
         }
         observations.append(workspace.addObserver(forName: NSWorkspace.activeSpaceDidChangeNotification,
             object: nil, queue: .main) { [weak self] _ in self?.interrupt(animated: false) })
@@ -154,7 +162,6 @@ final class WindowDividerManager {
         let entry = Entry(id: id, element: window, app: app, screen: screen, frame: frame)
         entries[id] = entry
         entries = entries.filter { !$0.value.app.isTerminated }
-        if entries.count > 32, let oldest = entries.keys.first(where: { $0 != id }) { entries.removeValue(forKey: oldest) }
         // Inventory and optional AX eligibility are copied on a worker. A newer
         // placement replaces this entry before an old observation can pair it.
         let candidates = Array(entries.values)
@@ -192,6 +199,11 @@ final class WindowDividerManager {
                             screen: NSScreen, axis: WindowSplitAxis, normalized: CGRect,
                             extent: CGRect, area: CGRect, gap: CGFloat) {
         let id = entry.id
+        let liveIDs = Set(visibleOrder.map(\.id))
+        entries = entries.filter { liveIDs.contains($0.key) }
+        // Prune closed windows before applying the cap, so they cannot evict
+        // a still-visible partner from a long-running application.
+        if entries.count > 32, let oldest = entries.values.filter({ $0.id != id }).min(by: { $0.recordedAt < $1.recordedAt }) { entries.removeValue(forKey: oldest.id) }
         let orderedEntries = candidates.sorted { a, b in
             (visibleOrder.firstIndex(where: { $0.id == a.id }) ?? Int.max)
                 < (visibleOrder.firstIndex(where: { $0.id == b.id }) ?? Int.max)
@@ -255,8 +267,14 @@ final class WindowDividerManager {
                       self.pairs[self.screenID(pair.left.screen)] === pair,
                       pair.hoverFrame.contains(NSEvent.mouseLocation.screenFlipped),
                       !WindowFeatureInteraction.helperIsPresenting() else { return }
-                guard let preparation, self.visible(pair, in: infos, ignoring: passive),
-                      let l = infos.first(where: { $0.id == pair.left.id })?.frame,
+                // Occlusion and an AX timeout are temporary. Hide the handle
+                // and retry without forgetting the accepted pair.
+                guard let preparation, self.visible(pair, in: infos, ignoring: passive) else {
+                    pair.prepared = nil
+                    self.panel.hide(); self.shown = nil
+                    return
+                }
+                guard let l = infos.first(where: { $0.id == pair.left.id })?.frame,
                       let r = infos.first(where: { $0.id == pair.right.id })?.frame,
                       let original = WindowDividerGeometry(left: pair.left.frame, right: pair.right.frame, axis: pair.axis),
                       original.containsPair(left: l, right: r),
@@ -283,12 +301,12 @@ final class WindowDividerManager {
                                                     ignoring: ignoring.union(Set([panel, overlay].compactMap { CGWindowID(exactly: $0.windowNumber) })))
     }
 
-    private func begin(pointerX: CGFloat? = nil) -> Bool {
+    private func begin(pointerX: CGFloat? = nil, resetting: Bool = false) -> Bool {
         WindowPlacementCoordinator.shared.cancelAll()
         sizeWarning?.hide()
         finishMovement()
         guard let pair = shown, let prepared = pair.prepared,
-              ProcessInfo.processInfo.systemUptime - pair.observedAt < 0.3 else { panel.hide(); poll(); return false }
+              (resetting || ProcessInfo.processInfo.systemUptime - pair.observedAt < 0.3) else { panel.hide(); poll(); return false }
         WindowFeatureInteraction.cancelHelper()
         WindowAnimator.shared.finish()
         let l = pair.left.element, r = pair.right.element
@@ -403,7 +421,7 @@ final class WindowDividerManager {
     }
 
     private func reset() {
-        guard begin(), let engine = resize else { return }
+        guard begin(resetting: true), let engine = resize else { return }
         transition(to: engine.geometry.axis.rect(engine.geometry.outer).midX)
     }
 
@@ -414,6 +432,7 @@ final class WindowDividerManager {
     }
 
     private func showHandle(_ pair: Pair) {
+        if Defaults.windowDividerEnhanced.enabled { _ = WindowCapturePermission.previewsAllowed }
         panel.show(at: pair.center.screenFlipped, axis: pair.axis)
     }
 
@@ -439,6 +458,21 @@ final class WindowDividerManager {
         active = nil; resize = nil
         placementCompleted = false
 
+    }
+
+    private func handleInterruption(_ event: NSEvent) {
+        guard event.type != .keyDown || event.keyCode == 53 else { return }
+        if let cancellation = placementCancellation, let pair = active {
+            if event.type == .keyDown {
+                cancellation.requestRollback()
+                return
+            }
+            let hit = event.cgEvent?.getIntegerValueField(.mouseEventWindowUnderMousePointer)
+            // An unrelated click must not abandon a half-written pair. A click
+            // on either member may start a manual move and takes ownership now.
+            if let hit, hit != Int64(pair.left.id), hit != Int64(pair.right.id) { return }
+        }
+        interrupt()
     }
 
     /// Called before another Rectangle command or a manual grab takes ownership.

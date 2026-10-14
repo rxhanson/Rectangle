@@ -144,7 +144,7 @@ struct WindowPlacementAcknowledgement {
             pending = .position(position)
         } else if !sizeMatches {
             if sizeWrites >= 2 || (directPlacement && sizeWrites == 1 && !resizeResponded && !probeAttempted) {
-                guard let placement, frame.width >= target.width - 1, frame.height >= target.height - 1 else { return .failed }
+                guard let placement else { return .failed }
                 guard let sizeStableAt, now - sizeStableAt >= 0.12 else { return .waiting }
                 if !verifiedConstrainedSize(frame.size) {
                     // A successful AX return alone does not prove a resize was
@@ -181,12 +181,16 @@ struct WindowPlacementAcknowledgement {
     }
 
     private func verifiedConstrainedSize(_ size: CGSize) -> Bool {
-        guard size.width >= target.width - 1, size.height >= target.height - 1,
-              !sameSize(size, target.size) else { return false }
+        guard !sameSize(size, target.size) else { return false }
         func verified(_ actual: CGFloat, _ requested: CGFloat, _ previous: CGFloat?,
                       _ reported: CGFloat?) -> Bool {
-            if actual <= requested + 1 { return true }
-            if let previous, actual < previous - 1 { return true }
+            if abs(actual - requested) <= 1 { return true }
+            if let previous {
+                // Accept grid rounding or a maximum only after this axis responds.
+                // An unchanged axis must not borrow evidence from the other axis.
+                if previous > requested + 1, actual < previous - 1 { return true }
+                if previous < requested - 1, actual > previous + 1 { return true }
+            }
             guard let reported, reported.isFinite, reported > 0 else { return false }
             return abs(reported - actual) <= 1
         }
