@@ -8997,31 +8997,18 @@ final class WindowPlacementAcknowledgementTests: XCTestCase {
         }
     }
 
-    func testSmallerIgnoredAxisCannotBorrowOtherAxisResponse() {
-        let original = CGRect(x: 0, y: 0, width: 200, height: 200)
-        var frame = original
-        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 600))
-        var failed = false
-        for tick in 0...160 {
-            switch state.observe(frame, at: Double(tick) * 0.025) {
-            case .size(let size): frame.size.height = size.height
-            case .position(let point): frame.origin = point
-            case .complete: XCTFail("An unchanged width is not a maximum-size response"); return
-            case .failed: failed = true
-            case .waiting: break
-            }
-            if failed { break }
-        }
-        XCTAssertTrue(failed)
+    func testFixedWidthCompletesAfterBoundedOppositeProbe() {
+        assertFixedAxisIsProbed(original: CGSize(width: 200, height: 200),
+                                target: CGSize(width: 400, height: 600), ignoredWidth: true)
     }
 
-    func testHeightResponseDoesNotVerifyIgnoredWidth() {
-        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+    func testFixedWidthCompletesAfterOtherAxisResponse() {
+        assertFixedAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 600), ignoredWidth: true)
     }
 
-    func testWidthResponseDoesNotVerifyIgnoredHeight() {
-        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+    func testFixedHeightCompletesAfterOtherAxisResponse() {
+        assertFixedAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 300), ignoredWidth: false)
     }
 
@@ -9046,30 +9033,76 @@ final class WindowPlacementAcknowledgementTests: XCTestCase {
         XCTAssertEqual(completed?.size, CGSize(width: 700, height: 600))
     }
 
-    private func assertIgnoredAxisIsProbed(original: CGSize, target: CGSize, ignoredWidth: Bool,
-                                           file: StaticString = #filePath, line: UInt = #line) {
+    private func assertFixedAxisIsProbed(original: CGSize, target: CGSize, ignoredWidth: Bool,
+                                         file: StaticString = #filePath, line: UInt = #line) {
         var frame = CGRect(origin: .zero, size: original)
         var state = acknowledgement(original: frame, target: CGRect(origin: .zero, size: target))
         var probed = false
-        var failed = false
-        for time in [0.0, 0.02, 0.2, 0.66, 0.8, 1.32, 1.36, 2.0] {
-            switch state.observe(frame, at: time) {
+        var completed = false
+        for tick in 0...240 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
             case .size(let size):
-                if ignoredWidth {
-                    probed = probed || size.width > original.width
-                    frame.size.height = size.height
-                } else {
-                    probed = probed || size.height > original.height
-                    frame.size.width = size.width
-                }
+                let requested = ignoredWidth ? size.width : size.height
+                let wanted = ignoredWidth ? target.width : target.height
+                let initial = ignoredWidth ? original.width : original.height
+                probed = probed || abs(requested - wanted) > 1 && abs(requested - initial) > 1
+                if ignoredWidth { frame.size.height = size.height }
+                else { frame.size.width = size.width }
             case .position(let point): frame.origin = point
-            case .complete: XCTFail("An ignored axis is not a verified minimum", file: file, line: line)
+            case .complete: completed = true
+            case .failed: XCTFail("A responsive window can have one fixed axis", file: file, line: line); return
+            case .waiting: break
+            }
+            if completed { break }
+        }
+        XCTAssertTrue(probed, file: file, line: line)
+        XCTAssertTrue(completed, file: file, line: line)
+        XCTAssertEqual(frame.size, ignoredWidth ? CGSize(width: original.width, height: target.height)
+            : CGSize(width: target.width, height: original.height), file: file, line: line)
+    }
+
+    func testMinimumProbePreservesOtherAxisGridResponse() {
+        checkConstraints(original: CGSize(width: 500, height: 600), target: CGSize(width: 400, height: 623),
+                         expected: CGSize(width: 500, height: 615)) {
+            CGSize(width: max(500, $0.width), height: floor($0.height / 15) * 15)
+        }
+    }
+
+    func testMaximumAxisAlreadyAtLimitUsesShrinkProbe() {
+        checkConstraints(original: CGSize(width: 500, height: 400), target: CGSize(width: 800, height: 600),
+                         expected: CGSize(width: 500, height: 600)) {
+            CGSize(width: min(500, $0.width), height: $0.height)
+        }
+    }
+
+    func testWhollyIgnoredResizeStillFails() {
+        let original = CGRect(x: 0, y: 0, width: 500, height: 600)
+        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 623))
+        var failed = false
+        for tick in 0...240 {
+            switch state.observe(original, at: Double(tick) * 0.025) {
             case .failed: failed = true
+            case .complete: XCTFail("A wholly ignored resize is not a constrained response"); return
+            default: break
+            }
+            if failed { break }
+        }
+        XCTAssertTrue(failed)
+    }
+
+    private func checkConstraints(original: CGSize, target: CGSize, expected: CGSize, respond: (CGSize) -> CGSize) {
+        var frame = CGRect(origin: .zero, size: original)
+        var state = acknowledgement(original: frame, target: CGRect(origin: .zero, size: target))
+        for tick in 0...240 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
+            case .size(let size): frame.size = respond(size)
+            case .position(let point): frame.origin = point
+            case .complete(let actual): XCTAssertEqual(actual.size, expected); return
+            case .failed: XCTFail("Allowed constrained geometry must complete"); return
             case .waiting: break
             }
         }
-        XCTAssertTrue(probed, file: file, line: line)
-        XCTAssertTrue(failed, file: file, line: line)
+        XCTFail("Placement did not terminate")
     }
 
     private func acknowledgement(original: CGRect, target: CGRect) -> WindowPlacementAcknowledgement {
@@ -10967,5 +11000,30 @@ final class LayoutHelperPlacementCancellationTests: XCTestCase {
         service.cancelAll()
         WindowAnimator.shared.cancel()
         XCTAssertEqual(outcomes, 1)
+    }
+}
+
+final class LayoutHelperRestorationRegressionTests: XCTestCase {
+    func testActualConstrainedAndPartialPreparationPreserveOriginal() {
+        let original = CGRect(x: 50, y: 80, width: 900, height: 600)
+        let target = CGRect(x: 0, y: 0, width: 500, height: 800)
+        for prepared in [CGRect(x: 0, y: 0, width: 496, height: 800),
+                         CGRect(x: 50, y: 80, width: 496, height: 800)] {
+            var frames = LayoutHelperRestorationFrames()
+            _ = frames.original(id: 1, pid: 2, launch: 3, frame: original, remember: true, prepared: target)
+            frames.preparationObserver(id: 1, pid: 2, launch: 3)(prepared)
+            XCTAssertEqual(frames.original(id: 1, pid: 2, launch: 3, frame: prepared, remember: false), original)
+        }
+    }
+
+    func testNewActionInvalidatesHistoryEvenIfWindowReturnsToPreparedFrame() {
+        var frames = LayoutHelperRestorationFrames()
+        let original = CGRect(x: 50, y: 80, width: 900, height: 600)
+        let target = CGRect(x: 0, y: 0, width: 500, height: 800)
+        _ = frames.original(id: 1, pid: 2, launch: 3, frame: original, remember: true, prepared: target)
+        let lateReadback = frames.preparationObserver(id: 1, pid: 2, launch: 3)
+        frames.remove(windowID: 1)
+        lateReadback(target)
+        XCTAssertEqual(frames.original(id: 1, pid: 2, launch: 3, frame: target, remember: false), target)
     }
 }

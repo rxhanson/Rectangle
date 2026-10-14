@@ -58,6 +58,17 @@ final class LayoutHelperManager {
     private var lockObservers: [NSObjectProtocol] = []
     private var stageObservation: NSObject?
 
+    func invalidateRestoration(for windowID: CGWindowID?) {
+        if let windowID { restorationFrames.remove(windowID: windowID) }
+    }
+
+    private func invalidateRestorationForPointer(_ event: NSEvent) {
+        guard event.type == .leftMouseDown || event.type == .rightMouseDown,
+              let raw = event.cgEvent?.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent),
+              raw > 0, let id = CGWindowID(exactly: raw) else { return }
+        invalidateRestoration(for: id)
+    }
+
     func containsPointerEvent(_ event: NSEvent) -> Bool {
         panel.containsPointerEvent(event)
     }
@@ -299,6 +310,7 @@ final class LayoutHelperManager {
         guard globalMonitor == nil else { return }
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
             guard let self else { return }
+            self.invalidateRestorationForPointer(event)
             if event.type != .keyDown || event.keyCode == 53 || self.placingWindow != nil { self.cancel() }
         }
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
@@ -308,7 +320,10 @@ final class LayoutHelperManager {
                 return nil
             }
             if event.type == .keyDown, self.placingWindow != nil { self.cancel() }
-            if event.type != .keyDown, !self.panel.owns(event.window) { self.cancel() }
+            if event.type != .keyDown, !self.panel.owns(event.window) {
+                self.invalidateRestorationForPointer(event)
+                self.cancel()
+            }
             return event
         }
     }
@@ -498,7 +513,9 @@ final class LayoutHelperManager {
                 return Self.enabled && self.token == selectionToken && self.retainedIsValid()
                     && self.selectionTargetIsAvailable(currentCell, excluding: id)
             }
-            self.pendingRestore = LayoutHelperWindowRestoration.restore(window, target: target, original: original, isCurrent: isCurrent) { [weak self] outcome in
+            self.pendingRestore = LayoutHelperWindowRestoration.restore(window, target: target, original: original,
+                observePreparation: self.restorationFrames.preparationObserver(id: snapshot.id, pid: snapshot.pid, launch: snapshot.launch),
+                isCurrent: isCurrent) { [weak self] outcome in
                 guard let self, self.token == selectionToken else { return }
                 self.pendingRestore = nil
                 switch outcome {

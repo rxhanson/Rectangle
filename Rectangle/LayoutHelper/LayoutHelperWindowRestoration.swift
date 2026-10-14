@@ -4,7 +4,8 @@ import ScreenCaptureKit
 /// Try the target geometry before restoring, then acknowledge the restored
 /// state and fresh geometry before the ordinary snap's final verification.
 enum LayoutHelperWindowRestoration {
-    static func restore(_ window: AccessibilityElement, target: CGRect? = nil, original: CGRect? = nil, isCurrent: @escaping () -> Bool,
+    static func restore(_ window: AccessibilityElement, target: CGRect? = nil, original: CGRect? = nil,
+                        observePreparation: @escaping (CGRect) -> Void = { _ in }, isCurrent: @escaping () -> Bool,
                         completion: @escaping (WindowPlacementCoordinator.Outcome) -> Void) -> WindowPlacementCoordinator.Cancellation {
         let cancellation = WindowPlacementCoordinator.Cancellation()
         let timer = Timer(timeInterval: 0.025, repeats: true) { _ in
@@ -25,16 +26,24 @@ enum LayoutHelperWindowRestoration {
             if let element = WindowAccessibilityLookup.resolve(pid: pid, id: id, launch: launch,
                 preferred: preferred, isCurrent: valid) {
                 let worker = PlacementWindowElement(element, windowID: id)
+                func recordedWrite(_ write: () -> AXError) -> AXError {
+                    guard let status = cancellation.write(write) else { return .failure }
+                    // Capture actual clamping and partial writes, including the
+                    // last write whose reply arrived after cancellation.
+                    observePreparation(worker.frame)
+                    return status
+                }
                 if let target, worker.isResizable(), worker.isSystemDialog != true {
                     _ = prepare(target: target, isCurrent: valid, minimized: { worker.isMinimized },
-                        size: { requested in cancellation.write { worker.writeSize(requested) } ?? .failure },
-                        position: { requested in cancellation.write { worker.writePosition(requested) } ?? .failure },
-                        frame: { worker.frame })
+                        size: { requested in recordedWrite { worker.writeSize(requested) } },
+                        position: { requested in recordedWrite { worker.writePosition(requested) } },
+                        frame: { let frame = worker.frame; observePreparation(frame); return frame })
                 }
                 let acknowledged = acknowledge(isCurrent: valid, minimized: { worker.isMinimized }, restore: {
                     cancellation.write { AXUIElementSetAttributeValue(element, kAXMinimizedAttribute as CFString, kCFBooleanFalse) } ?? .failure
                 }, frame: {
                     let frame = worker.frame
+                    observePreparation(frame)
                     guard WindowGeometry.valid(frame), let server = WindowUtil.getWindowFrame(id: id),
                           WindowGeometry.near(frame, server, tolerance: 1) else { return nil }
                     return frame
@@ -43,8 +52,8 @@ enum LayoutHelperWindowRestoration {
                 case .failed, .unresponsive:
                     if let original {
                         _ = rollback(original: original, isCurrent: valid,
-                            size: { requested in cancellation.write { worker.writeSize(requested) } ?? .failure },
-                            position: { requested in cancellation.write { worker.writePosition(requested) } ?? .failure })
+                            size: { requested in recordedWrite { worker.writeSize(requested) } },
+                            position: { requested in recordedWrite { worker.writePosition(requested) } })
                     }
                 case .placed, .cancelled: break
                 }
@@ -117,20 +126,45 @@ struct LayoutHelperRestorationFrames {
         let pid: pid_t
         let launch: TimeInterval
     }
-    private var frames: [Identity: (original: CGRect, prepared: CGRect)] = [:]
+    /// A worker can finish reading its last write after the main owner cancels.
+    /// Keep those observations on the operation record, not in shared manager state.
+    private final class Preparation {
+        private let lock = NSLock()
+        private var frames: [CGRect] = []
+        func record(_ frame: CGRect) {
+            guard WindowGeometry.valid(frame) else { return }
+            lock.lock(); defer { lock.unlock() }
+            if !frames.contains(where: { WindowGeometry.matches($0, frame, tolerance: 1) }) { frames.append(frame) }
+        }
+        func matches(_ frame: CGRect) -> Bool {
+            lock.lock(); defer { lock.unlock() }
+            return frames.contains { WindowGeometry.matches($0, frame, tolerance: 1) }
+        }
+    }
+    private var frames: [Identity: (original: CGRect, preparation: Preparation)] = [:]
     mutating func original(id: CGWindowID, pid: pid_t, launch: TimeInterval, frame: CGRect, remember: Bool, prepared: CGRect? = nil) -> CGRect {
         let key = Identity(id: id, pid: pid, launch: launch)
         if let stored = frames[key] {
-            if WindowGeometry.matches(frame, stored.prepared, tolerance: 1)
-                || WindowGeometry.matches(frame, stored.original, tolerance: 1) {
-                if let prepared { frames[key] = (stored.original, prepared) }
+            if stored.preparation.matches(frame) {
+                if let prepared { stored.preparation.record(prepared) }
                 return stored.original
             }
-            // A later user move supersedes an abandoned restoration.
             frames.removeValue(forKey: key)
         }
-        if remember { frames[key] = (frame, prepared ?? frame) }
+        if remember {
+            let preparation = Preparation()
+            preparation.record(frame)
+            if let prepared { preparation.record(prepared) }
+            frames[key] = (frame, preparation)
+        }
         return frame
+    }
+    func preparationObserver(id: CGWindowID, pid: pid_t, launch: TimeInterval) -> (CGRect) -> Void {
+        let preparation = frames[Identity(id: id, pid: pid, launch: launch)]?.preparation
+        return { preparation?.record($0) }
+    }
+    mutating func remove(windowID: CGWindowID) {
+        frames = frames.filter { $0.key.id != windowID }
     }
     mutating func remove(id: CGWindowID, pid: pid_t, launch: TimeInterval) {
         frames.removeValue(forKey: Identity(id: id, pid: pid, launch: launch))

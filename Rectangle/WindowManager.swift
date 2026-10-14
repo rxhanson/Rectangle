@@ -71,6 +71,9 @@ class WindowManager {
         // after a session transition (#640). Actions still execute; only
         // window-id-keyed history is skipped.
         let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
+        // A new Rectangle command supersedes any abandoned helper preparation,
+        // even if it later returns the window to exactly the same tile.
+        LayoutHelperManager.shared.invalidateRestoration(for: windowId)
 
         let action = parameters.action
         

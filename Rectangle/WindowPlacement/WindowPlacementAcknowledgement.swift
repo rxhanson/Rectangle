@@ -17,6 +17,9 @@ struct WindowPlacementAcknowledgement {
     private var previousSize: CGSize?
     private var sizeStableAt: TimeInterval?
     private var resizeResponded = false
+    private var widthResponded = false
+    private var heightResponded = false
+    private var verifiedFixedAxis = false
     private var probeAttempted = false
     private var probeSize: CGSize?
     private var verifiedProbeSize: CGSize?
@@ -62,6 +65,7 @@ struct WindowPlacementAcknowledgement {
             animationEvidence = nil
             stableAt = nil
         }
+        recordAxisResponses(frame.size)
         if let original, !sameSize(frame.size, original.size) { resizeResponded = true }
         if let previousSize, !sameSize(frame.size, previousSize) { resizeResponded = true }
         if previousSize.map({ sameSize($0, frame.size) }) != true { sizeStableAt = now }
@@ -117,7 +121,19 @@ struct WindowPlacementAcknowledgement {
             pending = .size(probeSize); waitingUntil = now + 0.65
             return pending
         }
-        if probeSize != nil { return .failed }
+        if probeSize != nil {
+            // A fixed axis can refuse both directions while the other axis
+            // responds. Retry the destination after this bounded probe, then
+            // accept the stable permitted size. A wholly ignored resize fails.
+            guard resizeResponded else { return .failed }
+            probeSize = nil
+            verifiedFixedAxis = true
+            sizeWrites = 2
+            sizeRequestedAt = now
+            pending = .size(target.size)
+            waitingUntil = now + 0.65
+            return pending
+        }
         var position = target.origin
         if !sizeMatches, let bounds {
             // Reserve room for the larger size on each axis, including growth.
@@ -150,8 +166,14 @@ struct WindowPlacementAcknowledgement {
                     // A successful AX return alone does not prove a resize was
                     // honored. Verify responsiveness before accepting a plateau.
                     guard !probeAttempted else { return .failed }
-                    let probe = CGSize(width: frame.width + (frame.width > target.width + 1 ? 2 : 0),
-                                       height: frame.height + (frame.height > target.height + 1 ? 2 : 0))
+                    func oppositeProbe(_ actual: CGFloat, _ target: CGFloat) -> CGFloat {
+                        if actual > target + 1 { return actual + 2 }
+                        if actual < target - 1 { return max(1, actual - 2) }
+                        return actual
+                    }
+                    let probe = CGSize(width: oppositeProbe(frame.width, target.width),
+                                       height: oppositeProbe(frame.height, target.height))
+                    guard !sameSize(probe, frame.size) else { return .failed }
                     guard !placement.constrainToScreen
                         || (probe.width <= placement.screenFrame.width
                             && probe.height <= placement.screenFrame.height) else { return .failed }
@@ -180,24 +202,29 @@ struct WindowPlacementAcknowledgement {
         return pending
     }
 
+    private mutating func recordAxisResponses(_ size: CGSize) {
+        func responded(_ actual: CGFloat, _ requested: CGFloat, _ original: CGFloat?, _ probe: CGFloat?) -> Bool {
+            for value in [original, probe] {
+                guard let previous = value else { continue }
+                if previous > requested + 1 && actual < previous - 1 { return true }
+                if previous < requested - 1 && actual > previous + 1 { return true }
+            }
+            return false
+        }
+        // Evidence belongs to this target and survives a probe of another axis.
+        widthResponded = widthResponded || responded(size.width, target.width, original?.width, verifiedProbeSize?.width)
+        heightResponded = heightResponded || responded(size.height, target.height, original?.height, verifiedProbeSize?.height)
+    }
+
     private func verifiedConstrainedSize(_ size: CGSize) -> Bool {
         guard !sameSize(size, target.size) else { return false }
-        func verified(_ actual: CGFloat, _ requested: CGFloat, _ previous: CGFloat?,
-                      _ reported: CGFloat?) -> Bool {
-            if abs(actual - requested) <= 1 { return true }
-            if let previous {
-                // Accept grid rounding or a maximum only after this axis responds.
-                // An unchanged axis must not borrow evidence from the other axis.
-                if previous > requested + 1, actual < previous - 1 { return true }
-                if previous < requested - 1, actual > previous + 1 { return true }
-            }
+        func verified(_ actual: CGFloat, _ requested: CGFloat, _ responded: Bool, _ reported: CGFloat?) -> Bool {
+            if abs(actual - requested) <= 1 || responded || verifiedFixedAxis { return true }
             guard let reported, reported.isFinite, reported > 0 else { return false }
             return abs(reported - actual) <= 1
         }
-        // Each constrained axis needs evidence. A change in height alone must
-        // not justify accepting an ignored width request.
-        return verified(size.width, target.width, verifiedProbeSize?.width ?? original?.width, reportedMinimum?.width)
-            && verified(size.height, target.height, verifiedProbeSize?.height ?? original?.height, reportedMinimum?.height)
+        return verified(size.width, target.width, widthResponded, reportedMinimum?.width)
+            && verified(size.height, target.height, heightResponded, reportedMinimum?.height)
     }
 
     private func sameSize(_ first: CGSize, _ second: CGSize) -> Bool {
