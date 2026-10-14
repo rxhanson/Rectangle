@@ -36,7 +36,7 @@ final class LayoutHelperManager {
     private var layout: LayoutHelperLayout?
     private var screen: NSScreen?
     private var retained: [AccessibilityElement: CGRect] = [:]
-    private var retainedLaunches: [CGWindowID: TimeInterval] = [:]
+    private var retainedIdentities: [AccessibilityElement: (id: CGWindowID, pid: pid_t, launch: TimeInterval)] = [:]
     private var existingOccupants: [WindowInfo] = []
     private var occupancyInfos: [WindowInfo]?
     private var selectionCover: WindowInfo?
@@ -205,7 +205,7 @@ final class LayoutHelperManager {
         layout = nil; screen = nil; currentCell = nil
         selecting = false; selectionCover = nil
         statusMessage = nil
-        retained.removeAll(); retainedLaunches.removeAll(); candidates.removeAll()
+        retained.removeAll(); retainedIdentities.removeAll(); candidates.removeAll()
         existingOccupants.removeAll(); occupancyInfos = nil
         completedCells.removeAll()
         return token
@@ -266,12 +266,14 @@ final class LayoutHelperManager {
             self.panel.interactionSuspended = false
             self.anchorWindowID = id
             self.completedCells.removeAll()
-            self.retainedLaunches.removeAll()
+            self.retainedIdentities.removeAll()
             self.keyboardTriggered = result.source == .keyboardShortcut
             self.layout = plan
             self.screen = result.calcResult.screen
             self.retained = [result.windowElement: frame]
-            self.retainedLaunches[id] = result.windowElement.pid.flatMap { WindowProcessIdentity.launchTime(for: $0) }
+            if let launch = WindowProcessIdentity.launchTime(for: actual.pid) {
+                self.retainedIdentities[result.windowElement] = (id, actual.pid, launch)
+            }
             self.resumeCatalog(for: requestToken)
             WindowAnimationDiagnostics.event("helper-open", fields: ["candidates": self.catalog.snapshots.count])
             self.showNext()
@@ -371,17 +373,21 @@ final class LayoutHelperManager {
         guard let layout, let screen, currentCell == cell,
               let occupants = visibleOccupants(in: layout, on: screen,
                 excluding: Set([anchorWindowID].compactMap { $0 }), requireQualification: true,
-                excludingOccupants: Set(retained.keys.compactMap(\.windowId)).union([id])) else { return false }
+                excludingOccupants: Set(retainedIdentities.values.map(\.id)).union([id])) else { return false }
         return !occupants.contains { layout.occupiedCells(by: $0.frame).contains(cell) }
     }
 
     private func retainedIsValid() -> Bool {
-        let ids = retained.keys.compactMap(\.windowId)
+        // Native restore animations can briefly make AX identity reads fail.
+        // Use the identity copied at acceptance and validate its live process
+        // and WindowServer frame without another synchronous AX round trip.
+        let ids = retainedIdentities.values.map(\.id)
         let live = WindowUtil.getWindowList(ids: ids, forceRefresh: true)
         return retained.allSatisfy { window, frame in
-            guard let id = window.windowId, let pid = window.pid,
-                  let launch = retainedLaunches[id], WindowProcessIdentity.launchTime(for: pid) == launch,
-                  let info = live.first(where: { $0.id == id && $0.pid == pid }), info.isOnScreen else { return false }
+            guard let identity = retainedIdentities[window],
+                  WindowProcessIdentity.launchTime(for: identity.pid) == identity.launch,
+                  let info = live.first(where: { $0.id == identity.id && $0.pid == identity.pid }),
+                  info.isOnScreen else { return false }
             return LayoutHelperLayout.matches(info.frame, frame)
         }
     }
@@ -399,7 +405,7 @@ final class LayoutHelperManager {
         }
         guard let occupants = visibleOccupants(in: layout, on: screen,
             excluding: Set([anchorWindowID].compactMap { $0 }),
-            excludingOccupants: Set(retained.keys.compactMap(\.windowId))) else { return }
+            excludingOccupants: Set(retainedIdentities.values.map(\.id))) else { return }
         existingOccupants = occupants
         for window in occupants { occupied.formUnion(layout.occupiedCells(by: window.frame)) }
         guard let next = layout.remaining(excluding: occupied).first else {
@@ -585,7 +591,7 @@ final class LayoutHelperManager {
                 AppDelegate.windowHistory.lastRectangleActions[snapshot.id] = RectangleAction(action: .specified, subAction: nil, rect: frame, count: 1)
                 self.completedCells.insert(selectedCell)
                 self.retained[window] = frame
-                self.retainedLaunches[snapshot.id] = snapshot.launch
+                self.retainedIdentities[window] = (snapshot.id, snapshot.pid, snapshot.launch)
                 WindowFeatureInteraction.recordPlacement(window, snapshot.id, frame, screen, !result.isFixedSize)
                 if Defaults.showMinimumWindowSizeWarning.userEnabled, WindowSizeConstraint.isExceeded(requested: target, actual: frame, action: .specified) {
                     if self.sizeWarning == nil { self.sizeWarning = WindowSizeWarning() }
