@@ -121,7 +121,7 @@ struct SnappedWindowFit: Equatable {
 
     func neighborIsUnchanged() -> Bool {
         WindowUtil.getWindowList(ids: [neighborID], forceRefresh: true, cacheResult: false).contains {
-            $0.id == neighborID && $0.pid == neighborPID && WindowGeometry.matches($0.frame, neighborFrame)
+            $0.id == neighborID && $0.pid == neighborPID && $0.isOnScreen && WindowGeometry.matches($0.frame, neighborFrame)
         }
     }
 

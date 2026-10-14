@@ -11,6 +11,7 @@ class WindowManager {
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
     private var fittingWindowID: CGWindowID?
+    private var interruptedFitWindowID: CGWindowID?
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
@@ -55,6 +56,10 @@ class WindowManager {
         )
     }
     
+    /// Snapshot ownership before the action notification synchronously cancels
+    /// the coordinator. The next execution consumes it independently of AX lag.
+    func prepareForAction() { interruptedFitWindowID = fittingWindowID }
+
     func execute(_ parameters: ExecutionParameters) {
         var completionDeferred = false
         defer { if !completionDeferred { parameters.completion?() } }
@@ -72,6 +77,8 @@ class WindowManager {
         // window-id-keyed history is skipped.
         let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
 
+        let preservesFitRestore = windowId != nil && (windowId == fittingWindowID || windowId == interruptedFitWindowID)
+        interruptedFitWindowID = nil
         let action = parameters.action
         
         if action == .restore {
@@ -131,7 +138,7 @@ class WindowManager {
         
         let previousAction = lastRectangleAction
         let previousRestore = windowId.flatMap { AppDelegate.windowHistory.restoreRects[$0] }
-        let windowMovedExternally = !(windowId != nil && fittingWindowID == windowId)
+        let windowMovedExternally = !preservesFitRestore
             && currentWindowRect != lastRectangleAction?.rect
         
         if windowMovedExternally {
@@ -372,6 +379,20 @@ class WindowManager {
         let window = result.windowElement
         let requestExecutionID = executionID
         guard plan.neighborIsUnchanged() else { NSSound.beep(); return }
+        // A bookkeeping ID may be inferred from the frame or element hash.
+        // Such an element cannot pass the coordinator's AX/WindowServer identity
+        // check. Preserve the ordinary mover's supported fallback for this case.
+        if window.windowId == nil {
+            completionDeferred = true
+            windowAnimator.afterPendingWrites(cancellation: completion) { [weak self] in
+                defer { completion?() }
+                guard let self, self.executionID == requestExecutionID, plan.neighborIsUnchanged() else { return }
+                let frame = self.apply(result: result)
+                if acrossDisplays { self.windowMovedAcrossDisplays(windowElement: window, resultingRect: frame, preservesFocus: preservesFocus) }
+                self.postProcess(result: result, resultingRect: frame)
+            }
+            return
+        }
         if WindowGeometry.matches(before, plan.target, tolerance: 1) {
             postProcess(result: result, resultingRect: before)
             return
