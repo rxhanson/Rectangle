@@ -300,7 +300,7 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
-            WindowDividerManager.shared.interrupt()
+            WindowDividerManager.shared.handleInterruption(event)
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location

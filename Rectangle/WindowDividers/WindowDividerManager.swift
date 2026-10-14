@@ -174,6 +174,7 @@ final class WindowDividerManager {
                 let eligible = eligibilityConfirmed || WindowDividerPreparedPair.Input(id: id, pid: pid)
                     .flatMap { WindowDividerPreparedPair.read($0) } != nil
                 let visibleOrder = eligible ? WindowUtil.getWindowList(forceRefresh: true, cacheResult: false) : []
+                let existing = eligible ? WindowUtil.getWindowList(all: true, forceRefresh: true, cacheResult: false) : []
                 DispatchQueue.main.async { [weak self] in
                     guard let self else { return }
                     self.recordRunning = false
@@ -181,7 +182,7 @@ final class WindowDividerManager {
                     guard eligible, self.recordGeneration == generation, Defaults.windowDivider.enabled,
                           let current = self.entries[id], current.frame == frame,
                           current.element == window else { return }
-                    self.recordPair(entry, candidates: candidates, visibleOrder: visibleOrder,
+                    self.recordPair(entry, candidates: candidates, visibleOrder: visibleOrder, existing: existing,
                         screen: screen, axis: axis, normalized: normalized, extent: extent, area: area, gap: gap)
                 }
             }
@@ -195,11 +196,11 @@ final class WindowDividerManager {
         work()
     }
 
-    private func recordPair(_ entry: Entry, candidates: [Entry], visibleOrder: [WindowInfo],
+    private func recordPair(_ entry: Entry, candidates: [Entry], visibleOrder: [WindowInfo], existing: [WindowInfo],
                             screen: NSScreen, axis: WindowSplitAxis, normalized: CGRect,
                             extent: CGRect, area: CGRect, gap: CGFloat) {
         let id = entry.id
-        let liveIDs = Set(visibleOrder.map(\.id))
+        let liveIDs = Self.retainedWindowIDs(recorded: Set(entries.keys), existing: existing, recording: id)
         entries = entries.filter { liveIDs.contains($0.key) }
         // Prune closed windows before applying the cap, so they cannot evict
         // a still-visible partner from a long-running application.
@@ -460,19 +461,35 @@ final class WindowDividerManager {
 
     }
 
-    private func handleInterruption(_ event: NSEvent) {
-        guard event.type != .keyDown || event.keyCode == 53 else { return }
-        if let cancellation = placementCancellation, let pair = active {
-            if event.type == .keyDown {
-                cancellation.requestRollback()
-                return
-            }
-            let hit = event.cgEvent?.getIntegerValueField(.mouseEventWindowUnderMousePointer)
-            // An unrelated click must not abandon a half-written pair. A click
-            // on either member may start a manual move and takes ownership now.
-            if let hit, hit != Int64(pair.left.id), hit != Int64(pair.right.id) { return }
+    enum Interruption { case ignore, rollback, cancel }
+
+    static func interruption(_ event: NSEvent, placingMembers: Set<CGWindowID>?) -> Interruption {
+        if event.type == .keyDown {
+            guard event.keyCode == 53 else { return .ignore }
+            return placingMembers == nil ? .cancel : .rollback
         }
-        interrupt()
+        guard let members = placingMembers else { return .cancel }
+        // The visual window can be our click-through overlay. Use the actual
+        // event recipient; unknown targets conservatively transfer ownership.
+        let raw = event.cgEvent?.getIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent) ?? 0
+        guard raw > 0, let id = CGWindowID(exactly: raw) else { return .cancel }
+        return members.contains(id) ? .cancel : .ignore
+    }
+
+    static func retainedWindowIDs(recorded: Set<CGWindowID>, existing: [WindowInfo], recording: CGWindowID) -> Set<CGWindowID> {
+        let live = Set(existing.map(\.id))
+        // A missing just-recorded window signals an incomplete enumeration.
+        guard live.contains(recording) else { return recorded }
+        return recorded.intersection(live)
+    }
+
+    func handleInterruption(_ event: NSEvent) {
+        let members = placementCancellation == nil ? nil : active.map { Set([$0.left.id, $0.right.id]) }
+        switch Self.interruption(event, placingMembers: members) {
+        case .ignore: return
+        case .rollback: placementCancellation?.requestRollback()
+        case .cancel: interrupt()
+        }
     }
 
     /// Called before another Rectangle command or a manual grab takes ownership.

@@ -154,7 +154,7 @@ final class WindowDividerPlacement {
         // when two applications cannot share an exact split.
         guard corrections < 4, !actual.isNull, actual.width > 0,
               abs(actual.minX - expected.minX) <= 1,
-              abs(actual.minY - expected.minY) <= 1, abs(actual.height - expected.height) <= 3,
+              abs(actual.minY - expected.minY) <= 1, abs(actual.height - expected.height) <= 2,
               abs(actual.width - expected.width) > 1,
               (before.width > expected.width + 1 && actual.width < before.width - 1)
                 || (before.width < expected.width - 1 && actual.width > before.width + 1) else { return false }
@@ -167,20 +167,21 @@ final class WindowDividerPlacement {
         let achieved = pending.index == 0 ? outer.minX + actual.width + geometry.gap / 2
             : outer.maxX - actual.width - geometry.gap / 2
         guard let corrected = geometry.frames(at: achieved, minimumLeft: updated[0], minimumRight: updated[1]) else { return false }
-        minima = updated
-        let priorTargets = targets
-        targets = [corrected.left, corrected.right]
+        var correctedTargets = [corrected.left, corrected.right]
         for index in 0...1 {
-            var target = axis.rect(targets[index])
-            let prior = axis.rect(priorTargets[index])
+            var target = axis.rect(correctedTargets[index])
+            let prior = axis.rect(targets[index])
             target.origin.y = prior.minY; target.size.height = prior.height
-            targets[index] = axis.rect(target)
+            correctedTargets[index] = axis.rect(target)
         }
-        corrections += 1
-        // Small cross-axis rounding was already accepted when the pair formed.
-        var accepted = axis.rect(targets[pending.index])
+        var accepted = axis.rect(correctedTargets[pending.index])
         accepted.size.height = actual.height
-        targets[pending.index] = axis.rect(accepted)
+        correctedTargets[pending.index] = axis.rect(accepted)
+        // A permitted per-write rounding must also leave an eligible pair.
+        guard WindowDividerGeometry(left: correctedTargets[0], right: correctedTargets[1], axis: axis) != nil else { return false }
+        minima = updated
+        targets = correctedTargets
+        corrections += 1
         cursor = 0
         verifiedPairSince = nil
         return true

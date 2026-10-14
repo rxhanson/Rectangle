@@ -8997,31 +8997,18 @@ final class WindowPlacementAcknowledgementTests: XCTestCase {
         }
     }
 
-    func testSmallerIgnoredAxisCannotBorrowOtherAxisResponse() {
-        let original = CGRect(x: 0, y: 0, width: 200, height: 200)
-        var frame = original
-        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 600))
-        var failed = false
-        for tick in 0...160 {
-            switch state.observe(frame, at: Double(tick) * 0.025) {
-            case .size(let size): frame.size.height = size.height
-            case .position(let point): frame.origin = point
-            case .complete: XCTFail("An unchanged width is not a maximum-size response"); return
-            case .failed: failed = true
-            case .waiting: break
-            }
-            if failed { break }
-        }
-        XCTAssertTrue(failed)
+    func testFixedWidthCompletesAfterBoundedOppositeProbe() {
+        assertFixedAxisIsProbed(original: CGSize(width: 200, height: 200),
+                                target: CGSize(width: 400, height: 600), ignoredWidth: true)
     }
 
-    func testHeightResponseDoesNotVerifyIgnoredWidth() {
-        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+    func testFixedWidthCompletesAfterOtherAxisResponse() {
+        assertFixedAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 600), ignoredWidth: true)
     }
 
-    func testWidthResponseDoesNotVerifyIgnoredHeight() {
-        assertIgnoredAxisIsProbed(original: CGSize(width: 700, height: 500),
+    func testFixedHeightCompletesAfterOtherAxisResponse() {
+        assertFixedAxisIsProbed(original: CGSize(width: 700, height: 500),
                                   target: CGSize(width: 400, height: 300), ignoredWidth: false)
     }
 
@@ -9046,30 +9033,76 @@ final class WindowPlacementAcknowledgementTests: XCTestCase {
         XCTAssertEqual(completed?.size, CGSize(width: 700, height: 600))
     }
 
-    private func assertIgnoredAxisIsProbed(original: CGSize, target: CGSize, ignoredWidth: Bool,
-                                           file: StaticString = #filePath, line: UInt = #line) {
+    private func assertFixedAxisIsProbed(original: CGSize, target: CGSize, ignoredWidth: Bool,
+                                         file: StaticString = #filePath, line: UInt = #line) {
         var frame = CGRect(origin: .zero, size: original)
         var state = acknowledgement(original: frame, target: CGRect(origin: .zero, size: target))
         var probed = false
-        var failed = false
-        for time in [0.0, 0.02, 0.2, 0.66, 0.8, 1.32, 1.36, 2.0] {
-            switch state.observe(frame, at: time) {
+        var completed = false
+        for tick in 0...240 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
             case .size(let size):
-                if ignoredWidth {
-                    probed = probed || size.width > original.width
-                    frame.size.height = size.height
-                } else {
-                    probed = probed || size.height > original.height
-                    frame.size.width = size.width
-                }
+                let requested = ignoredWidth ? size.width : size.height
+                let wanted = ignoredWidth ? target.width : target.height
+                let initial = ignoredWidth ? original.width : original.height
+                probed = probed || abs(requested - wanted) > 1 && abs(requested - initial) > 1
+                if ignoredWidth { frame.size.height = size.height }
+                else { frame.size.width = size.width }
             case .position(let point): frame.origin = point
-            case .complete: XCTFail("An ignored axis is not a verified minimum", file: file, line: line)
+            case .complete: completed = true
+            case .failed: XCTFail("A responsive window can have one fixed axis", file: file, line: line); return
+            case .waiting: break
+            }
+            if completed { break }
+        }
+        XCTAssertTrue(probed, file: file, line: line)
+        XCTAssertTrue(completed, file: file, line: line)
+        XCTAssertEqual(frame.size, ignoredWidth ? CGSize(width: original.width, height: target.height)
+            : CGSize(width: target.width, height: original.height), file: file, line: line)
+    }
+
+    func testMinimumProbePreservesOtherAxisGridResponse() {
+        checkConstraints(original: CGSize(width: 500, height: 600), target: CGSize(width: 400, height: 623),
+                         expected: CGSize(width: 500, height: 615)) {
+            CGSize(width: max(500, $0.width), height: floor($0.height / 15) * 15)
+        }
+    }
+
+    func testMaximumAxisAlreadyAtLimitUsesShrinkProbe() {
+        checkConstraints(original: CGSize(width: 500, height: 400), target: CGSize(width: 800, height: 600),
+                         expected: CGSize(width: 500, height: 600)) {
+            CGSize(width: min(500, $0.width), height: $0.height)
+        }
+    }
+
+    func testWhollyIgnoredResizeStillFails() {
+        let original = CGRect(x: 0, y: 0, width: 500, height: 600)
+        var state = acknowledgement(original: original, target: CGRect(x: 0, y: 0, width: 400, height: 623))
+        var failed = false
+        for tick in 0...240 {
+            switch state.observe(original, at: Double(tick) * 0.025) {
             case .failed: failed = true
+            case .complete: XCTFail("A wholly ignored resize is not a constrained response"); return
+            default: break
+            }
+            if failed { break }
+        }
+        XCTAssertTrue(failed)
+    }
+
+    private func checkConstraints(original: CGSize, target: CGSize, expected: CGSize, respond: (CGSize) -> CGSize) {
+        var frame = CGRect(origin: .zero, size: original)
+        var state = acknowledgement(original: frame, target: CGRect(origin: .zero, size: target))
+        for tick in 0...240 {
+            switch state.observe(frame, at: Double(tick) * 0.025) {
+            case .size(let size): frame.size = respond(size)
+            case .position(let point): frame.origin = point
+            case .complete(let actual): XCTAssertEqual(actual.size, expected); return
+            case .failed: XCTFail("Allowed constrained geometry must complete"); return
             case .waiting: break
             }
         }
-        XCTAssertTrue(probed, file: file, line: line)
-        XCTAssertTrue(failed, file: file, line: line)
+        XCTFail("Placement did not terminate")
     }
 
     private func acknowledgement(original: CGRect, target: CGRect) -> WindowPlacementAcknowledgement {
@@ -9817,5 +9850,51 @@ final class WindowDividerGlassLineTests: XCTestCase {
             Notification.Name.blurStyleChanged.post()
             XCTAssertTrue(overlay.guide.decoration.isHidden, "Changing material must not revive a retired guide")
         }
+    }
+}
+
+final class WindowDividerInterruptionRegressionTests: XCTestCase {
+    func testOnlyClosedEntriesArePrunedAndIncompleteListsAreIgnored() {
+        let hidden = WindowInfo(id: 1, level: 0, frame: CGRect(x: 0, y: 0, width: 500, height: 800), pid: 2, processName: nil, isOnScreen: false)
+        let visible = WindowInfo(id: 3, level: 0, frame: hidden.frame, pid: 2, processName: nil)
+        XCTAssertEqual(WindowDividerManager.retainedWindowIDs(recorded: [1, 3, 4], existing: [hidden, visible], recording: 3), [1, 3])
+        XCTAssertEqual(WindowDividerManager.retainedWindowIDs(recorded: [1, 3], existing: [], recording: 3), [1, 3])
+    }
+
+    func testClickThroughOverlayUsesActualRecipientAndPreservesUnrelatedClicks() throws {
+        let cg = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: .zero, mouseButton: .left))
+        cg.setIntegerValueField(.mouseEventWindowUnderMousePointer, value: 99)
+        for (recipient, expected) in [(Int64(1), WindowDividerManager.Interruption.cancel), (3, .ignore), (0, .cancel)] {
+            cg.setIntegerValueField(.mouseEventWindowUnderMousePointerThatCanHandleThisEvent, value: recipient)
+            let event = try XCTUnwrap(NSEvent(cgEvent: cg))
+            XCTAssertEqual(WindowDividerManager.interruption(event, placingMembers: [1, 2]), expected)
+        }
+    }
+
+    func testEscapeRequestsRollbackOnlyWhilePlacing() throws {
+        let event = try XCTUnwrap(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [], timestamp: 0, windowNumber: 0, context: nil, characters: "", charactersIgnoringModifiers: "", isARepeat: false, keyCode: 53))
+        XCTAssertEqual(WindowDividerManager.interruption(event, placingMembers: [1, 2]), .rollback)
+        XCTAssertEqual(WindowDividerManager.interruption(event, placingMembers: nil), .cancel)
+    }
+}
+
+final class WindowDividerCrossAxisRegressionTests: XCTestCase {
+    func testRoundingCannotCommitAnIneligiblePair() throws {
+        let original = [CGRect(x: 0, y: 0, width: 510, height: 799), CGRect(x: 520, y: 0, width: 480, height: 800)]
+        var frames = original
+        var time: TimeInterval = 0
+        let placement = try XCTUnwrap(WindowDividerPlacement(left: frames[0], right: frames[1], axis: .horizontal,
+            divider: 405, minimumLeft: 100, minimumRight: 100,
+            write: { left, requested, attribute in
+                let i = left ? 0 : 1
+                if attribute == .size {
+                    frames[i].size = requested.size
+                    if left, requested.width < 500 { frames[i].size = CGSize(width: 391, height: 797) }
+                } else { frames[i].origin = requested.origin }
+                return true
+            }, read: { frames[$0 ? 0 : 1] }))
+        let result = try XCTUnwrap(placement.settle(isCurrent: { true }, now: { time }, pause: { time += 0.025 }))
+        XCTAssertEqual(result.left, original[0]); XCTAssertEqual(result.right, original[1])
+        XCTAssertNotNil(WindowDividerGeometry(left: result.left, right: result.right))
     }
 }
