@@ -8340,6 +8340,12 @@
             "state" : "translated",
             "value" : "Thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "八等分"
+          }
         }
       }
     },
@@ -8374,6 +8380,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Phím tắt bổ sung"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外快捷键"
           }
         }
       }
@@ -13765,6 +13777,12 @@
             "state" : "translated",
             "value" : "Chiều rộng lớn hơn"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "增加宽度"
+          }
         }
       }
     },
@@ -14909,6 +14927,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ chín"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分"
           }
         }
       }
@@ -19230,6 +19254,12 @@
             "state" : "translated",
             "value" : "Thứ mười sáu"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分"
+          }
         }
       }
     },
@@ -19620,6 +19650,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiều rộng nhỏ hơn"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "减少宽度"
           }
         }
       }
@@ -20329,7 +20365,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "按列平铺窗口"
           }
         }
@@ -20382,7 +20418,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "按行平铺窗口"
           }
         }
@@ -20401,6 +20437,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "平铺"
           }
         }
       }
@@ -20471,6 +20513,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Việc xếp gạch trong hình chữ nhật đã bị vô hiệu hóa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 中的窗口平铺功能已被禁用"
           }
         }
       }
@@ -20639,6 +20687,12 @@
             "state" : "translated",
             "value" : "Để điều chỉnh ô xếp macOS, hãy vào Cài đặt hệ thống → Màn hình nền & Dock → Windows"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要调整 macOS 窗口平铺，请前往 系统设置 → 桌面与程序坞 → 窗口"
+          }
         }
       }
     },
@@ -20709,6 +20763,12 @@
             "state" : "translated",
             "value" : "Tính năng ghép cạnh màn hình trên cùng trong macOS hiện đã bị vô hiệu hóa"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 中的顶部屏幕边缘平铺现已禁用"
+          }
         }
       }
     },
@@ -20737,6 +20797,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nửa trên/dưới"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上／下半屏"
           }
         }
       }
@@ -20903,6 +20969,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ mười hai"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分"
           }
         }
       }
@@ -21214,6 +21286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cập nhật có sẵn…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有可用更新…"
           }
         }
       }
@@ -23758,6 +23836,12 @@
             "state" : "translated",
             "value" : "Bước chiều rộng (px)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽度步长（px）"
+          }
         }
       }
     },
@@ -23776,6 +23860,12 @@
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره به کوچک‌تر امکان‌پذیر نیست.\nممکن است پنجره‌ها هم‌پوشانی پیدا کنند."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将窗口缩得更小。\n窗口可能会重叠。"
+          }
         }
       }
     },
@@ -23793,6 +23883,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حداقل اندازهٔ پنجره حاصل شد"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已达到窗口最小尺寸"
           }
         }
       }
