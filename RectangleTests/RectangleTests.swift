@@ -6249,17 +6249,37 @@ class ShortcutManagerSessionTests: XCTestCase {
         }
     }
 
+    private final class CursorScreenDetection: ScreenDetection {
+        let screen: NSScreen
+
+        init(screen: NSScreen) {
+            self.screen = screen
+        }
+
+        override func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
+            UsableScreens(currentScreen: screen, adjacentScreens: AdjacentScreens(prev: screen, next: screen), numScreens: 2)
+        }
+
+        override func detectScreensAtCursor() -> UsableScreens? {
+            UsableScreens(currentScreen: screen, numScreens: 2)
+        }
+    }
+
     /// Runs `body` with the settings that decide how a mouse button press
     /// executes, putting the user's back afterwards.
     private func withExecutionSettings(subsequentExecutionMode: SubsequentExecutionMode = .none,
-                                       pointerTargeting: Bool, _ body: () throws -> Void) rethrows {
+                                       pointerTargeting: Bool, cursorDetection: Bool = false,
+                                       _ body: () throws -> Void) rethrows {
         let savedMode = Defaults.subsequentExecutionMode.toCodable()
         let savedPointerTargeting = Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled
+        let savedCursorDetection = Defaults.useCursorScreenDetection.enabled
         Defaults.subsequentExecutionMode.load(from: CodableDefault(int: subsequentExecutionMode.rawValue))
         Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled = pointerTargeting
+        Defaults.useCursorScreenDetection.enabled = cursorDetection
         defer {
             Defaults.subsequentExecutionMode.load(from: savedMode)
             Defaults.mouseButtonShortcutsUseWindowUnderCursor.enabled = savedPointerTargeting
+            Defaults.useCursorScreenDetection.enabled = savedCursorDetection
         }
         try body()
     }
@@ -6354,6 +6374,30 @@ class ShortcutManagerSessionTests: XCTestCase {
             let parameters = try XCTUnwrap(windowManager.executedParameters.first)
             XCTAssertTrue(parameters.screen === screen)
             XCTAssertTrue(parameters.preservesFocus)
+        }
+    }
+
+    func testDisplayCycleStartsFreshWhenCursorPointsAtAnotherDisplay() throws {
+        defer { AppDelegate.windowHistory.cursorScreenFrames.removeValue(forKey: 987_004) }
+        try withExecutionSettings(subsequentExecutionMode: .cycleMonitor, pointerTargeting: false, cursorDetection: true) {
+            let window = TestWindow(windowId: 987_004)
+            defer { AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: 987_004) }
+            let screen = try XCTUnwrap(NSScreen.screens.first)
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(windowManager: windowManager, screenDetection: CursorScreenDetection(screen: screen))
+            AppDelegate.windowHistory.lastRectangleActions[987_004] = RectangleAction(action: .leftHalf, rect: window.frame)
+
+            // The last press happened with the cursor on another display.
+            AppDelegate.windowHistory.cursorScreenFrames[987_004] = screen.frame.offsetBy(dx: screen.frame.width, dy: 0)
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName,
+                                            object: ExecutionParameters(.leftHalf, windowElement: window, windowId: 987_004))
+            XCTAssertNil(try XCTUnwrap(windowManager.executedParameters.last).screen)
+
+            // Pressing again with the cursor where it was last time still cycles.
+            AppDelegate.windowHistory.cursorScreenFrames[987_004] = screen.frame
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName,
+                                            object: ExecutionParameters(.leftHalf, windowElement: window, windowId: 987_004))
+            XCTAssertTrue(try XCTUnwrap(windowManager.executedParameters.last).screen === screen)
         }
     }
 
@@ -6849,17 +6893,21 @@ class DisplayMoveFocusTests: XCTestCase {
         }
     }
 
-    func testMovingAcrossDisplaysBringsTheWindowForwardUnlessFocusIsPreserved() {
+    func testMovingAcrossDisplaysBringsTheWindowForwardUnlessFocusIsPreserved() throws {
         let previousMoveCursor = Defaults.moveCursorAcrossDisplays.enabled
         Defaults.moveCursorAcrossDisplays.enabled = false
         defer { Defaults.moveCursorAcrossDisplays.enabled = previousMoveCursor }
         let manager = WindowManager()
         let window = FocusTrackingElement()
 
-        manager.windowMovedAcrossDisplays(windowElement: window, resultingRect: .zero, preservesFocus: true)
+        let screen = try XCTUnwrap(NSScreen.screens.first)
+
+        manager.windowMovedAcrossDisplays(windowElement: window, windowId: nil, resultingRect: .zero,
+                                          destination: screen, preservesFocus: true)
         XCTAssertEqual(window.bringToFrontCalls, 0)
 
-        manager.windowMovedAcrossDisplays(windowElement: window, resultingRect: .zero, preservesFocus: false)
+        manager.windowMovedAcrossDisplays(windowElement: window, windowId: nil, resultingRect: .zero,
+                                          destination: screen, preservesFocus: false)
         XCTAssertEqual(window.bringToFrontCalls, 1)
     }
 }
@@ -7871,7 +7919,8 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             warningVisible = false
         }
 
-        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {}
+        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,
+                                                resultingRect: CGRect, destination: NSScreen, preservesFocus: Bool) {}
 
         override func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
             super.postProcess(result: result, resultingRect: resultingRect, incrementCount: incrementCount)
@@ -7998,7 +8047,8 @@ final class CrossDisplayResizeTests: XCTestCase {
     private final class TestWindowManager: WindowManager {
         var didFinish: ((ResultParameters, CGRect) -> Void)?
 
-        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {}
+        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,
+                                                resultingRect: CGRect, destination: NSScreen, preservesFocus: Bool) {}
 
         override func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
             didFinish?(result, resultingRect)
@@ -9086,3 +9136,325 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
 }
 
 
+final class CursorScreenDetectionExecutionTests: XCTestCase {
+    private let windowId: CGWindowID = 523_001
+    private var savedDefaults: [(Default, CodableDefault)] = []
+    private var savedActions: [CGWindowID: RectangleAction] = [:]
+    private var savedCursorScreenFrames: [CGWindowID: CGRect] = [:]
+    private var savedCursorActions: [CGWindowID: WindowAction] = [:]
+    private var savedLogging = false
+
+    private let left = TestScreen(frame: CGRect(x: 0, y: 0, width: 1000, height: 800))
+    private let right = TestScreen(frame: CGRect(x: 1000, y: 0, width: 1000, height: 800))
+
+    override func setUp() {
+        super.setUp()
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.useCursorScreenDetection, CodableDefault(bool: true)),
+            (Defaults.moveCursorAcrossDisplays, CodableDefault(int: 2)),
+            (Defaults.moveCursor, CodableDefault(int: 2)),
+            (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.none.rawValue)),
+            (Defaults.cooperativeCornerResize, CodableDefault(bool: false)),
+            (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
+            (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
+            (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
+            (Defaults.verticalSplitRatio, CodableDefault(float: 50)),
+            (Defaults.halvesPreserveOtherAxisSize, CodableDefault(bool: false)),
+            (Defaults.cycleSizesIsChanged, CodableDefault(bool: false)),
+            (Defaults.attemptMatchOnNextPrevDisplay, CodableDefault(int: 2)),
+            (Defaults.centerAcrossDisplays, CodableDefault(int: 2)),
+            (Defaults.gapSize, CodableDefault(float: 0)),
+            (Defaults.stageSize, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapLeft, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapRight, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapTop, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapBottom, CodableDefault(float: 0)),
+            (Defaults.cyclingOverlapOffset, CodableDefault(int: 2)),
+            (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
+            (Defaults.todo, CodableDefault(int: 2))
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+        savedActions = AppDelegate.windowHistory.lastRectangleActions
+        savedCursorScreenFrames = AppDelegate.windowHistory.cursorScreenFrames
+        savedCursorActions = AppDelegate.windowHistory.cursorActions
+        AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        AppDelegate.windowHistory.cursorScreenFrames.removeValue(forKey: windowId)
+        AppDelegate.windowHistory.cursorActions.removeValue(forKey: windowId)
+        savedLogging = Logger.logging
+        Logger.logging = false
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        AppDelegate.windowHistory.lastRectangleActions = savedActions
+        AppDelegate.windowHistory.cursorScreenFrames = savedCursorScreenFrames
+        AppDelegate.windowHistory.cursorActions = savedCursorActions
+        Logger.logging = savedLogging
+        ActiveSideSplitRatios.shared.resetAll()
+        super.tearDown()
+    }
+
+    func testCommandMovesWindowToCursorDisplay() {
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+    }
+
+    func testPointingAtAnotherDisplayIsNotARepeatWhenRepeatsCrossDisplays() {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+        XCTAssertEqual(window.frame, leftHalf(of: left))
+
+        detection.cursorScreen = right
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+
+        // Treated as a repeat, this used to bounce the window to the right half of `left`.
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+    }
+
+    func testPointingAtAnotherDisplayIsNotARepeatWhenRepeatsCycleSizes() {
+        Defaults.subsequentExecutionMode.value = .resize
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+        detection.cursorScreen = right
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.count, 1)
+    }
+
+    func testRepeatWithoutMovingCursorStillCrossesDisplays() {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+        XCTAssertEqual(window.frame, rightHalf(of: right))
+
+        // The window has left the cursor's display, but the walk continues from where it is.
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+    }
+
+    func testRepeatWithoutMovingCursorWalksDisplaysLikeWithTheSettingOff() {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+
+        // An app that sizes its window in rows never lands exactly on the target,
+        // so Rectangle forgets its last action between presses.
+        func walk(cursorDetection: Bool) -> [CGRect] {
+            Defaults.useCursorScreenDetection.enabled = cursorDetection
+            AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            AppDelegate.windowHistory.cursorScreenFrames.removeValue(forKey: windowId)
+            AppDelegate.windowHistory.cursorActions.removeValue(forKey: windowId)
+            let window = TestWindow(frame: leftHalf(of: right), heightStep: 7)
+            let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+            let manager = TestWindowManager(screenDetection: detection)
+            return (0..<6).map { _ in
+                manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+                return window.frame
+            }
+        }
+
+        let expected = walk(cursorDetection: false)
+        XCTAssertEqual(Set(expected.map(\.minX)).count, 4, "the walk should visit both halves of both displays")
+        XCTAssertEqual(walk(cursorDetection: true), expected)
+    }
+
+    func testRepeatWithoutMovingCursorStillCyclesSizes() {
+        Defaults.subsequentExecutionMode.value = .resize
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+
+        XCTAssertEqual(window.frame.minX, right.frame.minX)
+        XCTAssertNotEqual(window.frame.width, right.frame.width / 2)
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[windowId]?.count, 2)
+    }
+
+    func testAnotherCommandAfterCyclingDisplaysGoesToCursorDisplay() {
+        Defaults.subsequentExecutionMode.value = .cycleMonitor
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.topLeft, windowElement: window, windowId: windowId))
+        // A repeat cycles the window on to the next display while the cursor stays put.
+        manager.execute(ExecutionParameters(.topLeft, screen: right, windowElement: window, windowId: windowId))
+        XCTAssertTrue(right.frame.screenFlipped.contains(window.frame))
+
+        manager.execute(ExecutionParameters(.topRight, windowElement: window, windowId: windowId))
+
+        XCTAssertTrue(left.frame.screenFlipped.contains(window.frame))
+        XCTAssertEqual(window.frame.minX, left.frame.midX)
+    }
+
+    func testCursorStaysPutWhenWindowMovesToItsDisplay() {
+        Defaults.moveCursorAcrossDisplays.enabled = true
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+        XCTAssertEqual(manager.cursorWarps, 0)
+    }
+
+    func testCursorMovedAlongWithWindowStillCountsAsTheSameDisplay() {
+        Defaults.subsequentExecutionMode.value = .cycleMonitor
+        Defaults.moveCursorAcrossDisplays.enabled = true
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.topLeft, windowElement: window, windowId: windowId))
+        manager.execute(ExecutionParameters(.topLeft, screen: right, windowElement: window, windowId: windowId))
+
+        // The cursor followed the window, which mustn't make the next press a fresh one.
+        XCTAssertEqual(manager.cursorWarps, 1)
+        XCTAssertTrue(detection.cursorScreen === right)
+        XCTAssertFalse(AppDelegate.windowHistory.cursorChangedDisplay(for: windowId, cursorScreenFrame: right.frame))
+    }
+
+    func testNextDisplayCountsFromWindowDisplay() {
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.nextDisplay, windowElement: window, windowId: windowId))
+
+        XCTAssertTrue(right.frame.screenFlipped.contains(window.frame))
+    }
+
+    func testCursorDisplayIsIgnoredWhenSettingIsOff() {
+        Defaults.useCursorScreenDetection.enabled = false
+        let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+        let manager = TestWindowManager(screenDetection: detection)
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
+
+        XCTAssertEqual(window.frame, leftHalf(of: left))
+        XCTAssertNil(AppDelegate.windowHistory.cursorScreenFrames[windowId])
+    }
+
+    private func leftHalf(of screen: NSScreen) -> CGRect {
+        CGRect(x: screen.frame.minX, y: screen.frame.minY,
+               width: screen.frame.width / 2, height: screen.frame.height).screenFlipped
+    }
+
+    private func rightHalf(of screen: NSScreen) -> CGRect {
+        CGRect(x: screen.frame.midX, y: screen.frame.minY,
+               width: screen.frame.width / 2, height: screen.frame.height).screenFlipped
+    }
+
+    private final class TestScreen: NSScreen {
+        private let testFrame: CGRect
+
+        init(frame: CGRect) {
+            testFrame = frame
+            super.init()
+        }
+
+        override var frame: NSRect { testFrame }
+        override var visibleFrame: NSRect { testFrame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private final class TestScreenDetection: ScreenDetection {
+        let screens: [NSScreen]
+        var cursorScreen: NSScreen
+
+        init(screens: [NSScreen], cursorScreen: NSScreen) {
+            self.screens = screens
+            self.cursorScreen = cursorScreen
+        }
+
+        override func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
+            let windowFrame = frontmostWindowElement?.frame.screenFlipped ?? .zero
+            let screen = screens.first { $0.frame.contains(CGPoint(x: windowFrame.midX, y: windowFrame.midY)) } ?? screens[0]
+            return usableScreens(around: screen)
+        }
+
+        override func detectScreensAtCursor() -> UsableScreens? {
+            usableScreens(around: cursorScreen)
+        }
+
+        private func usableScreens(around screen: NSScreen) -> UsableScreens {
+            let other = screens.first { $0 !== screen } ?? screen
+            return UsableScreens(currentScreen: screen, adjacentScreens: AdjacentScreens(prev: other, next: other),
+                                 numScreens: screens.count, screensOrdered: screens)
+        }
+    }
+
+    private final class TestWindow: AccessibilityElement {
+        private var currentFrame: CGRect
+        private let heightStep: CGFloat?
+
+        /// A `heightStep` rounds the height down to whole steps, like an app
+        /// that sizes its window in rows, so the frame differs from the target.
+        init(frame: CGRect, heightStep: CGFloat? = nil) {
+            currentFrame = frame
+            self.heightStep = heightStep
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { currentFrame }
+        override var isSheet: Bool? { false }
+        override var isSystemDialog: Bool? { false }
+        override var minimumSize: CGSize? { nil }
+        override func getWindowId() -> CGWindowID? { nil }
+        override func isResizable() -> Bool { true }
+        override func bringToFront(force: Bool = false) {}
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: ImmediateWindowPlacement? = nil) {
+            setFrame(target, adjustSizeFirst: sizeFirst)
+        }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            var frame = frame
+            if let heightStep {
+                frame.size.height = (frame.height / heightStep).rounded(.down) * heightStep
+            }
+            currentFrame = frame
+        }
+    }
+
+    private final class TestWindowManager: WindowManager {
+        private let detection: TestScreenDetection
+        private(set) var cursorWarps = 0
+
+        init(screenDetection: TestScreenDetection) {
+            detection = screenDetection
+            super.init(screenDetection: screenDetection)
+        }
+
+        override func showSizeConstraintWarning(on screen: NSScreen) {}
+        override func hideSizeConstraintWarning() {}
+
+        override func warpCursor(to point: CGPoint) {
+            cursorWarps += 1
+            detection.cursorScreen = detection.screens.first { $0.frame.screenFlipped.contains(point) } ?? detection.cursorScreen
+        }
+    }
+}

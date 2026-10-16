@@ -101,26 +101,6 @@ class WindowManager {
             return
         }
         
-        // An explicit screen (display cycling) or the cursor screen controls the
-        // calculation, but neither necessarily contains the window before it moves.
-        let sourceScreens = screenDetection.detectScreens(using: frontmostWindowElement)
-        var screens: UsableScreens?
-        if let screen = parameters.screen {
-            screens = parameters.source == .titleBar
-            ? screenDetection.detectScreens(at: screen)
-            : UsableScreens(currentScreen: screen, numScreens: 1)
-        } else {
-            screens = Defaults.useCursorScreenDetection.enabled
-            ? screenDetection.detectScreensAtCursor()
-            : sourceScreens
-        }
-        
-        guard let usableScreens = screens, let sourceScreens else {
-            NSSound.beep()
-            Logger.log("Unable to obtain usable screens")
-            return
-        }
-        
         let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
         let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
         
@@ -133,6 +113,53 @@ class WindowManager {
             if let windowId {
                 AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             }
+        }
+        
+        // An explicit screen (display cycling) or the cursor screen controls the
+        // calculation, but neither necessarily contains the window before it moves.
+        let sourceScreens = screenDetection.detectScreens(using: frontmostWindowElement)
+        var screens: UsableScreens?
+        if let screen = parameters.screen {
+            screens = parameters.source == .titleBar
+            ? screenDetection.detectScreens(at: screen)
+            : UsableScreens(currentScreen: screen, numScreens: 1)
+        } else if Defaults.useCursorScreenDetection.enabled,
+                  action.classification != .display,
+                  let cursorScreens = screenDetection.detectScreensAtCursor() {
+            let cursorScreenFrame = cursorScreens.currentScreen.frame
+            let cursorChangedDisplay = AppDelegate.windowHistory.cursorChangedDisplay(for: windowId, cursorScreenFrame: cursorScreenFrame)
+            let isSameCommandAgain = windowId.map { AppDelegate.windowHistory.cursorActions[$0] == action } ?? false
+            if !cursorChangedDisplay && isSameCommandAgain {
+                // Until the cursor points elsewhere, pressing the same command again continues
+                // from wherever the last press left the window, so repeats that cross displays
+                // keep working. This mustn't depend on the last action, which is forgotten
+                // whenever the app adjusts the frame Rectangle set.
+                screens = sourceScreens
+            } else {
+                // Pointing at another display, or pressing another command, is a first press
+                // on the cursor's display. The last action there doesn't count as a repeat if
+                // the cursor moved or repeats walked the window off that display.
+                if cursorChangedDisplay || sourceScreens?.currentScreen != cursorScreens.currentScreen {
+                    lastRectangleAction = nil
+                    if let windowId {
+                        AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                    }
+                }
+                screens = cursorScreens
+            }
+            if let windowId {
+                AppDelegate.windowHistory.cursorScreenFrames[windowId] = cursorScreenFrame
+                AppDelegate.windowHistory.cursorActions[windowId] = action
+            }
+        } else {
+            // Display actions count from the window's display, even with cursor screen detection.
+            screens = sourceScreens
+        }
+        
+        guard let usableScreens = screens, let sourceScreens else {
+            NSSound.beep()
+            Logger.log("Unable to obtain usable screens")
+            return
         }
         
         if parameters.updateRestoreRect, let windowId {
@@ -278,14 +305,16 @@ class WindowManager {
                             defer { parameters.completion?() }
                             guard let self, self.executionID == currentExecutionID else { return }
                             let finalRect = self.apply(result: resultParameters)
-                            self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect,
+                            self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, windowId: windowId,
+                                                           resultingRect: finalRect, destination: calcResult.screen,
                                                            preservesFocus: parameters.preservesFocus)
                             self.postProcess(result: resultParameters, resultingRect: finalRect, incrementCount: !animated)
                         }
                         return
                     }
                 }
-                windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect,
+                windowMovedAcrossDisplays(windowElement: frontmostWindowElement, windowId: windowId,
+                                          resultingRect: resultingRect, destination: calcResult.screen,
                                           preservesFocus: parameters.preservesFocus)
             }
 
@@ -351,14 +380,36 @@ class WindowManager {
         }
     }
     
-    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {
+    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,
+                                   resultingRect: CGRect, destination: NSScreen, preservesFocus: Bool) {
         if !preservesFocus {
             windowElement.bringToFront(force: true)
         }
         
-        if Defaults.moveCursorAcrossDisplays.userEnabled {
-            CGWarpMouseCursorPosition(resultingRect.centerPoint)
+        if Defaults.moveCursorAcrossDisplays.userEnabled, !windowCameToCursor(on: destination) {
+            moveCursor(to: resultingRect.centerPoint, on: destination, windowId: windowId)
         }
+    }
+
+    /// With cursor screen detection, a window moved to the cursor's display was sent
+    /// there by the cursor, so moving the cursor again would only pull it away from
+    /// where the user put it.
+    private func windowCameToCursor(on destination: NSScreen) -> Bool {
+        Defaults.useCursorScreenDetection.enabled
+            && screenDetection.detectScreensAtCursor()?.currentScreen == destination
+    }
+
+    private func moveCursor(to point: CGPoint, on screen: NSScreen, windowId: CGWindowID?) {
+        warpCursor(to: point)
+        // Rectangle moving the cursor isn't the user pointing at another display,
+        // so the next press of the same command still counts as a repeat.
+        if Defaults.useCursorScreenDetection.enabled, let windowId {
+            AppDelegate.windowHistory.cursorScreenFrames[windowId] = screen.frame
+        }
+    }
+
+    func warpCursor(to point: CGPoint) {
+        CGWarpMouseCursorPosition(point)
     }
 
     func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
@@ -369,7 +420,7 @@ class WindowManager {
         }
         
         if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
-            CGWarpMouseCursorPosition(resultingRect.centerPoint)
+            moveCursor(to: resultingRect.centerPoint, on: calcResult.screen, windowId: result.windowId)
         }
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
