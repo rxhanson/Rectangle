@@ -827,9 +827,12 @@ enum WindowAction: Int, Codable {
         case .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
              .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth:
             return NSImage()
-        case .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
-             .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth:
-            return NSImage()
+        case .firstVerticalSixth: return NSImage(imageLiteralResourceName: "firstVerticalSixthTemplate")
+        case .secondVerticalSixth: return NSImage(imageLiteralResourceName: "secondVerticalSixthTemplate")
+        case .thirdVerticalSixth: return NSImage(imageLiteralResourceName: "thirdVerticalSixthTemplate")
+        case .fourthVerticalSixth: return NSImage(imageLiteralResourceName: "fourthVerticalSixthTemplate")
+        case .fifthVerticalSixth: return NSImage(imageLiteralResourceName: "fifthVerticalSixthTemplate")
+        case .lastVerticalSixth: return NSImage(imageLiteralResourceName: "lastVerticalSixthTemplate")
         case .doubleHeightUp: return  NSImage()
         case .doubleHeightDown: return  NSImage()
         case .doubleWidthLeft: return  NSImage()
