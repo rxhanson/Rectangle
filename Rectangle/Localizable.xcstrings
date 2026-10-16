@@ -29527,6 +29527,16 @@
         }
       }
     },
+    "Snap before reaching screen edges" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到达屏幕边缘前即吸附"
+          }
+        }
+      }
+    },
     "Snap windows by dragging" : {
       "localizations" : {
         "ar" : {
