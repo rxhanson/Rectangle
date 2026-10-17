@@ -10828,6 +10828,16 @@
         }
       }
     },
+    "Fifth Vertical Sixth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fifth Vertical Sixth"
+          }
+        }
+      }
+    },
     "File" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12763,6 +12773,16 @@
         }
       }
     },
+    "First Vertical Sixth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Vertical Sixth"
+          }
+        }
+      }
+    },
     "Follow System" : {
       "localizations" : {
         "en" : {
@@ -12837,6 +12857,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "直向八分之一（第 4 欄）"
+          }
+        }
+      }
+    },
+    "Fourth Vertical Sixth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fourth Vertical Sixth"
           }
         }
       }
@@ -17377,6 +17407,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "直向八分之一（第 8 欄）"
+          }
+        }
+      }
+    },
+    "Last Vertical Sixth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last Vertical Sixth"
           }
         }
       }
@@ -27396,6 +27436,16 @@
         }
       }
     },
+    "Second Vertical Sixth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second Vertical Sixth"
+          }
+        }
+      }
+    },
     "Select All" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -30485,6 +30535,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "直向八分之一（第 3 欄）"
+          }
+        }
+      }
+    },
+    "Third Vertical Sixth" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Third Vertical Sixth"
           }
         }
       }

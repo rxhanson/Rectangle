@@ -274,6 +274,12 @@ class WindowCalculationFactory {
     static let sixthVerticalEighthCalculation = VerticalEighthCalculation(ordinal: 5)
     static let seventhVerticalEighthCalculation = VerticalEighthCalculation(ordinal: 6)
     static let lastVerticalEighthCalculation = VerticalEighthCalculation(ordinal: 7)
+    static let firstVerticalSixthCalculation = VerticalSixthCalculation(ordinal: 0)
+    static let secondVerticalSixthCalculation = VerticalSixthCalculation(ordinal: 1)
+    static let thirdVerticalSixthCalculation = VerticalSixthCalculation(ordinal: 2)
+    static let fourthVerticalSixthCalculation = VerticalSixthCalculation(ordinal: 3)
+    static let fifthVerticalSixthCalculation = VerticalSixthCalculation(ordinal: 4)
+    static let lastVerticalSixthCalculation = VerticalSixthCalculation(ordinal: 5)
 
     static let calculationsByAction: [WindowAction: WindowCalculation] = [
      .leftHalf: leftHalfCalculation,
@@ -350,6 +356,12 @@ class WindowCalculationFactory {
      .sixthVerticalEighth: sixthVerticalEighthCalculation,
      .seventhVerticalEighth: seventhVerticalEighthCalculation,
      .lastVerticalEighth: lastVerticalEighthCalculation,
+     .firstVerticalSixth: firstVerticalSixthCalculation,
+     .secondVerticalSixth: secondVerticalSixthCalculation,
+     .thirdVerticalSixth: thirdVerticalSixthCalculation,
+     .fourthVerticalSixth: fourthVerticalSixthCalculation,
+     .fifthVerticalSixth: fifthVerticalSixthCalculation,
+     .lastVerticalSixth: lastVerticalSixthCalculation,
      .halveHeightUp: halfOrDoubleDimensionCalculation,
      .halveHeightDown: halfOrDoubleDimensionCalculation,
      .halveWidthLeft: halfOrDoubleDimensionCalculation,
