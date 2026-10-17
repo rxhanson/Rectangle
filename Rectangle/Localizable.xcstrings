@@ -214,6 +214,12 @@
             "value" : "%"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -234,6 +240,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld px"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld пкс"
           }
         },
         "zh-Hans" : {
@@ -789,7 +801,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Перемістіть обране завдання у передній план"
+            "value" : "1. Виведіть обраний застосунок завдань на передній план"
           }
         },
         "vi" : {
@@ -2135,6 +2147,12 @@
             "value" : "تنظیمات بین نمایشگرها"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування для кількох екранів"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2158,6 +2176,12 @@
             "value" : "پس از اینکه Rectangle پنجره‌ای را بیشینه یا تقریباً بیشینه کرد، اجرای دوبارهٔ همان عمل پنجره را به اندازه و موقعیت قبلی‌اش بازمی‌گرداند."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Після того як Rectangle максимізує або майже максимізує вікно, повторне виконання тієї самої дії повертає вікну попередній розмір і положення."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2176,6 +2200,12 @@
             "value" : "اجازه دادن"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дозволити"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2190,6 +2220,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "اجازهٔ اجرای فرمان URL به Rectangle داده شود؟"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дозволити дію Rectangle через URL?"
           }
         },
         "zh-Hans" : {
@@ -2412,6 +2448,12 @@
             "value" : "یک منبع خارجی از Rectangle درخواست کرده است تا «%1$@» را روی شناسهٔ بستهٔ برنامهٔ «%2$@» اجرا کند. اجازه می‌دهید؟"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зовнішнє джерело просить Rectangle виконати «%1$@» для застосунку з ідентифікатором «%2$@». Дозволити?"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2618,6 +2660,12 @@
             "value" : "متحرک‌سازی پنجره‌ها"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Анімувати вікна"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2647,6 +2695,12 @@
             "value" : "アニメーションの種類"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стиль анімації"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2667,6 +2721,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تنظیمات برنامه"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування застосунку"
           }
         },
         "zh-Hans" : {
@@ -3078,6 +3138,12 @@
             "value" : "رفتار"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поведінка"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3104,6 +3170,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしの外観"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вигляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -3140,6 +3212,12 @@
             "value" : "プレビューの背景をぼかす"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розмивати відбиток"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3173,6 +3251,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしプレビュー"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попередній перегляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -3393,6 +3477,12 @@
             "value" : "یک‌هشتم پایین مرکز چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3420,6 +3510,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 가운데 왼쪽 1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва восьма частина"
           }
         },
         "vi" : {
@@ -3450,6 +3546,12 @@
             "value" : "یک‌شانزدهم پایین مرکز چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3470,6 +3572,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین مرکز چپ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -3494,6 +3602,12 @@
             "value" : "یک‌نهم پایین مرکز"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центральна дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3514,6 +3628,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم پایین مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права 1/8"
           }
         },
         "zh-Hans" : {
@@ -3545,6 +3665,12 @@
             "value" : "아래 가운데 오른쪽 1/8"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права восьма частина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3573,6 +3699,12 @@
             "value" : "یک‌شانزدهم پایین مرکز راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3593,6 +3725,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -3819,6 +3957,12 @@
             "value" : "아래쪽 1/8, 모서리에서 3등분"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижні восьмі від кутів; третини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4037,6 +4181,12 @@
             "value" : "یک‌هشتم پایین چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4064,6 +4214,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 왼쪽 1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва восьма частина"
           }
         },
         "vi" : {
@@ -4094,6 +4250,12 @@
             "value" : "یک‌نهم پایین چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4114,6 +4276,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین چپ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -4328,6 +4496,12 @@
             "value" : "یک‌دوازدهم پایین چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4540,6 +4714,12 @@
             "value" : "یک‌هشتم پایین راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4567,6 +4747,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 오른쪽 1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права восьма частина"
           }
         },
         "vi" : {
@@ -4597,6 +4783,12 @@
             "value" : "یک‌نهم پایین راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4617,6 +4809,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -4829,6 +5027,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -5049,6 +5253,12 @@
             "value" : "아래 1/3"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня третина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5083,6 +5293,12 @@
             "value" : "아래 2/3"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижні дві третини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5103,6 +5319,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "پنجره‌هایی را که در همان ناحیهٔ پنجرهٔ فعال چسبانده شده‌اند، یکی‌یکی به جلو می‌آورد"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По черзі виводити на передній план вікна, прив'язані до тієї ж зони, що й активне вікно"
           }
         },
         "zh-Hans" : {
@@ -5127,6 +5349,12 @@
             "value" : "برنامهٔ Todo انتخابی خود را به جلو بیاورید"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виведіть обраний застосунок завдань на передній план"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5138,6 +5366,12 @@
     "Button %lld" : {
       "comment" : "A numbered mouse button in a shortcut. The side buttons on most mice are 4 and 5.",
       "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кнопка %lld"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6086,6 +6320,12 @@
             "value" : "قرار دادن پنجره‌ها در مرکز هنگام انتقال بین نمایشگرها"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Центрувати вікна при переміщенні між екранами"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6868,6 +7108,12 @@
             "value" : "تنظیم مرز بین عملیات کناره و گوشه"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштувати межу між діями для половин і кутів"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6913,6 +7159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konflikt s umiestnením dlaždíc v macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфлікт із розкладанням вікон macOS"
           }
         },
         "vi" : {
@@ -7090,7 +7342,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conflict with system setting"
+            "value" : "Конфлікт із системним налаштуванням"
           }
         },
         "vi" : {
@@ -7323,6 +7575,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حق نشر © 2019-2026 Ryan Hanson. تمامی حقوق محفوظ است."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson. Усі права захищено."
           }
         },
         "zh-Hans" : {
@@ -7699,6 +7957,12 @@
             "value" : "در حال استفاده: "
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Використовується: "
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7919,6 +8183,12 @@
             "value" : "1/4 동작시 위치 순환, 절반 동작시 창 크기 순환"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "перемикати положення для чвертей, розміри для половин"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -8064,8 +8334,8 @@
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "перемикати ½, ⅔, and ⅓ при діях з половиною"
+            "state" : "translated",
+            "value" : "перемикати ½, ⅔ і ⅓ при діях з половинами"
           }
         },
         "vi" : {
@@ -8102,6 +8372,12 @@
             "value" : "چرخش بین پنجره‌های روی‌هم"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8116,6 +8392,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چرخش بین پنجره‌های روی‌هم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі"
           }
         },
         "zh-Hans" : {
@@ -8134,6 +8416,12 @@
             "value" : "چرخش معکوس بین پنجره‌های روی‌هم"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі у зворотному порядку"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8148,6 +8436,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چرخش معکوس بین پنجره‌های روی‌هم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі у зворотному порядку"
           }
         },
         "zh-Hans" : {
@@ -8357,6 +8651,12 @@
             "value" : "جهت گسترش میانبرهای چرخشی گوشه"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторні дії для кутів розширюють вікно"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8383,6 +8683,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ダーク"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Темний"
           }
         },
         "zh-Hans" : {
@@ -8783,6 +9089,12 @@
             "value" : "ウインドウを直接リサイズ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пряма зміна розміру"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9027,6 +9339,12 @@
             "value" : "Vypnúť v macOS"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в macOS"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9080,6 +9398,12 @@
             "value" : "Vypnúť v Rectangle"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в Rectangle"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9131,6 +9455,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zatvoriť"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрити"
           }
         },
         "vi" : {
@@ -9690,7 +10020,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-click window title bar to maximize/restore"
+            "value" : "Подвійне клацання по заголовку вікна максимізує/відновлює"
           }
         },
         "vi" : {
@@ -9756,6 +10086,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Potiahnutie na okraj obrazovky je zapnuté v Rectangle aj macOS."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон перетягуванням до краю екрана увімкнено і в Rectangle, і в macOS."
           }
         },
         "vi" : {
@@ -9982,6 +10318,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмі"
           }
         },
         "vi" : {
@@ -10745,6 +11087,12 @@
             "value" : "Дополнительные горячие клавиши"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додаткові комбінації клавіш"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10786,6 +11134,12 @@
             "value" : "⋯"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додатково"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10812,6 +11166,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی پنجم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "П'ята вертикальна восьма"
           }
         },
         "zh-Hans" : {
@@ -11748,7 +12108,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Знайти попередній"
+            "value" : "Знайти попереднє"
           }
         },
         "vi" : {
@@ -12749,6 +13109,12 @@
             "value" : "یک‌هشتم عمودی اول"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перша вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12783,6 +13149,12 @@
             "value" : "システムに合わせる"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Як у системі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12805,6 +13177,12 @@
             "value" : "برای فهرست پنجره‌ها و میانبرهای چرخشی. وقتی خاموش است، پنجره‌هایی که در یک موقعیت بالا چپ روی‌هم قرار گرفته‌اند، صرف‌نظر از اندازه‌شان حساب می‌شوند"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Для списку вікон і комбінацій перемикання. Якщо вимкнено, у стос потрапляють усі вікна з тим самим верхнім лівим кутом, незалежно від розміру"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12825,6 +13203,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی چهارم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Четверта вертикальна восьма"
           }
         },
         "zh-Hans" : {
@@ -13003,7 +13387,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Четверини"
+            "value" : "Чверті"
           }
         },
         "vi" : {
@@ -13580,7 +13964,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Налаштування"
+            "value" : "Загальні"
           }
         },
         "vi" : {
@@ -14010,6 +14394,12 @@
             "value" : "システム設定→プライバシーとセキュリティ→デバイスの制御とデータへのアクセスを選択します"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейдіть до Системні параметри → Конфіденційність і безпека → Керування пристроями й доступ до даних"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14036,6 +14426,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "دکمهٔ سبز چراغ راهنما به‌جای تمام‌صفحه، پنجره را بیشینه می‌کند"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зелена кнопка вікна максимізує замість повноекранного режиму"
           }
         },
         "zh-Hans" : {
@@ -14067,6 +14463,12 @@
             "value" : "그리드 위치"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Положення в сітці"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14094,6 +14496,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "عملیات نیمه، اندازهٔ پنجره را در محور دیگر حفظ می‌کنند"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дії з половинами зберігають розмір вікна по іншій осі"
           }
         },
         "zh-Hans" : {
@@ -14147,6 +14555,12 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Haptická odozva"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тактильний відгук"
           }
         },
         "vi" : {
@@ -14940,6 +15354,12 @@
             "value" : "برای رفتار پیش‌فرض macOS، هر کلید تبدیل را نگه دارید یا از منوی پنجره استفاده کنید"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Утримуйте будь-яку клавішу-модифікатор або скористайтеся меню «Вікно» для стандартної поведінки macOS"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14966,6 +15386,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "수평 (좌/우, %)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По горизонталі (Л/П, %)"
           }
         },
         "vi" : {
@@ -14996,6 +15422,12 @@
             "value" : "به‌صورت افقی"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "по горизонталі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15010,6 +15442,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌صورت افقی"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По горизонталі"
           }
         },
         "zh-Hans" : {
@@ -15032,6 +15470,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "برای نمایش فهرست، نشانگر را نزدیک گوشهٔ بالا چپ پنجره نگه دارید"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Наведіть курсор біля верхнього лівого кута вікна, щоб показати список"
           }
         },
         "zh-Hans" : {
@@ -15725,6 +16169,12 @@
             "value" : "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При повторенні дій переміщення або половин вікно переходитиме на наступний екран замість зміни розміру на 1/2, 2/3 і 1/3."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16110,6 +16560,12 @@
             "value" : "در منوی Rectangle، حالت Todo را فعال کنید."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У меню Rectangle увімкніть режим Завдань."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16130,6 +16586,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "در منوی Rectangle، گزینهٔ\n«استفاده از [برنامه] به‌عنوان برنامهٔ Todo» را انتخاب کنید"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У меню Rectangle виберіть\n«Використовувати [Застосунок] як застосунок Завдань»"
           }
         },
         "zh-Hans" : {
@@ -16302,7 +16764,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перейти до вибору"
+            "value" : "Перейти до виділеного"
           }
         },
         "vi" : {
@@ -16523,6 +16985,12 @@
     },
     "Keyboard shortcuts always act on the focused window" : {
       "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Комбінації клавіш завжди діють на активне вікно"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16537,6 +17005,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "نواحی چسباندن در حالت افقی"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зони прив'язки для горизонтального екрана"
           }
         },
         "zh-Hans" : {
@@ -16571,6 +17045,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Увеличить ширину"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більша ширина"
           }
         },
         "vi" : {
@@ -16754,7 +17234,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Останній чверть"
+            "value" : "Остання чверть"
           }
         },
         "vi" : {
@@ -17367,6 +17847,12 @@
             "value" : "یک‌هشتم عمودی آخر"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остання вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17774,6 +18260,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "نیمهٔ چپ و سپس نیمهٔ بالا، پنجره را به یک‌چهارم بالا چپ منتقل می‌کند؛ عمل مربوط به لبهٔ مقابل، آن را دوباره گسترش می‌دهد."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«Ліва половина», а потім «Верхня половина» переміщує вікно у верхню ліву чверть; дія для протилежного краю розширює його назад."
           }
         },
         "zh-Hans" : {
@@ -18185,6 +18677,12 @@
             "value" : "ライト"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Світлий"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18213,6 +18711,12 @@
             "value" : "یک‌شانزدهم میانی پایین مرکز چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18233,6 +18737,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня центрально-права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -18257,6 +18767,12 @@
             "value" : "یک‌شانزدهم میانی پایین چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18277,6 +18793,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -19266,6 +19788,12 @@
             "value" : "تنظیمات بیشینه‌سازی"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування максимізації"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19286,6 +19814,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حداکثر تعداد پنجره‌ها در هر ستون"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Максимум вікон у стовпці"
           }
         },
         "zh-Hans" : {
@@ -19310,6 +19844,12 @@
             "value" : "حداکثر تعداد پنجره‌ها در هر سطر"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Максимум вікон у рядку"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19321,6 +19861,12 @@
     "Middle Button" : {
       "comment" : "The middle mouse button in a shortcut",
       "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня кнопка"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19341,6 +19887,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی مرکز چپ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня центрально-ліва дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -19365,6 +19917,12 @@
             "value" : "یک‌نهم میانی مرکز"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня центральна дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19385,6 +19943,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня центрально-права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -19409,6 +19973,12 @@
             "value" : "یک‌نهم میانی چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня ліва дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19429,6 +19999,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی چپ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня ліва дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -19453,6 +20029,12 @@
             "value" : "یک‌نهم میانی راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня права дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19473,6 +20055,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -19501,6 +20089,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "중간 1/3"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня третина"
           }
         },
         "vi" : {
@@ -19729,6 +20323,12 @@
             "value" : "حداقل اندازهٔ پنجره حاصل شد"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Досягнуто мінімального розміру вікна"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19739,6 +20339,12 @@
     },
     "Mouse button shortcuts act on the window under the pointer" : {
       "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Комбінації з кнопками миші діють на вікно під курсором"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21862,6 +22468,12 @@
             "value" : "1/9"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дев'яті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21895,6 +22507,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/9 (3×3)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дев'яті (3×3)"
           }
         },
         "vi" : {
@@ -22122,6 +22740,12 @@
             "value" : "تغییر موقعیت پنجره در صورت هم‌پوشانی"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зміщувати вікно, якщо воно перекриває інше"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22136,6 +22760,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "فقط پنجره‌های هم‌اندازه روی‌هم در نظر گرفته شوند"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Об'єднувати в стос лише вікна однакового розміру"
           }
         },
         "zh-Hans" : {
@@ -23494,6 +24124,12 @@
             "value" : "نواحی چسباندن در حالت عمودی"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зони прив'язки для вертикального екрана"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23707,6 +24343,12 @@
             "value" : "حفظ حالت بیشینه هنگام انتقال بین نمایشگرها"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберігати максимізацію при переміщенні між екранами"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23727,6 +24369,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حفظ اندازهٔ محور کناری برای عملیات نیمه، مشابه Windows"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберігати розмір по іншій осі для дій з половинами, як у Windows"
           }
         },
         "zh-Hans" : {
@@ -23758,6 +24406,12 @@
             "value" : "그리드의 모든 위치를 순환하려면 단축키를 여러 번 누르십시오."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Натискайте комбінацію клавіш повторно, щоб перебрати всі положення в сітці."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23780,6 +24434,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "جلوگیری از فعال شدن Mission Control هنگام کشیدن"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не запускати Mission Control під час перетягування"
           }
         },
         "zh-Hans" : {
@@ -24000,6 +24660,12 @@
             "value" : "px"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "пкс"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24217,6 +24883,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ناحیهٔ برنامه‌های اخیر"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Область недавніх застосунків"
           }
         },
         "zh-Hans" : {
@@ -25576,6 +26248,12 @@
             "value" : "حذف فاصله در لبهٔ بالایی نمایشگر"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прибрати відступ біля верхнього краю екрана"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25786,6 +26464,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حذف فاصلهٔ بالایی هنگام چسباندن به لبهٔ بالا"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прибирати верхній відступ при прив'язці до верхнього краю"
           }
         },
         "zh-Hans" : {
@@ -26000,6 +26684,12 @@
             "value" : "بیشینه‌سازی مکرر، اندازه و موقعیت قبلی را بازمی‌گرداند"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторна максимізація відновлює попередній розмір і положення"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26020,6 +26710,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره‌های مجاور هنگام چرخش میانبرهای کناره یا گوشه"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Змінювати розмір сусідніх вікон при перемиканні половин або кутів"
           }
         },
         "zh-Hans" : {
@@ -26381,7 +27077,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Відновити типові комбінації клавіш"
+            "value" : "Відновити типові комбінації клавіш і зони прив’язки"
           }
         },
         "vi" : {
@@ -26571,7 +27267,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Відновлювати розмір вікна при відміні зміни розміру"
+            "value" : "Відновлювати розмір вікна після відкріплення"
           }
         },
         "vi" : {
@@ -27382,6 +28078,12 @@
             "value" : "یک‌هشتم عمودی دوم"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Друга вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27983,6 +28685,12 @@
             "value" : "یک‌هشتم عمودی هفتم"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьома вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28196,6 +28904,12 @@
             "value" : "نمایش میانبرهای *اضافی* در منو"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати *додаткові* комбінації клавіш у меню"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28223,6 +28937,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "메뉴에 추가 크기 표시"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати додаткові розміри в меню"
           }
         },
         "vi" : {
@@ -28444,6 +29164,12 @@
             "value" : "نمایش فهرست پنجره‌های روی‌هم با نگه‌داشتن نشانگر"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати список вікон у стосі при наведенні"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28650,6 +29376,12 @@
             "value" : "نمایش هشدار وقتی پنجره‌ها به اندازهٔ کافی کوچک نمی‌شوند"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попереджати, якщо вікно неможливо зменшити до потрібного розміру"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28676,6 +29408,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "절반 분할 비율"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Співвідношення поділу половин"
           }
         },
         "vi" : {
@@ -28898,6 +29636,12 @@
             "value" : "1/16"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шістнадцяті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28933,6 +29677,12 @@
             "value" : "1/16 (4×4)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шістнадцяті (4×4)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28959,6 +29709,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی ششم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шоста вертикальна восьма"
           }
         },
         "zh-Hans" : {
@@ -29371,6 +30127,12 @@
             "value" : "Уменьшить ширину"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менша ширина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29512,6 +30274,12 @@
     },
     "Snap before reaching screen edges" : {
       "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прив'язувати до досягнення країв екрана"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30044,6 +30812,12 @@
             "value" : "پنجره‌های روی‌هم"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вікна в стосі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30064,6 +30838,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stage Manager"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менеджер сцени"
           }
         },
         "zh-Hans" : {
@@ -30473,6 +31253,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی سوم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Третя вертикальна восьма"
           }
         },
         "zh-Hans" : {
@@ -31069,6 +31855,12 @@
             "value" : "این گزینه فضای کمی برای نمایش پنجرهٔ زیرین باقی می‌گذارد و با فاصلهٔ بین پنجره‌ها بهترین نتیجه را دارد"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Залишає трохи місця, щоб було видно вікно під ним; найкраще працює з відступами між вікнами"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31119,6 +31911,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ウインドウを列に並べる"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти стовпцями"
           }
         },
         "zh-Hans" : {
@@ -31173,6 +31971,12 @@
             "value" : "ウインドウを行に並べる"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти рядками"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31193,6 +31997,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار پنجره‌ها در سطرها/ستون‌ها"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон рядками/стовпцями"
           }
         },
         "zh-Hans" : {
@@ -31216,6 +32026,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон"
           }
         },
         "zh-Hans" : {
@@ -31265,6 +32081,12 @@
             "value" : "Umiestnenie dlaždíc v macOS bolo vypnuté"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у macOS вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31300,6 +32122,12 @@
             "value" : "Rectangle의 타일 정리 기능이 비활성화됨"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у Rectangle вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31333,6 +32161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 타일 정리 기능을 조정하려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб налаштувати розкладання вікон macOS, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
           }
         },
         "vi" : {
@@ -31510,7 +32344,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting."
+            "value" : "Щоб Rectangle керував подвійним клацанням по заголовку вікна, потрібно вимкнути відповідне налаштування macOS."
           }
         },
         "vi" : {
@@ -31576,6 +32410,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pre opätovné povolenie, prejdi do Systémové nastavenia → Plocha a Dock → Okná"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб увімкнути його знову, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
           }
         },
         "vi" : {
@@ -31790,6 +32630,12 @@
             "value" : "حالت Todo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Режим Завдань"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32000,6 +32846,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر وضعیت نشان پنجره‌های روی‌هم"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемкнути позначку стосу вікон"
           }
         },
         "zh-Hans" : {
@@ -32214,6 +33066,12 @@
             "value" : "تغییر وضعیت فهرست پنجره‌ها"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемкнути список вікон"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32426,6 +33284,12 @@
             "value" : "یک‌هشتم بالا مرکز چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32453,6 +33317,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 가운데 왼쪽 1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва восьма частина"
           }
         },
         "vi" : {
@@ -32483,6 +33353,12 @@
             "value" : "یک‌شانزدهم بالا مرکز چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32503,6 +33379,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا مرکز چپ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -32527,6 +33409,12 @@
             "value" : "یک‌نهم بالا مرکز"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центральна дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32547,6 +33435,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم بالا مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права 1/8"
           }
         },
         "zh-Hans" : {
@@ -32578,6 +33472,12 @@
             "value" : "위 가운데 오른쪽 1/8"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права восьма частина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32606,6 +33506,12 @@
             "value" : "یک‌شانزدهم بالا مرکز راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32626,6 +33532,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -32852,6 +33764,12 @@
             "value" : "위쪽 1/8, 모서리에서 최대화"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхні восьмі від кутів; максимізувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33070,6 +33988,12 @@
             "value" : "یک‌هشتم بالا چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33097,6 +34021,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 왼쪽 1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва восьма частина"
           }
         },
         "vi" : {
@@ -33127,6 +34057,12 @@
             "value" : "یک‌نهم بالا چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33147,6 +34083,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا چپ"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -33361,6 +34303,12 @@
             "value" : "یک‌دوازدهم بالا چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33573,6 +34521,12 @@
             "value" : "یک‌هشتم بالا راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33600,6 +34554,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "오른쪽 1/8"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права восьма частина"
           }
         },
         "vi" : {
@@ -33630,6 +34590,12 @@
             "value" : "یک‌نهم بالا راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33650,6 +34616,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -33821,7 +34793,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Верхнія права шоста частина"
+            "value" : "Верхня права шоста частина"
           }
         },
         "vi" : {
@@ -33864,6 +34836,12 @@
             "value" : "یک‌دوازدهم بالا راست"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33891,6 +34869,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS의 화면 상단 가장자리 타일 정렬이 꺼졌습니다"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон біля верхнього краю екрана в macOS тепер вимкнено"
           }
         },
         "vi" : {
@@ -34117,6 +35101,12 @@
             "value" : "위 1/3"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня третина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34149,6 +35139,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 2/3"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхні дві третини"
           }
         },
         "vi" : {
@@ -34192,6 +35188,12 @@
             "value" : "Górna/Dolna połowa"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня/нижня половини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34220,6 +35222,12 @@
             "value" : "بالا/پایین‌ها"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верх/низ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34240,6 +35248,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "در نظر گرفتن چند نمایشگر به‌عنوان یکی"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вважати кілька екранів одним"
           }
         },
         "zh-Hans" : {
@@ -34271,6 +35285,12 @@
             "value" : "여러 모니터를 하나로 인식"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вважати кілька моніторів одним"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34298,6 +35318,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дванадцяті"
           }
         },
         "vi" : {
@@ -34335,6 +35361,12 @@
             "value" : "1/12 (4×3)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дванадцяті (4×3)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34362,6 +35394,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره به کوچک‌تر امکان‌پذیر نیست.\nممکن است پنجره‌ها هم‌پوشانی پیدا کنند."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неможливо ще зменшити вікно.\nВікна можуть перекриватися."
           }
         },
         "zh-Hans" : {
@@ -34583,6 +35621,12 @@
             "value" : "업데이트 가능…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступне оновлення…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34611,6 +35655,12 @@
             "value" : "یک‌شانزدهم میانی بالا مرکز چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34631,6 +35681,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا مرکز راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня центрально-права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -34655,6 +35711,12 @@
             "value" : "یک‌شانزدهم میانی بالا چپ"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34675,6 +35737,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا راست"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -34896,6 +35964,12 @@
             "value" : "화면 감지에 커서 위치 사용"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Визначати екран за положенням курсора"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34922,6 +35996,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "استفاده از مکان‌نما برای تشخیص نمایشگر"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Визначати екран за курсором"
           }
         },
         "zh-Hans" : {
@@ -35440,6 +36520,12 @@
             "value" : "수직 (상/하, %)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По вертикалі (В/Н, %)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35468,6 +36554,12 @@
             "value" : "عمودی"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "по вертикалі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35482,6 +36574,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌صورت عمودی"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По вертикалі"
           }
         },
         "zh-Hans" : {
@@ -36263,6 +37361,12 @@
             "value" : "وقتی خاموش است، فاصلهٔ پنجره تا لبه‌های صفحه در صورت امکان حفظ می‌شود."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо вимкнено, прилягання вікна до країв екрана за можливості зберігається."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36473,6 +37577,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "هنگام استفاده از چند نمایشگر، آن‌ها را به‌عنوان یک نمایشگر در نظر می‌گیرد. لازم است در System Settings > Desktop & Dock گزینهٔ Displays have separate Spaces خاموش باشد."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо екранів кілька, вважає їх одним екраном. Потрібно вимкнути Системні параметри > Робочий стіл і Dock > «Дисплеї мають окремі простори»."
           }
         },
         "zh-Hans" : {
@@ -36697,6 +37807,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Шаг ширины (px)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крок ширини (пкс)"
           }
         },
         "vi" : {
