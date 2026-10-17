@@ -1,7 +1,7 @@
 import Foundation
 
 /// Align the size actually accepted by the app at the requested destination.
-struct ImmediateWindowPlacement {
+struct ImmediateWindowPlacement: Equatable {
     let screenFrame: CGRect
     let sharedEdges: Edge?
     let constrainToScreen: Bool
