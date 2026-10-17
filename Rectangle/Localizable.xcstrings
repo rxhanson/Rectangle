@@ -30265,6 +30265,16 @@
         }
       }
     },
+    "Switch to the opposite side on half actions" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半屏操作切换到对侧"
+          }
+        }
+      }
+    },
     "Third Fourth" : {
       "localizations" : {
         "ar" : {

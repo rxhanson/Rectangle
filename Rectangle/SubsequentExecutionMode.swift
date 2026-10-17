@@ -9,6 +9,7 @@ enum SubsequentExecutionMode: Int {
     case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
     case cycleMonitor = 4
     case resizeAndCycleQuadrants = 5
+    case switchSides = 6 // repeated half actions move to the opposite side
     
     var title: String {
         switch self {
@@ -18,6 +19,7 @@ enum SubsequentExecutionMode: Int {
         case .acrossAndResize: return String(localized: "move to adjacent on left/right, or cycle size on side")
         case .cycleMonitor: return String(localized: "cycle through displays")
         case .resizeAndCycleQuadrants: return String(localized: "cycle positions on quadrants, cycle sizes on side")
+        case .switchSides: return String(localized: "Switch to the opposite side on half actions")
         }
     }
     
@@ -28,7 +30,7 @@ enum SubsequentExecutionMode: Int {
         }
     }
     
-    static var ordered: [SubsequentExecutionMode] = [.none, .cycleMonitor, .resize, .acrossMonitor, .acrossAndResize, .resizeAndCycleQuadrants]
+    static var ordered: [SubsequentExecutionMode] = [.none, .cycleMonitor, .resize, .acrossMonitor, .acrossAndResize, .resizeAndCycleQuadrants, .switchSides]
 }
 
 class SubsequentExecutionDefault: Default {

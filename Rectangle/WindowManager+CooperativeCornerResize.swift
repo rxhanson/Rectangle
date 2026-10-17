@@ -107,6 +107,16 @@ extension WindowManager {
         let tolerance = CooperativeCornerResize.detectionTolerance(screenFrame: screenFrame, configuredGap: gapSize)
         let captureTolerance = CooperativeCornerResize.captureTolerance(screenFrame: screenFrame, axis: cooperativeAxis)
         let isRepeatedCooperativeAction = action.isCompatibleRepeatedResizeAction(with: lastRectangleAction?.action)
+        if isRepeatedCooperativeAction, !action.isCooperativeCornerAction,
+           Defaults.subsequentExecutionMode.value == .switchSides,
+           CooperativeCornerResize.isSideSwitch(oldFocusedFrame: oldFocusedFrame, newFocusedFrame: newFocusedFrame,
+                                                axis: cooperativeAxis, tolerance: tolerance) {
+            // A repeated half action that switched sides is a move, not a resize of the shared edge:
+            // planned as one, the action's moved edge would be pushed across the screen, squeezing the
+            // neighbor and recording a wrong split ratio. Corners cycle quadrant positions through their
+            // own cooperative path and keep it.
+            return nil
+        }
         let actionDescription = isRepeatedCooperativeAction ? "repeated cooperative resize" : "initial corner/side cooperative placement"
         let screenFrameAX = screenFrame.screenFlipped
         let elementsById = AccessibilityElement.getAllWindowElements().reduce(into: [CGWindowID: AccessibilityElement]()) { elements, element in

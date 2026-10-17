@@ -314,6 +314,22 @@ struct CooperativeCornerResize {
         }
     }
 
+    /// Both edges along the axis moved: the window jumped to the other side (the `switchSides`
+    /// repeated-command mode) rather than resizing against a shared edge, so no neighbor gives way.
+    static func isSideSwitch(oldFocusedFrame: CGRect,
+                             newFocusedFrame: CGRect,
+                             axis: CornerCycleExpansionAxis,
+                             tolerance: CGFloat) -> Bool {
+        switch axis {
+        case .horizontal:
+            return abs(oldFocusedFrame.minX - newFocusedFrame.minX) > tolerance
+                && abs(oldFocusedFrame.maxX - newFocusedFrame.maxX) > tolerance
+        case .vertical:
+            return abs(oldFocusedFrame.minY - newFocusedFrame.minY) > tolerance
+                && abs(oldFocusedFrame.maxY - newFocusedFrame.maxY) > tolerance
+        }
+    }
+
     static func movedEdge(from oldFocusedFrame: CGRect,
                           to newFocusedFrame: CGRect,
                           axis: CornerCycleExpansionAxis,

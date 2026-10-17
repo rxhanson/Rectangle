@@ -37,11 +37,18 @@ class WindowCalculation: Calculation {
     }
     
     func isRepeatedCommand(_ params: WindowCalculationParameters) -> Bool {
-        if let lastAction = params.lastAction, lastAction.action == params.action {
-            let normalizedLastRect = lastAction.rect.screenFlipped
-            return normalizedLastRect == params.window.rect
-        }
-        return false
+        isRepeatedCommand(lastAction: params.lastAction, action: params.action, windowRect: params.window.rect)
+    }
+
+    func isRepeatedCommand(_ params: RectCalculationParameters) -> Bool {
+        isRepeatedCommand(lastAction: params.lastAction, action: params.action, windowRect: params.window.rect)
+    }
+
+    /// The same action was just executed on this window and the window has not moved since.
+    private func isRepeatedCommand(lastAction: RectangleAction?, action: WindowAction, windowRect: CGRect) -> Bool {
+        guard let lastAction, lastAction.action == action else { return false }
+        let normalizedLastRect = lastAction.rect.screenFlipped
+        return normalizedLastRect == windowRect
     }
     
 }
