@@ -19737,23 +19737,6 @@
         }
       }
     },
-    "Mission Control dragging" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mission Control dragging"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "کشیدن با Mission Control"
-          }
-        }
-      }
-    },
     "Mouse button shortcuts act on the window under the pointer" : {
       "localizations" : {
         "zh-Hans" : {
