@@ -235,6 +235,12 @@
             "state" : "translated",
             "value" : "%lld px"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
         }
       }
     },
@@ -2128,6 +2134,12 @@
             "state" : "translated",
             "value" : "تنظیمات بین نمایشگرها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨显示器设置"
+          }
         }
       }
     },
@@ -2145,6 +2157,12 @@
             "state" : "translated",
             "value" : "پس از اینکه Rectangle پنجره‌ای را بیشینه یا تقریباً بیشینه کرد، اجرای دوبارهٔ همان عمل پنجره را به اندازه و موقعیت قبلی‌اش بازمی‌گرداند."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 将窗口最大化或接近最大化后，再次执行同一操作会将窗口恢复到之前的大小和位置。"
+          }
         }
       }
     },
@@ -2157,6 +2175,12 @@
             "state" : "translated",
             "value" : "اجازه دادن"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许"
+          }
         }
       }
     },
@@ -2166,6 +2190,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "اجازهٔ اجرای فرمان URL به Rectangle داده شود؟"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许 Rectangle 执行 URL 操作？"
           }
         }
       }
@@ -2381,6 +2411,12 @@
             "state" : "translated",
             "value" : "یک منبع خارجی از Rectangle درخواست کرده است تا «%1$@» را روی شناسهٔ بستهٔ برنامهٔ «%2$@» اجرا کند. اجازه می‌دهید؟"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部来源请求 Rectangle 对包标识符为“%2$@”的 App 执行“%1$@”操作。是否允许？"
+          }
         }
       }
     },
@@ -2581,6 +2617,12 @@
             "state" : "translated",
             "value" : "متحرک‌سازی پنجره‌ها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口动画"
+          }
         }
       }
     },
@@ -2625,6 +2667,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تنظیمات برنامه"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用设置"
           }
         }
       }
@@ -3029,6 +3077,12 @@
             "state" : "translated",
             "value" : "رفتار"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行为"
+          }
         }
       }
     },
@@ -3338,6 +3392,12 @@
             "state" : "translated",
             "value" : "یک‌هشتم پایین مرکز چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／８"
+          }
         }
       }
     },
@@ -3367,6 +3427,12 @@
             "state" : "translated",
             "value" : "Dưới cùng Trung tâm Bên trái Thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／８"
+          }
         }
       }
     },
@@ -3382,6 +3448,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین مرکز چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／１６"
           }
         }
       }
@@ -3399,6 +3471,12 @@
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین مرکز چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／１２"
+          }
         }
       }
     },
@@ -3415,6 +3493,12 @@
             "state" : "translated",
             "value" : "یک‌نهم پایین مرکز"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下１／９"
+          }
         }
       }
     },
@@ -3430,6 +3514,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم پایین مرکز راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／８"
           }
         }
       }
@@ -3460,6 +3550,12 @@
             "state" : "translated",
             "value" : "Dưới cùng Trung tâm Bên phải Thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／８"
+          }
         }
       }
     },
@@ -3476,6 +3572,12 @@
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین مرکز راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／１６"
+          }
         }
       }
     },
@@ -3491,6 +3593,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین مرکز راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／１２"
           }
         }
       }
@@ -3716,6 +3824,12 @@
             "state" : "translated",
             "value" : "Phần tám dưới cùng từ các góc; phần ba"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自角落则底部⅛；⅓"
+          }
         }
       }
     },
@@ -3922,6 +4036,12 @@
             "state" : "translated",
             "value" : "یک‌هشتم پایین چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／８"
+          }
         }
       }
     },
@@ -3951,6 +4071,12 @@
             "state" : "translated",
             "value" : "Dưới cùng bên trái thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／８"
+          }
         }
       }
     },
@@ -3967,6 +4093,12 @@
             "state" : "translated",
             "value" : "یک‌نهم پایین چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左下１／９"
+          }
         }
       }
     },
@@ -3982,6 +4114,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／１６"
           }
         }
       }
@@ -4189,6 +4327,12 @@
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／１２"
+          }
         }
       }
     },
@@ -4395,6 +4539,12 @@
             "state" : "translated",
             "value" : "یک‌هشتم پایین راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／８"
+          }
         }
       }
     },
@@ -4424,6 +4574,12 @@
             "state" : "translated",
             "value" : "Dưới cùng bên phải thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／８"
+          }
         }
       }
     },
@@ -4440,6 +4596,12 @@
             "state" : "translated",
             "value" : "یک‌نهم پایین راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右下１／９"
+          }
         }
       }
     },
@@ -4455,6 +4617,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／１６"
           }
         }
       }
@@ -4661,6 +4829,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／１２"
           }
         }
       }
@@ -4880,6 +5054,12 @@
             "state" : "translated",
             "value" : "Thứ ba dưới cùng"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "底部１／３"
+          }
         }
       }
     },
@@ -4908,6 +5088,12 @@
             "state" : "translated",
             "value" : "Hai phần ba dưới cùng"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "底部２／３"
+          }
         }
       }
     },
@@ -4917,6 +5103,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "پنجره‌هایی را که در همان ناحیهٔ پنجرهٔ فعال چسبانده شده‌اند، یکی‌یکی به جلو می‌آورد"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逐个前置与当前窗口吸附在同一区域的其他窗口"
           }
         }
       }
@@ -4934,11 +5126,25 @@
             "state" : "translated",
             "value" : "برنامهٔ Todo انتخابی خود را به جلو بیاورید"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前置您选择的待办应用"
+          }
         }
       }
     },
     "Button %lld" : {
-      "comment" : "A numbered mouse button in a shortcut. The side buttons on most mice are 4 and 5."
+      "comment" : "A numbered mouse button in a shortcut. The side buttons on most mice are 4 and 5.",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按钮 %lld"
+          }
+        }
+      }
     },
     "Cancel" : {
       "localizations" : {
@@ -5879,6 +6085,12 @@
             "state" : "translated",
             "value" : "قرار دادن پنجره‌ها در مرکز هنگام انتقال بین نمایشگرها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨显示器移动时将窗口居中"
+          }
         }
       }
     },
@@ -6655,6 +6867,12 @@
             "state" : "translated",
             "value" : "تنظیم مرز بین عملیات کناره و گوشه"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置半屏操作与角落操作的分界"
+          }
         }
       }
     },
@@ -7106,6 +7324,12 @@
             "state" : "translated",
             "value" : "حق نشر © 2019-2026 Ryan Hanson. تمامی حقوق محفوظ است."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson。保留所有权利。"
+          }
         }
       }
     },
@@ -7474,6 +7698,12 @@
             "state" : "translated",
             "value" : "در حال استفاده: "
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前使用中："
+          }
         }
       }
     },
@@ -7694,6 +7924,12 @@
             "state" : "needs_review",
             "value" : "vị trí chu kỳ trên góc phần tư, kích thước chu kỳ trên một nửa"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角落操作循环位置，半屏操作循环大小"
+          }
         }
       }
     },
@@ -7840,7 +8076,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "半屏操作循环½、⅔、⅓"
           }
         },
@@ -7865,6 +8101,12 @@
             "state" : "translated",
             "value" : "چرخش بین پنجره‌های روی‌هم"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循环切换堆叠窗口"
+          }
         }
       }
     },
@@ -7874,6 +8116,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چرخش بین پنجره‌های روی‌هم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循环切换堆叠窗口"
           }
         }
       }
@@ -7885,6 +8133,12 @@
             "state" : "translated",
             "value" : "چرخش معکوس بین پنجره‌های روی‌هم"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反向循环切换堆叠窗口"
+          }
         }
       }
     },
@@ -7894,6 +8148,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چرخش معکوس بین پنجره‌های روی‌هم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反向循环切换堆叠窗口"
           }
         }
       }
@@ -8071,7 +8331,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "循环显示器"
           }
         },
@@ -8095,6 +8355,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "جهت گسترش میانبرهای چرخشی گوشه"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循环角落快捷键的扩展方向"
           }
         }
       }
@@ -9239,7 +9505,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "不执行任何操作"
           }
         },
@@ -9722,6 +9988,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ tám"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "八等分"
           }
         }
       }
@@ -10428,8 +10700,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "导出"
+            "state" : "translated",
+            "value" : "导出配置"
           }
         },
         "zh-Hant" : {
@@ -10478,6 +10750,12 @@
             "state" : "translated",
             "value" : "Phím tắt bổ sung"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外快捷键"
+          }
         }
       }
     },
@@ -10513,6 +10791,12 @@
             "state" : "translated",
             "value" : "⋯"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多选项"
+          }
         }
       }
     },
@@ -10528,6 +10812,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی پنجم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第５列）"
           }
         },
         "zh-Hant" : {
@@ -12459,6 +12749,12 @@
             "value" : "یک‌هشتم عمودی اول"
           }
         },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第１列）"
+          }
+        },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12508,6 +12804,12 @@
             "state" : "translated",
             "value" : "برای فهرست پنجره‌ها و میانبرهای چرخشی. وقتی خاموش است، پنجره‌هایی که در یک موقعیت بالا چپ روی‌هم قرار گرفته‌اند، صرف‌نظر از اندازه‌شان حساب می‌شوند"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "适用于窗口列表和循环切换快捷键。关闭时，左上角位置相同的窗口无论大小都视为堆叠"
+          }
         }
       }
     },
@@ -12523,6 +12825,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی چهارم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第４列）"
           }
         },
         "zh-Hant" : {
@@ -13729,6 +14037,12 @@
             "state" : "translated",
             "value" : "دکمهٔ سبز چراغ راهنما به‌جای تمام‌صفحه، پنجره را بیشینه می‌کند"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "绿色按钮执行最大化而非进入全屏幕"
+          }
         }
       }
     },
@@ -13758,6 +14072,12 @@
             "state" : "translated",
             "value" : "Vị trí lưới"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网格位置"
+          }
         }
       }
     },
@@ -13774,6 +14094,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "عملیات نیمه، اندازهٔ پنجره را در محور دیگر حفظ می‌کنند"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半屏操作保留窗口在另一轴向上的尺寸"
           }
         }
       }
@@ -13831,8 +14157,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "触感反馈"
+            "state" : "translated",
+            "value" : "提供触感反馈"
           }
         }
       }
@@ -14613,6 +14939,12 @@
             "state" : "translated",
             "value" : "برای رفتار پیش‌فرض macOS، هر کلید تبدیل را نگه دارید یا از منوی پنجره استفاده کنید"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住任意修饰键或使用“窗口”菜单可执行 macOS 默认行为"
+          }
         }
       }
     },
@@ -14641,6 +14973,12 @@
             "state" : "translated",
             "value" : "Ngang (trái/phải, %)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平（左／右，%）"
+          }
         }
       }
     },
@@ -14657,6 +14995,12 @@
             "state" : "translated",
             "value" : "به‌صورت افقی"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平方向"
+          }
         }
       }
     },
@@ -14666,6 +15010,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌صورت افقی"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平"
           }
         }
       }
@@ -14682,6 +15032,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "برای نمایش فهرست، نشانگر را نزدیک گوشهٔ بالا چپ پنجره نگه دارید"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将光标悬停在窗口左上角附近以显示列表"
           }
         }
       }
@@ -15722,8 +16078,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "导入"
+            "state" : "translated",
+            "value" : "导入配置"
           }
         },
         "zh-Hant" : {
@@ -15753,6 +16109,12 @@
             "state" : "translated",
             "value" : "در منوی Rectangle، حالت Todo را فعال کنید."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 菜单中，启用待办模式。"
+          }
         }
       }
     },
@@ -15768,6 +16130,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "در منوی Rectangle، گزینهٔ\n«استفاده از [برنامه] به‌عنوان برنامهٔ Todo» را انتخاب کنید"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 菜单中，选择\n“使用［应用程序］作为待办应用”"
           }
         }
       }
@@ -16135,8 +16503,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "使所选应用程序在主屏幕右侧始终保持可见"
+            "state" : "translated",
+            "value" : "使所选应用程序在主屏幕一侧始终保持可见"
           }
         },
         "zh-Hant" : {
@@ -16154,7 +16522,14 @@
       }
     },
     "Keyboard shortcuts always act on the focused window" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "键盘快捷键始终作用于当前窗口"
+          }
+        }
+      }
     },
     "Landscape Snap Areas" : {
       "localizations" : {
@@ -16162,6 +16537,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "نواحی چسباندن در حالت افقی"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "横屏吸附区域"
           }
         }
       }
@@ -16196,6 +16577,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiều rộng lớn hơn"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "增加宽度"
           }
         }
       }
@@ -16980,6 +17367,12 @@
             "value" : "یک‌هشتم عمودی آخر"
           }
         },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第８列）"
+          }
+        },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17382,6 +17775,12 @@
             "state" : "translated",
             "value" : "نیمهٔ چپ و سپس نیمهٔ بالا، پنجره را به یک‌چهارم بالا چپ منتقل می‌کند؛ عمل مربوط به لبهٔ مقابل، آن را دوباره گسترش می‌دهد."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先执行左半屏再执行上半屏会将窗口移至左上角１／４；执行相对边缘的操作则会将其展开还原。"
+          }
         }
       }
     },
@@ -17748,7 +18147,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "左半屏，靠近角落则上／下半屏"
           }
         },
@@ -17813,6 +18212,12 @@
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین مرکز چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排中左１／１６"
+          }
         }
       }
     },
@@ -17828,6 +18233,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین مرکز راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排中右１／１６"
           }
         }
       }
@@ -17845,6 +18256,12 @@
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排左１／１６"
+          }
         }
       }
     },
@@ -17860,6 +18277,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排右１／１６"
           }
         }
       }
@@ -18228,7 +18651,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "放大"
           }
         },
@@ -18419,7 +18842,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "缩小"
           }
         },
@@ -18842,6 +19265,12 @@
             "state" : "translated",
             "value" : "تنظیمات بیشینه‌سازی"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大化设置"
+          }
         }
       }
     },
@@ -18857,6 +19286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حداکثر تعداد پنجره‌ها در هر ستون"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每列最多窗口数"
           }
         }
       }
@@ -18874,11 +19309,25 @@
             "state" : "translated",
             "value" : "حداکثر تعداد پنجره‌ها در هر سطر"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每行最多窗口数"
+          }
         }
       }
     },
     "Middle Button" : {
-      "comment" : "The middle mouse button in a shortcut"
+      "comment" : "The middle mouse button in a shortcut",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中键"
+          }
+        }
+      }
     },
     "Middle Center Left Twelfth" : {
       "localizations" : {
@@ -18892,6 +19341,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی مرکز چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排中左１／１２"
           }
         }
       }
@@ -18909,6 +19364,12 @@
             "state" : "translated",
             "value" : "یک‌نهم میانی مرکز"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正中１／９"
+          }
         }
       }
     },
@@ -18924,6 +19385,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی مرکز راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排中右１／１２"
           }
         }
       }
@@ -18941,6 +19408,12 @@
             "state" : "translated",
             "value" : "یک‌نهم میانی چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左中１／９"
+          }
         }
       }
     },
@@ -18956,6 +19429,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排左１／１２"
           }
         }
       }
@@ -18973,6 +19452,12 @@
             "state" : "translated",
             "value" : "یک‌نهم میانی راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右中１／９"
+          }
         }
       }
     },
@@ -18988,6 +19473,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排右１／１２"
           }
         }
       }
@@ -19016,6 +19507,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ ba ở giữa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中部１／３"
           }
         }
       }
@@ -19231,6 +19728,12 @@
             "state" : "translated",
             "value" : "حداقل اندازهٔ پنجره حاصل شد"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已达到窗口最小尺寸"
+          }
         }
       }
     },
@@ -19252,7 +19755,14 @@
       }
     },
     "Mouse button shortcuts act on the window under the pointer" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鼠标按钮快捷键作用于指针下方的窗口"
+          }
+        }
+      }
     },
     "Move cursor along with window across displays" : {
       "localizations" : {
@@ -20187,7 +20697,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "移动到左侧或右侧的相邻显示器"
           }
         },
@@ -20378,7 +20888,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "左／右移动到相邻，或半屏循环大小"
           }
         },
@@ -21374,6 +21884,12 @@
             "state" : "translated",
             "value" : "Thứ chín"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分"
+          }
         }
       }
     },
@@ -21402,6 +21918,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ chín (3×3)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分（3×3）"
           }
         }
       }
@@ -21616,6 +22138,12 @@
             "state" : "translated",
             "value" : "تغییر موقعیت پنجره در صورت هم‌پوشانی"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口重叠时错开位置"
+          }
         }
       }
     },
@@ -21625,6 +22153,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "فقط پنجره‌های هم‌اندازه روی‌هم در نظر گرفته شوند"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅堆叠大小相同的窗口"
           }
         }
       }
@@ -22976,6 +23510,12 @@
             "state" : "translated",
             "value" : "نواحی چسباندن در حالت عمودی"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖屏吸附区域"
+          }
         }
       }
     },
@@ -23183,6 +23723,12 @@
             "state" : "translated",
             "value" : "حفظ حالت بیشینه هنگام انتقال بین نمایشگرها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨显示器移动时保持最大化状态"
+          }
         }
       }
     },
@@ -23198,6 +23744,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حفظ اندازهٔ محور کناری برای عملیات نیمه، مشابه Windows"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半屏操作保留侧轴尺寸（类似 Windows）"
           }
         }
       }
@@ -23228,6 +23780,12 @@
             "state" : "translated",
             "value" : "Nhấn phím tắt nhiều lần để duyệt qua tất cả các vị trí trong lưới."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重复按下快捷键可循环切换网格中的所有位置。"
+          }
         }
       }
     },
@@ -23239,6 +23797,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "جلوگیری از فعال شدن Mission Control هنگام کشیدن"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖移时防止触发调度中心"
           }
         }
       }
@@ -23458,6 +24022,12 @@
             "state" : "translated",
             "value" : "px"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
         }
       }
     },
@@ -23664,6 +24234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ناحیهٔ برنامه‌های اخیر"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近使用的应用程序区域"
           }
         }
       }
@@ -25016,6 +25592,12 @@
             "state" : "translated",
             "value" : "حذف فاصله در لبهٔ بالایی نمایشگر"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除屏幕顶部边缘的空隙"
+          }
         }
       }
     },
@@ -25221,6 +25803,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حذف فاصلهٔ بالایی هنگام چسباندن به لبهٔ بالا"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "吸附到顶部边缘时移除顶部空隙"
           }
         }
       }
@@ -25428,6 +26016,12 @@
             "state" : "translated",
             "value" : "بیشینه‌سازی مکرر، اندازه و موقعیت قبلی را بازمی‌گرداند"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重复最大化时恢复之前的大小和位置"
+          }
         }
       }
     },
@@ -25443,6 +26037,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره‌های مجاور هنگام چرخش میانبرهای کناره یا گوشه"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循环半屏或角落快捷键时同时调整相邻窗口大小"
           }
         }
       }
@@ -26380,7 +26980,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "右半屏，靠近角落则上／下半屏"
           }
         },
@@ -26797,6 +27397,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی دوم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第２列）"
           }
         },
         "zh-Hant" : {
@@ -27394,6 +28000,12 @@
             "value" : "یک‌هشتم عمودی هفتم"
           }
         },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第７列）"
+          }
+        },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27600,6 +28212,12 @@
             "state" : "translated",
             "value" : "نمایش میانبرهای *اضافی* در منو"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在菜单中显示*额外*快捷键"
+          }
         }
       }
     },
@@ -27628,6 +28246,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hiển thị kích thước bổ sung trong menu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在菜单中显示更多尺寸"
           }
         }
       }
@@ -27836,6 +28460,12 @@
             "state" : "translated",
             "value" : "نمایش فهرست پنجره‌های روی‌هم با نگه‌داشتن نشانگر"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "悬停时显示堆叠窗口列表"
+          }
         }
       }
     },
@@ -28036,6 +28666,12 @@
             "state" : "translated",
             "value" : "نمایش هشدار وقتی پنجره‌ها به اندازهٔ کافی کوچک نمی‌شوند"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "窗口无法缩小到所需尺寸时显示警告"
+          }
         }
       }
     },
@@ -28063,6 +28699,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tỷ lệ chia một nửa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "侧边分割比例"
           }
         }
       }
@@ -28278,6 +28920,12 @@
             "state" : "translated",
             "value" : "Thứ mười sáu"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分"
+          }
         }
       }
     },
@@ -28307,6 +28955,12 @@
             "state" : "translated",
             "value" : "Thứ mười sáu (4×4)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分（4×4）"
+          }
         }
       }
     },
@@ -28322,6 +28976,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی ششم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第６列）"
           }
         },
         "zh-Hant" : {
@@ -28733,6 +29393,12 @@
             "state" : "translated",
             "value" : "Chiều rộng nhỏ hơn"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "减少宽度"
+          }
         }
       }
     },
@@ -28857,6 +29523,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "貼齊區域"
+          }
+        }
+      }
+    },
+    "Snap before reaching screen edges" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到达屏幕边缘前即吸附"
           }
         }
       }
@@ -29176,7 +29852,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "放大镜"
+            "value" : "Spectacle"
           }
         }
       }
@@ -29384,6 +30060,12 @@
             "state" : "translated",
             "value" : "پنجره‌های روی‌هم"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "堆叠窗口"
+          }
         }
       }
     },
@@ -29399,6 +30081,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stage Manager"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "台前调度"
           }
         }
       }
@@ -29802,6 +30490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی سوم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向１／８（第３列）"
           }
         },
         "zh-Hant" : {
@@ -30360,7 +31054,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "⅓，靠近角落则上／下半屏"
           }
         },
@@ -30390,6 +31084,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "این گزینه فضای کمی برای نمایش پنجرهٔ زیرین باقی می‌گذارد و با فاصلهٔ بین پنجره‌ها بهترین نتیجه را دارد"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会留出少许空间以露出下方的窗口，配合窗口间空隙使用效果最佳"
           }
         }
       }
@@ -30511,6 +31211,12 @@
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار پنجره‌ها در سطرها/ستون‌ها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按行／列平铺窗口"
+          }
         }
       }
     },
@@ -30527,6 +31233,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "平铺"
           }
         }
       }
@@ -30610,6 +31322,12 @@
             "state" : "translated",
             "value" : "Việc xếp gạch trong hình chữ nhật đã bị vô hiệu hóa"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 中的窗口平铺功能已被禁用"
+          }
         }
       }
     },
@@ -30638,6 +31356,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Để điều chỉnh ô xếp macOS, hãy vào Cài đặt hệ thống → Màn hình nền & Dock → Windows"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要调整 macOS 窗口平铺，请前往 系统设置 → 桌面与程序坞 → 窗口"
           }
         }
       }
@@ -31082,6 +31806,12 @@
             "state" : "translated",
             "value" : "حالت Todo"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待办模式"
+          }
         }
       }
     },
@@ -31287,6 +32017,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر وضعیت نشان پنجره‌های روی‌هم"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换堆叠窗口标记"
           }
         }
       }
@@ -31494,6 +32230,12 @@
             "state" : "translated",
             "value" : "تغییر وضعیت فهرست پنجره‌ها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换窗口列表"
+          }
         }
       }
     },
@@ -31700,6 +32442,12 @@
             "state" : "translated",
             "value" : "یک‌هشتم بالا مرکز چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／８"
+          }
         }
       }
     },
@@ -31729,6 +32477,12 @@
             "state" : "translated",
             "value" : "Trên cùng Bên trái Thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／８"
+          }
         }
       }
     },
@@ -31744,6 +32498,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا مرکز چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／１６"
           }
         }
       }
@@ -31761,6 +32521,12 @@
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا مرکز چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／１２"
+          }
         }
       }
     },
@@ -31777,6 +32543,12 @@
             "state" : "translated",
             "value" : "یک‌نهم بالا مرکز"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上１／９"
+          }
         }
       }
     },
@@ -31792,6 +32564,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم بالا مرکز راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／８"
           }
         }
       }
@@ -31822,6 +32600,12 @@
             "state" : "translated",
             "value" : "Trên cùng Bên phải Thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／８"
+          }
         }
       }
     },
@@ -31838,6 +32622,12 @@
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا مرکز راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／１６"
+          }
         }
       }
     },
@@ -31853,6 +32643,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا مرکز راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／１２"
           }
         }
       }
@@ -32078,6 +32874,12 @@
             "state" : "translated",
             "value" : "Thứ tám hàng đầu từ các quả phạt góc; tối đa"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自角落则顶部⅛；最大化"
+          }
         }
       }
     },
@@ -32284,6 +33086,12 @@
             "state" : "translated",
             "value" : "یک‌هشتم بالا چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／８"
+          }
         }
       }
     },
@@ -32313,6 +33121,12 @@
             "state" : "translated",
             "value" : "Trên cùng bên trái thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／８"
+          }
         }
       }
     },
@@ -32329,6 +33143,12 @@
             "state" : "translated",
             "value" : "یک‌نهم بالا چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上１／９"
+          }
         }
       }
     },
@@ -32344,6 +33164,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／１６"
           }
         }
       }
@@ -32551,6 +33377,12 @@
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／１２"
+          }
         }
       }
     },
@@ -32757,6 +33589,12 @@
             "state" : "translated",
             "value" : "یک‌هشتم بالا راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／８"
+          }
         }
       }
     },
@@ -32786,6 +33624,12 @@
             "state" : "translated",
             "value" : "Trên cùng bên phải thứ tám"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／８"
+          }
         }
       }
     },
@@ -32802,6 +33646,12 @@
             "state" : "translated",
             "value" : "یک‌نهم بالا راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上１／９"
+          }
         }
       }
     },
@@ -32817,6 +33667,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／１６"
           }
         }
       }
@@ -33024,6 +33880,12 @@
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／１２"
+          }
         }
       }
     },
@@ -33052,6 +33914,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tính năng ghép cạnh màn hình trên cùng trong macOS hiện đã bị vô hiệu hóa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 中的顶部屏幕边缘平铺现已禁用"
           }
         }
       }
@@ -33271,6 +34139,12 @@
             "state" : "translated",
             "value" : "Trên cùng thứ ba"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顶部１／３"
+          }
         }
       }
     },
@@ -33298,6 +34172,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hai phần ba hàng đầu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顶部２／３"
           }
         }
       }
@@ -33334,6 +34214,12 @@
             "state" : "translated",
             "value" : "Nửa trên/dưới"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上／下半屏"
+          }
         }
       }
     },
@@ -33350,6 +34236,12 @@
             "state" : "translated",
             "value" : "بالا/پایین‌ها"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上／下半屏"
+          }
         }
       }
     },
@@ -33365,6 +34257,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "در نظر گرفتن چند نمایشگر به‌عنوان یکی"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将多个显示器视为一个"
           }
         }
       }
@@ -33388,6 +34286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "여러 모니터를 하나로 인식"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将多个显示器视为一个"
           }
         }
       }
@@ -33418,6 +34322,12 @@
             "state" : "translated",
             "value" : "Thứ mười hai"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分"
+          }
         }
       }
     },
@@ -33447,6 +34357,12 @@
             "state" : "translated",
             "value" : "Thứ mười hai (4×3)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分（4×3）"
+          }
         }
       }
     },
@@ -33463,6 +34379,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره به کوچک‌تر امکان‌پذیر نیست.\nممکن است پنجره‌ها هم‌پوشانی پیدا کنند."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将窗口缩得更小。\n窗口可能会重叠。"
           }
         }
       }
@@ -33683,6 +34605,12 @@
             "state" : "translated",
             "value" : "Cập nhật có sẵn…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有可用更新…"
+          }
         }
       }
     },
@@ -33698,6 +34626,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا مرکز چپ"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排中左１／１６"
           }
         }
       }
@@ -33715,6 +34649,12 @@
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا مرکز راست"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排中右１／１６"
+          }
         }
       }
     },
@@ -33731,6 +34671,12 @@
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا چپ"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排左１／１６"
+          }
         }
       }
     },
@@ -33746,6 +34692,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا راست"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排右１／１６"
           }
         }
       }
@@ -33966,6 +34918,12 @@
             "state" : "translated",
             "value" : "Sử dụng vị trí con trỏ để nhận diện màn hình"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用光标位置检测屏幕"
+          }
         }
       }
     },
@@ -33981,6 +34939,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "استفاده از مکان‌نما برای تشخیص نمایشگر"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按光标位置检测屏幕"
           }
         }
       }
@@ -34498,6 +35462,12 @@
             "state" : "translated",
             "value" : "Dọc (T/B, %)"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直（上／下，%）"
+          }
         }
       }
     },
@@ -34514,6 +35484,12 @@
             "state" : "translated",
             "value" : "عمودی"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直方向"
+          }
         }
       }
     },
@@ -34523,6 +35499,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌صورت عمودی"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直"
           }
         }
       }
@@ -35297,6 +36279,12 @@
             "state" : "translated",
             "value" : "وقتی خاموش است، فاصلهٔ پنجره تا لبه‌های صفحه در صورت امکان حفظ می‌شود."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭时，将在适用情况下保留窗口与屏幕边缘的相对位置。"
+          }
         }
       }
     },
@@ -35502,6 +36490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "هنگام استفاده از چند نمایشگر، آن‌ها را به‌عنوان یک نمایشگر در نظر می‌گیرد. لازم است در System Settings > Desktop & Dock گزینهٔ Displays have separate Spaces خاموش باشد."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用多个显示器时，将它们视为一个显示器。需要关闭 系统设置 > 桌面与程序坞 > “显示器具有单独的空间”。"
           }
         }
       }
@@ -35726,6 +36720,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bước chiều rộng (px)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽度步长（px）"
           }
         }
       }
