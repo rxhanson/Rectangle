@@ -143,14 +143,9 @@ final class StackBadgeListPanel: NSPanel {
         isReleasedWhenClosed = false
         collectionBehavior = [.transient, .ignoresCycle]
 
-        let container = NSVisualEffectView(frame: NSRect(origin: .zero, size: frame.size))
-        container.material = .hudWindow
-        container.blendingMode = .behindWindow
-        container.state = .active
-        container.wantsLayer = true
-        container.layer?.cornerRadius = 8
-        container.layer?.cornerCurve = .continuous
-        container.layer?.masksToBounds = true
+        let surface = BlurSurfaceView(frame: NSRect(origin: .zero, size: frame.size),
+                                      material: .hudWindow, cornerRadius: 8)
+        let container = surface.content
 
         for (index, window) in windows.enumerated() {
             let row = StackBadgeRowView(
@@ -172,7 +167,7 @@ final class StackBadgeListPanel: NSPanel {
             rows.append(row)
         }
 
-        contentView = container
+        contentView = surface
         applySelection()
     }
 
