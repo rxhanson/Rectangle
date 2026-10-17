@@ -1,0 +1,251 @@
+import Cocoa
+
+/// AX attributes can be accepted asynchronously. Acknowledge each attribute
+/// before sending the next one so a delayed position write cannot discard an
+/// earlier resize. Rollback uses the same acknowledgment path.
+final class WindowDividerPlacement {
+    enum State: Equatable { case waiting, completed, rolledBack, failed }
+    enum Attribute { case size, position }
+    private struct Pending {
+        let index: Int
+        let attribute: Attribute
+        let before: CGRect
+        let expected: CGRect
+        let startedAt: TimeInterval
+        var observed: CGRect
+        var stableSince: TimeInterval
+    }
+
+    private let geometry: WindowDividerGeometry
+    private let requested: CGFloat
+    private let originals: [CGRect]
+    private var targets: [CGRect]
+    private var minima: [CGFloat]
+    private let write: (Bool, CGRect, Attribute) -> Bool
+    private let readFrame: (Bool) -> CGRect
+    private let acknowledged: ((Bool, CGRect) -> Bool)?
+    private var readbacks: [Bool: CGRect] = [:]
+
+    private func read(_ isLeft: Bool) -> CGRect {
+        if let frame = readbacks[isLeft] { return frame }
+        let frame = readFrame(isLeft)
+        readbacks[isLeft] = frame
+        return frame
+    }
+    private var order: [Int]
+    private var cursor = 0
+    private var pending: Pending?
+    private var rollingBack = false
+    private var corrections = 0
+    private var hitMinimum = false
+    private var rollbackIncomplete = false
+    private var terminal: State?
+    private var unreadableSince: TimeInterval?
+    private(set) var verifiedPairSince: TimeInterval?
+
+    /// Warn only after a verified placement ends beyond the requested divider.
+    var minimumSizeReached: Bool {
+        guard terminal == .completed else { return false }
+        let actual = (geometry.axis.rect(left).maxX + geometry.axis.rect(right).minX) / 2
+        return hitMinimum && abs(actual - requested) > 1
+    }
+
+    var left: CGRect { targets[0] }
+    var right: CGRect { targets[1] }
+
+    init?(left: CGRect, right: CGRect, axis: WindowSplitAxis, divider: CGFloat,
+          minimumLeft: CGFloat, minimumRight: CGFloat,
+          write: @escaping (Bool, CGRect, Attribute) -> Bool,
+          read: @escaping (Bool) -> CGRect, acknowledged: ((Bool, CGRect) -> Bool)? = nil) {
+        guard let geometry = WindowDividerGeometry(left: left, right: right, axis: axis),
+              let target = geometry.frames(at: divider, minimumLeft: minimumLeft, minimumRight: minimumRight) else { return nil }
+        self.geometry = geometry; requested = divider
+        hitMinimum = abs((axis.rect(target.left).maxX + axis.rect(target.right).minX) / 2 - divider) > 1
+        originals = [left, right]; targets = [target.left, target.right]
+        // Eligibility allows small cross-axis differences. Resizing the split
+        // must not force an already rounded height/width to the union's extent.
+        for index in 0...1 {
+            var target = axis.rect(targets[index])
+            let original = axis.rect(originals[index])
+            target.origin.y = original.minY; target.size.height = original.height
+            targets[index] = axis.rect(target)
+        }
+        minima = [minimumLeft, minimumRight]; self.write = write; self.readFrame = read; self.acknowledged = acknowledged
+        order = axis.rect(target.left).width < axis.rect(left).width ? [0, 1] : [1, 0]
+    }
+
+    func advance(at time: TimeInterval) -> State {
+        if let terminal { return terminal }
+        readbacks.removeAll(keepingCapacity: true)
+        if var waiting = pending {
+            let actual = read(waiting.index == 0)
+            // Reuse only simultaneous observations of both final frames. A new
+            // write, changed target, or mismatch starts the stability period over.
+            if WindowGeometry.matches(actual, targets[waiting.index], tolerance: 1),
+               WindowGeometry.matches(read(waiting.index != 0), targets[1 - waiting.index], tolerance: 1) {
+                if verifiedPairSince == nil { verifiedPairSince = time }
+            } else { verifiedPairSince = nil }
+            if !WindowGeometry.matches(actual, waiting.observed, tolerance: 0.5) {
+                waiting.observed = actual; waiting.stableSince = time
+            }
+            let stable = time - waiting.stableSince >= 0.05
+            if WindowGeometry.matches(actual, waiting.expected, tolerance: 1),
+               stable || acknowledged?(waiting.index == 0, waiting.expected) == true {
+                pending = nil
+            } else if !rollingBack, waiting.attribute == .size, stable,
+                      acceptClamp(actual, pending: waiting) {
+                pending = nil
+            } else if time - waiting.startedAt >= 0.6 {
+                failCurrent()
+            } else {
+                pending = waiting
+                return .waiting
+            }
+        }
+        while cursor < order.count {
+            let index = order[cursor], current = read(order[cursor] == 0), target = targets[index]
+            guard !current.isNull, !current.isEmpty else {
+                if let since = unreadableSince, time - since >= 0.6 { failCurrent() }
+                else if unreadableSince == nil { unreadableSince = time }
+                return .waiting
+            }
+            unreadableSince = nil
+            if WindowGeometry.matches(current, target, tolerance: 1) { cursor += 1; continue }
+            let attribute: Attribute
+            if geometry.axis.rect(target).minX < geometry.axis.rect(current).minX - 1 {
+                attribute = .position
+            } else if abs(current.width - target.width) > 1 || abs(current.height - target.height) > 1 {
+                attribute = .size
+            } else { attribute = .position }
+            let expected = attribute == .size ? CGRect(origin: current.origin, size: target.size)
+                : CGRect(origin: target.origin, size: current.size)
+            // AX can report a timeout while the app still applies the request.
+            // The bounded readback below decides whether placement succeeded.
+            verifiedPairSince = nil
+            _ = write(index == 0, expected, attribute)
+            readbacks.removeAll(keepingCapacity: true)
+            pending = Pending(index: index, attribute: attribute, before: current,
+                              expected: expected, startedAt: time, observed: current, stableSince: time)
+            return .waiting
+        }
+        let actualLeft = read(true), actualRight = read(false)
+        guard !actualLeft.isNull, !actualLeft.isEmpty, !actualRight.isNull, !actualRight.isEmpty else {
+            if let since = unreadableSince, time - since >= 0.6 {
+                if rollingBack { terminal = .failed; return .failed }
+                failCurrent()
+            } else if unreadableSince == nil { unreadableSince = time }
+            return .waiting
+        }
+        unreadableSince = nil
+        guard WindowGeometry.matches(actualLeft, targets[0], tolerance: 1),
+              WindowGeometry.matches(actualRight, targets[1], tolerance: 1) else {
+            if rollingBack { terminal = .failed; return .failed }
+            failCurrent(); return .waiting
+        }
+        terminal = rollbackIncomplete ? .failed : rollingBack ? .rolledBack : .completed
+        return terminal!
+    }
+
+    private func acceptClamp(_ actual: CGRect, pending: Pending) -> Bool {
+        let axis = geometry.axis
+        let actual = axis.rect(actual), expected = axis.rect(pending.expected), before = axis.rect(pending.before)
+        // A plateau is evidence only after this axis responded. Quantized
+        // sizes may land on either side; keep a bounded number of corrections
+        // when two applications cannot share an exact split.
+        guard corrections < 4, !actual.isNull, actual.width > 0,
+              abs(actual.minX - expected.minX) <= 1,
+              abs(actual.minY - expected.minY) <= 1, abs(actual.height - expected.height) <= 2,
+              abs(actual.width - expected.width) > 1,
+              (before.width > expected.width + 1 && actual.width < before.width - 1)
+                || (before.width < expected.width - 1 && actual.width > before.width + 1) else { return false }
+        var updated = minima
+        if actual.width > expected.width + 1, actual.width < before.width - 1 {
+            updated[pending.index] = max(updated[pending.index], actual.width)
+            hitMinimum = true
+        }
+        let outer = axis.rect(geometry.outer)
+        let achieved = pending.index == 0 ? outer.minX + actual.width + geometry.gap / 2
+            : outer.maxX - actual.width - geometry.gap / 2
+        guard let corrected = geometry.frames(at: achieved, minimumLeft: updated[0], minimumRight: updated[1]) else { return false }
+        var correctedTargets = [corrected.left, corrected.right]
+        for index in 0...1 {
+            var target = axis.rect(correctedTargets[index])
+            let prior = axis.rect(targets[index])
+            target.origin.y = prior.minY; target.size.height = prior.height
+            correctedTargets[index] = axis.rect(target)
+        }
+        var accepted = axis.rect(correctedTargets[pending.index])
+        accepted.size.height = actual.height
+        correctedTargets[pending.index] = axis.rect(accepted)
+        // A permitted per-write rounding must also leave an eligible pair.
+        guard WindowDividerGeometry(left: correctedTargets[0], right: correctedTargets[1], axis: axis) != nil else { return false }
+        minima = updated
+        targets = correctedTargets
+        corrections += 1
+        cursor = 0
+        verifiedPairSince = nil
+        return true
+    }
+
+    private func failCurrent() {
+        verifiedPairSince = nil
+        pending = nil
+        unreadableSince = nil
+        if rollingBack {
+            rollbackIncomplete = true; cursor += 1
+        } else {
+            rollingBack = true; targets = originals; cursor = 0
+            // Release space before restoring the other member.
+            order = geometry.axis.rect(read(true)).width > geometry.axis.rect(originals[0]).width ? [0, 1] : [1, 0]
+        }
+    }
+}
+
+extension WindowDividerPlacement {
+    struct Result {
+        let left: CGRect
+        let right: CGRect
+        let minimumSizeReached: Bool
+    }
+
+    /// The existing incremental placement and reveal gates run on one worker.
+    /// Check ownership between app replies; cancellation never waits on AX.
+    func settle(isCurrent: () -> Bool, shouldRollback: () -> Bool = { false },
+                now: () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
+                pause: () -> Void = { Thread.sleep(forTimeInterval: 0.025) }) -> Result? {
+        let deadline = now() + 6
+        while isCurrent(), now() < deadline {
+            if shouldRollback(), !rollingBack { terminal = nil; failCurrent() }
+            switch advance(at: now()) {
+            case .waiting: pause()
+            case .failed: return nil
+            case .completed, .rolledBack:
+                var gate = WindowDividerRevealGate(left: left, right: right,
+                    startedAt: now(), matchedSince: verifiedPairSince)
+                while isCurrent(), now() < deadline {
+                    if shouldRollback(), !rollingBack { terminal = nil; failCurrent(); break }
+                    let actualLeft = readFrame(true)
+                    guard isCurrent() else { return nil }
+                    let actualRight = readFrame(false)
+                    guard isCurrent() else { return nil }
+                    // The fast per-attribute acknowledgment is optional, but a
+                    // supplied verifier must agree with both final frames before
+                    // the completed pair can be revealed. No limit is retained.
+                    let leftVerified = acknowledged?(true, actualLeft) ?? true
+                    guard isCurrent() else { return nil }
+                    let rightVerified = acknowledged?(false, actualRight) ?? true
+                    guard isCurrent() else { return nil }
+                    switch gate.observe(left: leftVerified ? actualLeft : .null,
+                                        right: rightVerified ? actualRight : .null, at: now()) {
+                    case .waiting: pause()
+                    case .ready: return Result(left: left, right: right, minimumSizeReached: minimumSizeReached)
+                    case .timedOut: return nil
+                    }
+                }
+                if rollingBack && terminal == nil { continue }
+                return nil
+            }
+        }
+        return nil
+    }
+}

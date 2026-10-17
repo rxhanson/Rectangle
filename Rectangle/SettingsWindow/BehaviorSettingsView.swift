@@ -384,6 +384,8 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            adjacentWindowsSection
+
             // MARK: - Extras
             Section {
                 CustomDisclosureGroup {
@@ -412,6 +414,40 @@ struct BehaviorSettingsView: View {
                     .padding(.leading, 12)
                 } label: {
                     Label("Extras", systemImage: "ellipsis.viewfinder")
+                }
+            }
+        }
+    }
+
+    private var adjacentWindowsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Drag dividers to resize adjacent windows", isOn: $viewModel.windowDivider)
+                            .accessibilityIdentifier("windowDivider")
+                        Text("Left/right and top/bottom pairs only.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Enhanced transitions", isOn: $viewModel.windowDividerEnhanced)
+                            .accessibilityIdentifier("windowDividerEnhanced")
+                        Text("Uses a temporary screenshot to hide resizing. Requires Screen Recording access.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.leading, 20)
+                    .disabled(!viewModel.windowDivider || !WindowCapturePermission.previewsSupported)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label {
+                    Text("Adjacent Windows")
+                } icon: {
+                    Image(systemName: "rectangle.grid.1x2")
+                        .rotationEffect(.degrees(90))
                 }
             }
         }

@@ -17,7 +17,7 @@ final class WindowAnimator {
     func finishForNewDrag() { cancel() }
 
 
-    typealias WindowLookup = (pid_t, CGWindowID, TimeInterval, AXUIElement?, () -> Bool) -> WindowAccessibilityLookup.Result
+    typealias WindowLookup = (pid_t, CGWindowID, TimeInterval, AXUIElement?, @escaping () -> Bool) -> WindowAccessibilityLookup.Result
     private struct Active {
         let element: AccessibilityElement
         let destination: CGRect
@@ -64,7 +64,7 @@ final class WindowAnimator {
 
     private let lookupWindow: WindowLookup
 
-    init(queue: DispatchQueue = DispatchQueue(label: "Rectangle.WindowAnimation", qos: .userInteractive),
+    init(queue: DispatchQueue = WindowWriteQueue.shared.queue,
          lookupWindow: @escaping WindowLookup = { pid, id, launch, preferred, isCurrent in
         WindowAccessibilityLookup.resolveResult(pid: pid, id: id, launch: launch, preferred: preferred, isCurrent: isCurrent)
     }) {
@@ -94,8 +94,17 @@ final class WindowAnimator {
         if let active, active.element == element { return active.destination }
         return retiring.last(where: { $0.0 == element })?.1
     }
+    func afterPendingWrites(isCurrent: @escaping () -> Bool,
+                            onCancelled: @escaping () -> Void = {},
+                            _ body: @escaping () -> Void) {
+        afterPendingWrites(cancellation: onCancelled) {
+            guard isCurrent() else { onCancelled(); return }
+            body()
+        }
+    }
+
     func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
-        if active == nil && retiring.isEmpty && !tickPending { body(); return }
+        if active == nil && retiring.isEmpty && !tickPending && WindowWriteQueue.shared.pending == 0 { body(); return }
         let expected = generation
         queue.async { [self] in
             DispatchQueue.main.async { [self] in
