@@ -7,8 +7,6 @@ import os.log
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    static let launcherAppId = "com.knollsoft.RectangleLauncher"
-
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
