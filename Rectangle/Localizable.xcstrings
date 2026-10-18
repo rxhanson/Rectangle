@@ -214,6 +214,12 @@
             "value" : "%"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -231,6 +237,12 @@
           }
         },
         "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
+        },
+        "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld px"
@@ -747,7 +759,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Trazer seu aplicativo todo escolhido para frente"
+            "value" : "1. Traga para a frente o app de tarefas escolhido"
           }
         },
         "pt-PT" : {
@@ -938,7 +950,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. No menu do Rectangle, selecione\n\"Use [Aplicativo] como Todo App\""
+            "value" : "2. No menu do Rectangle, selecione\n\"Usar [app] como app de tarefas\""
           }
         },
         "pt-PT" : {
@@ -1129,7 +1141,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. No menu do Rectangle, habilite o Todo Mode."
+            "value" : "3. No menu do Rectangle, ative o Modo Tarefas."
           }
         },
         "pt-PT" : {
@@ -1541,19 +1553,54 @@
       }
     },
     "½" : {
-
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "½"
+          }
+        }
+      }
     },
     "⅓" : {
-
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅓"
+          }
+        }
+      }
     },
     "¼" : {
-
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¼"
+          }
+        }
+      }
     },
     "⅔" : {
-
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅔"
+          }
+        }
+      }
     },
     "¾" : {
-
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¾"
+          }
+        }
+      }
     },
     "About" : {
       "extractionState" : "manual",
@@ -2056,7 +2103,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sobre o Todo Mode"
+            "value" : "Sobre o Modo Tarefas"
           }
         },
         "pt-PT" : {
@@ -2135,6 +2182,12 @@
             "value" : "تنظیمات بین نمایشگرها"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre telas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2158,6 +2211,12 @@
             "value" : "پس از اینکه Rectangle پنجره‌ای را بیشینه یا تقریباً بیشینه کرد، اجرای دوبارهٔ همان عمل پنجره را به اندازه و موقعیت قبلی‌اش بازمی‌گرداند."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depois que o Rectangle maximiza ou quase maximiza uma janela, executar a mesma ação novamente devolve a janela ao tamanho e à posição anteriores."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2176,6 +2235,12 @@
             "value" : "اجازه دادن"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2190,6 +2255,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "اجازهٔ اجرای فرمان URL به Rectangle داده شود؟"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir ação de URL do Rectangle?"
           }
         },
         "zh-Hans" : {
@@ -2412,6 +2483,12 @@
             "value" : "یک منبع خارجی از Rectangle درخواست کرده است تا «%1$@» را روی شناسهٔ بستهٔ برنامهٔ «%2$@» اجرا کند. اجازه می‌دهید؟"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma fonte externa pediu ao Rectangle para executar \"%1$@\" no app com bundle ID \"%2$@\". Permitir?"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2539,7 +2616,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Animate footprint"
+            "value" : "Animar pré-visualização"
           }
         },
         "pt-PT" : {
@@ -2618,6 +2695,12 @@
             "value" : "متحرک‌سازی پنجره‌ها"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Animar janelas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2647,6 +2730,12 @@
             "value" : "アニメーションの種類"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animação"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2667,6 +2756,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تنظیمات برنامه"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes do app"
           }
         },
         "zh-Hans" : {
@@ -2802,7 +2897,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autorizar Rectangle"
+            "value" : "Autorizar o Rectangle"
           }
         },
         "pt-PT" : {
@@ -3078,6 +3173,12 @@
             "value" : "رفتار"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comportamento"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3104,6 +3205,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしの外観"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aparência do desfoque"
           }
         },
         "zh-Hans" : {
@@ -3140,6 +3247,12 @@
             "value" : "プレビューの背景をぼかす"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfocar pré-visualização"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3173,6 +3286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしプレビュー"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfocar pré-visualização"
           }
         },
         "zh-Hans" : {
@@ -3308,7 +3427,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade inferior"
+            "value" : "Inferior"
           }
         },
         "pt-PT" : {
@@ -3393,6 +3512,12 @@
             "value" : "یک‌هشتم پایین مرکز چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior centro-esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3420,6 +3545,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 가운데 왼쪽 1/8"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior centro-esquerdo"
           }
         },
         "vi" : {
@@ -3450,6 +3581,12 @@
             "value" : "یک‌شانزدهم پایین مرکز چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 inferior centro-esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3470,6 +3607,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین مرکز چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 inferior centro-esquerdo"
           }
         },
         "zh-Hans" : {
@@ -3494,6 +3637,12 @@
             "value" : "یک‌نهم پایین مرکز"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 inferior central"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3514,6 +3663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم پایین مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior centro-direito"
           }
         },
         "zh-Hans" : {
@@ -3545,6 +3700,12 @@
             "value" : "아래 가운데 오른쪽 1/8"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior centro-direito"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3573,6 +3734,12 @@
             "value" : "یک‌شانزدهم پایین مرکز راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 inferior centro-direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3593,6 +3760,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 inferior centro-direito"
           }
         },
         "zh-Hans" : {
@@ -3728,7 +3901,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexto inferior central"
+            "value" : "1/6 inferior central"
           }
         },
         "pt-PT" : {
@@ -3817,6 +3990,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래쪽 1/8, 모서리에서 3등분"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oitavos inferiores a partir dos cantos; terços"
           }
         },
         "vi" : {
@@ -4037,6 +4216,12 @@
             "value" : "یک‌هشتم پایین چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4064,6 +4249,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 왼쪽 1/8"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior esquerdo"
           }
         },
         "vi" : {
@@ -4094,6 +4285,12 @@
             "value" : "یک‌نهم پایین چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 inferior esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4114,6 +4311,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 inferior esquerdo"
           }
         },
         "zh-Hans" : {
@@ -4243,7 +4446,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexto inferior à esquerda"
+            "value" : "1/6 inferior esquerdo"
           }
         },
         "pt-PT" : {
@@ -4326,6 +4529,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 inferior esquerdo"
           }
         },
         "zh-Hans" : {
@@ -4540,6 +4749,12 @@
             "value" : "یک‌هشتم پایین راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4567,6 +4782,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "아래 오른쪽 1/8"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 inferior direito"
           }
         },
         "vi" : {
@@ -4597,6 +4818,12 @@
             "value" : "یک‌نهم پایین راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 inferior direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4617,6 +4844,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم پایین راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 inferior direito"
           }
         },
         "zh-Hans" : {
@@ -4746,7 +4979,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexto inferior à direita"
+            "value" : "1/6 inferior direito"
           }
         },
         "pt-PT" : {
@@ -4829,6 +5062,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم پایین راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 inferior direito"
           }
         },
         "zh-Hans" : {
@@ -4958,7 +5197,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bottom sixths from corners; thirds"
+            "value" : "Sextos inferiores a partir dos cantos; terços"
           }
         },
         "pt-PT" : {
@@ -5049,6 +5288,12 @@
             "value" : "아래 1/3"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terço inferior"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5083,6 +5328,12 @@
             "value" : "아래 2/3"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dois terços inferiores"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5103,6 +5354,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "پنجره‌هایی را که در همان ناحیهٔ پنجرهٔ فعال چسبانده شده‌اند، یکی‌یکی به جلو می‌آورد"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traz para a frente, uma por vez, as janelas encaixadas na mesma área da janela em foco"
           }
         },
         "zh-Hans" : {
@@ -5127,6 +5384,12 @@
             "value" : "برنامهٔ Todo انتخابی خود را به جلو بیاورید"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traga para a frente o app de tarefas escolhido"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5138,6 +5401,12 @@
     "Button %lld" : {
       "comment" : "A numbered mouse button in a shortcut. The side buttons on most mice are 4 and 5.",
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão %lld"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5443,7 +5712,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade central"
+            "value" : "Centro"
           }
         },
         "pt-PT" : {
@@ -6013,7 +6282,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dois Terços Centrais"
+            "value" : "Dois terços centrais"
           }
         },
         "ro" : {
@@ -6084,6 +6353,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "قرار دادن پنجره‌ها در مرکز هنگام انتقال بین نمایشگرها"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centralizar janelas ao mover entre telas"
           }
         },
         "zh-Hans" : {
@@ -6213,7 +6488,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Procurar atualizações automaticamente"
+            "value" : "Buscar atualizações automaticamente"
           }
         },
         "pt-PT" : {
@@ -6403,7 +6678,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Procurar por atualizações…"
+            "value" : "Buscar atualizações…"
           }
         },
         "pt-PT" : {
@@ -6593,7 +6868,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spectacle também fará com que comandos repetidos alternem o tamanho da janela entre 1/2, 2/3 e 1/3 de largura"
+            "value" : "Ao escolher o Spectacle, atalhos repetidos também alternam a largura da janela entre 1/2, 2/3 e 1/3"
           }
         },
         "pt-PT" : {
@@ -6868,6 +7143,12 @@
             "value" : "تنظیم مرز بین عملیات کناره و گوشه"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Define a divisão entre as ações laterais e as de canto"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6907,6 +7188,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 타일 정리 기능과 충돌"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflito com a organização lado a lado do macOS"
           }
         },
         "sk" : {
@@ -7325,6 +7612,12 @@
             "value" : "حق نشر © 2019-2026 Ryan Hanson. تمامی حقوق محفوظ است."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson. Todos os direitos reservados."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7699,6 +7992,12 @@
             "value" : "در حال استفاده: "
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usando atualmente: "
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7919,6 +8218,12 @@
             "value" : "1/4 동작시 위치 순환, 절반 동작시 창 크기 순환"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar posições nos quadrantes e tamanhos nas laterais"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -8038,6 +8343,12 @@
             "value" : "byt mellom storleikar for halv-handlingar"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar tamanhos nas ações laterais"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -8102,6 +8413,12 @@
             "value" : "چرخش بین پنجره‌های روی‌هم"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar janelas empilhadas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8116,6 +8433,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چرخش بین پنجره‌های روی‌هم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar janelas empilhadas"
           }
         },
         "zh-Hans" : {
@@ -8134,6 +8457,12 @@
             "value" : "چرخش معکوس بین پنجره‌های روی‌هم"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar janelas empilhadas (ordem inversa)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8148,6 +8477,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چرخش معکوس بین پنجره‌های روی‌هم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar janelas empilhadas (ordem inversa)"
           }
         },
         "zh-Hans" : {
@@ -8277,8 +8612,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "cycle through displays"
+            "state" : "translated",
+            "value" : "Alternar entre telas"
           }
         },
         "pt-PT" : {
@@ -8357,6 +8692,12 @@
             "value" : "جهت گسترش میانبرهای چرخشی گوشه"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos cíclicos de canto expandem"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8383,6 +8724,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ダーク"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuro"
           }
         },
         "zh-Hans" : {
@@ -8512,7 +8859,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atalhos padrões"
+            "value" : "Atalhos padrão"
           }
         },
         "pt-PT" : {
@@ -8691,7 +9038,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir"
+            "value" : "Apagar"
           }
         },
         "pt-PT" : {
@@ -8781,6 +9128,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ウインドウを直接リサイズ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionamento direto"
           }
         },
         "zh-Hans" : {
@@ -8917,7 +9270,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disable fast dragging to Mission Control"
+            "value" : "Desativar o arrasto rápido para o Mission Control"
           }
         },
         "pt-PT" : {
@@ -9021,6 +9374,12 @@
             "value" : "macOS의 기능 끄기"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar no macOS"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9074,6 +9433,12 @@
             "value" : "Rectangle의 기능 끄기"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar no Rectangle"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9125,6 +9490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "무시"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar"
           }
         },
         "sk" : {
@@ -9451,8 +9822,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "do nothing"
+            "state" : "translated",
+            "value" : "Não fazer nada"
           }
         },
         "pt-PT" : {
@@ -9648,7 +10019,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Duplo clique no title bar da janela para maximizar/restaurar"
+            "value" : "Clique duplo na barra de título para maximizar/restaurar"
           }
         },
         "pt-PT" : {
@@ -9750,6 +10121,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "화면 가장자리로 드래그해 타일을 정렬하는 기능이 Rectangle과 macOS 설정에서 모두 켜져 있습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado ao arrastar para a borda da tela está ativada no Rectangle e no macOS."
           }
         },
         "sk" : {
@@ -9984,6 +10361,12 @@
             "value" : "1/8"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oitavos"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10117,7 +10500,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verificar Rectangle.app"
+            "value" : "Ative o Rectangle.app"
           }
         },
         "pt-PT" : {
@@ -10301,7 +10684,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Habilitar Todo Mode"
+            "value" : "Ativar Modo Tarefas"
           }
         },
         "pt-PT" : {
@@ -10646,8 +11029,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Exportar"
+            "state" : "translated",
+            "value" : "Exportar configuração"
           }
         },
         "pt-PT" : {
@@ -10739,6 +11122,12 @@
             "value" : "추가 단축키"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos extras"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10780,6 +11169,12 @@
             "value" : "⋯"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extras"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10812,6 +11207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی پنجم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quinto oitavo vertical"
           }
         },
         "zh-Hans" : {
@@ -11525,7 +11926,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar próximo"
+            "value" : "Buscar seguinte"
           }
         },
         "pt-PT" : {
@@ -12484,7 +12885,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primeiro três quartos"
+            "value" : "Primeiros três quartos"
           }
         },
         "pt-PT" : {
@@ -12759,6 +13160,12 @@
             "value" : "یک‌هشتم عمودی اول"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro oitavo vertical"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12803,6 +13210,12 @@
             "value" : "システムに合わせる"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir o sistema"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12825,6 +13238,12 @@
             "value" : "برای فهرست پنجره‌ها و میانبرهای چرخشی. وقتی خاموش است، پنجره‌هایی که در یک موقعیت بالا چپ روی‌هم قرار گرفته‌اند، صرف‌نظر از اندازه‌شان حساب می‌شوند"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vale para a lista de janelas e para os atalhos de alternância. Quando desativado, janelas empilhadas na mesma posição superior esquerda contam independentemente do tamanho"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12845,6 +13264,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی چهارم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarto oitavo vertical"
           }
         },
         "zh-Hans" : {
@@ -13187,7 +13612,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fourths columns"
+            "value" : "Colunas em quartos"
           }
         },
         "pt-PT" : {
@@ -13377,7 +13802,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço entre janelas"
+            "value" : "Espaçamento entre janelas"
           }
         },
         "pt-PT" : {
@@ -13949,7 +14374,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vá em Preferências do Sistema → Segurança e Privacidade → Privacidade → Acessibilidade"
+            "value" : "Acesse Ajustes do Sistema → Privacidade e Segurança → Acessibilidade"
           }
         },
         "pt-PT" : {
@@ -14040,6 +14465,12 @@
             "value" : "システム設定→プライバシーとセキュリティ→デバイスの制御とデータへのアクセスを選択します"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acesse Ajustes do Sistema → Privacidade e Segurança → Controle de Dispositivos e Acesso a Dados"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14066,6 +14497,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "دکمهٔ سبز چراغ راهنما به‌جای تمام‌صفحه، پنجره را بیشینه می‌کند"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão verde da janela maximiza em vez de entrar em tela cheia"
           }
         },
         "zh-Hans" : {
@@ -14097,6 +14534,12 @@
             "value" : "그리드 위치"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posições da grade"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14124,6 +14567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "عملیات نیمه، اندازهٔ پنجره را در محور دیگر حفظ می‌کنند"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ações de metade preservam o tamanho da janela no outro eixo"
           }
         },
         "zh-Hans" : {
@@ -14165,6 +14614,12 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "햅틱 피드백"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fornecer feedback tátil"
           }
         },
         "ru" : {
@@ -14503,7 +14958,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ocultar ícone da barra de menu"
+            "value" : "Ocultar ícone da barra de menus"
           }
         },
         "pt-PT" : {
@@ -14694,7 +15149,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esconder Outros"
+            "value" : "Ocultar outros"
           }
         },
         "pt-PT" : {
@@ -14970,6 +15425,12 @@
             "value" : "برای رفتار پیش‌فرض macOS، هر کلید تبدیل را نگه دارید یا از منوی پنجره استفاده کنید"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantenha qualquer tecla modificadora pressionada ou use o menu Janela para ter o comportamento padrão do macOS"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14996,6 +15457,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "수평 (좌/우, %)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horizontal (E/D, %)"
           }
         },
         "vi" : {
@@ -15026,6 +15493,12 @@
             "value" : "به‌صورت افقی"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "horizontalmente"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15040,6 +15513,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌صورت افقی"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horizontalmente"
           }
         },
         "zh-Hans" : {
@@ -15062,6 +15541,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "برای نمایش فهرست، نشانگر را نزدیک گوشهٔ بالا چپ پنجره نگه دارید"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posicione o cursor perto do canto superior esquerdo de uma janela para mostrar a lista"
           }
         },
         "zh-Hans" : {
@@ -15352,7 +15837,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se a área é muito pequeno, aplicativos recentes serão ocultados"
+            "value" : "Se a área for muito pequena, os apps recentes serão ocultados"
           }
         },
         "pt-PT" : {
@@ -15543,7 +16028,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se a seleção estiver desativada, clique no cadeado e insira sua senha"
+            "value" : "Se a caixa de seleção estiver desativada, clique no cadeado e digite sua senha"
           }
         },
         "pt-PT" : {
@@ -15728,7 +16213,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetindo os comandos de movimento e divisão, a janela será movida para a próxima tela, em vez de diminuir para 1/2, 2/3 ou 1/3 do tamanho"
+            "value" : "Ao repetir ações de mover ou de metade, a janela vai para a próxima tela em vez de alternar entre 1/2, 2/3 e 1/3 do tamanho."
           }
         },
         "pt-PT" : {
@@ -16054,8 +16539,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Importar"
+            "state" : "translated",
+            "value" : "Importar configuração"
           }
         },
         "pt-PT" : {
@@ -16140,6 +16625,12 @@
             "value" : "در منوی Rectangle، حالت Todo را فعال کنید."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No menu do Rectangle, ative o Modo Tarefas."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16160,6 +16651,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "در منوی Rectangle، گزینهٔ\n«استفاده از [برنامه] به‌عنوان برنامهٔ Todo» را انتخاب کنید"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No menu do Rectangle, selecione\n\"Usar [app] como app de tarefas\""
           }
         },
         "zh-Hans" : {
@@ -16479,8 +16976,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Keep a chosen application visible on the right side of your primary screen at all times"
+            "state" : "translated",
+            "value" : "Mantém um app escolhido sempre visível na lateral da tela principal"
           }
         },
         "pt-PT" : {
@@ -16553,6 +17050,12 @@
     },
     "Keyboard shortcuts always act on the focused window" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos de teclado sempre atuam na janela em foco"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16567,6 +17070,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "نواحی چسباندن در حالت افقی"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Áreas de encaixe (paisagem)"
           }
         },
         "zh-Hans" : {
@@ -16595,6 +17104,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "너비 크게"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aumentar largura"
           }
         },
         "ru" : {
@@ -17122,7 +17637,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Último três quartos"
+            "value" : "Últimos três quartos"
           }
         },
         "pt-PT" : {
@@ -17397,6 +17912,12 @@
             "value" : "یک‌هشتم عمودی آخر"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último oitavo vertical"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17540,7 +18061,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar no login"
+            "value" : "Abrir ao iniciar sessão"
           }
         },
         "pt-PT" : {
@@ -17814,6 +18335,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "نیمهٔ چپ و سپس نیمهٔ بالا، پنجره را به یک‌چهارم بالا چپ منتقل می‌کند؛ عمل مربوط به لبهٔ مقابل، آن را دوباره گسترش می‌دهد."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metade esquerda seguida de metade superior move a janela para o quarto superior esquerdo; a ação da borda oposta a expande de volta."
           }
         },
         "zh-Hans" : {
@@ -18133,8 +18660,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Metade esquerda, metade de cima/baixo próximo das bordas"
+            "state" : "translated",
+            "value" : "Metade esquerda; metade superior/inferior perto dos cantos"
           }
         },
         "pt-PT" : {
@@ -18225,6 +18752,12 @@
             "value" : "ライト"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18253,6 +18786,12 @@
             "value" : "یک‌شانزدهم میانی پایین مرکز چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-inferior centro-esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18273,6 +18812,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-inferior centro-direito"
           }
         },
         "zh-Hans" : {
@@ -18297,6 +18842,12 @@
             "value" : "یک‌شانزدهم میانی پایین چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-inferior esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18317,6 +18868,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی پایین راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-inferior direito"
           }
         },
         "zh-Hans" : {
@@ -18447,7 +19004,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menu Principal"
+            "value" : "Menu principal"
           }
         },
         "pt-PT" : {
@@ -18637,7 +19194,7 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Aumentar"
           }
         },
@@ -18828,7 +19385,7 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Diminuir"
           }
         },
@@ -19306,6 +19863,12 @@
             "value" : "تنظیمات بیشینه‌سازی"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes de maximização"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19326,6 +19889,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حداکثر تعداد پنجره‌ها در هر ستون"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Máximo de janelas por coluna"
           }
         },
         "zh-Hans" : {
@@ -19350,6 +19919,12 @@
             "value" : "حداکثر تعداد پنجره‌ها در هر سطر"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Máximo de janelas por linha"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19361,6 +19936,12 @@
     "Middle Button" : {
       "comment" : "The middle mouse button in a shortcut",
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão do meio"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19381,6 +19962,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی مرکز چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 central centro-esquerdo"
           }
         },
         "zh-Hans" : {
@@ -19405,6 +19992,12 @@
             "value" : "یک‌نهم میانی مرکز"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 central"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19425,6 +20018,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 central centro-direito"
           }
         },
         "zh-Hans" : {
@@ -19449,6 +20048,12 @@
             "value" : "یک‌نهم میانی چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 central esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19469,6 +20074,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 central esquerdo"
           }
         },
         "zh-Hans" : {
@@ -19493,6 +20104,12 @@
             "value" : "یک‌نهم میانی راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 central direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19513,6 +20130,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم میانی راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 central direito"
           }
         },
         "zh-Hans" : {
@@ -19541,6 +20164,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "중간 1/3"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terço do meio"
           }
         },
         "vi" : {
@@ -19769,6 +20398,12 @@
             "value" : "حداقل اندازهٔ پنجره حاصل شد"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamanho mínimo da janela atingido"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19779,6 +20414,12 @@
     },
     "Mouse button shortcuts act on the window under the pointer" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos de botão do mouse atuam na janela sob o ponteiro"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19906,7 +20547,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Move cursor along with window across displays"
+            "value" : "Mover o cursor junto com a janela entre telas"
           }
         },
         "pt-PT" : {
@@ -20666,8 +21307,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "move to adjacent display on left or right"
+            "state" : "translated",
+            "value" : "Mover para a tela adjacente à esquerda ou à direita"
           }
         },
         "pt-PT" : {
@@ -20857,8 +21498,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "move to adjacent on left/right, or cycle size on side"
+            "state" : "translated",
+            "value" : "Mover para a tela adjacente à esquerda/direita ou alternar o tamanho na lateral"
           }
         },
         "pt-PT" : {
@@ -21054,7 +21695,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Centro"
+            "value" : "Centralizar"
           }
         },
         "pt-PT" : {
@@ -21902,6 +22543,12 @@
             "value" : "1/9"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nonos"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21935,6 +22582,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/9 (3×3)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nonos (3×3)"
           }
         },
         "vi" : {
@@ -22077,7 +22730,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não autorizado para controlar seu computador"
+            "value" : "Sem autorização para controlar o computador"
           }
         },
         "pt-PT" : {
@@ -22162,6 +22815,12 @@
             "value" : "تغییر موقعیت پنجره در صورت هم‌پوشانی"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deslocar a posição da janela quando houver sobreposição"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22176,6 +22835,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "فقط پنجره‌های هم‌اندازه روی‌هم در نظر گرفته شوند"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empilhar apenas janelas do mesmo tamanho"
           }
         },
         "zh-Hans" : {
@@ -22306,7 +22971,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir Ajustes do Sistema"
+            "value" : "Abrir Preferências do Sistema"
           }
         },
         "pt-PT" : {
@@ -22877,7 +23542,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Outro"
+            "value" : "Outros"
           }
         },
         "pt-PT" : {
@@ -23534,6 +24199,12 @@
             "value" : "نواحی چسباندن در حالت عمودی"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Áreas de encaixe (retrato)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23747,6 +24418,12 @@
             "value" : "حفظ حالت بیشینه هنگام انتقال بین نمایشگرها"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter a janela maximizada ao mover entre telas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23767,6 +24444,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حفظ اندازهٔ محور کناری برای عملیات نیمه، مشابه Windows"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preservar o tamanho no outro eixo nas ações de metade, como no Windows"
           }
         },
         "zh-Hans" : {
@@ -23798,6 +24481,12 @@
             "value" : "그리드의 모든 위치를 순환하려면 단축키를 여러 번 누르십시오."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pressione o atalho repetidamente para percorrer todas as posições da grade."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23820,6 +24509,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "جلوگیری از فعال شدن Mission Control هنگام کشیدن"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impedir que o Mission Control seja ativado ao arrastar"
           }
         },
         "zh-Hans" : {
@@ -24040,6 +24735,12 @@
             "value" : "px"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24174,7 +24875,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
@@ -24257,6 +24958,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ناحیهٔ برنامه‌های اخیر"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Área de apps recentes"
           }
         },
         "zh-Hans" : {
@@ -25149,7 +25856,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preferências do Rectangle"
+            "value" : "Ajustes do Rectangle"
           }
         },
         "pt-PT" : {
@@ -25530,7 +26237,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reflow Todo"
+            "value" : "Reorganizar Modo Tarefas"
           }
         },
         "pt-PT" : {
@@ -25614,6 +26321,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حذف فاصله در لبهٔ بالایی نمایشگر"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover espaçamento na borda superior da tela"
           }
         },
         "zh-Hans" : {
@@ -25743,7 +26456,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Permitir qualquer atalho de teclado"
+            "value" : "Remover restrições de atalhos de teclado"
           }
         },
         "pt-PT" : {
@@ -25826,6 +26539,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حذف فاصلهٔ بالایی هنگام چسباندن به لبهٔ بالا"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover espaçamento superior ao encaixar na borda superior"
           }
         },
         "zh-Hans" : {
@@ -26040,6 +26759,12 @@
             "value" : "بیشینه‌سازی مکرر، اندازه و موقعیت قبلی را بازمی‌گرداند"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximizar novamente restaura o tamanho e a posição anteriores"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26060,6 +26785,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره‌های مجاور هنگام چرخش میانبرهای کناره یا گوشه"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionar janelas adjacentes ao alternar atalhos laterais ou de canto"
           }
         },
         "zh-Hans" : {
@@ -26379,7 +27110,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurar atalhos padrão"
+            "value" : "Restaurar atalhos e áreas de encaixe padrão"
           }
         },
         "pt-PT" : {
@@ -26569,7 +27300,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurar tamanho da janela quando desencaixado"
+            "value" : "Restaurar o tamanho da janela ao desencaixar"
           }
         },
         "pt-PT" : {
@@ -26759,7 +27490,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade direita"
+            "value" : "Direita"
           }
         },
         "pt-PT" : {
@@ -26949,8 +27680,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Metade direita, metade cima/baixo próximo das bordas"
+            "state" : "translated",
+            "value" : "Metade direita; metade superior/inferior perto dos cantos"
           }
         },
         "pt-PT" : {
@@ -27420,6 +28151,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی دوم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segundo oitavo vertical"
           }
         },
         "zh-Hans" : {
@@ -27948,7 +28685,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preferências…"
+            "value" : "Ajustes…"
           }
         },
         "pt-PT" : {
@@ -28031,6 +28768,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی هفتم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sétimo oitavo vertical"
           }
         },
         "zh-Hans" : {
@@ -28167,7 +28910,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atalhos de teclado"
+            "value" : "Atalhos"
           }
         },
         "pt-PT" : {
@@ -28246,6 +28989,12 @@
             "value" : "نمایش میانبرهای *اضافی* در منو"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar atalhos *extras* no menu"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28273,6 +29022,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "메뉴에 추가 크기 표시"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar tamanhos adicionais no menu"
           }
         },
         "vi" : {
@@ -28409,7 +29164,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos"
+            "value" : "Mostrar tudo"
           }
         },
         "pt-PT" : {
@@ -28492,6 +29247,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "نمایش فهرست پنجره‌های روی‌هم با نگه‌داشتن نشانگر"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar lista de janelas empilhadas ao passar o cursor"
           }
         },
         "zh-Hans" : {
@@ -28621,7 +29382,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar Todo Mode no menu"
+            "value" : "Mostrar Modo Tarefas no menu"
           }
         },
         "pt-PT" : {
@@ -28700,6 +29461,12 @@
             "value" : "نمایش هشدار وقتی پنجره‌ها به اندازهٔ کافی کوچک نمی‌شوند"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar aviso quando não for possível reduzir a janela o suficiente"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28726,6 +29493,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "절반 분할 비율"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proporção da divisão lateral"
           }
         },
         "vi" : {
@@ -28948,6 +29721,12 @@
             "value" : "1/16"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dezesseis avos"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28983,6 +29762,12 @@
             "value" : "1/16 (4×4)"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dezesseis avos (4×4)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29009,6 +29794,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی ششم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sexto oitavo vertical"
           }
         },
         "zh-Hans" : {
@@ -29415,6 +30206,12 @@
             "value" : "너비 작게"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diminuir largura"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29507,7 +30304,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redimensionar areas"
+            "value" : "Áreas de encaixe"
           }
         },
         "pt-PT" : {
@@ -29562,6 +30359,12 @@
     },
     "Snap before reaching screen edges" : {
       "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encaixar antes de chegar às bordas da tela"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29689,7 +30492,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redimensionar janelas arrastando"
+            "value" : "Encaixar janelas ao arrastar"
           }
         },
         "pt-PT" : {
@@ -30009,7 +30812,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atalhos Spectacle tem mais chance de causar conflitos com outros atalhos"
+            "value" : "Os atalhos do Spectacle têm mais chance de conflitar com outros atalhos"
           }
         },
         "pt-PT" : {
@@ -30094,6 +30897,12 @@
             "value" : "پنجره‌های روی‌هم"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Janelas empilhadas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30114,6 +30923,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stage Manager"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizador Visual"
           }
         },
         "zh-Hans" : {
@@ -30244,7 +31059,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stage Manager recent apps area"
+            "value" : "Área de apps recentes do Organizador Visual"
           }
         },
         "pt-PT" : {
@@ -30523,6 +31338,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم عمودی سوم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terceiro oitavo vertical"
           }
         },
         "zh-Hans" : {
@@ -30853,7 +31674,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thirds, drag toward center for two thirds"
+            "value" : "Terços; arraste em direção ao centro para dois terços"
           }
         },
         "pt-PT" : {
@@ -31043,8 +31864,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Thirds, top/bottom side near corners"
+            "state" : "translated",
+            "value" : "Terços; metade superior/inferior perto dos cantos"
           }
         },
         "pt-PT" : {
@@ -31129,6 +31950,12 @@
             "value" : "این گزینه فضای کمی برای نمایش پنجرهٔ زیرین باقی می‌گذارد و با فاصلهٔ بین پنجره‌ها بهترین نتیجه را دارد"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deixa um pequeno espaço mostrando a janela de baixo; funciona melhor com espaçamento entre janelas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31179,6 +32006,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ウインドウを列に並べる"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar em colunas"
           }
         },
         "zh-Hans" : {
@@ -31233,6 +32066,12 @@
             "value" : "ウインドウを行に並べる"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar em linhas"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31253,6 +32092,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار پنجره‌ها در سطرها/ستون‌ها"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar janelas em linhas/colunas"
           }
         },
         "zh-Hans" : {
@@ -31276,6 +32121,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lado a lado"
           }
         },
         "zh-Hans" : {
@@ -31319,6 +32170,12 @@
             "value" : "macOS의 타일 정리 기능이 비활성화됨"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado do macOS foi desativada"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31360,6 +32217,12 @@
             "value" : "Rectangle의 타일 정리 기능이 비활성화됨"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado do Rectangle foi desativada"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31393,6 +32256,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 타일 정리 기능을 조정하려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar a organização lado a lado do macOS, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
           }
         },
         "vi" : {
@@ -31528,7 +32397,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting."
+            "value" : "Para que o Rectangle controle o clique duplo na barra de título, você precisa desativar a configuração correspondente do macOS."
           }
         },
         "pt-PT" : {
@@ -31630,6 +32499,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "다시 켜려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동합니다"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para reativá-la, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
           }
         },
         "sk" : {
@@ -31771,7 +32646,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo application width"
+            "value" : "Largura do app de tarefas"
           }
         },
         "pt-PT" : {
@@ -31848,6 +32723,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حالت Todo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modo Tarefas"
           }
         },
         "zh-Hans" : {
@@ -31977,7 +32858,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo side"
+            "value" : "Lado do app de tarefas"
           }
         },
         "pt-PT" : {
@@ -32060,6 +32941,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر وضعیت نشان پنجره‌های روی‌هم"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar indicador de janelas empilhadas"
           }
         },
         "zh-Hans" : {
@@ -32189,7 +33076,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toggle Todo"
+            "value" : "Alternar Modo Tarefas"
           }
         },
         "pt-PT" : {
@@ -32272,6 +33159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر وضعیت فهرست پنجره‌ها"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternar lista de janelas"
           }
         },
         "zh-Hans" : {
@@ -32401,7 +33294,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade superior"
+            "value" : "Superior"
           }
         },
         "pt-PT" : {
@@ -32486,6 +33379,12 @@
             "value" : "یک‌هشتم بالا مرکز چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior centro-esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32513,6 +33412,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 가운데 왼쪽 1/8"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior centro-esquerdo"
           }
         },
         "vi" : {
@@ -32543,6 +33448,12 @@
             "value" : "یک‌شانزدهم بالا مرکز چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 superior centro-esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32563,6 +33474,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا مرکز چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 superior centro-esquerdo"
           }
         },
         "zh-Hans" : {
@@ -32587,6 +33504,12 @@
             "value" : "یک‌نهم بالا مرکز"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 superior central"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32607,6 +33530,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم بالا مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior centro-direito"
           }
         },
         "zh-Hans" : {
@@ -32638,6 +33567,12 @@
             "value" : "위 가운데 오른쪽 1/8"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior centro-direito"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32666,6 +33601,12 @@
             "value" : "یک‌شانزدهم بالا مرکز راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 superior centro-direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32686,6 +33627,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 superior centro-direito"
           }
         },
         "zh-Hans" : {
@@ -32821,7 +33768,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexto superior central"
+            "value" : "1/6 superior central"
           }
         },
         "pt-PT" : {
@@ -32910,6 +33857,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위쪽 1/8, 모서리에서 최대화"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oitavos superiores a partir dos cantos; maximizar"
           }
         },
         "vi" : {
@@ -33045,7 +33998,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Topo esquerdo"
+            "value" : "Superior esquerdo"
           }
         },
         "pt-PT" : {
@@ -33130,6 +34083,12 @@
             "value" : "یک‌هشتم بالا چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33157,6 +34116,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 왼쪽 1/8"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior esquerdo"
           }
         },
         "vi" : {
@@ -33187,6 +34152,12 @@
             "value" : "یک‌نهم بالا چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 superior esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33207,6 +34178,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 superior esquerdo"
           }
         },
         "zh-Hans" : {
@@ -33336,7 +34313,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexto superior à esquerda"
+            "value" : "1/6 superior esquerdo"
           }
         },
         "pt-PT" : {
@@ -33419,6 +34396,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم بالا چپ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 superior esquerdo"
           }
         },
         "zh-Hans" : {
@@ -33548,7 +34531,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em cima, à direita"
+            "value" : "Superior direito"
           }
         },
         "pt-PT" : {
@@ -33633,6 +34616,12 @@
             "value" : "یک‌هشتم بالا راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33660,6 +34649,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "오른쪽 1/8"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/8 superior direito"
           }
         },
         "vi" : {
@@ -33690,6 +34685,12 @@
             "value" : "یک‌نهم بالا راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/9 superior direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33710,6 +34711,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم بالا راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 superior direito"
           }
         },
         "zh-Hans" : {
@@ -33839,7 +34846,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sexto superior à  direita"
+            "value" : "1/6 superior direito"
           }
         },
         "pt-PT" : {
@@ -33924,6 +34931,12 @@
             "value" : "یک‌دوازدهم بالا راست"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/12 superior direito"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33951,6 +34964,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS의 화면 상단 가장자리 타일 정렬이 꺼졌습니다"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado na borda superior da tela foi desativada no macOS"
           }
         },
         "vi" : {
@@ -34086,7 +35105,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Top sixths from corners; maximize"
+            "value" : "Sextos superiores a partir dos cantos; maximizar"
           }
         },
         "pt-PT" : {
@@ -34177,6 +35196,12 @@
             "value" : "위 1/3"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terço superior"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34209,6 +35234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "위 2/3"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dois terços superiores"
           }
         },
         "vi" : {
@@ -34252,6 +35283,12 @@
             "value" : "Górna/Dolna połowa"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metades superior/inferior"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34280,6 +35317,12 @@
             "value" : "بالا/پایین‌ها"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metades superior/inferior"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34300,6 +35343,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "در نظر گرفتن چند نمایشگر به‌عنوان یکی"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tratar várias telas como uma só"
           }
         },
         "zh-Hans" : {
@@ -34331,6 +35380,12 @@
             "value" : "여러 모니터를 하나로 인식"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tratar várias telas como uma só"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34358,6 +35413,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duodécimos"
           }
         },
         "vi" : {
@@ -34395,6 +35456,12 @@
             "value" : "1/12 (4×3)"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duodécimos (4×3)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34422,6 +35489,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره به کوچک‌تر امکان‌پذیر نیست.\nممکن است پنجره‌ها هم‌پوشانی پیدا کنند."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível reduzir mais a janela.\nAs janelas podem se sobrepor."
           }
         },
         "zh-Hans" : {
@@ -34643,6 +35716,12 @@
             "value" : "업데이트 가능…"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualização disponível…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34671,6 +35750,12 @@
             "value" : "یک‌شانزدهم میانی بالا مرکز چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-superior centro-esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34691,6 +35776,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا مرکز راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-superior centro-direito"
           }
         },
         "zh-Hans" : {
@@ -34715,6 +35806,12 @@
             "value" : "یک‌شانزدهم میانی بالا چپ"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-superior esquerdo"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34735,6 +35832,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم میانی بالا راست"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/16 meio-superior direito"
           }
         },
         "zh-Hans" : {
@@ -34864,7 +35967,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use as Todo Window"
+            "value" : "Usar como janela de tarefas"
           }
         },
         "pt-PT" : {
@@ -34956,6 +36059,12 @@
             "value" : "화면 감지에 커서 위치 사용"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detectar a tela pela posição do cursor"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34982,6 +36091,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "استفاده از مکان‌نما برای تشخیص نمایشگر"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detectar a tela pela posição do cursor"
           }
         },
         "zh-Hans" : {
@@ -35105,7 +36220,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use frontmost.app as Todo App"
+            "value" : "Usar frontmost.app como app de tarefas"
           }
         },
         "pt-PT" : {
@@ -35500,6 +36615,12 @@
             "value" : "수직 (상/하, %)"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vertical (S/I, %)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35528,6 +36649,12 @@
             "value" : "عمودی"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "verticalmente"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35542,6 +36669,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌صورت عمودی"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verticalmente"
           }
         },
         "zh-Hans" : {
@@ -36053,7 +37186,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bem vindo ao Rectangle!"
+            "value" : "Boas-vindas ao Rectangle!"
           }
         },
         "pt-PT" : {
@@ -36244,7 +37377,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bem vindo!"
+            "value" : "Boas-vindas!"
           }
         },
         "pt-PT" : {
@@ -36321,6 +37454,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "وقتی خاموش است، فاصلهٔ پنجره تا لبه‌های صفحه در صورت امکان حفظ می‌شود."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando desativado, a distância da janela até as bordas da tela é mantida quando possível."
           }
         },
         "zh-Hans" : {
@@ -36450,7 +37589,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando o ícone da barra de menus estiver oculto, reinicie o Rectangle pelo Finder para abrir o menu."
+            "value" : "Com o ícone da barra de menus oculto, abra o Rectangle novamente pelo Finder para acessá-lo"
           }
         },
         "pt-PT" : {
@@ -36533,6 +37672,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "هنگام استفاده از چند نمایشگر، آن‌ها را به‌عنوان یک نمایشگر در نظر می‌گیرد. لازم است در System Settings > Desktop & Dock گزینهٔ Displays have separate Spaces خاموش باشد."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com várias telas, trata todas como uma só. Requer que Ajustes do Sistema > Mesa e Dock > \"As telas têm Spaces separados\" esteja DESATIVADO."
           }
         },
         "zh-Hans" : {
@@ -36662,7 +37807,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "While in Todo Mode, you can refresh the Todo Mode layout by selecting \"Reflow Todo\" in the Rectangle menu or executing the associated keyboard shortcut."
+            "value" : "No Modo Tarefas, você pode atualizar o layout escolhendo \"Reorganizar Modo Tarefas\" no menu do Rectangle ou usando o atalho de teclado correspondente."
           }
         },
         "pt-PT" : {
@@ -36751,6 +37896,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "너비 단위 (px)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de largura (px)"
           }
         },
         "ru" : {
