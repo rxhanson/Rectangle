@@ -800,7 +800,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetindo os comandos de movimento e divisão, a janela será movida para a próxima tela, em vez de diminuir para 1/2, 2/3 ou 1/3 do tamanho"
+            "value" : "Ao repetir ações de mover ou de metade, a janela vai para a próxima tela em vez de alternar entre 1/2, 2/3 e 1/3 do tamanho."
           }
         },
         "pt-PT" : {
@@ -2102,7 +2102,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
@@ -3770,7 +3770,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
@@ -4010,6 +4010,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "アニメーションの種類"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animação"
           }
         },
         "uk" : {
@@ -4645,7 +4651,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menu Principal"
+            "value" : "Menu principal"
           }
         },
         "pt-PT" : {
@@ -5229,6 +5235,12 @@
             "value" : "ぼかしの外観"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aparência do desfoque"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5268,6 +5280,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしプレビュー"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfocar pré-visualização"
           }
         },
         "uk" : {
@@ -6101,7 +6119,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não autorizado para controlar seu computador"
+            "value" : "Sem autorização para controlar o computador"
           }
         },
         "pt-PT" : {
@@ -6347,6 +6365,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 타일 정리 기능과 충돌"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflito com a organização lado a lado do macOS"
           }
         },
         "sk" : {
@@ -7366,6 +7390,12 @@
             "value" : "ダーク"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuro"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7405,6 +7435,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ウインドウを直接リサイズ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionamento direto"
           }
         },
         "uk" : {
@@ -7452,6 +7488,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS의 기능 끄기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar no macOS"
           }
         },
         "sk" : {
@@ -7507,6 +7549,12 @@
             "value" : "Rectangle의 기능 끄기"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar no Rectangle"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7558,6 +7606,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "무시"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar"
           }
         },
         "sk" : {
@@ -7981,6 +8035,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "화면 가장자리로 드래그해 타일을 정렬하는 기능이 Rectangle과 macOS 설정에서 모두 켜져 있습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado ao arrastar para a borda da tela está ativada no Rectangle e no macOS."
           }
         },
         "sk" : {
@@ -8557,6 +8617,12 @@
             "value" : "1/8"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oitavos"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8596,6 +8662,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "추가 단축키"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos extras"
           }
         },
         "ru" : {
@@ -9327,6 +9399,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "システムに合わせる"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir o sistema"
           }
         },
         "uk" : {
@@ -11280,7 +11358,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Procurar por atualizações…"
+            "value" : "Buscar atualizações…"
           }
         },
         "pt-PT" : {
@@ -13890,7 +13968,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos"
+            "value" : "Mostrar tudo"
           }
         },
         "pt-PT" : {
@@ -14130,6 +14208,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "너비 크게"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aumentar largura"
           }
         },
         "ru" : {
@@ -14477,6 +14561,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ライト"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
           }
         },
         "uk" : {
@@ -15329,6 +15419,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/9"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nonos"
           }
         },
         "uk" : {
@@ -16790,7 +16886,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Outro"
+            "value" : "Outros"
           }
         },
         "pt-PT" : {
@@ -17516,7 +17612,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir"
+            "value" : "Apagar"
           }
         },
         "pt-PT" : {
@@ -18200,7 +18296,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar próximo"
+            "value" : "Buscar seguinte"
           }
         },
         "pt-PT" : {
@@ -19747,6 +19843,12 @@
             "value" : "1/16"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dezesseis avos"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20142,6 +20244,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "너비 작게"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diminuir largura"
           }
         },
         "ru" : {
@@ -20885,6 +20993,12 @@
             "value" : "ウインドウを列に並べる"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar em colunas"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20944,6 +21058,12 @@
             "value" : "ウインドウを行に並べる"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar em linhas"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20971,6 +21091,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lado a lado"
           }
         },
         "uk" : {
@@ -21014,6 +21140,12 @@
             "value" : "macOS의 타일 정리 기능이 비활성화됨"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado do macOS foi desativada"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21053,6 +21185,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle의 타일 정리 기능이 비활성화됨"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado do Rectangle foi desativada"
           }
         },
         "uk" : {
@@ -21240,6 +21378,12 @@
             "value" : "macOS 타일 정리 기능을 조정하려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar a organização lado a lado do macOS, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21287,6 +21431,12 @@
             "value" : "다시 켜려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동합니다"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para reativá-la, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21328,6 +21478,12 @@
             "value" : "macOS의 화면 상단 가장자리 타일 정렬이 꺼졌습니다"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado na borda superior da tela foi desativada no macOS"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21367,6 +21523,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Górna/Dolna połowa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metades superior/inferior"
           }
         },
         "uk" : {
@@ -21551,6 +21713,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duodécimos"
           }
         },
         "uk" : {
@@ -21886,6 +22054,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "업데이트 가능…"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualização disponível…"
           }
         },
         "uk" : {
@@ -22413,7 +22587,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esconder Outros"
+            "value" : "Ocultar outros"
           }
         },
         "pt-PT" : {
@@ -24485,6 +24659,12 @@
             "value" : "너비 단위 (px)"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de largura (px)"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24527,6 +24707,12 @@
             "value" : "تغییر اندازهٔ پنجره به کوچک‌تر امکان‌پذیر نیست.\nممکن است پنجره‌ها هم‌پوشانی پیدا کنند."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível reduzir mais a janela.\nAs janelas podem se sobrepor."
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24555,6 +24741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "حداقل اندازهٔ پنجره حاصل شد"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamanho mínimo da janela atingido"
           }
         },
         "uk" : {
@@ -26197,8 +26389,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferências…"
+            "state" : "translated",
+            "value" : "Ajustes…"
           }
         },
         "pt-PT" : {
@@ -26384,7 +26576,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
