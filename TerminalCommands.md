@@ -18,6 +18,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Add extra "ninths" sizing commands](#add-extra-ninths-sizing-commands)
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
 - [Add extra "full-height eighths" sizing commands](#add-extra-full-height-eighths-sizing-commands)
+- [Add extra "full-height sixths" sizing commands](#add-extra-full-height-sixths-sizing-commands)
 - [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
 - [Add doubling/halving window sizing commands](#add-doublinghalving-window-sizing-commands)
 - [Add additional tiling and cascading commands](#add-additional-tiling-and-cascading-commands)
@@ -262,6 +263,27 @@ defaults write com.knollsoft.Rectangle firstVerticalEighth -dict-add keyCode -fl
 ```
 
 Repeating `firstVerticalEighth` cycles forward through all 8 positions. Repeating `lastVerticalEighth` cycles through them in reverse when repeated-command behavior is enabled.
+
+## Add extra "full-height sixths" sizing commands
+
+These commands divide a landscape display into 6 full-height vertical columns. On a portrait display, they automatically rotate into 6 horizontal rows. They can be configured under the "Extra" section of the Shortcuts settings, or via CLI.
+
+The key codes are:
+
+* firstVerticalSixth
+* secondVerticalSixth
+* thirdVerticalSixth
+* fourthVerticalSixth
+* fifthVerticalSixth
+* lastVerticalSixth
+
+For example, the command for setting the first vertical sixth shortcut to `ctrl opt shift 1` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle firstVerticalSixth -dict-add keyCode -float 18 modifierFlags -float 917504
+```
+
+Repeating `firstVerticalSixth` cycles forward through all 6 positions. Repeating `lastVerticalSixth` cycles through them in reverse when repeated-command behavior is enabled.
 
 ## Add additional "thirds" sizing commands 
 

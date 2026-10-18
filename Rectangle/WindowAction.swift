@@ -147,7 +147,13 @@ enum WindowAction: Int, Codable {
          fifthVerticalEighth = 137,
          sixthVerticalEighth = 138,
          seventhVerticalEighth = 139,
-         lastVerticalEighth = 140
+         lastVerticalEighth = 140,
+         firstVerticalSixth = 141,
+         secondVerticalSixth = 142,
+         thirdVerticalSixth = 143,
+         fourthVerticalSixth = 144,
+         fifthVerticalSixth = 145,
+         lastVerticalSixth = 146
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -166,6 +172,8 @@ enum WindowAction: Int, Codable {
                          bottomLeftEighth, bottomCenterLeftEighth, bottomCenterRightEighth, bottomRightEighth,
                          firstVerticalEighth, secondVerticalEighth, thirdVerticalEighth, fourthVerticalEighth,
                          fifthVerticalEighth, sixthVerticalEighth, seventhVerticalEighth, lastVerticalEighth,
+                         firstVerticalSixth, secondVerticalSixth, thirdVerticalSixth,
+                         fourthVerticalSixth, fifthVerticalSixth, lastVerticalSixth,
                          topLeftNinth, topCenterNinth, topRightNinth,
                          middleLeftNinth, middleCenterNinth, middleRightNinth,
                          bottomLeftNinth, bottomCenterNinth, bottomRightNinth,
@@ -222,6 +230,8 @@ enum WindowAction: Int, Codable {
         case .smallerWidth, .largerWidth, .topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds,
              .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
              .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
+             .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
+             .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth,
              .cycleStackedWindows, .cycleStackedWindowsBackward: return true
         default: return false
         }
@@ -301,6 +311,12 @@ enum WindowAction: Int, Codable {
         case .sixthVerticalEighth: return "sixthVerticalEighth"
         case .seventhVerticalEighth: return "seventhVerticalEighth"
         case .lastVerticalEighth: return "lastVerticalEighth"
+        case .firstVerticalSixth: return "firstVerticalSixth"
+        case .secondVerticalSixth: return "secondVerticalSixth"
+        case .thirdVerticalSixth: return "thirdVerticalSixth"
+        case .fourthVerticalSixth: return "fourthVerticalSixth"
+        case .fifthVerticalSixth: return "fifthVerticalSixth"
+        case .lastVerticalSixth: return "lastVerticalSixth"
         case .doubleHeightUp: return "doubleHeightUp"
         case .doubleHeightDown: return "doubleHeightDown"
         case .doubleWidthLeft: return "doubleWidthLeft"
@@ -529,6 +545,18 @@ enum WindowAction: Int, Codable {
             String(localized: "Seventh Vertical Eighth")
         case .lastVerticalEighth:
             String(localized: "Last Vertical Eighth")
+        case .firstVerticalSixth:
+            String(localized: "First Vertical Sixth")
+        case .secondVerticalSixth:
+            String(localized: "Second Vertical Sixth")
+        case .thirdVerticalSixth:
+            String(localized: "Third Vertical Sixth")
+        case .fourthVerticalSixth:
+            String(localized: "Fourth Vertical Sixth")
+        case .fifthVerticalSixth:
+            String(localized: "Fifth Vertical Sixth")
+        case .lastVerticalSixth:
+            String(localized: "Last Vertical Sixth")
         case .tileRows:
             String(localized: "Tile in Rows")
         case .tileColumns:
@@ -661,6 +689,8 @@ enum WindowAction: Int, Codable {
             .cycleStackedWindows, .cycleStackedWindowsBackward,
             .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
             .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
+            .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
+            .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth,
             // Ninths
             .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth,
             // Corner thirds
@@ -797,6 +827,12 @@ enum WindowAction: Int, Codable {
         case .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
              .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth:
             return NSImage()
+        case .firstVerticalSixth: return NSImage(imageLiteralResourceName: "firstVerticalSixthTemplate")
+        case .secondVerticalSixth: return NSImage(imageLiteralResourceName: "secondVerticalSixthTemplate")
+        case .thirdVerticalSixth: return NSImage(imageLiteralResourceName: "thirdVerticalSixthTemplate")
+        case .fourthVerticalSixth: return NSImage(imageLiteralResourceName: "fourthVerticalSixthTemplate")
+        case .fifthVerticalSixth: return NSImage(imageLiteralResourceName: "fifthVerticalSixthTemplate")
+        case .lastVerticalSixth: return NSImage(imageLiteralResourceName: "lastVerticalSixthTemplate")
         case .doubleHeightUp: return  NSImage()
         case .doubleHeightDown: return  NSImage()
         case .doubleWidthLeft: return  NSImage()
@@ -873,6 +909,9 @@ enum WindowAction: Int, Codable {
         case .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
              .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth: return [.left, .right]
         case .lastVerticalEighth: return .left
+        case .firstVerticalSixth: return .right
+        case .secondVerticalSixth, .thirdVerticalSixth, .fourthVerticalSixth, .fifthVerticalSixth: return [.left, .right]
+        case .lastVerticalSixth: return .left
         case .moveUp: return Defaults.resizeOnDirectionalMove.enabled ? .bottom : .none
         case .moveDown: return Defaults.resizeOnDirectionalMove.enabled ? .top : .none
         case .moveLeft: return Defaults.resizeOnDirectionalMove.enabled ? .right : .none
@@ -892,6 +931,8 @@ enum WindowAction: Int, Codable {
             .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
             .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
             .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
+            .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
+            .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth,
             .topLeftTwelfth, .topCenterLeftTwelfth, .topCenterRightTwelfth, .topRightTwelfth,
             .middleLeftTwelfth, .middleCenterLeftTwelfth, .middleCenterRightTwelfth, .middleRightTwelfth,
             .bottomLeftTwelfth, .bottomCenterLeftTwelfth, .bottomCenterRightTwelfth, .bottomRightTwelfth,
@@ -954,7 +995,8 @@ enum WindowAction: Int, Codable {
         switch self {
         case .firstThird, .centerThird, .lastThird, .firstTwoThirds, .centerTwoThirds, .lastTwoThirds: return .thirds
         case .firstFourth, .secondFourth, .thirdFourth, .lastFourth, .firstThreeFourths, .centerThreeFourths, .lastThreeFourths: return .fourths
-        case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth: return .sixths
+        case .topLeftSixth, .topCenterSixth, .topRightSixth, .bottomLeftSixth, .bottomCenterSixth, .bottomRightSixth,
+             .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth, .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth: return .sixths
         case .topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth,
              .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth, .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth: return .eighths
         case .topLeftNinth, .topCenterNinth, .topRightNinth, .middleLeftNinth, .middleCenterNinth, .middleRightNinth, .bottomLeftNinth, .bottomCenterNinth, .bottomRightNinth: return .ninths
@@ -1086,6 +1128,20 @@ enum SubWindowAction {
     seventhVerticalEighthPortrait,
     lastVerticalEighthPortrait,
 
+    firstVerticalSixthLandscape,
+    secondVerticalSixthLandscape,
+    thirdVerticalSixthLandscape,
+    fourthVerticalSixthLandscape,
+    fifthVerticalSixthLandscape,
+    lastVerticalSixthLandscape,
+
+    firstVerticalSixthPortrait,
+    secondVerticalSixthPortrait,
+    thirdVerticalSixthPortrait,
+    fourthVerticalSixthPortrait,
+    fifthVerticalSixthPortrait,
+    lastVerticalSixthPortrait,
+
     topLeftTwelfth,
     topCenterLeftTwelfth,
     topCenterRightTwelfth,
@@ -1204,6 +1260,14 @@ enum SubWindowAction {
              .fifthVerticalEighthPortrait, .sixthVerticalEighthPortrait, .seventhVerticalEighthPortrait:
             return [.top, .bottom]
         case .lastVerticalEighthPortrait: return .top
+        case .firstVerticalSixthLandscape: return .right
+        case .secondVerticalSixthLandscape, .thirdVerticalSixthLandscape, .fourthVerticalSixthLandscape, .fifthVerticalSixthLandscape:
+            return [.left, .right]
+        case .lastVerticalSixthLandscape: return .left
+        case .firstVerticalSixthPortrait: return .bottom
+        case .secondVerticalSixthPortrait, .thirdVerticalSixthPortrait, .fourthVerticalSixthPortrait, .fifthVerticalSixthPortrait:
+            return [.top, .bottom]
+        case .lastVerticalSixthPortrait: return .top
         case .topLeftTwelfth: return [.right, .bottom]
         case .topCenterLeftTwelfth: return [.right, .left, .bottom]
         case .topCenterRightTwelfth: return [.right, .left, .bottom]

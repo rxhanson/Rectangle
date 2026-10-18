@@ -420,6 +420,130 @@ class VerticalEighthActionTests: XCTestCase {
     }
 }
 
+class VerticalSixthActionTests: XCTestCase {
+
+    private let actions: [WindowAction] = [
+        .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
+        .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth
+    ]
+
+    func testVerticalSixthActionsUseAvailableStableIdentifiers() {
+        XCTAssertEqual(WindowAction.lastVerticalEighth.rawValue, 140)
+        XCTAssertEqual(actions.map(\.rawValue), [141, 142, 143, 144, 145, 146])
+        XCTAssertEqual(actions.map(\.name), [
+            "firstVerticalSixth", "secondVerticalSixth", "thirdVerticalSixth",
+            "fourthVerticalSixth", "fifthVerticalSixth", "lastVerticalSixth"
+        ])
+    }
+
+    func testVerticalSixthActionsTileVisibleFrameIntoSixFullHeightColumns() {
+        let visibleFrame = CGRect(x: 0, y: 40, width: 3840, height: 1000)
+        let expected = (0..<6).map { CGRect(x: CGFloat($0 * 640), y: 40, width: 640, height: 1000) }
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalSixthActionsUseBoundaryRoundingAcrossNonDivisibleLandscapeWidth() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let expected = [
+            CGRect(x: 20, y: 40, width: 167, height: 800),
+            CGRect(x: 187, y: 40, width: 167, height: 800),
+            CGRect(x: 354, y: 40, width: 167, height: 800),
+            CGRect(x: 521, y: 40, width: 167, height: 800),
+            CGRect(x: 688, y: 40, width: 167, height: 800),
+            CGRect(x: 855, y: 40, width: 168, height: 800)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testVerticalSixthActionsRotateIntoTopToBottomRowsOnPortraitDisplays() {
+        let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let expected = [
+            CGRect(x: 20, y: 876, width: 800, height: 167),
+            CGRect(x: 20, y: 709, width: 800, height: 167),
+            CGRect(x: 20, y: 542, width: 800, height: 167),
+            CGRect(x: 20, y: 375, width: 800, height: 167),
+            CGRect(x: 20, y: 208, width: 800, height: 167),
+            CGRect(x: 20, y: 40, width: 800, height: 168)
+        ]
+
+        XCTAssertEqual(actions.map { calculate($0, visibleFrame: visibleFrame).rect }, expected)
+    }
+
+    func testFirstVerticalSixthCyclesForwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
+            let results = repeatedResults(for: .firstVerticalSixth, count: 7, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [20, 120, 220, 320, 420, 520, 20])
+        }
+    }
+
+    func testLastVerticalSixthCyclesBackwardAndWraps() {
+        withSubsequentExecutionMode(.resize) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
+            let results = repeatedResults(for: .lastVerticalSixth, count: 7, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map { $0.rect.minX }, [520, 420, 320, 220, 120, 20, 520])
+        }
+    }
+
+    func testEndpointCyclingIsDisabledWhenSubsequentExecutionModeIsNone() {
+        withSubsequentExecutionMode(.none) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
+            XCTAssertEqual(repeatedResults(for: .firstVerticalSixth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [20, 20, 20])
+            XCTAssertEqual(repeatedResults(for: .lastVerticalSixth, count: 3, visibleFrame: visibleFrame).map { $0.rect.minX },
+                           [520, 520, 520])
+        }
+    }
+
+    func testVerticalSixthResultingSubActionsProvideGapEdges() {
+        let landscape = CGRect(x: 20, y: 40, width: 1003, height: 800)
+        let portrait = CGRect(x: 20, y: 40, width: 800, height: 1003)
+        let landscapeEdges: [Edge] = [.right, [.left, .right], [.left, .right], [.left, .right], [.left, .right], .left]
+        let portraitEdges: [Edge] = [.bottom, [.top, .bottom], [.top, .bottom], [.top, .bottom], [.top, .bottom], .top]
+
+        for (index, action) in actions.enumerated() {
+            XCTAssertEqual(calculate(action, visibleFrame: landscape).subAction?.gapSharedEdge, landscapeEdges[index])
+            XCTAssertEqual(calculate(action, visibleFrame: portrait).subAction?.gapSharedEdge, portraitEdges[index])
+        }
+    }
+
+    func testVerticalSixthActionsAreHiddenFromMenuAndDragSnapping() {
+        XCTAssertTrue(actions.allSatisfy { WindowAction.active.contains($0) })
+        XCTAssertTrue(actions.allSatisfy(\.excludedFromMenu))
+        XCTAssertTrue(actions.allSatisfy { !$0.isDragSnappable })
+    }
+
+    private func calculate(_ action: WindowAction,
+                           visibleFrame: CGRect,
+                           lastAction: RectangleAction? = nil) -> RectResult {
+        WindowCalculationFactory.calculationsByAction[action]!.calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: visibleFrame),
+                                      visibleFrameOfScreen: visibleFrame,
+                                      action: action,
+                                      lastAction: lastAction)
+        )
+    }
+
+    private func repeatedResults(for action: WindowAction,
+                                 count: Int,
+                                 visibleFrame: CGRect) -> [RectResult] {
+        var lastAction: RectangleAction?
+        return (0..<count).map { _ in
+            let result = calculate(action, visibleFrame: visibleFrame, lastAction: lastAction)
+            lastAction = RectangleAction(action: action, subAction: result.subAction, rect: result.rect)
+            return result
+        }
+    }
+
+    private func withSubsequentExecutionMode(_ mode: SubsequentExecutionMode, _ body: () -> Void) {
+        let saved = Defaults.subsequentExecutionMode.value
+        defer { Defaults.subsequentExecutionMode.value = saved }
+        Defaults.subsequentExecutionMode.value = mode
+        body()
+    }
+}
+
 class WindowActionMenuTests: XCTestCase {
 
     func testRowsAndColumnsShareOptionalSubmenu() throws {
