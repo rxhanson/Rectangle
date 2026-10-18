@@ -253,6 +253,7 @@ class ShortcutManager {
             }
 
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
+               !cursorChangedDisplay(windowId: windowId),
                RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowManager.logicalFrame(for: windowElement)) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus, completion: parameters.completion, cancellation: parameters.cancellation)
@@ -372,6 +373,15 @@ class ShortcutManager {
             return true
         }
         return false
+    }
+
+    /// Pointing at another display with cursor screen detection makes a press
+    /// a first press there, so it mustn't cycle the window on from its display.
+    private func cursorChangedDisplay(windowId: CGWindowID) -> Bool {
+        guard Defaults.useCursorScreenDetection.enabled,
+              let cursorScreen = screenDetection.detectScreensAtCursor()?.currentScreen
+        else { return false }
+        return AppDelegate.windowHistory.cursorChangedDisplay(for: windowId, cursorScreenFrame: cursorScreen.frame)
     }
 
     private func subscribe(notification: WindowAction, selector: Selector) {

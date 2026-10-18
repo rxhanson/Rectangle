@@ -118,10 +118,6 @@ struct BehaviorSettingsView: View {
                 CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
-                        if viewModel.showCursorScreenDetection {
-                            Toggle("Use cursor screen detection", isOn: $viewModel.useCursorScreenDetection)
-                        }
-                        
                         Toggle("Double-click window title bar to maximize/restore", isOn: $viewModel.doubleClickTitleBar)
                         Toggle("Repeated maximize restores the previous size and position", isOn: $viewModel.repeatedMaximizeRestoresPrevious)
 
@@ -144,6 +140,12 @@ struct BehaviorSettingsView: View {
                 CustomDisclosureGroup {
                     VStack(alignment: .leading, spacing: 12) {
                         Divider()
+                        VStack(alignment: .leading, spacing: 2) {
+                            Toggle("Move window to display where cursor is", isOn: $viewModel.useCursorScreenDetection)
+                            Text("All move commands will move the focused window to its target position on the display where the cursor currently resides, leaving the cursor where it is.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                         Toggle("Move cursor along with window across displays", isOn: $viewModel.moveCursorAcrossDisplays)
                         Toggle("Preserve maximize state when moving across displays", isOn: $viewModel.autoMaximize)
                         VStack(alignment: .leading, spacing: 2) {
