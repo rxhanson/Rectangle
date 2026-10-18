@@ -1402,6 +1402,105 @@ class ScreenFlippedTests: XCTestCase {
     }
 }
 
+final class TodoWindowPlacementTests: XCTestCase {
+    private var savedDefaults: [(Default, CodableDefault)] = []
+
+    override func setUp() {
+        super.setUp()
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.todoSidebarWidth, CodableDefault(float: 1024)),
+            (Defaults.todoSidebarWidthUnit, CodableDefault(int: TodoSidebarWidthUnit.pixels.rawValue)),
+            (Defaults.todoSidebarSide, CodableDefault(int: TodoSidebarSide.right.rawValue)),
+            (Defaults.gapSize, CodableDefault(float: 0))
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        super.tearDown()
+    }
+
+    func testPrimaryDisplayUsesVisibleTopEdge() {
+        assertPlacement(visibleFrame: CGRect(x: 0, y: 0, width: 2560, height: 1415),
+                        expected: CGRect(x: 1536, y: 25, width: 1024, height: 1415))
+    }
+
+    func testDisplayAbovePrimaryKeepsNegativeAccessibilityY() {
+        // Issue #535: this window must stay on the upper display, rather than move to y = 1440.
+        assertPlacement(visibleFrame: CGRect(x: 0, y: 1440, width: 2560, height: 1415),
+                        expected: CGRect(x: 1536, y: -1415, width: 1024, height: 1415))
+    }
+
+    func testDisplayBelowPrimaryKeepsVerticalOffset() {
+        assertPlacement(visibleFrame: CGRect(x: 0, y: -1440, width: 2560, height: 1415),
+                        expected: CGRect(x: 1536, y: 1465, width: 1024, height: 1415))
+    }
+
+    func testHorizontalDisplaysKeepPositiveAndNegativeVerticalOffsetsOnBothSides() {
+        for side in TodoSidebarSide.allCases {
+            let sidebarX: CGFloat = side == .left ? -2560 : -1024
+            assertPlacement(visibleFrame: CGRect(x: -2560, y: 320, width: 2560, height: 1415),
+                            expected: CGRect(x: sidebarX, y: -295, width: 1024, height: 1415),
+                            side: side)
+            assertPlacement(visibleFrame: CGRect(x: -2560, y: -320, width: 2560, height: 1415),
+                            expected: CGRect(x: sidebarX, y: 345, width: 1024, height: 1415),
+                            side: side)
+        }
+    }
+
+    func testAdjustedVisibleFramePreservesDockAndMenuInsetsOnBothSides() {
+        let visibleFrame = CGRect(x: 70, y: 1510, width: 2490, height: 1345)
+        assertPlacement(visibleFrame: visibleFrame,
+                        expected: CGRect(x: 70, y: -1415, width: 1024, height: 1345),
+                        side: .left)
+        assertPlacement(visibleFrame: visibleFrame,
+                        expected: CGRect(x: 1536, y: -1415, width: 1024, height: 1345))
+    }
+
+    func testGapsPreserveUpperDisplayAndUseHalfGapAtSharedEdge() {
+        Defaults.gapSize.value = 20
+        let visibleFrame = CGRect(x: 0, y: 1440, width: 2560, height: 1415)
+        assertPlacement(visibleFrame: visibleFrame,
+                        expected: CGRect(x: 20, y: -1395, width: 994, height: 1375),
+                        side: .left)
+        assertPlacement(visibleFrame: visibleFrame,
+                        expected: CGRect(x: 1546, y: -1395, width: 994, height: 1375))
+    }
+
+    func testPercentageWidthUsesDestinationVisibleFrameWidth() {
+        Defaults.todoSidebarWidth.value = 40
+        Defaults.todoSidebarWidthUnit.value = .pct
+        assertPlacement(visibleFrame: CGRect(x: 70, y: 1510, width: 2490, height: 1345),
+                        expected: CGRect(x: 1564, y: -1415, width: 996, height: 1345))
+    }
+
+    private func assertPlacement(visibleFrame: CGRect, expected: CGRect, side: TodoSidebarSide = .right,
+                                 file: StaticString = #filePath, line: UInt = #line) {
+        Defaults.todoSidebarSide.value = side
+        let window = CapturingWindow()
+
+        TodoManager.moveTodoWindow(window, screenVisibleFrame: visibleFrame, primaryScreenMaxY: 1440)
+
+        XCTAssertEqual(window.requestedFrames, [expected], file: file, line: line)
+    }
+
+    private final class CapturingWindow: AccessibilityElement {
+        private(set) var requestedFrames: [CGRect] = []
+
+        init() {
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { CGRect(x: 100, y: 1000, width: 500, height: 400) }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            requestedFrames.append(frame)
+        }
+    }
+}
+
 final class DockVisibleFrameTests: XCTestCase {
     private let screen = CGRect(x: 0, y: 0, width: 1440, height: 900)
     private let visibleWithoutDock = CGRect(x: 0, y: 0, width: 1440, height: 875)

@@ -13,7 +13,14 @@ extension CGRect {
         guard !isNull else {
             return self
         }
-        return .init(origin: .init(x: origin.x, y: NSScreen.screens[0].frame.maxY - maxY), size: size)
+        return screenFlipped(primaryScreenMaxY: NSScreen.screens[0].frame.maxY)
+    }
+
+    func screenFlipped(primaryScreenMaxY: CGFloat) -> CGRect {
+        guard !isNull else {
+            return self
+        }
+        return .init(origin: .init(x: origin.x, y: primaryScreenMaxY - maxY), size: size)
     }
 
     var isLandscape: Bool { width > height }
