@@ -195,7 +195,7 @@ Note that shortcuts in v0.41+ are stored in a different format and will not load
 
 That file can be backed up or transferred to other machines.
 
-If you are using Rectangle v0.44+, you can also use the import/export button in the Preferences pane to share to your preferences and keyboard shortcuts across machines using a JSON file.
+If you are using Rectangle v0.44+, you can also use the import/export buttons on the **App Settings** tab of the Settings window to share your preferences and keyboard shortcuts across machines using a JSON file.
 
 > [!NOTE]  
 > If you are having issues with configuration options persisting after an application restart and you've installed using Homebrew, you will need to uninstall and reinstall with the `--zap` flag.
