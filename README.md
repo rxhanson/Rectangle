@@ -1,5 +1,7 @@
 # Rectangle
 
+English | [简体中文](README.zh-Hans.md)
+
 Rectangle is a window management app for macOS based on Spectacle.
 
 <img width="612" height="810" alt="image" src="https://github.com/user-attachments/assets/c088d1e2-3661-4041-ac30-95da89ac4a41" />
