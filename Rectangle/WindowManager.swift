@@ -10,6 +10,7 @@ class WindowManager {
     private let windowAnimator: WindowAnimator
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
+    private var dividerHandoffID = 0
     
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared) {
@@ -55,6 +56,16 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        dividerHandoffID += 1
+        let handoff = dividerHandoffID
+        WindowDividerManager.shared.interrupt()
+        if WindowDividerManager.shared.hasPendingPlacement {
+            windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) { [weak self] in
+                guard let self, self.dividerHandoffID == handoff else { parameters.cancellation?(); return }
+                self.execute(parameters)
+            }
+            return
+        }
         var completionDeferred = false
         defer { if !completionDeferred { parameters.completion?() } }
         hideSizeConstraintWarning()
@@ -78,6 +89,7 @@ class WindowManager {
                 return
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+                WindowPlacementCoordinator.shared.cancelAll()
                 executionID &+= 1
                 let currentExecutionID = executionID
                 completionDeferred = true
@@ -235,6 +247,7 @@ class WindowManager {
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
+        WindowPlacementCoordinator.shared.cancelAll()
         executionID &+= 1
         let currentExecutionID = executionID
 
@@ -374,6 +387,10 @@ class WindowManager {
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
 
+        if !result.isFixedSize {
+            WindowDividerManager.shared.record(result.windowElement, id: result.windowId, frame: resultingRect,
+                screen: calcResult.screen, eligibilityConfirmed: true)
+        }
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
                                       "achieved": [resultingRect.minX, resultingRect.minY, resultingRect.width, resultingRect.height],

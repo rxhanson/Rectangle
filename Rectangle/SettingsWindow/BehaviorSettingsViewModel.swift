@@ -180,10 +180,32 @@ final class BehaviorSettingsViewModel {
     var showCombinedDisplayMode: Bool { !NSScreen.screensHaveSeparateSpaces }
     var stageCapable: Bool { StageUtil.stageCapable }
     
+    var windowDividerEnhanced = false {
+        didSet {
+            guard oldValue != windowDividerEnhanced else { return }
+            Defaults.windowDividerEnhanced.enabled = windowDividerEnhanced
+            WindowDividerManager.shared.interrupt(animated: false)
+            if windowDividerEnhanced && !reloadingDefaults {
+                WindowCapturePermission.guideIfNeeded(for: .windowDivider, onDecline: { Defaults.windowDividerEnhanced.enabled = false }) { [weak self] in
+                    self?.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
+                }
+            }
+        }
+    }
+    var windowDivider = false {
+        didSet {
+            Defaults.windowDivider.enabled = windowDivider
+            WindowDividerManager.shared.clear()
+        }
+    }
+    private var reloadingDefaults = false
+
     private var aboutTodoWindowController: NSWindowController?
     
     // MARK: - Initialization
     init() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
@@ -227,6 +249,8 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
+        windowDivider = Defaults.windowDivider.enabled
+        windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
         
         setupObservers()
     }
@@ -247,6 +271,8 @@ final class BehaviorSettingsViewModel {
     }
     
     func reloadFromDefaults() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
@@ -290,6 +316,8 @@ final class BehaviorSettingsViewModel {
         self.selectedHSplitPreset = CycleSize.matching(percentValue: hRatio)
         self.selectedVSplitPreset = CycleSize.matching(percentValue: vRatio)
         self.showMinimumWindowSizeWarning = Defaults.showMinimumWindowSizeWarning.userEnabled
+        windowDivider = Defaults.windowDivider.enabled
+        windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
     }
     
     // MARK: - Cycle Sizes Binding Helper
