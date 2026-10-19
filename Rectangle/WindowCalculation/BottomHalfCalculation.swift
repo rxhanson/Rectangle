@@ -10,6 +10,15 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcul
             return tiledRect
         }
 
+        if Defaults.subsequentExecutionMode.value == .switchSides {
+            // Repeating Bottom Half while the window still sits on the bottom half moves it to the top
+            // half; see LeftRightHalfCalculation.calculateSwitchSides.
+            guard isRepeatedCommand(params) else { return calculateFirstRect(params) }
+            let opposite = RectCalculationParameters(window: params.window, visibleFrameOfScreen: params.visibleFrameOfScreen,
+                                                     action: .topHalf, lastAction: params.lastAction)
+            return RectResult(WindowCalculationFactory.topHalfCalculation.calculateFirstRect(opposite).rect, resultingAction: .topHalf)
+        }
+
         if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes {
             return calculateFirstRect(params)
         }

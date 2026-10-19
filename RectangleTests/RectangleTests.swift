@@ -9309,3 +9309,242 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
 }
 
 
+final class SwitchSidesRepeatedCommandTests: XCTestCase {
+    private let windowId: CGWindowID = 4242
+    private let screen = RepeatedMaximizeTestScreen(frame: CGRect(x: 0, y: 0, width: 1000, height: 600))
+    private let floating = CGRect(x: 100, y: 100, width: 400, height: 300)
+    private var savedMode: SubsequentExecutionMode = .resize
+    private var savedPreserveOtherAxis = false
+    private var savedHorizontalSplitRatio: Float = 50
+    private var savedVerticalSplitRatio: Float = 50
+    private var savedGapSize: Float = 0
+
+    override func setUp() {
+        super.setUp()
+        savedMode = Defaults.subsequentExecutionMode.value
+        savedPreserveOtherAxis = Defaults.halvesPreserveOtherAxisSize.enabled
+        savedHorizontalSplitRatio = Defaults.horizontalSplitRatio.value
+        savedVerticalSplitRatio = Defaults.verticalSplitRatio.value
+        savedGapSize = Defaults.gapSize.value
+        Defaults.subsequentExecutionMode.value = .switchSides
+        Defaults.halvesPreserveOtherAxisSize.enabled = false
+        Defaults.horizontalSplitRatio.value = 50
+        Defaults.verticalSplitRatio.value = 50
+        Defaults.gapSize.value = 0
+        ActiveSideSplitRatios.shared.resetAll()
+    }
+
+    override func tearDown() {
+        Defaults.subsequentExecutionMode.value = savedMode
+        Defaults.halvesPreserveOtherAxisSize.enabled = savedPreserveOtherAxis
+        Defaults.horizontalSplitRatio.value = savedHorizontalSplitRatio
+        Defaults.verticalSplitRatio.value = savedVerticalSplitRatio
+        Defaults.gapSize.value = savedGapSize
+        ActiveSideSplitRatios.shared.resetAll()
+        super.tearDown()
+    }
+
+    // MARK: - Left and right halves
+
+    func testRepeatedLeftHalfSwitchesToTheRightHalfAndBack() throws {
+        let first = try XCTUnwrap(calculate(.leftHalf, window: floating, last: nil))
+        XCTAssertEqual(first.resultingAction, .leftHalf)
+        assertRect(first.rect, plainHalf(.leftHalf))
+
+        let second = try XCTUnwrap(calculate(.leftHalf, window: first.rect, last: (first.resultingAction, first.rect)))
+        XCTAssertEqual(second.resultingAction, .rightHalf)
+        assertRect(second.rect, plainHalf(.rightHalf))
+
+        let third = try XCTUnwrap(calculate(.leftHalf, window: second.rect, last: (second.resultingAction, second.rect)))
+        XCTAssertEqual(third.resultingAction, .leftHalf)
+        assertRect(third.rect, plainHalf(.leftHalf))
+    }
+
+    func testRepeatedRightHalfSwitchesToTheLeftHalf() throws {
+        let first = try XCTUnwrap(calculate(.rightHalf, window: floating, last: nil))
+        XCTAssertEqual(first.resultingAction, .rightHalf)
+
+        let second = try XCTUnwrap(calculate(.rightHalf, window: first.rect, last: (first.resultingAction, first.rect)))
+        XCTAssertEqual(second.resultingAction, .leftHalf)
+        assertRect(second.rect, plainHalf(.leftHalf))
+    }
+
+    func testPressingTheOtherSideMovesThereWithoutSwitching() throws {
+        // Left Half, then Right Half: the window simply goes right; switching only happens on a repeat.
+        let left = try XCTUnwrap(calculate(.leftHalf, window: floating, last: nil))
+        let right = try XCTUnwrap(calculate(.rightHalf, window: left.rect, last: (left.resultingAction, left.rect)))
+        XCTAssertEqual(right.resultingAction, .rightHalf)
+        assertRect(right.rect, plainHalf(.rightHalf))
+    }
+
+    func testAWindowThatMovedSinceTheLastActionGetsAPlainHalf() throws {
+        let first = try XCTUnwrap(calculate(.leftHalf, window: floating, last: nil))
+        let moved = first.rect.offsetBy(dx: 0, dy: 10)
+        let result = try XCTUnwrap(calculate(.leftHalf, window: moved, last: (.leftHalf, first.rect)))
+        XCTAssertEqual(result.resultingAction, .leftHalf)
+        assertRect(result.rect, plainHalf(.leftHalf))
+    }
+
+    func testAnUnrelatedLastActionGetsAPlainHalf() throws {
+        let maximized = screen.frame
+        let result = try XCTUnwrap(calculate(.leftHalf, window: maximized, last: (.maximize, maximized)))
+        XCTAssertEqual(result.resultingAction, .leftHalf)
+        assertRect(result.rect, plainHalf(.leftHalf))
+    }
+
+    func testTheOppositeSideUsesTheComplementarySplitRatio() throws {
+        Defaults.horizontalSplitRatio.value = 60
+        Defaults.verticalSplitRatio.value = 60
+        ActiveSideSplitRatios.shared.resetAll()
+        let visible = screen.adjustedVisibleFrame()
+
+        let left = try XCTUnwrap(calculate(.leftHalf, window: floating, last: nil))
+        XCTAssertEqual(left.rect.width, floor(visible.width * 0.6), accuracy: 1)
+        let right = try XCTUnwrap(calculate(.leftHalf, window: left.rect, last: (left.resultingAction, left.rect)))
+        XCTAssertEqual(right.rect.width, floor(visible.width * 0.4), accuracy: 1)
+        XCTAssertEqual(right.rect.maxX, visible.maxX, accuracy: 0.5)
+        let back = try XCTUnwrap(calculate(.leftHalf, window: right.rect, last: (right.resultingAction, right.rect)))
+        XCTAssertEqual(back.rect.width, floor(visible.width * 0.6), accuracy: 1)
+        XCTAssertEqual(back.rect.minX, visible.minX, accuracy: 0.5)
+
+        let top = try XCTUnwrap(calculate(.topHalf, window: floating, last: nil))
+        XCTAssertEqual(top.rect.height, floor(visible.height * 0.6), accuracy: 1)
+        let bottom = try XCTUnwrap(calculate(.topHalf, window: top.rect, last: (top.resultingAction, top.rect)))
+        XCTAssertEqual(bottom.rect.height, floor(visible.height * 0.4), accuracy: 1)
+        XCTAssertEqual(bottom.rect.minY, visible.minY, accuracy: 0.5)
+    }
+
+    // MARK: - Top and bottom halves
+
+    func testRepeatedTopHalfSwitchesToTheBottomHalfAndBack() throws {
+        let first = try XCTUnwrap(calculate(.topHalf, window: floating, last: nil))
+        XCTAssertEqual(first.resultingAction, .topHalf)
+
+        let second = try XCTUnwrap(calculate(.topHalf, window: first.rect, last: (first.resultingAction, first.rect)))
+        XCTAssertEqual(second.resultingAction, .bottomHalf)
+        assertRect(second.rect, plainHalf(.bottomHalf))
+
+        let third = try XCTUnwrap(calculate(.topHalf, window: second.rect, last: (second.resultingAction, second.rect)))
+        XCTAssertEqual(third.resultingAction, .topHalf)
+        assertRect(third.rect, plainHalf(.topHalf))
+    }
+
+    func testRepeatedBottomHalfSwitchesToTheTopHalf() throws {
+        let first = try XCTUnwrap(calculate(.bottomHalf, window: floating, last: nil))
+        let second = try XCTUnwrap(calculate(.bottomHalf, window: first.rect, last: (first.resultingAction, first.rect)))
+        XCTAssertEqual(second.resultingAction, .topHalf)
+        assertRect(second.rect, plainHalf(.topHalf))
+    }
+
+    // MARK: - Interplay with other options
+
+    func testPlainHalvesStillSwitchWhenHalvesPreserveTheOtherAxis() throws {
+        Defaults.halvesPreserveOtherAxisSize.enabled = true
+
+        let left = try XCTUnwrap(calculate(.leftHalf, window: floating, last: nil))
+        let right = try XCTUnwrap(calculate(.leftHalf, window: left.rect, last: (left.resultingAction, left.rect)))
+        XCTAssertEqual(right.resultingAction, .rightHalf)
+        assertRect(right.rect, plainHalf(.rightHalf))
+
+        let top = try XCTUnwrap(calculate(.topHalf, window: floating, last: nil))
+        let bottom = try XCTUnwrap(calculate(.topHalf, window: top.rect, last: (top.resultingAction, top.rect)))
+        XCTAssertEqual(bottom.resultingAction, .bottomHalf)
+        assertRect(bottom.rect, plainHalf(.bottomHalf))
+    }
+
+    func testAQuarterKeepsItsPlaceWhenHalvesPreserveTheOtherAxis() throws {
+        Defaults.halvesPreserveOtherAxisSize.enabled = true
+        let visible = screen.adjustedVisibleFrame()
+        let quarter = HalfSplitFrameCalculation.cornerRect(in: visible, horizontalSide: .leading, verticalSide: .leading,
+                                                           horizontalFraction: 0.5, verticalFraction: 0.5)
+
+        let result = try XCTUnwrap(calculate(.topHalf, window: quarter, last: (.topLeft, quarter)))
+        XCTAssertEqual(result.resultingAction, .topLeft)
+        assertRect(result.rect, quarter)
+    }
+
+    func testASideSwitchIsNotACooperativeResize() {
+        let left = CGRect(x: 0, y: 0, width: 500, height: 600)
+        let right = CGRect(x: 500, y: 0, width: 500, height: 600)
+        let widerLeft = CGRect(x: 0, y: 0, width: 667, height: 600)
+        XCTAssertTrue(CooperativeCornerResize.isSideSwitch(oldFocusedFrame: left, newFocusedFrame: right, axis: .horizontal, tolerance: 4))
+        XCTAssertFalse(CooperativeCornerResize.isSideSwitch(oldFocusedFrame: left, newFocusedFrame: widerLeft, axis: .horizontal, tolerance: 4))
+        XCTAssertFalse(CooperativeCornerResize.isSideSwitch(oldFocusedFrame: left, newFocusedFrame: left, axis: .horizontal, tolerance: 4))
+
+        let top = CGRect(x: 0, y: 300, width: 1000, height: 300)
+        let bottom = CGRect(x: 0, y: 0, width: 1000, height: 300)
+        XCTAssertTrue(CooperativeCornerResize.isSideSwitch(oldFocusedFrame: top, newFocusedFrame: bottom, axis: .vertical, tolerance: 4))
+        XCTAssertFalse(CooperativeCornerResize.isSideSwitch(oldFocusedFrame: top, newFocusedFrame: bottom, axis: .horizontal, tolerance: 4))
+    }
+
+    // MARK: - Scope of the mode
+
+    func testOtherModesDoNotSwitchSides() throws {
+        for mode in SubsequentExecutionMode.ordered where mode != .switchSides {
+            Defaults.subsequentExecutionMode.value = mode
+            for action in [WindowAction.leftHalf, .rightHalf, .topHalf, .bottomHalf] {
+                let first = try XCTUnwrap(calculate(action, window: floating, last: nil))
+                let second = try XCTUnwrap(calculate(action, window: first.rect, last: (first.resultingAction, first.rect)))
+                XCTAssertEqual(second.resultingAction, action, "\(mode) \(action)")
+            }
+        }
+    }
+
+    func testThirdsKeepTogglingInTheSwitchSidesMode() {
+        let visibleFrame = CGRect(x: 0, y: 0, width: 900, height: 600)
+        let calculation = WindowCalculationFactory.calculationsByAction[.firstTwoThirds]!
+        func params(window: CGRect, last: RectangleAction?) -> RectCalculationParameters {
+            RectCalculationParameters(window: Window(id: windowId, rect: window),
+                                      visibleFrameOfScreen: visibleFrame,
+                                      action: .firstTwoThirds,
+                                      lastAction: last)
+        }
+        let first = calculation.calculateRect(params(window: visibleFrame, last: nil))
+        XCTAssertEqual(first.rect.minX, 0)
+        XCTAssertEqual(first.rect.width, 600)
+
+        let repeated = calculation.calculateRect(params(window: first.rect,
+                                                        last: RectangleAction(action: .firstTwoThirds, subAction: first.subAction, rect: first.rect, count: 1)))
+        XCTAssertEqual(repeated.rect.minX, 300)
+        XCTAssertEqual(repeated.rect.width, 600)
+        XCTAssertNotEqual(repeated.subAction, first.subAction)
+
+        let back = calculation.calculateRect(params(window: repeated.rect,
+                                                    last: RectangleAction(action: .firstTwoThirds, subAction: repeated.subAction, rect: repeated.rect, count: 2)))
+        XCTAssertEqual(back.rect.minX, 0)
+    }
+
+    func testTheModeIsOfferedAndNeitherResizesNorTraverses() {
+        XCTAssertTrue(SubsequentExecutionMode.ordered.contains(.switchSides))
+        XCTAssertEqual(SubsequentExecutionMode(rawValue: 6), .switchSides)
+        XCTAssertFalse(SubsequentExecutionMode.switchSides.resizes)
+        XCTAssertFalse(Defaults.subsequentExecutionMode.resizes)
+        XCTAssertFalse(Defaults.subsequentExecutionMode.traversesDisplays)
+        XCTAssertFalse(Defaults.subsequentExecutionMode.cyclesQuadrantPositions)
+    }
+
+    // MARK: - Helpers
+
+    /// Runs the action's calculation the way WindowManager does: the window in screen coordinates,
+    /// and the recorded rect flipped as `recordAction` stores it, so a repeat is recognised when they match.
+    private func calculate(_ action: WindowAction, window: CGRect, last: (WindowAction, CGRect)?) -> WindowCalculationResult? {
+        let params = WindowCalculationParameters(window: Window(id: windowId, rect: window),
+                                                 usableScreens: UsableScreens(currentScreen: screen, numScreens: 1),
+                                                 action: action,
+                                                 lastAction: last.map { RectangleAction(action: $0.0, subAction: nil, rect: $0.1.screenFlipped, count: 1) },
+                                                 ignoreTodo: false)
+        return WindowCalculationFactory.calculationsByAction[action]!.calculate(params)
+    }
+
+    /// What a first execution of the action produces on this screen.
+    private func plainHalf(_ action: WindowAction) -> CGRect {
+        calculate(action, window: floating, last: nil)?.rect ?? .null
+    }
+
+    private func assertRect(_ rect: CGRect, _ expected: CGRect, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(rect.minX, expected.minX, accuracy: 0.5, "minX", file: file, line: line)
+        XCTAssertEqual(rect.minY, expected.minY, accuracy: 0.5, "minY", file: file, line: line)
+        XCTAssertEqual(rect.width, expected.width, accuracy: 0.5, "width", file: file, line: line)
+        XCTAssertEqual(rect.height, expected.height, accuracy: 0.5, "height", file: file, line: line)
+    }
+}
