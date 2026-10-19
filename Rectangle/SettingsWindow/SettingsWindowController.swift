@@ -3,7 +3,9 @@
 import AppKit
 import SwiftUI
 
-class SettingsWindowController: NSWindowController {
+class SettingsWindowController: NSWindowController, NSWindowDelegate {
+    
+    var onClose: (() -> Void)?
     
     convenience init() {
         let contentViewController = SettingsTabViewController()
@@ -19,6 +21,13 @@ class SettingsWindowController: NSWindowController {
         window.center()
         
         self.init(window: window)
+        window.delegate = self
+    }
+    
+    func windowWillClose(_ notification: Notification) {
+        onClose?()
+        // AppKit keeps a closed window alive, so drop its content to free the tabs and SwiftUI views.
+        DispatchQueue.main.async { self.window?.contentViewController = nil }
     }
 }
 
