@@ -323,6 +323,12 @@
             "value" : "Nedre"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Опустити"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -465,6 +471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Anpassa verktygsfältet…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштувати панель інструментів…"
           }
         },
         "vi" : {
@@ -815,6 +827,12 @@
             "value" : "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При повторенні дій переміщення або половин вікно переходитиме на наступний екран замість зміни розміру на 1/2, 2/3 і 1/3."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -957,6 +975,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Höja"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підняти"
           }
         },
         "vi" : {
@@ -1103,6 +1127,12 @@
             "value" : "Transformationer"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перетворення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1245,6 +1275,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stavning"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правопис"
           }
         },
         "vi" : {
@@ -1391,6 +1427,12 @@
             "value" : "Använd standard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1533,6 +1575,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tal"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мовлення"
           }
         },
         "vi" : {
@@ -2639,6 +2687,12 @@
             "value" : "Kopiera stil"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копіювати стиль"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2975,6 +3029,12 @@
             "value" : "Skrivriktning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напрямок письма"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3117,6 +3177,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Substitutioner"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заміни"
           }
         },
         "vi" : {
@@ -3263,6 +3329,12 @@
             "value" : "Smart kopiera/klistra in"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумне копіювання/вставлення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3407,6 +3479,12 @@
             "value" : "Dra åt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ущільнити"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3549,6 +3627,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automatiskt rättstavning"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автоматично виправляти правопис"
           }
         },
         "vi" : {
@@ -3887,6 +3971,12 @@
             "value" : "Använd standard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3926,6 +4016,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estilo de animação"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стиль анімації"
           }
         },
         "zh-Hans" : {
@@ -4070,6 +4166,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skriv ut…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Друкувати…"
           }
         },
         "vi" : {
@@ -4408,6 +4510,12 @@
             "value" : "Typsnitt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шрифт"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4744,6 +4852,12 @@
             "value" : "\tVänster till höger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tЗліва направо"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4886,6 +5000,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa färger"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати кольори"
           }
         },
         "vi" : {
@@ -5121,6 +5241,12 @@
             "value" : "Aparência do desfoque"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вигляд розмиття"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5160,6 +5286,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desfocar pré-visualização"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попередній перегляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -5690,6 +5822,12 @@
             "value" : "Spara som…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберегти як…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5832,6 +5970,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformationer"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перетворення"
           }
         },
         "vi" : {
@@ -6176,6 +6320,12 @@
             "value" : "Använd ingen"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не використовувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6227,6 +6377,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konflikt s umiestnením dlaždíc v macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфлікт із розкладанням вікон macOS"
           }
         },
         "vi" : {
@@ -6551,6 +6707,12 @@
             "value" : "Markerade"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виділення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6693,6 +6855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Smarta länkar"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумні посилання"
           }
         },
         "vi" : {
@@ -6839,6 +7007,12 @@
             "value" : "Text"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текст"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6981,6 +7155,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ändra till gemener"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Усі малі літери"
           }
         },
         "vi" : {
@@ -7216,6 +7396,12 @@
             "value" : "Escuro"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Темний"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7255,6 +7441,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redimensionamento direto"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пряма зміна розміру"
           }
         },
         "zh-Hans" : {
@@ -7310,6 +7502,12 @@
             "value" : "Vypnúť v macOS"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в macOS"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7363,6 +7561,12 @@
             "value" : "Vypnúť v Rectangle"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в Rectangle"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7414,6 +7618,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zatvoriť"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрити"
           }
         },
         "vi" : {
@@ -7839,6 +8049,12 @@
             "value" : "Potiahnutie na okraj obrazovky je zapnuté v Rectangle aj macOS."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон перетягуванням до краю екрана увімкнено і в Rectangle, і в macOS."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8175,6 +8391,12 @@
             "value" : "Stavning och grammatik"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правопис і граматика"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8401,6 +8623,12 @@
             "value" : "Oitavos"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмі"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8446,6 +8674,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дополнительные горячие клавиши"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додаткові комбінації клавіш"
           }
         },
         "vi" : {
@@ -8784,6 +9018,12 @@
             "value" : "Text"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текст"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8926,6 +9166,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Substitutioner"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заміни"
           }
         },
         "vi" : {
@@ -9161,6 +9407,12 @@
             "value" : "Seguir o sistema"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Як у системі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9330,7 +9582,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Четверини"
+            "value" : "Чверті"
           }
         },
         "vi" : {
@@ -9489,6 +9741,12 @@
             "value" : "Fetstil"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жирний"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9631,6 +9889,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Format"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Формат"
           }
         },
         "vi" : {
@@ -9969,6 +10233,12 @@
             "value" : "Typsnitt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шрифт"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10111,6 +10381,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Använd standard"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартно"
           }
         },
         "vi" : {
@@ -10449,6 +10725,12 @@
             "value" : "Skrivriktning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напрямок письма"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10785,6 +11067,12 @@
             "value" : "Visa stavning och grammatik"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати правопис і граматику"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10927,6 +11215,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Textbyte"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заміна тексту"
           }
         },
         "vi" : {
@@ -11265,6 +11559,12 @@
             "value" : "Smarta citat"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумні лапки"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11599,6 +11899,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kontrollera dokument nu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевірити документ зараз"
           }
         },
         "vi" : {
@@ -11937,6 +12243,12 @@
             "value" : "Index"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижній індекс"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12079,6 +12391,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mindre"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менший"
           }
         },
         "vi" : {
@@ -12417,6 +12735,12 @@
             "value" : "Baslinje"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Базова лінія"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12559,6 +12883,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Justera"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирівняти по ширині"
           }
         },
         "vi" : {
@@ -12705,6 +13035,12 @@
             "value" : "Använd ingen"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не використовувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12849,6 +13185,12 @@
             "value" : "Kerning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кернінг"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12991,6 +13333,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\tHöger till vänster"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСправа наліво"
           }
         },
         "vi" : {
@@ -13329,6 +13677,12 @@
             "value" : "Format"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Формат"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13471,6 +13825,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Återgå till sparad"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повернути до збереженого"
           }
         },
         "vi" : {
@@ -13809,6 +14169,12 @@
             "value" : "Visa sidofältet"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати бічну панель"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13854,6 +14220,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Увеличить ширину"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більша ширина"
           }
         },
         "vi" : {
@@ -14000,6 +14372,12 @@
             "value" : "\tVänster till höger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tЗліва направо"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14144,6 +14522,12 @@
             "value" : "Ta fram allt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перенести все наперед"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14183,6 +14567,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Claro"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Світлий"
           }
         },
         "zh-Hans" : {
@@ -14327,6 +14717,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Klistra in linjal"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставити лінійку"
           }
         },
         "vi" : {
@@ -14663,6 +15059,12 @@
             "value" : "Kontrollera grammatik med stavning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевіряти граматику разом із правописом"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14805,6 +15207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kopiera linjal"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копіювати лінійку"
           }
         },
         "vi" : {
@@ -15017,6 +15425,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nonos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дев'яті"
           }
         },
         "vi" : {
@@ -15355,6 +15769,12 @@
             "value" : "\tStandard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСтандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15497,6 +15917,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligaturer"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лігатури"
           }
         },
         "vi" : {
@@ -15835,6 +16261,12 @@
             "value" : "Baslinje"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Базова лінія"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15979,6 +16411,12 @@
             "value" : "Öppna senaste"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити недавні"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16121,6 +16559,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lossa"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розрідити"
           }
         },
         "vi" : {
@@ -16670,7 +17114,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Знайти попередній"
+            "value" : "Знайти попереднє"
           }
         },
         "vi" : {
@@ -17027,6 +17471,12 @@
             "value" : "Sluta prata"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зупинити мовлення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17361,6 +17811,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Större"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більший"
           }
         },
         "vi" : {
@@ -17699,6 +18155,12 @@
             "value" : "Visa typsnitt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати шрифти"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18035,6 +18497,12 @@
             "value" : "Sidinställningar…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Параметри сторінки…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18177,6 +18645,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoom"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Масштабувати"
           }
         },
         "vi" : {
@@ -18323,6 +18797,12 @@
             "value" : "\tHöger till vänster"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСправа наліво"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18465,6 +18945,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kontrollera stavningen medan du skriver"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевіряти правопис під час введення"
           }
         },
         "vi" : {
@@ -18611,6 +19097,12 @@
             "value" : "Smarta bindestreck"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумні тире"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18753,6 +19245,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Upphöjd"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхній індекс"
           }
         },
         "vi" : {
@@ -19124,7 +19622,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перейти до вибору"
+            "value" : "Перейти до виділеного"
           }
         },
         "vi" : {
@@ -19349,6 +19847,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dezesseis avos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шістнадцяті"
           }
         },
         "vi" : {
@@ -19754,6 +20258,12 @@
             "value" : "Уменьшить ширину"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менша ширина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19898,6 +20408,12 @@
             "value" : "Visa verktygsfältet"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати панель інструментів"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20040,6 +20556,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bläddra mellan skärmarna med upprepade vänster- eller högerkommandon"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати екрани при повторенні дій ліворуч або праворуч"
           }
         },
         "vi" : {
@@ -20477,6 +20999,12 @@
             "value" : "Organizar em colunas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти стовпцями"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20536,6 +21064,12 @@
             "value" : "Organizar em linhas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти рядками"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20563,6 +21097,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lado a lado"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон"
           }
         },
         "zh-Hans" : {
@@ -20612,6 +21152,12 @@
             "value" : "Umiestnenie dlaždíc v macOS bolo vypnuté"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у macOS вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20645,6 +21191,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A organização lado a lado do Rectangle foi desativada"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у Rectangle вимкнено"
           }
         },
         "vi" : {
@@ -20791,6 +21343,12 @@
             "value" : "Kerning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кернінг"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20824,6 +21382,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Para ajustar a organização lado a lado do macOS, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб налаштувати розкладання вікон macOS, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
           }
         },
         "vi" : {
@@ -20879,6 +21443,12 @@
             "value" : "Pre opätovné povolenie, prejdi do Systémové nastavenia → Plocha a Dock → Okná"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб увімкнути його знову, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20912,6 +21482,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A organização lado a lado na borda superior da tela foi desativada no macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон біля верхнього краю екрана в macOS тепер вимкнено"
           }
         },
         "vi" : {
@@ -20953,6 +21529,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Metades superior/inferior"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня/нижня половини"
           }
         },
         "vi" : {
@@ -21099,6 +21681,12 @@
             "value" : "Datadetektorer"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Детектори даних"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21131,6 +21719,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duodécimos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дванадцяті"
           }
         },
         "vi" : {
@@ -21277,6 +21871,12 @@
             "value" : "Öppna senaste"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити недавні"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21421,6 +22021,12 @@
             "value" : "Kapitalisera"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "З великої літери"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21454,6 +22060,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atualização disponível…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступне оновлення…"
           }
         },
         "vi" : {
@@ -22380,6 +22992,12 @@
             "value" : "Mitten"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По центру"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22522,6 +23140,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kursiv"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Курсив"
           }
         },
         "vi" : {
@@ -22668,6 +23292,12 @@
             "value" : "Klistra in stil"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставити стиль"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22810,6 +23440,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa linjal"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати лінійку"
           }
         },
         "vi" : {
@@ -22956,6 +23592,12 @@
             "value" : "Ändra till versaler"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Усі великі літери"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23100,6 +23742,12 @@
             "value" : "Rensa menyn"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистити меню"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23242,6 +23890,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligaturer"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лігатури"
           }
         },
         "vi" : {
@@ -23772,6 +24426,12 @@
             "value" : "Anpassa höger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирівняти праворуч"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24011,6 +24671,12 @@
             "value" : "Шаг ширины (px)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крок ширини (пкс)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24047,6 +24713,12 @@
             "value" : "Não é possível reduzir mais a janela.\nAs janelas podem se sobrepor."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неможливо ще зменшити вікно.\nВікна можуть перекриватися."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24075,6 +24747,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tamanho mínimo da janela atingido"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Досягнуто мінімального розміру вікна"
           }
         },
         "zh-Hans" : {
@@ -24405,6 +25083,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Understrykning"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підкреслений"
           }
         },
         "vi" : {
@@ -24743,6 +25427,12 @@
             "value" : "Använd alla"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Використовувати всі"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24879,6 +25569,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tal"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мовлення"
           }
         },
         "vi" : {
@@ -25403,6 +26099,12 @@
             "value" : "\tStandard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСтандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25545,6 +26247,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Börja tala"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Почати мовлення"
           }
         },
         "vi" : {
@@ -26063,6 +26771,12 @@
             "value" : "Visa substitutioner"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати заміни"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26207,6 +26921,12 @@
             "value" : "Justera vänster"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирівняти ліворуч"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26349,6 +27069,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paragraf"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Абзац"
           }
         },
         "vi" : {

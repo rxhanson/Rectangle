@@ -220,6 +220,12 @@
             "value" : "%"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -246,6 +252,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld px"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld пкс"
           }
         },
         "zh-Hans" : {
@@ -801,7 +813,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Перемістіть обране завдання у передній план"
+            "value" : "1. Виведіть обраний застосунок завдань на передній план"
           }
         },
         "vi" : {
@@ -2188,6 +2200,12 @@
             "value" : "Entre telas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування для кількох екранів"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2217,6 +2235,12 @@
             "value" : "Depois que o Rectangle maximiza ou quase maximiza uma janela, executar a mesma ação novamente devolve a janela ao tamanho e à posição anteriores."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Після того як Rectangle максимізує або майже максимізує вікно, повторне виконання тієї самої дії повертає вікну попередній розмір і положення."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2241,6 +2265,12 @@
             "value" : "Permitir"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дозволити"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2261,6 +2291,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Permitir ação de URL do Rectangle?"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дозволити дію Rectangle через URL?"
           }
         },
         "zh-Hans" : {
@@ -2489,6 +2525,12 @@
             "value" : "Uma fonte externa pediu ao Rectangle para executar \"%1$@\" no app com bundle ID \"%2$@\". Permitir?"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зовнішнє джерело просить Rectangle виконати «%1$@» для застосунку з ідентифікатором «%2$@». Дозволити?"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2701,6 +2743,12 @@
             "value" : "Animar janelas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Анімувати вікна"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2736,6 +2784,12 @@
             "value" : "Estilo de animação"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стиль анімації"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2762,6 +2816,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ajustes do app"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування застосунку"
           }
         },
         "zh-Hans" : {
@@ -3179,6 +3239,12 @@
             "value" : "Comportamento"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поведінка"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3211,6 +3277,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aparência do desfoque"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вигляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -3253,6 +3325,12 @@
             "value" : "Desfocar pré-visualização"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розмивати відбиток"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3292,6 +3370,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desfocar pré-visualização"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попередній перегляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -3518,6 +3602,12 @@
             "value" : "1/8 inferior centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3551,6 +3641,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 inferior centro-esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва восьма частина"
           }
         },
         "vi" : {
@@ -3587,6 +3683,12 @@
             "value" : "1/16 inferior centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3613,6 +3715,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 inferior centro-esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-ліва дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -3643,6 +3751,12 @@
             "value" : "1/9 inferior central"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центральна дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3669,6 +3783,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 inferior centro-direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права 1/8"
           }
         },
         "zh-Hans" : {
@@ -3706,6 +3826,12 @@
             "value" : "1/8 inferior centro-direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права восьма частина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3740,6 +3866,12 @@
             "value" : "1/16 inferior centro-direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3766,6 +3898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 inferior centro-direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня центрально-права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -3998,6 +4136,12 @@
             "value" : "Oitavos inferiores a partir dos cantos; terços"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижні восьмі від кутів; третини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4222,6 +4366,12 @@
             "value" : "1/8 inferior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4255,6 +4405,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 inferior esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва восьма частина"
           }
         },
         "vi" : {
@@ -4291,6 +4447,12 @@
             "value" : "1/9 inferior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4317,6 +4479,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 inferior esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -4537,6 +4705,12 @@
             "value" : "1/12 inferior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня ліва дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4755,6 +4929,12 @@
             "value" : "1/8 inferior direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4788,6 +4968,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 inferior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права восьма частина"
           }
         },
         "vi" : {
@@ -4824,6 +5010,12 @@
             "value" : "1/9 inferior direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4850,6 +5042,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 inferior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -5068,6 +5266,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 inferior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -5294,6 +5498,12 @@
             "value" : "Terço inferior"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня третина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5334,6 +5544,12 @@
             "value" : "Dois terços inferiores"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижні дві третини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5360,6 +5576,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Traz para a frente, uma por vez, as janelas encaixadas na mesma área da janela em foco"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По черзі виводити на передній план вікна, прив'язані до тієї ж зони, що й активне вікно"
           }
         },
         "zh-Hans" : {
@@ -5390,6 +5612,12 @@
             "value" : "Traga para a frente o app de tarefas escolhido"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виведіть обраний застосунок завдань на передній план"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5405,6 +5633,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Botão %lld"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кнопка %lld"
           }
         },
         "zh-Hans" : {
@@ -6361,6 +6595,12 @@
             "value" : "Centralizar janelas ao mover entre telas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Центрувати вікна при переміщенні між екранами"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7149,6 +7389,12 @@
             "value" : "Define a divisão entre as ações laterais e as de canto"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштувати межу між діями для половин і кутів"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7200,6 +7446,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konflikt s umiestnením dlaždíc v macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфлікт із розкладанням вікон macOS"
           }
         },
         "vi" : {
@@ -7377,7 +7629,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conflict with system setting"
+            "value" : "Конфлікт із системним налаштуванням"
           }
         },
         "vi" : {
@@ -7616,6 +7868,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copyright © 2019-2026 Ryan Hanson. Todos os direitos reservados."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson. Усі права захищено."
           }
         },
         "zh-Hans" : {
@@ -7998,6 +8256,12 @@
             "value" : "Usando atualmente: "
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Використовується: "
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8224,6 +8488,12 @@
             "value" : "Alternar posições nos quadrantes e tamanhos nas laterais"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "перемикати положення для чвертей, розміри для половин"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -8375,8 +8645,8 @@
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "перемикати ½, ⅔, and ⅓ при діях з половиною"
+            "state" : "translated",
+            "value" : "перемикати ½, ⅔ і ⅓ при діях з половинами"
           }
         },
         "vi" : {
@@ -8419,6 +8689,12 @@
             "value" : "Alternar janelas empilhadas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8439,6 +8715,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alternar janelas empilhadas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі"
           }
         },
         "zh-Hans" : {
@@ -8463,6 +8745,12 @@
             "value" : "Alternar janelas empilhadas (ordem inversa)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі у зворотному порядку"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8483,6 +8771,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alternar janelas empilhadas (ordem inversa)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати вікна в стосі у зворотному порядку"
           }
         },
         "zh-Hans" : {
@@ -8698,6 +8992,12 @@
             "value" : "Atalhos cíclicos de canto expandem"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторні дії для кутів розширюють вікно"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8730,6 +9030,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escuro"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Темний"
           }
         },
         "zh-Hans" : {
@@ -9136,6 +9442,12 @@
             "value" : "Redimensionamento direto"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пряма зміна розміру"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9386,6 +9698,12 @@
             "value" : "Vypnúť v macOS"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в macOS"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9445,6 +9763,12 @@
             "value" : "Vypnúť v Rectangle"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в Rectangle"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9502,6 +9826,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zatvoriť"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрити"
           }
         },
         "vi" : {
@@ -10061,7 +10391,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-click window title bar to maximize/restore"
+            "value" : "Подвійне клацання по заголовку вікна максимізує/відновлює"
           }
         },
         "vi" : {
@@ -10133,6 +10463,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Potiahnutie na okraj obrazovky je zapnuté v Rectangle aj macOS."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон перетягуванням до краю екрана увімкнено і в Rectangle, і в macOS."
           }
         },
         "vi" : {
@@ -10365,6 +10701,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Oitavos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмі"
           }
         },
         "vi" : {
@@ -11134,6 +11476,12 @@
             "value" : "Дополнительные горячие клавиши"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додаткові комбінації клавіш"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11181,6 +11529,12 @@
             "value" : "⋯"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додатково"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11215,6 +11569,12 @@
             "value" : "Quinto oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "П'ята вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11235,6 +11595,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fifth Vertical Sixth"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "П'ята вертикальна шоста"
           }
         }
       }
@@ -12159,7 +12525,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Знайти попередній"
+            "value" : "Знайти попереднє"
           }
         },
         "vi" : {
@@ -13166,6 +13532,12 @@
             "value" : "Primeiro oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перша вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13186,6 +13558,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "First Vertical Sixth"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перша вертикальна шоста"
           }
         }
       }
@@ -13216,6 +13594,12 @@
             "value" : "Seguir o sistema"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Як у системі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13242,6 +13626,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vale para a lista de janelas e para os atalhos de alternância. Quando desativado, janelas empilhadas na mesma posição superior esquerda contam independentemente do tamanho"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Для списку вікон і комбінацій перемикання. Якщо вимкнено, у стос потрапляють усі вікна з тим самим верхнім лівим кутом, незалежно від розміру"
           }
         },
         "zh-Hans" : {
@@ -13272,6 +13662,12 @@
             "value" : "Quarto oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Четверта вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13292,6 +13688,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fourth Vertical Sixth"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Четверта вертикальна шоста"
           }
         }
       }
@@ -13458,7 +13860,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Четверини"
+            "value" : "Чверті"
           }
         },
         "vi" : {
@@ -14035,7 +14437,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Налаштування"
+            "value" : "Загальні"
           }
         },
         "vi" : {
@@ -14471,6 +14873,12 @@
             "value" : "Acesse Ajustes do Sistema → Privacidade e Segurança → Controle de Dispositivos e Acesso a Dados"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейдіть до Системні параметри → Конфіденційність і безпека → Керування пристроями й доступ до даних"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14503,6 +14911,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Botão verde da janela maximiza em vez de entrar em tela cheia"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зелена кнопка вікна максимізує замість повноекранного режиму"
           }
         },
         "zh-Hans" : {
@@ -14540,6 +14954,12 @@
             "value" : "Posições da grade"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Положення в сітці"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14573,6 +14993,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ações de metade preservam o tamanho da janela no outro eixo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дії з половинами зберігають розмір вікна по іншій осі"
           }
         },
         "zh-Hans" : {
@@ -14632,6 +15058,12 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Haptická odozva"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тактильний відгук"
           }
         },
         "vi" : {
@@ -15431,6 +15863,12 @@
             "value" : "Mantenha qualquer tecla modificadora pressionada ou use o menu Janela para ter o comportamento padrão do macOS"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Утримуйте будь-яку клавішу-модифікатор або скористайтеся меню «Вікно» для стандартної поведінки macOS"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15463,6 +15901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Horizontal (E/D, %)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По горизонталі (Л/П, %)"
           }
         },
         "vi" : {
@@ -15499,6 +15943,12 @@
             "value" : "horizontalmente"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "по горизонталі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15519,6 +15969,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Horizontalmente"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По горизонталі"
           }
         },
         "zh-Hans" : {
@@ -15547,6 +16003,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Posicione o cursor perto do canto superior esquerdo de uma janela para mostrar a lista"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Наведіть курсор біля верхнього лівого кута вікна, щоб показати список"
           }
         },
         "zh-Hans" : {
@@ -16240,6 +16702,12 @@
             "value" : "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При повторенні дій переміщення або половин вікно переходитиме на наступний екран замість зміни розміру на 1/2, 2/3 і 1/3."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16631,6 +17099,12 @@
             "value" : "No menu do Rectangle, ative o Modo Tarefas."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У меню Rectangle увімкніть режим Завдань."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16657,6 +17131,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No menu do Rectangle, selecione\n\"Usar [app] como app de tarefas\""
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "У меню Rectangle виберіть\n«Використовувати [Застосунок] як застосунок Завдань»"
           }
         },
         "zh-Hans" : {
@@ -16829,7 +17309,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перейти до вибору"
+            "value" : "Перейти до виділеного"
           }
         },
         "vi" : {
@@ -17056,6 +17536,12 @@
             "value" : "Atalhos de teclado sempre atuam na janela em foco"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Комбінації клавіш завжди діють на активне вікно"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17076,6 +17562,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Áreas de encaixe (paisagem)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зони прив'язки для горизонтального екрана"
           }
         },
         "zh-Hans" : {
@@ -17116,6 +17608,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Увеличить ширину"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більша ширина"
           }
         },
         "vi" : {
@@ -17299,7 +17797,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Останній чверть"
+            "value" : "Остання чверть"
           }
         },
         "vi" : {
@@ -17918,6 +18416,12 @@
             "value" : "Último oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остання вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17938,6 +18442,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last Vertical Sixth"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Остання вертикальна шоста"
           }
         }
       }
@@ -18341,6 +18851,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Metade esquerda seguida de metade superior move a janela para o quarto superior esquerdo; a ação da borda oposta a expande de volta."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«Ліва половина», а потім «Верхня половина» переміщує вікно у верхню ліву чверть; дія для протилежного краю розширює його назад."
           }
         },
         "zh-Hans" : {
@@ -18758,6 +19274,12 @@
             "value" : "Claro"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Світлий"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18792,6 +19314,12 @@
             "value" : "1/16 meio-inferior centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18818,6 +19346,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 meio-inferior centro-direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня центрально-права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -18848,6 +19382,12 @@
             "value" : "1/16 meio-inferior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18874,6 +19414,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 meio-inferior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижня середня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -19869,6 +20415,12 @@
             "value" : "Ajustes de maximização"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштування максимізації"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19895,6 +20447,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Máximo de janelas por coluna"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Максимум вікон у стовпці"
           }
         },
         "zh-Hans" : {
@@ -19925,6 +20483,12 @@
             "value" : "Máximo de janelas por linha"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Максимум вікон у рядку"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19940,6 +20504,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Botão do meio"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня кнопка"
           }
         },
         "zh-Hans" : {
@@ -19970,6 +20540,12 @@
             "value" : "1/12 central centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня центрально-ліва дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19996,6 +20572,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/9 central"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня центральна дев'ята частина"
           }
         },
         "zh-Hans" : {
@@ -20026,6 +20608,12 @@
             "value" : "1/12 central centro-direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня центрально-права дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20052,6 +20640,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/9 central esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня ліва дев'ята частина"
           }
         },
         "zh-Hans" : {
@@ -20082,6 +20676,12 @@
             "value" : "1/12 central esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня ліва дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20110,6 +20710,12 @@
             "value" : "1/9 central direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня права дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20136,6 +20742,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 central direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -20170,6 +20782,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Terço do meio"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Середня третина"
           }
         },
         "vi" : {
@@ -20404,6 +21022,12 @@
             "value" : "Tamanho mínimo da janela atingido"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Досягнуто мінімального розміру вікна"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20418,6 +21042,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atalhos de botão do mouse atuam na janela sob o ponteiro"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Комбінації з кнопками миші діють на вікно під курсором"
           }
         },
         "zh-Hans" : {
@@ -22549,6 +23179,12 @@
             "value" : "Nonos"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дев'яті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22588,6 +23224,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nonos (3×3)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дев'яті (3×3)"
           }
         },
         "vi" : {
@@ -22821,6 +23463,12 @@
             "value" : "Deslocar a posição da janela quando houver sobreposição"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зміщувати вікно, якщо воно перекриває інше"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22841,6 +23489,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empilhar apenas janelas do mesmo tamanho"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Об'єднувати в стос лише вікна однакового розміру"
           }
         },
         "zh-Hans" : {
@@ -24205,6 +24859,12 @@
             "value" : "Áreas de encaixe (retrato)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зони прив'язки для вертикального екрана"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24424,6 +25084,12 @@
             "value" : "Manter a janela maximizada ao mover entre telas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберігати максимізацію при переміщенні між екранами"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24450,6 +25116,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preservar o tamanho no outro eixo nas ações de metade, como no Windows"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберігати розмір по іншій осі для дій з половинами, як у Windows"
           }
         },
         "zh-Hans" : {
@@ -24487,6 +25159,12 @@
             "value" : "Pressione o atalho repetidamente para percorrer todas as posições da grade."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Натискайте комбінацію клавіш повторно, щоб перебрати всі положення в сітці."
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24515,6 +25193,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impedir que o Mission Control seja ativado ao arrastar"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не запускати Mission Control під час перетягування"
           }
         },
         "zh-Hans" : {
@@ -24741,6 +25425,12 @@
             "value" : "px"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "пкс"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24964,6 +25654,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Área de apps recentes"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Область недавніх застосунків"
           }
         },
         "zh-Hans" : {
@@ -26329,6 +27025,12 @@
             "value" : "Remover espaçamento na borda superior da tela"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прибрати відступ біля верхнього краю екрана"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26545,6 +27247,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remover espaçamento superior ao encaixar na borda superior"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прибирати верхній відступ при прив'язці до верхнього краю"
           }
         },
         "zh-Hans" : {
@@ -26765,6 +27473,12 @@
             "value" : "Maximizar novamente restaura o tamanho e a posição anteriores"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повторна максимізація відновлює попередній розмір і положення"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26791,6 +27505,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redimensionar janelas adjacentes ao alternar atalhos laterais ou de canto"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Змінювати розмір сусідніх вікон при перемиканні половин або кутів"
           }
         },
         "zh-Hans" : {
@@ -27152,7 +27872,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Відновити типові комбінації клавіш"
+            "value" : "Відновити типові комбінації клавіш і зони прив’язки"
           }
         },
         "vi" : {
@@ -27342,7 +28062,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Відновлювати розмір вікна при відміні зміни розміру"
+            "value" : "Відновлювати розмір вікна після відкріплення"
           }
         },
         "vi" : {
@@ -28159,6 +28879,12 @@
             "value" : "Segundo oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Друга вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28179,6 +28905,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Second Vertical Sixth"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Друга вертикальна шоста"
           }
         }
       }
@@ -28776,6 +29508,12 @@
             "value" : "Sétimo oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сьома вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28995,6 +29733,12 @@
             "value" : "Mostrar atalhos *extras* no menu"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати *додаткові* комбінації клавіш у меню"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29028,6 +29772,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar tamanhos adicionais no menu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати додаткові розміри в меню"
           }
         },
         "vi" : {
@@ -29255,6 +30005,12 @@
             "value" : "Mostrar lista de janelas empilhadas ao passar o cursor"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показувати список вікон у стосі при наведенні"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29467,6 +30223,12 @@
             "value" : "Mostrar aviso quando não for possível reduzir a janela o suficiente"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попереджати, якщо вікно неможливо зменшити до потрібного розміру"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29499,6 +30261,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Proporção da divisão lateral"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Співвідношення поділу половин"
           }
         },
         "vi" : {
@@ -29727,6 +30495,12 @@
             "value" : "Dezesseis avos"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шістнадцяті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29768,6 +30542,12 @@
             "value" : "Dezesseis avos (4×4)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шістнадцяті (4×4)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29800,6 +30580,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sexto oitavo vertical"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шоста вертикальна восьма"
           }
         },
         "zh-Hans" : {
@@ -30218,6 +31004,12 @@
             "value" : "Уменьшить ширину"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менша ширина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30363,6 +31155,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Encaixar antes de chegar às bordas da tela"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Прив'язувати до досягнення країв екрана"
           }
         },
         "zh-Hans" : {
@@ -30903,6 +31701,12 @@
             "value" : "Janelas empilhadas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вікна в стосі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30929,6 +31733,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Organizador Visual"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менеджер сцени"
           }
         },
         "zh-Hans" : {
@@ -31346,6 +32156,12 @@
             "value" : "Terceiro oitavo vertical"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Третя вертикальна восьма"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31366,6 +32182,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Third Vertical Sixth"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Третя вертикальна шоста"
           }
         }
       }
@@ -31956,6 +32778,12 @@
             "value" : "Deixa um pequeno espaço mostrando a janela de baixo; funciona melhor com espaçamento entre janelas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Залишає трохи місця, щоб було видно вікно під ним; найкраще працює з відступами між вікнами"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32012,6 +32840,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Organizar em colunas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти стовпцями"
           }
         },
         "zh-Hans" : {
@@ -32072,6 +32906,12 @@
             "value" : "Organizar em linhas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти рядками"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32098,6 +32938,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Organizar janelas em linhas/colunas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон рядками/стовпцями"
           }
         },
         "zh-Hans" : {
@@ -32127,6 +32973,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lado a lado"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон"
           }
         },
         "zh-Hans" : {
@@ -32182,6 +33034,12 @@
             "value" : "Umiestnenie dlaždíc v macOS bolo vypnuté"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у macOS вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32223,6 +33081,12 @@
             "value" : "A organização lado a lado do Rectangle foi desativada"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у Rectangle вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32262,6 +33126,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Para ajustar a organização lado a lado do macOS, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб налаштувати розкладання вікон macOS, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
           }
         },
         "vi" : {
@@ -32439,7 +33309,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To let Rectangle manage the title bar double click functionality, you need to disable the corresponding macOS setting."
+            "value" : "Щоб Rectangle керував подвійним клацанням по заголовку вікна, потрібно вимкнути відповідне налаштування macOS."
           }
         },
         "vi" : {
@@ -32511,6 +33381,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pre opätovné povolenie, prejdi do Systémové nastavenia → Plocha a Dock → Okná"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб увімкнути його знову, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
           }
         },
         "vi" : {
@@ -32731,6 +33607,12 @@
             "value" : "Modo Tarefas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Режим Завдань"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32947,6 +33829,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alternar indicador de janelas empilhadas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемкнути позначку стосу вікон"
           }
         },
         "zh-Hans" : {
@@ -33167,6 +34055,12 @@
             "value" : "Alternar lista de janelas"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемкнути список вікон"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33385,6 +34279,12 @@
             "value" : "1/8 superior centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33418,6 +34318,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 superior centro-esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва восьма частина"
           }
         },
         "vi" : {
@@ -33454,6 +34360,12 @@
             "value" : "1/16 superior centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33480,6 +34392,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 superior centro-esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-ліва дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -33510,6 +34428,12 @@
             "value" : "1/9 superior central"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центральна дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33536,6 +34460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 superior centro-direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права 1/8"
           }
         },
         "zh-Hans" : {
@@ -33573,6 +34503,12 @@
             "value" : "1/8 superior centro-direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права восьма частина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33607,6 +34543,12 @@
             "value" : "1/16 superior centro-direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33633,6 +34575,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/12 superior centro-direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня центрально-права дванадцята частина"
           }
         },
         "zh-Hans" : {
@@ -33865,6 +34813,12 @@
             "value" : "Oitavos superiores a partir dos cantos; maximizar"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхні восьмі від кутів; максимізувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34089,6 +35043,12 @@
             "value" : "1/8 superior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34122,6 +35082,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 superior esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва восьма частина"
           }
         },
         "vi" : {
@@ -34158,6 +35124,12 @@
             "value" : "1/9 superior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34184,6 +35156,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 superior esquerdo"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -34404,6 +35382,12 @@
             "value" : "1/12 superior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня ліва дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34622,6 +35606,12 @@
             "value" : "1/8 superior direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права 1/8"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34655,6 +35645,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/8 superior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права восьма частина"
           }
         },
         "vi" : {
@@ -34691,6 +35687,12 @@
             "value" : "1/9 superior direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права дев'ята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34717,6 +35719,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 superior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -34888,7 +35896,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Верхнія права шоста частина"
+            "value" : "Верхня права шоста частина"
           }
         },
         "vi" : {
@@ -34937,6 +35945,12 @@
             "value" : "1/12 superior direito"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня права дванадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34970,6 +35984,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A organização lado a lado na borda superior da tela foi desativada no macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон біля верхнього краю екрана в macOS тепер вимкнено"
           }
         },
         "vi" : {
@@ -35202,6 +36222,12 @@
             "value" : "Terço superior"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня третина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35240,6 +36266,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dois terços superiores"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхні дві третини"
           }
         },
         "vi" : {
@@ -35289,6 +36321,12 @@
             "value" : "Metades superior/inferior"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня/нижня половини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35323,6 +36361,12 @@
             "value" : "Metades superior/inferior"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верх/низ"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35349,6 +36393,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tratar várias telas como uma só"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вважати кілька екранів одним"
           }
         },
         "zh-Hans" : {
@@ -35386,6 +36436,12 @@
             "value" : "Tratar várias telas como uma só"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вважати кілька моніторів одним"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35419,6 +36475,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duodécimos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дванадцяті"
           }
         },
         "vi" : {
@@ -35462,6 +36524,12 @@
             "value" : "Duodécimos (4×3)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дванадцяті (4×3)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35495,6 +36563,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não é possível reduzir mais a janela.\nAs janelas podem se sobrepor."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неможливо ще зменшити вікно.\nВікна можуть перекриватися."
           }
         },
         "zh-Hans" : {
@@ -35722,6 +36796,12 @@
             "value" : "Atualização disponível…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступне оновлення…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35756,6 +36836,12 @@
             "value" : "1/16 meio-superior centro-esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня центрально-ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35782,6 +36868,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 meio-superior centro-direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня центрально-права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -35812,6 +36904,12 @@
             "value" : "1/16 meio-superior esquerdo"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня ліва шістнадцята частина"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35838,6 +36936,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1/16 meio-superior direito"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня середня права шістнадцята частина"
           }
         },
         "zh-Hans" : {
@@ -36065,6 +37169,12 @@
             "value" : "Detectar a tela pela posição do cursor"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Визначати екран за положенням курсора"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36097,6 +37207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Detectar a tela pela posição do cursor"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Визначати екран за курсором"
           }
         },
         "zh-Hans" : {
@@ -36621,6 +37737,12 @@
             "value" : "Vertical (S/I, %)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По вертикалі (В/Н, %)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36655,6 +37777,12 @@
             "value" : "verticalmente"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "по вертикалі"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36675,6 +37803,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verticalmente"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По вертикалі"
           }
         },
         "zh-Hans" : {
@@ -37462,6 +38596,12 @@
             "value" : "Quando desativado, a distância da janela até as bordas da tela é mantida quando possível."
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо вимкнено, прилягання вікна до країв екрана за можливості зберігається."
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37678,6 +38818,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Com várias telas, trata todas como uma só. Requer que Ajustes do Sistema > Mesa e Dock > \"As telas têm Spaces separados\" esteja DESATIVADO."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Якщо екранів кілька, вважає їх одним екраном. Потрібно вимкнути Системні параметри > Робочий стіл і Dock > «Дисплеї мають окремі простори»."
           }
         },
         "zh-Hans" : {
@@ -37908,6 +39054,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Шаг ширины (px)"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крок ширини (пкс)"
           }
         },
         "vi" : {
