@@ -1950,6 +1950,198 @@ final class ScreenEdgeGapTests: XCTestCase {
     }
 }
 
+final class MenuBarUtilTests: XCTestCase {
+    private let screen = CGRect(x: 0, y: 0, width: 1280, height: 800)
+    private let visibleBelowMenuBar = CGRect(x: 0, y: 0, width: 1280, height: 777)
+
+    func testExtendsFrameToTopOfScreen() {
+        XCTAssertEqual(extended(visibleBelowMenuBar), screen)
+    }
+
+    func testStopsBelowNotch() {
+        let notchedScreen = CGRect(x: 0, y: 0, width: 1512, height: 982)
+        let visibleFrame = CGRect(x: 0, y: 0, width: 1512, height: 918)
+
+        XCTAssertEqual(
+            extended(visibleFrame, screenFrame: notchedScreen, topSafeAreaInset: 32),
+            CGRect(x: 0, y: 0, width: 1512, height: 950)
+        )
+    }
+
+    func testLeavesFrameAlreadyAtTopOfScreenAlone() {
+        XCTAssertEqual(extended(screen), screen)
+    }
+
+    func testLeavesFrameAlreadyBelowNotchAlone() {
+        let notchedScreen = CGRect(x: 0, y: 0, width: 1512, height: 982)
+        let visibleFrame = CGRect(x: 0, y: 0, width: 1512, height: 950)
+
+        XCTAssertEqual(extended(visibleFrame, screenFrame: notchedScreen, topSafeAreaInset: 32), visibleFrame)
+    }
+
+    func testNeverShrinksFrame() {
+        let tallerThanScreen = CGRect(x: 0, y: 0, width: 1280, height: 820)
+
+        XCTAssertEqual(extended(tallerThanScreen), tallerThanScreen)
+    }
+
+    func testPreservesDockInsets() {
+        let bottomDock = CGRect(x: 0, y: 70, width: 1280, height: 707)
+        XCTAssertEqual(extended(bottomDock), CGRect(x: 0, y: 70, width: 1280, height: 730))
+
+        let sideDocks = CGRect(x: 70, y: 0, width: 1140, height: 777)
+        XCTAssertEqual(extended(sideDocks), CGRect(x: 70, y: 0, width: 1140, height: 800))
+    }
+
+    func testKeepsOriginOfSecondaryDisplays() {
+        let rightScreen = CGRect(x: 1280, y: 0, width: 1920, height: 1080)
+        let rightVisibleFrame = CGRect(x: 1280, y: 0, width: 1920, height: 1055)
+        XCTAssertEqual(extended(rightVisibleFrame, screenFrame: rightScreen), rightScreen)
+
+        let upperScreen = CGRect(x: 0, y: 800, width: 1920, height: 1080)
+        let upperVisibleFrame = CGRect(x: 0, y: 800, width: 1920, height: 1055)
+        XCTAssertEqual(extended(upperVisibleFrame, screenFrame: upperScreen), upperScreen)
+    }
+
+    func testNullFramesPassThrough() {
+        XCTAssertTrue(extended(.null).isNull)
+        XCTAssertEqual(extended(visibleBelowMenuBar, screenFrame: .null), visibleBelowMenuBar)
+    }
+
+    private func extended(_ visibleFrame: CGRect,
+                          screenFrame: CGRect? = nil,
+                          topSafeAreaInset: CGFloat = 0) -> CGRect {
+        MenuBarUtil.frameIgnoringMenuBar(visibleFrame, screenFrame: screenFrame ?? screen, topSafeAreaInset: topSafeAreaInset)
+    }
+}
+
+final class IgnoreMenuBarTests: XCTestCase {
+    private let screen = TestScreen(notchHeight: 0)
+    private let notchedScreen = TestScreen(notchHeight: 32)
+    private var savedDefaults: [(Default, CodableDefault)] = []
+    private var storedIgnoreMenuBar: Any?
+
+    override func setUp() {
+        super.setUp()
+        storedIgnoreMenuBar = UserDefaults.standard.object(forKey: Defaults.ignoreMenuBar.key)
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
+            (Defaults.screenEdgeGapsOnMainScreenOnly, CodableDefault(bool: false)),
+            (Defaults.screenEdgeGapTop, CodableDefault(float: 0)),
+            (Defaults.screenEdgeGapTopNotch, CodableDefault(double: -1)),
+            (Defaults.ignoreMenuBar, CodableDefault(int: 0))
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        UserDefaults.standard.set(storedIgnoreMenuBar, forKey: Defaults.ignoreMenuBar.key)
+        super.tearDown()
+    }
+
+    func testMenuBarStaysReservedByDefault() {
+        XCTAssertEqual(topEdge(of: screen), 777)
+        XCTAssertEqual(topEdge(of: notchedScreen), 950)
+    }
+
+    func testEnabledOptionUsesFullScreenHeight() {
+        Defaults.ignoreMenuBar.enabled = true
+
+        XCTAssertEqual(topEdge(of: screen), 800)
+    }
+
+    func testEnabledOptionStopsBelowNotch() {
+        Defaults.ignoreMenuBar.enabled = true
+
+        XCTAssertEqual(topEdge(of: notchedScreen), 950)
+    }
+
+    func testDisabledOptionKeepsMenuBarReserved() {
+        Defaults.ignoreMenuBar.enabled = false
+
+        XCTAssertEqual(topEdge(of: screen), 777)
+    }
+
+    func testTopGapAppliesOnTopOfFullHeight() {
+        Defaults.ignoreMenuBar.enabled = true
+        Defaults.screenEdgeGapTop.value = 10
+
+        XCTAssertEqual(topEdge(of: screen), 790)
+    }
+
+    func testNotchGapAppliesBelowNotch() {
+        Defaults.ignoreMenuBar.enabled = true
+        Defaults.screenEdgeGapTop.value = 10
+        Defaults.screenEdgeGapTopNotch.value = 4
+
+        XCTAssertEqual(topEdge(of: notchedScreen), 946)
+        XCTAssertEqual(topEdge(of: screen), 790)
+    }
+
+    func testTerminalBoolValueEnablesOption() {
+        let key = Defaults.ignoreMenuBar.key
+        let stored = UserDefaults.standard.object(forKey: key)
+        defer { UserDefaults.standard.set(stored, forKey: key) }
+
+        UserDefaults.standard.set(true, forKey: key)
+        XCTAssertTrue(OptionalBoolDefault(key: key).userEnabled)
+
+        UserDefaults.standard.set(false, forKey: key)
+        XCTAssertFalse(OptionalBoolDefault(key: key).userEnabled)
+
+        UserDefaults.standard.removeObject(forKey: key)
+        XCTAssertTrue(OptionalBoolDefault(key: key).notSet)
+    }
+
+    func testOptionSurvivesConfigRoundTrip() throws {
+        let option = Defaults.ignoreMenuBar
+        option.enabled = true
+        let exportedEnabled = try exportedIgnoreMenuBar()
+        XCTAssertEqual(exportedEnabled.int, 1)
+
+        option.enabled = nil
+        XCTAssertEqual(topEdge(of: screen), 777)
+
+        option.load(from: exportedEnabled)
+        XCTAssertTrue(option.userEnabled)
+        XCTAssertEqual(topEdge(of: screen), 800)
+    }
+
+    // The Dock correction runs against the live Dock, so only the top edge is asserted here;
+    // MenuBarUtilTests cover the rest of the rect.
+    private func topEdge(of screen: NSScreen) -> CGFloat {
+        screen.adjustedVisibleFrame(true, true).maxY
+    }
+
+    private func exportedIgnoreMenuBar() throws -> CodableDefault {
+        let json = try XCTUnwrap(Defaults.encoded())
+        let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+        return try XCTUnwrap(config.defaults[Defaults.ignoreMenuBar.key])
+    }
+
+    private final class TestScreen: NSScreen {
+        private let notchHeight: CGFloat
+
+        init(notchHeight: CGFloat) {
+            self.notchHeight = notchHeight
+            super.init()
+        }
+
+        override var frame: NSRect {
+            notchHeight > 0 ? CGRect(x: 0, y: 0, width: 1512, height: 982) : CGRect(x: 0, y: 0, width: 1280, height: 800)
+        }
+        override var visibleFrame: NSRect {
+            // Notched displays reserve exactly the notch band for the menu bar.
+            notchHeight > 0 ? CGRect(x: 0, y: 0, width: 1512, height: 950) : CGRect(x: 0, y: 0, width: 1280, height: 777)
+        }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsets(top: notchHeight, left: 0, bottom: 0, right: 0) }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+}
+
 class DefaultsExportTests: XCTestCase {
 
     func testOverlapDefaultsInExportArray() {
@@ -1965,6 +2157,11 @@ class DefaultsExportTests: XCTestCase {
     func testMouseButtonSettingInExportArray() {
         let keys = Defaults.array.map { $0.key }
         XCTAssertTrue(keys.contains("mouseButtonShortcutsUseWindowUnderCursor"), "mouseButtonShortcutsUseWindowUnderCursor missing from Defaults.array")
+    }
+
+    func testIgnoreMenuBarInExportArray() {
+        let keys = Defaults.array.map { $0.key }
+        XCTAssertTrue(keys.contains("ignoreMenuBar"), "ignoreMenuBar missing from Defaults.array")
     }
 }
 
