@@ -4,7 +4,7 @@
 
 Rectangle 是一款基于 Spectacle 的 macOS 窗口管理应用。
 
-<img width="612" height="810" alt="image" src="https://github.com/user-attachments/assets/c088d1e2-3661-4041-ac30-95da89ac4a41" />
+<img width="612" height="810" alt="Rectangle 的设置窗口（键盘快捷键）" src="https://github.com/user-attachments/assets/7db283bc-febb-4b83-87ca-20b9139352d4" />
 
 ## 系统要求
 
