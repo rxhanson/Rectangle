@@ -1,11 +1,19 @@
 import CoreFoundation
-import Foundation
 import IOKit
+import Foundation
 
 struct TrackpadTouch: Equatable, Codable, Sendable {
     var identifier: Int
     var position: TrackpadPoint
     var velocity: TrackpadPoint
+
+    var state: Int? = nil
+    var fingerID: Int? = nil
+    var handID: Int? = nil
+    var size: Double? = nil
+    var pressure: Double? = nil
+    var majorAxis: Double? = nil
+    var minorAxis: Double? = nil
 
     init(identifier: Int, position: TrackpadPoint, velocity: TrackpadPoint) {
         self.identifier = identifier
@@ -57,6 +65,8 @@ struct TrackpadTouchFrame: Equatable, Codable, Sendable {
 }
 
 protocol TrackpadTouchSource: AnyObject {
+    // Synchronous motion classification only; window lookup and UI work must stay asynchronous.
+    var onContactFrame: ((TrackpadTouchFrame) -> Void)? { get set }
     var onDeviceOverlap: (() -> Void)? { get set }
     var onContactCount: ((Int) -> Void)? { get set }
     var onFrame: ((TrackpadTouchFrame) -> Void)? { get set }

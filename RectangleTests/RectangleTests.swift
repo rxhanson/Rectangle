@@ -9011,6 +9011,7 @@ final class TrackpadGestureRegressionTests: XCTestCase {
         XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
         gate.observeContactCount(0)
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
         gate.setEnabled(false)
         XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
@@ -9023,9 +9024,11 @@ final class TrackpadGestureRegressionTests: XCTestCase {
         gate.observeContactCount(3)
         XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
         gate.observeContactCount(0)
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
     }
 
@@ -9037,11 +9040,13 @@ final class TrackpadGestureRegressionTests: XCTestCase {
         XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
         XCTAssertTrue(gate.hasLeakedScrollInSession)
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
         XCTAssertTrue(gate.hasLeakedScrollInSession,
                       "Capture must reject window actions after scrolling has already reached the app")
         gate.observeContactCount(0)
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
         XCTAssertFalse(gate.hasLeakedScrollInSession)
     }
@@ -9052,6 +9057,7 @@ final class TrackpadGestureRegressionTests: XCTestCase {
         gate.setAllowedFingerCounts([4])
         gate.setEnabled(true)
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
         gate.observeContactCount(0)
 
@@ -9070,6 +9076,7 @@ final class TrackpadGestureRegressionTests: XCTestCase {
         gate.setAllowedFingerCounts([4])
         gate.setEnabled(true)
         gate.observeContactCount(4)
+        gate.observeMotion(eligible: true, committed: true)
         gate.observeContactCount(0)
 
         for time in [0.10, 0.20, 0.30] {
@@ -9096,13 +9103,155 @@ final class TrackpadGestureRegressionTests: XCTestCase {
     }
 }
 
+final class TrackpadContactMotionTests: XCTestCase {
+    private func touch(_ id: Int, _ x: Double, _ y: Double = 0.5,
+                       vx: Double = 2, vy: Double = 0) -> TrackpadTouch {
+        .init(identifier: id, position: .init(x: x, y: y), velocity: .init(x: vx, y: vy))
+    }
+    private func frame(_ time: Double, _ touches: [TrackpadTouch]) -> TrackpadTouchFrame {
+        .init(timestamp: time, touches: touches)
+    }
 
+    func testTwoMovingFingersWithRestingPalmNeverBecomeThreeFingerSwipe() {
+        for palmFirst in [false, true] {
+            var recognizer = TrackpadGestureRecognizer(config: .default)
+            let palm = touch(9, 0.96, 0.04, vx: 0)
+            if palmFirst { XCTAssertNil(recognizer.process(frame(0.9, [palm]))) }
+            XCTAssertNil(recognizer.process(frame(1, [touch(1, 0.1), touch(2, 0.2), palm])))
+            for step in 1...12 {
+                let travel = Double(step) * 0.04
+                XCTAssertNil(recognizer.process(frame(1 + Double(step) / 100,
+                    [touch(1, 0.1 + travel), touch(2, 0.2 + travel), palm])))
+                XCTAssertFalse(recognizer.captureEligible)
+            }
+            XCTAssertTrue(recognizer.rejected)
+        }
+    }
+
+    func testThreeMovingFingersWithRestingContactCannotBecomeFourFingerSwipe() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        let palm = touch(9, 0.95, 0.04, vx: 0)
+        XCTAssertNil(recognizer.process(frame(1, [touch(1, 0.1), touch(2, 0.2), touch(3, 0.3), palm])))
+        XCTAssertNil(recognizer.process(frame(1.1, [touch(1, 0.4), touch(2, 0.5), touch(3, 0.6), palm])))
+        XCTAssertTrue(recognizer.rejected)
+    }
+
+    func testPalmRemainingOnSurfaceCannotRearmNewMovingFingers() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        let palm = touch(9, 0.95, 0.04, vx: 0)
+        _ = recognizer.process(frame(1, [touch(1, 0.1), touch(2, 0.2), palm]))
+        _ = recognizer.process(frame(1.1, [touch(1, 0.4), touch(2, 0.5), palm]))
+        _ = recognizer.process(frame(1.2, [palm]))
+        _ = recognizer.process(frame(1.3, [touch(3, 0.1), touch(4, 0.2), palm]))
+        XCTAssertNil(recognizer.process(frame(1.4, [touch(3, 0.5), touch(4, 0.6), palm])))
+        XCTAssertTrue(recognizer.rejected)
+        _ = recognizer.process(frame(1.5, []))
+        _ = recognizer.process(frame(2, [touch(1, 0.1), touch(2, 0.2), touch(3, 0.3)]))
+        XCTAssertEqual(recognizer.process(frame(2.1, [touch(1, 0.4), touch(2, 0.5), touch(3, 0.6)]))?.fingers, 3)
+    }
+
+    func testCornerAndUnequalFingerTravelRemainValidForBothCounts() {
+        for count in [3, 4] {
+            var recognizer = TrackpadGestureRecognizer(config: .default)
+            let initial = (0..<count).map { touch($0, 0.02 + Double($0) * 0.12, 0.05 + Double($0) * 0.10) }
+            _ = recognizer.process(frame(1, initial))
+            let moved = initial.enumerated().map { index, point in
+                touch(point.identifier, point.position.x + 0.20 + Double(index) * 0.02, point.position.y + 0.01)
+            }
+            XCTAssertEqual(recognizer.process(frame(1.1, moved))?.fingers, count)
+        }
+    }
+
+    func testStaggeredLandingRebaselinesWithoutCountingNewFingerPositionAsMotion() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        _ = recognizer.process(frame(1, [touch(1, 0.1), touch(2, 0.2)]))
+        XCTAssertNil(recognizer.process(frame(1.02, [touch(1, 0.11), touch(2, 0.21), touch(3, 0.7)])))
+        XCTAssertEqual(recognizer.process(frame(1.12, [touch(1, 0.31), touch(2, 0.41), touch(3, 0.9)]))?.fingers, 3)
+    }
+
+    func testSameCountIDReplacementCannotInjectDisplacement() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        _ = recognizer.process(frame(1, [touch(1, 0.1), touch(2, 0.1), touch(3, 0.1)]))
+        XCTAssertNil(recognizer.process(frame(1.1, [touch(1, 0.1), touch(2, 0.1), touch(4, 0.9)])))
+        XCTAssertTrue(recognizer.identitiesChanged)
+        XCTAssertFalse(recognizer.captureEligible)
+        XCTAssertNil(recognizer.process(frame(1.2, [touch(1, 0.11), touch(2, 0.11), touch(4, 0.91)])))
+    }
+
+    func testOldSpeedSpikeDoesNotQualifyLaterContinuousSlowDrift() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        func sample(_ x: Double, speed: Double, time: Double) -> TrackpadTouchFrame {
+            frame(time, (0..<3).map { touch($0, x, vx: speed) })
+        }
+        _ = recognizer.process(sample(0.1, speed: 2, time: 1))
+        _ = recognizer.process(sample(0.11, speed: 2, time: 1.01))
+        for step in 1...300 {
+            XCTAssertNil(recognizer.process(sample(0.11 + Double(step) * 0.001,
+                                                   speed: 0.10, time: 1.01 + Double(step) * 0.01)))
+        }
+    }
+
+    func testOneOpposingFingerDoesNotBorrowOtherFingersVelocity() {
+        var recognizer = TrackpadGestureRecognizer(config: .default)
+        _ = recognizer.process(frame(1, [touch(1, 0.1), touch(2, 0.1), touch(3, 0.1)]))
+        XCTAssertNil(recognizer.process(frame(1.1, [touch(1, 0.4), touch(2, 0.4), touch(3, 0.4, vx: -2)])))
+    }
+
+    func testBroadMovingContactIsRejectedButUnknownLabelsAreNotEnough() {
+        for broad in [false, true] {
+            var recognizer = TrackpadGestureRecognizer(config: .default)
+            func contacts(_ x: Double) -> [TrackpadTouch] {
+                (0..<3).map { id in
+                    var contact = touch(id, x)
+                    contact.fingerID = 0
+                    contact.handID = 0
+                    contact.size = broad && id == 2 ? 5 : 1
+                    contact.majorAxis = broad && id == 2 ? 3 : 1
+                    return contact
+                }
+            }
+            _ = recognizer.process(frame(1, contacts(0.1)))
+            let event = recognizer.process(frame(1.1, contacts(0.4)))
+            XCTAssertEqual(event != nil, !broad)
+            XCTAssertEqual(recognizer.rejected, broad)
+        }
+    }
+
+    func testDuplicateIDsAndInvalidCoordinatesRejectWithoutCrashing() {
+        for contacts in [[touch(1, 0.1), touch(1, 0.2), touch(3, 0.3)],
+                         [touch(1, .nan), touch(2, 0.2), touch(3, 0.3)]] {
+            var recognizer = TrackpadGestureRecognizer(config: .default)
+            XCTAssertNil(recognizer.process(frame(1, contacts)))
+            XCTAssertTrue(recognizer.rejected)
+        }
+    }
+
+    func testUnconfirmedCaptureReleasesWhenThirdFingerLiftsWithoutDraining() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setEnabled(true)
+        gate.observeContactCount(3)
+        gate.observeMotion(eligible: true, committed: false)
+        XCTAssertTrue(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(2)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeContactCount(0)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+    }
+
+    func testThreeContactsAloneCannotCaptureScrollAndLaterMotionCannotTakeItOver() {
+        let gate = TrackpadExclusiveGestureGate()
+        gate.setEnabled(true)
+        gate.observeContactCount(3)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        gate.observeMotion(eligible: true, committed: true)
+        XCTAssertFalse(gate.shouldSuppressScroll(phase: .active))
+        XCTAssertFalse(gate.isExclusive)
+    }
+}
 
 private final class TrackpadGestureTestClock: @unchecked Sendable {
     var time: TimeInterval = 0
 }
-
-
 
 @MainActor
 final class TrackpadMinimizeExecutionTests: XCTestCase {
@@ -9152,8 +9301,6 @@ final class TrackpadMinimizeExecutionTests: XCTestCase {
         }
     }
 }
-
-
 
 final class TrackpadTargetLookupConcurrencyTests: XCTestCase {
     func testBlockedLookupDoesNotBlockRecognitionAndDeliversWhenReady() {
@@ -9235,8 +9382,6 @@ final class TrackpadTargetLookupConcurrencyTests: XCTestCase {
     }
 }
 
-
-
 private final class TrackpadLookupTestState: @unchecked Sendable {
     private let lock = NSLock()
     private var cursor = 0
@@ -9263,8 +9408,6 @@ private final class TrackpadLookupTestState: @unchecked Sendable {
         return recorded
     }
 }
-
-
 
 @MainActor
 final class TrackpadRuntimeQueueTests: XCTestCase {
@@ -9318,9 +9461,153 @@ final class TrackpadRuntimeQueueTests: XCTestCase {
     }
 }
 
+@MainActor
+final class TrackpadCaptureCancellationTests: XCTestCase {
+    func testContaminationCancelsActionAlreadyWaitingOnMain() {
+        checkQueuedAction(delivers: false) { capture, _, _ in capture.contaminateSession() }
+    }
 
+    func testNewContactSessionCancelsOldActionBeforeNewGestureIsRecognized() {
+        checkQueuedAction(delivers: false) { _, source, _ in
+            source.lift(time: 1.2)
+            source.send(x: 0.2, time: 2)
+        }
+    }
+
+    func testSameCountReplacementCancelsOldAction() {
+        checkQueuedAction(delivers: false) { _, source, driver in
+            source.onContactCount?(4)
+            source.onContactFrame?(.init(timestamp: 1.15, touches: (1...4).map {
+                .init(identifier: $0, position: .init(x: 0.7, y: 0.5), velocity: .zero)
+            }))
+            XCTAssertFalse(driver.filter?(.active) ?? true, "Cancelling the gesture must also release scrolling")
+        }
+    }
+
+    func testRecognizedActionSurvivesNormalPartialAndCompleteLift() {
+        checkQueuedAction(delivers: true) { _, source, _ in
+            source.onContactCount?(3)
+            source.onContactFrame?(.init(timestamp: 1.15, touches: (0..<3).map {
+                .init(identifier: $0, position: .init(x: 0.7, y: 0.5), velocity: .zero)
+            }))
+            source.lift(time: 1.2)
+        }
+    }
+
+    func testOverlapAfterLiftStillCancelsOldQueuedAction() {
+        checkQueuedAction(delivers: false) { _, source, _ in
+            source.lift(time: 1.2)
+            source.onDeviceOverlap?()
+        }
+    }
+
+    func testTapOutageCancelsOldQueuedActionEvenAfterRecovery() {
+        checkQueuedAction(delivers: false) { _, _, driver in driver.onDisabled?() }
+    }
+
+    private func checkQueuedAction(delivers: Bool,
+        invalidate: (TrackpadExclusiveGestureCapture, TrackpadRuntimeTestSource, TrackpadCaptureTestDriver) -> Void) {
+        let source = TrackpadRuntimeTestSource()
+        let driver = TrackpadCaptureTestDriver()
+        let capture = TrackpadExclusiveGestureCapture(driver: driver)
+        let queue = DispatchQueue(label: "trackpad-test.capture-cancellation")
+        let target = TrackpadCursorWindowShortcutTargeter.Target(
+            window: AXUIElementCreateApplication(getpid()), pid: getpid())
+        let targeter = TrackpadCursorWindowShortcutTargeter(cursorLocation: { .zero }, findWindow: { _ in target }, lookupQueue: queue)
+        let runtime = TrackpadGestureRuntime(source: source, capture: capture, targeter: targeter)
+        var settings = TrackpadGestureSettings()
+        settings.enabled = true
+        settings.fingers = 4
+        var delivered = 0
+        runtime.onAction = { _, _, _, _ in delivered += 1 }
+        runtime.start(settings: settings, systemFingers: [])
+        capture.setAccessibilityTrusted(true)
+        defer { runtime.stop() }
+        source.send(x: 0.2, time: 1)
+        queue.sync {}
+        source.send(x: 0.7, time: 1.1)
+        invalidate(capture, source, driver)
+        let drained = expectation(description: "main action queue drained")
+        DispatchQueue.main.async { drained.fulfill() }
+        wait(for: [drained], timeout: 1)
+        XCTAssertEqual(delivered, delivers ? 1 : 0)
+    }
+
+    func testCaptureCannotApproveAfterScrollWasDeliveredOrBeforeMotion() {
+        let driver = TrackpadCaptureTestDriver()
+        let capture = TrackpadExclusiveGestureCapture(driver: driver)
+        capture.setAccessibilityTrusted(true)
+        capture.setEnabled(true)
+        capture.start()
+        defer { capture.stop() }
+        capture.observeContactCount(3)
+        XCTAssertFalse(capture.performIfHealthy { XCTFail("Contact count alone cannot authorize actions") })
+        let beforeScroll = capture.actionToken
+        XCTAssertFalse(driver.filter?(.active) ?? true)
+        XCTAssertNotEqual(capture.actionToken, beforeScroll)
+        capture.observeMotion(eligible: true, committed: true)
+        XCTAssertFalse(capture.performIfHealthy { XCTFail("Scrolling cannot be taken over") })
+        capture.observeContactCount(0)
+        capture.observeContactCount(3)
+        capture.observeMotion(eligible: true, committed: true)
+        XCTAssertTrue(capture.performIfHealthy {})
+    }
+
+    func testCommittedCaptureKeepsPartialLiftAndMomentumTailAcrossStateSynchronization() {
+        let driver = TrackpadCaptureTestDriver()
+        let capture = TrackpadExclusiveGestureCapture(driver: driver)
+        capture.setAccessibilityTrusted(true)
+        capture.setAllowedFingerCounts([4])
+        capture.setEnabled(true)
+        capture.start()
+        defer { capture.stop() }
+        capture.observeContactCount(4)
+        capture.observeMotion(eligible: true, committed: true)
+        for count in [3, 3, 2, 1, 0] {
+            capture.observeContactCount(count)
+            capture.observeMotion(eligible: false, committed: false)
+            XCTAssertTrue(driver.filter?(.active) ?? false)
+        }
+        XCTAssertTrue(driver.filter?(.momentumEnded) ?? false)
+        XCTAssertFalse(driver.filter?(.none) ?? true)
+    }
+
+    func testMotionClassificationPrecedesAsynchronousFrameObservers() {
+        let queue = DispatchQueue(label: "trackpad-test.synchronous-motion")
+        let source = TrackpadMultitouchTouchSource(deliveryQueue: queue)
+        let observed = expectation(description: "queued observer ran")
+        var classified = false
+        source.onContactFrame = { _ in classified = true }
+        source.onFrame = { _ in
+            XCTAssertTrue(classified)
+            observed.fulfill()
+        }
+        source.deliver(.init(timestamp: 1, touches: [
+            .init(identifier: 1, position: .init(x: 0.1, y: 0.5), velocity: .zero)
+        ]))
+        XCTAssertTrue(classified)
+        wait(for: [observed], timeout: 1)
+        source.stop()
+    }
+}
+
+private final class TrackpadCaptureTestDriver: TrackpadScrollEventTapDriving {
+    var isEnabled = false
+    var onDisabled: (@Sendable () -> Void)?
+    var onUnexpectedStop: (@Sendable () -> Void)?
+    var filter: (@Sendable (TrackpadScrollStreamPhase) -> Bool)?
+    func start(filter: @escaping @Sendable (TrackpadScrollStreamPhase) -> Bool) -> Bool {
+        self.filter = filter
+        isEnabled = true
+        return true
+    }
+    func reenable() -> Bool { isEnabled = true; return true }
+    func recreate(filter: @escaping @Sendable (TrackpadScrollStreamPhase) -> Bool) -> Bool { start(filter: filter) }
+    func stop() { isEnabled = false }
+}
 
 private final class TrackpadRuntimeTestSource: TrackpadTouchSource {
+    var onContactFrame: ((TrackpadTouchFrame) -> Void)?
     var onDeviceOverlap: (() -> Void)?
     var onContactCount: ((Int) -> Void)?
     var onFrame: ((TrackpadTouchFrame) -> Void)?
@@ -9329,19 +9616,18 @@ private final class TrackpadRuntimeTestSource: TrackpadTouchSource {
     func stop() {}
     func send(x: Double, time: Double) {
         onContactCount?(4)
-        onFrame?(.init(timestamp: time, touches: (0..<4).map {
+        onContactFrame?(.init(timestamp: time, touches: (0..<4).map {
             .init(identifier: $0, position: .init(x: x, y: 0.5), velocity: .init(x: x < 0.5 ? -2 : 2, y: 0))
         }))
     }
     func lift(time: Double) {
         onContactCount?(0)
-        onFrame?(.init(timestamp: time, touches: []))
+        onContactFrame?(.init(timestamp: time, touches: []))
     }
 }
 
-
-
 private final class TrackpadRuntimeTestCapture: TrackpadExclusiveGestureCapturing, @unchecked Sendable {
+    var actionToken: TrackpadCaptureToken { .init(session: 0, scroll: 0) }
     var isHealthy = true
     var onHealthChange: (@Sendable (Bool) -> Void)?
     func start() { isHealthy = true }
@@ -9351,6 +9637,7 @@ private final class TrackpadRuntimeTestCapture: TrackpadExclusiveGestureCapturin
     func setEnabled(_ enabled: Bool) {}
     func setAllowedFingerCounts(_ counts: Set<Int>) {}
     func observeContactCount(_ count: Int) {}
+    func observeMotion(eligible: Bool, committed: Bool) {}
     func contaminateSession() {}
     func performIfHealthy(_ action: () -> Void) -> Bool {
         guard isHealthy else { return false }

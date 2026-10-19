@@ -15,6 +15,8 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
     private var allowedFingerCounts: Set<Int> = [3]
     private var lastContactCount = 0
     private var leakedScrollInSession = false
+    private var committed = false
+    private var revision: UInt = 0
     private var state: State = .idle
 
     init(
@@ -36,17 +38,18 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
         self.enabled = enabled
         if !enabled {
             state = .idle
-        } else if allowedFingerCounts.contains(lastContactCount) && !leakedScrollInSession {
-            state = .exclusive
+            committed = false
         }
     }
 
     func setAllowedFingerCounts(_ counts: Set<Int>) {
         lock.lock()
-        allowedFingerCounts = counts
-        if lastContactCount >= 3 {
-            if !counts.contains(lastContactCount) { state = .idle }
-            else if enabled && !leakedScrollInSession { state = .exclusive }
+        if allowedFingerCounts != counts {
+            allowedFingerCounts = counts
+            if !counts.contains(lastContactCount) {
+                state = .idle
+                committed = false
+            }
         }
         lock.unlock()
     }
@@ -55,6 +58,7 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
         lock.lock()
         defer { lock.unlock() }
         lastContactCount = count
+        defer { if count == 0 { committed = false } }
         if count == 0 { leakedScrollInSession = false }
         guard enabled else {
             state = .idle
@@ -63,23 +67,51 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
 
         switch state {
         case .idle:
-            if allowedFingerCounts.contains(count) && !leakedScrollInSession { state = .exclusive }
+            break
         case .exclusive:
-            if count == 0 { state = .draining(deadline: now() + quietInterval) }
-            else if count >= 3 && !allowedFingerCounts.contains(count) { state = .idle }
+            if count == 0 {
+                state = committed ? .draining(deadline: now() + quietInterval) : .idle
+            } else if !committed && !allowedFingerCounts.contains(count) { state = .idle }
         case .draining:
             // New contacts start a new session; only contact-free events belong
             // to the previous gesture's inertial tail.
             if count > 0 {
-                state = allowedFingerCounts.contains(count) && !leakedScrollInSession ? .exclusive : .idle
+                state = .idle
             }
         }
+    }
+
+    func observeMotion(eligible: Bool, committed: Bool) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard enabled, allowedFingerCounts.contains(lastContactCount), !leakedScrollInSession else { return }
+        if eligible {
+            state = .exclusive
+            self.committed = self.committed || committed
+        } else if !self.committed {
+            state = .idle
+        }
+    }
+
+    var actionRevision: UInt {
+        lock.lock()
+        defer { lock.unlock() }
+        return revision
+    }
+
+    var isExclusive: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if case .exclusive = state { return true }
+        return false
     }
 
     func reset() {
         lock.lock()
         lastContactCount = 0
         leakedScrollInSession = false
+        committed = false
+        revision &+= 1
         state = .idle
         lock.unlock()
     }
@@ -91,7 +123,10 @@ final class TrackpadExclusiveGestureGate: @unchecked Sendable {
 
         switch state {
         case .idle:
-            if lastContactCount > 0 { leakedScrollInSession = true }
+            if lastContactCount > 0 && !leakedScrollInSession {
+                leakedScrollInSession = true
+                revision &+= 1
+            }
             return false
         case .exclusive:
             return true

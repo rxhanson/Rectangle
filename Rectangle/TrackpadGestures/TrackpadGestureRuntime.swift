@@ -12,6 +12,7 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
     private var threeFingerOrigin: TrackpadPoint?
     private var generation: UInt = 0
     private var running = false
+    private var recognizedCaptureToken: TrackpadCaptureToken?
     private let epochLock = NSLock()
     private var healthEpoch: UInt = 0
     var onAction: ((Int, TrackpadCursorWindowShortcutTargeter.Target, UInt, UInt) -> Void)?
@@ -30,7 +31,7 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
         // allow scrolling and reject window gestures until the session ends.
         source.onDeviceOverlap = { [weak capture] in capture?.contaminateSession() }
         source.onContactCount = { [weak capture] in capture?.observeContactCount($0) }
-        source.onFrame = { [weak self] in self?.handle($0) }
+        source.onContactFrame = { [weak self] in self?.handle($0) }
         capture.onHealthChange = { [weak self] _ in
             guard let self else { return }
             self.epochLock.lock()
@@ -76,11 +77,12 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
     func accepts(generation: UInt, epoch: UInt) -> Bool {
         lock.lock()
         let active = running && self.generation == generation
+        let expectedCapture = recognizedCaptureToken
         lock.unlock()
         epochLock.lock()
         let sameHealth = healthEpoch == epoch
         epochLock.unlock()
-        return active && sameHealth && capture.isHealthy
+        return active && sameHealth && capture.isHealthy && expectedCapture == capture.actionToken
     }
 
     private func handle(_ frame: TrackpadTouchFrame) {
@@ -88,6 +90,9 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
         guard running else { lock.unlock(); return }
         let configuration = settings
         let event = recognizer.process(frame)
+        if recognizer.identitiesChanged || recognizer.rejected { generation &+= 1 }
+        let rejected = recognizer.rejected
+        let eligible = recognizer.captureEligible
         let action = event.flatMap {
             $0.fingers == configuration.fingers && configuration[$0.direction] != TrackpadGestureAction.none
                 ? configuration[$0.direction] : nil
@@ -96,21 +101,25 @@ final class TrackpadGestureRuntime: @unchecked Sendable {
         // activating an application, not only once this gesture executes.
         if action != nil { generation &+= 1 }
         let token = generation
-        var contaminated = false
+        var contaminated = recognizer.identitiesChanged && recognizer.hasFired
         if systemFingers.contains(3), frame.touches.count == 3 {
             let center = centroid(of: frame.touches)
             if let origin = threeFingerOrigin {
                 let dx = center.x - origin.x, dy = center.y - origin.y
-                contaminated = dx * dx + dy * dy >= 0.02 * 0.02
+                contaminated = contaminated || dx * dx + dy * dy >= 0.02 * 0.02
             } else { threeFingerOrigin = center }
         } else { threeFingerOrigin = nil }
         lock.unlock()
         // Once a three-finger system gesture moves, adding a fourth finger
         // must not turn it into a Rectangle gesture.
-        if contaminated { capture.contaminateSession() }
+        if contaminated || rejected { capture.contaminateSession() }
+        capture.observeMotion(eligible: eligible, committed: action != nil)
         targeter.observeFrame(contactCount: frame.touches.count)
         guard let action else { return }
         capture.performIfHealthy {
+            lock.lock()
+            recognizedCaptureToken = capture.actionToken
+            lock.unlock()
             epochLock.lock()
             let epoch = healthEpoch
             epochLock.unlock()

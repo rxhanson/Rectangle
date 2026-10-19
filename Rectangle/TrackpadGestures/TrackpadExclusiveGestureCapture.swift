@@ -21,12 +21,19 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
     private var requestedEnabled = false
     private var allowedFingerCounts: Set<Int> = [3]
     private var rawContactCount = 0
+    private var sessionRevision: UInt = 0
     // A failed tap opens scrolling but blocks actions until every finger lifts.
     private var sessionContaminated = false
     private var outageActive = true
     private var healthRevision: UInt = 0
     private var healthChangeCallback: (@Sendable (Bool) -> Void)?
     private let afterContactStatePublished: (@Sendable () -> Void)?
+
+    var actionToken: TrackpadCaptureToken {
+        contactStateLock.lock()
+        defer { contactStateLock.unlock() }
+        return .init(session: sessionRevision, scroll: gate.actionRevision)
+    }
 
     var isHealthy: Bool {
         stateLock.lock()
@@ -131,6 +138,7 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
         operationLock.lock()
         contactStateLock.lock()
         stateLock.lock()
+        if requestedEnabled != enabled { sessionRevision &+= 1 }
         requestedEnabled = enabled
         synchronizeGateWhileLocked()
         stateLock.unlock()
@@ -147,6 +155,7 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
             && !counts.contains(rawContactCount) {
             sessionContaminated = true
         }
+        if allowedFingerCounts != counts { sessionRevision &+= 1 }
         allowedFingerCounts = counts
         synchronizeGateWhileLocked()
         stateLock.unlock()
@@ -156,6 +165,7 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
 
     func observeContactCount(_ count: Int) {
         contactStateLock.lock()
+        if count > 0 && rawContactCount == 0 { sessionRevision &+= 1 }
         if count == 0 {
             sessionContaminated = false
         } else if rawContactCount == 0 && outageActive {
@@ -174,10 +184,17 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
         operationLock.unlock()
     }
 
+    func observeMotion(eligible: Bool, committed: Bool) {
+        operationLock.lock()
+        gate.observeMotion(eligible: eligible, committed: committed)
+        operationLock.unlock()
+    }
+
     func contaminateSession() {
         operationLock.lock()
         contactStateLock.lock()
         stateLock.lock()
+        sessionRevision &+= 1
         if rawContactCount > 0 { sessionContaminated = true }
         synchronizeGateWhileLocked()
         stateLock.unlock()
@@ -192,7 +209,7 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
         stateLock.lock()
         let approved = healthy && requestedEnabled && !outageActive
             && allowedFingerCounts.contains(rawContactCount)
-            && !sessionContaminated && !gate.hasLeakedScrollInSession
+            && !sessionContaminated && !gate.hasLeakedScrollInSession && gate.isExclusive
         stateLock.unlock()
         contactStateLock.unlock()
         guard approved else {
@@ -279,6 +296,7 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
             return nil
         }
         healthy = value
+        sessionRevision &+= 1
         healthRevision &+= 1
         let revision = healthRevision
         let callback = healthChangeCallback
@@ -300,6 +318,7 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
     private func resetSessionWhileLocked() {
         contactStateLock.lock()
         rawContactCount = 0
+        sessionRevision &+= 1
         sessionContaminated = false
         gate.reset()
         contactStateLock.unlock()
@@ -315,7 +334,13 @@ final class TrackpadExclusiveGestureCapture: TrackpadExclusiveGestureCapturing, 
     }
 }
 
+struct TrackpadCaptureToken: Equatable {
+    let session: UInt
+    let scroll: UInt
+}
+
 protocol TrackpadExclusiveGestureCapturing: AnyObject, Sendable {
+    var actionToken: TrackpadCaptureToken { get }
     var isHealthy: Bool { get }
     var onHealthChange: (@Sendable (Bool) -> Void)? { get set }
     func start()
@@ -325,6 +350,7 @@ protocol TrackpadExclusiveGestureCapturing: AnyObject, Sendable {
     func setEnabled(_ enabled: Bool)
     func setAllowedFingerCounts(_ counts: Set<Int>)
     func observeContactCount(_ count: Int)
+    func observeMotion(eligible: Bool, committed: Bool)
     func contaminateSession()
     @discardableResult
     func performIfHealthy(_ action: () -> Void) -> Bool

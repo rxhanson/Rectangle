@@ -15,7 +15,7 @@ typedef struct {
     int handID;
     MTReadout normalized;
     float size;
-    int pressure;
+    float pressure;
     float angle;
     float majorAxis;
     float minorAxis;

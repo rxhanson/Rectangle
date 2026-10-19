@@ -21,13 +21,19 @@ private func contactCallback(
         for i in 0..<Int(numTouches) {
             let t = touches[i]
             guard t.state == contactState else { continue }
-            contacts.append(
-                TrackpadTouch(
-                    identifier: Int(t.identifier),
-                    position: TrackpadPoint(x: Double(t.normalized.position.x), y: Double(t.normalized.position.y)),
-                    velocity: TrackpadPoint(x: Double(t.normalized.velocity.x), y: Double(t.normalized.velocity.y))
-                )
+            var contact = TrackpadTouch(
+                identifier: Int(t.identifier),
+                position: TrackpadPoint(x: Double(t.normalized.position.x), y: Double(t.normalized.position.y)),
+                velocity: TrackpadPoint(x: Double(t.normalized.velocity.x), y: Double(t.normalized.velocity.y))
             )
+            contact.state = Int(t.state)
+            contact.fingerID = Int(t.fingerID)
+            contact.handID = Int(t.handID)
+            contact.size = Double(t.size)
+            contact.pressure = Double(t.pressure)
+            contact.majorAxis = Double(t.majorAxis)
+            contact.minorAxis = Double(t.minorAxis)
+            contacts.append(contact)
         }
     }
 
@@ -36,6 +42,7 @@ private func contactCallback(
 }
 
 final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Sendable {
+    var onContactFrame: ((TrackpadTouchFrame) -> Void)?
     var onDeviceOverlap: (() -> Void)?
     var onContactCount: ((Int) -> Void)?
     var onFrame: ((TrackpadTouchFrame) -> Void)?
@@ -138,7 +145,7 @@ final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Senda
         deliveryStateLock.lock()
         guard acceptingFrames else { deliveryStateLock.unlock(); return }
         let acceptsDevice = deviceSession.accepts(device: device, contacts: frame.touches.count)
-        // Publish contacts before queueing recognition so scrolling cannot leak first.
+        // Publish motion and capture decisions synchronously before queued observers.
         let generation = deliveryGeneration
         synchronousContactCallbacks.enter()
         deliveryStateLock.unlock()
@@ -148,6 +155,7 @@ final class TrackpadMultitouchTouchSource: TrackpadTouchSource, @unchecked Senda
             return
         }
         onContactCount?(frame.touches.count)
+        onContactFrame?(frame)
         deliveryQueue.async { [weak self] in
             guard let self else { return }
             self.deliveryStateLock.lock()
