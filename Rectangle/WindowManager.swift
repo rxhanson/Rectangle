@@ -55,6 +55,8 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
+        var acceptedHelperPrefetch = false
+        defer { if !acceptedHelperPrefetch { LayoutHelperManager.shared.cancelPrefetch() } }
         var completionDeferred = false
         defer { if !completionDeferred { parameters.completion?() } }
         hideSizeConstraintWarning()
@@ -69,15 +71,20 @@ class WindowManager {
         // after a session transition (#640). Actions still execute; only
         // window-id-keyed history is skipped.
         let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
+        // A new Rectangle command supersedes any abandoned helper preparation,
+        // even if it later returns the window to exactly the same tile.
+        LayoutHelperManager.shared.invalidateRestoration(for: windowId)
 
         let action = parameters.action
         
         if action == .restore {
+            LayoutHelperManager.shared.cancel()
             guard let windowId else {
                 NSSound.beep()
                 return
             }
             if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+                WindowPlacementCoordinator.shared.cancelAll()
                 executionID &+= 1
                 let currentExecutionID = executionID
                 completionDeferred = true
@@ -198,6 +205,12 @@ class WindowManager {
             }
         }
 
+        let helperPlan = LayoutHelperLayout.make(action: calcResult.resultingAction,
+            screen: visibleFrameOfDestinationScreen.screenFlipped, anchor: calcResult.initialRect.screenFlipped,
+            gap: CGFloat(Defaults.gapSize.value), skipTopGap: Defaults.skipGapTopEdge.enabled,
+            includeDenseGrids: Defaults.layoutHelperDenseGrids.enabled)
+        let layoutHelperToken = LayoutHelperManager.shared.beginSnap(source: parameters.source,
+            windowID: windowId, screen: calcResult.screen, canPresent: !isFixedSize && helperPlan != nil)
         let resultParameters = ResultParameters(windowId: windowId,
                                                 action: action,
                                                 windowElement: frontmostWindowElement,
@@ -205,7 +218,9 @@ class WindowManager {
                                                 usableScreens: sourceScreens,
                                                 visibleFrameOfScreen: visibleFrameOfDestinationScreen,
                                                 source: parameters.source,
-                                                isFixedSize: isFixedSize)
+                                                isFixedSize: isFixedSize, layoutHelperToken: layoutHelperToken)
+        acceptedHelperPrefetch = true
+        LayoutHelperManager.shared.prefetchForSnap(result: resultParameters)
 
         if cooperativeCornerPlan == nil {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
@@ -219,11 +234,13 @@ class WindowManager {
                                                                             achievedFrame: currentNormalizedRect,
                                                                             screenFrame: cooperativeCornerPlan.screenFrame,
                                                                             gapSize: cooperativeCornerPlan.gapSize)
+                LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
                 Logger.log("Cooperative resize no-op: solved frames already match current frames")
                 recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
                 return
             }
         } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
+            LayoutHelperManager.shared.didSnap(result: resultParameters, frame: currentWindowRect)
             Logger.log("Current frame is equal to new frame")
 
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
@@ -235,6 +252,7 @@ class WindowManager {
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
+        WindowPlacementCoordinator.shared.cancelAll()
         executionID &+= 1
         let currentExecutionID = executionID
 
@@ -374,6 +392,7 @@ class WindowManager {
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
 
+        LayoutHelperManager.shared.didSnap(result: result, frame: resultingRect)
         let requestedRect = calcResult.rect.screenFlipped
         var evidence: [String: Any] = ["action": calcResult.resultingAction.name,
                                       "achieved": [resultingRect.minX, resultingRect.minY, resultingRect.width, resultingRect.height],
@@ -423,6 +442,7 @@ struct ResultParameters {
     let visibleFrameOfScreen: CGRect
     let source: ExecutionSource
     let isFixedSize: Bool
+    var layoutHelperToken: UUID? = nil
 }
 
 struct RectangleAction {
