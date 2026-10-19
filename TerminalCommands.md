@@ -10,6 +10,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Resize on Directional Move](#resize-on-directional-move)
 - [Make the half actions tile like Windows or KDE](#make-the-half-actions-tile-like-windows-or-kde)
 - [Adjust macOS Ventura Stage Manager size](#adjust-macos-ventura-stage-manager-size)
+- [Make Center respect the Stage Manager strip](#make-center-respect-the-stage-manager-strip)
 - [Enable Todo Mode](#enable-todo-mode)
 - [Only allow drag-to-snap when modifier keys are pressed](#only-allow-drag-to-snap-when-modifier-keys-are-pressed)
 - [Almost Maximize](#almost-maximize)
@@ -121,6 +122,16 @@ To set it to a proportion of your screen's width, set it to a value between 0 an
 ```bash
 defaults write com.knollsoft.Rectangle stageSize -float <VALUE_BETWEEN_0_AND_1>
 ```
+
+## Make Center respect the Stage Manager strip
+
+By default, Center and the extra centering with prominence command ignore the Stage Manager strip and center the window on the full width of the screen, even while the other actions leave room for the strip. Enable this to have those two commands leave room for it too:
+
+```bash
+defaults write com.knollsoft.Rectangle alwaysAccountForStage -bool true
+```
+
+This only affects those two commands. Like every other action, they only leave room for the strip while it is actually showing with windows in it, so this is not a way to keep a permanent gap on that side of the screen; for that, see [Setting gaps at the screen edges](#setting-gaps-at-the-screen-edges).
 
 ## Enable Todo Mode
 
