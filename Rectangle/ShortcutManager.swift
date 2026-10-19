@@ -230,6 +230,7 @@ class ShortcutManager {
         // running it here as well would dismiss the preview before the move finishes.
         var completionHandledByWindowManager = false
         defer { if !completionHandledByWindowManager { originalParameters.completion?() } }
+        windowManager.prepareForAction()
         Notification.Name.windowActionWillExecute.post(object: parameters)
 
         if MultiWindowManager.execute(parameters: parameters) {
