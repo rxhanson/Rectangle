@@ -80,7 +80,7 @@ private enum CooperativeResizeSide {
 extension ExecutionSource {
     var allowsCooperativeResize: Bool {
         switch self {
-        case .keyboardShortcut, .dragToSnap:
+        case .keyboardShortcut, .dragToSnap, .trackpadGesture:
             return true
         case .menuItem, .url, .titleBar:
             return false
