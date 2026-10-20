@@ -39,15 +39,15 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 | Bottom left, center, or right third                    | Respective third                       |
 | Bottom left or right third, then drag to bottom center | First or last two thirds, respectively |
 
-In **Snap Areas**, enable **Animate windows (experimental)** for smooth window resizing or **Blur footprint** for a blurred snap preview. Both are off by default. Animated snapping keeps the selected edge or center aligned when an app limits its window size or aspect ratio. Dragging a snapped window starts restoring its previous size as the window begins moving, and a quick release lets the remaining restore animation continue. Far-right title-bar grabs can still show visible jumps. Title-bar double-click maximize/restore follows the same animation setting and timing as snapping. Window animation has been tested in known scenarios, but remains experimental because repeatedly updating the window's size and position during the transition may cause issues in some edge cases.
+In **Behavior** > **Extras**, enable **Animate windows** for smooth window resizing, or in **Snap Areas**, enable **Blur footprint** for a blurred snap preview. Both are off by default. Animated snapping keeps the selected edge or center aligned when an app limits its window size or aspect ratio. Dragging a snapped window starts restoring its previous size as the window begins moving, and a quick release lets the remaining restore animation continue. Far-right title-bar grabs can still show visible jumps. Title-bar double-click maximize/restore follows the same animation setting and timing as snapping. Window animation has been tested in known scenarios, but remains experimental because repeatedly updating the window's size and position during the transition may cause issues in some edge cases.
 
 ### Tile windows in rows or columns
 
-Enable **Show additional sizes in menu** to include Rows and Columns in the **Tiling** submenu. Their keyboard shortcuts remain available when the submenu is hidden.
+In **Behavior** > **Extras**, enable **Show Extra shortcuts in menu** to include Rows and Columns in the **Tiling** submenu. Their keyboard shortcuts remain available when the submenu is hidden.
 
-In Settings > General, click **Extras** to assign separate keys to **Tile Windows in Rows** and **Tile Windows in Columns**. Each action arranges ordinary windows in the current Space on the display containing the focused window, including windows covered by others. When no ordinary window is focused, the display under the mouse pointer is used instead. **Tile All** uses the same display-selection rule. Normally, windows on another display stay in place, and an empty target display does nothing. When Rectangle's combined-display mode is enabled and macOS "Displays have separate Spaces" is disabled, Rows and Columns instead tile across the combined display area. Rows run from top to bottom; columns run from left to right. Within either direction, Rectangle uses the windows' upper-left positions before moving them to choose their order.
+In Settings > **Shortcuts**, expand **⋯** and then **Extra** to assign separate keys to **Tile in Rows** and **Tile in Columns**. Each action arranges ordinary windows in the current Space on the display containing the focused window, including windows covered by others. When no ordinary window is focused, the display under the mouse pointer is used instead. **Tile All** uses the same display-selection rule. Normally, windows on another display stay in place, and an empty target display does nothing. When Rectangle's combined-display mode is enabled and macOS "Displays have separate Spaces" is disabled, Rows and Columns instead tile across the combined display area. Rows run from top to bottom; columns run from left to right. Within either direction, Rectangle uses the windows' upper-left positions before moving them to choose their order.
 
-From an unrecognized layout, the first press starts with one window per row or column. Repeating the action cycles through distinct grid layouts. In Settings > General > **Extras**, **Maximum windows per column** and **Maximum windows per row** control the cycle independently. Both default to 3 and are independent of the single-window **Repeated commands** setting. Set either limit to 1 to keep that action's original one-window-per-row-or-column behavior. Existing saved limits are preserved.
+From an unrecognized layout, the first press starts with one window per row or column. Repeating the action cycles through distinct grid layouts. Click the gear button next to **Tile in Rows** to set **Maximum windows per column** and **Maximum windows per row**, which control the cycle independently. Both default to 3 and are independent of the single-window **Repeated commands** setting. Set either limit to 1 to keep that action's original one-window-per-row-or-column behavior. Existing saved limits are preserved.
 
 Windows are balanced across occupied rows or columns, with no deliberately empty cells. For example, six windows with a column limit of 3 cycle through six columns of one, three columns of two, two columns of three, then repeat. Five windows cycle through column populations `1,1,1,1,1`, `2,2,1`, and `3,2`. A column with fewer windows still fills its full height; rows behave the same way across their full width. Duplicate layouts are skipped, so four windows with a limit of 3 alternate between four groups of one and two groups of two. Limits above the number of windows add no layouts.
 
@@ -183,7 +183,7 @@ Or, this can be done with the following steps instead of the tccutil terminal co
 
 ## Import & export JSON config
 
-There are buttons for importing and exporting the config as a JSON file in the settings tab of the preferences window. 
+There are buttons for importing and exporting the config as a JSON file on the **App Settings** tab of the Settings window.
 
 Upon launch, Rectangle will load a config file at `~/Library/Application Support/Rectangle/RectangleConfig.json` if it is present and will rename that file with a time/date stamp so that it isn't read on subsequent launches.
 
@@ -195,7 +195,7 @@ Note that shortcuts in v0.41+ are stored in a different format and will not load
 
 That file can be backed up or transferred to other machines.
 
-If you are using Rectangle v0.44+, you can also use the import/export button in the Preferences pane to share to your preferences and keyboard shortcuts across machines using a JSON file.
+If you are using Rectangle v0.44+, you can also use the import/export buttons on the **App Settings** tab of the Settings window to share your preferences and keyboard shortcuts across machines using a JSON file.
 
 > [!NOTE]  
 > If you are having issues with configuration options persisting after an application restart and you've installed using Homebrew, you will need to uninstall and reinstall with the `--zap` flag.
@@ -228,7 +228,7 @@ Logic from Rectangle is used in the [Multitouch](https://multitouch.app) app. Th
 
 ### Contributing additional sizes and positions
 
-Rectangle's UI is intentionally simple. If you want to add a size and position that's not in the Shortcuts tab, then you can now add them into the "Extra Shortcuts" section accessed via the ellipsis button at the bottom of the General tab.
+Rectangle's UI is intentionally simple. If you want to add a size and position that's not in the main list of the Shortcuts tab, then you can now add them into the "Extra" section, inside the collapsible "⋯" section at the bottom of the Shortcuts tab.
 
 ### Localization
 
