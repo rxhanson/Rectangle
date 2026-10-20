@@ -11602,6 +11602,12 @@
             "state" : "translated",
             "value" : "П'ята вертикальна шоста"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向 1/6（第 5 列）"
+          }
         }
       }
     },
@@ -13565,6 +13571,12 @@
             "state" : "translated",
             "value" : "Перша вертикальна шоста"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向 1/6（第 1 列）"
+          }
         }
       }
     },
@@ -13694,6 +13706,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Четверта вертикальна шоста"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向 1/6（第 4 列）"
           }
         }
       }
@@ -18448,6 +18466,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Остання вертикальна шоста"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向 1/6（第 6 列）"
           }
         }
       }
@@ -28912,6 +28936,12 @@
             "state" : "translated",
             "value" : "Друга вертикальна шоста"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向 1/6（第 2 列）"
+          }
         }
       }
     },
@@ -32198,6 +32228,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Третя вертикальна шоста"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "竖向 1/6（第 3 列）"
           }
         }
       }
