@@ -310,8 +310,19 @@ class AccessibilityElement {
     }
     
     var windowElement: AccessibilityElement? {
-        if isWindow == true { return self }
-        return getElementValue(.window)
+        Self.resolveWindowElement(self, isWindow: isWindow,
+                                  containingWindow: { getElementValue(.window) },
+                                  subrole: { subrole })
+    }
+
+    static func resolveWindowElement(_ element: AccessibilityElement, isWindow: Bool?,
+                                     containingWindow: () -> AccessibilityElement?,
+                                     subrole: () -> NSAccessibility.Subrole?) -> AccessibilityElement? {
+        if isWindow == true { return element }
+        if let window = containingWindow() { return window }
+        // Emacs 28 exposes its window as AXTextField without an AXWindow attribute.
+        // Its AXStandardWindow subrole still identifies the element as the window itself.
+        return subrole() == .standardWindow ? element : nil
     }
     
     var isMainWindow: Bool? {
