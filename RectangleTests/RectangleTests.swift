@@ -2017,6 +2017,21 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+final class BundleIdentityTests: XCTestCase {
+
+    func testDebugBuildsUseTheirOwnBundleIdentifier() {
+        // Keeps a build from Xcode from sharing the installed app's
+        // Accessibility permission and preferences.
+        XCTAssertEqual(Bundle.main.bundleIdentifier, "com.knollsoft.Rectangle.debug")
+    }
+
+    func testExportedConfigKeepsTheReleaseBundleIdentifier() throws {
+        let json = try XCTUnwrap(Defaults.encoded())
+        let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+        XCTAssertEqual(config.bundleId, "com.knollsoft.Rectangle")
+    }
+}
+
 class ConfigImportTests: XCTestCase {
 
     private static let shortcutKeys = WindowAction.active.map(\.name) + TodoManager.defaultsKeys + StackBadgeManager.defaultsKeys

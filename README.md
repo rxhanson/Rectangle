@@ -242,6 +242,8 @@ Rectangle uses [Swift Package Manager](https://www.swift.org/package-manager/) t
 
 The original repository for MASShortcut was archived, so Rectangle uses my [fork](https://github.com/rxhanson/MASShortcut). If you want to make any changes that involve MASShortcut, please make a pull request on my fork. 
 
+Debug builds use the bundle identifier `com.knollsoft.Rectangle.debug`, so a build from Xcode gets its own Accessibility permission and preferences instead of sharing the installed copy's. Quit the installed Rectangle while running a Debug build, since both respond to the same shortcuts and window drags. Use the `.debug` identifier with `defaults` and `tccutil`. For example, an ad-hoc signed build needs its permission granted again after rebuilding, and `tccutil reset Accessibility com.knollsoft.Rectangle.debug` clears the stale entry.
+
 Due to the addition of the Liquid Glass icon with a fallback for older versions of macOS, there will be a build failure on macOS versions < 26. You can delete the "Asset Catalog Other Flags" to build locally on versions < 26 (but don't check that change in if you create a pull request).
 
 ## Credits
