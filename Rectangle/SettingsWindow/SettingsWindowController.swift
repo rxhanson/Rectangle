@@ -12,10 +12,10 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
         let window = NSWindow(contentViewController: contentViewController)
         
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        window.title = SettingsTabViewController.Tab.shortcuts.label
         
-        let initialTab = SettingsTabViewController.Tab.shortcuts
-        let initialSize = initialTab.defaultSize ?? initialTab.makeViewController().view.fittingSize
+        let initialTab = Defaults.settingsTab.value
+        window.title = initialTab.label
+        let initialSize = initialTab.defaultSize ?? contentViewController.tabViewItems[initialTab.rawValue].viewController!.view.fittingSize
         window.setContentSize(initialSize)
         window.minSize = NSSize(width: 500, height: 350)
         window.center()
@@ -91,6 +91,7 @@ class SettingsTabViewController: NSTabViewController {
             item.image = NSImage(imageLiteralResourceName: tab.imageName)
             addTabViewItem(item)
         }
+        selectedTabViewItemIndex = Defaults.settingsTab.value.rawValue
         
         Notification.Name.snapAreaSettingsNeedsResize.onPost {[weak self] notification in
             guard let self,
@@ -128,6 +129,8 @@ class SettingsTabViewController: NSTabViewController {
     private func tabDidSwitch(to item: NSTabViewItem, at index: Int) {
         guard let window = view.window, let viewController = item.viewController else { return }
         
+        // Only user switches reach here: the window guard skips the automatic selection during viewDidLoad.
+        if let tab = Tab(rawValue: index) { Defaults.settingsTab.value = tab }
         window.title = item.label
         
         if let savedSize = savedTabSizes[index] {
