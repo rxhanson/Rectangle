@@ -9612,3 +9612,88 @@ final class SwitchSidesRepeatedCommandTests: XCTestCase {
         XCTAssertEqual(rect.height, expected.height, accuracy: 0.5, "height", file: file, line: line)
     }
 }
+
+final class EdgeActionsAcrossDisplaysTests: XCTestCase {
+    private final class TestScreen: NSScreen {
+        private let testFrame: CGRect
+
+        init(frame: CGRect) {
+            testFrame = frame
+            super.init()
+        }
+
+        override var frame: NSRect { testFrame }
+        override var visibleFrame: NSRect { testFrame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var backingScaleFactor: CGFloat { 1 }
+        override func convertRectToBacking(_ rect: NSRect) -> NSRect { rect }
+        override func convertRectFromBacking(_ rect: NSRect) -> NSRect { rect }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private let left = TestScreen(frame: CGRect(x: 0, y: 0, width: 1200, height: 800))
+    private let right = TestScreen(frame: CGRect(x: 1200, y: 0, width: 1200, height: 800))
+    private var savedMode: SubsequentExecutionMode = .resize
+
+    override func setUp() {
+        super.setUp()
+        savedMode = Defaults.subsequentExecutionMode.value
+    }
+
+    override func tearDown() {
+        Defaults.subsequentExecutionMode.value = savedMode
+        super.tearDown()
+    }
+
+    /// Runs the action on `current` with the previous run having left the window at `previous`
+    /// (nil for a first run), the way WindowManager does.
+    private func calculate(_ action: WindowAction, on current: NSScreen, previous: WindowCalculationResult?, singleScreen: Bool = false) -> WindowCalculationResult? {
+        let other = current === left ? right : left
+        let adjacent = singleScreen ? nil : AdjacentScreens(prev: other, next: other)
+        let params = WindowCalculationParameters(
+            window: Window(id: 1, rect: previous?.rect ?? current.frame.insetBy(dx: 100, dy: 100)),
+            usableScreens: UsableScreens(currentScreen: current, adjacentScreens: adjacent, numScreens: singleScreen ? 1 : 2, screensOrdered: singleScreen ? [current] : [left, right]),
+            action: action,
+            lastAction: previous.map { RectangleAction(action: action, subAction: $0.resultingSubAction, rect: $0.rect.screenFlipped, count: 1) },
+            ignoreTodo: false)
+        return WindowCalculationFactory.calculationsByAction[action]!.calculate(params)
+    }
+
+    func testRepeatedEdgeActionsMoveToTheOppositeEdgeOfTheAdjacentDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let cases: [(WindowAction, WindowAction, NSScreen, NSScreen, CGFloat)] = [
+            (.firstThird, .lastThird, left, right, 3),
+            (.lastThird, .firstThird, right, left, 3),
+            (.firstFourth, .lastFourth, left, right, 4),
+            (.lastFourth, .firstFourth, right, left, 4),
+        ]
+        for (action, opposite, from, to, parts) in cases {
+            let first = try XCTUnwrap(calculate(action, on: from, previous: nil))
+            XCTAssertTrue(first.screen === from)
+            XCTAssertEqual(first.resultingAction, action)
+
+            let repeated = try XCTUnwrap(calculate(action, on: from, previous: first))
+            XCTAssertTrue(repeated.screen === to, "\(action) should move to the other display")
+            XCTAssertEqual(repeated.resultingAction, opposite)
+            XCTAssertEqual(repeated.rect.width, floor(to.frame.width / parts))
+            XCTAssertEqual(repeated.rect.minX, opposite == .lastThird || opposite == .lastFourth ? to.frame.maxX - repeated.rect.width : to.frame.minX)
+        }
+    }
+
+    func testOtherModesStillCycleThroughPositionsOnTheSameDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .resize
+        let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil))
+        let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first))
+        XCTAssertTrue(repeated.screen === left)
+        XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+
+    func testAcrossMonitorStillCyclesOnASingleDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil, singleScreen: true))
+        let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first, singleScreen: true))
+        XCTAssertTrue(repeated.screen === left)
+        XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+}
