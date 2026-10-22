@@ -255,7 +255,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func openPreferences(_ sender: Any) {
         if settingsWindowController == nil {
-            settingsWindowController = SettingsWindowController()
+            let controller = SettingsWindowController()
+            controller.onClose = { [weak self] in self?.settingsWindowController = nil }
+            settingsWindowController = controller
         }
         NSApp.activate(ignoringOtherApps: true)
         settingsWindowController?.showWindow(self)
