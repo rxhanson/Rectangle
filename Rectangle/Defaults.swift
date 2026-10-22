@@ -134,7 +134,6 @@ class Defaults {
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
     static let mouseButtonShortcutsUseWindowUnderCursor = BoolDefault(key: "mouseButtonShortcutsUseWindowUnderCursor")
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
-    static let settingsTab = IntEnumDefault<SettingsTabViewController.Tab>(key: "settingsTab", defaultValue: .shortcuts)
     static var array: [Default] = [
         launchOnLogin,
         disabledApps,
