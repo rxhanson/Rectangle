@@ -41,6 +41,7 @@ class ShortcutManager {
     private let workspaceNotificationCenter: NotificationCenter
     private let shortcutsProvider: () -> [WindowAction: MASShortcut]
     private let appDisabledProvider: () -> Bool
+    private let missionControlActiveProvider: () -> Bool
     private let windowUnderCursorProvider: (MouseButtonPress) -> AccessibilityElement?
     private let scheduler: ShortcutRebindScheduler
     private let todoSessionStateChanged: (Bool) -> Void
@@ -65,6 +66,7 @@ class ShortcutManager {
             return session?[kCGSessionOnConsoleKey] as? Bool ?? true
         },
         appDisabledProvider: @escaping () -> Bool = { ApplicationToggle.shortcutsDisabled },
+        missionControlActiveProvider: @escaping () -> Bool = { WindowAnimationInterruptionPolicy.missionControlActive },
         windowUnderCursorProvider: @escaping (MouseButtonPress) -> AccessibilityElement? = { press in
             AccessibilityElement.getWindowElementUnderCursor(at: press.location, eventWindowID: press.windowId)
         },
@@ -84,6 +86,7 @@ class ShortcutManager {
         self.workspaceNotificationCenter = workspaceNotificationCenter
         self.shortcutsProvider = shortcutsProvider
         self.appDisabledProvider = appDisabledProvider
+        self.missionControlActiveProvider = missionControlActiveProvider
         self.windowUnderCursorProvider = windowUnderCursorProvider
         self.scheduler = scheduler
         self.todoSessionStateChanged = todoSessionStateChanged
@@ -230,6 +233,14 @@ class ShortcutManager {
         // running it here as well would dismiss the preview before the move finishes.
         var completionHandledByWindowManager = false
         defer { if !completionHandledByWindowManager { originalParameters.completion?() } }
+
+        // Mission Control leaves the previous app frontmost, so a shortcut would
+        // move the window behind the overview and distort its thumbnail (#1739).
+        if parameters.source == .keyboardShortcut, missionControlActiveProvider() {
+            Logger.log("Ignoring \(parameters.action.name) while Mission Control is active")
+            return
+        }
+
         Notification.Name.windowActionWillExecute.post(object: parameters)
 
         if MultiWindowManager.execute(parameters: parameters) {

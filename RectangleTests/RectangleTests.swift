@@ -6294,6 +6294,7 @@ class ShortcutManagerSessionTests: XCTestCase {
         let workspaceNotificationCenter: NotificationCenter
         let shortcuts: ValueBox<[WindowAction: MASShortcut]>
         let appDisabled: ValueBox<Bool>
+        let missionControlActive: ValueBox<Bool>
         let scheduler: SchedulerSpy
         let todoSessionStates: ValueBox<[Bool]>
     }
@@ -6305,6 +6306,7 @@ class ShortcutManagerSessionTests: XCTestCase {
     private func makeHarness(
         initiallyActive: Bool = true,
         appDisabled: Bool = false,
+        missionControlActive: Bool = false,
         shortcuts: [WindowAction: MASShortcut]? = nil,
         windowManager: WindowManager = WindowManager(),
         screenDetection: ScreenDetection = ScreenDetection(),
@@ -6316,6 +6318,7 @@ class ShortcutManagerSessionTests: XCTestCase {
         let workspaceNotificationCenter = NotificationCenter()
         let shortcuts = ValueBox(shortcuts ?? [.leftHalf: shortcut(1)])
         let appDisabled = ValueBox(appDisabled)
+        let missionControlActive = ValueBox(missionControlActive)
         let scheduler = SchedulerSpy()
         let todoSessionStates = ValueBox<[Bool]>([])
         let manager = ShortcutManager(
@@ -6328,6 +6331,7 @@ class ShortcutManagerSessionTests: XCTestCase {
             shortcutsProvider: { shortcuts.value },
             activeStateProvider: { initiallyActive },
             appDisabledProvider: { appDisabled.value },
+            missionControlActiveProvider: { missionControlActive.value },
             windowUnderCursorProvider: { _ in windowUnderCursor },
             scheduler: { scheduler.schedule($0) },
             todoSessionStateChanged: { todoSessionStates.value.append($0) }
@@ -6341,6 +6345,7 @@ class ShortcutManagerSessionTests: XCTestCase {
             workspaceNotificationCenter: workspaceNotificationCenter,
             shortcuts: shortcuts,
             appDisabled: appDisabled,
+            missionControlActive: missionControlActive,
             scheduler: scheduler,
             todoSessionStates: todoSessionStates
         )
@@ -6641,6 +6646,82 @@ class ShortcutManagerSessionTests: XCTestCase {
             let parameters = try XCTUnwrap(windowManager.executedParameters.first)
             XCTAssertTrue(parameters.screen === screen)
             XCTAssertTrue(parameters.preservesFocus)
+        }
+    }
+
+    /// Mission Control does not change the frontmost app, so a hotkey pressed
+    /// while it is showing would move the window behind the overview.
+    func testKeyboardShortcutIsIgnoredWhileMissionControlIsActive() throws {
+        try withExecutionSettings(pointerTargeting: false) {
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(missionControlActive: true, windowManager: windowManager)
+            var completed = false
+
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName,
+                                            object: ExecutionParameters(.leftHalf, completion: { completed = true }))
+            XCTAssertTrue(windowManager.executedParameters.isEmpty)
+            XCTAssertTrue(completed, "An ignored request still gets its completion")
+
+            harness.missionControlActive.value = false
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: ExecutionParameters(.leftHalf))
+            XCTAssertEqual(windowManager.executedParameters.map(\.action), [.leftHalf])
+        }
+    }
+
+    func testMouseButtonPressIsIgnoredWhileMissionControlIsActive() throws {
+        try withExecutionSettings(pointerTargeting: false) {
+            let mouseButton = mouseButtonShortcut(4)
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(missionControlActive: true, shortcuts: [.rightHalf: mouseButton], windowManager: windowManager)
+
+            try press(mouseButton, in: harness)
+            XCTAssertTrue(windowManager.executedParameters.isEmpty)
+
+            harness.missionControlActive.value = false
+            try press(mouseButton, in: harness)
+            XCTAssertEqual(windowManager.executedParameters.map(\.action), [.rightHalf])
+        }
+    }
+
+    /// An ignored shortcut is dropped before anything observes it.
+    func testIgnoredShortcutIsNotAnnouncedAsExecuting() throws {
+        try withExecutionSettings(pointerTargeting: false) {
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(missionControlActive: true, windowManager: windowManager)
+            var announced = [WindowAction]()
+            let observer = Notification.Name.windowActionWillExecute.onPost { notification in
+                if let parameters = notification.object as? ExecutionParameters {
+                    announced.append(parameters.action)
+                }
+            }
+            defer { NotificationCenter.default.removeObserver(observer) }
+
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: ExecutionParameters(.leftHalf))
+            XCTAssertTrue(announced.isEmpty)
+
+            harness.missionControlActive.value = false
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: ExecutionParameters(.leftHalf))
+            XCTAssertEqual(announced, [.leftHalf])
+        }
+    }
+
+    /// Menu, URL scheme, title bar and drag-to-snap requests are deliberate,
+    /// so only keyboard (and mouse button) shortcuts are held back.
+    func testOtherSourcesStillExecuteWhileMissionControlIsActive() throws {
+        try withExecutionSettings(pointerTargeting: false) {
+            let window = TestWindow(windowId: 987_004)
+            let screen = try XCTUnwrap(NSScreen.screens.first)
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(missionControlActive: true, windowManager: windowManager)
+            let sources: [ExecutionSource] = [.menuItem, .url, .titleBar, .dragToSnap]
+
+            for source in sources {
+                harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName,
+                                                object: ExecutionParameters(.leftHalf, screen: screen, windowElement: window,
+                                                                            windowId: 987_004, source: source))
+            }
+
+            XCTAssertEqual(windowManager.executedParameters.map(\.source), sources)
         }
     }
 
