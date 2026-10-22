@@ -52,6 +52,7 @@ class Defaults {
     static let screenEdgeGapRight = FloatDefault(key: "screenEdgeGapRight", defaultValue: 0)
     static let screenEdgeGapsOnMainScreenOnly = BoolDefault(key: "screenEdgeGapsOnMainScreenOnly")
     static let screenEdgeGapTopNotch = DoubleDefault(key: "screenEdgeGapTopNotch", defaultValue: -1)
+    static let ignoreMenuBar = OptionalBoolDefault(key: "ignoreMenuBar")
     static let lastVersion = StringDefault(key: "lastVersion")
     static let installVersion = StringDefault(key: "installVersion")
     static let showAllActionsInMenu = OptionalBoolDefault(key: "showAllActionsInMenu")
@@ -179,6 +180,7 @@ class Defaults {
         screenEdgeGapRight,
         screenEdgeGapsOnMainScreenOnly,
         screenEdgeGapTopNotch,
+        ignoreMenuBar,
         showAllActionsInMenu,
         showAdditionalSizesInMenu,
         footprintAlpha,

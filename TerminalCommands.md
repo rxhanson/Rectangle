@@ -34,6 +34,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Disabling window restore when moving windows](#disabling-window-restore-when-moving-windows)
 - [Changing the margin for the snap areas](#changing-the-margin-for-the-snap-areas)
 - [Setting gaps at the screen edges](#setting-gaps-at-the-screen-edges)
+- [Use the full screen height when the menu bar is hidden](#use-the-full-screen-height-when-the-menu-bar-is-hidden)
 - [Ignore specific drag to snap areas](#ignore-specific-drag-to-snap-areas)
 - [Disabling gaps when maximizing](#disabling-gaps-when-maximizing)
 - [Enabling snap areas for sixths](#enabling-snap-areas-for-sixths)
@@ -525,6 +526,22 @@ If you want these gaps to be applied on your main screen only you can set screen
 
 ```bash
 defaults write com.knollsoft.Rectangle screenEdgeGapsOnMainScreenOnly -bool true
+```
+
+## Use the full screen height when the menu bar is hidden
+
+Some apps hide the menu bar only while they are frontmost (for example with `LSUIPresentationMode` in their Info.plist). macOS keeps reporting the menu bar's strip as reserved to other apps, so Rectangle leaves it empty at the top of the screen. To have Rectangle use the whole screen height instead, execute:
+
+```bash
+defaults write com.knollsoft.Rectangle ignoreMenuBar -bool true
+```
+
+Only enable this when your menu bar is hidden: while it is visible, macOS keeps windows below it, so a full-height window is pushed down and its bottom edge ends up off screen. If the menu bar is hidden system-wide in System Settings, macOS already reports the full height and this changes nothing. Windows stay below the notch on displays that have one, and the screen edge gaps above still apply.
+
+Restart Rectangle after changing this preference. To restore the default:
+
+```bash
+defaults delete com.knollsoft.Rectangle ignoreMenuBar
 ```
 
 ## Ignore specific drag to snap areas
