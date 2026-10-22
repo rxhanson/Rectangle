@@ -69,7 +69,8 @@ struct WindowCalculationParameters {
         RectCalculationParameters(window: window,
                                   visibleFrameOfScreen: visibleFrame ?? usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                   action: differentAction ?? action,
-                                  lastAction: lastAction)
+                                  lastAction: lastAction,
+                                  hasAdjacentScreen: usableScreens.adjacentScreens != nil)
     }
     
     func withDifferentAction(_ differentAction: WindowAction) -> WindowCalculationParameters {
@@ -86,6 +87,7 @@ struct RectCalculationParameters {
     let visibleFrameOfScreen: CGRect
     let action: WindowAction
     let lastAction: RectangleAction?
+    var hasAdjacentScreen = false
 }
 
 struct RectResult {
