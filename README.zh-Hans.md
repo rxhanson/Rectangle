@@ -242,6 +242,8 @@ Rectangle 使用 [Swift Package Manager](https://www.swift.org/package-manager/)
 
 MASShortcut 的原始仓库已被归档，因此 Rectangle 使用的是我的[复刻版本](https://github.com/rxhanson/MASShortcut)。如果要做任何涉及 MASShortcut 的改动，请向我的复刻版本提交拉取请求。
 
+Debug 构建使用 bundle identifier `com.knollsoft.Rectangle.debug`，因此从 Xcode 构建的应用拥有独立的辅助功能权限和偏好设置，不会与已安装的版本共用。运行 Debug 构建时请退出已安装的 Rectangle，因为两者会同时响应相同的快捷键和窗口拖移。使用 `defaults` 和 `tccutil` 时请改用 `.debug` 标识符。例如，ad-hoc 签名的构建在重新构建后需要重新授予权限，可以用 `tccutil reset Accessibility com.knollsoft.Rectangle.debug` 清除失效的条目。
+
 由于新增了 Liquid Glass 图标并为较旧版本的 macOS 提供了回退方案，在低于 macOS 26 的版本上构建会失败。可以删除「Asset Catalog Other Flags」以便在低于 26 的版本上进行本地构建（但如果要创建拉取请求，请不要把这一改动一并提交）。
 
 ## 致谢
