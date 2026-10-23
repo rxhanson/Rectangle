@@ -9073,6 +9073,15 @@ class TitleBarScreenDetectionTests: XCTestCase {
         XCTAssertTrue(TitleBarManager.screenForClick(at: CGPoint(x: 50, y: 900), screens: [left, above]) === above)
         XCTAssertNil(TitleBarManager.screenForClick(at: CGPoint(x: 5000, y: 0), screens: [left, above]))
     }
+
+    func testTitleBarDoubleClickSkipsIgnoredApps() {
+        let slack = "com.tinyspeck.slackmacgap"
+        XCTAssertFalse(TitleBarManager.isIgnored(bundleIdentifier: slack, disabledApps: nil, titleBarIgnoredApps: nil))
+        XCTAssertTrue(TitleBarManager.isIgnored(bundleIdentifier: slack, disabledApps: [slack], titleBarIgnoredApps: nil))
+        XCTAssertTrue(TitleBarManager.isIgnored(bundleIdentifier: slack, disabledApps: nil, titleBarIgnoredApps: [slack]))
+        XCTAssertFalse(TitleBarManager.isIgnored(bundleIdentifier: slack, disabledApps: ["com.apple.Safari"],
+                                                 titleBarIgnoredApps: ["com.microsoft.Outlook"]))
+    }
 }
 
 final class WindowAnimationSettlementRoundingTests: XCTestCase {

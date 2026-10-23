@@ -75,7 +75,7 @@ If pressing a button doesn't record it, other software, such as your mouse's own
 
 ### Ignore an app
 
-Ignoring an app means that when the app is frontmost, keyboard shortcuts are un-registered from macOS. When the app is no longer frontmost, keyboard shortcuts are re-registered with macOS. This is useful for apps that have the same shortcuts like Rectangle and you do not want to change them.
+Ignoring an app means that when the app is frontmost, keyboard shortcuts are un-registered from macOS. When the app is no longer frontmost, keyboard shortcuts are re-registered with macOS. This is useful for apps that have the same shortcuts like Rectangle and you do not want to change them. Double-clicking the title bar of an ignored app's window does not trigger Rectangle's title bar action either.
 
 1. Focus the app that you want to ignore (make a window from that app frontmost).
 1. Open the Rectangle menu and select "Ignore app"
