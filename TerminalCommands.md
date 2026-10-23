@@ -477,6 +477,8 @@ Keeps the window restore behavior above for everything else:
 defaults write com.knollsoft.Rectangle unsnapRestoreFromSizeChange -int 2
 ```
 
+This can also be toggled with the "Also restore windows resized with Larger or Smaller" checkbox in the Snap Areas tab of the Settings window.
+
 ## Changing the margin for the snap areas
 
 Each margin is configured separately, and has a default value of 5
