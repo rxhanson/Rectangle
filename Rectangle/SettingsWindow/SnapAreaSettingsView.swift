@@ -48,6 +48,13 @@ final class SnapAreaViewModel {
         }
     }
     
+    var unsnapRestoreFromSizeChange: Bool {
+        didSet {
+            guard oldValue != unsnapRestoreFromSizeChange else { return }
+            Defaults.unsnapRestoreFromSizeChange.enabled = unsnapRestoreFromSizeChange
+        }
+    }
+    
     var hapticFeedback: Bool {
         didSet {
             guard oldValue != hapticFeedback else { return }
@@ -111,6 +118,7 @@ final class SnapAreaViewModel {
         self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.unsnapRestoreFromSizeChange = !Defaults.unsnapRestoreFromSizeChange.userDisabled
         self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
@@ -126,6 +134,7 @@ final class SnapAreaViewModel {
     func syncDefaults() {
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.unsnapRestoreFromSizeChange = !Defaults.unsnapRestoreFromSizeChange.userDisabled
         self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
@@ -200,6 +209,8 @@ struct SnapAreaSettingsView: View {
             Section {
                 Toggle("Snap windows by dragging", isOn: $viewModel.windowSnapping)
                 Toggle("Restore window size when unsnapped", isOn: $viewModel.unsnapRestore)
+                Toggle("Also restore windows resized with Larger or Smaller", isOn: $viewModel.unsnapRestoreFromSizeChange)
+                    .disabled(!viewModel.unsnapRestore)
             }
             
             // Customization Options
