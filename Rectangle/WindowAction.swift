@@ -651,11 +651,11 @@ enum WindowAction: Int, Codable {
     var settingsDisplayName: String? {
         switch self {
         case .topLeftNinth:
-            return "Ninths (3x3)"
+            return String(localized: "Ninths (3x3)")
         case .topLeftTwelfth:
-            return "Twelfths (3x4)"
+            return String(localized: "Twelfths (3x4)")
         case .topLeftSixteenth:
-            return "Sixteenths (4x4)"
+            return String(localized: "Sixteenths (4x4)")
         default: return nil
         }
     }

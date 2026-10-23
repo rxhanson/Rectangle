@@ -11443,6 +11443,16 @@
         }
       }
     },
+    "Extra" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外快捷键"
+          }
+        }
+      }
+    },
     "Extra Shortcuts" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -11606,7 +11616,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "竖向 1/6（第 5 列）"
+            "value" : "竖向１／６（第５列）"
           }
         }
       }
@@ -13575,7 +13585,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "竖向 1/6（第 1 列）"
+            "value" : "竖向１／６（第１列）"
           }
         }
       }
@@ -13711,7 +13721,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "竖向 1/6（第 4 列）"
+            "value" : "竖向１／６（第４列）"
           }
         }
       }
@@ -18471,7 +18481,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "竖向 1/6（第 6 列）"
+            "value" : "竖向１／６（第６列）"
           }
         }
       }
@@ -23262,6 +23272,16 @@
             "value" : "Thứ chín (3×3)"
           }
         },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分（3×3）"
+          }
+        }
+      }
+    },
+    "Ninths (3x3)" : {
+      "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28940,7 +28960,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "竖向 1/6（第 2 列）"
+            "value" : "竖向１／６（第２列）"
           }
         }
       }
@@ -30592,6 +30612,16 @@
         }
       }
     },
+    "Sixteenths (4x4)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分（4×4）"
+          }
+        }
+      }
+    },
     "Sixth Vertical Eighth" : {
       "localizations" : {
         "en" : {
@@ -32233,7 +32263,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "竖向 1/6（第 3 列）"
+            "value" : "竖向１／６（第３列）"
           }
         }
       }
@@ -36539,6 +36569,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "十二等分"
+          }
+        }
+      }
+    },
+    "Twelfths (3x4)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分（3×4）"
           }
         }
       }
