@@ -72,8 +72,9 @@ class TitleBarManager {
             return
         }
         if let bundleIdentifier,
-            let ignoredApps = Defaults.doubleClickTitleBarIgnoredApps.typedValue,
-            ignoredApps.contains(bundleIdentifier) {
+           Self.isIgnored(bundleIdentifier: bundleIdentifier,
+                          disabledApps: Defaults.disabledApps.typedValue,
+                          titleBarIgnoredApps: Defaults.doubleClickTitleBarIgnoredApps.typedValue) {
             return
         }
         let historyAction = windowElement.windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
@@ -99,6 +100,12 @@ class TitleBarManager {
 
     static func screenForClick(at location: CGPoint, screens: [NSScreen]) -> NSScreen? {
         screens.first { $0.frame.contains(location) }
+    }
+
+    /// Apps ignored from the Rectangle menu get no title bar action either, like they get no shortcuts.
+    static func isIgnored(bundleIdentifier: String, disabledApps: Set<String>?, titleBarIgnoredApps: [String]?) -> Bool {
+        disabledApps?.contains(bundleIdentifier) == true
+            || titleBarIgnoredApps?.contains(bundleIdentifier) == true
     }
 
     static func resolveAction(_ action: WindowAction, restoreEnabled: Bool,
