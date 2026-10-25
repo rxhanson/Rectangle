@@ -9809,3 +9809,33 @@ final class SwitchSidesRepeatedCommandTests: XCTestCase {
         XCTAssertEqual(rect.height, expected.height, accuracy: 0.5, "height", file: file, line: line)
     }
 }
+
+final class StackBadgeListSelectionTests: XCTestCase {
+    private let windows = [StackBadgeStackedWindow(windowId: 11, pid: 1, title: "backchannel"),
+                           StackBadgeStackedWindow(windowId: 22, pid: 1, title: "dead"),
+                           StackBadgeStackedWindow(windowId: 33, pid: 1, title: "Rectangle")]
+
+    private func panel(selecting id: CGWindowID?) -> StackBadgeListPanel {
+        StackBadgeListPanel(windows: windows, selectedWindowId: id,
+                            listTop: CGPoint(x: 100, y: 800),
+                            screenFrame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+                            onSelect: { _ in }, onDismiss: {}, onLostKey: {})
+    }
+
+    // The front window of the stack sorts to the last row here; the list
+    // still opens with it highlighted.
+    func testOpensOnTheFrontWindowWhereverItSorts() {
+        XCTAssertEqual(panel(selecting: 33).selectedWindow?.windowId, 33)
+    }
+
+    func testFallsBackToTheFirstRowWhenTheFrontWindowIsNotListed() {
+        XCTAssertEqual(panel(selecting: 99).selectedWindow?.windowId, 11)
+        XCTAssertEqual(panel(selecting: nil).selectedWindow?.windowId, 11)
+    }
+
+    func testArrowKeysMoveFromTheFrontWindow() {
+        let list = panel(selecting: 22)
+        list.moveSelection(by: 1)
+        XCTAssertEqual(list.selectedWindow?.windowId, 33)
+    }
+}
