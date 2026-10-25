@@ -236,6 +236,20 @@ final class EarlySnapEdgeTests: XCTestCase {
         model.syncDefaults()
         XCTAssertEqual(Defaults.snapBeforeReachingEdges.value, 47.5)
     }
+    func testSizeChangeUnsnapRestoreToggleMatchesDefault() {
+        let saved = Defaults.unsnapRestoreFromSizeChange.toCodable()
+        defer { Defaults.unsnapRestoreFromSizeChange.load(from: saved) }
+        Defaults.unsnapRestoreFromSizeChange.enabled = nil
+        let model = SnapAreaViewModel()
+        XCTAssertTrue(model.unsnapRestoreFromSizeChange)
+        model.unsnapRestoreFromSizeChange = false
+        XCTAssertTrue(Defaults.unsnapRestoreFromSizeChange.userDisabled)
+        model.unsnapRestoreFromSizeChange = true
+        XCTAssertFalse(Defaults.unsnapRestoreFromSizeChange.userDisabled)
+        Defaults.unsnapRestoreFromSizeChange.enabled = false
+        model.syncDefaults()
+        XCTAssertFalse(model.unsnapRestoreFromSizeChange)
+    }
 
 }
 
