@@ -2214,6 +2214,25 @@ class DefaultsExportTests: XCTestCase {
     }
 }
 
+final class SettingsLabelLocalizationTests: XCTestCase {
+
+    // These Settings labels used to be plain literals, so they stayed English in every language.
+    func testSettingsOnlyLabelsHaveSimplifiedChineseTranslations() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "zh-Hans", ofType: "lproj"))
+        let zhHans = try XCTUnwrap(Bundle(path: path))
+        for key in ["Extra", "Ninths (3x3)", "Twelfths (3x4)", "Sixteenths (4x4)"] {
+            let value = zhHans.localizedString(forKey: key, value: nil, table: "Localizable")
+            XCTAssertNotEqual(value, key, "\(key) has no zh-Hans translation")
+        }
+    }
+
+    func testSettingsDisplayNamesKeepTheirEnglishText() {
+        XCTAssertEqual(WindowAction.topLeftNinth.settingsDisplayName, String(localized: "Ninths (3x3)"))
+        XCTAssertEqual(WindowAction.topLeftTwelfth.settingsDisplayName, String(localized: "Twelfths (3x4)"))
+        XCTAssertEqual(WindowAction.topLeftSixteenth.settingsDisplayName, String(localized: "Sixteenths (4x4)"))
+    }
+}
+
 final class BundleIdentityTests: XCTestCase {
 
     func testDebugBuildsUseTheirOwnBundleIdentifier() {
