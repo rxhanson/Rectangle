@@ -8,14 +8,13 @@
 import Cocoa
 
 /// A single window row: app icon, then the window name. Highlights like a
-/// native menu row when selected by hover or arrow keys.
+/// native menu row when selected by a click or the arrow keys. Hovering does
+/// not move the highlight, so it keeps marking the window on top of the stack.
 final class StackBadgeRowView: NSView {
-    private let onHover: () -> Void
     private let onClick: () -> Void
     private let textField: NSTextField
 
-    init(title: String, icon: NSImage?, onHover: @escaping () -> Void, onClick: @escaping () -> Void) {
-        self.onHover = onHover
+    init(title: String, icon: NSImage?, onClick: @escaping () -> Void) {
         self.onClick = onClick
         self.textField = NSTextField(labelWithString: title)
         super.init(frame: .zero)
@@ -50,18 +49,6 @@ final class StackBadgeRowView: NSView {
     func setSelected(_ selected: Bool) {
         layer?.backgroundColor = selected ? NSColor.selectedContentBackgroundColor.cgColor : nil
         textField.textColor = selected ? .selectedMenuItemTextColor : .labelColor
-    }
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        trackingAreas.forEach(removeTrackingArea)
-        addTrackingArea(NSTrackingArea(rect: bounds,
-                                       options: [.mouseEnteredAndExited, .activeAlways],
-                                       owner: self))
-    }
-
-    override func mouseEntered(with event: NSEvent) {
-        onHover()
     }
 
     override func mouseUp(with event: NSEvent) {

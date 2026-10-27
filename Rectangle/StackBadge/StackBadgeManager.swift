@@ -279,6 +279,10 @@ class StackBadgeManager {
 
         let anchorTopLeft = CGPoint(x: leftMost.frame.origin.x, y: topMost.frame.origin.y).screenFlipped
 
+        // The window list comes back front to back, so this is the window the
+        // user can see at the front of the stack - the one the list highlights.
+        let frontWindowId = stacked.first { $0.alpha > 0 }?.id
+
         let requestGeneration = generation
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let windows = StackBadgeStackedWindow.titledWindows(for: stacked, axTimeout: Self.axTimeout)
@@ -287,12 +291,14 @@ class StackBadgeManager {
                       self.generation == requestGeneration,
                       self.timer != nil
                 else { return }
-                self.show(windows: windows, corner: anchorTopLeft, screenFrame: screenFrame)
+                self.show(windows: windows, frontWindowId: frontWindowId,
+                          corner: anchorTopLeft, screenFrame: screenFrame)
             }
         }
     }
 
-    private func show(windows: [StackBadgeStackedWindow], corner: CGPoint, screenFrame: CGRect) {
+    private func show(windows: [StackBadgeStackedWindow], frontWindowId: CGWindowID?,
+                      corner: CGPoint, screenFrame: CGRect) {
         dismiss()
 
         let listTop = CGPoint(x: corner.x + 12,
@@ -308,7 +314,8 @@ class StackBadgeManager {
         }
 
         let list = StackBadgeListPanel(
-            windows: listed, listTop: listTop, screenFrame: screenFrame,
+            windows: listed, selectedWindowId: frontWindowId,
+            listTop: listTop, screenFrame: screenFrame,
             onSelect: { [weak self] window in self?.focus(window) },
             onDismiss: { [weak self] in self?.dismiss() },
             onLostKey: { [weak self] in

@@ -114,12 +114,17 @@ final class StackBadgeListPanel: NSPanel {
     }
 
     init(windows: [StackBadgeStackedWindow],
+         selectedWindowId: CGWindowID? = nil,
          listTop: CGPoint,
          screenFrame: CGRect,
          onSelect: @escaping (StackBadgeStackedWindow) -> Void,
          onDismiss: @escaping () -> Void,
          onLostKey: @escaping () -> Void) {
         self.windows = windows
+        // The list is alphabetical, so the window at the front of the stack can
+        // be on any row; start the selection there so the highlight shows which
+        // window is the one on top.
+        self.selectedIndex = windows.firstIndex { $0.windowId == selectedWindowId } ?? 0
         self.onSelect = onSelect
         self.onDismiss = onDismiss
         self.onLostKey = onLostKey
@@ -156,7 +161,6 @@ final class StackBadgeListPanel: NSPanel {
             let row = StackBadgeRowView(
                 title: window.title,
                 icon: Self.appIcon(pid: window.pid),
-                onHover: { [weak self] in self?.select(index: index) },
                 onClick: { [weak self] in
                     guard let self else { return }
                     self.select(index: index)
