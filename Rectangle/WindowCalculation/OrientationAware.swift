@@ -37,6 +37,8 @@ extension OrientationAware where Self: WindowCalculation {
         else { return nil }
 
         let screen = toNext ? adjacentScreens.next : adjacentScreens.prev
+        // With "traverse single screen", a lone display is its own adjacent screen: keep cycling there.
+        guard screen !== params.usableScreens.currentScreen else { return nil }
         let rectResult = opposite.orientationBasedRect(screen.adjustedVisibleFrame(params.ignoreTodo))
         return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: oppositeAction, resultingSubAction: rectResult.subAction)
     }

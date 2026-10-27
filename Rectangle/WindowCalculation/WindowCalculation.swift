@@ -70,7 +70,7 @@ struct WindowCalculationParameters {
                                   visibleFrameOfScreen: visibleFrame ?? usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
                                   action: differentAction ?? action,
                                   lastAction: lastAction,
-                                  hasAdjacentScreen: usableScreens.adjacentScreens != nil)
+                                  hasAdjacentScreen: usableScreens.adjacentScreens.map { $0.next !== usableScreens.currentScreen } ?? false)
     }
     
     func withDifferentAction(_ differentAction: WindowAction) -> WindowCalculationParameters {

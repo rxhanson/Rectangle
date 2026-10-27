@@ -9907,6 +9907,7 @@ final class EdgeActionsAcrossDisplaysTests: XCTestCase {
     private var savedFlag = CodableDefault(int: 0)
     private var storedFlag: Any?
 
+    // Same save/restore as IgnoreMenuBarTests: the in-memory value and the raw UserDefaults entry.
     override func setUp() {
         super.setUp()
         savedMode = Defaults.subsequentExecutionMode.value
@@ -9918,16 +9919,23 @@ final class EdgeActionsAcrossDisplaysTests: XCTestCase {
     override func tearDown() {
         Defaults.subsequentExecutionMode.value = savedMode
         Defaults.thirdsAndFourthsAcrossDisplays.load(from: savedFlag)
-        // Removes the key when it was unset before; load(from:) above writes 0 for unset.
+        // Written last: nil removes the key, so an unset flag stays unset (load(from:) writes 0).
         UserDefaults.standard.set(storedFlag, forKey: Defaults.thirdsAndFourthsAcrossDisplays.key)
         super.tearDown()
     }
 
     /// Runs the action on `current` with the previous run having left the window at `previous`
-    /// (nil for a first run), the way WindowManager does.
-    private func calculate(_ action: WindowAction, on current: NSScreen, previous: WindowCalculationResult?, singleScreen: Bool = false) -> WindowCalculationResult? {
+    /// (nil for a first run), the way WindowManager does. `traversesSingleScreen` mirrors
+    /// ScreenDetection when one display is its own adjacent screen.
+    private func calculate(_ action: WindowAction, on current: NSScreen, previous: WindowCalculationResult?,
+                           singleScreen: Bool = false, traversesSingleScreen: Bool = false) -> WindowCalculationResult? {
         let other = current === left ? right : left
-        let adjacent = singleScreen ? nil : AdjacentScreens(prev: other, next: other)
+        let adjacent: AdjacentScreens?
+        if singleScreen {
+            adjacent = traversesSingleScreen ? AdjacentScreens(prev: current, next: current) : nil
+        } else {
+            adjacent = AdjacentScreens(prev: other, next: other)
+        }
         let params = WindowCalculationParameters(
             window: Window(id: 1, rect: previous?.rect ?? current.frame.insetBy(dx: 100, dy: 100)),
             usableScreens: UsableScreens(currentScreen: current, adjacentScreens: adjacent, numScreens: singleScreen ? 1 : 2, screensOrdered: singleScreen ? [current] : [left, right]),
@@ -9972,6 +9980,17 @@ final class EdgeActionsAcrossDisplaysTests: XCTestCase {
         let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first, singleScreen: true))
         XCTAssertTrue(repeated.screen === left)
         XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+
+    func testFlagOnWithTraverseSingleScreenStillCyclesOnOneDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let cases: [(WindowAction, WindowAction)] = [(.firstThird, .lastThird), (.firstFourth, .lastFourth)]
+        for (action, opposite) in cases {
+            let first = try XCTUnwrap(calculate(action, on: left, previous: nil, singleScreen: true, traversesSingleScreen: true))
+            let repeated = try XCTUnwrap(calculate(action, on: left, previous: first, singleScreen: true, traversesSingleScreen: true))
+            XCTAssertTrue(repeated.screen === left, "\(action) should stay on the one display")
+            XCTAssertNotEqual(repeated.resultingAction, opposite)
+        }
     }
 
     func testWithTheFlagOffRepeatedLeftThirdStillCyclesOnTheSameDisplay() throws {
