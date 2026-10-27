@@ -9904,14 +9904,22 @@ final class EdgeActionsAcrossDisplaysTests: XCTestCase {
     private let left = TestScreen(frame: CGRect(x: 0, y: 0, width: 1200, height: 800))
     private let right = TestScreen(frame: CGRect(x: 1200, y: 0, width: 1200, height: 800))
     private var savedMode: SubsequentExecutionMode = .resize
+    private var savedFlag = CodableDefault(int: 0)
+    private var storedFlag: Any?
 
     override func setUp() {
         super.setUp()
         savedMode = Defaults.subsequentExecutionMode.value
+        storedFlag = UserDefaults.standard.object(forKey: Defaults.thirdsAndFourthsAcrossDisplays.key)
+        savedFlag = Defaults.thirdsAndFourthsAcrossDisplays.toCodable()
+        Defaults.thirdsAndFourthsAcrossDisplays.enabled = true
     }
 
     override func tearDown() {
         Defaults.subsequentExecutionMode.value = savedMode
+        Defaults.thirdsAndFourthsAcrossDisplays.load(from: savedFlag)
+        // Removes the key when it was unset before; load(from:) above writes 0 for unset.
+        UserDefaults.standard.set(storedFlag, forKey: Defaults.thirdsAndFourthsAcrossDisplays.key)
         super.tearDown()
     }
 
@@ -9962,6 +9970,15 @@ final class EdgeActionsAcrossDisplaysTests: XCTestCase {
         Defaults.subsequentExecutionMode.value = .acrossMonitor
         let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil, singleScreen: true))
         let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first, singleScreen: true))
+        XCTAssertTrue(repeated.screen === left)
+        XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+
+    func testWithTheFlagOffRepeatedLeftThirdStillCyclesOnTheSameDisplay() throws {
+        Defaults.thirdsAndFourthsAcrossDisplays.enabled = nil
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil))
+        let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first))
         XCTAssertTrue(repeated.screen === left)
         XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
     }

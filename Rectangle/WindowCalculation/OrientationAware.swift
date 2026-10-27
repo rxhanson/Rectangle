@@ -22,13 +22,16 @@ extension OrientationAware {
 
 
 extension OrientationAware where Self: WindowCalculation {
-    /// With "move to adjacent display" as the repeated command, repeating an edge action sends the
-    /// window to the opposite edge of the neighbouring display, as the left and right halves do.
+    /// Behind the hidden `thirdsAndFourthsAcrossDisplays` flag, with "move to adjacent display" as the
+    /// repeated command, repeating an edge action sends the window to the opposite edge of the
+    /// neighbouring display, as the left and right halves do. Returns nil (use the same-display
+    /// cycling) when the flag is off.
     func calculateAcrossDisplays(_ params: WindowCalculationParameters,
                                  toNext: Bool,
                                  oppositeAction: WindowAction,
                                  opposite: OrientationAware) -> WindowCalculationResult? {
-        guard Defaults.subsequentExecutionMode.value == .acrossMonitor,
+        guard Defaults.thirdsAndFourthsAcrossDisplays.enabled == true,
+              Defaults.subsequentExecutionMode.value == .acrossMonitor,
               isRepeatedCommand(params),
               let adjacentScreens = params.usableScreens.adjacentScreens
         else { return nil }

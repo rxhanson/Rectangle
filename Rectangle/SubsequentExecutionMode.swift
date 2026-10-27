@@ -59,11 +59,14 @@ class SubsequentExecutionDefault: Default {
     }
 
     /// First/last thirds and fourths step through their positions on repeat, except when repeating
-    /// should do nothing or move to the adjacent display (which needs an adjacent display to move to).
+    /// should do nothing, or when it moves to the adjacent display: with the hidden
+    /// `thirdsAndFourthsAcrossDisplays` flag on, that needs an adjacent display to move to.
     func cyclesThirdsAndFourths(hasAdjacentScreen: Bool) -> Bool {
         switch value {
         case .none: return false
-        case .acrossMonitor: return !hasAdjacentScreen
+        case .acrossMonitor:
+            let movesAcrossDisplays = Defaults.thirdsAndFourthsAcrossDisplays.enabled == true && hasAdjacentScreen
+            return !movesAcrossDisplays
         default: return true
         }
     }
