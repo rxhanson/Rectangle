@@ -722,13 +722,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si repites acciones de mitad o desplazar, la ventana se moverá a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
+            "value" : "Si repites acciones de mitad o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si repites acciones de mitad o desplazar, la ventana se moverá a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
+            "value" : "Si repites acciones de mitad o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
           }
         },
         "fa" : {
@@ -4000,6 +4000,18 @@
             "value" : "Animation style"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animación"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5223,6 +5235,18 @@
             "value" : "Blur appearance"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspecto del desenfoque"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspecto del desenfoque"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5268,6 +5292,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Blur preview"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vista previa desenfocada"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vista previa desenfocada"
           }
         },
         "fa" : {
@@ -6349,6 +6385,18 @@
             "value" : "Konflikt mit macOS Fenstermanagement"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflicto con el mosaico de macOS"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflicto con el mosaico de macOS"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7378,6 +7426,18 @@
             "value" : "Dark"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oscuro"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oscuro"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7425,6 +7485,18 @@
             "value" : "Direct resize"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionado directo"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionado directo"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7470,6 +7542,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In Systemeinstellungen deaktivieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en macOS"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en macOS"
           }
         },
         "fa" : {
@@ -7531,6 +7615,18 @@
             "value" : "In Rectangle deaktivieren"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en Rectangle"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en Rectangle"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7588,6 +7684,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbrechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar"
           }
         },
         "fa" : {
@@ -8017,6 +8125,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Das Ziehen zum Bildschirmrand für das Anordnen von Fenstern ist sowohl in Rectangle als auch in den macOS Systemeinstellungen aktiviert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El mosaico al arrastrar al borde de la pantalla está activado tanto en Rectangle como en macOS."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El mosaico al arrastrar al borde de la pantalla está activado tanto en Rectangle como en macOS."
           }
         },
         "fa" : {
@@ -8605,6 +8725,18 @@
     },
     "Eighths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Octavos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Octavos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8650,6 +8782,18 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Extra Shortcuts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atajos extra"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atajos extra"
           }
         },
         "fa" : {
@@ -9387,6 +9531,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Follow System"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según el sistema"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según el sistema"
           }
         },
         "fa" : {
@@ -14198,6 +14354,18 @@
             "value" : "Larger Width"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensanchar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensanchar"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14549,6 +14717,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Light"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
           }
         },
         "fa" : {
@@ -15409,6 +15589,18 @@
     },
     "Ninths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novenos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novenos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19831,6 +20023,18 @@
     },
     "Sixteenths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieciseisavos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieciseisavos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20234,6 +20438,18 @@
             "value" : "Smaller Width"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estrechar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estrechar"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20459,13 +20675,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bucle a través de pantallas en ejecuciones repetidas de comandos de movimiento a la izquierda o a la derecha"
+            "value" : "Recorrer las pantallas al repetir los comandos de mover a la izquierda o a la derecha"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bucle a través de pantallas en ejecuciones repetidas de comandos de movimiento a la izquierda o a la derecha"
+            "value" : "Recorrer las pantallas al repetir los comandos de mover a la izquierda o a la derecha"
           }
         },
         "fa" : {
@@ -20965,14 +21181,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en columnas"
+            "state" : "translated",
+            "value" : "Organizar en columnas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en columnas"
+            "state" : "translated",
+            "value" : "Organizar en columnas"
           }
         },
         "fa" : {
@@ -21030,14 +21246,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en filas"
+            "state" : "translated",
+            "value" : "Organizar en filas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en filas"
+            "state" : "translated",
+            "value" : "Organizar en filas"
           }
         },
         "fa" : {
@@ -21087,6 +21303,18 @@
             "value" : "Tiling"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mosaico"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mosaico"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21120,6 +21348,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Das Ziehen von Fenstern an den Bildschirmrand zum Anordnen wurde in den macOS Systemeinstellungen deaktiviert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS"
           }
         },
         "fa" : {
@@ -21175,6 +21415,18 @@
     "Tiling in Rectangle has been disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de Rectangle"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de Rectangle"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21366,6 +21618,18 @@
     "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar el mosaico de macOS, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar el mosaico de macOS, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21411,6 +21675,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um dies wieder zu aktivieren, gehe zu Systemeinstellungen → Schreibtisch & Dock → Fenster"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para volver a activarlo, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para volver a activarlo, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
           }
         },
         "fa" : {
@@ -21466,6 +21742,18 @@
     "Top screen edge tiling in macOS is now disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS en el borde superior de la pantalla"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS en el borde superior de la pantalla"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21507,6 +21795,18 @@
     "Top/bottom sides" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitades superior/inferior"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitades superior/inferior"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21703,6 +22003,18 @@
     },
     "Twelfths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doceavos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doceavos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22044,6 +22356,18 @@
     "Update Available…" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualización disponible…"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualización disponible…"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24647,6 +24971,18 @@
             "value" : "Width Step (px)"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de anchura (px)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de anchura (px)"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24701,6 +25037,18 @@
             "value" : "Unable to resize window smaller.\nWindows may overlap."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede reducir más la ventana.\nLas ventanas pueden superponerse."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede reducir más la ventana.\nLas ventanas pueden superponerse."
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24735,6 +25083,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minimum window size reached"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño mínimo de ventana alcanzado"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño mínimo de ventana alcanzado"
           }
         },
         "fa" : {
@@ -26311,14 +26671,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferencias…"
+            "state" : "translated",
+            "value" : "Ajustes…"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferencias…"
+            "state" : "translated",
+            "value" : "Ajustes…"
           }
         },
         "fa" : {
