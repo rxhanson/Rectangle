@@ -1405,6 +1405,26 @@ final class FootprintAlphaDefaultsTests: XCTestCase {
     }
 }
 
+final class BoolDefaultTests: XCTestCase {
+
+    /// A supplied default (e.g. ignoreShortcutsInMissionControl) applies only
+    /// while the key is unset; an explicit `-bool false`/`true` always wins, and
+    /// omitting a default keeps the historical false.
+    func testDefaultValueAppliesOnlyWhileUnset() {
+        let key = "boolDefaultTest_\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+
+        XCTAssertTrue(BoolDefault(key: key, defaultValue: true).enabled, "Unset falls back to the supplied default")
+        XCTAssertFalse(BoolDefault(key: key).enabled, "Unset stays false when no default is supplied")
+
+        UserDefaults.standard.set(false, forKey: key)
+        XCTAssertFalse(BoolDefault(key: key, defaultValue: true).enabled, "An explicit false overrides a true default")
+
+        UserDefaults.standard.set(true, forKey: key)
+        XCTAssertTrue(BoolDefault(key: key, defaultValue: false).enabled, "An explicit true overrides a false default")
+    }
+}
+
 class PositionCyclesTests: XCTestCase {
 
     func testSixthsReturnTrue() {
@@ -6231,6 +6251,7 @@ class ShortcutManagerSessionTests: XCTestCase {
         let shortcuts: ValueBox<[WindowAction: MASShortcut]>
         let appDisabled: ValueBox<Bool>
         let missionControlActive: ValueBox<Bool>
+        let ignoreShortcutsInMissionControl: ValueBox<Bool>
         let scheduler: SchedulerSpy
         let todoSessionStates: ValueBox<[Bool]>
     }
@@ -6243,6 +6264,7 @@ class ShortcutManagerSessionTests: XCTestCase {
         initiallyActive: Bool = true,
         appDisabled: Bool = false,
         missionControlActive: Bool = false,
+        ignoreShortcutsInMissionControl: Bool = true,
         shortcuts: [WindowAction: MASShortcut]? = nil,
         windowManager: WindowManager = WindowManager(),
         screenDetection: ScreenDetection = ScreenDetection(),
@@ -6255,6 +6277,7 @@ class ShortcutManagerSessionTests: XCTestCase {
         let shortcuts = ValueBox(shortcuts ?? [.leftHalf: shortcut(1)])
         let appDisabled = ValueBox(appDisabled)
         let missionControlActive = ValueBox(missionControlActive)
+        let ignoreShortcutsInMissionControl = ValueBox(ignoreShortcutsInMissionControl)
         let scheduler = SchedulerSpy()
         let todoSessionStates = ValueBox<[Bool]>([])
         let manager = ShortcutManager(
@@ -6268,6 +6291,7 @@ class ShortcutManagerSessionTests: XCTestCase {
             activeStateProvider: { initiallyActive },
             appDisabledProvider: { appDisabled.value },
             missionControlActiveProvider: { missionControlActive.value },
+            ignoreShortcutsInMissionControlProvider: { ignoreShortcutsInMissionControl.value },
             windowUnderCursorProvider: { _ in windowUnderCursor },
             scheduler: { scheduler.schedule($0) },
             todoSessionStateChanged: { todoSessionStates.value.append($0) }
@@ -6282,6 +6306,7 @@ class ShortcutManagerSessionTests: XCTestCase {
             shortcuts: shortcuts,
             appDisabled: appDisabled,
             missionControlActive: missionControlActive,
+            ignoreShortcutsInMissionControl: ignoreShortcutsInMissionControl,
             scheduler: scheduler,
             todoSessionStates: todoSessionStates
         )
@@ -6658,6 +6683,26 @@ class ShortcutManagerSessionTests: XCTestCase {
             }
 
             XCTAssertEqual(windowManager.executedParameters.map(\.source), sources)
+        }
+    }
+
+    /// The guard is opt-out: turning the ignoreShortcutsInMissionControl default
+    /// off lets a keyboard shortcut run even while Mission Control is showing,
+    /// and turning it back on holds the next one back.
+    func testKeyboardShortcutHonorsTheIgnoreInMissionControlDefault() throws {
+        try withExecutionSettings(pointerTargeting: false) {
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(missionControlActive: true, ignoreShortcutsInMissionControl: false,
+                                      windowManager: windowManager)
+
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: ExecutionParameters(.leftHalf))
+            XCTAssertEqual(windowManager.executedParameters.map(\.action), [.leftHalf],
+                           "With the default disabled the shortcut runs despite Mission Control")
+
+            harness.ignoreShortcutsInMissionControl.value = true
+            harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: ExecutionParameters(.leftHalf))
+            XCTAssertEqual(windowManager.executedParameters.map(\.action), [.leftHalf],
+                           "Re-enabling the default holds the next shortcut back")
         }
     }
 

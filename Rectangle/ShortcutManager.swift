@@ -42,6 +42,7 @@ class ShortcutManager {
     private let shortcutsProvider: () -> [WindowAction: MASShortcut]
     private let appDisabledProvider: () -> Bool
     private let missionControlActiveProvider: () -> Bool
+    private let ignoreShortcutsInMissionControlProvider: () -> Bool
     private let windowUnderCursorProvider: (MouseButtonPress) -> AccessibilityElement?
     private let scheduler: ShortcutRebindScheduler
     private let todoSessionStateChanged: (Bool) -> Void
@@ -67,6 +68,7 @@ class ShortcutManager {
         },
         appDisabledProvider: @escaping () -> Bool = { ApplicationToggle.shortcutsDisabled },
         missionControlActiveProvider: @escaping () -> Bool = { WindowAnimationInterruptionPolicy.missionControlActive },
+        ignoreShortcutsInMissionControlProvider: @escaping () -> Bool = { Defaults.ignoreShortcutsInMissionControl.enabled },
         windowUnderCursorProvider: @escaping (MouseButtonPress) -> AccessibilityElement? = { press in
             AccessibilityElement.getWindowElementUnderCursor(at: press.location, eventWindowID: press.windowId)
         },
@@ -87,6 +89,7 @@ class ShortcutManager {
         self.shortcutsProvider = shortcutsProvider
         self.appDisabledProvider = appDisabledProvider
         self.missionControlActiveProvider = missionControlActiveProvider
+        self.ignoreShortcutsInMissionControlProvider = ignoreShortcutsInMissionControlProvider
         self.windowUnderCursorProvider = windowUnderCursorProvider
         self.scheduler = scheduler
         self.todoSessionStateChanged = todoSessionStateChanged
@@ -236,7 +239,10 @@ class ShortcutManager {
 
         // Mission Control leaves the previous app frontmost, so a shortcut would
         // move the window behind the overview and distort its thumbnail (#1739).
-        if parameters.source == .keyboardShortcut, missionControlActiveProvider() {
+        // Opt out with: defaults write com.knollsoft.Rectangle ignoreShortcutsInMissionControl -bool false
+        if parameters.source == .keyboardShortcut,
+           ignoreShortcutsInMissionControlProvider(),
+           missionControlActiveProvider() {
             Logger.log("Ignoring \(parameters.action.name) while Mission Control is active")
             return
         }
