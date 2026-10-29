@@ -35,6 +35,7 @@ class Defaults {
     static let moveFixedSizeToEdge = IntEnumDefault<EdgeAlignment>(key: "moveFixedSizeToEdge", defaultValue: .edgesAndCorners)
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
+    static let thirdsAndFourthsAcrossDisplays = OptionalBoolDefault(key: "thirdsAndFourthsAcrossDisplays")
     static let useCursorScreenDetection = BoolDefault(key: "useCursorScreenDetection")
     static let minimumWindowWidth = DoubleDefault(key: "minimumWindowWidth", defaultValue: 0.25)
     static let minimumWindowHeight = DoubleDefault(key: "minimumWindowHeight", defaultValue: 0.25)
@@ -166,6 +167,7 @@ class Defaults {
         repeatedMaximizeRestoresPrevious,
         ignoredSnapAreas,
         traverseSingleScreen,
+        thirdsAndFourthsAcrossDisplays,
         minimumWindowWidth,
         minimumWindowHeight,
         sizeOffset,

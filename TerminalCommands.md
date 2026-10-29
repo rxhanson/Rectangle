@@ -6,6 +6,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Adjust Behavior on Repeated Commands](#adjust-behavior-on-repeated-commands)
+- [Move thirds and fourths to the adjacent display on repeat](#move-thirds-and-fourths-to-the-adjacent-display-on-repeat)
 - [Cycle thirds on repeated Center Half commands](#cycle-thirds-on-repeated-center-half-commands)
 - [Resize on Directional Move](#resize-on-directional-move)
 - [Make the half actions tile like Windows or KDE](#make-the-half-actions-tile-like-windows-or-kde)
@@ -76,6 +77,20 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 4: repeat same action on next display
 5: cycle positions on quadrants, cycle sizes on side
 6: switch to the opposite side on half actions
+
+## Move thirds and fourths to the adjacent display on repeat
+
+This is off by default. With "Move to adjacent display on left or right" selected as the repeated command, repeating Left Third, Right Third, First Fourth or Last Fourth moves the window to the adjacent display, the same way the left and right halves do. Without this setting, those repeats cycle the window through positions on the same display. Without a second display, they keep cycling.
+
+```bash
+defaults write com.knollsoft.Rectangle thirdsAndFourthsAcrossDisplays -bool true
+```
+
+To turn it off again, delete the setting:
+
+```bash
+defaults delete com.knollsoft.Rectangle thirdsAndFourthsAcrossDisplays
+```
 
 ## Cycle thirds on repeated Center Half commands
 
