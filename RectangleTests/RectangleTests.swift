@@ -10007,3 +10007,194 @@ final class StackBadgeListSelectionTests: XCTestCase {
         XCTAssertEqual(list.selectedWindow?.windowId, 33)
     }
 }
+
+final class FullScreenSnapGateTests: XCTestCase {
+    // Flipped frames: the built-in display is the primary one, the external display sits above it.
+    private let builtIn = CGRect(x: 0, y: 0, width: 1728, height: 1117)
+    private let external = CGRect(x: -416, y: -1440, width: 2560, height: 1440)
+
+    func testNothingIsGatedWithoutAFullscreenWindow() {
+        let gate = FullScreenSnapGate(isFullScreen: false, windowFrame: external, displayFrames: [builtIn, external])
+        XCTAssertEqual(gate, .inactive)
+        XCTAssertFalse(gate.suspendsListening)
+        XCTAssertFalse(gate.ignoresGesture(at: CGPoint(x: 800, y: -700)))
+        XCTAssertFalse(gate.ignoresGesture(at: nil))
+    }
+
+    func testAFullscreenWindowOnOneOfTwoDisplaysOnlyBlocksGesturesOnThatDisplay() {
+        let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: external, displayFrames: [builtIn, external])
+        XCTAssertFalse(gate.suspendsListening)
+        XCTAssertEqual(gate.displayFrame, external)
+        XCTAssertTrue(gate.ignoresGesture(at: CGPoint(x: 800, y: -700)), "on the fullscreen display")
+        XCTAssertFalse(gate.ignoresGesture(at: CGPoint(x: 800, y: 500)), "on the other display")
+        XCTAssertTrue(gate.ignoresGesture(at: nil), "an unknown location counts as the fullscreen display")
+    }
+
+    func testAFullscreenWindowOnTheOnlyDisplayStillStopsListening() {
+        let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: builtIn, displayFrames: [builtIn])
+        XCTAssertTrue(gate.suspendsListening)
+        XCTAssertTrue(gate.ignoresGesture(at: CGPoint(x: 10, y: 10)))
+    }
+
+    func testAnUnknownWindowFrameStillStopsListening() {
+        let frames: [CGRect?] = [nil, .null, .zero, CGRect(x: 9000, y: 9000, width: 10, height: 10)]
+        for frame in frames {
+            let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: frame, displayFrames: [builtIn, external])
+            XCTAssertNil(gate.displayFrame, String(describing: frame))
+            XCTAssertTrue(gate.suspendsListening, String(describing: frame))
+            XCTAssertTrue(gate.ignoresGesture(at: CGPoint(x: 800, y: 500)), String(describing: frame))
+        }
+    }
+
+    func testTheDisplayShowingMostOfTheWindowIsChosen() {
+        // 300 points of the window are on the external display, 700 on the built-in one.
+        let straddling = CGRect(x: 200, y: -300, width: 1000, height: 1000)
+        let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: straddling, displayFrames: [builtIn, external])
+        XCTAssertEqual(gate.displayFrame, builtIn)
+    }
+}
+
+final class SnappingManagerFullScreenTests: XCTestCase {
+    private final class Manager: SnappingManager {
+        var begunDrags = 0
+        @discardableResult
+        override func beginNativeDrag() -> UUID {
+            begunDrags += 1
+            return super.beginNativeDrag()
+        }
+    }
+
+    private let builtIn = CGRect(x: 0, y: 0, width: 1728, height: 1117)
+    private let external = CGRect(x: -416, y: -1440, width: 2560, height: 1440)
+    private let onExternal = CGPoint(x: 800, y: -700)
+    private let onBuiltIn = CGPoint(x: 800, y: 500)
+    private var savedSnapping: Bool?
+    private var savedObtainOnClick: Bool?
+
+    override func setUp() {
+        super.setUp()
+        savedSnapping = Defaults.windowSnapping.enabled
+        savedObtainOnClick = Defaults.obtainWindowOnClick.enabled
+        Defaults.windowSnapping.enabled = false
+        // Keeps a tracked mouse-down away from the accessibility hit-test under the cursor.
+        Defaults.obtainWindowOnClick.enabled = false
+    }
+
+    override func tearDown() {
+        Defaults.windowSnapping.enabled = savedSnapping
+        Defaults.obtainWindowOnClick.enabled = savedObtainOnClick
+        super.tearDown()
+    }
+
+    private func fullScreenOnExternal() -> FullScreenSnapGate {
+        FullScreenSnapGate(isFullScreen: true, windowFrame: external, displayFrames: [builtIn, external])
+    }
+
+    private func mouse(_ type: CGEventType, at point: CGPoint) throws -> NSEvent {
+        let cgEvent = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: type,
+                                            mouseCursorPosition: point, mouseButton: .left))
+        return try XCTUnwrap(NSEvent(cgEvent: cgEvent))
+    }
+
+    func testAGestureOnTheFullscreenDisplayIsLeftAlone() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        XCTAssertEqual(manager.begunDrags, 0)
+        manager.handle(event: try mouse(.leftMouseDragged, at: CGPoint(x: 850, y: -650)))
+        XCTAssertEqual(manager.windowIdAttempt, 0, "no window lookup during the gesture")
+        XCTAssertNil(manager.windowElement)
+        XCTAssertFalse(manager.windowMoving)
+        manager.handle(event: try mouse(.leftMouseUp, at: CGPoint(x: 850, y: -650)))
+        XCTAssertEqual(manager.begunDrags, 0)
+    }
+
+    func testAGestureOnTheOtherDisplayIsTracked() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onBuiltIn))
+        XCTAssertEqual(manager.begunDrags, 1)
+        manager.handle(event: try mouse(.leftMouseUp, at: onBuiltIn))
+    }
+
+    func testEachGestureIsJudgedOnItsOwn() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        manager.handle(event: try mouse(.leftMouseUp, at: onExternal))
+        manager.handle(event: try mouse(.leftMouseDown, at: onBuiltIn))
+        XCTAssertEqual(manager.begunDrags, 1, "the ignored gesture does not carry over")
+        manager.handle(event: try mouse(.leftMouseUp, at: onBuiltIn))
+        manager.fullScreenGate = .inactive
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        XCTAssertEqual(manager.begunDrags, 2, "nothing is ignored once the window left fullscreen")
+        manager.handle(event: try mouse(.leftMouseUp, at: onExternal))
+    }
+
+    func testAGestureIsForgottenWhenListeningStops() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        // Listening stops before the release arrives, as it does when an ignored app comes to the front.
+        manager.toggleListening()
+        // The restarted monitor picks up the next drag part-way, as it did before this change.
+        manager.handle(event: try mouse(.leftMouseDragged, at: onBuiltIn))
+        XCTAssertEqual(manager.windowIdAttempt, 1, "the drag is looked at rather than swallowed")
+        manager.handle(event: try mouse(.leftMouseUp, at: onBuiltIn))
+    }
+
+    func testAnIgnoredPressFinishesAGestureWhoseReleaseWasLost() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onBuiltIn))
+        XCTAssertEqual(manager.begunDrags, 1)
+        manager.windowId = 42
+        manager.initialWindowRect = CGRect(x: 100, y: 100, width: 800, height: 600)
+        manager.currentSnapArea = SnapArea(screen: try XCTUnwrap(NSScreen.screens.first), directional: .l, action: .leftHalf)
+
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        XCTAssertEqual(manager.begunDrags, 1, "the press on the fullscreen display is still ignored")
+        XCTAssertNil(manager.windowId)
+        XCTAssertNil(manager.initialWindowRect)
+        XCTAssertNil(manager.currentSnapArea)
+        manager.handle(event: try mouse(.leftMouseUp, at: onExternal))
+    }
+
+    func testListeningContinuesForAFullscreenWindowOnOneOfTwoDisplays() {
+        Defaults.windowSnapping.enabled = true
+        let manager = SnappingManager()
+        defer {
+            manager.allowListening = false
+            manager.toggleListening()
+        }
+        // A baseline that does not depend on the test host's own front window.
+        manager.fullScreenGate = .inactive
+        manager.toggleListening()
+        let wasRunning = manager.eventMonitor?.running ?? false
+
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.toggleListening()
+        XCTAssertNotNil(manager.eventMonitor, "gestures on the fullscreen display are ignored instead")
+        XCTAssertEqual(manager.eventMonitor?.running ?? false, wasRunning)
+
+        manager.fullScreenGate = FullScreenSnapGate(isFullScreen: true, windowFrame: builtIn, displayFrames: [builtIn])
+        manager.toggleListening()
+        XCTAssertNil(manager.eventMonitor, "a fullscreen window on the only display stops listening as before")
+
+        manager.isFullScreen = true
+        manager.toggleListening()
+        XCTAssertNil(manager.eventMonitor, "so does a fullscreen window whose display is unknown")
+
+        manager.fullScreenGate = .inactive
+        manager.toggleListening()
+        XCTAssertNotNil(manager.eventMonitor)
+    }
+
+    func testDisplayChangesReevaluateTheGate() {
+        let manager = SnappingManager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        NotificationCenter.default.post(name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        XCTAssertFalse(manager.isFullScreen, "the test host's front window is not fullscreen")
+        XCTAssertEqual(manager.fullScreenGate, .inactive)
+    }
+}
