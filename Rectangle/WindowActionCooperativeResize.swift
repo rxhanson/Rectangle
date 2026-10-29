@@ -82,7 +82,7 @@ extension ExecutionSource {
         switch self {
         case .keyboardShortcut, .dragToSnap:
             return true
-        case .menuItem, .url, .titleBar:
+        case .menuItem, .url, .titleBar, .newWindow:
             return false
         }
     }

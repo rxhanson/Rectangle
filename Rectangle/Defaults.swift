@@ -135,6 +135,7 @@ class Defaults {
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
     static let mouseButtonShortcutsUseWindowUnderCursor = BoolDefault(key: "mouseButtonShortcutsUseWindowUnderCursor")
     static let ignoreShortcutsInMissionControl = BoolDefault(key: "ignoreShortcutsInMissionControl", defaultValue: true)
+    static let newWindowAction = StringDefault(key: "newWindowAction")
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
         launchOnLogin,
@@ -182,6 +183,7 @@ class Defaults {
         screenEdgeGapsOnMainScreenOnly,
         screenEdgeGapTopNotch,
         ignoreMenuBar,
+        newWindowAction,
         showAllActionsInMenu,
         showAdditionalSizesInMenu,
         footprintAlpha,
