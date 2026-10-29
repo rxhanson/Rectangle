@@ -277,6 +277,12 @@
             "state" : "translated",
             "value" : "%lld px"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
         }
       }
     },
@@ -2301,6 +2307,12 @@
             "state" : "translated",
             "value" : "跨显示器设置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨顯示器設定"
+          }
         }
       }
     },
@@ -2354,6 +2366,12 @@
             "state" : "translated",
             "value" : "Rectangle 将窗口最大化或接近最大化后，再次执行同一操作会将窗口恢复到之前的大小和位置。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 將視窗放到最大或近乎放到最大後，再次執行相同的動作會將視窗復原至先前的大小與位置。"
+          }
         }
       }
     },
@@ -2402,6 +2420,12 @@
             "state" : "translated",
             "value" : "允许"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允許"
+          }
         }
       }
     },
@@ -2447,6 +2471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "允许 Rectangle 执行 URL 操作？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "是否允許 Rectangle 執行 URL 動作？"
           }
         }
       }
@@ -2678,6 +2708,12 @@
             "state" : "translated",
             "value" : "同时恢复用“放大”或“缩小”调整过大小的窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "也復原以「放大」或「縮小」調整大小的視窗"
+          }
         }
       }
     },
@@ -2731,6 +2767,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "外部来源请求 Rectangle 对包标识符为“%2$@”的 App 执行“%1$@”操作。是否允许？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部來源請求 Rectangle 執行「%@」動作，目標應用程式的套件識別碼為「%@」。是否允許？"
           }
         }
       }
@@ -2974,6 +3016,12 @@
             "state" : "translated",
             "value" : "窗口动画"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "視窗動畫"
+          }
         }
       }
     },
@@ -3084,6 +3132,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "应用设置"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "應用程式設定"
           }
         }
       }
@@ -3536,6 +3590,12 @@
             "state" : "translated",
             "value" : "行为"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行為"
+          }
         }
       }
     },
@@ -3977,6 +4037,12 @@
             "state" : "translated",
             "value" : "下排中左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／８"
+          }
         }
       }
     },
@@ -4042,6 +4108,12 @@
             "state" : "translated",
             "value" : "下排中左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／８"
+          }
         }
       }
     },
@@ -4090,6 +4162,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "下排中左１／１６"
@@ -4146,6 +4224,12 @@
             "state" : "translated",
             "value" : "下排中左１／１２"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中左１／１２"
+          }
         }
       }
     },
@@ -4198,6 +4282,12 @@
             "state" : "translated",
             "value" : "中下１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下１／９"
+          }
         }
       }
     },
@@ -4246,6 +4336,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／８"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "下排中右１／８"
@@ -4315,6 +4411,12 @@
             "state" : "translated",
             "value" : "下排中右１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／８"
+          }
         }
       }
     },
@@ -4367,6 +4469,12 @@
             "state" : "translated",
             "value" : "下排中右１／１６"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／１６"
+          }
         }
       }
     },
@@ -4415,6 +4523,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排中右１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "下排中右１／１２"
@@ -4685,6 +4799,12 @@
             "state" : "translated",
             "value" : "自角落则底部⅛；⅓"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自角落則底部⅛；⅓"
+          }
         }
       }
     },
@@ -4933,6 +5053,12 @@
             "state" : "translated",
             "value" : "下排左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／８"
+          }
         }
       }
     },
@@ -4998,6 +5124,12 @@
             "state" : "translated",
             "value" : "下排左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／８"
+          }
         }
       }
     },
@@ -5050,6 +5182,12 @@
             "state" : "translated",
             "value" : "左下１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左下１／９"
+          }
         }
       }
     },
@@ -5098,6 +5236,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "下排左１／１６"
@@ -5350,6 +5494,12 @@
             "state" : "translated",
             "value" : "下排左１／１２"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排左１／１２"
+          }
         }
       }
     },
@@ -5598,6 +5748,12 @@
             "state" : "translated",
             "value" : "下排右１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／８"
+          }
         }
       }
     },
@@ -5663,6 +5819,12 @@
             "state" : "translated",
             "value" : "下排右１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／８"
+          }
         }
       }
     },
@@ -5715,6 +5877,12 @@
             "state" : "translated",
             "value" : "右下１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右下１／９"
+          }
         }
       }
     },
@@ -5763,6 +5931,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "下排右１／１６"
@@ -6011,6 +6185,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下排右１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "下排右１／１２"
@@ -6275,6 +6455,12 @@
             "state" : "translated",
             "value" : "底部１／３"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "底部１／３"
+          }
         }
       }
     },
@@ -6339,6 +6525,12 @@
             "state" : "translated",
             "value" : "底部２／３"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "底部２／３"
+          }
         }
       }
     },
@@ -6384,6 +6576,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "逐个前置与当前窗口吸附在同一区域的其他窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逐一將與目前使用中的視窗貼齊於同一區域的其他視窗移至最前。"
           }
         }
       }
@@ -6437,6 +6635,12 @@
             "state" : "translated",
             "value" : "前置您选择的待办应用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將您選擇的待辦應用程式移至最前"
+          }
         }
       }
     },
@@ -6477,6 +6681,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按钮 %lld"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按鈕 %lld"
           }
         }
       }
@@ -7052,7 +7262,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中央１／３"
+            "value" : "中間１／３"
           }
         },
         "zh-Hant-HK" : {
@@ -7486,6 +7696,12 @@
             "state" : "translated",
             "value" : "跨显示器移动时将窗口居中"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨顯示器移動時將視窗置中"
+          }
         }
       }
     },
@@ -7870,7 +8086,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "檢查更新⋯"
+            "value" : "檢查更新項目⋯"
           }
         },
         "zh-Hant-HK" : {
@@ -8066,7 +8282,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果選擇 Spectacle，重複快速鍵也會循環½、⅔、⅓視窗寬度"
+            "value" : "如果選擇 Spectacle，重複快速鍵也會循環切換½、⅔、⅓視窗寬度。"
           }
         },
         "zh-Hant-HK" : {
@@ -8322,6 +8538,12 @@
             "state" : "translated",
             "value" : "配置半屏操作与角落操作的分界"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定半螢幕動作與角落動作的分界"
+          }
         }
       }
     },
@@ -8404,6 +8626,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "与 macOS 窗口平铺功能冲突"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "與 macOS 視窗並排功能衝突"
           }
         }
       }
@@ -8851,6 +9079,12 @@
             "state" : "translated",
             "value" : "Copyright © 2019-2026 Ryan Hanson。保留所有权利。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson. 保留一切權利。"
+          }
         }
       }
     },
@@ -9267,6 +9501,12 @@
             "state" : "translated",
             "value" : "当前使用中："
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前正在使用： "
+          }
         }
       }
     },
@@ -9529,6 +9769,12 @@
             "state" : "translated",
             "value" : "角落操作循环位置，半屏操作循环大小"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角落動作循環切換位置，半螢幕動作循環切換大小"
+          }
         }
       }
     },
@@ -9693,8 +9939,8 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "一半動作循環½、⅔和⅓"
+            "state" : "translated",
+            "value" : "半螢幕動作循環切換大小"
           }
         },
         "zh-Hant-HK" : {
@@ -9748,6 +9994,12 @@
             "state" : "translated",
             "value" : "循环切换堆叠窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循環切換堆疊視窗"
+          }
         }
       }
     },
@@ -9793,6 +10045,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "循环切换堆叠窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "循環切換堆疊視窗"
           }
         }
       }
@@ -9840,6 +10098,12 @@
             "state" : "translated",
             "value" : "反向循环切换堆叠窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反向循環切換堆疊視窗"
+          }
         }
       }
     },
@@ -9885,6 +10149,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "反向循环切换堆叠窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "反向循環切換堆疊視窗"
           }
         }
       }
@@ -10074,8 +10344,8 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "循環顯示器"
+            "state" : "translated",
+            "value" : "循環切換顯示器"
           }
         },
         "zh-Hant-HK" : {
@@ -10128,6 +10398,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "循环角落快捷键的扩展方向"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "角落快速鍵循環時的擴展方向"
           }
         }
       }
@@ -10913,6 +11189,12 @@
             "state" : "translated",
             "value" : "在 macOS 里禁用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 macOS 中停用"
+          }
         }
       }
     },
@@ -10996,6 +11278,12 @@
             "state" : "translated",
             "value" : "在 Rectangle 里禁用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 中停用"
+          }
         }
       }
     },
@@ -11075,6 +11363,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忽略"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "忽略"
@@ -11458,7 +11752,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "不執行任何動作"
           }
         },
@@ -11661,7 +11955,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "連按兩下視窗標題列來最大化/復原"
+            "value" : "連按兩下視窗標題列來放到最大／復原"
           }
         },
         "zh-Hant-HK" : {
@@ -11751,6 +12045,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 Rectangle 和 macOS 中都启用了拖移窗口至屏幕边缘实现平铺"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 和 macOS 都已啟用拖移視窗至螢幕邊緣來並排視窗的功能。"
           }
         }
       }
@@ -12010,6 +12310,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "八等分"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "八等分"
@@ -12761,8 +13067,8 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "輸出"
+            "state" : "translated",
+            "value" : "輸出設定檔"
           }
         },
         "zh-Hant-HK" : {
@@ -12797,6 +13103,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "额外快捷键"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "額外快速鍵"
           }
         }
       }
@@ -12869,6 +13181,12 @@
             "state" : "translated",
             "value" : "额外快捷键"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "額外快速鍵"
+          }
         }
       }
     },
@@ -12939,6 +13257,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更多选项"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多選項"
           }
         }
       }
@@ -13037,6 +13361,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "竖向１／６（第５列）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向六分之一（第 5 欄）"
           }
         }
       }
@@ -14605,7 +14935,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左側1／3"
+            "value" : "左側１／３"
           }
         },
         "zh-Hant-HK" : {
@@ -14997,7 +15327,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左側２/３"
+            "value" : "左側２／３"
           }
         },
         "zh-Hant-HK" : {
@@ -15102,6 +15432,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "竖向１／６（第１列）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向六分之一（第 1 欄）"
           }
         }
       }
@@ -15213,6 +15549,12 @@
             "state" : "translated",
             "value" : "适用于窗口列表和循环切换快捷键。关闭时，左上角位置相同的窗口无论大小都视为堆叠"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "適用於視窗列表與循環切換快速鍵。關閉時，左上角位置相同的視窗無論大小都視為堆疊。"
+          }
         }
       }
     },
@@ -15310,6 +15652,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "竖向１／６（第４列）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向六分之一（第 4 欄）"
           }
         }
       }
@@ -16095,7 +16443,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "設定"
+            "value" : "一般"
           }
         },
         "zh-Hant-HK" : {
@@ -16612,6 +16960,12 @@
             "state" : "translated",
             "value" : "绿色按钮执行最大化而非进入全屏幕"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "綠色按鈕會將視窗放到最大，而非進入全螢幕"
+          }
         }
       }
     },
@@ -16677,6 +17031,12 @@
             "state" : "translated",
             "value" : "网格位置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網格位置"
+          }
         }
       }
     },
@@ -16729,6 +17089,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "半屏操作保留窗口在另一轴向上的尺寸"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半螢幕動作會保留視窗在另一軸向上的大小。"
           }
         }
       }
@@ -16818,6 +17184,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "提供触感反馈"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "觸覺回饋"
           }
         }
       }
@@ -17658,6 +18030,12 @@
             "state" : "translated",
             "value" : "按住任意修饰键或使用“窗口”菜单可执行 macOS 默认行为"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按住任一修飾鍵或使用「視窗」選單，即可執行 macOS 預設行為。"
+          }
         }
       }
     },
@@ -17722,6 +18100,12 @@
             "state" : "translated",
             "value" : "水平（左／右，%）"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平（左／右，%）"
+          }
         }
       }
     },
@@ -17774,6 +18158,12 @@
             "state" : "translated",
             "value" : "水平方向"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平方向"
+          }
         }
       }
     },
@@ -17816,6 +18206,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "水平"
@@ -17871,6 +18267,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "将光标悬停在窗口左上角附近以显示列表"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將游標停留在視窗左上角附近，即可顯示列表。"
           }
         }
       }
@@ -18035,6 +18437,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ⓘ"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ⓘ"
@@ -18227,7 +18635,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果該區域過小，將會隱藏最近使用過的應用程式"
+            "value" : "如果該區域過小，將會隱藏最近使用過的應用程式。"
           }
         },
         "zh-Hant-HK" : {
@@ -18598,6 +19006,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如果你重复移动或进行一半的移动操作，窗口将移动到下一个显示器，而不是 1 / 2、2 / 3 或 1 / 3 大小。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "若重複執行移動或半螢幕動作，視窗會移至下一個顯示器，而非切換為 ½、⅔、⅓ 大小。"
           }
         }
       }
@@ -18971,8 +19385,8 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "輸入"
+            "state" : "translated",
+            "value" : "輸入設定檔"
           }
         },
         "zh-Hant-HK" : {
@@ -19032,6 +19446,12 @@
             "state" : "translated",
             "value" : "在 Rectangle 菜单中，启用待办模式。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 選單中，啟用待辦模式。"
+          }
         }
       }
     },
@@ -19083,6 +19503,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 Rectangle 菜单中，选择\n“使用［应用程序］作为待办应用”"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Rectangle 選單中，選擇\n「使用［應用程式］作為待辦應用程式」"
           }
         }
       }
@@ -19468,8 +19894,8 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "在主螢幕右側始終顯示所選擇的應用程式"
+            "state" : "translated",
+            "value" : "讓您選擇的應用程式始終顯示在主螢幕的一側。"
           }
         },
         "zh-Hant-HK" : {
@@ -19517,6 +19943,12 @@
             "state" : "translated",
             "value" : "键盘快捷键始终作用于当前窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "鍵盤快速鍵一律作用於目前使用中的視窗。"
+          }
         }
       }
     },
@@ -19562,6 +19994,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "横屏吸附区域"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "橫向螢幕貼齊區域"
           }
         }
       }
@@ -19632,6 +20070,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "增加宽度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "增加寬度"
           }
         }
       }
@@ -20023,7 +20467,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "右首１／３"
+            "value" : "右側１／３"
           }
         },
         "zh-Hant-HK" : {
@@ -20415,7 +20859,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "右側2／3"
+            "value" : "右側２／３"
           }
         },
         "zh-Hant-HK" : {
@@ -20520,6 +20964,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "竖向１／６（第６列）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向六分之一（第 6 欄）"
           }
         }
       }
@@ -20905,7 +21355,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左側"
+            "value" : "左半"
           }
         },
         "zh-Hant-HK" : {
@@ -20965,6 +21415,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "先执行左半屏再执行上半屏会将窗口移至左上角１／４；执行相对边缘的操作则会将其展开还原。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先執行「左半」再執行「上半」，會將視窗移至左上角１／４；執行相對邊緣的動作則會將其重新展開。"
           }
         }
       }
@@ -21350,7 +21806,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "左半，靠近角落則上半／下半"
           }
         },
@@ -21475,6 +21931,12 @@
             "state" : "translated",
             "value" : "中下排中左１／１６"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排中左１／１６"
+          }
         }
       }
     },
@@ -21523,6 +21985,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排中右１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中下排中右１／１６"
@@ -21579,6 +22047,12 @@
             "state" : "translated",
             "value" : "中下排左１／１６"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排左１／１６"
+          }
         }
       }
     },
@@ -21627,6 +22101,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中下排右１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中下排右１／１６"
@@ -22016,7 +22496,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "放大"
           }
         },
@@ -22213,7 +22693,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "縮小"
           }
         },
@@ -22678,6 +23158,12 @@
             "state" : "translated",
             "value" : "最大化设置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大化設定"
+          }
         }
       }
     },
@@ -22729,6 +23215,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "每列最多窗口数"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每直欄最多視窗數"
           }
         }
       }
@@ -22782,6 +23274,12 @@
             "state" : "translated",
             "value" : "每行最多窗口数"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每橫列最多視窗數"
+          }
         }
       }
     },
@@ -22822,6 +23320,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "中键"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中鍵"
           }
         }
       }
@@ -22871,6 +23375,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排中左１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中排中左１／１２"
@@ -22927,6 +23437,12 @@
             "state" : "translated",
             "value" : "正中１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正中１／９"
+          }
         }
       }
     },
@@ -22975,6 +23491,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排中右１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中排中右１／１２"
@@ -23031,6 +23553,12 @@
             "state" : "translated",
             "value" : "左中１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左中１／９"
+          }
         }
       }
     },
@@ -23079,6 +23607,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排左１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中排左１／１２"
@@ -23135,6 +23669,12 @@
             "state" : "translated",
             "value" : "右中１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右中１／９"
+          }
         }
       }
     },
@@ -23183,6 +23723,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中排右１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中排右１／１２"
@@ -23247,6 +23793,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中部１／３"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中部１／３"
@@ -23507,6 +24059,12 @@
             "state" : "translated",
             "value" : "已达到窗口最小尺寸"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已達到視窗最小尺寸"
+          }
         }
       }
     },
@@ -23546,6 +24104,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "鼠标按钮快捷键作用于指针下方的窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滑鼠按鈕快速鍵作用於游標下方的視窗。"
           }
         }
       }
@@ -24519,7 +25083,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "移至左側或右側的相鄰顯示器"
           }
         },
@@ -24716,8 +25280,8 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "左／右移至相鄰，或一半循環大小"
+            "state" : "translated",
+            "value" : "左／右移至相鄰顯示器，或半螢幕動作循環切換大小"
           }
         },
         "zh-Hant-HK" : {
@@ -25772,6 +26336,12 @@
             "state" : "translated",
             "value" : "九等分"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分"
+          }
         }
       }
     },
@@ -25837,6 +26407,12 @@
             "state" : "translated",
             "value" : "九等分（3×3）"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分（3×3）"
+          }
         }
       }
     },
@@ -25861,6 +26437,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分（3×3）"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "九等分（3×3）"
@@ -26120,6 +26702,12 @@
             "state" : "translated",
             "value" : "窗口重叠时错开位置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "視窗重疊時錯開位置"
+          }
         }
       }
     },
@@ -26165,6 +26753,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "仅堆叠大小相同的窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "僅堆疊大小相同的視窗"
           }
         }
       }
@@ -26551,7 +27145,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "開啟系統設定"
+            "value" : "打開系統設定"
           }
         },
         "zh-Hant-HK" : {
@@ -27594,6 +28188,12 @@
             "state" : "translated",
             "value" : "竖屏吸附区域"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向螢幕貼齊區域"
+          }
         }
       }
     },
@@ -27843,6 +28443,12 @@
             "state" : "translated",
             "value" : "跨显示器移动时保持最大化状态"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨顯示器移動時保持最大化狀態"
+          }
         }
       }
     },
@@ -27894,6 +28500,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "半屏操作保留侧轴尺寸（类似 Windows）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半螢幕動作保留另一軸向的大小（類似 Windows）"
           }
         }
       }
@@ -27960,6 +28572,12 @@
             "state" : "translated",
             "value" : "重复按下快捷键可循环切换网格中的所有位置。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重複按下快速鍵即可循環切換網格中的所有位置。"
+          }
         }
       }
     },
@@ -28007,6 +28625,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拖移时防止触发调度中心"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖移時防止觸發「指揮中心」"
           }
         }
       }
@@ -28252,6 +28876,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "px"
@@ -28504,6 +29134,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最近使用的应用程序区域"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近使用過的應用程式區域"
           }
         }
       }
@@ -29480,7 +30116,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rectangle 偏好設定"
+            "value" : "Rectangle 設定"
           }
         },
         "zh-Hant-HK" : {
@@ -29934,6 +30570,12 @@
             "state" : "translated",
             "value" : "移除屏幕顶部边缘的空隙"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除螢幕頂部邊緣的空隙"
+          }
         }
       }
     },
@@ -30181,6 +30823,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "吸附到顶部边缘时移除顶部空隙"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貼齊頂部邊緣時移除頂部空隙"
           }
         }
       }
@@ -30430,6 +31078,12 @@
             "state" : "translated",
             "value" : "重复最大化时恢复之前的大小和位置"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重複「放到最大」時復原先前的大小與位置"
+          }
         }
       }
     },
@@ -30481,6 +31135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "循环半屏或角落快捷键时同时调整相邻窗口大小"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半螢幕或角落快速鍵循環時一併調整相鄰視窗大小"
           }
         }
       }
@@ -30866,7 +31526,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "復原預設快速鍵"
+            "value" : "復原預設快速鍵與貼齊區域"
           }
         },
         "zh-Hant-HK" : {
@@ -31454,7 +32114,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "右半，靠近角落則上半／下半"
           }
         },
@@ -31959,6 +32619,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "竖向１／６（第２列）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向六分之一（第 2 欄）"
           }
         }
       }
@@ -32543,7 +33209,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "偏好設定⋯"
+            "value" : "設定⋯"
           }
         },
         "zh-Hant-HK" : {
@@ -32852,6 +33518,12 @@
             "state" : "translated",
             "value" : "在菜单中显示*额外*快捷键"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在選單中顯示*額外*快速鍵"
+          }
         }
       }
     },
@@ -32916,6 +33588,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在菜单中显示更多尺寸"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在選單中顯示更多尺寸"
           }
         }
       }
@@ -33166,6 +33844,12 @@
             "state" : "translated",
             "value" : "悬停时显示堆叠窗口列表"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游標停留時顯示堆疊視窗列表"
+          }
         }
       }
     },
@@ -33408,6 +34092,12 @@
             "state" : "translated",
             "value" : "窗口无法缩小到所需尺寸时显示警告"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "視窗無法縮小到所需大小時顯示警告"
+          }
         }
       }
     },
@@ -33471,6 +34161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "侧边分割比例"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半螢幕分割比例"
           }
         }
       }
@@ -33655,7 +34351,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一半螢幕"
+            "value" : "半螢幕"
           }
         },
         "zh-Hant-HK" : {
@@ -33728,6 +34424,12 @@
             "state" : "translated",
             "value" : "十六等分"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分"
+          }
         }
       }
     },
@@ -33793,6 +34495,12 @@
             "state" : "translated",
             "value" : "十六等分（4×4）"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分（4×4）"
+          }
         }
       }
     },
@@ -33817,6 +34525,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分（4×4）"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "十六等分（4×4）"
@@ -34331,6 +35045,12 @@
             "state" : "translated",
             "value" : "减少宽度"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "減少寬度"
+          }
         }
       }
     },
@@ -34501,6 +35221,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "到达屏幕边缘前即吸附"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到達螢幕邊緣前即貼齊"
           }
         }
       }
@@ -34834,6 +35560,12 @@
             "state" : "translated",
             "value" : "Spectacle"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spectacle"
+          }
         }
       }
     },
@@ -35022,7 +35754,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Spectacle 快速鍵更可能與其他快速鍵相衝突"
+            "value" : "Spectacle 快速鍵更可能與其他快速鍵相衝突。"
           }
         },
         "zh-Hant-HK" : {
@@ -35082,6 +35814,12 @@
             "state" : "translated",
             "value" : "堆叠窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "堆疊視窗"
+          }
         }
       }
     },
@@ -35133,6 +35871,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "台前调度"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幕前調度"
           }
         }
       }
@@ -35358,6 +36102,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "半屏操作切换到对侧"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半螢幕動作切換至另一側"
           }
         }
       }
@@ -35658,6 +36408,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "竖向１／６（第３列）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直向六分之一（第 3 欄）"
           }
         }
       }
@@ -36234,7 +36990,7 @@
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "⅓，靠近角落則上半／下半"
           }
         },
@@ -36294,6 +37050,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这会留出少许空间以露出下方的窗口，配合窗口间空隙使用效果最佳"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這會留下少許空間，露出底下的視窗，搭配視窗間空隙使用效果最佳。"
           }
         }
       }
@@ -36365,6 +37127,12 @@
             "state" : "translated",
             "value" : "按列平铺窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以直欄並排視窗"
+          }
         }
       }
     },
@@ -36435,6 +37203,12 @@
             "state" : "translated",
             "value" : "按行平铺窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以橫列並排視窗"
+          }
         }
       }
     },
@@ -36486,6 +37260,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按行／列平铺窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以橫列／直欄並排視窗"
           }
         }
       }
@@ -36539,6 +37319,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "平铺"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "視窗並排"
           }
         }
       }
@@ -36623,6 +37409,12 @@
             "state" : "translated",
             "value" : "macOS 中的窗口平铺功能已被禁用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 的視窗並排功能已停用"
+          }
         }
       }
     },
@@ -36688,6 +37480,12 @@
             "state" : "translated",
             "value" : "Rectangle 中的窗口平铺功能已被禁用"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 的視窗並排功能已停用"
+          }
         }
       }
     },
@@ -36752,6 +37550,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要调整 macOS 窗口平铺，请前往 系统设置 → 桌面与程序坞 → 窗口"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "若要調整 macOS 的視窗並排設定，請前往 系統設定 → 桌面與 Dock → 視窗"
           }
         }
       }
@@ -37032,6 +37836,12 @@
             "state" : "translated",
             "value" : "要重新启用它，请转到系统设置→ 桌面与程序坞 → 窗口"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "若要重新啟用此功能，請前往 系統設定 → 桌面與 Dock → 視窗"
+          }
         }
       }
     },
@@ -37273,6 +38083,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "待办模式"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待辦模式"
           }
         }
       }
@@ -37522,6 +38338,12 @@
             "state" : "translated",
             "value" : "切换堆叠窗口标记"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換堆疊視窗標記"
+          }
         }
       }
     },
@@ -37769,6 +38591,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切换窗口列表"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切換視窗列表"
           }
         }
       }
@@ -38018,6 +38846,12 @@
             "state" : "translated",
             "value" : "上排中左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／８"
+          }
         }
       }
     },
@@ -38083,6 +38917,12 @@
             "state" : "translated",
             "value" : "上排中左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／８"
+          }
         }
       }
     },
@@ -38131,6 +38971,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "上排中左１／１６"
@@ -38187,6 +39033,12 @@
             "state" : "translated",
             "value" : "上排中左１／１２"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中左１／１２"
+          }
         }
       }
     },
@@ -38239,6 +39091,12 @@
             "state" : "translated",
             "value" : "中上１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上１／９"
+          }
         }
       }
     },
@@ -38287,6 +39145,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／８"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "上排中右１／８"
@@ -38356,6 +39220,12 @@
             "state" : "translated",
             "value" : "上排中右１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／８"
+          }
         }
       }
     },
@@ -38408,6 +39278,12 @@
             "state" : "translated",
             "value" : "上排中右１／１６"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／１６"
+          }
         }
       }
     },
@@ -38456,6 +39332,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排中右１／１２"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "上排中右１／１２"
@@ -38726,6 +39608,12 @@
             "state" : "translated",
             "value" : "自角落则顶部⅛；最大化"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自角落則頂部⅛；放到最大"
+          }
         }
       }
     },
@@ -38974,6 +39862,12 @@
             "state" : "translated",
             "value" : "上排左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／８"
+          }
         }
       }
     },
@@ -39039,6 +39933,12 @@
             "state" : "translated",
             "value" : "上排左１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／８"
+          }
         }
       }
     },
@@ -39091,6 +39991,12 @@
             "state" : "translated",
             "value" : "左上１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上１／９"
+          }
         }
       }
     },
@@ -39139,6 +40045,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "上排左１／１６"
@@ -39391,6 +40303,12 @@
             "state" : "translated",
             "value" : "上排左１／１２"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排左１／１２"
+          }
         }
       }
     },
@@ -39639,6 +40557,12 @@
             "state" : "translated",
             "value" : "上排右１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／８"
+          }
         }
       }
     },
@@ -39704,6 +40628,12 @@
             "state" : "translated",
             "value" : "上排右１／８"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／８"
+          }
         }
       }
     },
@@ -39756,6 +40686,12 @@
             "state" : "translated",
             "value" : "右上１／９"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上１／９"
+          }
         }
       }
     },
@@ -39804,6 +40740,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "上排右１／１６"
@@ -40056,6 +40998,12 @@
             "state" : "translated",
             "value" : "上排右１／１２"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上排右１／１２"
+          }
         }
       }
     },
@@ -40120,6 +41068,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS 中的顶部屏幕边缘平铺现已禁用"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 的螢幕頂部邊緣並排功能現已停用"
           }
         }
       }
@@ -40381,6 +41335,12 @@
             "state" : "translated",
             "value" : "顶部１／３"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "頂部１／３"
+          }
         }
       }
     },
@@ -40444,6 +41404,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "顶部２／３"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "頂部２／３"
           }
         }
       }
@@ -40516,6 +41482,12 @@
             "state" : "translated",
             "value" : "上／下半屏"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上半／下半"
+          }
         }
       }
     },
@@ -40568,6 +41540,12 @@
             "state" : "translated",
             "value" : "上／下半屏"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上半／下半"
+          }
         }
       }
     },
@@ -40619,6 +41597,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "将多个显示器视为一个"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將多個顯示器視為一個"
           }
         }
       }
@@ -40678,6 +41662,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "将多个显示器视为一个"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將多個顯示器視為一個"
           }
         }
       }
@@ -40744,6 +41734,12 @@
             "state" : "translated",
             "value" : "十二等分"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分"
+          }
         }
       }
     },
@@ -40768,6 +41764,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分（3×4）"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "十二等分（3×4）"
@@ -40837,6 +41839,12 @@
             "state" : "translated",
             "value" : "十二等分（4×3）"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分（4×3）"
+          }
         }
       }
     },
@@ -40889,6 +41897,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法将窗口缩得更小。\n窗口可能会重叠。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法將視窗縮得更小。\n視窗可能會重疊。"
           }
         }
       }
@@ -41151,6 +42165,12 @@
             "state" : "translated",
             "value" : "有可用更新…"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有可用的更新項目⋯"
+          }
         }
       }
     },
@@ -41199,6 +42219,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排中左１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中上排中左１／１６"
@@ -41255,6 +42281,12 @@
             "state" : "translated",
             "value" : "中上排中右１／１６"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排中右１／１６"
+          }
         }
       }
     },
@@ -41307,6 +42339,12 @@
             "state" : "translated",
             "value" : "中上排左１／１６"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排左１／１６"
+          }
         }
       }
     },
@@ -41355,6 +42393,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中上排右１／１６"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "中上排右１／１６"
@@ -41547,7 +42591,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "做為待辦視窗"
+            "value" : "作為待辦視窗"
           }
         },
         "zh-Hant-HK" : {
@@ -41620,6 +42664,12 @@
             "state" : "translated",
             "value" : "使用光标位置检测屏幕"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "依游標位置偵測顯示器"
+          }
         }
       }
     },
@@ -41671,6 +42721,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "按光标位置检测屏幕"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "依游標位置偵測顯示器"
           }
         }
       }
@@ -42178,6 +43234,12 @@
             "state" : "translated",
             "value" : "版本"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "版本"
+          }
         }
       }
     },
@@ -42242,6 +43304,12 @@
             "state" : "translated",
             "value" : "垂直（上／下，%）"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直（上／下，%）"
+          }
         }
       }
     },
@@ -42294,6 +43362,12 @@
             "state" : "translated",
             "value" : "垂直方向"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直方向"
+          }
         }
       }
     },
@@ -42336,6 +43410,12 @@
           }
         },
         "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直"
+          }
+        },
+        "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "垂直"
@@ -43173,6 +44253,12 @@
             "state" : "translated",
             "value" : "关闭时，将在适用情况下保留窗口与屏幕边缘的相对位置。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉時，將在適用的情況下保留視窗與螢幕邊緣的相對位置。"
+          }
         }
       }
     },
@@ -43421,6 +44507,12 @@
             "state" : "translated",
             "value" : "使用多个显示器时，将它们视为一个显示器。需要关闭 系统设置 > 桌面与程序坞 > “显示器具有单独的空间”。"
           }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用多個顯示器時，會將它們視為單一顯示器。需要在 系統設定 > 桌面與 Dock 中關閉「顯示器有單獨的空間」。"
+          }
         }
       }
     },
@@ -43609,7 +44701,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在待辦模式下，若要重新整理待辦模式佈局，您可以從 Rectangle 選單中選擇「重新排列待辦」，或使用相應的鍵盤快速鍵"
+            "value" : "在待辦模式下，若要重新整理待辦模式佈局，您可以從 Rectangle 選單中選擇「重新排列待辦」，或使用相應的鍵盤快速鍵。"
           }
         },
         "zh-Hant-HK" : {
@@ -43686,6 +44778,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "宽度步长（px）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "寬度增量（px）"
           }
         }
       }

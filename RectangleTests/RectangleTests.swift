@@ -2260,6 +2260,15 @@ final class SettingsLabelLocalizationTests: XCTestCase {
         }
     }
 
+    func testSettingsOnlyLabelsHaveTraditionalChineseTranslations() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "zh-Hant", ofType: "lproj"))
+        let zhHant = try XCTUnwrap(Bundle(path: path))
+        for key in ["Extra", "Ninths (3x3)", "Twelfths (3x4)", "Sixteenths (4x4)"] {
+            let value = zhHant.localizedString(forKey: key, value: nil, table: "Localizable")
+            XCTAssertNotEqual(value, key, "\(key) has no zh-Hant translation")
+        }
+    }
+
     func testSettingsDisplayNamesKeepTheirEnglishText() {
         XCTAssertEqual(WindowAction.topLeftNinth.settingsDisplayName, String(localized: "Ninths (3x3)"))
         XCTAssertEqual(WindowAction.topLeftTwelfth.settingsDisplayName, String(localized: "Twelfths (3x4)"))
