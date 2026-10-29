@@ -134,6 +134,7 @@ class Defaults {
     static let combinedDisplayMode = OptionalBoolDefault(key: "combinedDisplayMode")
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
     static let mouseButtonShortcutsUseWindowUnderCursor = BoolDefault(key: "mouseButtonShortcutsUseWindowUnderCursor")
+    static let ignoreShortcutsInMissionControl = BoolDefault(key: "ignoreShortcutsInMissionControl", defaultValue: true)
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
         launchOnLogin,
@@ -243,7 +244,8 @@ class Defaults {
         stackSameSizeOnly,
         moveFixedSizeToEdge,
         greenButtonOverride,
-        mouseButtonShortcutsUseWindowUnderCursor
+        mouseButtonShortcutsUseWindowUnderCursor,
+        ignoreShortcutsInMissionControl
     ]
 }
 
@@ -281,12 +283,16 @@ class BoolDefault: Default {
         }
     }
     
-    init(key: String) {
+    init(key: String, defaultValue: Bool = false) {
         self.key = key
-        enabled = UserDefaults.standard.bool(forKey: key)
+        if UserDefaults.standard.object(forKey: key) == nil {
+            enabled = defaultValue
+        } else {
+            enabled = UserDefaults.standard.bool(forKey: key)
+        }
         initialized = true
     }
-    
+
     func load(from codable: CodableDefault) {
         if let value = codable.bool {
             self.enabled = value
