@@ -178,6 +178,7 @@
 		AA0ACC2F2864A86D0025E376 /* StageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0ACC2E2864A86D0025E376 /* StageUtil.swift */; };
 		AA3A9E8B29230A82004EB8E5 /* CFExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */; };
 		AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */; };
+		A02451150D8421CBC2D209B8 /* NewWindowActionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 475F31E875EDE8D9DA3D62F4 /* NewWindowActionManager.swift */; };
 		AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */; };
 		AA4DA2FB28FDC94A00355CEB /* DispatchTimeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */; };
 		AA536C2729005DD000579AC6 /* TimeoutCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA536C2629005DD000579AC6 /* TimeoutCache.swift */; };
@@ -422,6 +423,7 @@
 		AA0ACC2E2864A86D0025E376 /* StageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageUtil.swift; sourceTree = "<group>"; };
 		AA3A9E8A29230A82004EB8E5 /* CFExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CFExtension.swift; sourceTree = "<group>"; };
 		AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleBarManager.swift; sourceTree = "<group>"; };
+		475F31E875EDE8D9DA3D62F4 /* NewWindowActionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWindowActionManager.swift; sourceTree = "<group>"; };
 		AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenButtonManager.swift; sourceTree = "<group>"; };
 		AA4DA2FA28FDC94A00355CEB /* DispatchTimeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchTimeExtension.swift; sourceTree = "<group>"; };
 		AA536C2629005DD000579AC6 /* TimeoutCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeoutCache.swift; sourceTree = "<group>"; };
@@ -755,6 +757,7 @@
 				F05220000000000000000001 /* WindowSizeWarning.swift */,
 				982470422EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift */,
 				AA49DD1029B8C1B100690E13 /* TitleBarManager.swift */,
+				475F31E875EDE8D9DA3D62F4 /* NewWindowActionManager.swift */,
 				AA49DD2029B8C1B100690E13 /* GreenButtonManager.swift */,
 				98987AA62391890C00BE72C4 /* Logging */,
 				98ED704D306179160077BD10 /* SettingsWindow */,
@@ -1183,6 +1186,7 @@
 				B4780A322BD4C75900732B9E /* HalfOrDoubleDimensionCalculation.swift in Sources */,
 				AA69F83C29909A95001A81AF /* RightTodoCalculation.swift in Sources */,
 				AA49DD1129B8C1B100690E13 /* TitleBarManager.swift in Sources */,
+				A02451150D8421CBC2D209B8 /* NewWindowActionManager.swift in Sources */,
 				AA49DD2129B8C1B100690E13 /* GreenButtonManager.swift in Sources */,
 				9824700D22AF9B7D0037B409 /* AppDelegate.swift in Sources */,
 				98ED703A305DB1180077BD10 /* BehaviorSettingsView.swift in Sources */,

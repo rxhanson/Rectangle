@@ -42,6 +42,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Control Enhanced UI handling](#control-enhanced-ui-handling)
 - [Prevent a window that is quickly dragged above the menu bar from going into Mission Control](#prevent-a-window-that-is-quickly-dragged-above-the-menu-bar-from-going-into-mission-control)
 - [Change the behavior of double-click window title bar](#change-the-behavior-of-double-click-window-title-bar)
+- [Apply an action to every new window](#apply-an-action-to-every-new-window)
 - [Change the order of displays to order by x coordinate](#change-the-order-of-displays-to-order-by-x-coordinate-for-next-and-prev-displays-commands)
 - [Keep window size when moving a maximized window to another display](#keep-window-size-when-moving-a-maximized-window-to-another-display)
 - [Repeat the last Rectangle action when moving to another display](#repeat-the-last-rectangle-action-when-moving-to-another-display)
@@ -674,6 +675,20 @@ To disable double-click window title bar only for specific bundle ids (in exampl
 
 ```bash
 defaults write com.knollsoft.Rectangle doubleClickTitleBarIgnoredApps -string "[\"com.microsoft.Outlook\"]"
+```
+
+## Apply an action to every new window
+
+Rectangle can run one of its window actions on each window an application opens, for example to maximize new windows. The value takes the same names as the `rectangle://execute-action` URLs listed in the [README](https://github.com/rxhanson/Rectangle#execute-an-action-by-url), such as `maximize`, `almost-maximize`, `center` or `left-half`. Actions that arrange several windows (`tile-all`, `cascade-all`, `cascade-active-app` and the like), the display moves (`next-display`, `previous-display`, `display-one` and so on) and `restore` are not accepted:
+
+```bash
+defaults write com.knollsoft.Rectangle newWindowAction -string maximize
+```
+
+Only ordinary windows of apps that have a Dock icon are affected; menu bar utilities are not watched. Dialogs, sheets, palettes, minimized and full-screen windows are left alone, as are apps on Rectangle's ignore list, the Todo app while Todo mode is on, windows that already exist when Rectangle starts, and a window that appears while you are dragging with the mouse, such as a tab torn off into its own window. Windows an app restores while it launches count as new. To turn it off:
+
+```bash
+defaults delete com.knollsoft.Rectangle newWindowAction
 ```
 
 ## Change the order of displays to order by x coordinate for next and prev displays commands

@@ -259,7 +259,7 @@ class ShortcutManager {
 
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
-           parameters.source != .titleBar,
+           parameters.source != .titleBar, parameters.source != .newWindow,
            parameters.action.classification != .size,
            parameters.action.classification != .display {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
