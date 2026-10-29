@@ -464,6 +464,7 @@ extension AppDelegate {
         self.showHideTodoMenuItems()
         TodoManager.registerUnregisterToggleShortcut()
         TodoManager.registerUnregisterReflowShortcut()
+        TodoManager.startReflowOnDisplayChanges()
         TodoManager.moveAllIfNeeded(bringToFront)
     }
 

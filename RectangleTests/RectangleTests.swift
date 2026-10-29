@@ -10007,3 +10007,129 @@ final class StackBadgeListSelectionTests: XCTestCase {
         XCTAssertEqual(list.selectedWindow?.windowId, 33)
     }
 }
+
+final class TodoDisplayChangeReflowTests: XCTestCase {
+
+    private typealias Layout = TodoDisplayChangeReflow.ScreenLayout
+
+    private final class SchedulerSpy {
+        private(set) var scheduled = [DispatchWorkItem]()
+
+        func schedule(_ work: DispatchWorkItem) {
+            scheduled.append(work)
+        }
+
+        /// Fires everything that is due, skipping cancelled items the way a queue does.
+        func settle() {
+            let due = scheduled
+            scheduled.removeAll()
+            for work in due where !work.isCancelled {
+                work.perform()
+            }
+        }
+    }
+
+    private final class Harness {
+        let notificationCenter = NotificationCenter()
+        let scheduler = SchedulerSpy()
+        var layout: Layout
+        var reflows = 0
+        var reflow: TodoDisplayChangeReflow?
+
+        init(initial: Layout) {
+            layout = initial
+            reflow = TodoDisplayChangeReflow(notificationCenter: notificationCenter,
+                                             delay: 0,
+                                             layout: { [unowned self] in self.layout },
+                                             reflow: { [unowned self] in self.reflows += 1 },
+                                             schedule: { [unowned self] _, work in self.scheduler.schedule(work) })
+        }
+
+        func post() {
+            notificationCenter.post(name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        }
+    }
+
+    private let laptopOnly = Layout(frames: [CGRect(x: 0, y: 0, width: 1728, height: 1117)],
+                                    visibleFrames: [CGRect(x: 0, y: 0, width: 1728, height: 1084)])
+    private let withExternal = Layout(frames: [CGRect(x: 0, y: 0, width: 1728, height: 1117),
+                                               CGRect(x: -99, y: 1117, width: 1920, height: 1080)],
+                                      visibleFrames: [CGRect(x: 0, y: 0, width: 1728, height: 1084),
+                                                      CGRect(x: -99, y: 1117, width: 1920, height: 1080)])
+
+    func testADisplayChangeReflowsOnceAfterTheBurstSettles() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.layout = withExternal
+        harness.post()
+        harness.post()
+        harness.post()
+        XCTAssertEqual(harness.reflows, 0, "nothing until the notifications settle")
+
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 1)
+    }
+
+    func testNotificationsThatLeaveTheLayoutAloneDoNotReflow() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.post()
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 0)
+    }
+
+    func testADisplayUnpluggedAndPluggedBackInStillReflows() {
+        let harness = Harness(initial: withExternal)
+
+        harness.layout = laptopOnly
+        harness.post()
+        harness.layout = withExternal
+        harness.post()
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 1, "macOS moved windows while the display was away")
+    }
+
+    func testOnlyANewLayoutReflowsAgain() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.layout = withExternal
+        harness.post()
+        harness.scheduler.settle()
+        XCTAssertEqual(harness.reflows, 1)
+
+        harness.post()
+        harness.scheduler.settle()
+        XCTAssertEqual(harness.reflows, 1, "the same layout again is not a change")
+
+        harness.layout = laptopOnly
+        harness.post()
+        harness.scheduler.settle()
+        XCTAssertEqual(harness.reflows, 2)
+    }
+
+    /// AppKit can still report the old visible frames when the notification
+    /// arrives; the layout is read again once the burst has settled.
+    func testALayoutThatOnlyDiffersOnceTheBurstSettlesStillReflows() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.post()
+        harness.layout = withExternal
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 1)
+    }
+
+    func testStopsListeningWhenReleased() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.reflow = nil
+        harness.layout = withExternal
+        harness.post()
+
+        XCTAssertTrue(harness.scheduler.scheduled.isEmpty)
+        XCTAssertEqual(harness.reflows, 0)
+    }
+}
