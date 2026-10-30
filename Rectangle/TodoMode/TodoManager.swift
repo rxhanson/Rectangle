@@ -229,6 +229,37 @@ class TodoManager {
             rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
         }
         todoWindow.setFrame(rect)
+        keepOnScreen(todoWindow, placedIn: rect,
+                     visibleFrame: screenVisibleFrame.screenFlipped(primaryScreenMaxY: primaryScreenMaxY),
+                     isRightSide: isRightSide)
+    }
+
+    /// An app can refuse a size below its minimum, which left a right-side Todo
+    /// window extending past the screen edge (#1307). Keep the size the app
+    /// accepted, align it with the outer edge of its zone (ClampedWindowAligner's
+    /// rule for the other actions) and keep it on screen with the position-only
+    /// write BestEffortWindowMover uses.
+    private static func keepOnScreen(_ todoWindow: AccessibilityElement, placedIn zone: CGRect,
+                                     visibleFrame: CGRect, isRightSide: Bool) {
+        let achieved = todoWindow.frame
+        let tolerance = ClampedWindowAligner.alignmentTolerance
+        guard !achieved.isNull,
+              achieved.width > zone.width + tolerance || achieved.height > zone.height + tolerance
+        else { return }
+
+        var corrected = achieved
+        if achieved.width > zone.width + tolerance {
+            corrected.origin.x = isRightSide ? zone.maxX - achieved.width : zone.minX
+        }
+        corrected = WindowFrameBounds.constrained(corrected, to: visibleFrame, gap: CGFloat(Defaults.gapSize.value))
+        // constrained favours the far edge of a window that cannot fit. Keep the
+        // leading edges, where the title bar is, on screen instead.
+        corrected.origin.x = max(corrected.minX, visibleFrame.minX)
+        corrected.origin.y = max(corrected.minY, visibleFrame.minY)
+        guard corrected.origin != achieved.origin else { return }
+
+        Logger.log("Todo window kept \(achieved.size.debugDescription) instead of \(zone.size.debugDescription), moving it to \(corrected.origin.debugDescription)")
+        todoWindow.setImmediateFrame(corrected, from: achieved, sizeFirst: false)
     }
     
     static func getSidebarWidth(visibleFrameWidth: CGFloat) -> CGFloat {
