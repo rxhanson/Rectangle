@@ -59,6 +59,28 @@ class WindowUtil {
         windowListCache[ids] = infos
         return infos
     }
+
+    /// AX position/size can momentarily lag the window server right after a window is
+    /// dragged to another display, still reporting it on the display it came from. The
+    /// window server tracks the move live, so when the two frames disagree, prefer the
+    /// server's. Otherwise a keyboard action resolves the stale display and, for one the
+    /// window already satisfies there (e.g. Maximize right after it was maximized), it
+    /// silently does nothing until the window is clicked and the app flushes its geometry.
+    static func reconciledFrame(accessibilityFrame: CGRect, serverFrame: CGRect?, tolerance: CGFloat = 1) -> CGRect {
+        guard let serverFrame, !serverFrame.isNull, !serverFrame.isEmpty else { return accessibilityFrame }
+        guard !accessibilityFrame.isNull else { return serverFrame }
+        let originMatches = abs(accessibilityFrame.minX - serverFrame.minX) <= tolerance
+            && abs(accessibilityFrame.minY - serverFrame.minY) <= tolerance
+        let sizeMatches = abs(accessibilityFrame.width - serverFrame.width) <= tolerance
+            && abs(accessibilityFrame.height - serverFrame.height) <= tolerance
+        return originMatches && sizeMatches ? accessibilityFrame : serverFrame
+    }
+
+    static func reconciledFrame(accessibilityFrame: CGRect, windowId: CGWindowID?, tolerance: CGFloat = 1) -> CGRect {
+        reconciledFrame(accessibilityFrame: accessibilityFrame,
+                        serverFrame: windowId.flatMap { getWindowFrame(id: $0) },
+                        tolerance: tolerance)
+    }
 }
 
 struct WindowInfo {

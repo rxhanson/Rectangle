@@ -101,9 +101,24 @@ class WindowManager {
             return
         }
         
+        let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
+        let accessibilityFrame = frontmostWindowElement.frame
+        // For a keyboard shortcut we resolve the focused window ourselves (no element is
+        // passed in). Its AX frame can momentarily lag the window server right after the
+        // window is dragged to another display, still reporting the previous display. The
+        // window server tracks the move live, so prefer its frame: otherwise the action
+        // resolves the stale display and, for one the window already satisfies there (e.g.
+        // Maximize right after it was maximized), silently does nothing until it is clicked.
+        // An unreadable (null) AX frame keeps the existing not-snappable handling below.
+        let liveFrame = parameters.windowElement == nil && !accessibilityFrame.isNull
+            ? WindowUtil.reconciledFrame(accessibilityFrame: accessibilityFrame, windowId: windowId)
+            : accessibilityFrame
+
         // An explicit screen (display cycling) or the cursor screen controls the
         // calculation, but neither necessarily contains the window before it moves.
-        let sourceScreens = screenDetection.detectScreens(using: frontmostWindowElement)
+        let sourceScreens = liveFrame != accessibilityFrame
+            ? (screenDetection.detectScreens(containing: liveFrame) ?? screenDetection.detectScreens(using: frontmostWindowElement))
+            : screenDetection.detectScreens(using: frontmostWindowElement)
         var screens: UsableScreens?
         if let screen = parameters.screen {
             screens = parameters.source == .titleBar
@@ -114,15 +129,14 @@ class WindowManager {
             ? screenDetection.detectScreensAtCursor()
             : sourceScreens
         }
-        
+
         guard let usableScreens = screens, let sourceScreens else {
             NSSound.beep()
             Logger.log("Unable to obtain usable screens")
             return
         }
-        
-        let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
-        let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
+
+        let currentWindowRect = pendingDestination ?? liveFrame
         
         var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
         

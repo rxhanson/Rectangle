@@ -9440,6 +9440,75 @@ class TitleBarScreenDetectionTests: XCTestCase {
     }
 }
 
+/// A window dragged to another display keeps its old accessibility frame until the app
+/// flushes it (e.g. on a click), while the window server reports the move immediately.
+/// A keyboard action therefore resolves the previous display and, when the window already
+/// satisfies the action there (Maximize right after it was maximized), silently no-ops.
+/// Reconciling the stale AX frame against the live server frame targets the real display.
+class CrossDisplayStaleFrameTests: XCTestCase {
+
+    private final class TestScreen: NSScreen {
+        let testFrame: CGRect
+        init(_ frame: CGRect) { testFrame = frame; super.init() }
+        override var frame: NSRect { testFrame }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    func testReconciledFrameKeepsTheAccessibilityFrameWhenTheServerFrameIsUnavailable() {
+        let ax = CGRect(x: 10, y: 20, width: 800, height: 600)
+        XCTAssertEqual(WindowUtil.reconciledFrame(accessibilityFrame: ax, serverFrame: nil), ax)
+        XCTAssertEqual(WindowUtil.reconciledFrame(accessibilityFrame: ax, serverFrame: .null), ax)
+        XCTAssertEqual(WindowUtil.reconciledFrame(accessibilityFrame: ax, serverFrame: CGRect(x: 10, y: 20, width: 0, height: 0)), ax)
+    }
+
+    func testReconciledFrameKeepsTheAccessibilityFrameWhenTheFramesAgreeWithinTolerance() {
+        let ax = CGRect(x: 10, y: 20, width: 800, height: 600)
+        let withinTolerance = CGRect(x: 10.5, y: 19.5, width: 800.5, height: 599.5)
+        XCTAssertEqual(WindowUtil.reconciledFrame(accessibilityFrame: ax, serverFrame: withinTolerance), ax)
+    }
+
+    func testReconciledFramePrefersTheServerFrameWhenTheyDisagree() {
+        let staleAX = CGRect(x: -1512, y: 0, width: 1512, height: 944)
+        let liveServer = CGRect(x: 100, y: 120, width: 1000, height: 700)
+        XCTAssertEqual(WindowUtil.reconciledFrame(accessibilityFrame: staleAX, serverFrame: liveServer), liveServer)
+    }
+
+    func testReconciledFrameUsesTheServerFrameWhenTheAccessibilityFrameIsMissing() {
+        let liveServer = CGRect(x: 100, y: 120, width: 1000, height: 700)
+        XCTAssertEqual(WindowUtil.reconciledFrame(accessibilityFrame: .null, serverFrame: liveServer), liveServer)
+    }
+
+    func testStaleAccessibilityFrameWouldResolveThePreviousDisplayButTheLiveFrameResolvesTheReal() {
+        let builtIn = TestScreen(CGRect(x: -1512, y: 0, width: 1512, height: 944))
+        let external = TestScreen(CGRect(x: 0, y: 0, width: 2560, height: 1080))
+        let detection = ScreenDetection(screens: { [builtIn, external] })
+
+        // The window was maximized on the built-in display, then dragged onto the external
+        // one. AX still reports the old maximized frame; the window server reports the move.
+        let staleAccessibilityFrame = builtIn.frame.screenFlipped
+        let liveServerFrame = external.frame.insetBy(dx: 300, dy: 200).screenFlipped
+
+        XCTAssertTrue(detection.detectScreens(containing: staleAccessibilityFrame)?.currentScreen === builtIn)
+        XCTAssertTrue(detection.detectScreens(containing: liveServerFrame)?.currentScreen === external)
+
+        // Reconciliation is what bridges the two: the action follows the window, not the
+        // stale frame, so Maximize targets the external display instead of no-op'ing.
+        let reconciled = WindowUtil.reconciledFrame(accessibilityFrame: staleAccessibilityFrame, serverFrame: liveServerFrame)
+        XCTAssertTrue(detection.detectScreens(containing: reconciled)?.currentScreen === external)
+    }
+
+    func testDetectScreensContainingFallsBackToASingleDisplay() {
+        let only = TestScreen(CGRect(x: 0, y: 0, width: 1440, height: 900))
+        let detection = ScreenDetection(screens: { [only] })
+        XCTAssertTrue(detection.detectScreens(containing: only.frame.screenFlipped)?.currentScreen === only)
+    }
+
+    func testDetectScreensContainingReturnsNilWhenNoDisplaysAreConnected() {
+        XCTAssertNil(ScreenDetection(screens: { [] }).detectScreens(containing: .zero))
+    }
+}
+
 final class WindowAnimationSettlementRoundingTests: XCTestCase {
     private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
 

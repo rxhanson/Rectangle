@@ -34,7 +34,30 @@ class ScreenDetection {
         }
         
         let adjacentScreens = adjacent(toFrameOfScreen: sourceScreen.frame, screens: screensOrdered)
-        
+
+        return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
+    }
+
+    /// Like `detectScreens(using:)` but keyed off an explicit window frame, for when the
+    /// caller already has the window's live geometry (the accessibility frame can lag it
+    /// right after a cross-display drag) and needs the display that frame actually sits on.
+    func detectScreens(containing windowFrame: CGRect) -> UsableScreens? {
+        let screens = availableScreens()
+        guard let firstScreen = screens.first else { return nil }
+
+        if screens.count == 1 {
+            let adjacentScreens = Defaults.traverseSingleScreen.enabled == true
+            ? AdjacentScreens(prev: firstScreen, next: firstScreen)
+            : nil
+
+            return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: [firstScreen])
+        }
+
+        let screensOrdered = order(screens: screens)
+        guard let sourceScreen = screenContaining(windowFrame, screens: screensOrdered) else { return nil }
+
+        let adjacentScreens = adjacent(toFrameOfScreen: sourceScreen.frame, screens: screensOrdered)
+
         return UsableScreens(currentScreen: sourceScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
     }
 
