@@ -24328,396 +24328,396 @@
         }
       }
     },
-    "move to adjacent display on left or right" : {
+    "move to adjacent display on half actions" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "انتقل إلى الشاشة المجاورة على اليسار أو اليمين"
+            "value" : "انتقل إلى الشاشة المجاورة في إجراءات النصف"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "mou a la pantalla adjacent a l'esquerra o a la dreta"
+            "value" : "mou a la pantalla adjacent en les accions de meitat"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "mou a la pantalla adjacent a l'esquerra o a la dreta"
+            "value" : "mou a la pantalla adjacent en les accions de meitat"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "přesunout na sousedící displej vlevo nebo vpravo"
+            "value" : "přesunout na sousedící displej u polovičních akcí"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Zum benachbarten Bildschirm auf der linken oder rechten Seite bewegen"
+            "value" : "Bei Aktionen für halbe Bildschirme zum benachbarten Bildschirm bewegen"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Move to adjacent display on left or right"
+            "value" : "Move to adjacent display on half actions"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover a la pantalla contigua a la izquierda o a la derecha"
+            "value" : "Mover a la pantalla contigua en las acciones de mitad"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover a la pantalla contigua a la izquierda o a la derecha"
+            "value" : "Mover a la pantalla contigua en las acciones de mitad"
           }
         },
         "fa" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "انتقال به نمایشگر مجاور در چپ یا راست"
+            "state" : "needs_review",
+            "value" : "انتقال به نمایشگر مجاور در عملیات نیمه"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "déplacer vers le moniteur à gauche ou à droite"
+            "state" : "translated",
+            "value" : "déplacer vers le moniteur adjacent lors des actions de moitié d’écran"
           }
         },
         "hi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "बाएँ या दाएँ बगल वाले डिस्प्ले पर मूव करें"
+            "state" : "needs_review",
+            "value" : "आधी स्क्रीन की क्रियाओं में बगल वाले डिस्प्ले पर मूव करें"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "pindah ke tampilan yang berdekatan di kiri atau kanan"
+            "value" : "pindah ke tampilan yang berdekatan pada tindakan setengah"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sposta nello schermo adiacente a sinistra o a destra"
+            "value" : "sposta nello schermo adiacente con le azioni di mezzi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "ウインドウを左右のディスプレイに順次移動"
+            "value" : "半分の操作でウインドウを隣接するディスプレイに移動"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "인접한 왼쪽 또는 오른쪽 디스플레이로 이동"
+            "value" : "절반 동작시 인접한 디스플레이로 이동"
           }
         },
         "lt" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "pereiti prie gretimo ekrano kairėje arba dešinėje"
+            "value" : "pereiti prie gretimo ekrano pusių veiksmuose"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "flytt til nærmeste skjerm til venstre eller høgre"
+            "value" : "flytt til nærmeste skjerm ved halv-handlinger"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "move to adjacent display on left or right"
+            "value" : "naar aangrenzend scherm verplaatsen bij halve acties"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "flytt til nærmaste skjerm til venstre eller høgre"
+            "value" : "flytt til nærmaste skjerm ved halv-handlingar"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "move to adjacent display on left or right"
+            "value" : "przenieś na sąsiedni ekran przy akcjach połówkowych"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover para a tela adjacente à esquerda ou à direita"
+            "state" : "needs_review",
+            "value" : "Mover para a tela adjacente nas ações de metade"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "move to adjacent display on left or right"
+            "value" : "mover para o ecrã adjacente nas ações de metade"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "mută în ecranul adiacent din stânga sau din dreapta"
+            "value" : "mută în ecranul adiacent la acțiunile de jumătate"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "перейти к соседнему дисплею слева или справа"
+            "value" : "перейти к соседнему дисплею для половин"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "presunúť na susediaci displej vľavo alebo vpravo"
+            "value" : "presunúť na susediaci displej pri skratkách polovice"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "flytta till intilliggande skärm till vänster eller höger"
+            "value" : "flytta till intilliggande skärm vid halva åtgärder"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "pencereyi sağdaki veya soldaki bitişik ekrana taşı"
+            "value" : "yarım seçeneklerde pencereyi bitişik ekrana taşı"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "перемістити на сусідній екран зліва або справа"
+            "value" : "перемістити на сусідній екран при діях з половинами"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Di chuyển đến cạnh trái hoặc phải"
+            "value" : "Di chuyển đến màn hình liền kề khi thao tác nửa màn hình"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "移动到左侧或右侧的相邻显示器"
+            "state" : "needs_review",
+            "value" : "半屏操作时移动到相邻显示器"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "移至左側或右側的相鄰顯示器"
+            "value" : "一半動作時移至相鄰顯示器"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "移到左側或右側的相鄰顯示器"
+            "value" : "一半動作時移到相鄰顯示器"
           }
         }
       }
     },
-    "move to adjacent on left/right, or cycle size on side" : {
+    "move to adjacent on halves, or cycle size on side" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "الانتقال إلى الحجم المجاور على اليسار / اليمين ، أو حجم الدورة على النصف"
+            "value" : "انتقل إلى الشاشة المجاورة في إجراءات النصف، أو بدّل الحجم على الجانب"
           }
         },
         "ca" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "mou al costat adjacent a l'esquerra/dreta, o la mida del cicle a la meitat"
+            "value" : "mou a la pantalla adjacent en les meitats, o alterna la mida al costat"
           }
         },
         "ca-ES" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "mou al costat adjacent a l'esquerra/dreta, o la mida del cicle a la meitat"
+            "value" : "mou a la pantalla adjacent en les meitats, o alterna la mida al costat"
           }
         },
         "cs" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "přesune na následující levou/pravou pozici"
+            "value" : "přesunout na sousedící displej u polovičních akcí, nebo měnit velikost na straně"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Zum benachbarten Bildschirm auf der linken/rechten Seite bewegen oder Größe auf die Hälfte einstellen"
+            "value" : "Bei halben Bildschirmen zum benachbarten Bildschirm bewegen oder Größe am Rand wechseln"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Move to adjacent on left/right, or cycle size on side"
+            "value" : "Move to adjacent on halves, or cycle size on side"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover a la pantalla contigua a la izquierda o a la derecha, o alternar tamaños en los lados"
+            "value" : "Mover a la pantalla contigua en las acciones de mitad, o alternar tamaños en los lados"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover a la pantalla contigua a la izquierda o a la derecha, o alternar tamaños en los lados"
+            "value" : "Mover a la pantalla contigua en las acciones de mitad, o alternar tamaños en los lados"
           }
         },
         "fa" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "انتقال به مجاور در چپ/راست، یا چرخش اندازه در کناره"
+            "state" : "needs_review",
+            "value" : "انتقال به مجاور در عملیات نیمه، یا چرخش اندازه در کناره"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "déplacer vers adjacent gauche/droite, ou scinder en deux"
+            "state" : "translated",
+            "value" : "déplacer vers le moniteur adjacent sur les moitiés, ou alterner la taille sur le côté"
           }
         },
         "hi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "बाएँ/दाएँ बगल वाले डिस्प्ले पर मूव करें, या आधी स्क्रीन पर आकार बारी-बारी से बदलें"
+            "state" : "needs_review",
+            "value" : "आधी स्क्रीन की क्रियाओं में बगल वाले डिस्प्ले पर मूव करें, या किनारे पर आकार बारी-बारी से बदलें"
           }
         },
         "id" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "pindah ke yang berdekatan di kiri/kanan, atau ukuran siklus di setengah"
+            "value" : "pindah ke tampilan yang berdekatan pada setengah, atau siklus ukuran di sisi"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sposta nell'adiacente a sinistra/destra, o scorri dimensioni con azioni di mezzi"
+            "value" : "sposta nell'adiacente con le azioni di mezzi, o scorri dimensioni sul lato"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "ウインドウを左右いずれかのディスプレイに移動させるか、サイズを半分にするのを繰り返す"
+            "value" : "半分の操作でウインドウを隣接するディスプレイに移動させるか、端でサイズを繰り返し変更"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "인접한 왼쪽 또는 오른쪽 디스플레이로 이동, 절반 동작시 창 크기 순환"
+            "value" : "절반 동작시 인접한 디스플레이로 이동, 가장자리에서 창 크기 순환"
           }
         },
         "lt" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "pereiti prie gretimo ekrano kairėje/dešinėje arba keisti pusės dydį"
+            "value" : "pereiti prie gretimo ekrano pusių veiksmuose arba keisti dydį šone"
           }
         },
         "nb" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "flytt til nærmeste til venstre/høgre, eller gå gjennom størrelsene på halvdeler"
+            "value" : "flytt til nærmeste ved halv-handlinger, eller gå gjennom størrelsene på halvdeler"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "move to adjacent on left/right, or cycle size on side"
+            "value" : "naar aangrenzend verplaatsen bij helften, of grootte wisselen aan de zijkant"
           }
         },
         "nn" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "flytt til nærmaste til venstre/høgre, eller gå gjennom storleikane på halvdelar"
+            "value" : "flytt til nærmaste ved halv-handlingar, eller gå gjennom storleikane på halvdelar"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "move to adjacent on left/right, or cycle size on side"
+            "value" : "przenieś na sąsiedni ekran przy połówkach lub zmieniaj rozmiar przy krawędzi"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover para a tela adjacente à esquerda/direita ou alternar o tamanho na lateral"
+            "state" : "needs_review",
+            "value" : "Mover para a tela adjacente nas metades ou alternar o tamanho na lateral"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "move to adjacent on left/right, or cycle size on side"
+            "value" : "mover para o ecrã adjacente nas metades, ou alternar o tamanho na lateral"
           }
         },
         "ro" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "mută pe partea stângă/dreaptă adiacentă, sau permută între jumătăți"
+            "value" : "mută în ecranul adiacent la jumătăți, sau permută dimensiunea pe margine"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "перейти к соседнему дисплею слева/справа или переключать размер половин"
+            "value" : "перейти к соседнему дисплею для половин или переключать размер у края"
           }
         },
         "sk" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "presunúť na vedľajšiu ľavú/pravú pozíciu alebo striedať polovice"
+            "value" : "presunúť na susediaci displej pri polovicach alebo striedať veľkosť na strane"
           }
         },
         "sv-SE" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "flytta till intilliggande till vänster/höger, eller växla storlek på hälften"
+            "value" : "flytta till intilliggande vid halva åtgärder, eller växla storlek på sidan"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sağa/sola taşı veya yarım boyutlarda geçiş yap"
+            "value" : "yarım seçeneklerde bitişik ekrana taşı veya kenarda boyutlar arasında geçiş yap"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "перемістити на сусідній лівий/правий, або циклічно змінювати розмір на половину"
+            "value" : "перемістити на сусідній екран при діях з половинами, або циклічно змінювати розмір збоку"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Di chuyển đến cạnh trái/phải, hoặc thay đổi tuần hoàn một nửa kích thước"
+            "value" : "Di chuyển đến màn hình liền kề khi thao tác nửa, hoặc thay đổi tuần hoàn kích thước ở cạnh"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "左／右移动到相邻，或半屏循环大小"
+            "state" : "needs_review",
+            "value" : "半屏操作移动到相邻显示器，或在边缘循环大小"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "左／右移至相鄰，或一半循環大小"
+            "value" : "一半動作移至相鄰顯示器，或在邊緣循環大小"
           }
         },
         "zh-Hant-HK" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "左／右移到相鄰，或一半循環大小"
+            "value" : "一半動作移到相鄰顯示器，或在邊緣循環大小"
           }
         }
       }

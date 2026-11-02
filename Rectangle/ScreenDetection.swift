@@ -156,6 +156,23 @@ struct UsableScreens {
     let numScreens: Int
     let screensOrdered: [NSScreen]
 
+    func verticalNeighbor(above: Bool, wrap: Bool) -> NSScreen? {
+        typealias Candidate = (screen: NSScreen, distance: CGFloat, overlap: CGFloat, isOpposite: Bool)
+        let source = frameOfCurrentScreen
+        let candidates = screensOrdered.compactMap { screen -> Candidate? in
+            let frame = screen.frame
+            let overlap = min(source.maxX, frame.maxX) - max(source.minX, frame.minX)
+            guard screen != currentScreen, overlap > 0 else { return nil }
+            return (screen,
+                    above ? frame.minY - source.maxY : source.minY - frame.maxY,
+                    overlap,
+                    above ? frame.maxY <= source.minY : frame.minY >= source.maxY)
+        }
+        let isCloser: (Candidate, Candidate) -> Bool = { ($0.distance, $1.overlap) < ($1.distance, $0.overlap) }
+        return candidates.filter { $0.distance >= 0 }.min(by: isCloser)?.screen
+            ?? (wrap ? candidates.filter { $0.isOpposite }.min(by: isCloser)?.screen : nil)
+    }
+
     init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int, screensOrdered: [NSScreen]? = nil) {
         self.currentScreen = currentScreen
         self.adjacentScreens = adjacentScreens

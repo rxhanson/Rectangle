@@ -70,9 +70,9 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 
 `subsequentExecutionMode` accepts the following values:
 0: halves to thirds Spectacle behavior (box unchecked)
-1: cycle displays (box checked) for left/right actions
+1: cycle displays (box checked) for half actions
 2: disabled
-3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
+3: cycle displays for half actions, halves to thirds for the rest (old Rectangle behavior)
 4: repeat same action on next display
 5: cycle positions on quadrants, cycle sizes on side
 6: switch to the opposite side on half actions
