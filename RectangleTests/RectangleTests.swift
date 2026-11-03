@@ -11023,3 +11023,127 @@ final class SnappingManagerFullScreenTests: XCTestCase {
         XCTAssertEqual(manager.fullScreenGate, .inactive)
     }
 }
+
+final class VerticalDisplayTraversalTests: XCTestCase {
+    private let laptop = RepeatedMaximizeTestScreen(frame: CGRect(x: 0, y: 0, width: 1500, height: 900))
+    private let above = RepeatedMaximizeTestScreen(frame: CGRect(x: -500, y: 900, width: 2500, height: 1400))
+    private let below = RepeatedMaximizeTestScreen(frame: CGRect(x: 0, y: -900, width: 1500, height: 900))
+    private var savedMode: SubsequentExecutionMode = .resize
+    private var savedPreserveOtherAxis = false
+
+    override func setUp() {
+        super.setUp()
+        savedMode = Defaults.subsequentExecutionMode.value
+        savedPreserveOtherAxis = Defaults.halvesPreserveOtherAxisSize.enabled
+        Defaults.halvesPreserveOtherAxisSize.enabled = false
+    }
+
+    override func tearDown() {
+        Defaults.subsequentExecutionMode.value = savedMode
+        Defaults.halvesPreserveOtherAxisSize.enabled = savedPreserveOtherAxis
+        super.tearDown()
+    }
+
+    private func calculate(_ action: WindowAction, source: NSScreen, screens: [NSScreen],
+                           repeated: Bool = true, moved: Bool = false,
+                           mode: SubsequentExecutionMode = .acrossMonitor,
+                           previous: WindowCalculationResult? = nil) -> WindowCalculationResult? {
+        Defaults.subsequentExecutionMode.value = mode
+        let calculation = WindowCalculationFactory.calculationsByAction[action]!
+        let sourceFrame = source.adjustedVisibleFrame(true)
+        let rect = previous?.rect ?? calculation.calculateRect(RectCalculationParameters(window: Window(id: nil, rect: sourceFrame),
+                                                                       visibleFrameOfScreen: sourceFrame,
+                                                                       action: action, lastAction: nil)).rect
+        let lastAction = repeated ? RectangleAction(action: previous?.resultingAction ?? action, rect: rect.screenFlipped) : nil
+        return calculation.calculate(WindowCalculationParameters(
+            window: Window(id: nil, rect: moved ? rect.offsetBy(dx: 20, dy: 0) : rect),
+            usableScreens: UsableScreens(currentScreen: source, numScreens: screens.count, screensOrdered: screens),
+            action: action, lastAction: lastAction, ignoreTodo: true))
+    }
+
+    func testRepeatedTopHalfMovesToBottomHalfOfDisplayAbove() throws {
+        let result = try XCTUnwrap(calculate(.topHalf, source: laptop, screens: [above, laptop]))
+        XCTAssertTrue(result.screen === above)
+        XCTAssertEqual(result.resultingAction, .bottomHalf)
+        XCTAssertEqual(result.rect.minY, above.adjustedVisibleFrame(true).minY)
+        XCTAssertEqual(result.rect.width, above.adjustedVisibleFrame(true).width)
+    }
+
+    func testRepeatedBottomHalfMovesToTopHalfOfDisplayBelow() throws {
+        let result = try XCTUnwrap(calculate(.bottomHalf, source: above, screens: [above, laptop]))
+        XCTAssertTrue(result.screen === laptop)
+        XCTAssertEqual(result.resultingAction, .topHalf)
+        XCTAssertEqual(result.rect.maxY, laptop.adjustedVisibleFrame(true).maxY)
+    }
+
+    func testFirstExecutionAndManuallyMovedWindowStayOnCurrentDisplay() {
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, above], repeated: false)?.screen === laptop)
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, above], moved: true)?.screen === laptop)
+    }
+
+    func testSideBySideAndCornerOnlyDisplaysAreNotAbove() {
+        let right = RepeatedMaximizeTestScreen(frame: CGRect(x: 1500, y: 0, width: 1500, height: 900))
+        let diagonal = RepeatedMaximizeTestScreen(frame: CGRect(x: 1500, y: 900, width: 1500, height: 900))
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, right, diagonal])?.screen === laptop)
+    }
+
+    func testNearestDisplayAboveWinsRegardlessOfScreenOrdering() {
+        let farther = RepeatedMaximizeTestScreen(frame: CGRect(x: 0, y: 2300, width: 1500, height: 900))
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [farther, above, laptop])?.screen === above)
+    }
+
+    func testEqualDistancePrefersGreaterHorizontalOverlap() {
+        let offset = RepeatedMaximizeTestScreen(frame: CGRect(x: 1400, y: 900, width: 1500, height: 900))
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [offset, laptop, above])?.screen === above)
+    }
+
+    func testVerticalTraversalWrapsAtBothEnds() {
+        XCTAssertTrue(calculate(.topHalf, source: above, screens: [laptop, above])?.screen === laptop)
+        XCTAssertTrue(calculate(.bottomHalf, source: laptop, screens: [laptop, above])?.screen === above)
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop])?.screen === laptop)
+    }
+
+    func testWrapChoosesOppositeEndOfThreeDisplayStack() {
+        let screens: [NSScreen] = [laptop, above, below]
+        XCTAssertTrue(calculate(.topHalf, source: above, screens: screens)?.screen === below)
+        XCTAssertTrue(calculate(.bottomHalf, source: below, screens: screens)?.screen === above)
+    }
+
+    func testAcrossAndResizeKeepsCyclingSizesAtVerticalBoundaries() {
+        XCTAssertTrue(calculate(.topHalf, source: above, screens: [laptop, above], mode: .acrossAndResize)?.screen === above)
+        XCTAssertTrue(calculate(.bottomHalf, source: laptop, screens: [laptop, above], mode: .acrossAndResize)?.screen === laptop)
+    }
+
+    func testRepeatedTopHalfCyclesThroughThreeDisplaysTwice() throws {
+        try assertCycle(.topHalf, screens: [laptop, above, below],
+                        expected: [(above, .bottomHalf), (above, .topHalf),
+                                   (below, .bottomHalf), (below, .topHalf),
+                                   (laptop, .bottomHalf), (laptop, .topHalf)])
+    }
+
+    func testRepeatedBottomHalfCyclesThroughThreeDisplaysTwice() throws {
+        try assertCycle(.bottomHalf, screens: [above, below, laptop],
+                        expected: [(below, .topHalf), (below, .bottomHalf),
+                                   (above, .topHalf), (above, .bottomHalf),
+                                   (laptop, .topHalf), (laptop, .bottomHalf)])
+    }
+
+    private func assertCycle(_ action: WindowAction, screens: [NSScreen],
+                             expected: [(NSScreen, WindowAction)],
+                             file: StaticString = #filePath, line: UInt = #line) throws {
+        var result = try XCTUnwrap(calculate(action, source: laptop, screens: screens, repeated: false))
+        for _ in 0..<2 {
+            for (screen, resultingAction) in expected {
+                result = try XCTUnwrap(calculate(action, source: result.screen, screens: screens, previous: result))
+                XCTAssertTrue(result.screen === screen, file: file, line: line)
+                XCTAssertEqual(result.resultingAction, resultingAction, file: file, line: line)
+            }
+        }
+    }
+
+    func testTraversalRequiresAcrossDisplaysMode() {
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, above], mode: .none)?.screen === laptop)
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, above], mode: .resize)?.screen === laptop)
+        XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, above], mode: .acrossAndResize)?.screen === above)
+    }
+}

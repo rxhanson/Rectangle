@@ -4,6 +4,10 @@ import Foundation
 
 class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculation {
 
+    override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        calculateAcrossVerticalDisplays(params) ?? super.calculate(params)
+    }
+
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
 
         if Defaults.halvesPreserveOtherAxisSize.enabled, let tiledRect = HalvesPreserveOtherAxisSize.rect(for: params) {
@@ -13,10 +17,7 @@ class BottomHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalcul
         if Defaults.subsequentExecutionMode.value == .switchSides {
             // Repeating Bottom Half while the window still sits on the bottom half moves it to the top
             // half; see LeftRightHalfCalculation.calculateSwitchSides.
-            guard isRepeatedCommand(params) else { return calculateFirstRect(params) }
-            let opposite = RectCalculationParameters(window: params.window, visibleFrameOfScreen: params.visibleFrameOfScreen,
-                                                     action: .topHalf, lastAction: params.lastAction)
-            return RectResult(WindowCalculationFactory.topHalfCalculation.calculateFirstRect(opposite).rect, resultingAction: .topHalf)
+            return isRepeatedCommand(params) ? facingVerticalHalf(params) : calculateFirstRect(params)
         }
 
         if params.lastAction == nil || !Defaults.subsequentExecutionMode.resizes {

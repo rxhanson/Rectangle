@@ -25,6 +25,27 @@ class WindowCalculation: Calculation {
     func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         RectResult(.null)
     }
+
+    func facingVerticalHalf(_ params: RectCalculationParameters) -> RectResult {
+        let (action, calculation): (WindowAction, RepeatedExecutionsCalculation) = params.action == .topHalf
+            ? (.bottomHalf, WindowCalculationFactory.bottomHalfCalculation)
+            : (.topHalf, WindowCalculationFactory.topHalfCalculation)
+        let facing = RectCalculationParameters(window: params.window, visibleFrameOfScreen: params.visibleFrameOfScreen,
+                                               action: action, lastAction: params.lastAction)
+        return RectResult(calculation.calculateFirstRect(facing).rect, resultingAction: action)
+    }
+
+    func calculateAcrossVerticalDisplays(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        guard Defaults.subsequentExecutionMode.traversesDisplays,
+              isRepeatedCommand(params),
+              let screen = params.usableScreens.verticalNeighbor(above: params.action == .topHalf,
+                                                                wrap: !Defaults.subsequentExecutionMode.resizes),
+              !Defaults.halvesPreserveOtherAxisSize.enabled || HalvesPreserveOtherAxisSize.rect(for: params.asRectParams()) == nil
+        else { return nil }
+
+        let facing = facingVerticalHalf(params.asRectParams(visibleFrame: screen.adjustedVisibleFrame(params.ignoreTodo)))
+        return WindowCalculationResult(rect: facing.rect, screen: screen, resultingAction: facing.resultingAction ?? params.action)
+    }
     
     func rectCenteredWithinRect(_ rect1: CGRect, _ rect2: CGRect) -> Bool {
         let centeredMidX = abs(rect2.midX - rect1.midX) <= 1.0

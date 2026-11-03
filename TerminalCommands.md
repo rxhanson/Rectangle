@@ -72,16 +72,16 @@ defaults write com.knollsoft.Rectangle subsequentExecutionMode -int 2
 
 `subsequentExecutionMode` accepts the following values:
 0: halves to thirds Spectacle behavior (box unchecked)
-1: cycle displays (box checked) for left/right actions
+1: cycle displays (box checked) for side actions
 2: disabled
-3: cycle displays for left/right actions, halves to thirds for the rest (old Rectangle behavior)
+3: cycle displays for side actions, halves to thirds for the rest (old Rectangle behavior)
 4: repeat same action on next display
 5: cycle positions on quadrants, cycle sizes on side
 6: switch to the opposite side on half actions
 
 ## Move thirds and fourths to the adjacent display on repeat
 
-This is off by default. With "Move to adjacent display on left or right" selected as the repeated command, repeating Left Third, Right Third, First Fourth or Last Fourth moves the window to the adjacent display, the same way the left and right halves do. Without this setting, those repeats cycle the window through positions on the same display. Without a second display, they keep cycling.
+This is off by default. With "Move to adjacent display on side actions" selected as the repeated command, repeating Left Third, Right Third, First Fourth or Last Fourth moves the window to the adjacent display, the same way the left and right halves do. Without this setting, those repeats cycle the window through positions on the same display. Without a second display, they keep cycling.
 
 ```bash
 defaults write com.knollsoft.Rectangle thirdsAndFourthsAcrossDisplays -bool true
