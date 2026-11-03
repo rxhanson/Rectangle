@@ -35,6 +35,7 @@ class Defaults {
     static let moveFixedSizeToEdge = IntEnumDefault<EdgeAlignment>(key: "moveFixedSizeToEdge", defaultValue: .edgesAndCorners)
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
+    static let thirdsAndFourthsAcrossDisplays = OptionalBoolDefault(key: "thirdsAndFourthsAcrossDisplays")
     static let useCursorScreenDetection = BoolDefault(key: "useCursorScreenDetection")
     static let minimumWindowWidth = DoubleDefault(key: "minimumWindowWidth", defaultValue: 0.25)
     static let minimumWindowHeight = DoubleDefault(key: "minimumWindowHeight", defaultValue: 0.25)
@@ -135,6 +136,7 @@ class Defaults {
     static let greenButtonOverride = BoolDefault(key: "greenButtonOverride")
     static let mouseButtonShortcutsUseWindowUnderCursor = BoolDefault(key: "mouseButtonShortcutsUseWindowUnderCursor")
     static let ignoreShortcutsInMissionControl = BoolDefault(key: "ignoreShortcutsInMissionControl", defaultValue: true)
+    static let newWindowAction = StringDefault(key: "newWindowAction")
     static let wasWelcomeDisplayed = BoolDefault(key: "wasWelcomeDisplayed")
     static var array: [Default] = [
         launchOnLogin,
@@ -166,6 +168,7 @@ class Defaults {
         repeatedMaximizeRestoresPrevious,
         ignoredSnapAreas,
         traverseSingleScreen,
+        thirdsAndFourthsAcrossDisplays,
         minimumWindowWidth,
         minimumWindowHeight,
         sizeOffset,
@@ -182,6 +185,7 @@ class Defaults {
         screenEdgeGapsOnMainScreenOnly,
         screenEdgeGapTopNotch,
         ignoreMenuBar,
+        newWindowAction,
         showAllActionsInMenu,
         showAdditionalSizesInMenu,
         footprintAlpha,

@@ -2246,6 +2246,11 @@ class DefaultsExportTests: XCTestCase {
         let keys = Defaults.array.map { $0.key }
         XCTAssertTrue(keys.contains("ignoreMenuBar"), "ignoreMenuBar missing from Defaults.array")
     }
+
+    func testNewWindowActionInExportArray() {
+        let keys = Defaults.array.map { $0.key }
+        XCTAssertTrue(keys.contains("newWindowAction"), "newWindowAction missing from Defaults.array")
+    }
 }
 
 final class SettingsLabelLocalizationTests: XCTestCase {
@@ -2257,6 +2262,15 @@ final class SettingsLabelLocalizationTests: XCTestCase {
         for key in ["Extra", "Ninths (3x3)", "Twelfths (3x4)", "Sixteenths (4x4)"] {
             let value = zhHans.localizedString(forKey: key, value: nil, table: "Localizable")
             XCTAssertNotEqual(value, key, "\(key) has no zh-Hans translation")
+        }
+    }
+
+    func testSettingsOnlyLabelsHaveTraditionalChineseTranslations() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "zh-Hant", ofType: "lproj"))
+        let zhHant = try XCTUnwrap(Bundle(path: path))
+        for key in ["Extra", "Ninths (3x3)", "Twelfths (3x4)", "Sixteenths (4x4)"] {
+            let value = zhHant.localizedString(forKey: key, value: nil, table: "Localizable")
+            XCTAssertNotEqual(value, key, "\(key) has no zh-Hant translation")
         }
     }
 
@@ -6784,6 +6798,21 @@ class ShortcutManagerSessionTests: XCTestCase {
         override func getWindowId() -> CGWindowID? { testWindowId }
     }
 
+    /// A window that already fills its screen, which the repeat detection reads as a repeated Maximize.
+    private final class ScreenSizedWindow: AccessibilityElement {
+        private let testWindowId: CGWindowID?
+        private let testSize: CGSize
+
+        init(windowId: CGWindowID?, size: CGSize) {
+            testWindowId = windowId
+            testSize = size
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { CGRect(origin: .zero, size: testSize) }
+        override func getWindowId() -> CGWindowID? { testWindowId }
+    }
+
     private final class AdjacentScreenDetection: ScreenDetection {
         let screen: NSScreen
 
@@ -6997,6 +7026,29 @@ class ShortcutManagerSessionTests: XCTestCase {
             harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: ExecutionParameters(.leftHalf))
             XCTAssertEqual(windowManager.executedParameters.map(\.action), [.leftHalf],
                            "Re-enabling the default holds the next shortcut back")
+        }
+    }
+
+    /// Repeated commands set to "cycle through displays" treat a Maximize on an
+    /// already screen-sized window as a repeat. A window that opens at that size
+    /// must not be sent to another display by its automatic placement.
+    func testNewWindowPlacementIsNeverTreatedAsARepeatedCommand() throws {
+        try withExecutionSettings(subsequentExecutionMode: .cycleMonitor, pointerTargeting: false) {
+            let screen = try XCTUnwrap(NSScreen.screens.first)
+            let window = ScreenSizedWindow(windowId: 987_005, size: screen.visibleFrame.size)
+            defer { AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: 987_005) }
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(windowManager: windowManager, screenDetection: AdjacentScreenDetection(screen: screen))
+
+            harness.notificationCenter.post(name: WindowAction.maximize.notificationName,
+                                            object: ExecutionParameters(.maximize, windowElement: window, windowId: 987_005,
+                                                                        source: .newWindow, preservesFocus: true))
+            harness.notificationCenter.post(name: WindowAction.maximize.notificationName,
+                                            object: ExecutionParameters(.maximize, windowElement: window, windowId: 987_005))
+
+            XCTAssertEqual(windowManager.executedParameters.count, 2)
+            XCTAssertNil(windowManager.executedParameters[0].screen, "a new window stays on its own display")
+            XCTAssertTrue(windowManager.executedParameters[1].screen === screen, "the same request from a shortcut cycles displays")
         }
     }
 
@@ -10005,6 +10057,636 @@ final class StackBadgeListSelectionTests: XCTestCase {
         let list = panel(selecting: 22)
         list.moveSelection(by: 1)
         XCTAssertEqual(list.selectedWindow?.windowId, 33)
+    }
+}
+
+final class NewWindowActionPolicyTests: XCTestCase {
+
+    func testValuesFollowTheUrlSchemeShortcutNamesAndAliases() {
+        XCTAssertEqual(NewWindowActionPolicy.action(named: "maximize"), .maximize)
+        XCTAssertEqual(NewWindowActionPolicy.action(named: "left-half"), .leftHalf)
+        XCTAssertEqual(NewWindowActionPolicy.action(named: "leftHalf"), .leftHalf)
+        XCTAssertEqual(NewWindowActionPolicy.action(named: "left-side"), .leftHalf)
+        XCTAssertEqual(NewWindowActionPolicy.action(named: " Almost-Maximize "), .almostMaximize)
+    }
+
+    func testUnsetOrUnknownValuesDisableTheFeature() {
+        XCTAssertNil(NewWindowActionPolicy.action(named: nil))
+        XCTAssertNil(NewWindowActionPolicy.action(named: ""))
+        XCTAssertNil(NewWindowActionPolicy.action(named: "none"))
+        XCTAssertNil(NewWindowActionPolicy.action(named: "full-screen"))
+    }
+
+    func testActionsThatArrangeOtherWindowsOrMoveDisplaysAreNotAccepted() {
+        for name in ["tile-all", "cascade-all", "cascade-active-app", "tileRows", "reverse-all",
+                     "cycle-stacked-windows", "left-todo", "restore",
+                     "next-display", "previous-display", "display-two"] {
+            XCTAssertNil(NewWindowActionPolicy.action(named: name), name)
+        }
+        XCTAssertEqual(NewWindowActionPolicy.action(named: "center-half"), .centerHalf)
+    }
+
+    private func candidate(pid: pid_t = 42, bundleIdentifier: String? = "com.example.app", windowId: CGWindowID? = 7,
+                           isStandardWindow: Bool? = true, isSheet: Bool? = false, isMinimized: Bool? = false,
+                           isFullScreen: Bool? = false, hasFrame: Bool = true) -> NewWindowActionPolicy.Candidate {
+        NewWindowActionPolicy.Candidate(pid: pid, bundleIdentifier: bundleIdentifier, windowId: windowId,
+                                        isStandardWindow: isStandardWindow, isSheet: isSheet,
+                                        isMinimized: isMinimized, isFullScreen: isFullScreen, hasFrame: hasFrame)
+    }
+
+    private func applies(_ candidate: NewWindowActionPolicy.Candidate,
+                         ignored: Set<String> = [], handled: Set<CGWindowID> = []) -> Bool {
+        NewWindowActionPolicy.shouldApply(candidate, ownPid: 1,
+                                          isIgnoredApp: { ignored.contains($0) },
+                                          alreadyHandled: { handled.contains($0) })
+    }
+
+    func testAnOrdinaryWindowOfAnotherAppQualifies() {
+        XCTAssertTrue(applies(candidate()))
+    }
+
+    func testOnlyStandardWindowsQualify() {
+        XCTAssertFalse(applies(candidate(isStandardWindow: false)), "dialogs and palettes")
+        XCTAssertFalse(applies(candidate(isStandardWindow: nil)), "unknown subrole")
+        XCTAssertFalse(applies(candidate(isSheet: true)))
+    }
+
+    func testMinimizedFullScreenAndVanishedWindowsAreSkipped() {
+        XCTAssertFalse(applies(candidate(isMinimized: true)))
+        XCTAssertFalse(applies(candidate(isFullScreen: true)))
+        XCTAssertFalse(applies(candidate(hasFrame: false)))
+    }
+
+    func testRectanglesOwnWindowsIgnoredAppsAndHandledWindowsAreSkipped() {
+        XCTAssertFalse(applies(candidate(pid: 1)))
+        XCTAssertFalse(applies(candidate(), ignored: ["com.example.app"]))
+        XCTAssertFalse(applies(candidate(), handled: [7]))
+    }
+
+    func testAWindowWithoutAnIdIsStillHandled() {
+        XCTAssertTrue(applies(candidate(windowId: nil), handled: [7]))
+    }
+}
+
+final class NewWindowActionManagerTests: XCTestCase {
+
+    private final class ValueBox<Value> {
+        var value: Value
+
+        init(_ value: Value) {
+            self.value = value
+        }
+    }
+
+    private final class TestWindow: AccessibilityElement {
+        var standard: Bool? = true
+        var sheet: Bool? = false
+        var minimized: Bool? = false
+        var fullScreen: Bool? = false
+        var testFrame = CGRect(x: 20, y: 40, width: 640, height: 480)
+        private let id: CGWindowID?
+
+        init(id: CGWindowID?) {
+            self.id = id
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var isStandardWindow: Bool? { standard }
+        override var isSheet: Bool? { sheet }
+        override var isMinimized: Bool? { minimized }
+        override var isFullScreen: Bool? { fullScreen }
+        override var frame: CGRect { testFrame }
+        override func getWindowId() -> CGWindowID? { id }
+        // Wraps the system-wide element, so a timeout set here would become the process default.
+        override func setMessagingTimeout(_ seconds: Float) {}
+    }
+
+    private final class ObserverSpy: WindowCreationObserving {
+        private final class Token {}
+        private(set) var attachedPids = [pid_t]()
+        private var handlers = [pid_t: (AccessibilityElement) -> Void]()
+        private var pendingReadiness = [pid_t: () -> Void]()
+        private var failures = [pid_t: () -> Void]()
+        var readyImmediately = true
+
+        func observeWindowCreation(pid: pid_t, onReady: @escaping () -> Void,
+                                   onWindowCreated: @escaping (AccessibilityElement) -> Void,
+                                   onFailed: @escaping () -> Void) -> AnyObject? {
+            attachedPids.append(pid)
+            handlers[pid] = onWindowCreated
+            failures[pid] = onFailed
+            if readyImmediately {
+                onReady()
+            } else {
+                pendingReadiness[pid] = onReady
+            }
+            return Token()
+        }
+
+        func becomeReady(_ pid: pid_t) {
+            pendingReadiness.removeValue(forKey: pid)?()
+        }
+
+        func fail(_ pid: pid_t) {
+            pendingReadiness.removeValue(forKey: pid)
+            failures.removeValue(forKey: pid)?()
+        }
+
+        func failureHandler(for pid: pid_t) -> (() -> Void)? {
+            failures[pid]
+        }
+
+        func windowCreated(_ window: AccessibilityElement, in pid: pid_t) {
+            handlers[pid]?(window)
+        }
+    }
+
+    private typealias App = NewWindowActionManager.Application
+
+    private struct Harness {
+        let manager: NewWindowActionManager
+        let spy: ObserverSpy
+        let actionName: ValueBox<String?>
+        let executed: ValueBox<[ExecutionParameters]>
+        let existingWindows: ValueBox<[pid_t: [AccessibilityElement]]>
+        let ignoredApps: ValueBox<Set<String>>
+        let mouseButtonDown: ValueBox<Bool>
+        let notificationCenter: NotificationCenter
+    }
+
+    private func makeHarness(actionName: String? = "maximize",
+                             apps: [App] = [App(pid: 100, bundleIdentifier: "com.example.one")],
+                             existingWindows: [pid_t: [AccessibilityElement]] = [:],
+                             readyImmediately: Bool = true) -> Harness {
+        let spy = ObserverSpy()
+        spy.readyImmediately = readyImmediately
+        let actionName = ValueBox<String?>(actionName)
+        let executed = ValueBox<[ExecutionParameters]>([])
+        let existing = ValueBox(existingWindows)
+        let ignored = ValueBox(Set<String>())
+        let mouseButtonDown = ValueBox(false)
+        let notificationCenter = NotificationCenter()
+        let manager = NewWindowActionManager(
+            ownPid: 1,
+            delay: 0,
+            notificationCenter: notificationCenter,
+            workspaceNotificationCenter: NotificationCenter(),
+            observers: spy,
+            actionProvider: { NewWindowActionPolicy.action(named: actionName.value) },
+            runningApplications: { apps },
+            existingWindows: { existing.value[$0] ?? [] },
+            isIgnoredApp: { ignored.value.contains($0) },
+            execute: { executed.value.append($0) },
+            schedule: { _, body in body() },
+            isPrimaryMouseButtonDown: { mouseButtonDown.value }
+        )
+        return Harness(manager: manager, spy: spy, actionName: actionName, executed: executed,
+                       existingWindows: existing, ignoredApps: ignored, mouseButtonDown: mouseButtonDown,
+                       notificationCenter: notificationCenter)
+    }
+
+    func testNothingIsObservedWithoutAConfiguredAction() {
+        let harness = makeHarness(actionName: nil)
+
+        XCTAssertNil(harness.manager.action)
+        XCTAssertTrue(harness.spy.attachedPids.isEmpty)
+    }
+
+    func testRegularAppsAreObservedExceptRectangleItself() {
+        let harness = makeHarness(apps: [App(pid: 100, bundleIdentifier: "com.example.one"),
+                                         App(pid: 200, bundleIdentifier: "com.example.menubar", isRegular: false),
+                                         App(pid: 1, bundleIdentifier: "com.knollsoft.Rectangle")])
+
+        XCTAssertEqual(harness.spy.attachedPids, [100])
+        XCTAssertEqual(harness.manager.observedProcessIdentifiers, [100])
+    }
+
+    func testWindowsThatAlreadyExistAtStartupAreLeftAlone() {
+        let harness = makeHarness(existingWindows: [100: [TestWindow(id: 5)]])
+
+        XCTAssertTrue(harness.executed.value.isEmpty)
+    }
+
+    func testANewWindowGetsTheConfiguredAction() throws {
+        let harness = makeHarness()
+        let window = TestWindow(id: 7)
+
+        harness.spy.windowCreated(window, in: 100)
+
+        XCTAssertEqual(harness.executed.value.count, 1)
+        let parameters = try XCTUnwrap(harness.executed.value.first)
+        XCTAssertEqual(parameters.action, .maximize)
+        XCTAssertTrue(parameters.windowElement === window)
+        XCTAssertEqual(parameters.windowId, 7)
+        XCTAssertEqual(parameters.source, .newWindow)
+        XCTAssertTrue(parameters.preservesFocus)
+    }
+
+    func testEachWindowIsHandledOnce() {
+        let harness = makeHarness()
+        let window = TestWindow(id: 7)
+
+        harness.spy.windowCreated(window, in: 100)
+        harness.spy.windowCreated(window, in: 100)
+
+        XCTAssertEqual(harness.executed.value.count, 1)
+    }
+
+    func testDialogsMinimizedFullScreenAndVanishedWindowsAreSkipped() {
+        let harness = makeHarness()
+        let dialog = TestWindow(id: 8)
+        dialog.standard = false
+        let minimized = TestWindow(id: 9)
+        minimized.minimized = true
+        let fullScreen = TestWindow(id: 10)
+        fullScreen.fullScreen = true
+        let vanished = TestWindow(id: 11)
+        vanished.testFrame = .null
+
+        for window in [dialog, minimized, fullScreen, vanished] {
+            harness.spy.windowCreated(window, in: 100)
+        }
+
+        XCTAssertTrue(harness.executed.value.isEmpty)
+    }
+
+    func testIgnoredAppsAreSkipped() {
+        let harness = makeHarness()
+        harness.ignoredApps.value = ["com.example.one"]
+
+        harness.spy.windowCreated(TestWindow(id: 7), in: 100)
+
+        XCTAssertTrue(harness.executed.value.isEmpty)
+    }
+
+    func testWindowsALaunchingAppRestoresCountAsNew() {
+        let harness = makeHarness(readyImmediately: false)
+        let restored = [TestWindow(id: 31), TestWindow(id: 32)]
+        harness.existingWindows.value[300] = restored
+
+        harness.manager.applicationDidLaunch(App(pid: 300, bundleIdentifier: "com.example.three"))
+        XCTAssertTrue(harness.executed.value.isEmpty, "nothing until the observer is attached")
+
+        harness.spy.becomeReady(300)
+        XCTAssertEqual(harness.executed.value.map(\.windowId), [31, 32])
+
+        harness.spy.windowCreated(restored[0], in: 300)
+        XCTAssertEqual(harness.executed.value.count, 2, "a window reported again is not placed twice")
+    }
+
+    func testTerminatedAppsAreNoLongerObserved() {
+        let harness = makeHarness()
+
+        harness.manager.applicationDidTerminate(pid: 100)
+        harness.spy.windowCreated(TestWindow(id: 7), in: 100)
+
+        XCTAssertTrue(harness.executed.value.isEmpty)
+        XCTAssertTrue(harness.manager.observedProcessIdentifiers.isEmpty)
+    }
+
+    func testImportingAConfigReloadsTheSetting() {
+        let harness = makeHarness(actionName: nil)
+        XCTAssertTrue(harness.spy.attachedPids.isEmpty)
+
+        harness.actionName.value = "center"
+        harness.notificationCenter.post(name: .configImported, object: nil)
+
+        XCTAssertEqual(harness.manager.action, .center)
+        XCTAssertEqual(harness.spy.attachedPids, [100])
+    }
+
+    func testAFailedObserverIsAttachedAgainWhenTheAppIsNextActivated() {
+        let harness = makeHarness(readyImmediately: false)
+        let app = App(pid: 100, bundleIdentifier: "com.example.one")
+        harness.existingWindows.value[100] = [TestWindow(id: 5)]
+
+        harness.spy.fail(100)
+        XCTAssertTrue(harness.manager.observedProcessIdentifiers.isEmpty)
+
+        harness.manager.applicationDidActivate(app)
+        harness.spy.becomeReady(100)
+        XCTAssertEqual(harness.spy.attachedPids, [100, 100])
+        XCTAssertTrue(harness.executed.value.isEmpty, "the windows it already has are the user's")
+
+        harness.spy.windowCreated(TestWindow(id: 7), in: 100)
+        XCTAssertEqual(harness.executed.value.map(\.windowId), [7])
+    }
+
+    func testActivatingAnObservedAppChangesNothing() {
+        let harness = makeHarness()
+
+        harness.manager.applicationDidActivate(App(pid: 100, bundleIdentifier: "com.example.one"))
+
+        XCTAssertEqual(harness.spy.attachedPids, [100])
+    }
+
+    func testAppsStillLaunchingAtStartupWaitForTheirLaunchNotification() {
+        let launching = App(pid: 100, bundleIdentifier: "com.example.one", isFinishedLaunching: false)
+        let harness = makeHarness(apps: [launching], existingWindows: [100: [TestWindow(id: 5)]])
+        XCTAssertTrue(harness.spy.attachedPids.isEmpty)
+
+        harness.manager.applicationDidLaunch(App(pid: 100, bundleIdentifier: "com.example.one"))
+
+        XCTAssertEqual(harness.spy.attachedPids, [100])
+        XCTAssertEqual(harness.executed.value.map(\.windowId), [5], "windows restored while launching count as new")
+    }
+
+    func testAWindowThatAppearsDuringAMouseDragIsLeftAlone() {
+        let harness = makeHarness()
+        let tornOff = TestWindow(id: 7)
+
+        harness.mouseButtonDown.value = true
+        harness.spy.windowCreated(tornOff, in: 100)
+        XCTAssertTrue(harness.executed.value.isEmpty)
+
+        harness.mouseButtonDown.value = false
+        harness.spy.windowCreated(TestWindow(id: 8), in: 100)
+        XCTAssertEqual(harness.executed.value.map(\.windowId), [8])
+    }
+
+    /// An app the user opens is activated before it finishes launching; the launch
+    /// notification must still bring in the windows it restored.
+    func testWindowsOfAnAppActivatedWhileStillLaunchingCountAsNew() {
+        let harness = makeHarness(readyImmediately: false)
+        harness.existingWindows.value[300] = [TestWindow(id: 31)]
+
+        harness.manager.applicationDidActivate(App(pid: 300, bundleIdentifier: "com.example.three", isFinishedLaunching: false))
+        harness.manager.applicationDidLaunch(App(pid: 300, bundleIdentifier: "com.example.three"))
+        XCTAssertTrue(harness.executed.value.isEmpty, "nothing until the observer is attached")
+
+        harness.spy.becomeReady(300)
+
+        XCTAssertEqual(harness.spy.attachedPids, [100, 300], "the launch notification upgrades the observation instead of attaching again")
+        XCTAssertEqual(harness.executed.value.map(\.windowId), [31])
+    }
+
+    func testALaunchNotificationAfterTheObserverIsReadyPlacesTheRestoredWindows() {
+        let harness = makeHarness()
+
+        harness.manager.applicationDidActivate(App(pid: 300, bundleIdentifier: "com.example.three", isFinishedLaunching: false))
+        XCTAssertTrue(harness.executed.value.isEmpty)
+
+        harness.existingWindows.value[300] = [TestWindow(id: 31), TestWindow(id: 32)]
+        harness.manager.applicationDidLaunch(App(pid: 300, bundleIdentifier: "com.example.three"))
+
+        XCTAssertEqual(harness.spy.attachedPids, [100, 300])
+        XCTAssertEqual(harness.executed.value.map(\.windowId), [31, 32])
+    }
+
+    func testAStaleFailureDoesNotDropAReplacedObservation() {
+        let harness = makeHarness(readyImmediately: false)
+        let stale = harness.spy.failureHandler(for: 100)
+
+        harness.notificationCenter.post(name: .configImported, object: nil)
+        XCTAssertEqual(harness.spy.attachedPids, [100, 100])
+
+        stale?()
+
+        XCTAssertEqual(harness.manager.observedProcessIdentifiers, [100])
+final class EdgeActionsAcrossDisplaysTests: XCTestCase {
+    private final class TestScreen: NSScreen {
+        private let testFrame: CGRect
+
+        init(frame: CGRect) {
+            testFrame = frame
+            super.init()
+        }
+
+        override var frame: NSRect { testFrame }
+        override var visibleFrame: NSRect { testFrame }
+        override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+        override var backingScaleFactor: CGFloat { 1 }
+        override func convertRectToBacking(_ rect: NSRect) -> NSRect { rect }
+        override func convertRectFromBacking(_ rect: NSRect) -> NSRect { rect }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private let left = TestScreen(frame: CGRect(x: 0, y: 0, width: 1200, height: 800))
+    private let right = TestScreen(frame: CGRect(x: 1200, y: 0, width: 1200, height: 800))
+    private var savedMode: SubsequentExecutionMode = .resize
+    private var savedFlag = CodableDefault(int: 0)
+    private var storedFlag: Any?
+
+    // Same save/restore as IgnoreMenuBarTests: the in-memory value and the raw UserDefaults entry.
+    override func setUp() {
+        super.setUp()
+        savedMode = Defaults.subsequentExecutionMode.value
+        storedFlag = UserDefaults.standard.object(forKey: Defaults.thirdsAndFourthsAcrossDisplays.key)
+        savedFlag = Defaults.thirdsAndFourthsAcrossDisplays.toCodable()
+        Defaults.thirdsAndFourthsAcrossDisplays.enabled = true
+    }
+
+    override func tearDown() {
+        Defaults.subsequentExecutionMode.value = savedMode
+        Defaults.thirdsAndFourthsAcrossDisplays.load(from: savedFlag)
+        // Written last: nil removes the key, so an unset flag stays unset (load(from:) writes 0).
+        UserDefaults.standard.set(storedFlag, forKey: Defaults.thirdsAndFourthsAcrossDisplays.key)
+        super.tearDown()
+    }
+
+    /// Runs the action on `current` with the previous run having left the window at `previous`
+    /// (nil for a first run), the way WindowManager does. `traversesSingleScreen` mirrors
+    /// ScreenDetection when one display is its own adjacent screen.
+    private func calculate(_ action: WindowAction, on current: NSScreen, previous: WindowCalculationResult?,
+                           singleScreen: Bool = false, traversesSingleScreen: Bool = false) -> WindowCalculationResult? {
+        let other = current === left ? right : left
+        let adjacent: AdjacentScreens?
+        if singleScreen {
+            adjacent = traversesSingleScreen ? AdjacentScreens(prev: current, next: current) : nil
+        } else {
+            adjacent = AdjacentScreens(prev: other, next: other)
+        }
+        let params = WindowCalculationParameters(
+            window: Window(id: 1, rect: previous?.rect ?? current.frame.insetBy(dx: 100, dy: 100)),
+            usableScreens: UsableScreens(currentScreen: current, adjacentScreens: adjacent, numScreens: singleScreen ? 1 : 2, screensOrdered: singleScreen ? [current] : [left, right]),
+            action: action,
+            lastAction: previous.map { RectangleAction(action: action, subAction: $0.resultingSubAction, rect: $0.rect.screenFlipped, count: 1) },
+            ignoreTodo: false)
+        return WindowCalculationFactory.calculationsByAction[action]!.calculate(params)
+    }
+
+    func testRepeatedEdgeActionsMoveToTheOppositeEdgeOfTheAdjacentDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let cases: [(WindowAction, WindowAction, NSScreen, NSScreen, CGFloat)] = [
+            (.firstThird, .lastThird, left, right, 3),
+            (.lastThird, .firstThird, right, left, 3),
+            (.firstFourth, .lastFourth, left, right, 4),
+            (.lastFourth, .firstFourth, right, left, 4),
+        ]
+        for (action, opposite, from, to, parts) in cases {
+            let first = try XCTUnwrap(calculate(action, on: from, previous: nil))
+            XCTAssertTrue(first.screen === from)
+            XCTAssertEqual(first.resultingAction, action)
+
+            let repeated = try XCTUnwrap(calculate(action, on: from, previous: first))
+            XCTAssertTrue(repeated.screen === to, "\(action) should move to the other display")
+            XCTAssertEqual(repeated.resultingAction, opposite)
+            XCTAssertEqual(repeated.rect.width, floor(to.frame.width / parts))
+            XCTAssertEqual(repeated.rect.minX, opposite == .lastThird || opposite == .lastFourth ? to.frame.maxX - repeated.rect.width : to.frame.minX)
+        }
+    }
+
+    func testOtherModesStillCycleThroughPositionsOnTheSameDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .resize
+        let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil))
+        let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first))
+        XCTAssertTrue(repeated.screen === left)
+        XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+
+    func testAcrossMonitorStillCyclesOnASingleDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil, singleScreen: true))
+        let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first, singleScreen: true))
+        XCTAssertTrue(repeated.screen === left)
+        XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+
+    func testFlagOnWithTraverseSingleScreenStillCyclesOnOneDisplay() throws {
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let cases: [(WindowAction, WindowAction)] = [(.firstThird, .lastThird), (.firstFourth, .lastFourth)]
+        for (action, opposite) in cases {
+            let first = try XCTUnwrap(calculate(action, on: left, previous: nil, singleScreen: true, traversesSingleScreen: true))
+            let repeated = try XCTUnwrap(calculate(action, on: left, previous: first, singleScreen: true, traversesSingleScreen: true))
+            XCTAssertTrue(repeated.screen === left, "\(action) should stay on the one display")
+            XCTAssertNotEqual(repeated.resultingAction, opposite)
+        }
+    }
+
+    func testWithTheFlagOffRepeatedLeftThirdStillCyclesOnTheSameDisplay() throws {
+        Defaults.thirdsAndFourthsAcrossDisplays.enabled = nil
+        Defaults.subsequentExecutionMode.value = .acrossMonitor
+        let first = try XCTUnwrap(calculate(.firstThird, on: left, previous: nil))
+        let repeated = try XCTUnwrap(calculate(.firstThird, on: left, previous: first))
+        XCTAssertTrue(repeated.screen === left)
+        XCTAssertEqual(repeated.resultingSubAction, .centerVerticalThird)
+    }
+}
+
+final class TodoDisplayChangeReflowTests: XCTestCase {
+
+    private typealias Layout = TodoDisplayChangeReflow.ScreenLayout
+
+    private final class SchedulerSpy {
+        private(set) var scheduled = [DispatchWorkItem]()
+
+        func schedule(_ work: DispatchWorkItem) {
+            scheduled.append(work)
+        }
+
+        /// Fires everything that is due, skipping cancelled items the way a queue does.
+        func settle() {
+            let due = scheduled
+            scheduled.removeAll()
+            for work in due where !work.isCancelled {
+                work.perform()
+            }
+        }
+    }
+
+    private final class Harness {
+        let notificationCenter = NotificationCenter()
+        let scheduler = SchedulerSpy()
+        var layout: Layout
+        var reflows = 0
+        var reflow: TodoDisplayChangeReflow?
+
+        init(initial: Layout) {
+            layout = initial
+            reflow = TodoDisplayChangeReflow(notificationCenter: notificationCenter,
+                                             delay: 0,
+                                             layout: { [unowned self] in self.layout },
+                                             reflow: { [unowned self] in self.reflows += 1 },
+                                             schedule: { [unowned self] _, work in self.scheduler.schedule(work) })
+        }
+
+        func post() {
+            notificationCenter.post(name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        }
+    }
+
+    private let laptopOnly = Layout(frames: [CGRect(x: 0, y: 0, width: 1728, height: 1117)],
+                                    visibleFrames: [CGRect(x: 0, y: 0, width: 1728, height: 1084)])
+    private let withExternal = Layout(frames: [CGRect(x: 0, y: 0, width: 1728, height: 1117),
+                                               CGRect(x: -99, y: 1117, width: 1920, height: 1080)],
+                                      visibleFrames: [CGRect(x: 0, y: 0, width: 1728, height: 1084),
+                                                      CGRect(x: -99, y: 1117, width: 1920, height: 1080)])
+
+    func testADisplayChangeReflowsOnceAfterTheBurstSettles() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.layout = withExternal
+        harness.post()
+        harness.post()
+        harness.post()
+        XCTAssertEqual(harness.reflows, 0, "nothing until the notifications settle")
+
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 1)
+    }
+
+    func testNotificationsThatLeaveTheLayoutAloneDoNotReflow() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.post()
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 0)
+    }
+
+    func testADisplayUnpluggedAndPluggedBackInStillReflows() {
+        let harness = Harness(initial: withExternal)
+
+        harness.layout = laptopOnly
+        harness.post()
+        harness.layout = withExternal
+        harness.post()
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 1, "macOS moved windows while the display was away")
+    }
+
+    func testOnlyANewLayoutReflowsAgain() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.layout = withExternal
+        harness.post()
+        harness.scheduler.settle()
+        XCTAssertEqual(harness.reflows, 1)
+
+        harness.post()
+        harness.scheduler.settle()
+        XCTAssertEqual(harness.reflows, 1, "the same layout again is not a change")
+
+        harness.layout = laptopOnly
+        harness.post()
+        harness.scheduler.settle()
+        XCTAssertEqual(harness.reflows, 2)
+    }
+
+    /// AppKit can still report the old visible frames when the notification
+    /// arrives; the layout is read again once the burst has settled.
+    func testALayoutThatOnlyDiffersOnceTheBurstSettlesStillReflows() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.post()
+        harness.layout = withExternal
+        harness.scheduler.settle()
+
+        XCTAssertEqual(harness.reflows, 1)
+    }
+
+    func testStopsListeningWhenReleased() {
+        let harness = Harness(initial: laptopOnly)
+
+        harness.reflow = nil
+        harness.layout = withExternal
+        harness.post()
+
+        XCTAssertTrue(harness.scheduler.scheduled.isEmpty)
+        XCTAssertEqual(harness.reflows, 0)
     }
 }
 
