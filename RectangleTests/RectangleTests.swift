@@ -1705,6 +1705,146 @@ final class TodoWindowPlacementTests: XCTestCase {
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             requestedFrames.append(frame)
         }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: ImmediateWindowPlacement? = nil) {
+            requestedFrames.append(target)
+        }
+    }
+}
+
+final class TodoWindowMinimumSizeTests: XCTestCase {
+    private var savedDefaults: [(Default, CodableDefault)] = []
+
+    override func setUp() {
+        super.setUp()
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.todoSidebarWidth, CodableDefault(float: 400)),
+            (Defaults.todoSidebarWidthUnit, CodableDefault(int: TodoSidebarWidthUnit.pixels.rawValue)),
+            (Defaults.todoSidebarSide, CodableDefault(int: TodoSidebarSide.right.rawValue)),
+            (Defaults.gapSize, CodableDefault(float: 0))
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        super.tearDown()
+    }
+
+    // The primary display's visible frame; accessibility y of its top edge is 25.
+    private let visibleFrame = CGRect(x: 0, y: 0, width: 2560, height: 1415)
+
+    private func place(_ window: MinimumSizeWindow, side: TodoSidebarSide = .right) {
+        Defaults.todoSidebarSide.value = side
+        TodoManager.moveTodoWindow(window, screenVisibleFrame: visibleFrame, primaryScreenMaxY: 1440)
+    }
+
+    func testAWindowThatAcceptsTheSidebarWidthIsPlacedOnce() {
+        let window = MinimumSizeWindow(minimumWidth: 300)
+        place(window)
+        XCTAssertEqual(window.frame, CGRect(x: 2160, y: 25, width: 400, height: 1415))
+        XCTAssertEqual(window.sizeWrites, 1)
+        XCTAssertEqual(window.moves, [])
+    }
+
+    func testAWiderMinimumWidthKeepsTheRightSidebarOnScreen() {
+        // Issue #1307: the window kept 600 points and used to extend 200 points past the screen edge.
+        let window = MinimumSizeWindow(minimumWidth: 600)
+        place(window)
+        XCTAssertEqual(window.frame, CGRect(x: 1960, y: 25, width: 600, height: 1415))
+        XCTAssertEqual(window.frame.maxX, visibleFrame.maxX)
+        XCTAssertEqual(window.sizeWrites, 1, "the accepted size is kept; only the position is written again")
+        XCTAssertEqual(window.moves, [CGPoint(x: 1960, y: 25)])
+    }
+
+    func testGapsStayInFrontOfTheOuterEdge() {
+        Defaults.gapSize.value = 20
+        let window = MinimumSizeWindow(minimumWidth: 600)
+        place(window)
+        // The zone ends 20 points before the screen edge; the window ends with the zone.
+        XCTAssertEqual(window.frame, CGRect(x: 1940, y: 45, width: 600, height: 1375))
+    }
+
+    func testALeftSidebarAlreadyStartsAtItsEdge() {
+        let window = MinimumSizeWindow(minimumWidth: 600)
+        place(window, side: .left)
+        XCTAssertEqual(window.frame, CGRect(x: 0, y: 25, width: 600, height: 1415))
+        XCTAssertEqual(window.moves, [])
+    }
+
+    func testAWindowWiderThanTheScreenKeepsItsLeadingEdgeOnScreen() {
+        for side in TodoSidebarSide.allCases {
+            let window = MinimumSizeWindow(minimumWidth: 3000)
+            place(window, side: side)
+            XCTAssertEqual(window.frame, CGRect(x: 0, y: 25, width: 3000, height: 1415), "\(side)")
+        }
+    }
+
+    func testALeftSidebarThatOnlyFitsWithoutItsGapMovesToTheScreenEdge() {
+        Defaults.gapSize.value = 20
+        let window = MinimumSizeWindow(minimumWidth: 2550)
+        place(window, side: .left)
+        XCTAssertEqual(window.frame, CGRect(x: 0, y: 45, width: 2550, height: 1375))
+        XCTAssertEqual(window.moves, [CGPoint(x: 0, y: 45)])
+    }
+
+    func testATallerMinimumHeightEndsWithTheVisibleFrame() {
+        Defaults.gapSize.value = 20
+        let window = MinimumSizeWindow(minimumWidth: 300, minimumHeight: 1400)
+        place(window)
+        // The zone is 1375 tall; the window keeps 1400 and moves up to end with the visible frame.
+        XCTAssertEqual(window.frame, CGRect(x: 2170, y: 40, width: 370, height: 1400))
+        XCTAssertEqual(window.moves, [CGPoint(x: 2170, y: 40)])
+    }
+
+    func testAWindowTallerThanTheScreenKeepsItsTopOnScreen() {
+        let window = MinimumSizeWindow(minimumWidth: 300, minimumHeight: 1500)
+        place(window)
+        XCTAssertEqual(window.frame, CGRect(x: 2160, y: 25, width: 400, height: 1500))
+        XCTAssertEqual(window.moves, [])
+    }
+
+    func testAnUnreadableFrameIsLeftAlone() {
+        let window = MinimumSizeWindow(minimumWidth: 600, reportsFrame: false)
+        place(window)
+        XCTAssertEqual(window.sizeWrites, 1)
+        XCTAssertEqual(window.moves, [])
+    }
+
+    /// Applies a requested frame the way an app with a minimum size does, and
+    /// records the position-only moves of the correction.
+    private final class MinimumSizeWindow: AccessibilityElement {
+        private var currentFrame = CGRect(x: 100, y: 1000, width: 500, height: 400)
+        private let minimumWidth: CGFloat
+        private let minimumHeight: CGFloat
+        private let reportsFrame: Bool
+        private(set) var sizeWrites = 0
+        private(set) var moves: [CGPoint] = []
+
+        init(minimumWidth: CGFloat, minimumHeight: CGFloat = 0, reportsFrame: Bool = true) {
+            self.minimumWidth = minimumWidth
+            self.minimumHeight = minimumHeight
+            self.reportsFrame = reportsFrame
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { reportsFrame ? currentFrame : .null }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            sizeWrites += 1
+            currentFrame = CGRect(origin: frame.origin,
+                                  size: CGSize(width: max(frame.width, minimumWidth),
+                                               height: max(frame.height, minimumHeight)))
+        }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: ImmediateWindowPlacement? = nil) {
+            XCTAssertEqual(target.size, before.size, "the correction must not ask for a new size")
+            moves.append(target.origin)
+            currentFrame.origin = target.origin
+        }
     }
 }
 
@@ -10443,6 +10583,9 @@ final class NewWindowActionManagerTests: XCTestCase {
         stale?()
 
         XCTAssertEqual(harness.manager.observedProcessIdentifiers, [100])
+    }
+}
+
 final class EdgeActionsAcrossDisplaysTests: XCTestCase {
     private final class TestScreen: NSScreen {
         private let testFrame: CGRect
@@ -10687,6 +10830,197 @@ final class TodoDisplayChangeReflowTests: XCTestCase {
 
         XCTAssertTrue(harness.scheduler.scheduled.isEmpty)
         XCTAssertEqual(harness.reflows, 0)
+    }
+}
+
+final class FullScreenSnapGateTests: XCTestCase {
+    // Flipped frames: the built-in display is the primary one, the external display sits above it.
+    private let builtIn = CGRect(x: 0, y: 0, width: 1728, height: 1117)
+    private let external = CGRect(x: -416, y: -1440, width: 2560, height: 1440)
+
+    func testNothingIsGatedWithoutAFullscreenWindow() {
+        let gate = FullScreenSnapGate(isFullScreen: false, windowFrame: external, displayFrames: [builtIn, external])
+        XCTAssertEqual(gate, .inactive)
+        XCTAssertFalse(gate.suspendsListening)
+        XCTAssertFalse(gate.ignoresGesture(at: CGPoint(x: 800, y: -700)))
+        XCTAssertFalse(gate.ignoresGesture(at: nil))
+    }
+
+    func testAFullscreenWindowOnOneOfTwoDisplaysOnlyBlocksGesturesOnThatDisplay() {
+        let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: external, displayFrames: [builtIn, external])
+        XCTAssertFalse(gate.suspendsListening)
+        XCTAssertEqual(gate.displayFrame, external)
+        XCTAssertTrue(gate.ignoresGesture(at: CGPoint(x: 800, y: -700)), "on the fullscreen display")
+        XCTAssertFalse(gate.ignoresGesture(at: CGPoint(x: 800, y: 500)), "on the other display")
+        XCTAssertTrue(gate.ignoresGesture(at: nil), "an unknown location counts as the fullscreen display")
+    }
+
+    func testAFullscreenWindowOnTheOnlyDisplayStillStopsListening() {
+        let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: builtIn, displayFrames: [builtIn])
+        XCTAssertTrue(gate.suspendsListening)
+        XCTAssertTrue(gate.ignoresGesture(at: CGPoint(x: 10, y: 10)))
+    }
+
+    func testAnUnknownWindowFrameStillStopsListening() {
+        let frames: [CGRect?] = [nil, .null, .zero, CGRect(x: 9000, y: 9000, width: 10, height: 10)]
+        for frame in frames {
+            let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: frame, displayFrames: [builtIn, external])
+            XCTAssertNil(gate.displayFrame, String(describing: frame))
+            XCTAssertTrue(gate.suspendsListening, String(describing: frame))
+            XCTAssertTrue(gate.ignoresGesture(at: CGPoint(x: 800, y: 500)), String(describing: frame))
+        }
+    }
+
+    func testTheDisplayShowingMostOfTheWindowIsChosen() {
+        // 300 points of the window are on the external display, 700 on the built-in one.
+        let straddling = CGRect(x: 200, y: -300, width: 1000, height: 1000)
+        let gate = FullScreenSnapGate(isFullScreen: true, windowFrame: straddling, displayFrames: [builtIn, external])
+        XCTAssertEqual(gate.displayFrame, builtIn)
+    }
+}
+
+final class SnappingManagerFullScreenTests: XCTestCase {
+    private final class Manager: SnappingManager {
+        var begunDrags = 0
+        @discardableResult
+        override func beginNativeDrag() -> UUID {
+            begunDrags += 1
+            return super.beginNativeDrag()
+        }
+    }
+
+    private let builtIn = CGRect(x: 0, y: 0, width: 1728, height: 1117)
+    private let external = CGRect(x: -416, y: -1440, width: 2560, height: 1440)
+    private let onExternal = CGPoint(x: 800, y: -700)
+    private let onBuiltIn = CGPoint(x: 800, y: 500)
+    private var savedSnapping: Bool?
+    private var savedObtainOnClick: Bool?
+
+    override func setUp() {
+        super.setUp()
+        savedSnapping = Defaults.windowSnapping.enabled
+        savedObtainOnClick = Defaults.obtainWindowOnClick.enabled
+        Defaults.windowSnapping.enabled = false
+        // Keeps a tracked mouse-down away from the accessibility hit-test under the cursor.
+        Defaults.obtainWindowOnClick.enabled = false
+    }
+
+    override func tearDown() {
+        Defaults.windowSnapping.enabled = savedSnapping
+        Defaults.obtainWindowOnClick.enabled = savedObtainOnClick
+        super.tearDown()
+    }
+
+    private func fullScreenOnExternal() -> FullScreenSnapGate {
+        FullScreenSnapGate(isFullScreen: true, windowFrame: external, displayFrames: [builtIn, external])
+    }
+
+    private func mouse(_ type: CGEventType, at point: CGPoint) throws -> NSEvent {
+        let cgEvent = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: type,
+                                            mouseCursorPosition: point, mouseButton: .left))
+        return try XCTUnwrap(NSEvent(cgEvent: cgEvent))
+    }
+
+    func testAGestureOnTheFullscreenDisplayIsLeftAlone() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        XCTAssertEqual(manager.begunDrags, 0)
+        manager.handle(event: try mouse(.leftMouseDragged, at: CGPoint(x: 850, y: -650)))
+        XCTAssertEqual(manager.windowIdAttempt, 0, "no window lookup during the gesture")
+        XCTAssertNil(manager.windowElement)
+        XCTAssertFalse(manager.windowMoving)
+        manager.handle(event: try mouse(.leftMouseUp, at: CGPoint(x: 850, y: -650)))
+        XCTAssertEqual(manager.begunDrags, 0)
+    }
+
+    func testAGestureOnTheOtherDisplayIsTracked() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onBuiltIn))
+        XCTAssertEqual(manager.begunDrags, 1)
+        manager.handle(event: try mouse(.leftMouseUp, at: onBuiltIn))
+    }
+
+    func testEachGestureIsJudgedOnItsOwn() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        manager.handle(event: try mouse(.leftMouseUp, at: onExternal))
+        manager.handle(event: try mouse(.leftMouseDown, at: onBuiltIn))
+        XCTAssertEqual(manager.begunDrags, 1, "the ignored gesture does not carry over")
+        manager.handle(event: try mouse(.leftMouseUp, at: onBuiltIn))
+        manager.fullScreenGate = .inactive
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        XCTAssertEqual(manager.begunDrags, 2, "nothing is ignored once the window left fullscreen")
+        manager.handle(event: try mouse(.leftMouseUp, at: onExternal))
+    }
+
+    func testAGestureIsForgottenWhenListeningStops() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        // Listening stops before the release arrives, as it does when an ignored app comes to the front.
+        manager.toggleListening()
+        // The restarted monitor picks up the next drag part-way, as it did before this change.
+        manager.handle(event: try mouse(.leftMouseDragged, at: onBuiltIn))
+        XCTAssertEqual(manager.windowIdAttempt, 1, "the drag is looked at rather than swallowed")
+        manager.handle(event: try mouse(.leftMouseUp, at: onBuiltIn))
+    }
+
+    func testAnIgnoredPressFinishesAGestureWhoseReleaseWasLost() throws {
+        let manager = Manager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.handle(event: try mouse(.leftMouseDown, at: onBuiltIn))
+        XCTAssertEqual(manager.begunDrags, 1)
+        manager.windowId = 42
+        manager.initialWindowRect = CGRect(x: 100, y: 100, width: 800, height: 600)
+        manager.currentSnapArea = SnapArea(screen: try XCTUnwrap(NSScreen.screens.first), directional: .l, action: .leftHalf)
+
+        manager.handle(event: try mouse(.leftMouseDown, at: onExternal))
+        XCTAssertEqual(manager.begunDrags, 1, "the press on the fullscreen display is still ignored")
+        XCTAssertNil(manager.windowId)
+        XCTAssertNil(manager.initialWindowRect)
+        XCTAssertNil(manager.currentSnapArea)
+        manager.handle(event: try mouse(.leftMouseUp, at: onExternal))
+    }
+
+    func testListeningContinuesForAFullscreenWindowOnOneOfTwoDisplays() {
+        Defaults.windowSnapping.enabled = true
+        let manager = SnappingManager()
+        defer {
+            manager.allowListening = false
+            manager.toggleListening()
+        }
+        // A baseline that does not depend on the test host's own front window.
+        manager.fullScreenGate = .inactive
+        manager.toggleListening()
+        let wasRunning = manager.eventMonitor?.running ?? false
+
+        manager.fullScreenGate = fullScreenOnExternal()
+        manager.toggleListening()
+        XCTAssertNotNil(manager.eventMonitor, "gestures on the fullscreen display are ignored instead")
+        XCTAssertEqual(manager.eventMonitor?.running ?? false, wasRunning)
+
+        manager.fullScreenGate = FullScreenSnapGate(isFullScreen: true, windowFrame: builtIn, displayFrames: [builtIn])
+        manager.toggleListening()
+        XCTAssertNil(manager.eventMonitor, "a fullscreen window on the only display stops listening as before")
+
+        manager.isFullScreen = true
+        manager.toggleListening()
+        XCTAssertNil(manager.eventMonitor, "so does a fullscreen window whose display is unknown")
+
+        manager.fullScreenGate = .inactive
+        manager.toggleListening()
+        XCTAssertNotNil(manager.eventMonitor)
+    }
+
+    func testDisplayChangesReevaluateTheGate() {
+        let manager = SnappingManager()
+        manager.fullScreenGate = fullScreenOnExternal()
+        NotificationCenter.default.post(name: NSApplication.didChangeScreenParametersNotification, object: nil)
+        XCTAssertFalse(manager.isFullScreen, "the test host's front window is not fullscreen")
+        XCTAssertEqual(manager.fullScreenGate, .inactive)
     }
 }
 
