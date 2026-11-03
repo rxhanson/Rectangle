@@ -10443,6 +10443,9 @@ final class NewWindowActionManagerTests: XCTestCase {
         stale?()
 
         XCTAssertEqual(harness.manager.observedProcessIdentifiers, [100])
+    }
+}
+
 final class EdgeActionsAcrossDisplaysTests: XCTestCase {
     private final class TestScreen: NSScreen {
         private let testFrame: CGRect
