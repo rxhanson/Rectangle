@@ -12,6 +12,14 @@ class TodoManager {
     static let reflowDefaultsKey = "reflowTodo"
     static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
     private static var shortcutBindingsSuspended = false
+    private static var displayChangeReflow: TodoDisplayChangeReflow?
+
+    /// Keeps the Todo layout in step with display changes for as long as the
+    /// app runs. Starting it again is a no-op.
+    static func startReflowOnDisplayChanges() {
+        guard displayChangeReflow == nil else { return }
+        displayChangeReflow = TodoDisplayChangeReflow()
+    }
     
     static func setTodoMode(_ enabled: Bool, _ bringToFront: Bool = true) {
         Defaults.todoMode.enabled = enabled
@@ -401,5 +409,87 @@ enum TodoSidebarWidthUnit: Int, CaseIterable, CustomStringConvertible {
         case .pixels: return String(localized: "px")
         case .pct: return String(localized: "%")
         }
+    }
+}
+
+/// Reflows Todo mode after the display configuration changes (#764).
+///
+/// Connecting or disconnecting a display, or changing an arrangement or a
+/// resolution, posts a burst of screen-parameter notifications, after which
+/// the Todo window tends to sit on the wrong display or at the wrong size.
+/// Once the burst settles, the reflow the Reflow Todo command performs runs,
+/// without bringing the Todo window forward. Nothing happens while Todo mode
+/// is off, and nothing happens for notifications that leave the layout as it
+/// was at the last reflow.
+final class TodoDisplayChangeReflow {
+
+    struct ScreenLayout: Equatable {
+        let frames: [CGRect]
+        let visibleFrames: [CGRect]
+
+        static var current: ScreenLayout {
+            ScreenLayout(frames: NSScreen.screens.map(\.frame), visibleFrames: NSScreen.screens.map(\.visibleFrame))
+        }
+    }
+
+    /// How long the screen parameters must stay quiet before the reflow.
+    static let settleDelay: TimeInterval = 1.0
+
+    private let notificationCenter: NotificationCenter
+    private let delay: TimeInterval
+    private let layout: () -> ScreenLayout
+    private let reflow: () -> Void
+    private let schedule: (TimeInterval, DispatchWorkItem) -> Void
+    private var observer: NSObjectProtocol?
+    private var pending: DispatchWorkItem?
+    private var lastLayout: ScreenLayout
+    private var layoutChanged = false
+
+    init(notificationCenter: NotificationCenter = .default,
+         delay: TimeInterval = TodoDisplayChangeReflow.settleDelay,
+         layout: @escaping () -> ScreenLayout = { .current },
+         reflow: @escaping () -> Void = { TodoManager.moveAllIfNeeded(false) },
+         schedule: @escaping (TimeInterval, DispatchWorkItem) -> Void = { delay, work in
+             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+         }) {
+        self.notificationCenter = notificationCenter
+        self.delay = delay
+        self.layout = layout
+        self.reflow = reflow
+        self.schedule = schedule
+        lastLayout = layout()
+        observer = notificationCenter.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
+                                                  object: nil, queue: .main) { [weak self] _ in
+            self?.screenParametersDidChange()
+        }
+    }
+
+    deinit {
+        pending?.cancel()
+        if let observer {
+            notificationCenter.removeObserver(observer)
+        }
+    }
+
+    private func screenParametersDidChange() {
+        // A display that is unplugged and plugged back in before the burst
+        // settles ends with the old layout, but macOS has moved windows meanwhile.
+        if layout() != lastLayout {
+            layoutChanged = true
+        }
+        pending?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.settled() }
+        pending = work
+        schedule(delay, work)
+    }
+
+    private func settled() {
+        pending = nil
+        // AppKit can report stale visible frames at notification time (#467),
+        // so the layout is checked again now that the burst has settled.
+        guard layoutChanged || layout() != lastLayout else { return }
+        layoutChanged = false
+        lastLayout = layout()
+        reflow()
     }
 }
