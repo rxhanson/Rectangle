@@ -106,6 +106,11 @@ class AccessibilityElement {
         return subrole == .systemDialog
     }
 
+    var isStandardWindow: Bool? {
+        guard let subrole = subrole else { return nil }
+        return subrole == .standardWindow
+    }
+
     var isFullScreenButton: Bool? {
         guard let subrole = subrole else { return nil }
         return subrole == .fullScreenButton
