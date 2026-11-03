@@ -85,6 +85,46 @@ enum DragRestorePlacement {
     }
 }
 
+/// Keeps drag-to-snap away from a window in fullscreen without giving it up
+/// on every display (#1260).
+///
+/// With separate Spaces per display, a fullscreen window takes over its own
+/// display only, so gestures that start there are ignored while the other
+/// displays keep snapping. Listening still stops altogether, as it always has,
+/// when the fullscreen window is on the only display or its display cannot be
+/// told.
+struct FullScreenSnapGate: Equatable {
+    static let inactive = FullScreenSnapGate(isFullScreen: false, windowFrame: nil, displayFrames: [])
+
+    let isFullScreen: Bool
+    /// The display showing the fullscreen window, in flipped coordinates.
+    let displayFrame: CGRect?
+    let suspendsListening: Bool
+
+    /// `windowFrame` and `displayFrames` are flipped (top-left origin), as
+    /// `AccessibilityElement.frame` and `NSScreen.frame.screenFlipped` are.
+    init(isFullScreen: Bool, windowFrame: CGRect?, displayFrames: [CGRect]) {
+        self.isFullScreen = isFullScreen
+        displayFrame = isFullScreen ? Self.display(containing: windowFrame, in: displayFrames) : nil
+        suspendsListening = isFullScreen && (displayFrame == nil || displayFrames.count < 2)
+    }
+
+    /// Whether a mouse gesture that starts at `location` (flipped) is left alone.
+    func ignoresGesture(at location: CGPoint?) -> Bool {
+        guard isFullScreen else { return false }
+        guard let displayFrame, let location else { return true }
+        return displayFrame.contains(location)
+    }
+
+    static func display(containing windowFrame: CGRect?, in displayFrames: [CGRect]) -> CGRect? {
+        guard let windowFrame, !windowFrame.isNull, !windowFrame.isEmpty else { return nil }
+        let covered = displayFrames
+            .map { ($0, $0.intersection(windowFrame)) }
+            .filter { !$0.1.isNull && !$0.1.isEmpty }
+        return covered.max { $0.1.width * $0.1.height < $1.1.width * $1.1.height }?.0
+    }
+}
+
 class SnappingManager {
     
     private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", 
@@ -100,7 +140,17 @@ class SnappingManager {
     var windowIdAttempt: Int = 0
     var lastWindowIdAttempt: TimeInterval?
     var windowMoving: Bool = false
-    var isFullScreen: Bool = false
+    /// Where the front window's fullscreen state keeps gestures away from
+    /// snapping. `checkFullScreen()` keeps it current.
+    var fullScreenGate = FullScreenSnapGate.inactive
+    /// Whether the front window is fullscreen. Setting it directly leaves the
+    /// display unknown until the next `checkFullScreen()`.
+    var isFullScreen: Bool {
+        get { fullScreenGate.isFullScreen }
+        set { fullScreenGate = FullScreenSnapGate(isFullScreen: newValue, windowFrame: nil, displayFrames: []) }
+    }
+    /// The current mouse gesture started on the fullscreen display.
+    private var ignoringGesture = false
     var allowListening: Bool = true
     var initialWindowRect: CGRect?
     private var initialWindowServerRect: CGRect?
@@ -135,6 +185,7 @@ class SnappingManager {
         
         registerWorkspaceChangeNote()
         registerSessionChangeNote()
+        registerScreenChangeNote()
         
         Notification.Name.windowSnapping.onPost { notification in
             if let enabled = notification.object as? Bool {
@@ -178,7 +229,7 @@ class SnappingManager {
     }
     
     func toggleListening() {
-        if allowListening, !isFullScreen, !Defaults.windowSnapping.userDisabled {
+        if allowListening, !fullScreenGate.suspendsListening, !Defaults.windowSnapping.userDisabled {
             enableSnapping()
         } else {
             disableSnapping()
@@ -191,7 +242,11 @@ class SnappingManager {
     }
     
     func checkFullScreen() {
-        isFullScreen = AccessibilityElement.getFrontWindowElement()?.isFullScreen == true
+        let frontWindow = AccessibilityElement.getFrontWindowElement()
+        let isFullScreen = frontWindow?.isFullScreen == true
+        fullScreenGate = FullScreenSnapGate(isFullScreen: isFullScreen,
+                                            windowFrame: isFullScreen ? frontWindow?.frame : nil,
+                                            displayFrames: NSScreen.screens.map { $0.frame.screenFlipped })
         toggleListening()
     }
     
@@ -205,6 +260,15 @@ class SnappingManager {
     }
     
     @objc func receiveSessionNote(_ notification: Notification) {
+        checkFullScreen()
+    }
+    
+    private func registerScreenChangeNote() {
+        // A display can come or go, or move, while a window stays fullscreen.
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveScreenChangeNote(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+    }
+    
+    @objc func receiveScreenChangeNote(_ notification: Notification) {
         checkFullScreen()
     }
         
@@ -249,6 +313,8 @@ class SnappingManager {
     private func stopEventMonitor() {
         if box?.waitingForPlacement == true { box?.orderOut(nil) }
         pendingReleasedRestore = nil
+        // A restarted monitor judges the first gesture it sees on its own.
+        ignoringGesture = false
         eventMonitor?.stop()
         eventMonitor = nil
     }
@@ -299,6 +365,18 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            // Left alone, as every gesture was while listening stopped for a
+            // fullscreen window: no window lookup, no drag tracking.
+            ignoringGesture = fullScreenGate.ignoresGesture(at: event.cgEvent?.location)
+            if ignoringGesture {
+                // A release that never arrived must not leave the previous
+                // gesture behind, as it would not have before.
+                if nativeGesture.held {
+                    nativeGesture.end()
+                    resetNativeDragState()
+                }
+                return
+            }
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -316,6 +394,10 @@ class SnappingManager {
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
+            if ignoringGesture {
+                ignoringGesture = false
+                return
+            }
             nativeGesture.end()
             traceNativeInput(event, phase: "up")
             if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
@@ -361,6 +443,7 @@ class SnappingManager {
             windowIdAttempt = 0
             lastWindowIdAttempt = nil
         case .leftMouseDragged:
+            if ignoringGesture { return }
             nativeGesture.drag()
 
             if nativeGesture.cancelled { return }
