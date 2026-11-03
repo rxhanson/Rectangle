@@ -1705,6 +1705,146 @@ final class TodoWindowPlacementTests: XCTestCase {
         override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
             requestedFrames.append(frame)
         }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: ImmediateWindowPlacement? = nil) {
+            requestedFrames.append(target)
+        }
+    }
+}
+
+final class TodoWindowMinimumSizeTests: XCTestCase {
+    private var savedDefaults: [(Default, CodableDefault)] = []
+
+    override func setUp() {
+        super.setUp()
+        let settings: [(Default, CodableDefault)] = [
+            (Defaults.todoSidebarWidth, CodableDefault(float: 400)),
+            (Defaults.todoSidebarWidthUnit, CodableDefault(int: TodoSidebarWidthUnit.pixels.rawValue)),
+            (Defaults.todoSidebarSide, CodableDefault(int: TodoSidebarSide.right.rawValue)),
+            (Defaults.gapSize, CodableDefault(float: 0))
+        ]
+        savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
+        settings.forEach { $0.0.load(from: $0.1) }
+    }
+
+    override func tearDown() {
+        savedDefaults.forEach { $0.0.load(from: $0.1) }
+        super.tearDown()
+    }
+
+    // The primary display's visible frame; accessibility y of its top edge is 25.
+    private let visibleFrame = CGRect(x: 0, y: 0, width: 2560, height: 1415)
+
+    private func place(_ window: MinimumSizeWindow, side: TodoSidebarSide = .right) {
+        Defaults.todoSidebarSide.value = side
+        TodoManager.moveTodoWindow(window, screenVisibleFrame: visibleFrame, primaryScreenMaxY: 1440)
+    }
+
+    func testAWindowThatAcceptsTheSidebarWidthIsPlacedOnce() {
+        let window = MinimumSizeWindow(minimumWidth: 300)
+        place(window)
+        XCTAssertEqual(window.frame, CGRect(x: 2160, y: 25, width: 400, height: 1415))
+        XCTAssertEqual(window.sizeWrites, 1)
+        XCTAssertEqual(window.moves, [])
+    }
+
+    func testAWiderMinimumWidthKeepsTheRightSidebarOnScreen() {
+        // Issue #1307: the window kept 600 points and used to extend 200 points past the screen edge.
+        let window = MinimumSizeWindow(minimumWidth: 600)
+        place(window)
+        XCTAssertEqual(window.frame, CGRect(x: 1960, y: 25, width: 600, height: 1415))
+        XCTAssertEqual(window.frame.maxX, visibleFrame.maxX)
+        XCTAssertEqual(window.sizeWrites, 1, "the accepted size is kept; only the position is written again")
+        XCTAssertEqual(window.moves, [CGPoint(x: 1960, y: 25)])
+    }
+
+    func testGapsStayInFrontOfTheOuterEdge() {
+        Defaults.gapSize.value = 20
+        let window = MinimumSizeWindow(minimumWidth: 600)
+        place(window)
+        // The zone ends 20 points before the screen edge; the window ends with the zone.
+        XCTAssertEqual(window.frame, CGRect(x: 1940, y: 45, width: 600, height: 1375))
+    }
+
+    func testALeftSidebarAlreadyStartsAtItsEdge() {
+        let window = MinimumSizeWindow(minimumWidth: 600)
+        place(window, side: .left)
+        XCTAssertEqual(window.frame, CGRect(x: 0, y: 25, width: 600, height: 1415))
+        XCTAssertEqual(window.moves, [])
+    }
+
+    func testAWindowWiderThanTheScreenKeepsItsLeadingEdgeOnScreen() {
+        for side in TodoSidebarSide.allCases {
+            let window = MinimumSizeWindow(minimumWidth: 3000)
+            place(window, side: side)
+            XCTAssertEqual(window.frame, CGRect(x: 0, y: 25, width: 3000, height: 1415), "\(side)")
+        }
+    }
+
+    func testALeftSidebarThatOnlyFitsWithoutItsGapMovesToTheScreenEdge() {
+        Defaults.gapSize.value = 20
+        let window = MinimumSizeWindow(minimumWidth: 2550)
+        place(window, side: .left)
+        XCTAssertEqual(window.frame, CGRect(x: 0, y: 45, width: 2550, height: 1375))
+        XCTAssertEqual(window.moves, [CGPoint(x: 0, y: 45)])
+    }
+
+    func testATallerMinimumHeightEndsWithTheVisibleFrame() {
+        Defaults.gapSize.value = 20
+        let window = MinimumSizeWindow(minimumWidth: 300, minimumHeight: 1400)
+        place(window)
+        // The zone is 1375 tall; the window keeps 1400 and moves up to end with the visible frame.
+        XCTAssertEqual(window.frame, CGRect(x: 2170, y: 40, width: 370, height: 1400))
+        XCTAssertEqual(window.moves, [CGPoint(x: 2170, y: 40)])
+    }
+
+    func testAWindowTallerThanTheScreenKeepsItsTopOnScreen() {
+        let window = MinimumSizeWindow(minimumWidth: 300, minimumHeight: 1500)
+        place(window)
+        XCTAssertEqual(window.frame, CGRect(x: 2160, y: 25, width: 400, height: 1500))
+        XCTAssertEqual(window.moves, [])
+    }
+
+    func testAnUnreadableFrameIsLeftAlone() {
+        let window = MinimumSizeWindow(minimumWidth: 600, reportsFrame: false)
+        place(window)
+        XCTAssertEqual(window.sizeWrites, 1)
+        XCTAssertEqual(window.moves, [])
+    }
+
+    /// Applies a requested frame the way an app with a minimum size does, and
+    /// records the position-only moves of the correction.
+    private final class MinimumSizeWindow: AccessibilityElement {
+        private var currentFrame = CGRect(x: 100, y: 1000, width: 500, height: 400)
+        private let minimumWidth: CGFloat
+        private let minimumHeight: CGFloat
+        private let reportsFrame: Bool
+        private(set) var sizeWrites = 0
+        private(set) var moves: [CGPoint] = []
+
+        init(minimumWidth: CGFloat, minimumHeight: CGFloat = 0, reportsFrame: Bool = true) {
+            self.minimumWidth = minimumWidth
+            self.minimumHeight = minimumHeight
+            self.reportsFrame = reportsFrame
+            super.init(AXUIElementCreateSystemWide())
+        }
+
+        override var frame: CGRect { reportsFrame ? currentFrame : .null }
+
+        override func setFrame(_ frame: CGRect, adjustSizeFirst: Bool = true, adjustPosition: Bool = true) {
+            sizeWrites += 1
+            currentFrame = CGRect(origin: frame.origin,
+                                  size: CGSize(width: max(frame.width, minimumWidth),
+                                               height: max(frame.height, minimumHeight)))
+        }
+
+        override func setImmediateFrame(_ target: CGRect, from before: CGRect, sizeFirst: Bool,
+                                        placement: ImmediateWindowPlacement? = nil) {
+            XCTAssertEqual(target.size, before.size, "the correction must not ask for a new size")
+            moves.append(target.origin)
+            currentFrame.origin = target.origin
+        }
     }
 }
 
