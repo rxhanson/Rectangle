@@ -262,7 +262,7 @@ private final class ScreenNumberBadge: NSPanel {
 
 /// Win+P-style list. Pressing the shortcut again moves the highlight; letting go of
 /// its modifiers after that applies it, like Cmd+Tab. A single press leaves it open.
-private final class DisplayModePanel: NSPanel {
+final class DisplayModePanel: NSPanel {
     private static let rowHeight: CGFloat = 40
     private static let padding: CGFloat = 6
     private let onChoose: (Int) -> Void
@@ -278,10 +278,14 @@ private final class DisplayModePanel: NSPanel {
          onChoose: @escaping (Int) -> Void, onCancel: @escaping () -> Void) {
         self.onChoose = onChoose
         self.onCancel = onCancel
-        let size = NSSize(width: 320, height: CGFloat(items.count) * Self.rowHeight + Self.padding * 2)
-        // Just below the screen's number badge, so the badge stays visible.
+        let listHeight = CGFloat(items.count) * Self.rowHeight
+        // Just below the screen's number badge, so the badge stays visible. Five or more
+        // screens give more rows than fit there, so the list scrolls.
         let top = screen.frame.midY - ScreenNumberBadge.size / 2 - 16
-        let frame = NSRect(x: screen.frame.midX - size.width / 2, y: max(screen.visibleFrame.minY + 8, top - size.height),
+        let bottom = screen.visibleFrame.minY + 8
+        let room = max(top - bottom - Self.padding * 2, Self.rowHeight * 5)
+        let size = NSSize(width: 320, height: min(listHeight, room) + Self.padding * 2)
+        let frame = NSRect(x: screen.frame.midX - size.width / 2, y: max(bottom, top - size.height),
                            width: size.width, height: size.height)
 
         super.init(contentRect: frame, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
@@ -301,15 +305,23 @@ private final class DisplayModePanel: NSPanel {
         container.layer?.cornerCurve = .continuous
         container.layer?.masksToBounds = true
 
+        let scrollView = NSScrollView(frame: NSRect(x: Self.padding, y: Self.padding,
+                                                    width: size.width - Self.padding * 2, height: size.height - Self.padding * 2))
+        scrollView.drawsBackground = false
+        scrollView.hasVerticalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.scrollerStyle = .overlay
+        let list = FlippedView(frame: NSRect(x: 0, y: 0, width: scrollView.contentSize.width, height: listHeight))
         for (index, item) in items.enumerated() {
             let row = DisplayModeRowView(title: item.title, subtitle: item.subtitle,
                                          onHover: { [weak self] in self?.select(index) },
                                          onClick: { [weak self] in self?.onChoose(index) })
-            row.frame = NSRect(x: Self.padding, y: size.height - Self.padding - CGFloat(index + 1) * Self.rowHeight,
-                               width: size.width - Self.padding * 2, height: Self.rowHeight)
-            container.addSubview(row)
+            row.frame = NSRect(x: 0, y: CGFloat(index) * Self.rowHeight, width: list.frame.width, height: Self.rowHeight)
+            list.addSubview(row)
             rows.append(row)
         }
+        scrollView.documentView = list
+        container.addSubview(scrollView)
         contentView = container
         select(selected)
 
@@ -357,7 +369,13 @@ private final class DisplayModePanel: NSPanel {
         for (i, row) in rows.enumerated() {
             row.setSelected(i == index)
         }
+        rows[index].scrollToVisible(rows[index].bounds)
     }
+}
+
+/// Lays the rows out from the top, so a scrolling list starts at its first row.
+private final class FlippedView: NSView {
+    override var isFlipped: Bool { true }
 }
 
 private final class DisplayModeRowView: NSView {

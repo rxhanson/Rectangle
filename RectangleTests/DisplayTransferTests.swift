@@ -1,5 +1,5 @@
 import XCTest
-import CoreGraphics
+import AppKit
 @testable import Rectangle
 
 final class DisplayTransferTests: XCTestCase {
@@ -239,5 +239,21 @@ final class DisplayModeTests: XCTestCase {
                        [one: .init(enabled: false), two: .init(), three: .init(enabled: false)])
         XCTAssertEqual(DisplayOption(screens: displays, mirror: true).configuration(displays: displays, main: two),
                        [one: .init(mirrorOf: two), two: .init(), three: .init(mirrorOf: two)])
+    }
+
+    func testListOfFiveScreensScrollsInsteadOfLeavingTheScreen() throws {
+        let screen = try XCTUnwrap(NSScreen.main)
+        let rows = (1...32).map { (title: "Option \($0)", subtitle: "") }
+        let panel = DisplayModePanel(rows: rows, selected: 0, screen: screen, onChoose: { _ in }, onCancel: {})
+        defer { panel.dismiss() }
+
+        XCTAssertTrue(screen.visibleFrame.contains(panel.frame), "\(panel.frame) is not inside \(screen.visibleFrame)")
+        let scrollView = try XCTUnwrap(panel.contentView?.subviews.compactMap { $0 as? NSScrollView }.first)
+        let listHeight = try XCTUnwrap(scrollView.documentView).frame.height
+        XCTAssertEqual(listHeight, 32 * 40)
+        XCTAssertLessThan(scrollView.frame.height, listHeight)
+
+        for _ in 1...31 { panel.selectNext() }
+        XCTAssertEqual(scrollView.documentVisibleRect.maxY, listHeight, accuracy: 0.5)
     }
 }
