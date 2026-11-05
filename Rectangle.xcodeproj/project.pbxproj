@@ -92,6 +92,7 @@
 		9824703B22B139780037B409 /* CUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703A22B139780037B409 /* CUtil.swift */; };
 		9824703D22B13C7E0037B409 /* AccessibilityElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703C22B13C7E0037B409 /* AccessibilityElement.swift */; };
 		9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824703E22B13FBC0037B409 /* ScreenDetection.swift */; };
+		AF0D15000000000000000001 /* DisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0D15000000000000000002 /* DisplayMode.swift */; };
 		9824704122B186D00037B409 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704022B186D00037B409 /* WindowManager.swift */; };
 		982470432EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982470422EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift */; };
 		9824704B22B189250037B409 /* StandardWindowMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824704622B189240037B409 /* StandardWindowMover.swift */; };
@@ -342,6 +343,7 @@
 		9824703A22B139780037B409 /* CUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CUtil.swift; sourceTree = "<group>"; };
 		9824703C22B13C7E0037B409 /* AccessibilityElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityElement.swift; sourceTree = "<group>"; };
 		9824703E22B13FBC0037B409 /* ScreenDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenDetection.swift; sourceTree = "<group>"; };
+		AF0D15000000000000000002 /* DisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayMode.swift; sourceTree = "<group>"; };
 		9824704022B186D00037B409 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
 		982470422EFA00010037B409 /* WindowManager+CooperativeCornerResize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WindowManager+CooperativeCornerResize.swift"; sourceTree = "<group>"; };
 		9824704622B189240037B409 /* StandardWindowMover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandardWindowMover.swift; sourceTree = "<group>"; };
@@ -751,6 +753,7 @@
 				AF0CB0770000000000000002 /* MouseButtonShortcut.swift */,
 				9824703C22B13C7E0037B409 /* AccessibilityElement.swift */,
 				9824703E22B13FBC0037B409 /* ScreenDetection.swift */,
+				AF0D15000000000000000002 /* DisplayMode.swift */,
 				98C275662322E2DA009B9292 /* WindowHistory.swift */,
 				7B4C0A202F1B000100C0FFEE /* RepeatedMaximizeRestore.swift */,
 				9824704022B186D00037B409 /* WindowManager.swift */,
@@ -1132,6 +1135,7 @@
 				98A009B1251252C900CFBF0C /* ThirdFourthCalculation.swift in Sources */,
 				D04CE31227817C9B00BD47B3 /* NinthsRepeated.swift in Sources */,
 				9824703F22B13FBC0037B409 /* ScreenDetection.swift in Sources */,
+				AF0D15000000000000000001 /* DisplayMode.swift in Sources */,
 				983DD04428B0639E00BF1EEE /* SnapAreaModel.swift in Sources */,
 				AA040C67290B2640003181D5 /* RunLoopThread.swift in Sources */,
 				9821402B22B388A000ABFB3F /* LowerRightCalculation.swift in Sources */,

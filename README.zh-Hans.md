@@ -73,6 +73,14 @@ brew install --cask rectangle
 
 如果按下某个按钮却没有被录制，可能是其他软件（例如鼠标附带的实用工具）在 Rectangle 接收到之前就重新映射了该按钮。
 
+### 选择开启哪些屏幕
+
+**显示模式**的用法类似 Windows 上的 Win+P。在**键盘快捷键**标签页的 ⋯ > **额外快捷键** 中为它指定按键。连接了多个屏幕后才会显示这一行；指定快捷键后会一直显示。按下快捷键会列出屏幕的所有组合，例如**仅显示器 1**或**显示器 1 + 2**，最后是**镜像所有显示器**，同时在每个屏幕中央显示它的编号。屏幕编号的顺序与 Rectangle 在**下一个显示器**中使用的顺序相同。
+
+按住快捷键的修饰键并再次按下其按键，可移到下一个选项；松开即可应用。只按一次时列表会保持打开，可以用方向键和 Return 键或点按来选择。按 Esc 键会关闭列表，不做任何更改。
+
+关闭屏幕依赖 macOS 的私有接口，因此将来的 macOS 版本可能会使其失效。无法使用时，列表只提供“开启所有屏幕”和**镜像所有显示器**。被 Rectangle 关闭的屏幕会在 Rectangle 退出时重新开启；仍开启的屏幕全部断开连接时也会重新开启。
+
 ### 忽略应用
 
 忽略某个应用意味着：当该应用位于最前面时，快捷键会从 macOS 取消注册；当该应用不再位于最前面时，快捷键会重新向 macOS 注册。如果某些应用与 Rectangle 使用相同的快捷键，而你又不想更改这些快捷键，这个功能就很有用。
@@ -86,7 +94,7 @@ brew install --cask rectangle
 
 打开 URL `rectangle://execute-action?name=[name]`。请尽可能不要激活 Rectangle。
 
-`[name]` 的可用值：`left-half`、`right-half`、`center-half`、`top-half`、`bottom-half`、`top-left`、`top-right`、`bottom-left`、`bottom-right`、`first-third`、`center-third`、`last-third`、`first-two-thirds`、`last-two-thirds`、`maximize`、`almost-maximize`、`maximize-height`、`smaller`、`larger`、`center`、`center-prominently`、`restore`、`next-display`、`previous-display`、`move-left`、`move-right`、`move-up`、`move-down`、`first-fourth`、`second-fourth`、`third-fourth`、`last-fourth`、`first-three-fourths`、`last-three-fourths`、`top-left-sixth`、`top-center-sixth`、`top-right-sixth`、`bottom-left-sixth`、`bottom-center-sixth`、`bottom-right-sixth`、`specified`、`reverse-all`、`top-left-ninth`、`top-center-ninth`、`top-right-ninth`、`middle-left-ninth`、`middle-center-ninth`、`middle-right-ninth`、`bottom-left-ninth`、`bottom-center-ninth`、`bottom-right-ninth`、`top-left-third`、`top-right-third`、`bottom-left-third`、`bottom-right-third`、`top-left-eighth`、`top-center-left-eighth`、`top-center-right-eighth`、`top-right-eighth`、`bottom-left-eighth`、`bottom-center-left-eighth`、`bottom-center-right-eighth`、`bottom-right-eighth`、`tile-all`、`tile-rows`、`tile-columns`、`cascade-all`、`cascade-active-app`、`cycle-stacked-windows`、`cycle-stacked-windows-backward`
+`[name]` 的可用值：`left-half`、`right-half`、`center-half`、`top-half`、`bottom-half`、`top-left`、`top-right`、`bottom-left`、`bottom-right`、`first-third`、`center-third`、`last-third`、`first-two-thirds`、`last-two-thirds`、`maximize`、`almost-maximize`、`maximize-height`、`smaller`、`larger`、`center`、`center-prominently`、`restore`、`next-display`、`previous-display`、`move-left`、`move-right`、`move-up`、`move-down`、`first-fourth`、`second-fourth`、`third-fourth`、`last-fourth`、`first-three-fourths`、`last-three-fourths`、`top-left-sixth`、`top-center-sixth`、`top-right-sixth`、`bottom-left-sixth`、`bottom-center-sixth`、`bottom-right-sixth`、`specified`、`reverse-all`、`top-left-ninth`、`top-center-ninth`、`top-right-ninth`、`middle-left-ninth`、`middle-center-ninth`、`middle-right-ninth`、`bottom-left-ninth`、`bottom-center-ninth`、`bottom-right-ninth`、`top-left-third`、`top-right-third`、`bottom-left-third`、`bottom-right-third`、`top-left-eighth`、`top-center-left-eighth`、`top-center-right-eighth`、`top-right-eighth`、`bottom-left-eighth`、`bottom-center-left-eighth`、`bottom-center-right-eighth`、`bottom-right-eighth`、`tile-all`、`tile-rows`、`tile-columns`、`cascade-all`、`cascade-active-app`、`cycle-stacked-windows`、`cycle-stacked-windows-backward`、`display-mode`
 
 示例（在 shell 中执行）：`open -g "rectangle://execute-action?name=left-half"`
 

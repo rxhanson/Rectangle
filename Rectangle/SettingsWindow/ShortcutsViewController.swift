@@ -316,7 +316,7 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.moveLeft, .moveRight, .moveUp, .moveDown])
         ]
         
-        let extraCategories: [ShortcutCategory] = [
+        var extraCategories: [ShortcutCategory] = [
             ShortcutCategory(actions: [.tileRows, .tileColumns]),
             ShortcutCategory(actions: [.largerWidth, .smallerWidth]),
             ShortcutCategory(actions: [.topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds]),
@@ -324,7 +324,10 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth]),
             ShortcutCategory(actions: [.topLeftNinth, .topLeftTwelfth, .topLeftSixteenth])
         ]
-        
+        if DisplayModeManager.shared.hasMultipleDisplays || ShortcutCycle.shortcut(for: .displayMode) != nil {
+            extraCategories.append(ShortcutCategory(actions: [.displayMode]))
+        }
+
         let extraGroup = CategoryGroup(title: String(localized: "Extra"), categories: extraCategories, isCollapsible: true)
         
         let standardGroup = CategoryGroup(title: "", categories: standardCategories, isCollapsible: false)

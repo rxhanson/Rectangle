@@ -1,5 +1,5 @@
 import XCTest
-import CoreGraphics
+import AppKit
 @testable import Rectangle
 
 final class DisplayTransferTests: XCTestCase {
@@ -214,5 +214,57 @@ final class DisplayTransferTests: XCTestCase {
                               "\(transferred) does not fit on \(destination)")
             }
         }
+    }
+}
+
+final class DisplayModeTests: XCTestCase {
+    private let one: CGDirectDisplayID = 11
+    private let two: CGDirectDisplayID = 22
+    private let three: CGDirectDisplayID = 33
+
+    func testOptionsListEveryCombinationSmallestFirstThenMirror() {
+        let options = DisplayOption.options(for: [one, two, three], canTurnOff: true)
+        XCTAssertEqual(options.map(\.screens), [[one], [two], [three], [one, two], [one, three], [two, three], [one, two, three], [one, two, three]])
+        XCTAssertEqual(options.map(\.mirror), [false, false, false, false, false, false, false, true])
+    }
+
+    func testWithoutTurningScreensOffOnlyAllAndMirrorAreOffered() {
+        let options = DisplayOption.options(for: [one, two], canTurnOff: false)
+        XCTAssertEqual(options, [DisplayOption(screens: [one, two], mirror: false), DisplayOption(screens: [one, two], mirror: true)])
+    }
+
+    func testConfigurationTurnsOffScreensOutsideTheChoice() {
+        let displays = [one, two, three]
+        XCTAssertEqual(DisplayOption(screens: [two], mirror: false).configuration(displays: displays, main: one),
+                       [one: .init(enabled: false), two: .init(), three: .init(enabled: false)])
+        XCTAssertEqual(DisplayOption(screens: displays, mirror: true).configuration(displays: displays, main: two),
+                       [one: .init(mirrorOf: two), two: .init(), three: .init(mirrorOf: two)])
+    }
+
+    func testListOfFiveScreensScrollsInsteadOfLeavingTheScreen() throws {
+        let screen = try XCTUnwrap(NSScreen.main)
+        let rows = (1...32).map { (title: "Option \($0)", subtitle: "") }
+        let panel = DisplayModePanel(rows: rows, selected: 0, screen: screen, onChoose: { _ in }, onCancel: {})
+        defer { panel.dismiss() }
+
+        XCTAssertTrue(screen.visibleFrame.contains(panel.frame), "\(panel.frame) is not inside \(screen.visibleFrame)")
+        let scrollView = try XCTUnwrap(panel.contentView?.subviews.compactMap { $0 as? NSScrollView }.first)
+        let listHeight = try XCTUnwrap(scrollView.documentView).frame.height
+        XCTAssertEqual(listHeight, 32 * 40)
+        XCTAssertLessThan(scrollView.frame.height, listHeight)
+
+        for _ in 1...31 { panel.selectNext() }
+        XCTAssertEqual(scrollView.documentVisibleRect.maxY, listHeight, accuracy: 0.5)
+    }
+
+    func testListThatFitsKeepsNoRoomForAScrollBar() throws {
+        let screen = try XCTUnwrap(NSScreen.main)
+        let rows = (1...8).map { (title: "Option \($0)", subtitle: "") }
+        let panel = DisplayModePanel(rows: rows, selected: 0, screen: screen, onChoose: { _ in }, onCancel: {})
+        defer { panel.dismiss() }
+
+        let scrollView = try XCTUnwrap(panel.contentView?.subviews.compactMap { $0 as? NSScrollView }.first)
+        XCTAssertFalse(scrollView.hasVerticalScroller)
+        XCTAssertEqual(try XCTUnwrap(scrollView.documentView).frame.width, scrollView.frame.width)
     }
 }
