@@ -308,9 +308,10 @@ final class DisplayModePanel: NSPanel {
         let scrollView = NSScrollView(frame: NSRect(x: Self.padding, y: Self.padding,
                                                     width: size.width - Self.padding * 2, height: size.height - Self.padding * 2))
         scrollView.drawsBackground = false
-        scrollView.hasVerticalScroller = true
-        scrollView.autohidesScrollers = true
         scrollView.scrollerStyle = .overlay
+        // No scroll bar, and no room kept for one, unless the list is cut off.
+        scrollView.hasVerticalScroller = listHeight > room
+        scrollView.tile()
         let list = FlippedView(frame: NSRect(x: 0, y: 0, width: scrollView.contentSize.width, height: listHeight))
         for (index, item) in items.enumerated() {
             let row = DisplayModeRowView(title: item.title, subtitle: item.subtitle,

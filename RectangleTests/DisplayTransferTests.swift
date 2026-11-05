@@ -256,4 +256,15 @@ final class DisplayModeTests: XCTestCase {
         for _ in 1...31 { panel.selectNext() }
         XCTAssertEqual(scrollView.documentVisibleRect.maxY, listHeight, accuracy: 0.5)
     }
+
+    func testListThatFitsKeepsNoRoomForAScrollBar() throws {
+        let screen = try XCTUnwrap(NSScreen.main)
+        let rows = (1...8).map { (title: "Option \($0)", subtitle: "") }
+        let panel = DisplayModePanel(rows: rows, selected: 0, screen: screen, onChoose: { _ in }, onCancel: {})
+        defer { panel.dismiss() }
+
+        let scrollView = try XCTUnwrap(panel.contentView?.subviews.compactMap { $0 as? NSScrollView }.first)
+        XCTAssertFalse(scrollView.hasVerticalScroller)
+        XCTAssertEqual(try XCTUnwrap(scrollView.documentView).frame.width, scrollView.frame.width)
+    }
 }
