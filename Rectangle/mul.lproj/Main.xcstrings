@@ -4168,6 +4168,12 @@
             "value" : "ऐनिमेशन शैली"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stile animazione"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5451,6 +5457,12 @@
             "value" : "धुंधलेपन का प्रकटन"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspetto della sfocatura"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5514,6 +5526,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "पूर्वावलोकन धुंधला करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sfoca l'anteprima"
           }
         },
         "ja" : {
@@ -6649,6 +6667,12 @@
             "value" : "macOS टाइलिंग से टकराव"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflitto con l'affiancamento di macOS"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7732,6 +7756,12 @@
             "value" : "गहरा"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scuro"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7797,6 +7827,12 @@
             "value" : "सीधे आकार बदलें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ridimensionamento diretto"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7860,6 +7896,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS में अक्षम करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disattiva in macOS"
           }
         },
         "ja" : {
@@ -7939,6 +7981,12 @@
             "value" : "Rectangle में अक्षम करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disattiva in Rectangle"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8014,6 +8062,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ख़ारिज करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi"
           }
         },
         "ja" : {
@@ -8473,6 +8527,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "स्क्रीन के किनारे पर ड्रैग करके टाइलिंग Rectangle और macOS दोनों में सक्षम है।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento trascinando sul bordo dello schermo è attivo sia in Rectangle sia in macOS."
           }
         },
         "ja" : {
@@ -9097,6 +9157,12 @@
             "value" : "आठवें भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavi"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9160,6 +9226,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "अतिरिक्त शॉर्टकट"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbreviazioni extra"
           }
         },
         "ko" : {
@@ -9939,6 +10011,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "सिस्टम के अनुसार"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come il sistema"
           }
         },
         "ja" : {
@@ -14942,6 +15020,12 @@
             "value" : "चौड़ाई बढ़ाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allarga"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15323,6 +15407,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "हल्का"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiaro"
           }
         },
         "ja" : {
@@ -16229,6 +16319,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "नौवें भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noni"
           }
         },
         "ko" : {
@@ -20827,6 +20923,12 @@
             "value" : "सोलहवें भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimi"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21258,6 +21360,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "चौड़ाई घटाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restringi"
           }
         },
         "ko" : {
@@ -22037,6 +22145,12 @@
             "value" : "कॉलम में टाइल करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affianca in colonne"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -22108,6 +22222,12 @@
             "value" : "पंक्तियों में टाइल करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affianca in righe"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -22167,6 +22287,12 @@
             "value" : "टाइलिंग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiancamento"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22218,6 +22344,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS में टाइलिंग अक्षम कर दी गई है"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento di macOS è stato disattivato"
           }
         },
         "ja" : {
@@ -22289,6 +22421,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle में टाइलिंग अक्षम कर दी गई है"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento di Rectangle è stato disattivato"
           }
         },
         "ko" : {
@@ -22506,6 +22644,12 @@
             "value" : "macOS टाइलिंग बदलने के लिए, सिस्टम सेटिंग → डेस्कटॉप और Dock → विंडो पर जाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per regolare l'affiancamento di macOS, vai in Impostazioni di Sistema → Scrivania e Dock → Finestre"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22569,6 +22713,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "इसे फिर से सक्षम करने के लिए, सिस्टम सेटिंग → डेस्कटॉप और Dock → विंडो पर जाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per riattivarlo, vai in Impostazioni di Sistema → Scrivania e Dock → Finestre"
           }
         },
         "ja" : {
@@ -22642,6 +22792,12 @@
             "value" : "macOS में स्क्रीन के ऊपरी किनारे पर टाइलिंग अब अक्षम है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento sul bordo superiore dello schermo in macOS è ora disattivato"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22699,6 +22855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी/निचला आधा"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lati superiore/inferiore"
           }
         },
         "ko" : {
@@ -22919,6 +23081,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "बारहवें भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimi"
           }
         },
         "ko" : {
@@ -23290,6 +23458,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "अपडेट उपलब्ध है…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiornamento disponibile…"
           }
         },
         "ko" : {
@@ -26003,6 +26177,12 @@
             "value" : "चौड़ाई का चरण (px)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passo larghezza (px)"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26075,6 +26255,12 @@
             "value" : "विंडो का आकार और छोटा नहीं किया जा सका।\nविंडो ओवरलैप हो सकती हैं।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile ridurre ancora la finestra.\nLe finestre potrebbero sovrapporsi."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26127,6 +26313,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "विंडो न्यूनतम आकार तक पहुँच गई है"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dimensione minima della finestra raggiunta"
           }
         },
         "pt-BR" : {
@@ -27787,8 +27979,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferenze…"
+            "state" : "translated",
+            "value" : "Impostazioni…"
           }
         },
         "ja" : {
