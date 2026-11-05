@@ -11589,7 +11589,7 @@
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Modo de pantalla"
           }
         },
@@ -24166,7 +24166,7 @@
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Duplicar todas las pantallas"
           }
         },
@@ -32497,7 +32497,7 @@
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pantalla %lld"
           }
         },
@@ -32573,7 +32573,7 @@
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Solo pantalla %lld"
           }
         },
@@ -32649,7 +32649,7 @@
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pantallas %@"
           }
         },
