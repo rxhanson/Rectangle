@@ -11611,6 +11611,12 @@
             "value" : "डिस्प्ले मोड"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modalità schermo"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -24188,6 +24194,12 @@
             "value" : "सभी डिस्प्ले मिरर करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplica tutti gli schermi"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -32519,6 +32531,12 @@
             "value" : "डिस्प्ले %lld"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermo %lld"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -32595,6 +32613,12 @@
             "value" : "केवल डिस्प्ले %lld"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo schermo %lld"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -32669,6 +32693,12 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "डिस्प्ले %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermi %@"
           }
         },
         "ja" : {
