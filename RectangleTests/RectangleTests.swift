@@ -9632,6 +9632,80 @@ class TitleBarScreenDetectionTests: XCTestCase {
     }
 }
 
+final class ScreenOrderingTests: XCTestCase {
+    private final class TestScreen: NSScreen {
+        let testFrame: CGRect
+        init(_ frame: CGRect) { testFrame = frame; super.init() }
+        override var frame: NSRect { testFrame }
+        override var hash: Int { ObjectIdentifier(self).hashValue }
+        override func isEqual(_ object: Any?) -> Bool { (object as AnyObject?) === self }
+    }
+
+    private func withYThenMinX(_ body: () -> Void) {
+        let saved = Defaults.screensOrderedByX.value
+        Defaults.screensOrderedByX.value = .yThenMinX
+        defer { Defaults.screensOrderedByX.value = saved }
+        body()
+    }
+
+    /// NSScreen.screens is not guaranteed to enumerate displays in any spatial order, so
+    /// ordering a fixed physical layout must not depend on the order the screens arrive in.
+    func testYThenMinXOrderingIsIndependentOfEnumerationOrder() {
+        withYThenMinX {
+            // A diagonal/staircase layout: A overlaps B in Y and B overlaps C in Y, but A and
+            // C do not overlap. This is the case the old comparator ordered by X for some
+            // pairs and by Y for others, making it intransitive.
+            let a = TestScreen(CGRect(x: 0,    y: 0,    width: 1000, height: 1000))
+            let b = TestScreen(CGRect(x: 1000, y: 500,  width: 1000, height: 1000))
+            let c = TestScreen(CGRect(x: 2000, y: 1000, width: 1000, height: 1000))
+            let detection = ScreenDetection(screens: { [a, b, c] })
+
+            let ordered = detection.order(screens: [a, b, c]).map(\.frame)
+            XCTAssertEqual(detection.order(screens: [c, b, a]).map(\.frame), ordered)
+            XCTAssertEqual(detection.order(screens: [b, a, c]).map(\.frame), ordered)
+            XCTAssertEqual(detection.order(screens: [c, a, b]).map(\.frame), ordered)
+        }
+    }
+
+    /// The connected staircase forms one vertical band, so the displays read left-to-right.
+    func testYThenMinXGivesADeterministicOrderForADiagonalLayout() {
+        withYThenMinX {
+            let a = TestScreen(CGRect(x: 0,    y: 0,    width: 1000, height: 1000))
+            let b = TestScreen(CGRect(x: 1000, y: 500,  width: 1000, height: 1000))
+            let c = TestScreen(CGRect(x: 2000, y: 1000, width: 1000, height: 1000))
+            let detection = ScreenDetection(screens: { [a, b, c] })
+            XCTAssertEqual(detection.order(screens: [c, b, a]).map(\.frame),
+                           [a, b, c].map(\.frame))
+        }
+    }
+
+    /// A 2x2 grid still reads top-to-bottom, left-to-right (unchanged from before the fix).
+    func testYThenMinXOrdersAGridTopToBottomLeftToRight() {
+        withYThenMinX {
+            let topLeft     = TestScreen(CGRect(x: 0,    y: 1000, width: 1000, height: 1000))
+            let topRight    = TestScreen(CGRect(x: 1000, y: 1000, width: 1000, height: 1000))
+            let bottomLeft  = TestScreen(CGRect(x: 0,    y: 0,    width: 1000, height: 1000))
+            let bottomRight = TestScreen(CGRect(x: 1000, y: 0,    width: 1000, height: 1000))
+            let detection = ScreenDetection(screens: { [bottomRight, topLeft, bottomLeft, topRight] })
+            XCTAssertEqual(
+                detection.order(screens: [bottomRight, topLeft, bottomLeft, topRight]).map(\.frame),
+                [topLeft, topRight, bottomLeft, bottomRight].map(\.frame))
+        }
+    }
+
+    /// Two displays sharing a desk, bottoms aligned but different heights, are one band, so
+    /// they stay left-to-right rather than being reordered by height.
+    func testYThenMinXKeepsAMixedHeightRowLeftToRight() {
+        withYThenMinX {
+            let short = TestScreen(CGRect(x: 0,    y: 0, width: 1000, height: 1000))
+            let tall  = TestScreen(CGRect(x: 1000, y: 0, width: 1000, height: 1400))
+            let detection = ScreenDetection(screens: { [tall, short] })
+            XCTAssertEqual(detection.order(screens: [tall, short]).map(\.frame),
+                           [short, tall].map(\.frame))
+        }
+    }
+}
+
 final class WindowAnimationSettlementRoundingTests: XCTestCase {
     private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
 
