@@ -53,15 +53,6 @@ struct CooperativeResizeCoordinator {
         }
     }
 
-    static func isCompatibleRepeatedResize(of action: WindowAction, with other: WindowAction?) -> Bool {
-        guard let other else { return false }
-        if isCornerAction(action), isCornerAction(other) {
-            return action == other
-        }
-        return side(for: action) == side(for: other)
-            && axis(for: action) == axis(for: other)
-    }
-
     static func isCornerAction(_ action: WindowAction) -> Bool {
         switch action {
         case .topLeft, .topRight, .bottomLeft, .bottomRight:
@@ -255,7 +246,7 @@ struct CooperativeResizeCoordinator {
         let gapSize = max(0, CGFloat(Defaults.gapSize.value))
         let tolerance = CooperativeCornerResize.detectionTolerance(screenFrame: screenFrame, configuredGap: gapSize)
         let captureTolerance = CooperativeCornerResize.captureTolerance(screenFrame: screenFrame, axis: cooperativeAxis)
-        let isRepeatedCooperativeAction = Self.isCompatibleRepeatedResize(of: action, with: lastRectangleAction?.action)
+        let isRepeatedCooperativeAction = action == lastRectangleAction?.action
         if isRepeatedCooperativeAction, !Self.isCornerAction(action),
            Defaults.subsequentExecutionMode.value == .switchSides,
            CooperativeCornerResize.isSideSwitch(oldFocusedFrame: oldFocusedFrame, newFocusedFrame: newFocusedFrame,

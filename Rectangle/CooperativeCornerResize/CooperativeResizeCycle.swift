@@ -8,7 +8,7 @@ enum CooperativeResizeCycle {
 
     static func nextRect(for calculation: RepeatedExecutionsCalculation,
                          params: RectCalculationParameters) -> RectResult {
-        guard CooperativeResizeCoordinator.isCompatibleRepeatedResize(of: params.action, with: params.lastAction?.action) else {
+        guard params.action == params.lastAction?.action else {
             return calculation.calculateFirstRect(params)
         }
 

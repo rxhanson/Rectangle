@@ -5925,7 +5925,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
         XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: visibleFrame), 0.5, accuracy: 0.001)
     }
 
-    func testHorizontalCornerShortcutCanCycleAfterCompatibleSideShortcut() {
+    func testHorizontalCornerShortcutDoesNotCycleAfterSideShortcut() {
         guard Defaults.cooperativeCornerResize.enabled else { return }
         setSplitRatio(50)
         Defaults.cornerCycleExpansionAxis.value = .horizontal
@@ -5939,10 +5939,10 @@ class HalfSplitCornerCalculationTests: XCTestCase {
                                                                                                                                             rect: leftFrame,
                                                                                                                                             count: 1))).rect
 
-        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 470, width: 800, height: 450))
+        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 470, width: 600, height: 450))
     }
 
-    func testVerticalCornerShortcutCanCycleAfterCompatibleSideShortcut() {
+    func testVerticalCornerShortcutDoesNotCycleAfterSideShortcut() {
         guard Defaults.cooperativeCornerResize.enabled else { return }
         setSplitRatio(50)
         Defaults.cornerCycleExpansionAxis.value = .vertical
@@ -5956,7 +5956,7 @@ class HalfSplitCornerCalculationTests: XCTestCase {
                                                                                                                                             rect: topFrame,
                                                                                                                                             count: 1))).rect
 
-        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 320, width: 600, height: 600))
+        assertRect(topLeftFrame, equals: CGRect(x: 10, y: 470, width: 600, height: 450))
     }
 
     func testDifferentTopCornerShortcutDoesNotTriggerVerticalExpansionCycleAtOneThirdSplit() {

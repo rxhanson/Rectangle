@@ -300,6 +300,52 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screen.frame), 0.5, accuracy: 0.001)
     }
 
+    func testDifferentNonCooperativeActionIsNotARepeat() {
+        let savedResizeOnDirectionalMove = Defaults.resizeOnDirectionalMove.enabled
+        defer { Defaults.resizeOnDirectionalMove.enabled = savedResizeOnDirectionalMove }
+        Defaults.resizeOnDirectionalMove.enabled = true
+        let fullScreen = CGRect(x: 0, y: 0, width: 1200, height: 900)
+        let rightSide = CGRect(x: 600, y: 0, width: 600, height: 900)
+
+        assertFirstPress(of: .centerHalf, after: .maximize, from: fullScreen, landsAt: CGRect(x: 300, y: 0, width: 600, height: 900))
+        assertFirstPress(of: .moveLeft, after: .maximize, from: fullScreen, landsAt: CGRect(x: 0, y: 0, width: 600, height: 900))
+        assertFirstPress(of: .moveLeft, after: .moveRight, from: rightSide, landsAt: CGRect(x: 0, y: 0, width: 600, height: 900))
+    }
+
+    func testSameNonCooperativeActionStillCycles() {
+        let focused = window(focusedId, CGRect(x: 300, y: 0, width: 600, height: 900))
+        seedHistory(focused, action: .centerHalf)
+
+        execute(.centerHalf, on: focused, among: [focused])
+
+        assertFrame(focused, CGRect(x: 200, y: 0, width: 800, height: 900))
+    }
+
+    func testHalfAndCornerOnTheSameEdgeAreNotRepeats() {
+        Defaults.cornerCycleExpansionAxis.value = .horizontal
+        assertFirstPress(of: .topLeft, after: .leftHalf, from: CGRect(x: 0, y: 0, width: 600, height: 900),
+                         landsAt: CGRect(x: 0, y: 450, width: 600, height: 450))
+        assertFirstPress(of: .leftHalf, after: .topLeft, from: CGRect(x: 0, y: 450, width: 600, height: 450),
+                         landsAt: CGRect(x: 0, y: 0, width: 600, height: 900))
+
+        Defaults.cornerCycleExpansionAxis.value = .vertical
+        assertFirstPress(of: .topLeft, after: .topHalf, from: CGRect(x: 0, y: 450, width: 1200, height: 450),
+                         landsAt: CGRect(x: 0, y: 450, width: 600, height: 450))
+        assertFirstPress(of: .topHalf, after: .topLeft, from: CGRect(x: 0, y: 450, width: 600, height: 450),
+                         landsAt: CGRect(x: 0, y: 450, width: 1200, height: 450))
+    }
+
+    private func assertFirstPress(of action: WindowAction, after previous: WindowAction, from start: CGRect, landsAt expected: CGRect,
+                                  file: StaticString = #filePath, line: UInt = #line) {
+        ActiveSideSplitRatios.shared.resetAll()
+        let focused = window(focusedId, start)
+        seedHistory(focused, action: previous)
+
+        execute(action, on: focused, among: [focused])
+
+        assertFrame(focused, expected, file: file, line: line)
+    }
+
     func testCrossDisplayMoveHasNoPlanAndNoCleanup() {
         let focused = window(focusedId, CGRect(x: 0, y: 0, width: 500, height: 900))
         let stacked = window(stackedId, CGRect(x: 0, y: 0, width: 500, height: 900))
