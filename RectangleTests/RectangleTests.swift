@@ -1558,14 +1558,14 @@ class PositionCyclesTests: XCTestCase {
 class CooperativeResizeSourceTests: XCTestCase {
 
     func testKeyboardShortcutsAndDragSnappingAllowCooperativeResize() {
-        XCTAssertTrue(ExecutionSource.keyboardShortcut.allowsCooperativeResize)
-        XCTAssertTrue(ExecutionSource.dragToSnap.allowsCooperativeResize)
+        XCTAssertTrue(CooperativeResizeCoordinator.allowsResize(from: .keyboardShortcut))
+        XCTAssertTrue(CooperativeResizeCoordinator.allowsResize(from: .dragToSnap))
     }
 
     func testNonSnappingSourcesDoNotAllowCooperativeResize() {
-        XCTAssertFalse(ExecutionSource.menuItem.allowsCooperativeResize)
-        XCTAssertFalse(ExecutionSource.url.allowsCooperativeResize)
-        XCTAssertFalse(ExecutionSource.titleBar.allowsCooperativeResize)
+        XCTAssertFalse(CooperativeResizeCoordinator.allowsResize(from: .menuItem))
+        XCTAssertFalse(CooperativeResizeCoordinator.allowsResize(from: .url))
+        XCTAssertFalse(CooperativeResizeCoordinator.allowsResize(from: .titleBar))
     }
 }
 

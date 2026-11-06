@@ -14,6 +14,88 @@ struct CooperativeResizeCoordinator {
         self.windowElements = windowElements
     }
 
+    private enum Side {
+        case left, right, top, bottom
+    }
+
+    static func axis(for action: WindowAction) -> CornerCycleExpansionAxis? {
+        switch action {
+        case .topLeft, .topRight, .bottomLeft, .bottomRight:
+            return Defaults.cornerCycleExpansionAxis.value
+        case .leftHalf, .rightHalf:
+            return .horizontal
+        case .topHalf, .bottomHalf:
+            return .vertical
+        default:
+            return nil
+        }
+    }
+
+    static func movedEdge(for action: WindowAction) -> CooperativeCornerResize.MovedEdge? {
+        switch side(for: action) {
+        case .left:
+            return .right
+        case .right:
+            return .left
+        case .top:
+            return .bottom
+        case .bottom:
+            return .top
+        case .none:
+            return nil
+        }
+    }
+
+    static func isCompatibleRepeatedResize(of action: WindowAction, with other: WindowAction?) -> Bool {
+        guard let other else { return false }
+        if isCornerAction(action), isCornerAction(other) {
+            return action == other
+        }
+        return side(for: action) == side(for: other)
+            && axis(for: action) == axis(for: other)
+    }
+
+    static func isCornerAction(_ action: WindowAction) -> Bool {
+        switch action {
+        case .topLeft, .topRight, .bottomLeft, .bottomRight:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static func allowsResize(from source: ExecutionSource) -> Bool {
+        switch source {
+        case .keyboardShortcut, .dragToSnap:
+            return true
+        case .menuItem, .url, .titleBar, .newWindow:
+            return false
+        }
+    }
+
+    private static func side(for action: WindowAction) -> Side? {
+        switch action {
+        case .leftHalf:
+            return .left
+        case .rightHalf:
+            return .right
+        case .topHalf:
+            return .top
+        case .bottomHalf:
+            return .bottom
+        case .topLeft:
+            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .left : .top
+        case .topRight:
+            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .right : .top
+        case .bottomLeft:
+            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .left : .bottom
+        case .bottomRight:
+            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .right : .bottom
+        default:
+            return nil
+        }
+    }
+
     /// Plans a move that other windows cooperate in, with a target revised to match.
     /// - Returns: nil when the window moves alone, including when the setting is off.
     ///   The target's side split ratio is recorded in that case.
@@ -156,12 +238,12 @@ struct CooperativeResizeCoordinator {
                                              destinationScreenIsCurrentScreen: Bool,
                                              lastRectangleAction: RectangleAction?) -> CooperativeCornerApplicationPlan? {
         guard Defaults.cooperativeCornerResize.enabled,
-              source.allowsCooperativeResize,
+              Self.allowsResize(from: source),
               let focusedWindowId,
               !focusedWindowIsFixedSize,
               destinationScreenIsCurrentScreen,
-              let cooperativeAxis = action.cooperativeResizeAxis,
-              let movedEdge = action.cooperativeResizeMovedEdge
+              let cooperativeAxis = Self.axis(for: action),
+              let movedEdge = Self.movedEdge(for: action)
         else {
             return nil
         }
@@ -169,8 +251,8 @@ struct CooperativeResizeCoordinator {
         let gapSize = max(0, CGFloat(Defaults.gapSize.value))
         let tolerance = CooperativeCornerResize.detectionTolerance(screenFrame: screenFrame, configuredGap: gapSize)
         let captureTolerance = CooperativeCornerResize.captureTolerance(screenFrame: screenFrame, axis: cooperativeAxis)
-        let isRepeatedCooperativeAction = action.isCompatibleRepeatedResizeAction(with: lastRectangleAction?.action)
-        if isRepeatedCooperativeAction, !action.isCooperativeCornerAction,
+        let isRepeatedCooperativeAction = Self.isCompatibleRepeatedResize(of: action, with: lastRectangleAction?.action)
+        if isRepeatedCooperativeAction, !Self.isCornerAction(action),
            Defaults.subsequentExecutionMode.value == .switchSides,
            CooperativeCornerResize.isSideSwitch(oldFocusedFrame: oldFocusedFrame, newFocusedFrame: newFocusedFrame,
                                                 axis: cooperativeAxis, tolerance: tolerance) {
@@ -211,7 +293,7 @@ struct CooperativeResizeCoordinator {
         let minimumSize = CGSize(width: max(1, CGFloat(Defaults.minimumWindowWidth.value)),
                                  height: max(1, CGFloat(Defaults.minimumWindowHeight.value)))
         var sideSplitRecordingFrame: CGRect?
-        var requestedFocusedFrame = (!isRepeatedCooperativeAction && action.isCooperativeCornerAction)
+        var requestedFocusedFrame = (!isRepeatedCooperativeAction && Self.isCornerAction(action))
             ? CooperativeCornerResize.focusedFrameResolvingRealizedCornerBoundary(requestedFocusedFrame: newFocusedFrame,
                                                                                   screenFrame: screenFrame,
                                                                                   candidates: candidates,
@@ -292,11 +374,11 @@ struct CooperativeResizeCoordinator {
                                                        currentAction: WindowAction,
                                                        lastRectangleAction: RectangleAction?) {
         guard Defaults.cooperativeCornerResize.enabled,
-              source.allowsCooperativeResize,
+              Self.allowsResize(from: source),
               let previousAction = lastRectangleAction?.action,
               currentAction != previousAction,
-              let cooperativeAxis = previousAction.cooperativeResizeAxis,
-              let movedEdge = previousAction.cooperativeResizeMovedEdge,
+              let cooperativeAxis = Self.axis(for: previousAction),
+              let movedEdge = Self.movedEdge(for: previousAction),
               !oldFocusedFrame.isNull,
               !newFocusedFrame.isNull,
               !screenFrame.isNull,
@@ -546,7 +628,7 @@ struct CooperativeResizeCoordinator {
                 return false
             }
 
-            return action.isCooperativeCornerAction
+            return Self.isCornerAction(action)
                 || matchesPerpendicularSpan(frame,
                                             sourceFrame: oldFocusedFrame,
                                             movedEdge: movedEdge,
@@ -600,7 +682,7 @@ struct CooperativeResizeCoordinator {
                                                              movedEdge: CooperativeCornerResize.MovedEdge,
                                                              tolerance: CGFloat,
                                                              gapSize: CGFloat) -> CGRect? {
-        guard action.isCooperativeCornerAction,
+        guard Self.isCornerAction(action),
               minimumRestrictedCleanupTargetFrame(action: action,
                                                   observedFrame: oldFocusedFrame,
                                                   screenFrame: screenFrame,
