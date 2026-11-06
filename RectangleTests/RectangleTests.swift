@@ -9858,12 +9858,15 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
     func testColdAndRepeatedPreviewKeepsMaterialInsideSurface() async throws {
         guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
         let blur = Defaults.footprintBlur.toCodable()
-        let alpha = Defaults.footprintAlpha.toCodable()
+        let alpha = Defaults.footprintAlpha.value
+        // A round trip through toCodable() would save an unset alpha as an explicit 0.
+        let storedAlpha = UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key)
         let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
         let fade = Defaults.footprintFade.toCodable()
         defer {
             Defaults.footprintBlur.load(from: blur)
-            Defaults.footprintAlpha.load(from: alpha)
+            Defaults.footprintAlpha.value = alpha
+            UserDefaults.standard.set(storedAlpha, forKey: Defaults.footprintAlpha.key)
             Defaults.footprintAnimationDurationMultiplier.load(from: duration)
             Defaults.footprintFade.load(from: fade)
         }
