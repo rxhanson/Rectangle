@@ -11,7 +11,7 @@ class WindowManager {
     private let windowHistory: WindowHistory
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
-    var cooperativeResize: CooperativeResizeCoordinator { CooperativeResizeCoordinator(windowHistory: windowHistory) }
+    var cooperativeResize: CooperativeResizeCoordinator? { CooperativeResizeCoordinator.ifEnabled(windowHistory: windowHistory) }
 
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared,
@@ -171,19 +171,21 @@ class WindowManager {
         let isFixedSize = (!frontmostWindowElement.isResizable() && willResize) || frontmostWindowElement.isSystemDialog == true
         let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
         let isMovedAcrossDisplays = sourceScreens.currentScreen != calcResult.screen
-        let moveRequest = WindowMoveRequest(calcResult: calcResult,
-                                            windowId: windowId,
-                                            isFixedSize: isFixedSize,
-                                            minimumSize: frontmostWindowElement.minimumSize,
-                                            action: action,
-                                            source: parameters.source,
-                                            currentFrame: currentNormalizedRect,
-                                            screenFrame: visibleFrameOfDestinationScreen,
-                                            destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                                            lastRectangleAction: lastRectangleAction)
-        let plannedMove = cooperativeResize.planMove(moveRequest)
-        if let plannedMove {
-            calcResult = plannedMove.calcResult
+        
+        let cooperativeMove = cooperativeResize?.beginMove(
+            WindowMoveRequest(calcResult: calcResult,
+                              windowId: windowId,
+                              isFixedSize: isFixedSize,
+                              minimumSize: frontmostWindowElement.minimumSize,
+                              action: action,
+                              source: parameters.source,
+                              currentFrame: currentNormalizedRect,
+                              screenFrame: visibleFrameOfDestinationScreen,
+                              destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
+                              lastRectangleAction: lastRectangleAction))
+        
+        if let cooperativeMove {
+            calcResult = cooperativeMove.calcResult
         }
 
         let resultParameters = ResultParameters(windowId: windowId,
@@ -195,7 +197,7 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
 
-        if pendingDestination == nil && (plannedMove?.isAlreadyAchieved() ?? currentNormalizedRect.equalTo(calcResult.rect)) {
+        if pendingDestination == nil && (cooperativeMove?.placement?.isAlreadyAchieved() ?? currentNormalizedRect.equalTo(calcResult.rect)) {
             Logger.log("Window is already at its target frame")
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
 
@@ -219,7 +221,7 @@ class WindowManager {
             // The worker already verified an animated frame. A second AX read on
             // main can stall if the target becomes busy after completion.
             var resultingRect = animatedFrame
-                ?? plannedMove?.place(result: resultParameters) { moveWindow(toRect: $0, result: $1) }
+                ?? cooperativeMove?.placement?.place(result: resultParameters) { moveWindow(toRect: $0, result: $1) }
                 ?? apply(result: resultParameters)
 
             if isMovedAcrossDisplays {
@@ -246,9 +248,8 @@ class WindowManager {
             }
 
             if !isMovedAcrossDisplays {
-                cooperativeResize.cleanUpAfterMove(moveRequest,
-                                                   resultingRect: resultingRect,
-                                                   screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo))
+                cooperativeMove?.cleanUp(resultingRect: resultingRect,
+                                         screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo))
                 if animatedFrame == nil {
                     resultingRect = frontmostWindowElement.frame
                 }

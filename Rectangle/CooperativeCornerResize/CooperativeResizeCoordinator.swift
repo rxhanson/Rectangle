@@ -14,6 +14,13 @@ struct CooperativeResizeCoordinator {
         self.windowElements = windowElements
     }
 
+    /// The coordinator to use for window moves, or nil while the setting is off.
+    static func ifEnabled(windowHistory: WindowHistory,
+                          windowElements: @escaping () -> [AccessibilityElement] = { AccessibilityElement.getAllWindowElements() }) -> CooperativeResizeCoordinator? {
+        guard Defaults.cooperativeCornerResize.enabled else { return nil }
+        return CooperativeResizeCoordinator(windowHistory: windowHistory, windowElements: windowElements)
+    }
+
     private enum Side {
         case left, right, top, bottom
     }
@@ -96,10 +103,9 @@ struct CooperativeResizeCoordinator {
         }
     }
 
-    /// Plans a move that other windows cooperate in, with a target revised to match.
-    /// - Returns: nil when the window moves alone, including when the setting is off.
-    ///   The target's side split ratio is recorded in that case.
-    func planMove(_ request: WindowMoveRequest) -> PlannedWindowMove? {
+    /// Starts a move, planning for other windows to cooperate in it where they can.
+    /// When the window moves alone, the target's side split ratio is recorded instead.
+    func beginMove(_ request: WindowMoveRequest) -> CooperativeMove {
         var calcResult = request.calcResult
         guard let plan = cooperativeCornerResizePlan(focusedWindowId: request.windowId,
                                                      focusedWindowIsFixedSize: request.isFixedSize,
@@ -115,19 +121,18 @@ struct CooperativeResizeCoordinator {
             ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
                                                           targetFrame: calcResult.initialRect,
                                                           screenFrame: request.screenFrame)
-            return nil
+            return CooperativeMove(calcResult: calcResult, placement: nil, request: request, coordinator: self)
         }
 
         calcResult.rect = plan.focusedFrame
         if let sideSplitRecordingFrame = plan.sideSplitRecordingFrame {
             calcResult.initialRect = sideSplitRecordingFrame
         }
-        return PlannedWindowMove(calcResult: calcResult, currentFrame: request.currentFrame, plan: plan, coordinator: self)
+        let placement = CooperativePlacement(currentFrame: request.currentFrame, plan: plan, coordinator: self)
+        return CooperativeMove(calcResult: calcResult, placement: placement, request: request, coordinator: self)
     }
 
-    /// Tidies the layout the focused window just left, once it has settled on the same screen.
-    /// This applies to any move, whether or not it was planned as a cooperative one.
-    func cleanUpAfterMove(_ request: WindowMoveRequest, resultingRect: CGRect, screenFrame: CGRect) {
+    fileprivate func cleanUpAfterMove(_ request: WindowMoveRequest, resultingRect: CGRect, screenFrame: CGRect) {
         applyCooperativeCornerCleanupIfNeeded(focusedWindowId: request.windowId,
                                               source: request.source,
                                               oldFocusedFrame: request.currentFrame,
@@ -237,8 +242,7 @@ struct CooperativeResizeCoordinator {
                                              screenFrame: CGRect,
                                              destinationScreenIsCurrentScreen: Bool,
                                              lastRectangleAction: RectangleAction?) -> CooperativeCornerApplicationPlan? {
-        guard Defaults.cooperativeCornerResize.enabled,
-              Self.allowsResize(from: source),
+        guard Self.allowsResize(from: source),
               let focusedWindowId,
               !focusedWindowIsFixedSize,
               destinationScreenIsCurrentScreen,
@@ -373,8 +377,7 @@ struct CooperativeResizeCoordinator {
                                                        screenFrame: CGRect,
                                                        currentAction: WindowAction,
                                                        lastRectangleAction: RectangleAction?) {
-        guard Defaults.cooperativeCornerResize.enabled,
-              Self.allowsResize(from: source),
+        guard Self.allowsResize(from: source),
               let previousAction = lastRectangleAction?.action,
               currentAction != previousAction,
               let cooperativeAxis = Self.axis(for: previousAction),
@@ -1607,10 +1610,24 @@ struct WindowMoveRequest {
     let lastRectangleAction: RectangleAction?
 }
 
-/// A move that other windows cooperate in, ready to be carried out.
-struct PlannedWindowMove {
+/// A window move in progress while cooperative resize is on.
+struct CooperativeMove {
     /// The calculation result, revised to the frame this move will aim for.
     let calcResult: WindowCalculationResult
+    /// How other windows cooperate in this move, or nil when the window moves alone.
+    let placement: CooperativePlacement?
+    fileprivate let request: WindowMoveRequest
+    fileprivate let coordinator: CooperativeResizeCoordinator
+
+    /// Tidies the layout the focused window just left, once it has settled on the same screen.
+    /// This applies to any move, whether or not other windows cooperated in it.
+    func cleanUp(resultingRect: CGRect, screenFrame: CGRect) {
+        coordinator.cleanUpAfterMove(request, resultingRect: resultingRect, screenFrame: screenFrame)
+    }
+}
+
+/// The part of a move that other windows cooperate in, ready to be carried out.
+struct CooperativePlacement {
     fileprivate let currentFrame: CGRect
     fileprivate let plan: CooperativeCornerApplicationPlan
     fileprivate let coordinator: CooperativeResizeCoordinator

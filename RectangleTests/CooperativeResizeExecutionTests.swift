@@ -283,7 +283,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screen.frame), 598.0 / 1200.0, accuracy: 0.001)
     }
 
-    func testFeatureOffLeavesNeighborAloneButStillRecordsSideRatio() {
+    func testFeatureOffLeavesNeighborAloneAndRecordsNoSideRatio() {
         Defaults.cooperativeCornerResize.enabled = false
         let focused = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
         let neighbor = window(neighborId, CGRect(x: 600, y: 0, width: 600, height: 900))
@@ -295,9 +295,9 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         assertUntouched(neighbor)
         assertHistory(focused, action: .leftHalf, count: 2)
 
-        // Pins existing behavior: a ratio recorded while off applies once the feature is on.
+        // A move made while off must not affect the split once the feature is on.
         Defaults.cooperativeCornerResize.enabled = true
-        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screen.frame), 800.0 / 1200.0, accuracy: 0.001)
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screen.frame), 0.5, accuracy: 0.001)
     }
 
     func testCrossDisplayMoveHasNoPlanAndNoCleanup() {
@@ -612,8 +612,8 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             super.init(screenDetection: screenDetection)
         }
 
-        override var cooperativeResize: CooperativeResizeCoordinator {
-            CooperativeResizeCoordinator(windowHistory: AppDelegate.windowHistory, windowElements: { [windows] in windows })
+        override var cooperativeResize: CooperativeResizeCoordinator? {
+            CooperativeResizeCoordinator.ifEnabled(windowHistory: AppDelegate.windowHistory, windowElements: { [windows] in windows })
         }
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {}
