@@ -19,12 +19,4 @@ extension RepeatedExecutionsInThirdsCalculation {
         return calculateFractionalRect(params, fraction: fraction)
     }
 
-    func calculateRepeatedSideRect(_ params: RectCalculationParameters) -> RectResult {
-        if Defaults.cooperativeCornerResize.enabled {
-            return CooperativeResizeCycle.nextSideRect(for: self, params: params)
-        }
-        
-        return calculateRepeatedRect(params)
-    }
-    
 }

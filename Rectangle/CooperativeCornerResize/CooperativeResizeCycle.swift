@@ -6,7 +6,6 @@ import Foundation
 /// from where the window actually is rather than only counting executions.
 enum CooperativeResizeCycle {
 
-    /// Advances from the cycle size matching the window's current frame.
     static func nextRect(for calculation: RepeatedExecutionsCalculation,
                          params: RectCalculationParameters) -> RectResult {
         guard CooperativeResizeCoordinator.isCompatibleRepeatedResize(of: params.action, with: params.lastAction?.action) else {
@@ -18,6 +17,24 @@ enum CooperativeResizeCycle {
             return calculation.calculateFirstRect(params)
         }
 
+        return isHalfAction(params.action)
+            ? nextHalfRect(for: calculation, sortedPositions: sortedPositions, params: params)
+            : nextRectFromCurrentFrame(for: calculation, sortedPositions: sortedPositions, params: params)
+    }
+
+    private static func isHalfAction(_ action: WindowAction) -> Bool {
+        switch action {
+        case .leftHalf, .rightHalf, .topHalf, .bottomHalf:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Advances from the cycle size matching the window's current frame.
+    private static func nextRectFromCurrentFrame(for calculation: RepeatedExecutionsCalculation,
+                                                 sortedPositions: [CycleSize],
+                                                 params: RectCalculationParameters) -> RectResult {
         let currentIndex = sortedPositions.firstIndex { cycleSize in
             currentFrame(params.window.rect,
                          matchesCycleFrame: calculation.calculateRect(for: cycleSize, params: params).rect,
@@ -37,18 +54,10 @@ enum CooperativeResizeCycle {
                                          params: params)
     }
 
-    /// Advances by execution count for half actions, skipping any size the window is already at.
-    static func nextSideRect(for calculation: RepeatedExecutionsCalculation,
-                             params: RectCalculationParameters) -> RectResult {
-        guard CooperativeResizeCoordinator.isCompatibleRepeatedResize(of: params.action, with: params.lastAction?.action) else {
-            return calculation.calculateFirstRect(params)
-        }
-
-        let sortedPositions = calculation.sortedCycleSizes()
-        guard !sortedPositions.isEmpty else {
-            return calculation.calculateFirstRect(params)
-        }
-
+    /// Advances by execution count, skipping any size the window is already at.
+    private static func nextHalfRect(for calculation: RepeatedExecutionsCalculation,
+                                     sortedPositions: [CycleSize],
+                                     params: RectCalculationParameters) -> RectResult {
         guard let count = params.lastAction?.count else {
             return calculation.calculateFirstRect(params)
         }
