@@ -6075,6 +6075,28 @@ final class CornerCycleExpansionModeTests: XCTestCase {
         XCTAssertEqual(CornerCycleExpansionMode(rawValue: 0), .horizontal)
         XCTAssertEqual(CornerCycleExpansionMode(rawValue: 1), .vertical)
     }
+
+    func testCooperativeCornerHelpersUseResolvedAxis() {
+        let savedMode = Defaults.cornerCycleExpansionAxis.value
+        defer { Defaults.cornerCycleExpansionAxis.value = savedMode }
+        Defaults.cornerCycleExpansionAxis.value = .displayOrientation
+
+        let landscapeFrame = CGRect(x: 0, y: 0, width: 1200, height: 900)
+        let portraitFrame = CGRect(x: 0, y: 0, width: 900, height: 1200)
+        XCTAssertEqual(CooperativeResizeCoordinator.axis(for: .topLeft, screenFrame: landscapeFrame), .horizontal)
+        XCTAssertEqual(CooperativeResizeCoordinator.axis(for: .topLeft, screenFrame: portraitFrame), .vertical)
+
+        if case .right? = CooperativeResizeCoordinator.movedEdge(for: .topLeft, axis: .horizontal) {
+            // Expected: cycling width moves the right edge of a left corner.
+        } else {
+            XCTFail("Horizontal top-left cycling should move the right edge")
+        }
+        if case .bottom? = CooperativeResizeCoordinator.movedEdge(for: .topLeft, axis: .vertical) {
+            // Expected: cycling height moves the bottom edge of a top corner.
+        } else {
+            XCTFail("Vertical top-left cycling should move the bottom edge")
+        }
+    }
 }
 
 class OverlapOffsetGuardsTests: XCTestCase {

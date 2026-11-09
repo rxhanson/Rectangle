@@ -124,7 +124,7 @@ enum CooperativeResizeCycle {
                                          action: WindowAction,
                                          axis: CornerCycleExpansionAxis,
                                          tolerance: CGFloat) -> Bool {
-        guard let movedEdge = CooperativeResizeCoordinator.movedEdge(for: action) else {
+        guard let movedEdge = CooperativeResizeCoordinator.movedEdge(for: action, axis: axis) else {
             return false
         }
 
