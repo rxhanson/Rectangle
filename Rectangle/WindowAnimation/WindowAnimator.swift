@@ -6,8 +6,10 @@ import QuartzCore
 final class WindowAnimator {
     static let shared = WindowAnimator()
 
+    /// Animation stays off for every action while cooperative resize is on, including ones that can't cooperate.
     static var enabled: Bool {
         Defaults.experimentalWindowAnimations.enabled
+            && !Defaults.cooperativeCornerResize.enabled
             && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
             && !NSWorkspace.shared.isVoiceOverEnabled
             && !NSWorkspace.shared.isSwitchControlEnabled

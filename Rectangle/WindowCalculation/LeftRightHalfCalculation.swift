@@ -48,13 +48,9 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         return RectResult(HalfSplitFrameCalculation.horizontalRect(in: params.visibleFrameOfScreen, side: side, fraction: fraction))
     }
 
-    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
-        calculateRepeatedSideRect(params)
-    }
-
     func calculateResize(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         let screen = params.usableScreens.currentScreen
-        let rectResult: RectResult = calculateRepeatedSideRect(params.asRectParams())
+        let rectResult: RectResult = calculateRepeatedRect(params.asRectParams())
         return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
     }
     

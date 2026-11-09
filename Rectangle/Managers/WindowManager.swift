@@ -8,14 +8,18 @@ class WindowManager {
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
     private let windowAnimator: WindowAnimator
+    private let windowHistory: WindowHistory
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
-    
+    var cooperativeResize: CooperativeResizeCoordinator? { CooperativeResizeCoordinator.ifEnabled(windowHistory: windowHistory) }
+
     init(screenDetection: ScreenDetection = ScreenDetection(),
-         windowAnimator: WindowAnimator = WindowAnimator.shared) {
-        
+         windowAnimator: WindowAnimator = WindowAnimator.shared,
+         windowHistory: WindowHistory = AppDelegate.windowHistory) {
+
         self.screenDetection = screenDetection
         self.windowAnimator = windowAnimator
+        self.windowHistory = windowHistory
         standardWindowMoverChain = [
             StandardWindowMover(),
             EdgeAlignmentWindowMover(),
@@ -37,21 +41,7 @@ class WindowManager {
                       action: WindowAction,
                       subAction: SubWindowAction?,
                       incrementCount: Bool = true) {
-        guard let windowId else { return }
-        let newCount: Int
-        if let lastRectangleAction = AppDelegate.windowHistory.lastRectangleActions[windowId],
-           lastRectangleAction.action == action {
-            newCount = incrementCount ? lastRectangleAction.count + 1 : lastRectangleAction.count
-        } else {
-            newCount = 1
-        }
-        
-        AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(
-            action: action,
-            subAction: subAction,
-            rect: resultingRect,
-            count: newCount
-        )
+        windowHistory.recordAction(windowId: windowId, resultingRect: resultingRect, action: action, subAction: subAction, incrementCount: incrementCount)
     }
     
     func execute(_ parameters: ExecutionParameters) {
@@ -77,7 +67,7 @@ class WindowManager {
                 NSSound.beep()
                 return
             }
-            if let restoreRect = AppDelegate.windowHistory.restoreRects[windowId] {
+            if let restoreRect = windowHistory.restoreRects[windowId] {
                 executionID &+= 1
                 let currentExecutionID = executionID
                 completionDeferred = true
@@ -97,7 +87,7 @@ class WindowManager {
                     }
                 }
             }
-            AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             return
         }
         
@@ -124,21 +114,21 @@ class WindowManager {
         let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
         let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
         
-        var lastRectangleAction = windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
+        var lastRectangleAction = windowId.flatMap { windowHistory.lastRectangleActions[$0] }
         
         let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
         
         if windowMovedExternally {
             lastRectangleAction = nil
             if let windowId {
-                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             }
         }
         
         if parameters.updateRestoreRect, let windowId {
-            if AppDelegate.windowHistory.restoreRects[windowId] == nil
+            if windowHistory.restoreRects[windowId] == nil
                 || windowMovedExternally {
-                AppDelegate.windowHistory.restoreRects[windowId] = currentWindowRect
+                windowHistory.restoreRects[windowId] = currentWindowRect
             }
         }
         
@@ -181,21 +171,21 @@ class WindowManager {
         let isFixedSize = (!frontmostWindowElement.isResizable() && willResize) || frontmostWindowElement.isSystemDialog == true
         let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
         let isMovedAcrossDisplays = sourceScreens.currentScreen != calcResult.screen
-        let cooperativeCornerPlan = cooperativeCornerResizePlan(focusedWindowId: windowId,
-                                                                focusedWindowIsFixedSize: isFixedSize,
-                                                                focusedWindowMinimumSize: frontmostWindowElement.minimumSize,
-                                                                action: action,
-                                                                source: parameters.source,
-                                                                oldFocusedFrame: currentNormalizedRect,
-                                                                newFocusedFrame: calcResult.rect,
-                                                                screenFrame: visibleFrameOfDestinationScreen,
-                                                                destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                                                                lastRectangleAction: lastRectangleAction)
-        if let cooperativeCornerPlan {
-            calcResult.rect = cooperativeCornerPlan.focusedFrame
-            if let sideSplitRecordingFrame = cooperativeCornerPlan.sideSplitRecordingFrame {
-                calcResult.initialRect = sideSplitRecordingFrame
-            }
+        
+        let cooperativeMove = cooperativeResize?.beginMove(
+            WindowMoveRequest(calcResult: calcResult,
+                              windowId: windowId,
+                              isFixedSize: isFixedSize,
+                              minimumSize: frontmostWindowElement.minimumSize,
+                              action: action,
+                              source: parameters.source,
+                              currentFrame: currentNormalizedRect,
+                              screenFrame: visibleFrameOfDestinationScreen,
+                              destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
+                              lastRectangleAction: lastRectangleAction))
+        
+        if let cooperativeMove {
+            calcResult = cooperativeMove.calcResult
         }
 
         let resultParameters = ResultParameters(windowId: windowId,
@@ -207,25 +197,8 @@ class WindowManager {
                                                 source: parameters.source,
                                                 isFixedSize: isFixedSize)
 
-        if cooperativeCornerPlan == nil {
-            ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
-                                                          targetFrame: calcResult.initialRect,
-                                                          screenFrame: visibleFrameOfDestinationScreen)
-        }
-
-        if let cooperativeCornerPlan {
-            if pendingDestination == nil && !cooperativeCornerPlan.needsApplication(focusedCurrentFrame: currentNormalizedRect) {
-                ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
-                                                                            achievedFrame: currentNormalizedRect,
-                                                                            screenFrame: cooperativeCornerPlan.screenFrame,
-                                                                            gapSize: cooperativeCornerPlan.gapSize)
-                Logger.log("Cooperative resize no-op: solved frames already match current frames")
-                recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-                return
-            }
-        } else if pendingDestination == nil && currentNormalizedRect.equalTo(calcResult.rect) {
-            Logger.log("Current frame is equal to new frame")
-
+        if pendingDestination == nil && (cooperativeMove?.placement?.isAlreadyAchieved() ?? currentNormalizedRect.equalTo(calcResult.rect)) {
+            Logger.log("Window is already at its target frame")
             recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
 
             return
@@ -240,31 +213,16 @@ class WindowManager {
 
         let animated = WindowAnimator.enabled && !isFixedSize
             && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
-            && !Defaults.cooperativeCornerResize.enabled
         
         let completeMove = { [self] (animatedFrame: CGRect?) in
             var waitsForRetry = false
             defer { if !waitsForRetry { parameters.completion?() } }
             guard executionID == currentExecutionID else { return }
-            var resultingRect: CGRect
-            if let cooperativeCornerPlan {
-                resultingRect = applyCooperativeCornerResize(result: resultParameters,
-                                                             plan: cooperativeCornerPlan)
-            } else if let animatedFrame {
-                // The worker already verified this frame. A second AX read on
-                // main can stall if the target becomes busy after completion.
-                resultingRect = animatedFrame
-            } else {
-                resultingRect = apply(result: resultParameters)
-            }
-
-            if let cooperativeCornerPlan {
-                // AX can enforce a minimum size that was not reported before the settling pass.
-                ActiveSideSplitRatios.shared.recordAchievedCooperativeAction(cooperativeCornerPlan.action,
-                                                                            achievedFrame: resultingRect.screenFlipped,
-                                                                            screenFrame: cooperativeCornerPlan.screenFrame,
-                                                                            gapSize: cooperativeCornerPlan.gapSize)
-            }
+            // The worker already verified an animated frame. A second AX read on
+            // main can stall if the target becomes busy after completion.
+            var resultingRect = animatedFrame
+                ?? cooperativeMove?.placement?.place(result: resultParameters) { moveWindow(toRect: $0, result: $1) }
+                ?? apply(result: resultParameters)
 
             if isMovedAcrossDisplays {
                 if calcResult.rect.size != resultingRect.size {
@@ -290,14 +248,9 @@ class WindowManager {
             }
 
             if !isMovedAcrossDisplays {
-                applyCooperativeCornerCleanupIfNeeded(focusedWindowId: windowId,
-                                                      source: parameters.source,
-                                                      oldFocusedFrame: currentNormalizedRect,
-                                                      newFocusedFrame: resultingRect.screenFlipped,
-                                                      screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo),
-                                                      currentAction: action,
-                                                      lastRectangleAction: lastRectangleAction)
-                if animatedFrame == nil || Defaults.cooperativeCornerResize.enabled {
+                cooperativeMove?.cleanUp(resultingRect: resultingRect,
+                                         screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo))
+                if animatedFrame == nil {
                     resultingRect = frontmostWindowElement.frame
                 }
             }
@@ -380,7 +333,7 @@ class WindowManager {
                                       "requested": [requestedRect.minX, requestedRect.minY, requestedRect.width, requestedRect.height]]
         if let windowId = result.windowId {
             evidence["windowID"] = windowId
-            if let restore = AppDelegate.windowHistory.restoreRects[windowId] {
+            if let restore = windowHistory.restoreRects[windowId] {
                 evidence["restore"] = [restore.minX, restore.minY, restore.width, restore.height]
             }
         }
