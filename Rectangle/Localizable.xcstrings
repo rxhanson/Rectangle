@@ -9707,6 +9707,16 @@
         }
       }
     },
+    "based on display orientation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "based on display orientation"
+          }
+        }
+      }
+    },
     "cycle positions on quadrants, cycle sizes on side" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -48,6 +48,23 @@ enum CycleSize: Int, CaseIterable {
     }
 }
 
+enum CornerCycleExpansionMode: Int, CaseIterable {
+    case horizontal = 0
+    case vertical = 1
+    case displayOrientation = 2
+
+    func axis(for screenFrame: CGRect) -> CornerCycleExpansionAxis {
+        switch self {
+        case .horizontal:
+            return .horizontal
+        case .vertical:
+            return .vertical
+        case .displayOrientation:
+            return screenFrame.isLandscape ? .horizontal : .vertical
+        }
+    }
+}
+
 enum CornerCycleExpansionAxis: Int, CaseIterable {
     case horizontal = 0
     case vertical = 1

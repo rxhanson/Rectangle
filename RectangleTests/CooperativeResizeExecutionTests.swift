@@ -27,7 +27,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         let settings: [(Default, CodableDefault)] = [
             (Defaults.subsequentExecutionMode, CodableDefault(int: SubsequentExecutionMode.resize.rawValue)),
             (Defaults.cooperativeCornerResize, CodableDefault(bool: true)),
-            (Defaults.cornerCycleExpansionAxis, CodableDefault(int: CornerCycleExpansionAxis.vertical.rawValue)),
+            (Defaults.cornerCycleExpansionAxis, CodableDefault(int: CornerCycleExpansionMode.vertical.rawValue)),
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),

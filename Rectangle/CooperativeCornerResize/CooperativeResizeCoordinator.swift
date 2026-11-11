@@ -25,10 +25,10 @@ struct CooperativeResizeCoordinator {
         case left, right, top, bottom
     }
 
-    static func axis(for action: WindowAction) -> CornerCycleExpansionAxis? {
+    static func axis(for action: WindowAction, screenFrame: CGRect) -> CornerCycleExpansionAxis? {
         switch action {
         case .topLeft, .topRight, .bottomLeft, .bottomRight:
-            return Defaults.cornerCycleExpansionAxis.value
+            return Defaults.cornerCycleExpansionAxis.value.axis(for: screenFrame)
         case .leftHalf, .rightHalf:
             return .horizontal
         case .topHalf, .bottomHalf:
@@ -38,8 +38,9 @@ struct CooperativeResizeCoordinator {
         }
     }
 
-    static func movedEdge(for action: WindowAction) -> CooperativeCornerResize.MovedEdge? {
-        switch side(for: action) {
+    static func movedEdge(for action: WindowAction,
+                          axis: CornerCycleExpansionAxis) -> CooperativeCornerResize.MovedEdge? {
+        switch side(for: action, cornerAxis: axis) {
         case .left:
             return .right
         case .right:
@@ -71,7 +72,7 @@ struct CooperativeResizeCoordinator {
         }
     }
 
-    private static func side(for action: WindowAction) -> Side? {
+    private static func side(for action: WindowAction, cornerAxis: CornerCycleExpansionAxis) -> Side? {
         switch action {
         case .leftHalf:
             return .left
@@ -82,13 +83,13 @@ struct CooperativeResizeCoordinator {
         case .bottomHalf:
             return .bottom
         case .topLeft:
-            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .left : .top
+            return cornerAxis == .horizontal ? .left : .top
         case .topRight:
-            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .right : .top
+            return cornerAxis == .horizontal ? .right : .top
         case .bottomLeft:
-            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .left : .bottom
+            return cornerAxis == .horizontal ? .left : .bottom
         case .bottomRight:
-            return Defaults.cornerCycleExpansionAxis.value == .horizontal ? .right : .bottom
+            return cornerAxis == .horizontal ? .right : .bottom
         default:
             return nil
         }
@@ -237,8 +238,8 @@ struct CooperativeResizeCoordinator {
               let focusedWindowId,
               !focusedWindowIsFixedSize,
               destinationScreenIsCurrentScreen,
-              let cooperativeAxis = Self.axis(for: action),
-              let movedEdge = Self.movedEdge(for: action)
+              let cooperativeAxis = Self.axis(for: action, screenFrame: screenFrame),
+              let movedEdge = Self.movedEdge(for: action, axis: cooperativeAxis)
         else {
             return nil
         }
@@ -371,8 +372,8 @@ struct CooperativeResizeCoordinator {
         guard Self.allowsResize(from: source),
               let previousAction = lastRectangleAction?.action,
               currentAction != previousAction,
-              let cooperativeAxis = Self.axis(for: previousAction),
-              let movedEdge = Self.movedEdge(for: previousAction),
+              let cooperativeAxis = Self.axis(for: previousAction, screenFrame: screenFrame),
+              let movedEdge = Self.movedEdge(for: previousAction, axis: cooperativeAxis),
               !oldFocusedFrame.isNull,
               !newFocusedFrame.isNull,
               !screenFrame.isNull,

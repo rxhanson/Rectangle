@@ -15,9 +15,9 @@ final class BehaviorSettingsViewModel {
     }
     
     var selectedCycleSizes: Set<CycleSize> = []
-    var cornerCycleExpansionAxis: CornerCycleExpansionAxis {
+    var cornerCycleExpansionMode: CornerCycleExpansionMode {
         didSet {
-            Defaults.cornerCycleExpansionAxis.value = cornerCycleExpansionAxis
+            Defaults.cornerCycleExpansionAxis.value = cornerCycleExpansionMode
         }
     }
     
@@ -188,7 +188,7 @@ final class BehaviorSettingsViewModel {
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
-        self.cornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
+        self.cornerCycleExpansionMode = Defaults.cornerCycleExpansionAxis.value
         self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
         
         self.gapSize = Double(Defaults.gapSize.value)
@@ -250,7 +250,7 @@ final class BehaviorSettingsViewModel {
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
-        self.cornerCycleExpansionAxis = Defaults.cornerCycleExpansionAxis.value
+        self.cornerCycleExpansionMode = Defaults.cornerCycleExpansionAxis.value
         self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
         
         self.gapSize = Double(Defaults.gapSize.value)
