@@ -9636,6 +9636,53 @@ class TitleBarScreenDetectionTests: XCTestCase {
     }
 }
 
+final class CenterThirdsRectTests: XCTestCase {
+    // A landscape frame whose width and height are both indivisible by 3, so the old
+    // `/ 3.0` without a floor produced fractional window geometry.
+    private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
+
+    private func rect(_ action: WindowAction) -> CGRect {
+        WindowCalculationFactory.calculationsByAction[action]!.calculateRect(
+            RectCalculationParameters(window: Window(id: 1, rect: screen),
+                                      visibleFrameOfScreen: screen,
+                                      action: action,
+                                      lastAction: nil)
+        ).rect
+    }
+
+    private func assertWholePixels(_ rect: CGRect, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(rect.minX, rect.minX.rounded(), "minX \(rect.minX) is fractional", file: file, line: line)
+        XCTAssertEqual(rect.minY, rect.minY.rounded(), "minY \(rect.minY) is fractional", file: file, line: line)
+        XCTAssertEqual(rect.width, rect.width.rounded(), "width \(rect.width) is fractional", file: file, line: line)
+        XCTAssertEqual(rect.height, rect.height.rounded(), "height \(rect.height) is fractional", file: file, line: line)
+    }
+
+    func testCenterThirdHasWholePixelGeometry() {
+        assertWholePixels(rect(.centerThird))
+    }
+
+    func testCenterThirdTilesContiguouslyWithFirstAndLastThirds() {
+        let first = rect(.firstThird)
+        let center = rect(.centerThird)
+        let last = rect(.lastThird)
+        // The three horizontal thirds meet with no gap and no overlap.
+        XCTAssertEqual(center.minX, first.maxX, accuracy: 0.0001)
+        XCTAssertEqual(center.maxX, last.minX, accuracy: 0.0001)
+    }
+
+    func testCenterTwoThirdsHasWholePixelsAndIsCentered() {
+        let r = rect(.centerTwoThirds)
+        assertWholePixels(r)
+        XCTAssertEqual(r.minX - screen.minX, screen.maxX - r.maxX, accuracy: 0.0001)
+    }
+
+    func testMiddleVerticalThirdHasWholePixelsAndIsCentered() {
+        let r = rect(.middleVerticalThird)
+        assertWholePixels(r)
+        XCTAssertEqual(r.minY - screen.minY, screen.maxY - r.maxY, accuracy: 0.0001)
+    }
+}
+
 final class WindowAnimationSettlementRoundingTests: XCTestCase {
     private let screen = CGRect(x: 0, y: 0, width: 1000, height: 800)
 
