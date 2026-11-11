@@ -24,6 +24,31 @@ Rectangle 支持 macOS 14 及更高版本。
 brew install --cask rectangle
 ```
 
+### 中国大陆用户：下载与更新
+
+如果访问 GitHub 不稳定，可以完全通过官网获取 Rectangle：
+
+- **下载**：从 <https://rectangleapp.com/zh-CN/> 下载最新的 dmg。每个版本都会同时发布到 GitHub 和 rectangleapp.com；自 2.0.4 起，官网的下载直接由 rectangleapp.com 提供，无需经过 GitHub。
+- **更新**：应用内更新（Rectangle 菜单中的「检查更新…」）同样从 rectangleapp.com 获取。
+- **Homebrew**：`brew install --cask rectangle` 目前仍从 GitHub 下载安装包。常见的 Homebrew 镜像配置加速的是 Homebrew 本身、软件索引和预编译包（bottle），不会改变这一点；下载失败时，请改从官网下载。
+- **旧版 macOS**：适用于 macOS 13 及更早版本的 v1.100 和 v0.73 目前只在 GitHub 上提供。
+
+Rectangle 的官方版本已内置简体中文，且完全免费。请只从官网、GitHub 或 Homebrew 获取，无需下载第三方网站提供的「汉化版」。
+
+安装后，可以用以下命令确认应用由开发者签名并已通过 Apple 公证：
+
+```bash
+spctl -a -vv /Applications/Rectangle.app
+```
+
+输出应为：
+
+```
+/Applications/Rectangle.app: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Ryan Hanson (XSYZ3E4B7D)
+```
+
 ## 使用方法
 
 [快捷键](https://support.apple.com/guide/mac-help/what-are-those-symbols-shown-in-menus-cpmh0011/mac)不言自明；至于吸附区域，如果你从未在 Windows 或其他窗口管理应用中使用过，则可能需要一些说明。
