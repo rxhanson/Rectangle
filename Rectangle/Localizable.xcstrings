@@ -1058,7 +1058,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⒉在 Rectangle 菜单中，选择\n“使用［应用程序］作为待办应用”"
+            "value" : "⒉在 Rectangle 菜单中，选择\n“使用［应用］作为待办应用”"
           }
         },
         "zh-Hant" : {
@@ -2766,7 +2766,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "外部来源请求 Rectangle 对包标识符为“%2$@”的 App 执行“%1$@”操作。是否允许？"
+            "value" : "外部来源请求 Rectangle 对包标识符为“%2$@”的应用执行“%1$@”操作。是否允许？"
           }
         },
         "zh-Hant" : {
@@ -2956,7 +2956,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "吸附动画"
+            "value" : "预览框动画"
           }
         },
         "zh-Hant" : {
@@ -3327,7 +3327,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "授权Rectangle"
+            "value" : "授权 Rectangle"
           }
         },
         "zh-Hant" : {
@@ -4797,7 +4797,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自角落则底部⅛；⅓"
+            "value" : "从角落拖入则底部⅛；否则⅓"
           }
         },
         "zh-Hant" : {
@@ -6377,7 +6377,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自角落则底部⅙；⅓"
+            "value" : "从角落拖入则底部⅙；否则⅓"
           }
         },
         "zh-Hant" : {
@@ -10339,7 +10339,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "循环显示器"
+            "value" : "在显示器间循环"
           }
         },
         "zh-Hant" : {
@@ -11187,7 +11187,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 macOS 里禁用"
+            "value" : "在 macOS 中禁用"
           }
         },
         "zh-Hant" : {
@@ -11276,7 +11276,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Rectangle 里禁用"
+            "value" : "在 Rectangle 中禁用"
           }
         },
         "zh-Hant" : {
@@ -11949,7 +11949,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连按窗口标题以缩放/恢复"
+            "value" : "连按窗口标题栏以最大化／恢复"
           }
         },
         "zh-Hant" : {
@@ -12044,7 +12044,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Rectangle 和 macOS 中都启用了拖移窗口至屏幕边缘实现平铺"
+            "value" : "在 Rectangle 和 macOS 中都启用了拖移窗口至屏幕边缘实现平铺。"
           }
         },
         "zh-Hant" : {
@@ -16830,7 +16830,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前往 系统设置 → 安全性与隐私 → 辅助功能"
+            "value" : "前往“系统设置”→“隐私与安全性”→“辅助功能”"
           }
         },
         "zh-Hant" : {
@@ -16900,7 +16900,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "前往 系统设置 → 隐私与安全性 → 设备控制和数据访问"
+            "value" : "前往“系统设置”→“隐私与安全”→“设备控制和数据访问”"
           }
         },
         "zh-Hant" : {
@@ -18629,7 +18629,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "若该区域过小，最近使用的应用程序将被隐藏"
+            "value" : "若该区域过小，最近使用的应用将被隐藏"
           }
         },
         "zh-Hant" : {
@@ -18826,7 +18826,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果复选框已禁用，点按锁型图标，然后输入您的密码"
+            "value" : "如果复选框已禁用，点按锁形图标，然后输入您的密码"
           }
         },
         "zh-Hant" : {
@@ -19005,7 +19005,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果你重复移动或进行一半的移动操作，窗口将移动到下一个显示器，而不是 1 / 2、2 / 3 或 1 / 3 大小。"
+            "value" : "重复执行移动或半屏操作时，窗口会移到下一个显示器，而不是循环½、⅔、⅓大小。"
           }
         },
         "zh-Hant" : {
@@ -19502,7 +19502,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Rectangle 菜单中，选择\n“使用［应用程序］作为待办应用”"
+            "value" : "在 Rectangle 菜单中，选择\n“使用［应用］作为待办应用”"
           }
         },
         "zh-Hant" : {
@@ -19889,7 +19889,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使所选应用程序在主屏幕一侧始终保持可见"
+            "value" : "使所选应用在主屏幕一侧始终保持可见"
           }
         },
         "zh-Hant" : {
@@ -25477,7 +25477,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中间"
+            "value" : "居中"
           }
         },
         "zh-Hant" : {
@@ -29133,7 +29133,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近使用的应用程序区域"
+            "value" : "最近使用的应用区域"
           }
         },
         "zh-Hant" : {
@@ -30110,7 +30110,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rectangle 偏好设置"
+            "value" : "Rectangle 设置"
           }
         },
         "zh-Hant" : {
@@ -33203,7 +33203,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "偏好设置…"
+            "value" : "设置…"
           }
         },
         "zh-Hant" : {
@@ -33778,7 +33778,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示所有"
+            "value" : "全部显示"
           }
         },
         "zh-Hant" : {
@@ -36061,7 +36061,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "“台前调度”最近使用的应用程序区域"
+            "value" : "“台前调度”最近使用的应用区域"
           }
         },
         "zh-Hant" : {
@@ -37549,7 +37549,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要调整 macOS 窗口平铺，请前往 系统设置 → 桌面与程序坞 → 窗口"
+            "value" : "要调整 macOS 窗口平铺，请前往“系统设置”→“桌面与程序坞”→“窗口”"
           }
         },
         "zh-Hant" : {
@@ -37739,7 +37739,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "你需要禁用 macOS 中对应的设置以使用 Rectangle 管理连按窗口标题功能。"
+            "value" : "要让 Rectangle 管理连按标题栏的功能，需要禁用 macOS 中的相应设置。"
           }
         },
         "zh-Hant" : {
@@ -37834,7 +37834,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要重新启用它，请转到系统设置→ 桌面与程序坞 → 窗口"
+            "value" : "要重新启用，请前往“系统设置”→“桌面与程序坞”→“窗口”"
           }
         },
         "zh-Hant" : {
@@ -38024,7 +38024,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "待办应用程序宽度"
+            "value" : "待办应用宽度"
           }
         },
         "zh-Hant" : {
@@ -38526,7 +38526,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "启用/禁用待办模式"
+            "value" : "启用／禁用待办模式"
           }
         },
         "zh-Hant" : {
@@ -39606,7 +39606,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自角落则顶部⅛；最大化"
+            "value" : "从角落拖入则顶部⅛；否则最大化"
           }
         },
         "zh-Hant" : {
@@ -41257,7 +41257,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自角落则顶部⅙；最大化"
+            "value" : "从角落拖入则顶部⅙；否则最大化"
           }
         },
         "zh-Hant" : {
@@ -44441,7 +44441,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当菜单栏图标被隐藏时，从访达重新开启Rectangle以打开。"
+            "value" : "隐藏菜单栏图标后，从访达重新打开 Rectangle 即可打开设置"
           }
         },
         "zh-Hant" : {
@@ -44505,7 +44505,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "使用多个显示器时，将它们视为一个显示器。需要关闭 系统设置 > 桌面与程序坞 > “显示器具有单独的空间”。"
+            "value" : "使用多个显示器时，将它们视为一个显示器。需要关闭“系统设置”>“桌面与程序坞”>“显示器具有单独的空间”。"
           }
         },
         "zh-Hant" : {
