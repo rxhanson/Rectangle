@@ -208,7 +208,25 @@
             "value" : "%"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        },
         "fa" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%"
+          }
+        },
+        "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%"
@@ -248,6 +266,18 @@
             "value" : "%lld px"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -255,6 +285,12 @@
           }
         },
         "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
+        },
+        "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld px"
@@ -1626,6 +1662,24 @@
     },
     "½" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "½"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "½"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "½"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1636,6 +1690,24 @@
     },
     "⅓" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅓"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅓"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅓"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1646,6 +1718,24 @@
     },
     "¼" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¼"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¼"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¼"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1656,6 +1746,24 @@
     },
     "⅔" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅔"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅔"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⅔"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1666,6 +1774,24 @@
     },
     "¾" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¾"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¾"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¾"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2290,6 +2416,12 @@
             "value" : "कई डिस्प्ले की सेटिंग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impostazioni tra più schermi"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2349,6 +2481,12 @@
             "value" : "Rectangle द्वारा किसी विंडो को मैक्सिमाइज़ या लगभग मैक्सिमाइज़ करने के बाद, वही क्रिया फिर से करने पर विंडो अपने पिछले आकार और स्थिति में लौट आती है।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dopo che Rectangle ha massimizzato o quasi massimizzato una finestra, ripetere la stessa azione riporta la finestra alla dimensione e alla posizione precedenti."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2403,6 +2541,12 @@
             "value" : "अनुमति दें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consenti"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2453,6 +2597,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle URL क्रिया की अनुमति दें?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consentire l'azione URL di Rectangle?"
           }
         },
         "pt-BR" : {
@@ -2703,6 +2853,18 @@
             "value" : "जिन विंडो का आकार \"बड़ा करें\" या \"छोटा करें\" से बदला गया है, उन्हें भी रीस्टोर करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripristina anche le finestre ridimensionate con Ingrandisci o Rimpicciolisci"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar também janelas redimensionadas com Aumentar ou Diminuir"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2749,6 +2911,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "एक बाहरी स्रोत ने Rectangle से ऐप बंडल आईडी \"%2$@\" पर \"%1$@\" करने को कहा है। अनुमति दें?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una fonte esterna ha chiesto a Rectangle di eseguire \"%1$@\" sull'app con bundle id \"%2$@\". Consentire?"
           }
         },
         "pt-BR" : {
@@ -2999,6 +3167,12 @@
             "value" : "विंडो ऐनिमेट करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anima le finestre"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3058,6 +3232,12 @@
             "value" : "ऐनिमेशन शैली"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stile animazione"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3114,6 +3294,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऐप सेटिंग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impostazioni app"
           }
         },
         "pt-BR" : {
@@ -3573,6 +3759,12 @@
             "value" : "व्यवहार"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comportamento"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3629,6 +3821,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "धुंधलेपन का प्रकटन"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspetto della sfocatura"
           }
         },
         "ja" : {
@@ -3695,6 +3893,12 @@
             "value" : "पूर्वावलोकन धुंधला करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sfoca l'anteprima"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3758,6 +3962,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "पूर्वावलोकन धुंधला करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sfoca l'anteprima"
           }
         },
         "ja" : {
@@ -4020,6 +4230,12 @@
             "value" : "निचला मध्य-बायाँ 1/8"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4077,6 +4293,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला मध्य-बायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore centro-sinistro"
           }
         },
         "ko" : {
@@ -4149,6 +4371,12 @@
             "value" : "निचला मध्य-बायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo inferiore centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4205,6 +4433,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला मध्य-बायाँ बारहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo inferiore centro-sinistro"
           }
         },
         "pt-BR" : {
@@ -4265,6 +4499,12 @@
             "value" : "निचला मध्य नौवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono inferiore centrale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4321,6 +4561,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला मध्य-दायाँ 1/8"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore centro-destro"
           }
         },
         "pt-BR" : {
@@ -4380,6 +4626,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला मध्य-दायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore centro-destro"
           }
         },
         "ko" : {
@@ -4452,6 +4704,12 @@
             "value" : "निचला मध्य-दायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo inferiore centro-destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4508,6 +4766,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला मध्य-दायाँ बारहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo inferiore centro-destro"
           }
         },
         "pt-BR" : {
@@ -4768,6 +5032,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "कोनों से निचले आठवें भाग; तिहाई भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavi inferiori dagli angoli; terzi"
           }
         },
         "ko" : {
@@ -5036,6 +5306,12 @@
             "value" : "निचला बायाँ 1/8"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5093,6 +5369,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला बायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore sinistro"
           }
         },
         "ko" : {
@@ -5165,6 +5447,12 @@
             "value" : "निचला बायाँ नौवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono inferiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5221,6 +5509,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला बायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo inferiore sinistro"
           }
         },
         "pt-BR" : {
@@ -5477,6 +5771,12 @@
             "value" : "निचला बायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo inferiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5731,6 +6031,12 @@
             "value" : "निचला दायाँ 1/8"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5788,6 +6094,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला दायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo inferiore destro"
           }
         },
         "ko" : {
@@ -5860,6 +6172,12 @@
             "value" : "निचला दायाँ नौवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono inferiore destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5916,6 +6234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला दायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo inferiore destro"
           }
         },
         "pt-BR" : {
@@ -6172,6 +6496,12 @@
             "value" : "निचला दायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo inferiore destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6426,6 +6756,12 @@
             "value" : "निचला तिहाई"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terzo inferiore"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6496,6 +6832,12 @@
             "value" : "निचला दो-तिहाई"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due terzi inferiori"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6560,6 +6902,12 @@
             "value" : "सक्रिय विंडो वाले एरिया में स्नैप की गई विंडो को एक-एक करके आगे लाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porta in primo piano, una alla volta, le finestre agganciate alla stessa area della finestra attiva"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6618,6 +6966,12 @@
             "value" : "अपने चुने हुए टूडू ऐप्लिकेशन को सबसे आगे लाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleziona la finestra dell'applicazione scelta"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6663,6 +7017,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "बटन %lld"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsante %lld"
           }
         },
         "pt-BR" : {
@@ -7679,6 +8039,12 @@
             "value" : "दूसरे डिस्प्ले पर ले जाते समय विंडो को बीच में रखें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centra le finestre quando passano da uno schermo all'altro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8521,6 +8887,12 @@
             "value" : "आधी स्क्रीन और कोने की क्रियाओं के बीच का विभाजन सेट करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configura il confine tra azioni laterali e azioni d'angolo"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8584,6 +8956,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS टाइलिंग से टकराव"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflitto con l'affiancamento di macOS"
           }
         },
         "ja" : {
@@ -9062,6 +9440,12 @@
             "value" : "कॉपीराइट © 2019-2026 Ryan Hanson। सर्वाधिकार सुरक्षित।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson. Tutti i diritti riservati."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9484,6 +9868,12 @@
             "value" : "अभी उपयोग में: "
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In uso: "
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9740,6 +10130,12 @@
             "value" : "कोनों पर स्थितियाँ और आधी स्क्रीन पर आकार बारी-बारी से बदलें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scorri le posizioni nei quadranti, scorri le dimensioni ai lati"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -9855,8 +10251,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "scorri tra ½, ⅔, e ⅓ con le azioni di mezzi"
+            "state" : "translated",
+            "value" : "Scorri le dimensioni con le azioni laterali"
           }
         },
         "ja" : {
@@ -9977,6 +10373,12 @@
             "value" : "स्टैक की गई विंडो बारी-बारी से बदलें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scorri le finestre impilate"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10027,6 +10429,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "स्टैक की गई विंडो बारी-बारी से बदलें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scorri finestre impilate"
           }
         },
         "pt-BR" : {
@@ -10081,6 +10489,12 @@
             "value" : "स्टैक की गई विंडो उलटे क्रम में बारी-बारी से बदलें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scorri le finestre impilate all'indietro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10131,6 +10545,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "स्टैक की गई विंडो उलटे क्रम में बारी-बारी से बदलें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scorri finestre impilate all'indietro"
           }
         },
         "pt-BR" : {
@@ -10236,8 +10656,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "scorri tra schermi"
+            "state" : "translated",
+            "value" : "Scorri tra gli schermi"
           }
         },
         "ja" : {
@@ -10382,6 +10802,12 @@
             "value" : "कोने के शॉर्टकट दोहराने पर विंडो फैलती है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le abbreviazioni cicliche d'angolo si espandono"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10438,6 +10864,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "गहरा"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scuro"
           }
         },
         "ja" : {
@@ -10880,6 +11312,12 @@
             "value" : "सीधे आकार बदलें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ridimensionamento diretto"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11148,6 +11586,12 @@
             "value" : "macOS में अक्षम करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disattiva in macOS"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11237,6 +11681,12 @@
             "value" : "Rectangle में अक्षम करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disattiva in Rectangle"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11324,6 +11774,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ख़ारिज करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi"
           }
         },
         "ja" : {
@@ -11644,8 +12100,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "nessuna azione"
+            "state" : "translated",
+            "value" : "Nessuna azione"
           }
         },
         "ja" : {
@@ -12005,6 +12461,12 @@
             "value" : "स्क्रीन के किनारे पर ड्रैग करके टाइलिंग Rectangle और macOS दोनों में सक्षम है।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento trascinando sul bordo dello schermo è attivo sia in Rectangle sia in macOS."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12283,6 +12745,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "आठवें भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavi"
           }
         },
         "ko" : {
@@ -12971,8 +13439,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Esporta"
+            "state" : "translated",
+            "value" : "Esporta configurazione"
           }
         },
         "ja" : {
@@ -13099,6 +13567,18 @@
             "value" : "अतिरिक्त"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbreviazioni extra"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos extras"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13144,6 +13624,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "अतिरिक्त शॉर्टकट"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbreviazioni extra"
           }
         },
         "ko" : {
@@ -13223,6 +13709,12 @@
             "value" : "अतिरिक्त"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extra"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13299,6 +13791,12 @@
             "value" : "पाँचवाँ लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quinto ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13349,6 +13847,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "पाँचवाँ लंबवत छठा भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quinto sesto verticale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quinto sexto vertical"
           }
         },
         "uk" : {
@@ -15370,6 +15880,12 @@
             "value" : "पहला लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primo ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15422,6 +15938,18 @@
             "value" : "पहला लंबवत छठा भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primo sesto verticale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro sexto vertical"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15472,6 +16000,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "सिस्टम के अनुसार"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come il sistema"
           }
         },
         "ja" : {
@@ -15532,6 +16066,12 @@
             "value" : "विंडो सूची और बारी-बारी से बदलने वाले शॉर्टकट के लिए। बंद होने पर, ऊपरी-बाएँ कोने की एक ही स्थिति पर स्टैक की गई विंडो गिनी जाती हैं, चाहे उनका आकार कुछ भी हो"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per l'elenco delle finestre e le abbreviazioni per scorrerle. Se disattivato, contano le finestre impilate nella stessa posizione in alto a sinistra, qualunque sia la loro dimensione"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15590,6 +16130,12 @@
             "value" : "चौथा लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarto ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15640,6 +16186,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "चौथा लंबवत छठा भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarto sesto verticale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quarto sexto vertical"
           }
         },
         "uk" : {
@@ -16879,6 +17437,12 @@
             "value" : "सिस्टम सेटिंग → गोपनीयता और सुरक्षा → डिवाइस नियंत्रण और डेटा ऐक्सेस पर जाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vai in Impostazioni di Sistema → Privacy e sicurezza → Controllo dei dispositivi e accesso ai dati"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16943,6 +17507,12 @@
             "value" : "हरा विंडो बटन फ़ुल स्क्रीन के बजाय मैक्सिमाइज़ करता है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il pulsante verde della finestra massimizza invece di passare a tutto schermo"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17000,6 +17570,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ग्रिड स्थितियाँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posizioni della griglia"
           }
         },
         "ko" : {
@@ -17073,6 +17649,12 @@
             "value" : "आधी स्क्रीन की क्रियाएँ दूसरे अक्ष पर विंडो का आकार बनाए रखती हैं"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le azioni di metà mantengono la dimensione della finestra sull'altro asse"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17136,6 +17718,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "हैप्टिक फ़ीडबैक दें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fornisci feedback aptico"
           }
         },
         "ja" : {
@@ -18013,6 +18601,12 @@
             "value" : "macOS का डिफ़ॉल्ट व्यवहार पाने के लिए कोई भी मॉडिफ़ायर की दबाए रखें या विंडो मेन्यू का उपयोग करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni premuto un tasto modificatore o usa il menu Finestra per il comportamento predefinito di macOS"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18069,6 +18663,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "क्षैतिज (बाएँ/दाएँ, %)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orizzontale (S/D, %)"
           }
         },
         "ko" : {
@@ -18141,6 +18741,12 @@
             "value" : "क्षैतिज रूप से"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "orizzontalmente"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18191,6 +18797,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "क्षैतिज रूप से"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orizzontalmente"
           }
         },
         "pt-BR" : {
@@ -18249,6 +18861,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "सूची दिखाने के लिए कर्सर को विंडो के ऊपरी-बाएँ कोने के पास ले जाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porta il puntatore vicino all'angolo in alto a sinistra di una finestra per mostrare l'elenco"
           }
         },
         "pt-BR" : {
@@ -19289,8 +19907,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Importa"
+            "state" : "translated",
+            "value" : "Importa configurazione"
           }
         },
         "ja" : {
@@ -19429,6 +20047,12 @@
             "value" : "Rectangle मेन्यू में टूडू मोड सक्षम करें।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nel menu di Rectangle, attiva la modalità In evidenza."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19485,6 +20109,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle मेन्यू में चुनें\n\"[ऐप्लिकेशन] को टूडू ऐप के रूप में उपयोग करें\""
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nel menu di Rectangle, seleziona\n\"Usa [Applicazione] come applicazione in evidenza\""
           }
         },
         "pt-BR" : {
@@ -19786,8 +20416,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tieni l'applicazione scelta sempre visibile sulla destra del tuo schermo principale"
+            "state" : "translated",
+            "value" : "Tieni l'applicazione scelta sempre visibile su un lato dello schermo principale"
           }
         },
         "ja" : {
@@ -19926,6 +20556,12 @@
             "value" : "कीबोर्ड शॉर्टकट हमेशा सक्रिय विंडो पर काम करते हैं"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le abbreviazioni da tastiera agiscono sempre sulla finestra attiva"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19976,6 +20612,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "लैंडस्केप स्नैप एरिया"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aree a scatto orizzontali"
           }
         },
         "pt-BR" : {
@@ -20034,6 +20676,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "चौड़ाई बढ़ाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allarga"
           }
         },
         "ko" : {
@@ -20902,6 +21550,12 @@
             "value" : "अंतिम लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20952,6 +21606,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "अंतिम लंबवत छठा भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo sesto verticale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último sexto vertical"
           }
         },
         "uk" : {
@@ -21399,6 +22065,12 @@
             "value" : "बायाँ आधा और फिर ऊपरी आधा करने पर विंडो ऊपरी-बाएँ चौथाई में चली जाती है; विपरीत किनारे की क्रिया उसे वापस फैला देती है।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metà sinistra seguita da Metà superiore sposta la finestra nel quarto in alto a sinistra; l'azione del bordo opposto la riespande."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21698,8 +22370,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Metà sinistra, metà superiore/inferiore vicino gli angoli"
+            "state" : "translated",
+            "value" : "Lato sinistro, alto/basso vicino agli angoli"
           }
         },
         "ja" : {
@@ -21850,6 +22522,12 @@
             "value" : "हल्का"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiaro"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21914,6 +22592,12 @@
             "value" : "निचला-मध्य मध्य-बायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-inferiore centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21970,6 +22654,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला-मध्य मध्य-दायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-inferiore centro-destro"
           }
         },
         "pt-BR" : {
@@ -22030,6 +22720,12 @@
             "value" : "निचला-मध्य बायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-inferiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22086,6 +22782,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "निचला-मध्य दायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-inferiore destro"
           }
         },
         "pt-BR" : {
@@ -22388,7 +23090,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Ingrandisci"
           }
         },
@@ -22585,7 +23287,7 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Rimpicciolisci"
           }
         },
@@ -23141,6 +23843,12 @@
             "value" : "मैक्सिमाइज़ सेटिंग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impostazioni di Massimizza"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23197,6 +23905,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "प्रति कॉलम अधिकतम विंडो"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Massimo di finestre per colonna"
           }
         },
         "pt-BR" : {
@@ -23257,6 +23971,12 @@
             "value" : "प्रति पंक्ति अधिकतम विंडो"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Massimo di finestre per riga"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23302,6 +24022,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "बीच वाला बटन"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsante centrale"
           }
         },
         "pt-BR" : {
@@ -23362,6 +24088,12 @@
             "value" : "मध्य मध्य-बायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo centrale centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23418,6 +24150,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "मध्य नौवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono centrale"
           }
         },
         "pt-BR" : {
@@ -23478,6 +24216,12 @@
             "value" : "मध्य मध्य-दायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo centrale centro-destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23534,6 +24278,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "मध्य बायाँ नौवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono centrale sinistro"
           }
         },
         "pt-BR" : {
@@ -23594,6 +24344,12 @@
             "value" : "मध्य बायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo centrale sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23650,6 +24406,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "मध्य दायाँ नौवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono centrale destro"
           }
         },
         "pt-BR" : {
@@ -23710,6 +24472,12 @@
             "value" : "मध्य दायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo centrale destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23766,6 +24534,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "बीच का तिहाई"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terzo di mezzo"
           }
         },
         "ko" : {
@@ -24042,6 +24816,12 @@
             "value" : "विंडो न्यूनतम आकार तक पहुँच गई है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dimensione minima della finestra raggiunta"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24086,6 +24866,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "माउस बटन शॉर्टकट पॉइंटर के नीचे वाली विंडो पर काम करते हैं"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le abbreviazioni con i pulsanti del mouse agiscono sulla finestra sotto il puntatore"
           }
         },
         "pt-BR" : {
@@ -24975,8 +25761,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "sposta nello schermo adiacente con le azioni laterali"
+            "state" : "translated",
+            "value" : "Sposta nello schermo adiacente con le azioni laterali"
           }
         },
         "ja" : {
@@ -25023,7 +25809,7 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Mover para a tela adjacente nas ações laterais"
           }
         },
@@ -25172,8 +25958,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "sposta nello schermo adiacente con le azioni laterali e scorri le dimensioni all'ultimo bordo"
+            "state" : "translated",
+            "value" : "Sposta nello schermo adiacente con le azioni laterali e scorri le dimensioni all'ultimo bordo"
           }
         },
         "ja" : {
@@ -25220,7 +26006,7 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Mover para a tela adjacente nas ações laterais e alternar o tamanho na última borda"
           }
         },
@@ -26307,6 +27093,12 @@
             "value" : "नौवें भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noni"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26378,6 +27170,12 @@
             "value" : "नौवें भाग (3×3)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noni (3×3)"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26434,6 +27232,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "नौवें भाग (3x3)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noni (3x3)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nonos (3x3)"
           }
         },
         "zh-Hans" : {
@@ -26685,6 +27495,12 @@
             "value" : "ओवरलैप होने पर विंडो की स्थिति थोड़ी खिसकाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sfalsa la posizione delle finestre sovrapposte"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26735,6 +27551,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "केवल समान आकार की विंडो को स्टैक मानें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impila solo finestre della stessa dimensione"
           }
         },
         "pt-BR" : {
@@ -28171,6 +28993,12 @@
             "value" : "पोर्ट्रेट स्नैप एरिया"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aree a scatto verticali"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28426,6 +29254,12 @@
             "value" : "दूसरे डिस्प्ले पर ले जाते समय मैक्सिमाइज़ की गई अवस्था बनाए रखें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantieni la finestra massimizzata quando passa da uno schermo all'altro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28482,6 +29316,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Windows की तरह, आधी स्क्रीन की क्रियाओं में दूसरे अक्ष का आकार बनाए रखें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantieni la dimensione sull'asse laterale con le azioni di metà, come in Windows"
           }
         },
         "pt-BR" : {
@@ -28541,6 +29381,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ग्रिड की सभी स्थितियाँ बारी-बारी से बदलने के लिए शॉर्टकट बार-बार दबाएँ।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premi ripetutamente l'abbreviazione per scorrere tutte le posizioni della griglia."
           }
         },
         "ko" : {
@@ -28607,6 +29453,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ड्रैग करते समय Mission Control शुरू होने से रोकें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impedisci l'attivazione di Mission Control durante il trascinamento"
           }
         },
         "pt-BR" : {
@@ -28839,6 +29691,18 @@
             "value" : "px"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
@@ -28846,6 +29710,12 @@
           }
         },
         "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "px"
@@ -29116,6 +29986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "हाल के ऐप का एरिया"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Area delle app recenti"
           }
         },
         "pt-BR" : {
@@ -30553,6 +31429,12 @@
             "value" : "स्क्रीन के ऊपरी किनारे पर अंतराल हटाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi lo spazio sul bordo superiore dello schermo"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -30805,6 +31687,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी किनारे पर स्नैप करते समय ऊपरी अंतराल हटाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi lo spazio superiore quando agganci al bordo superiore"
           }
         },
         "pt-BR" : {
@@ -31061,6 +31949,12 @@
             "value" : "दोबारा मैक्सिमाइज़ करने पर पिछला आकार और पिछली स्थिति रीस्टोर हो जाती है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripetere Massimizza ripristina la dimensione e la posizione precedenti"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31117,6 +32011,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "आधी स्क्रीन या कोने के शॉर्टकट से आकार बारी-बारी से बदलते समय बगल वाली विंडो का आकार भी बदलें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ridimensiona le finestre adiacenti quando scorri le abbreviazioni laterali o d'angolo"
           }
         },
         "pt-BR" : {
@@ -32006,8 +32906,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Metà destra, metà superiore/inferiore vicino gli angoli"
+            "state" : "translated",
+            "value" : "Lato destro, alto/basso vicino agli angoli"
           }
         },
         "ja" : {
@@ -32557,6 +33457,12 @@
             "value" : "दूसरा लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secondo ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32607,6 +33513,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "दूसरा लंबवत छठा भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secondo sesto verticale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segundo sexto vertical"
           }
         },
         "uk" : {
@@ -33252,6 +34170,12 @@
             "value" : "सातवाँ लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settimo ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33501,6 +34425,12 @@
             "value" : "मेन्यू में *अतिरिक्त* शॉर्टकट दिखाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra le abbreviazioni *extra* nel menu"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33558,6 +34488,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "मेन्यू में अन्य आकार भी दिखाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra dimensioni aggiuntive nel menu"
           }
         },
         "ko" : {
@@ -33827,6 +34763,12 @@
             "value" : "कर्सर ले जाने पर स्टैक की गई विंडो की सूची दिखाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra l'elenco delle finestre impilate al passaggio del puntatore"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34075,6 +35017,12 @@
             "value" : "जब विंडो का आकार पर्याप्त छोटा न हो सके, तो चेतावनी दिखाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvisa quando le finestre non possono essere ridotte abbastanza"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34131,6 +35079,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "आधी स्क्रीन का विभाजन अनुपात"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proporzione della divisione laterale"
           }
         },
         "ko" : {
@@ -34395,6 +35349,12 @@
             "value" : "सोलहवें भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimi"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34466,6 +35426,12 @@
             "value" : "सोलहवें भाग (4×4)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimi (4×4)"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34524,6 +35490,18 @@
             "value" : "सोलहवें भाग (4x4)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimi (4x4)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dezesseis avos (4x4)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34568,6 +35546,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "छठा लंबवत आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesto ottavo verticale"
           }
         },
         "pt-BR" : {
@@ -35010,6 +35994,12 @@
             "value" : "चौड़ाई घटाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restringi"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35203,6 +36193,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "स्क्रीन के किनारों तक पहुँचने से पहले स्नैप करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggancia prima di raggiungere i bordi dello schermo"
           }
         },
         "pt-BR" : {
@@ -35797,6 +36793,12 @@
             "value" : "स्टैक की गई विंडो"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finestre impilate"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35853,6 +36855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "स्टेज मैनेजर"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stage Manager"
           }
         },
         "pt-BR" : {
@@ -36096,6 +37104,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "आधी स्क्रीन की क्रियाओं में विपरीत ओर जाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passa al lato opposto con le azioni di metà"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar para o lado oposto nas ações de metade"
           }
         },
         "zh-Hans" : {
@@ -36346,6 +37366,12 @@
             "value" : "तीसरा लंबवत आठवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terzo ottavo verticale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36396,6 +37422,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "तीसरा लंबवत छठा भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terzo sesto verticale"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terceiro sexto vertical"
           }
         },
         "uk" : {
@@ -36882,8 +37920,8 @@
         },
         "it" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Terzi, metà superiore/inferiore vicino gli angoli"
+            "state" : "translated",
+            "value" : "Terzi, alto/basso vicino agli angoli"
           }
         },
         "ja" : {
@@ -37034,6 +38072,12 @@
             "value" : "इससे थोड़ी जगह छूट जाती है जिसमें नीचे वाली विंडो दिखती है, और यह विंडो के बीच अंतराल के साथ सबसे अच्छा लगता है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lascia un po' di spazio da cui si vede la finestra sotto ed è ideale con lo spazio tra le finestre"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37102,6 +38146,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "कॉलम में टाइल करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affianca in colonne"
           }
         },
         "ja" : {
@@ -37180,6 +38230,12 @@
             "value" : "पंक्तियों में टाइल करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affianca in righe"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37244,6 +38300,12 @@
             "value" : "विंडो को पंक्तियों/कॉलम में टाइल करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affianca le finestre in righe/colonne"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37301,6 +38363,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "टाइलिंग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiancamento"
           }
         },
         "pt-BR" : {
@@ -37366,6 +38434,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS में टाइलिंग अक्षम कर दी गई है"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento di macOS è stato disattivato"
           }
         },
         "ja" : {
@@ -37451,6 +38525,12 @@
             "value" : "Rectangle में टाइलिंग अक्षम कर दी गई है"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento di Rectangle è stato disattivato"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37520,6 +38600,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS टाइलिंग बदलने के लिए, सिस्टम सेटिंग → डेस्कटॉप और Dock → विंडो पर जाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per regolare l'affiancamento di macOS, vai in Impostazioni di Sistema → Scrivania e Dock → Finestre"
           }
         },
         "ko" : {
@@ -37795,6 +38881,12 @@
             "value" : "इसे फिर से सक्षम करने के लिए, सिस्टम सेटिंग → डेस्कटॉप और Dock → विंडो पर जाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per riattivarlo, vai in Impostazioni di Sistema → Scrivania e Dock → Finestre"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38067,6 +39159,12 @@
             "value" : "टूडू मोड"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modalità In evidenza"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38319,6 +39417,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "स्टैक की गई विंडो का बैज दिखाएँ/छिपाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra/nascondi il badge delle finestre impilate"
           }
         },
         "pt-BR" : {
@@ -38575,6 +39679,12 @@
             "value" : "विंडो सूची दिखाएँ/छिपाएँ"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra/nascondi l'elenco delle finestre"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38829,6 +39939,12 @@
             "value" : "ऊपरी मध्य-बायाँ 1/8"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38886,6 +40002,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी मध्य-बायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore centro-sinistro"
           }
         },
         "ko" : {
@@ -38958,6 +40080,12 @@
             "value" : "ऊपरी मध्य-बायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo superiore centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39014,6 +40142,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी मध्य-बायाँ बारहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo superiore centro-sinistro"
           }
         },
         "pt-BR" : {
@@ -39074,6 +40208,12 @@
             "value" : "ऊपरी मध्य नौवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono superiore centrale"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39130,6 +40270,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी मध्य-दायाँ 1/8"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore centro-destro"
           }
         },
         "pt-BR" : {
@@ -39189,6 +40335,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी मध्य-दायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore centro-destro"
           }
         },
         "ko" : {
@@ -39261,6 +40413,12 @@
             "value" : "ऊपरी मध्य-दायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo superiore centro-destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39317,6 +40475,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी मध्य-दायाँ बारहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo superiore centro-destro"
           }
         },
         "pt-BR" : {
@@ -39577,6 +40741,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "कोनों से ऊपरी आठवें भाग; मैक्सिमाइज़ करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavi superiori dagli angoli; massimizza"
           }
         },
         "ko" : {
@@ -39845,6 +41015,12 @@
             "value" : "ऊपरी बायाँ 1/8"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -39902,6 +41078,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी बायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore sinistro"
           }
         },
         "ko" : {
@@ -39974,6 +41156,12 @@
             "value" : "ऊपरी बायाँ नौवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono superiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40030,6 +41218,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी बायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo superiore sinistro"
           }
         },
         "pt-BR" : {
@@ -40286,6 +41480,12 @@
             "value" : "ऊपरी बायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo superiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40540,6 +41740,12 @@
             "value" : "ऊपरी दायाँ 1/8"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40597,6 +41803,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी दायाँ आठवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ottavo superiore destro"
           }
         },
         "ko" : {
@@ -40669,6 +41881,12 @@
             "value" : "ऊपरी दायाँ नौवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nono superiore destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40725,6 +41943,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी दायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo superiore destro"
           }
         },
         "pt-BR" : {
@@ -40981,6 +42205,12 @@
             "value" : "ऊपरी दायाँ बारहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimo superiore destro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41038,6 +42268,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "macOS में स्क्रीन के ऊपरी किनारे पर टाइलिंग अब अक्षम है"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affiancamento sul bordo superiore dello schermo in macOS è ora disattivato"
           }
         },
         "ko" : {
@@ -41306,6 +42542,12 @@
             "value" : "ऊपरी तिहाई"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terzo superiore"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41374,6 +42616,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी दो-तिहाई"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Due terzi superiori"
           }
         },
         "ko" : {
@@ -41445,6 +42693,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी/निचला आधा"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lati superiore/inferiore"
           }
         },
         "ko" : {
@@ -41523,6 +42777,12 @@
             "value" : "ऊपरी/निचला आधा"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alto/basso"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41579,6 +42839,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "कई डिस्प्ले को एक मानें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tratta più schermi come uno solo"
           }
         },
         "pt-BR" : {
@@ -41638,6 +42904,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "कई मॉनिटर को एक मानें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tratta più monitor come uno solo"
           }
         },
         "ko" : {
@@ -41705,6 +42977,12 @@
             "value" : "बारहवें भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimi"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41763,6 +43041,18 @@
             "value" : "बारहवें भाग (3x4)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimi (3x4)"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duodécimos (3x4)"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41808,6 +43098,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "बारहवें भाग (4×3)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodicesimi (4×3)"
           }
         },
         "ko" : {
@@ -41879,6 +43175,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "विंडो का आकार और छोटा नहीं किया जा सका।\nविंडो ओवरलैप हो सकती हैं।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile ridurre ancora la finestra.\nLe finestre potrebbero sovrapporsi."
           }
         },
         "pt-BR" : {
@@ -42136,6 +43438,12 @@
             "value" : "अपडेट उपलब्ध है…"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiornamento disponibile…"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42206,6 +43514,12 @@
             "value" : "ऊपरी-मध्य मध्य-बायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-superiore centro-sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42262,6 +43576,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी-मध्य मध्य-दायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-superiore centro-destro"
           }
         },
         "pt-BR" : {
@@ -42322,6 +43642,12 @@
             "value" : "ऊपरी-मध्य बायाँ सोलहवाँ भाग"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-superiore sinistro"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42378,6 +43704,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ऊपरी-मध्य दायाँ सोलहवाँ भाग"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sedicesimo medio-superiore destro"
           }
         },
         "pt-BR" : {
@@ -42635,6 +43967,12 @@
             "value" : "स्क्रीन पहचानने के लिए कर्सर की स्थिति का उपयोग करें"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa la posizione del puntatore per rilevare lo schermo"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42703,6 +44041,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "कर्सर से स्क्रीन पहचानें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rileva lo schermo dal puntatore"
           }
         },
         "pt-BR" : {
@@ -43275,6 +44619,12 @@
             "value" : "लंबवत (ऊपर/नीचे, %)"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verticale (A/B, %)"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43345,6 +44695,12 @@
             "value" : "लंबवत रूप से"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "verticalmente"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43395,6 +44751,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "लंबवत रूप से"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verticalmente"
           }
         },
         "pt-BR" : {
@@ -44236,6 +45598,12 @@
             "value" : "बंद होने पर, जहाँ संभव हो, स्क्रीन के किनारों के सापेक्ष विंडो की स्थिति बनी रहती है।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se disattivato, i bordi tra finestra e schermo vengono mantenuti dove possibile."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44490,6 +45858,12 @@
             "value" : "कई डिस्प्ले का उपयोग करते समय उन्हें एक ही डिस्प्ले मानता है। इसके लिए सिस्टम सेटिंग > डेस्कटॉप और Dock > \"अलग-अलग डिस्प्ले में अलग-अलग Spaces होने चाहिए\" बंद होना ज़रूरी है।"
           }
         },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con più schermi, li tratta come un unico schermo. Richiede che in Impostazioni di Sistema > Scrivania e Dock l'opzione «I monitor hanno spazi separati» sia disattivata."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44742,6 +46116,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "चौड़ाई का चरण (px)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passo larghezza (px)"
           }
         },
         "ko" : {
