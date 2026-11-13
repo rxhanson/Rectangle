@@ -2421,6 +2421,25 @@ final class SettingsLabelLocalizationTests: XCTestCase {
     }
 }
 
+final class TodoSideLocalizationTests: XCTestCase {
+
+    // "Left" and "Right" name the Left/Right Half actions, so the Todo side needs its own keys.
+    func testTodoSideTitlesKeepTheirEnglishText() throws {
+        try XCTSkipUnless(Bundle.main.preferredLocalizations.first == "en", "Needs the test host in English (#1958)")
+        XCTAssertEqual(TodoSidebarSide.left.title, "Left")
+        XCTAssertEqual(TodoSidebarSide.right.title, "Right")
+    }
+
+    func testTodoSideKeysAreSeparateFromTheHalfActionNames() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "zh-Hans", ofType: "lproj"))
+        let zhHans = try XCTUnwrap(Bundle(path: path))
+        XCTAssertEqual(zhHans.localizedString(forKey: "Todo Side Left", value: nil, table: "Localizable"), "左侧")
+        XCTAssertEqual(zhHans.localizedString(forKey: "Todo Side Right", value: nil, table: "Localizable"), "右侧")
+        XCTAssertEqual(zhHans.localizedString(forKey: "Left", value: nil, table: "Localizable"), "左半屏")
+        XCTAssertEqual(zhHans.localizedString(forKey: "Right", value: nil, table: "Localizable"), "右半屏")
+    }
+}
+
 final class BundleIdentityTests: XCTestCase {
 
     func testDebugBuildsUseTheirOwnBundleIdentifier() {
