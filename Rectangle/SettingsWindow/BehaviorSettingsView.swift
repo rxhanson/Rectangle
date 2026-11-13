@@ -306,8 +306,8 @@ struct BehaviorSettingsView: View {
                                     Text("Todo side")
                                     Spacer()
                                     Picker("", selection: $viewModel.todoSidebarSide) {
-                                        Text("Left").tag(TodoSidebarSide.left)
-                                        Text("Right").tag(TodoSidebarSide.right)
+                                        Text(TodoSidebarSide.left.title).tag(TodoSidebarSide.left)
+                                        Text(TodoSidebarSide.right.title).tag(TodoSidebarSide.right)
                                     }
                                     .frame(width: 90)
                                 }
