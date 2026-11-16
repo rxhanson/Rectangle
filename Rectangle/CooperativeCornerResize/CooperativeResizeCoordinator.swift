@@ -1587,18 +1587,20 @@ struct CooperativeResizeCoordinator {
     }
 }
 
-/// What a window action wants to do, for CooperativeResizeCoordinator to plan.
-struct WindowMoveRequest {
-    let calcResult: WindowCalculationResult
-    let windowId: CGWindowID?
-    let isFixedSize: Bool
-    let minimumSize: CGSize?
-    let action: WindowAction
-    let source: ExecutionSource
-    let currentFrame: CGRect
-    let screenFrame: CGRect
-    let destinationScreenIsCurrentScreen: Bool
-    let lastRectangleAction: RectangleAction?
+extension WindowMoveRequest {
+    /// Read from the window only when a plan needs it, since it costs an AX call.
+    var minimumSize: CGSize? { windowElement.minimumSize }
+}
+
+/// Offers a cooperative move for each window move while cooperative resize is on.
+struct CooperativeResizeDelegateProvider: WindowManagerDelegateProvider {
+    let windowHistory: WindowHistory
+    var windowElements: () -> [AccessibilityElement] = { AccessibilityElement.getAllWindowElements() }
+
+    func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
+        CooperativeResizeCoordinator.ifEnabled(windowHistory: windowHistory, windowElements: windowElements)?
+            .beginMove(request)
+    }
 }
 
 /// A window move in progress while cooperative resize is on.
@@ -1614,6 +1616,20 @@ struct CooperativeMove {
     /// This applies to any move, whether or not other windows cooperated in it.
     func cleanUp(resultingRect: CGRect, screenFrame: CGRect) {
         coordinator.cleanUpAfterMove(request, resultingRect: resultingRect, screenFrame: screenFrame)
+    }
+}
+
+extension CooperativeMove: WindowManagerDelegate {
+    func isAlreadyAchieved() -> Bool? {
+        placement?.isAlreadyAchieved()
+    }
+
+    func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? {
+        placement?.place(result: result, moveWindow: moveWindow)
+    }
+
+    func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) {
+        cleanUp(resultingRect: resultingRect, screenFrame: screenFrame)
     }
 }
 

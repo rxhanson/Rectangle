@@ -74,3 +74,14 @@ struct Edge: OptionSet {
         return rawValue.nonzeroBitCount == 1
     }
 }
+
+struct GapTargetAdjuster: WindowTargetAdjuster {
+    func adjust(_ result: inout WindowCalculationResult, action: WindowAction, windowId: CGWindowID?) {
+        let gapsApplicable = result.resultingAction.gapsApplicable
+        guard Defaults.gapSize.value > 0, gapsApplicable != .none else { return }
+
+        let gapSharedEdges = result.resultingSubAction?.gapSharedEdge ?? result.resultingAction.gapSharedEdge
+        result.rect = GapCalculation.applyGaps(result.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges,
+                                               gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
+    }
+}

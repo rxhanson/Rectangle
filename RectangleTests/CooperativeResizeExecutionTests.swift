@@ -390,6 +390,96 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertEqual(control.lastIncrementCount, false)
     }
 
+    // MARK: - Hooks
+
+    func testGapAdjusterOnlyChangesTheTargetWhenGapsAreSet() {
+        let target = CGRect(x: 0, y: 0, width: 600, height: 900)
+        var result = WindowCalculationResult(rect: target, screen: screen, resultingAction: .leftHalf)
+
+        GapTargetAdjuster().adjust(&result, action: .leftHalf, windowId: focusedId)
+        XCTAssertEqual(result.rect, target)
+
+        Defaults.gapSize.value = 10
+        GapTargetAdjuster().adjust(&result, action: .leftHalf, windowId: focusedId)
+        XCTAssertNotEqual(result.rect, target)
+        XCTAssertTrue(target.contains(result.rect))
+    }
+
+    func testOverlapOffsetAdjusterLeavesTheTargetAloneWhileDisabled() {
+        let target = CGRect(x: 0, y: 0, width: 1200, height: 900)
+        var result = WindowCalculationResult(rect: target, screen: screen, resultingAction: .maximize)
+
+        OverlapOffsetTargetAdjuster().adjust(&result, action: .maximize, windowId: focusedId)
+
+        XCTAssertEqual(result.rect, target)
+    }
+
+    func testDelegateRevisedTargetIsPlacedAndSettled() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let focused = window(focusedId, CGRect(x: 100, y: 100, width: 400, height: 400))
+        let revised = CGRect(x: 0, y: 0, width: 500, height: 900)
+        let manager = makeManager(windows: [focused])
+        var stub: StubDelegate?
+        manager.delegate = { request in
+            stub = StubDelegate(request)
+            stub?.calcResult.rect = revised
+            return stub
+        }
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: focused))
+
+        assertFrame(focused, revised)
+        XCTAssertEqual(manager.lastResult?.calcResult.rect, revised)
+        XCTAssertEqual(stub?.placeCount, 1)
+        XCTAssertEqual(stub?.settledCount, 1)
+    }
+
+    func testDelegateThatReportsAchievedSkipsPlacement() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let focused = window(focusedId, CGRect(x: 100, y: 100, width: 400, height: 400))
+        let manager = makeManager(windows: [focused])
+        var completions = 0
+        manager.delegate = { request in
+            let stub = StubDelegate(request)
+            stub.achieved = true
+            return stub
+        }
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: focused, completion: { completions += 1 }))
+
+        XCTAssertEqual(writes, [])
+        XCTAssertEqual(completions, 1)
+        XCTAssertEqual(manager.postProcessCount, 0)
+        assertHistory(focused, action: .leftHalf, count: 1)
+    }
+
+    func testDelegatePlacesAndIsSettledOnlyOnTheSourceScreen() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let focused = window(focusedId, CGRect(x: 100, y: 100, width: 400, height: 400))
+        let manager = makeManager(windows: [focused])
+        var stub: StubDelegate?
+        manager.delegate = { request in
+            stub = StubDelegate(request)
+            return stub
+        }
+
+        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: focused))
+
+        assertFrame(focused, CGRect(x: 1800, y: 0, width: 600, height: 900))
+        XCTAssertEqual(stub?.placeCount, 1)
+        XCTAssertEqual(stub?.settledCount, 0)
+    }
+
+    func testMinimumSizeIsNotReadWhileCooperativeResizeIsOff() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let focused = window(focusedId, CGRect(x: 100, y: 100, width: 400, height: 400))
+
+        execute(.leftHalf, on: focused, among: [focused])
+
+        assertFrame(focused, CGRect(x: 0, y: 0, width: 600, height: 900))
+        XCTAssertEqual(focused.minimumSizeReads, 0)
+    }
+
     // MARK: - Completion
 
     func testCompletionFiresOnceWhenWindowIsRejected() {
@@ -594,7 +684,11 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         func stopClamping() { onStopClamping?() }
 
         override var frame: CGRect { currentFrame }
-        override var minimumSize: CGSize? { reportedMinimumSize }
+        private(set) var minimumSizeReads = 0
+        override var minimumSize: CGSize? {
+            minimumSizeReads += 1
+            return reportedMinimumSize
+        }
         override var isWindow: Bool? { true }
         override var isSheet: Bool? { sheet }
         override var isMinimized: Bool? { false }
@@ -619,6 +713,26 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             result.origin.y = requested.maxY - result.height
             currentFrame = result.screenFlipped
         }
+    }
+
+    /// Revises nothing unless told to, places the window through the manager's movers, and counts its hooks.
+    private final class StubDelegate: WindowManagerDelegate {
+        var calcResult: WindowCalculationResult
+        var achieved: Bool?
+        private(set) var placeCount = 0
+        private(set) var settledCount = 0
+
+        init(_ request: WindowMoveRequest) { calcResult = request.calcResult }
+
+        func isAlreadyAchieved() -> Bool? { achieved }
+
+        func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? {
+            placeCount += 1
+            moveWindow(result.calcResult.rect, result)
+            return result.windowElement.frame
+        }
+
+        func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) { settledCount += 1 }
     }
 
     private final class TestScreen: NSScreen {
@@ -648,18 +762,21 @@ final class CooperativeResizeExecutionTests: XCTestCase {
     }
 
     private final class TestWindowManager: WindowManager {
-        private let windows: [AccessibilityElement]
         private(set) var postProcessCount = 0
         private(set) var lastIncrementCount: Bool?
         private(set) var lastResult: ResultParameters?
+        /// Replaces the built-in delegate when set.
+        var delegate: ((WindowMoveRequest) -> WindowManagerDelegate?)?
 
         init(screenDetection: ScreenDetection, windows: [AccessibilityElement]) {
-            self.windows = windows
-            super.init(screenDetection: screenDetection)
+            super.init(screenDetection: screenDetection,
+                       delegateProviders: [CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
+                                                                               windowElements: { windows })])
         }
 
-        override var cooperativeResize: CooperativeResizeCoordinator? {
-            CooperativeResizeCoordinator.ifEnabled(windowHistory: AppDelegate.windowHistory, windowElements: { [windows] in windows })
+        override func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
+            if let delegate { return delegate(request) }
+            return super.moveDelegate(for: request)
         }
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {}

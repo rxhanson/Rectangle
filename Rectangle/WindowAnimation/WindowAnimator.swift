@@ -96,8 +96,11 @@ final class WindowAnimator {
         if let active, active.element == element { return active.destination }
         return retiring.last(where: { $0.0 == element })?.1
     }
+    /// True when no animation is running or still has writes in flight.
+    var isIdle: Bool { active == nil && retiring.isEmpty && !tickPending }
+
     func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
-        if active == nil && retiring.isEmpty && !tickPending { body(); return }
+        if isIdle { body(); return }
         let expected = generation
         queue.async { [self] in
             DispatchQueue.main.async { [self] in
