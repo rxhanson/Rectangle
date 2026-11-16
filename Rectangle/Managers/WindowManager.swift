@@ -7,15 +7,17 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
+    private let targetAdjusterChain: [WindowTargetAdjuster]
+    private let delegateProviders: [WindowManagerDelegateProvider]
     private let windowAnimator: WindowAnimator
     private let windowHistory: WindowHistory
     private var windowSizeWarning: WindowSizeWarning?
     private var executionID = 0
-    var cooperativeResize: CooperativeResizeCoordinator? { CooperativeResizeCoordinator.ifEnabled(windowHistory: windowHistory) }
 
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared,
-         windowHistory: WindowHistory = AppDelegate.windowHistory) {
+         windowHistory: WindowHistory = AppDelegate.windowHistory,
+         delegateProviders: [WindowManagerDelegateProvider]? = nil) {
 
         self.screenDetection = screenDetection
         self.windowAnimator = windowAnimator
@@ -30,10 +32,24 @@ class WindowManager {
             FixedSizeWindowMover(),
             BestEffortWindowMover()
         ]
+
+        // Gaps come first: the overlap offset is measured from the gapped frame.
+        targetAdjusterChain = [
+            GapTargetAdjuster(),
+            OverlapOffsetTargetAdjuster()
+        ]
+
+        self.delegateProviders = delegateProviders ?? [
+            CooperativeResizeDelegateProvider(windowHistory: windowHistory)
+        ]
     }
-    
-    func logicalFrame(for element: AccessibilityElement) -> CGRect {
-        windowAnimator.destination(for: element) ?? element.frame
+
+    /// The delegate for a move, or nil when no feature customizes it.
+    func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
+        for provider in delegateProviders {
+            if let delegate = provider.delegate(for: request) { return delegate }
+        }
+        return nil
     }
 
     func recordAction(windowId: CGWindowID?,
@@ -45,56 +61,160 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
-        var completionDeferred = false
-        defer { if !completionDeferred { parameters.completion?() } }
+        // Completion fires exactly once: here, unless a placement or restore took it over.
+        var handedOff = false
+        defer { if !handedOff { parameters.completion?() } }
         hideSizeConstraintWarning()
 
-        guard let frontmostWindowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
-        else {
-            NSSound.beep()
-            return
-        }
+        guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
+        else { return reject(parameters) }
 
         // The window id can be unavailable when macOS stops vending window info
         // after a session transition (#640). Actions still execute; only
         // window-id-keyed history is skipped.
-        let windowId = parameters.windowId ?? frontmostWindowElement.getWindowId()
+        let windowId = parameters.windowId ?? windowElement.getWindowId()
 
-        let action = parameters.action
-        
-        if action == .restore {
-            guard let windowId else {
-                NSSound.beep()
-                return
-            }
-            if let restoreRect = windowHistory.restoreRects[windowId] {
-                executionID &+= 1
-                let currentExecutionID = executionID
-                completionDeferred = true
-                if WindowAnimator.enabled, frontmostWindowElement.isResizable() {
-                    windowAnimator.animate(frontmostWindowElement, to: restoreRect, profile: parameters.source == .keyboardShortcut ? .keyboard : .standard, cancellation: parameters.cancellation) { [weak self] frame in
-                        defer { parameters.completion?() }
-                        guard let self, self.executionID == currentExecutionID else { return }
-                        // A completed animation has already placed the real window.
-                        if frame.isNull { frontmostWindowElement.setFrame(restoreRect) }
-                    }
-                } else {
-                    WindowAnimator.shared.cancel(for: frontmostWindowElement)
-                    windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) { [weak self] in
-                        defer { parameters.completion?() }
-                        guard self?.executionID == currentExecutionID else { return }
-                        frontmostWindowElement.setFrame(restoreRect)
-                    }
-                }
-            }
-            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        if parameters.action == .restore {
+            handedOff = restore(windowElement, windowId: windowId, parameters: parameters)
             return
         }
-        
+
+        guard let move = planMove(windowElement, windowId: windowId, parameters: parameters),
+              !finishIfAlreadyAchieved(move)
+        else { return }
+
+        handedOff = true
+        perform(move)
+    }
+
+    /// Tells the user an action can't be carried out.
+    private func reject(_ parameters: ExecutionParameters, reason: String? = nil) {
+        NSSound.beep()
+        if let reason { Logger.log(reason) }
+    }
+
+    // MARK: - Planning
+
+    /// Everything about a move that is settled before any frame is written.
+    private struct PlannedMove {
+        let parameters: ExecutionParameters
+        let windowElement: AccessibilityElement
+        let windowId: CGWindowID?
+        /// The window's logical frame in AX coordinates: a pending animation's destination, or its frame.
+        let currentWindowRect: CGRect
+        let currentNormalizedRect: CGRect
+        let pendingDestination: CGRect?
+        let sourceScreens: UsableScreens
+        let ignoreTodo: Bool
+        let calcResult: WindowCalculationResult
+        let visibleFrameOfDestinationScreen: CGRect
+        let isFixedSize: Bool
+        let isMovedAcrossDisplays: Bool
+        let delegate: WindowManagerDelegate?
+        let result: ResultParameters
+
+        var action: WindowAction { parameters.action }
+
+        func complete() { parameters.completion?() }
+    }
+
+    /// Returns nil, after beeping, when the action can't be applied to this window.
+    private func planMove(_ windowElement: AccessibilityElement, windowId: CGWindowID?,
+                          parameters: ExecutionParameters) -> PlannedMove? {
+        let action = parameters.action
+
+        guard let screens = resolveScreens(for: windowElement, parameters: parameters) else {
+            reject(parameters, reason: "Unable to obtain usable screens")
+            return nil
+        }
+        let usableScreens = screens.usable
+        let sourceScreens = screens.source
+
+        let pendingDestination = windowAnimator.destination(for: windowElement)
+        let currentWindowRect = pendingDestination ?? windowElement.frame
+
+        let lastRectangleAction = reconcileHistory(windowId: windowId, currentWindowRect: currentWindowRect,
+                                                   updateRestoreRect: parameters.updateRestoreRect)
+
+        let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
+
+        if windowElement.isSheet == true
+            || currentWindowRect.isNull
+            || usableScreens.frameOfCurrentScreen.isNull
+            || usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo).isNull {
+            reject(parameters, reason: "Window is not snappable or usable screen is not valid")
+            return nil
+        }
+
+        let currentNormalizedRect = currentWindowRect.screenFlipped
+        let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
+
+        let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
+
+        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo)
+        guard var calcResult = windowCalculation?.calculate(calculationParams) else {
+            reject(parameters, reason: "Nil calculation result")
+            return nil
+        }
+
+        for adjuster in targetAdjusterChain {
+            adjuster.adjust(&calcResult, action: action, windowId: windowId)
+        }
+
+        // Derived from the adjusted target, and deliberately not recomputed after a delegate revises it.
+        let willResize = action.resizes || calcResult.rect.size != currentNormalizedRect.size
+        let isFixedSize = (!windowElement.isResizable() && willResize) || windowElement.isSystemDialog == true
+        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
+        let isMovedAcrossDisplays = sourceScreens.currentScreen != calcResult.screen
+
+        let delegate = moveDelegate(for: WindowMoveRequest(calcResult: calcResult,
+                                                                 windowId: windowId,
+                                                                 isFixedSize: isFixedSize,
+                                                                 windowElement: windowElement,
+                                                                 action: action,
+                                                                 source: parameters.source,
+                                                                 currentFrame: currentNormalizedRect,
+                                                                 screenFrame: visibleFrameOfDestinationScreen,
+                                                                 sourceScreens: sourceScreens,
+                                                                 destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
+                                                                 lastRectangleAction: lastRectangleAction))
+
+        if let delegate {
+            calcResult = delegate.calcResult
+        }
+
+        let result = ResultParameters(windowId: windowId,
+                                      action: action,
+                                      windowElement: windowElement,
+                                      calcResult: calcResult,
+                                      usableScreens: sourceScreens,
+                                      visibleFrameOfScreen: visibleFrameOfDestinationScreen,
+                                      source: parameters.source,
+                                      isFixedSize: isFixedSize)
+
+        return PlannedMove(parameters: parameters,
+                           windowElement: windowElement,
+                           windowId: windowId,
+                           currentWindowRect: currentWindowRect,
+                           currentNormalizedRect: currentNormalizedRect,
+                           pendingDestination: pendingDestination,
+                           sourceScreens: sourceScreens,
+                           ignoreTodo: ignoreTodo,
+                           calcResult: calcResult,
+                           visibleFrameOfDestinationScreen: visibleFrameOfDestinationScreen,
+                           isFixedSize: isFixedSize,
+                           isMovedAcrossDisplays: isMovedAcrossDisplays,
+                           delegate: delegate,
+                           result: result)
+    }
+
+    /// The screens to calculate against, and the screens the window starts on.
+    private func resolveScreens(for windowElement: AccessibilityElement,
+                                parameters: ExecutionParameters) -> (usable: UsableScreens, source: UsableScreens)? {
         // An explicit screen (display cycling) or the cursor screen controls the
         // calculation, but neither necessarily contains the window before it moves.
-        let sourceScreens = screenDetection.detectScreens(using: frontmostWindowElement)
-        var screens: UsableScreens?
+        let sourceScreens = screenDetection.detectScreens(using: windowElement)
+        let screens: UsableScreens?
         if let screen = parameters.screen {
             screens = parameters.source == .titleBar
             ? screenDetection.detectScreens(at: screen)
@@ -104,184 +224,187 @@ class WindowManager {
             ? screenDetection.detectScreensAtCursor()
             : sourceScreens
         }
-        
-        guard let usableScreens = screens, let sourceScreens else {
-            NSSound.beep()
-            Logger.log("Unable to obtain usable screens")
-            return
-        }
-        
-        let pendingDestination = windowAnimator.destination(for: frontmostWindowElement)
-        let currentWindowRect = pendingDestination ?? frontmostWindowElement.frame
-        
+
+        guard let screens, let sourceScreens else { return nil }
+        return (screens, sourceScreens)
+    }
+
+    /// Forgets history for a window moved since Rectangle last placed it, and saves its restore rect.
+    /// - Returns: The last action, if it still describes the window
+    private func reconcileHistory(windowId: CGWindowID?, currentWindowRect: CGRect,
+                                  updateRestoreRect: Bool) -> RectangleAction? {
         var lastRectangleAction = windowId.flatMap { windowHistory.lastRectangleActions[$0] }
-        
+
         let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
-        
+
         if windowMovedExternally {
             lastRectangleAction = nil
             if let windowId {
                 windowHistory.lastRectangleActions.removeValue(forKey: windowId)
             }
         }
-        
-        if parameters.updateRestoreRect, let windowId {
+
+        if updateRestoreRect, let windowId {
             if windowHistory.restoreRects[windowId] == nil
                 || windowMovedExternally {
                 windowHistory.restoreRects[windowId] = currentWindowRect
             }
         }
-        
-        let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
-        
-        if frontmostWindowElement.isSheet == true
-            || currentWindowRect.isNull
-            || usableScreens.frameOfCurrentScreen.isNull
-            || usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo).isNull {
-            NSSound.beep()
-            Logger.log("Window is not snappable or usable screen is not valid")
-            return
+
+        return lastRectangleAction
+    }
+
+    /// Returns true when the window is already where the move would put it, recording that as the action.
+    private func finishIfAlreadyAchieved(_ move: PlannedMove) -> Bool {
+        // The delegate's check records state, so it only runs without a pending destination.
+        guard move.pendingDestination == nil,
+              move.delegate?.isAlreadyAchieved() ?? move.currentNormalizedRect.equalTo(move.calcResult.rect)
+        else { return false }
+
+        Logger.log("Window is already at its target frame")
+        recordAction(windowId: move.windowId, resultingRect: move.currentWindowRect,
+                     action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
+        return true
+    }
+
+    // MARK: - Supersession
+
+    /// Supersedes any pending placement or restore; only the newest one may still write frames.
+    private func nextExecutionID() -> Int {
+        executionID &+= 1
+        return executionID
+    }
+
+    private func isCurrent(_ id: Int) -> Bool {
+        executionID == id
+    }
+
+    // MARK: - Restore
+
+    /// - Returns: Whether a deferred restore took over calling the completion
+    private func restore(_ windowElement: AccessibilityElement, windowId: CGWindowID?,
+                         parameters: ExecutionParameters) -> Bool {
+        guard let windowId else {
+            reject(parameters)
+            return false
         }
-        
-        let currentNormalizedRect = currentWindowRect.screenFlipped
-        let currentWindow = Window(id: windowId, rect: currentNormalizedRect)
-        
-        let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
-        
-        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo)
-        guard var calcResult = windowCalculation?.calculate(calculationParams) else {
-            NSSound.beep()
-            Logger.log("Nil calculation result")
-            return
+        var handedOff = false
+        if let restoreRect = windowHistory.restoreRects[windowId] {
+            let currentExecutionID = nextExecutionID()
+            handedOff = true
+            let animation = WindowMoveAnimation.forRestore(to: restoreRect, of: windowElement, source: parameters.source)
+            place(windowElement, animation: animation, cancellation: parameters.cancellation) { [weak self] animatedFrame in
+                defer { parameters.completion?() }
+                guard let self, self.isCurrent(currentExecutionID), animatedFrame == nil else { return }
+                windowElement.setFrame(restoreRect)
+            }
         }
-        
-        let gapsApplicable = calcResult.resultingAction.gapsApplicable
-        
-        if Defaults.gapSize.value > 0, gapsApplicable != .none {
-            let gapSharedEdges = calcResult.resultingSubAction?.gapSharedEdge ?? calcResult.resultingAction.gapSharedEdge
-            
-            calcResult.rect = GapCalculation.applyGaps(calcResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
-        }
+        windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        return handedOff
+    }
 
-        if Defaults.cyclingOverlapOffset.userEnabled, action.overlapOffsetApplies {
-            calcResult.rect = OverlapOffsetGeometry.applyOverlapOffsetIfNeeded(calcResult.rect, windowId: windowId, screen: calcResult.screen)
-        }
+    // MARK: - Placement
 
-        let willResize = action.resizes || calcResult.rect.size != currentNormalizedRect.size
-        let isFixedSize = (!frontmostWindowElement.isResizable() && willResize) || frontmostWindowElement.isSystemDialog == true
-        let visibleFrameOfDestinationScreen = calcResult.resultingScreenFrame ?? calcResult.screen.adjustedVisibleFrame(ignoreTodo)
-        let isMovedAcrossDisplays = sourceScreens.currentScreen != calcResult.screen
-        
-        let cooperativeMove = cooperativeResize?.beginMove(
-            WindowMoveRequest(calcResult: calcResult,
-                              windowId: windowId,
-                              isFixedSize: isFixedSize,
-                              minimumSize: frontmostWindowElement.minimumSize,
-                              action: action,
-                              source: parameters.source,
-                              currentFrame: currentNormalizedRect,
-                              screenFrame: visibleFrameOfDestinationScreen,
-                              destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                              lastRectangleAction: lastRectangleAction))
-        
-        if let cooperativeMove {
-            calcResult = cooperativeMove.calcResult
-        }
+    /// A planned move that has been accepted and now owns its completion.
+    private struct ActivePlacement {
+        let move: PlannedMove
+        let executionID: Int
+        let animated: Bool
+    }
 
-        let resultParameters = ResultParameters(windowId: windowId,
-                                                action: action,
-                                                windowElement: frontmostWindowElement,
-                                                calcResult: calcResult,
-                                                usableScreens: sourceScreens,
-                                                visibleFrameOfScreen: visibleFrameOfDestinationScreen,
-                                                source: parameters.source,
-                                                isFixedSize: isFixedSize)
+    /// The cross-display retries: one straight away, then one once macOS has settled the window.
+    private static let crossDisplayRetries: [(delay: DispatchTimeInterval?, message: String)] = [
+        (nil, "Window size wasn't applied perfectly across displays. Trying again."),
+        (.milliseconds(25), "Final attempt to adjust across displays.")
+    ]
 
-        if pendingDestination == nil && (cooperativeMove?.placement?.isAlreadyAchieved() ?? currentNormalizedRect.equalTo(calcResult.rect)) {
-            Logger.log("Window is already at its target frame")
-            recordAction(windowId: windowId, resultingRect: currentWindowRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-
-            return
-        }
-
-
+    private func perform(_ move: PlannedMove) {
         // Only an accepted move supersedes the prior completion. A rejected or
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
-        executionID &+= 1
-        let currentExecutionID = executionID
+        let calcResult = move.calcResult
+        let animation = WindowMoveAnimation.forMove(of: move.windowElement, action: move.action, calcResult: calcResult,
+                                                    screenFrame: move.visibleFrameOfDestinationScreen,
+                                                    isFixedSize: move.isFixedSize,
+                                                    isMovedAcrossDisplays: move.isMovedAcrossDisplays,
+                                                    source: move.parameters.source)
+        let placement = ActivePlacement(move: move, executionID: nextExecutionID(), animated: animation != nil)
 
-        let animated = WindowAnimator.enabled && !isFixedSize
-            && (!isMovedAcrossDisplays || parameters.source == .dragToSnap)
-        
-        let completeMove = { [self] (animatedFrame: CGRect?) in
-            var waitsForRetry = false
-            defer { if !waitsForRetry { parameters.completion?() } }
-            guard executionID == currentExecutionID else { return }
-            // The worker already verified an animated frame. A second AX read on
-            // main can stall if the target becomes busy after completion.
-            var resultingRect = animatedFrame
-                ?? cooperativeMove?.placement?.place(result: resultParameters) { moveWindow(toRect: $0, result: $1) }
-                ?? apply(result: resultParameters)
-
-            if isMovedAcrossDisplays {
-                if calcResult.rect.size != resultingRect.size {
-                    Logger.log("Window size wasn't applied perfectly across displays. Trying again.")
-                    resultingRect = apply(result: resultParameters)
-
-                    if calcResult.rect.size != resultingRect.size {
-                        Logger.log("Final attempt to adjust across displays.")
-                        waitsForRetry = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(25)) { [weak self] in
-                            defer { parameters.completion?() }
-                            guard let self, self.executionID == currentExecutionID else { return }
-                            let finalRect = self.apply(result: resultParameters)
-                            self.windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: finalRect,
-                                                           preservesFocus: parameters.preservesFocus)
-                            self.postProcess(result: resultParameters, resultingRect: finalRect, incrementCount: !animated)
-                        }
-                        return
-                    }
-                }
-                windowMovedAcrossDisplays(windowElement: frontmostWindowElement, resultingRect: resultingRect,
-                                          preservesFocus: parameters.preservesFocus)
-            }
-
-            if !isMovedAcrossDisplays {
-                cooperativeMove?.cleanUp(resultingRect: resultingRect,
-                                         screenFrame: sourceScreens.currentScreen.adjustedVisibleFrame(ignoreTodo))
-                if animatedFrame == nil {
-                    resultingRect = frontmostWindowElement.frame
-                }
-            }
-
-            postProcess(result: resultParameters, resultingRect: resultingRect, incrementCount: !animated)
-
-        }
-        
-        completionDeferred = true
-        if animated {
-            recordAction(windowId: windowId, resultingRect: calcResult.rect.screenFlipped,
+        if animation != nil {
+            // Recorded up front so a repeat press during the animation continues the cycle.
+            // `finish` then records the achieved frame without counting the action again.
+            recordAction(windowId: move.windowId, resultingRect: calcResult.rect.screenFlipped,
                          action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
-            let placement = WindowAnimationPlacement(
-                screenFrame: visibleFrameOfDestinationScreen.screenFlipped,
-                sharedEdges: action.resizes ? Defaults.moveFixedSizeToEdge.value.alignmentEdges(
-                    for: calcResult.initialRect.screenFlipped, in: visibleFrameOfDestinationScreen.screenFlipped) : nil,
-                constrainToScreen: !(action.allowedToExtendOutsideCurrentScreenArea && !NSScreen.screensHaveSeparateSpaces),
-                gap: CGFloat(Defaults.gapSize.value))
-            windowAnimator.animate(frontmostWindowElement,
-                                   to: calcResult.rect.screenFlipped,
-                                   releasedSnap: parameters.source == .dragToSnap, placement: placement,
-                                   profile: parameters.source == .keyboardShortcut ? .keyboard : .standard,
-                                   cancellation: parameters.cancellation) { frame in
-                completeMove(frame.isNull ? nil : frame)
-            }
-        } else {
-            windowAnimator.cancel(for: frontmostWindowElement)
-            windowAnimator.afterPendingWrites(cancellation: parameters.cancellation) {
-                completeMove(nil)
-            }
         }
+
+        place(move.windowElement, animation: animation,
+              cancellation: move.parameters.cancellation) { [self] animatedFrame in
+            completePlacement(placement, animatedFrame: animatedFrame)
+        }
+    }
+
+    /// Runs `completion` straight away in the usual case. Only an animation, or a placement that
+    /// must wait for an earlier animation to stop writing, goes through the animator.
+    /// - Parameter completion: Receives the frame an animation achieved, or nil to write the frame
+    private func place(_ windowElement: AccessibilityElement, animation: WindowMoveAnimation?,
+                       cancellation: (() -> Void)?, completion: @escaping (CGRect?) -> Void) {
+        guard animation != nil || !windowAnimator.isIdle else { return completion(nil) }
+        windowAnimator.place(windowElement, animation: animation, cancellation: cancellation, completion: completion)
+    }
+
+    /// Places the window, unless an animation already did, then settles it. Every path ends in one completion.
+    private func completePlacement(_ placement: ActivePlacement, animatedFrame: CGRect?) {
+        let move = placement.move
+        guard isCurrent(placement.executionID) else { return move.complete() }
+
+        // The worker already verified an animated frame. A second AX read on
+        // main can stall if the target becomes busy after completion.
+        let resultingRect = animatedFrame
+            ?? move.delegate?.place(result: move.result) { moveWindow(toRect: $0, result: $1) }
+            ?? apply(result: move.result)
+
+        if move.isMovedAcrossDisplays {
+            settleAcrossDisplays(placement, resultingRect: resultingRect, retries: Self.crossDisplayRetries[...])
+        } else {
+            settleOnSourceScreen(placement, resultingRect: resultingRect, animatedFrame: animatedFrame)
+        }
+    }
+
+    /// Reapplies the target while macOS hasn't given the window its size on the new display.
+    private func settleAcrossDisplays(_ placement: ActivePlacement, resultingRect: CGRect,
+                                      retries: ArraySlice<(delay: DispatchTimeInterval?, message: String)>) {
+        let move = placement.move
+        guard move.calcResult.rect.size != resultingRect.size, let retry = retries.first else {
+            windowMovedAcrossDisplays(windowElement: move.windowElement, resultingRect: resultingRect,
+                                      preservesFocus: move.parameters.preservesFocus)
+            return finish(placement, resultingRect: resultingRect)
+        }
+
+        Logger.log(retry.message)
+        let reapply = { [weak self] in
+            guard let self, self.isCurrent(placement.executionID) else { return move.complete() }
+            self.settleAcrossDisplays(placement, resultingRect: self.apply(result: move.result),
+                                      retries: retries.dropFirst())
+        }
+        if let delay = retry.delay {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: reapply)
+        } else {
+            reapply()
+        }
+    }
+
+    private func settleOnSourceScreen(_ placement: ActivePlacement, resultingRect: CGRect, animatedFrame: CGRect?) {
+        let move = placement.move
+        move.delegate?.moveDidSettle(resultingRect: resultingRect,
+                                      screenFrame: move.sourceScreens.currentScreen.adjustedVisibleFrame(move.ignoreTodo))
+        // Cleanup can move the focused window too, so read where it ended up.
+        let settledRect = animatedFrame == nil ? move.windowElement.frame : resultingRect
+        finish(placement, resultingRect: settledRect)
+    }
+
+    private func finish(_ placement: ActivePlacement, resultingRect: CGRect) {
+        postProcess(result: placement.move.result, resultingRect: resultingRect, incrementCount: !placement.animated)
+        placement.move.complete()
     }
 
     
@@ -337,7 +460,7 @@ class WindowManager {
                 evidence["restore"] = [restore.minX, restore.minY, restore.width, restore.height]
             }
         }
-        WindowAnimationDiagnostics.event("window-action-achieved", fields: evidence)
+        DiagnosticTrace.event("window-action-achieved", fields: evidence)
         Notification.Name.windowActionCompleted.post()
         
         if Logger.logging {

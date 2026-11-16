@@ -80,15 +80,6 @@ struct WindowAnimationPlacement: Equatable {
     }
 }
 
-enum WindowAnimationGeometry {
-    static func valid(_ frame: CGRect) -> Bool {
-        !frame.isNull && !frame.isInfinite && [frame.minX, frame.minY, frame.width, frame.height].allSatisfy { $0.isFinite } && frame.width > 0 && frame.height > 0
-    }
-    static func near(_ a: CGRect, _ b: CGRect, tolerance: CGFloat = 2) -> Bool {
-        valid(a) && valid(b) && abs(a.minX-b.minX) <= tolerance && abs(a.minY-b.minY) <= tolerance && abs(a.width-b.width) <= tolerance && abs(a.height-b.height) <= tolerance
-    }
-}
-
 enum WindowAnimationSize {
     static func animationSize(_ requested: CGSize, origin: CGSize, hint: CGSize?) -> CGSize {
         guard let hint else { return requested }
@@ -115,8 +106,8 @@ struct WindowAnimationSizeFeedback {
     private(set) var aspectRatio: CGFloat?
 
     mutating func observe(requested: CGSize, actual: CGRect, server: CGRect?, at time: TimeInterval) {
-        guard let server, WindowAnimationGeometry.valid(actual),
-              WindowAnimationGeometry.near(actual, server, tolerance: 1),
+        guard let server, actual.isValidWindowFrame,
+              actual.isNear(server, tolerance: 1),
               actual.width <= requested.width + 1, actual.height <= requested.height + 1 else {
             reset()
             return

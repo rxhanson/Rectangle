@@ -5,12 +5,9 @@ import Cocoa
 class ScreenDetection {
 
     private let availableScreens: () -> [NSScreen]
-    private let logicalFrame: (AccessibilityElement) -> CGRect?
 
-    init(screens: @escaping () -> [NSScreen] = { NSScreen.screens },
-         logicalFrame: @escaping (AccessibilityElement) -> CGRect? = { WindowAnimator.shared.logicalFrame(for: $0) }) {
+    init(screens: @escaping () -> [NSScreen] = { NSScreen.screens }) {
         availableScreens = screens
-        self.logicalFrame = logicalFrame
     }
 
     func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
@@ -27,7 +24,7 @@ class ScreenDetection {
         
         let screensOrdered = order(screens: screens)
         // Route repeated actions using the destination instead of an intermediate animation frame.
-        let windowFrame = frontmostWindowElement.map { logicalFrame($0) ?? $0.frame } ?? .zero
+        let windowFrame = frontmostWindowElement?.logicalFrame ?? .zero
         guard let sourceScreen: NSScreen = screenContaining(windowFrame, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
             return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)

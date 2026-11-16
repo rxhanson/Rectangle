@@ -134,7 +134,6 @@ class FootprintWindow: NSWindow {
     private var moving = false
     private var geometryAnimation: WindowFrameAnimation?
     private var geometryTimer: Timer?
-    private let capturePauseID = UUID()
     private var foregroundWindowID: CGWindowID?
     private var foregroundProcessID: pid_t?
     private var placementGeneration: UUID?
@@ -204,7 +203,6 @@ class FootprintWindow: NSWindow {
 
     deinit {
         geometryTimer?.invalidate()
-        WindowAnimationCaptureGate.shared.end(capturePauseID)
         if let accessibilityObserver { NSWorkspace.shared.notificationCenter.removeObserver(accessibilityObserver) }
     }
 
@@ -254,11 +252,9 @@ class FootprintWindow: NSWindow {
         let generation = UUID()
         geometryGeneration = generation
         moving = duration > 0
-        if moving { WindowAnimationCaptureGate.shared.begin(capturePauseID) }
         let arrived = { [weak self] in
             guard let self, self.geometryGeneration == generation else { return }
             self.moving = false
-            self.updateCaptureGate()
             self.tracePresentation("arrived")
         }
         if duration > 0 {
@@ -292,7 +288,6 @@ class FootprintWindow: NSWindow {
         } else {
             applyGeometry(rect, duration: duration, completion: arrived)
         }
-        updateCaptureGate()
     }
 
     private func applyGeometry(_ rect: CGRect, duration: TimeInterval, completion: (() -> Void)? = nil) {
@@ -421,13 +416,10 @@ class FootprintWindow: NSWindow {
 
     private func startFade(to opacity: CGFloat, duration: TimeInterval) {
         guard let layer = contentView?.layer else { return }
-        if duration > 0 { WindowAnimationCaptureGate.shared.begin(capturePauseID) }
         fade.set(layer, to: opacity, duration: duration) { [weak self] in
             guard let self else { return }
             if !self.showing { self.hidePreview() }
-            self.updateCaptureGate()
         }
-        updateCaptureGate()
     }
 
     private func hidePreview() {
@@ -435,10 +427,8 @@ class FootprintWindow: NSWindow {
         tracePresentation("hidden")
     }
 
-    private func updateCaptureGate() {
-        if moving || fade.isAnimating { WindowAnimationCaptureGate.shared.begin(capturePauseID) }
-        else { WindowAnimationCaptureGate.shared.end(capturePauseID) }
-    }
+    /// Whether the preview is still moving or fading.
+    var isAnimating: Bool { moving || fade.isAnimating }
 
     func refreshAccessibility() {
         updateAppearance()
@@ -466,13 +456,12 @@ class FootprintWindow: NSWindow {
         fade.cancel()
         geometryGeneration = UUID()
         moving = false
-        WindowAnimationCaptureGate.shared.end(capturePauseID)
         super.close()
     }
 
     private func tracePresentation(_ event: String, target: CGRect? = nil) {
         let rect = (target ?? displayedRect).screenFlipped
-        WindowAnimationDiagnostics.event("footprint." + event, fields: ["windowID": windowNumber,
+        DiagnosticTrace.event("footprint." + event, fields: ["windowID": windowNumber,
             "frame": [rect.minX, rect.minY, rect.width, rect.height],
             "alpha": contentView?.layer?.presentation()?.opacity ?? contentView?.layer?.opacity ?? 0,
             "shadowOpacity": shadow.container.presentation()?.opacity ?? shadow.container.opacity,

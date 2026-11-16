@@ -16,8 +16,8 @@ struct WindowAnimationWritePolicy {
     mutating func observe(ax: CGRect, server: CGRect?, at time: TimeInterval) {
         now = time
         guard let requested = lastRequest, let server,
-              WindowAnimationGeometry.near(ax, requested, tolerance: 1),
-              WindowAnimationGeometry.near(ax, server, tolerance: 1) else { reset(); return }
+              ax.isNear(requested, tolerance: 1),
+              ax.isNear(server, tolerance: 1) else { reset(); return }
         if time > verifiedAt { confirmations = min(2, confirmations + 1) }
         verifiedAt = time
         geometryChanged = false

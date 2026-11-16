@@ -81,7 +81,7 @@ final class WindowAnimator {
     private var workerNativeResize = false
     private var workerOffset = CGPoint.zero
     private lazy var core = DirectWindowAnimator(enabled: { true }, clock: { [weak self] in self?.workerTime ?? ProcessInfo.processInfo.systemUptime }, automaticallyAdvances: false, smoothResize: true,
-        environmentIsSafe: { !WindowAnimationInterruptionPolicy.missionControlActive },
+        environmentIsSafe: { !MissionControl.isActive },
         crossesDisplays: { [weak self] a, b in
             let screens = self?.workerScreens ?? []
             return WindowDisplayTransition.display(containing: a, displays: screens)
@@ -90,14 +90,15 @@ final class WindowAnimator {
         isNativeResizeApp: { [weak self] _ in self?.workerNativeResize == true })
 
 
-    func logicalFrame(for element: AccessibilityElement) -> CGRect? { destination(for: element) }
-
     func destination(for element: AccessibilityElement) -> CGRect? {
         if let active, active.element == element { return active.destination }
         return retiring.last(where: { $0.0 == element })?.1
     }
+    /// True when no animation is running or still has writes in flight.
+    var isIdle: Bool { active == nil && retiring.isEmpty && !tickPending }
+
     func afterPendingWrites(cancellation: (() -> Void)? = nil, _ body: @escaping () -> Void) {
-        if active == nil && retiring.isEmpty && !tickPending { body(); return }
+        if isIdle { body(); return }
         let expected = generation
         queue.async { [self] in
             DispatchQueue.main.async { [self] in
@@ -253,7 +254,7 @@ final class WindowAnimator {
                 if current.request.consumeGeometryChange() { workerWindow?.animationPolicy?.geometryChanged = true }
                 if current.request.consumeResizeChange() {
                     workerWindow?.animationResizeNotified = true
-                    WindowAnimationDiagnostics.event("animation-resize-notification", fields: ["windowID": workerWindow?.windowId ?? 0])
+                    DiagnosticTrace.event("animation-resize-notification", fields: ["windowID": workerWindow?.windowId ?? 0])
                 }
                 workerTime = start
                 workerWindow?.animationVerificationTime = start
@@ -262,7 +263,7 @@ final class WindowAnimator {
                 // Only motion samples look ahead; feedback and timeout checks use real time.
                 let sampleTime = WindowAnimationPacing.sampleTime(now: start, deadline: deadline, displayInterval: displayInterval)
                 core.advance(at: workerTime, presentationTime: sampleTime)
-                WindowAnimationDiagnostics.event("animation-executor-tick", fields: [
+                DiagnosticTrace.event("animation-executor-tick", fields: [
                     "windowID": workerWindow?.windowId ?? 0, "rate": rate,
                     "queueMilliseconds": (start - now) * 1000,
                     "sizeFrameCount": workerWindow?.resizeCadence.frames ?? 1,
@@ -314,4 +315,17 @@ final class WindowAnimator {
         }
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in self?.cancel() }
     }
+}
+
+extension AccessibilityElement {
+    /// Where the window is settling: a running animation's destination, or its current frame.
+    /// Decisions based on the window's position use this, so that they aren't thrown off
+    /// by a frame partway through an animation.
+    var logicalFrame: CGRect { WindowAnimator.shared.destination(for: self) ?? frame }
+
+    /// Whether moves of this window animate. Rectangle's own windows, such as Settings, never do:
+    /// the animator writes frames through Accessibility off the main thread, and for our own
+    /// process those writes are carried out in-process on that thread, where AppKit traps.
+    /// They are placed immediately instead.
+    var canAnimate: Bool { WindowAnimator.enabled && pid != getpid() }
 }
