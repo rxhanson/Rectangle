@@ -684,6 +684,10 @@ class BandTilingTests: XCTestCase {
 
     private typealias Manager = MultiWindowManager
 
+    /// The real Todo window, when Todo is on where the tests run, can share a window id
+    /// with a test window, so tests that aren't about Todo must not consult `TodoManager`.
+    private static let noTodoWindow: (AccessibilityElement) -> Bool = { _ in false }
+
     private func applyBandTiling(_ windows: [Manager.TilingWindow], bounds: Manager.BackingPixelBounds,
                                 direction: Manager.BandDirection, constraints: [Manager.BandConstraint],
                                 pointFrame: (CGRect) -> CGRect, backingFrame: (CGRect) -> CGRect) {
@@ -834,7 +838,7 @@ class BandTilingTests: XCTestCase {
                     XCTAssertEqual(detection.cursorDetections, hasFocus ? 0 : 1)
                     let windows = Manager.windowsOnScreen(screens: context.screens,
                                                           windows: [focused, underPointer],
-                                                          screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
+                                                          isActiveTodoWindow: Self.noTodoWindow, screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
                     let visibleInfo = [visible(101, frame: focused.frame), visible(102, frame: underPointer.frame)]
                     switch action {
                     case .tileRows, .tileColumns:
@@ -887,7 +891,7 @@ class BandTilingTests: XCTestCase {
         let detection = TestScreenDetection(screens: [emptyScreen, occupiedScreen], cursorScreen: emptyScreen)
         let context = try XCTUnwrap(Manager.tilingContext(focusedWindow: nil, screenDetection: detection))
         let windows = Manager.windowsOnScreen(screens: context.screens, windows: [window],
-                                              screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
+                                              isActiveTodoWindow: Self.noTodoWindow, screenFor: { detection.detectScreens(using: $0)?.currentScreen }).windows
         XCTAssertTrue(windows.isEmpty)
         for direction in [Manager.BandDirection.rows, .columns] {
             Manager.tileWindowsInBands(direction, focusedWindow: nil, windows: windows,
@@ -1046,7 +1050,7 @@ class BandTilingTests: XCTestCase {
             let windows = Manager.windowsOnScreen(screens: screens,
                                                   windows: [covered, otherSpace, otherDisplay],
                                                   focusedWindow: focused,
-                                                  screenFor: { $0 === otherDisplay ? otherScreen : screen }).windows
+                                                  isActiveTodoWindow: Self.noTodoWindow, screenFor: { $0 === otherDisplay ? otherScreen : screen }).windows
             Manager.tileWindowsInBands(direction, focusedWindow: focused,
                                        windows: windows,
                                        visibleWindowInfo: [visible(102, frame: lowerRight),
@@ -1125,7 +1129,7 @@ class BandTilingTests: XCTestCase {
                 let originalRightFrame = onRight.frame
                 let windows = Manager.windowsOnScreen(screens: screens, windows: [focused, onRight, otherSpace],
                                                       focusedWindow: focused, combineScreens: combineScreens,
-                                                      screenFor: { $0 === focused ? left : right }).windows
+                                                      isActiveTodoWindow: Self.noTodoWindow, screenFor: { $0 === focused ? left : right }).windows
                 let workArea = combineScreens ? left.frame.union(right.frame) : left.frame
                 Manager.tileWindowsInBands(direction, focusedWindow: focused, windows: windows,
                                            visibleWindowInfo: [visible(901, frame: focused.frame),
