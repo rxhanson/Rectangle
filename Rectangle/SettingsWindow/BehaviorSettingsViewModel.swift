@@ -176,7 +176,6 @@ final class BehaviorSettingsViewModel {
     
     // MARK: - UI Conditional Flags
     var showCooperativeCornerResize: Bool { Defaults.cooperativeCornerResize.enabled }
-    var showCursorScreenDetection: Bool { Defaults.useCursorScreenDetection.enabled }
     var showCombinedDisplayMode: Bool { !NSScreen.screensHaveSeparateSpaces }
     var stageCapable: Bool { StageUtil.stageCapable }
     

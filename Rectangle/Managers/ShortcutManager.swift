@@ -35,6 +35,7 @@ class ShortcutManager {
 
     let windowManager: WindowManager
     private let screenDetection: ScreenDetection
+    private let screenSelector: ScreenSelector
     private let bindingStore: ShortcutBindingStore
     private let mouseButtonBindingStore: MouseButtonBindingStore
     private let notificationCenter: NotificationCenter
@@ -67,7 +68,7 @@ class ShortcutManager {
             return session?[kCGSessionOnConsoleKey] as? Bool ?? true
         },
         appDisabledProvider: @escaping () -> Bool = { ApplicationToggle.shortcutsDisabled },
-        missionControlActiveProvider: @escaping () -> Bool = { WindowAnimationInterruptionPolicy.missionControlActive },
+        missionControlActiveProvider: @escaping () -> Bool = { MissionControl.isActive },
         ignoreShortcutsInMissionControlProvider: @escaping () -> Bool = { Defaults.ignoreShortcutsInMissionControl.enabled },
         windowUnderCursorProvider: @escaping (MouseButtonPress) -> AccessibilityElement? = { press in
             AccessibilityElement.getWindowElementUnderCursor(at: press.location, eventWindowID: press.windowId)
@@ -82,6 +83,7 @@ class ShortcutManager {
     ) {
         self.windowManager = windowManager
         self.screenDetection = screenDetection
+        self.screenSelector = ScreenSelector(screenDetection: screenDetection)
         self.bindingStore = bindingStore
         self.mouseButtonBindingStore = mouseButtonBindingStore
         self.notificationCenter = notificationCenter
@@ -270,7 +272,8 @@ class ShortcutManager {
             }
 
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
-               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowManager.logicalFrame(for: windowElement)) == nil {
+               !screenSelector.cursorChangedDisplay(for: windowId),
+               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowElement.logicalFrame) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus, completion: parameters.completion, cancellation: parameters.cancellation)
                     // Bypass any other subsequent action by removing the last action
@@ -316,7 +319,7 @@ class ShortcutManager {
             return
         }
 
-        let logicalFrame = windowManager.logicalFrame(for: windowElement)
+        let logicalFrame = windowElement.logicalFrame
         let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
         if ShortcutCycle.isStale(lastAction: lastAction, currentWindowRect: logicalFrame) {
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
@@ -381,7 +384,7 @@ class ShortcutManager {
     private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
 
         if parameters.action == .maximize {
-            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowManager.logicalFrame(for: windowElement).size {
+            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.logicalFrame.size {
                 return true
             }
         }

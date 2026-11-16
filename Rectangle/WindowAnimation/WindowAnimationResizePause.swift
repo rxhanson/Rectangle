@@ -40,7 +40,7 @@ struct WindowAnimationResizePause {
     mutating func observe(requested: CGSize, actual: CGRect, server: CGRect?, destination: CGRect,
                           placement: WindowAnimationPlacement, origin: CGRect, velocity: CGPoint,
                           at now: TimeInterval, endingAt: TimeInterval) {
-        guard let server, WindowAnimationGeometry.valid(actual), WindowAnimationGeometry.valid(server) else {
+        guard let server, actual.isValidWindowFrame, server.isValidWindowFrame else {
             width = nil; height = nil; motion = nil
             return
         }

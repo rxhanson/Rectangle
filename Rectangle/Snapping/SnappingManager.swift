@@ -58,8 +58,8 @@ struct WindowDragGeometry {
         // The two mouse-down reads may straddle the first native movement.
         // AX catching up still proves movement against its own baseline, but
         // a persistent difference between coordinate sources does not.
-        guard let server, WindowAnimationGeometry.near(ax, server, tolerance: 1),
-              !WindowAnimationGeometry.near(initialAX, ax, tolerance: 1) else { return false }
+        guard let server, ax.isNear(server, tolerance: 1),
+              !initialAX.isNear(ax, tolerance: 1) else { return false }
         return WindowDragGeometry(initialFrame: initialAX, initialServerFrame: nil, serverFrame: nil,
             accessibilityFrame: { ax })?.movedWithoutResizing == true
     }
@@ -523,12 +523,12 @@ class SnappingManager {
     }
 
     private func traceNativeInput(_ event: NSEvent, phase: String) {
-        guard WindowAnimationDiagnostics.enabled else { return }
+        guard DiagnosticTrace.enabled else { return }
         func fields(_ frame: CGRect?) -> [CGFloat] {
             guard let frame else { return [] }
             return [frame.minX, frame.minY, frame.width, frame.height]
         }
-        WindowAnimationDiagnostics.event("native-input-" + phase, fields: ["windowID": windowId ?? 0,
+        DiagnosticTrace.event("native-input-" + phase, fields: ["windowID": windowId ?? 0,
             "initialAX": fields(initialWindowRect), "initialServer": fields(initialWindowServerRect),
             "history": fields(windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0]?.rect }),
             "moving": windowMoving, "dragged": nativeGesture.observedDrag, "cancelled": nativeGesture.cancelled,
@@ -582,7 +582,7 @@ class SnappingManager {
         guard var pending = nativeSizeRestore, pending.windowID == windowId,
               let windowElement, !Defaults.unsnapRestore.userDisabled else { return }
         let current = windowElement.frame
-        guard WindowAnimationGeometry.valid(current) else { return }
+        guard current.isValidWindowFrame else { return }
         guard needsNativeSizeRestore(current.size, to: pending.size) else {
             nativeSizeRestore = nil
             return
@@ -602,7 +602,7 @@ class SnappingManager {
                                adjustSizeFirst: false, adjustPosition: false)
         let achieved = windowElement.frame
         if !needsNativeSizeRestore(achieved.size, to: pending.size) { nativeSizeRestore = nil }
-        WindowAnimationDiagnostics.event("native-size-restore-retry", fields: ["windowID": pending.windowID,
+        DiagnosticTrace.event("native-size-restore-retry", fields: ["windowID": pending.windowID,
             "requested": [pending.size.width, pending.size.height],
             "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
     }
@@ -624,14 +624,14 @@ class SnappingManager {
                   AppDelegate.windowHistory.lastRectangleActions[pending.windowID] == nil else { return }
             self.pendingReleasedRestore = nil
             let current = element.frame
-            guard WindowAnimationGeometry.valid(current), self.needsNativeSizeRestore(current.size, to: pending.size) else { return }
+            guard current.isValidWindowFrame, self.needsNativeSizeRestore(current.size, to: pending.size) else { return }
             var target = CGRect(origin: current.origin, size: pending.size)
             if let screen = NSScreen.screens.first(where: { $0.frame.screenFlipped.contains(current.origin) }) {
                 target = WindowFrameBounds.constrained(target, to: screen.visibleFrame.screenFlipped, gap: 0)
             }
             element.setFrame(target, adjustSizeFirst: false)
             let achieved = element.frame
-            WindowAnimationDiagnostics.event("native-size-restore-released", fields: ["windowID": pending.windowID,
+            DiagnosticTrace.event("native-size-restore-released", fields: ["windowID": pending.windowID,
                 "requested": [pending.size.width, pending.size.height],
                 "achieved": [achieved.width, achieved.height]])
         }
@@ -678,8 +678,15 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
+    /// Whether a blurred footprint sits just below the dragged window and stays up until the
+    /// window has animated into it. This only applies while placement animates: an immediate
+    /// placement needs no footprint to land in.
+    private var footprintFollowsAnimatedPlacement: Bool {
+        WindowAnimator.enabled && Defaults.footprintBlur.enabled
+    }
+
     private func snapPreviewCompletion() -> (() -> Void)? {
-        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+        if footprintFollowsAnimatedPlacement {
             return box?.completionForSnap(windowID: windowId)
         }
         box?.orderOut(nil)
@@ -695,7 +702,7 @@ class SnappingManager {
         }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
                          duration: getFootprintAnimationDuration(),
-                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
+                         below: footprintFollowsAnimatedPlacement ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {

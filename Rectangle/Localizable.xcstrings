@@ -8489,6 +8489,9 @@
         }
       }
     },
+    "Commands use the display containing the cursor instead of the window." : {
+
+    },
     "Configure the divide between side and corner actions" : {
       "localizations" : {
         "en" : {
@@ -25881,6 +25884,9 @@
         }
       }
     },
+    "Move window to display where cursor is" : {
+
+    },
     "New" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -42674,6 +42680,7 @@
       }
     },
     "Use cursor screen detection" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

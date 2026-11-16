@@ -194,7 +194,7 @@ class WindowAnimationElement: AccessibilityElement {
             return nil
         }
         guard resized, actualSize != nil else { animationPolicy?.reset(); return nil }
-        if deferred || WindowAnimationGeometry.near(resolved, frame, tolerance: 1) {
+        if deferred || resolved.isNear(frame, tolerance: 1) {
             animationPolicy?.requested(resolved)
         } else { animationPolicy?.reset() }
         return resolved
@@ -289,8 +289,8 @@ class WindowAnimationElement: AccessibilityElement {
     }
 
     private func recordAnimationWait(_ reason: String) {
-        guard WindowAnimationDiagnostics.enabled else { return }
-        WindowAnimationDiagnostics.event("animation-feedback-wait", fields: ["windowID": windowId ?? 0,
+        guard DiagnosticTrace.enabled else { return }
+        DiagnosticTrace.event("animation-feedback-wait", fields: ["windowID": windowId ?? 0,
             "reason": reason, "frameInterval": animationResizeResponse.frameInterval,
             "responseInterval": animationResizeResponse.responseInterval])
     }
@@ -367,7 +367,7 @@ final class WindowAnimationWorkerElement: WindowAnimationElement {
             resizeCadence.observe(cost: resizeCost)
             animationSizeInterval = resizeCadence.interval
         }
-        WindowAnimationDiagnostics.event("animation-operation", fields: ["windowID": windowId ?? 0,
+        DiagnosticTrace.event("animation-operation", fields: ["windowID": windowId ?? 0,
             "operation": operation, "milliseconds": cost * 1000])
         return value
     }
@@ -378,7 +378,7 @@ final class WindowAnimationWorkerElement: WindowAnimationElement {
         let allowed = frameBudget.allowsSizeRead(at: now,
             frameInterval: resizeCadence.frameInterval, resizeCost: resizeCost, reservingMotion: reservingMotion)
         if !allowed {
-            WindowAnimationDiagnostics.event("animation-read-deferred", fields: ["windowID": windowId ?? 0,
+            DiagnosticTrace.event("animation-read-deferred", fields: ["windowID": windowId ?? 0,
                 "reservingMotion": reservingMotion,
                 "estimatedMilliseconds": frameBudget.estimatedSizeReadCost(at: now, frameInterval: resizeCadence.frameInterval) * 1000])
         }
