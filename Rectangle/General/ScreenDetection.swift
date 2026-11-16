@@ -5,12 +5,9 @@ import Cocoa
 class ScreenDetection {
 
     private let availableScreens: () -> [NSScreen]
-    private let logicalFrame: (AccessibilityElement) -> CGRect?
 
-    init(screens: @escaping () -> [NSScreen] = { NSScreen.screens },
-         logicalFrame: @escaping (AccessibilityElement) -> CGRect? = { WindowAnimator.shared.logicalFrame(for: $0) }) {
+    init(screens: @escaping () -> [NSScreen] = { NSScreen.screens }) {
         availableScreens = screens
-        self.logicalFrame = logicalFrame
     }
 
     func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
@@ -27,7 +24,7 @@ class ScreenDetection {
         
         let screensOrdered = order(screens: screens)
         // Route repeated actions using the destination instead of an intermediate animation frame.
-        let windowFrame = frontmostWindowElement.map { logicalFrame($0) ?? $0.frame } ?? .zero
+        let windowFrame = frontmostWindowElement?.logicalFrame ?? .zero
         guard let sourceScreen: NSScreen = screenContaining(windowFrame, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
             return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
@@ -155,6 +152,23 @@ struct UsableScreens {
     let frameOfCurrentScreen: CGRect
     let numScreens: Int
     let screensOrdered: [NSScreen]
+
+    func verticalNeighbor(above: Bool, wrap: Bool) -> NSScreen? {
+        typealias Candidate = (screen: NSScreen, distance: CGFloat, overlap: CGFloat, isOpposite: Bool)
+        let source = frameOfCurrentScreen
+        let candidates = screensOrdered.compactMap { screen -> Candidate? in
+            let frame = screen.frame
+            let overlap = min(source.maxX, frame.maxX) - max(source.minX, frame.minX)
+            guard screen != currentScreen, overlap > 0 else { return nil }
+            return (screen,
+                    above ? frame.minY - source.maxY : source.minY - frame.maxY,
+                    overlap,
+                    above ? frame.maxY <= source.minY : frame.minY >= source.maxY)
+        }
+        let isCloser: (Candidate, Candidate) -> Bool = { ($0.distance, $1.overlap) < ($1.distance, $0.overlap) }
+        return candidates.filter { $0.distance >= 0 }.min(by: isCloser)?.screen
+            ?? (wrap ? candidates.filter { $0.isOpposite }.min(by: isCloser)?.screen : nil)
+    }
 
     init(currentScreen: NSScreen, adjacentScreens: AdjacentScreens? = nil, numScreens: Int, screensOrdered: [NSScreen]? = nil) {
         self.currentScreen = currentScreen
@@ -400,6 +414,22 @@ enum DockUtil {
     }
 }
 
+enum MenuBarUtil {
+    // When only the frontmost app hides the menu bar, macOS keeps reporting its strip as reserved
+    // in NSScreen.visibleFrame, so windows stop short of the top of the screen (#1043).
+    // Opting in extends the frame to the top edge, staying below a notch, where macOS never places windows.
+    static func frameIgnoringMenuBar(_ visibleFrame: CGRect,
+                                     screenFrame: CGRect,
+                                     topSafeAreaInset: CGFloat) -> CGRect {
+        guard !visibleFrame.isNull, !screenFrame.isNull else { return visibleFrame }
+        let maxY = screenFrame.maxY - max(0, topSafeAreaInset)
+        guard maxY > visibleFrame.maxY else { return visibleFrame }
+        var frame = visibleFrame
+        frame.size.height = maxY - frame.minY
+        return frame
+    }
+}
+
 extension NSScreen {
 
     func adjustedVisibleFrame(_ ignoreTodo: Bool = false, _ ignoreStage: Bool = false) -> CGRect {
@@ -410,7 +440,7 @@ extension NSScreen {
         if !NSScreen.screensHaveSeparateSpaces && Defaults.combinedDisplayMode.userEnabled {
             let combinedScreenFrame = dockSnapshot.screenFrames.reduce(CGRect.null) { $0.union($1) }
             let combinedVisibleFrame = screens.reduce(CGRect.null) {
-                $0.union(DockUtil.correctedVisibleFrame(for: $1, snapshot: dockSnapshot))
+                $0.union($1.correctedVisibleFrame(snapshot: dockSnapshot))
             }
             newFrame = DockUtil.correctedVisibleFrame(
                 screenFrame: combinedScreenFrame,
@@ -420,7 +450,7 @@ extension NSScreen {
                 dockAutoHideEnabled: dockSnapshot.dockAutoHideEnabled
             )
         } else {
-            newFrame = DockUtil.correctedVisibleFrame(for: self, snapshot: dockSnapshot)
+            newFrame = correctedVisibleFrame(snapshot: dockSnapshot)
         }
 
         if !ignoreStage && Defaults.stageSize.value > 0 {
@@ -452,13 +482,23 @@ extension NSScreen {
         newFrame.origin.y += Defaults.screenEdgeGapBottom.cgFloat
         newFrame.size.width -= (Defaults.screenEdgeGapLeft.cgFloat + Defaults.screenEdgeGapRight.cgFloat)
         
-        if self.safeAreaInsets.top != 0, Defaults.screenEdgeGapTopNotch.value != 0 {
-            newFrame.size.height -= (Defaults.screenEdgeGapTopNotch.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
+        // A negative notch gap (the default) means it isn't set, so the regular top gap applies.
+        let notchGap = Defaults.screenEdgeGapTopNotch.value
+        if self.safeAreaInsets.top != 0, notchGap >= 0 {
+            newFrame.size.height -= (CGFloat(notchGap) + Defaults.screenEdgeGapBottom.cgFloat)
         } else {
             newFrame.size.height -= (Defaults.screenEdgeGapTop.cgFloat + Defaults.screenEdgeGapBottom.cgFloat)
         }
 
         return newFrame
+    }
+
+    /// The Dock-corrected visible frame, extended to the top of the screen when the user
+    /// has opted out of the menu bar reservation (#1043).
+    private func correctedVisibleFrame(snapshot: DockUtil.Snapshot) -> CGRect {
+        let visibleFrame = DockUtil.correctedVisibleFrame(for: self, snapshot: snapshot)
+        guard Defaults.ignoreMenuBar.userEnabled else { return visibleFrame }
+        return MenuBarUtil.frameIgnoringMenuBar(visibleFrame, screenFrame: frame, topSafeAreaInset: safeAreaInsets.top)
     }
 
     static var portraitDisplayConnected: Bool {

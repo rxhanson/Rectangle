@@ -3,26 +3,44 @@
 import AppKit
 import SwiftUI
 
-class SettingsWindowController: NSWindowController {
+class SettingsWindowController: NSWindowController, NSWindowDelegate {
+    
+    var onClose: (() -> Void)?
     
     convenience init() {
         let contentViewController = SettingsTabViewController()
         let window = NSWindow(contentViewController: contentViewController)
         
         window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        window.title = SettingsTabViewController.Tab.shortcuts.label
         
-        let initialTab = SettingsTabViewController.Tab.shortcuts
-        let initialSize = initialTab.defaultSize ?? initialTab.makeViewController().view.fittingSize
-        window.setContentSize(initialSize)
-        window.minSize = NSSize(width: 500, height: 350)
+        let initialTab = SettingsTabViewController.currentTab
+        window.title = initialTab.label
+        let minSize = NSSize(width: 500, height: 350)
+        if let savedWindowSize = initialTab.savedWindowSize {
+            contentViewController.resizeWindow(toFrameSize: savedWindowSize, animated: false)
+        } else {
+            let initialSize = initialTab.defaultSize
+            ?? contentViewController.tabViewItems[initialTab.rawValue].viewController?.view.fittingSize
+            ?? minSize
+            window.setContentSize(initialSize)
+        }
+        window.minSize = minSize
         window.center()
         
         self.init(window: window)
+        window.delegate = self
+    }
+    
+    func windowWillClose(_ notification: Notification) {
+        (contentViewController as? SettingsTabViewController)?.saveCurrentSize()
+        onClose?()
+        DispatchQueue.main.async { self.window?.contentViewController = nil }
     }
 }
 
 class SettingsTabViewController: NSTabViewController {
+    static var currentTab: Tab = .shortcuts
+    static var savedWindowSizes: [Int: NSSize] = [:]
     
     enum Tab: Int, CaseIterable {
         case shortcuts
@@ -67,9 +85,11 @@ class SettingsTabViewController: NSTabViewController {
                 return AppSettingsViewController()
             }
         }
+        
+        var savedWindowSize: NSSize? {
+            SettingsTabViewController.savedWindowSizes[rawValue]
+        }
     }
-    
-    private var savedTabSizes: [Int: NSSize] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,13 +102,14 @@ class SettingsTabViewController: NSTabViewController {
             item.image = NSImage(imageLiteralResourceName: tab.imageName)
             addTabViewItem(item)
         }
+        selectedTabViewItemIndex = SettingsTabViewController.currentTab.rawValue
         
         Notification.Name.snapAreaSettingsNeedsResize.onPost {[weak self] notification in
             guard let self,
                   let snapAreasIndex = Tab.allCases.firstIndex(of: .snapAreas)
             else { return }
 
-            self.savedTabSizes.removeValue(forKey: snapAreasIndex)
+            Self.savedWindowSizes.removeValue(forKey: snapAreasIndex)
             
             if selectedTabViewItemIndex == snapAreasIndex {
                 let viewController = tabViewItems[snapAreasIndex].viewController!
@@ -106,7 +127,7 @@ class SettingsTabViewController: NSTabViewController {
     override var selectedTabViewItemIndex: Int {
         willSet {
             if selectedTabViewItemIndex != -1, let window = view.window {
-                savedTabSizes[selectedTabViewItemIndex] = window.frame.size
+                Self.savedWindowSizes[selectedTabViewItemIndex] = window.frame.size
             }
         }
         didSet {
@@ -116,12 +137,21 @@ class SettingsTabViewController: NSTabViewController {
         }
     }
     
+    func saveCurrentSize() {
+        if let window = view.window {
+            Self.savedWindowSizes[Self.currentTab.rawValue] = window.frame.size
+        }
+    }
+    
     private func tabDidSwitch(to item: NSTabViewItem, at index: Int) {
         guard let window = view.window, let viewController = item.viewController else { return }
         
+        if let tab = Tab(rawValue: index) {
+            SettingsTabViewController.currentTab = tab
+        }
         window.title = item.label
         
-        if let savedSize = savedTabSizes[index] {
+        if let savedSize = Self.savedWindowSizes[index] {
             resizeWindow(toFrameSize: savedSize, animated: true)
         } else if Tab.allCases.indices.contains(index) {
             let tab = Tab.allCases[index]
@@ -150,7 +180,7 @@ class SettingsTabViewController: NSTabViewController {
         return vc.view.bounds.size
     }
     
-    private func resizeWindow(toFrameSize targetFrameSize: NSSize, animated: Bool) {
+    func resizeWindow(toFrameSize targetFrameSize: NSSize, animated: Bool) {
         guard let window = view.window else { return }
         
         var frame = window.frame

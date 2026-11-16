@@ -6,18 +6,20 @@ enum SubsequentExecutionMode: Int {
     case resize = 0 // based on Spectacle
     case acrossMonitor = 1
     case none = 2
-    case acrossAndResize = 3 // across monitor for right/left, spectacle resize for all else
+    case acrossAndResize = 3 // across displays for side actions, resize at layout boundaries
     case cycleMonitor = 4
     case resizeAndCycleQuadrants = 5
+    case switchSides = 6 // repeated half actions move to the opposite side
     
     var title: String {
         switch self {
         case .resize: return String(localized: "cycle sizes on side actions")
-        case .acrossMonitor: return String(localized: "move to adjacent display on left or right")
+        case .acrossMonitor: return String(localized: "move to adjacent display on side actions")
         case .none: return String(localized: "do nothing")
-        case .acrossAndResize: return String(localized: "move to adjacent on left/right, or cycle size on side")
+        case .acrossAndResize: return String(localized: "move to adjacent display on side actions and cycle size at final edge")
         case .cycleMonitor: return String(localized: "cycle through displays")
         case .resizeAndCycleQuadrants: return String(localized: "cycle positions on quadrants, cycle sizes on side")
+        case .switchSides: return String(localized: "Switch to the opposite side on half actions")
         }
     }
     
@@ -28,7 +30,7 @@ enum SubsequentExecutionMode: Int {
         }
     }
     
-    static var ordered: [SubsequentExecutionMode] = [.none, .cycleMonitor, .resize, .acrossMonitor, .acrossAndResize, .resizeAndCycleQuadrants]
+    static var ordered: [SubsequentExecutionMode] = [.none, .cycleMonitor, .resize, .acrossMonitor, .acrossAndResize, .resizeAndCycleQuadrants, .switchSides]
 }
 
 class SubsequentExecutionDefault: Default {
@@ -53,6 +55,19 @@ class SubsequentExecutionDefault: Default {
         switch value {
         case .resize, .acrossAndResize, .resizeAndCycleQuadrants: return true
         default: return false
+        }
+    }
+
+    /// First/last thirds and fourths step through their positions on repeat, except when repeating
+    /// should do nothing, or when it moves to the adjacent display: with the hidden
+    /// `thirdsAndFourthsAcrossDisplays` flag on, that needs an adjacent display to move to.
+    func cyclesThirdsAndFourths(hasAdjacentScreen: Bool) -> Bool {
+        switch value {
+        case .none: return false
+        case .acrossMonitor:
+            let movesAcrossDisplays = Defaults.thirdsAndFourthsAcrossDisplays.enabled == true && hasAdjacentScreen
+            return !movesAcrossDisplays
+        default: return true
         }
     }
 

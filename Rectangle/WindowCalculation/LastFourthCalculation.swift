@@ -4,9 +4,14 @@ import Foundation
 
 class LastFourthCalculation: WindowCalculation, OrientationAware {
     
+    override func calculate(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        calculateAcrossDisplays(params, toNext: true, oppositeAction: .firstFourth, opposite: WindowCalculationFactory.firstFourthCalculation)
+            ?? super.calculate(params)
+    }
+
     override func calculateRect(_ params: RectCalculationParameters) -> RectResult {
         let visibleFrameOfScreen = params.visibleFrameOfScreen
-        guard Defaults.subsequentExecutionMode.value != .none,
+        guard Defaults.subsequentExecutionMode.cyclesThirdsAndFourths(hasAdjacentScreen: params.hasAdjacentScreen),
             let last = params.lastAction, let lastSubAction = last.subAction else {
                 return orientationBasedRect(visibleFrameOfScreen)
         }

@@ -72,7 +72,7 @@ final class DirectWindowAnimator {
         if let cached = element.animationReads?.server { return cached }
         let started = ProcessInfo.processInfo.systemUptime
         let frame = readServerFrame(element)
-        WindowAnimationDiagnostics.event("animation-operation", fields: ["operation": "server-read",
+        DiagnosticTrace.event("animation-operation", fields: ["operation": "server-read",
             "windowID": element.windowId ?? 0,
             "milliseconds": (ProcessInfo.processInfo.systemUptime - started) * 1000])
         element.animationReads?.server = frame
@@ -87,7 +87,7 @@ final class DirectWindowAnimator {
          clock: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
          automaticallyAdvances: Bool = true, smoothResize: Bool = false,
          frameInterval: TimeInterval = 1.0 / 60,
-         environmentIsSafe: @escaping () -> Bool = { !WindowAnimationInterruptionPolicy.missionControlActive },
+         environmentIsSafe: @escaping () -> Bool = { !MissionControl.isActive },
          serverFrame: @escaping (WindowAnimationElement) -> CGRect? = { element in
              element.windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
          },
@@ -191,7 +191,7 @@ final class DirectWindowAnimator {
             if !observedWindow.animationYieldRequested && (observedWindow.animationObservedFrame == nil || observedWindow.animationNeedsRecovery
                 || observedWindow.animationNeedsFreshGeometry || resizeResponseDue || growthReadbackDue
                 || age >= response.readbackInterval) {
-                if let actual = serverFrame(observedWindow), WindowAnimationGeometry.valid(actual) {
+                if let actual = serverFrame(observedWindow), actual.isValidWindowFrame {
                     observedWindow.animationObservedFrame = actual
                     observedWindow.animationObservedAt = now
                     observedWindow.animationExpectedOrigin = nil
@@ -242,8 +242,8 @@ final class DirectWindowAnimator {
             let server = serverFrame(window)
             let decision = pending.stability.observe(ax: actual, server: server,
                 destination: pending.destination, placement: pending.placement, origin: pending.origin, at: clock())
-            if WindowAnimationDiagnostics.enabled {
-                WindowAnimationDiagnostics.event("direct-settlement", fields: [
+            if DiagnosticTrace.enabled {
+                DiagnosticTrace.event("direct-settlement", fields: [
                     "windowID": window.windowId ?? 0, "elapsed": clock() - pending.stability.startedAt,
                     "actual": actual.dictionaryRepresentation,
                     "server": server?.dictionaryRepresentation ?? [:] as CFDictionary,
@@ -281,7 +281,7 @@ final class DirectWindowAnimator {
                 return
             }
             clearPendingRelease()
-            WindowAnimationDiagnostics.event("direct-released-snap-settled", fields: ["windowID": window.windowId ?? 0,
+            DiagnosticTrace.event("direct-released-snap-settled", fields: ["windowID": window.windowId ?? 0,
                 "ready": decision == .ready, "milliseconds": (time - pending.stability.startedAt) * 1000])
             if decision == .ready { pending.start(ax) }
             else { pending.fallback() }
@@ -295,7 +295,7 @@ final class DirectWindowAnimator {
         guard let size = element.size, element.animationResizeResponse.acknowledge(size, at: time) else { return }
         // Keep the resize pending until WindowServer confirms it, even after AX accepts the write.
         element.animationResizeNotified = false
-        WindowAnimationDiagnostics.event("animation-resize-acknowledged", fields: ["windowID": element.windowId ?? 0])
+        DiagnosticTrace.event("animation-resize-acknowledged", fields: ["windowID": element.windowId ?? 0])
     }
 
     func animate(_ element: WindowAnimationElement, from startingFrame: CGRect? = nil, to destination: CGRect,
@@ -336,7 +336,7 @@ final class DirectWindowAnimator {
                     // direct motion. Let the caller place a cross-display snap
                     // normally, without issuing intermediate animation frames.
                     if self.crossesDisplays(origin, destination) {
-                        WindowAnimationDiagnostics.event("direct-cross-display-snap-immediate", fields: [
+                        DiagnosticTrace.event("direct-cross-display-snap-immediate", fields: [
                             "windowID": element.windowId ?? 0,
                             "source": [origin.minX, origin.minY, origin.width, origin.height],
                             "destination": [destination.minX, destination.minY, destination.width, destination.height]])
@@ -347,7 +347,7 @@ final class DirectWindowAnimator {
                                         resizeOnly: resizeOnly, placement: placement, profile: profile, offset: offset,
                                         curve: curve, completion: completion)
                 }, fallback: { completion(.null) })
-            WindowAnimationDiagnostics.event("direct-released-snap-wait", fields: ["windowID": element.windowId ?? 0])
+            DiagnosticTrace.event("direct-released-snap-wait", fields: ["windowID": element.windowId ?? 0])
             startDriving()
             advance(at: clock())
             return
@@ -360,7 +360,7 @@ final class DirectWindowAnimator {
                                  placement: WindowAnimationPlacement?, generation: UUID,
                                  completion: @escaping (CGRect) -> Void) {
         guard enabled(), environmentIsSafe(), element.isFullScreen != true,
-              WindowAnimationGeometry.valid(destination) else { completion(.null); return }
+              destination.isValidWindowFrame else { completion(.null); return }
         let placement = placement ?? WindowAnimationPlacement(screenFrame: .zero, sharedEdges: nil,
                                                                constrainToScreen: false, gap: 0)
         let now = clock()
@@ -368,11 +368,11 @@ final class DirectWindowAnimator {
             session.completion = completion
             if session.motion.destination == destination, session.placement == placement { return }
             let ax = element.frame
-            let visible = serverFrame(element).flatMap { WindowAnimationGeometry.valid($0) ? $0 : nil }
+            let visible = serverFrame(element).flatMap { $0.isValidWindowFrame ? $0 : nil }
             // Continue after the latest acknowledged write; replaying a delayed
             // compositor frame would move the window back along the old path.
-            let actual = WindowAnimationGeometry.valid(ax) ? ax : (visible ?? ax)
-            guard WindowAnimationGeometry.valid(actual) else { cancel(); completion(.null); return }
+            let actual = ax.isValidWindowFrame ? ax : (visible ?? ax)
+            guard actual.isValidWindowFrame else { cancel(); completion(.null); return }
             let observed = [actual.minX, actual.minY, actual.width, actual.height]
             let corroborating = visible ?? actual
             let accessible = [corroborating.minX, corroborating.minY, corroborating.width, corroborating.height]
@@ -406,7 +406,7 @@ final class DirectWindowAnimator {
             session.recentWrites.removeAll(keepingCapacity: true)
             session.handoff = WindowAnimationHandoff()
             if screenChanged { startDriving() }
-            WindowAnimationDiagnostics.event("keyboard-animation-retarget", fields: ["windowID": element.windowId ?? 0,
+            DiagnosticTrace.event("keyboard-animation-retarget", fields: ["windowID": element.windowId ?? 0,
                 "source": [actual.minX, actual.minY, actual.width, actual.height],
                 "destination": [destination.minX, destination.minY, destination.width, destination.height], "velocity": velocity])
             return
@@ -429,8 +429,8 @@ final class DirectWindowAnimator {
         }
         guard intent == generation else { restoreAccessibility?(); return }
         let ax = element.frame
-        let origin = serverFrame(element).flatMap { WindowAnimationGeometry.valid($0) ? $0 : nil } ?? ax
-        guard WindowAnimationGeometry.valid(origin) else {
+        let origin = serverFrame(element).flatMap { $0.isValidWindowFrame ? $0 : nil } ?? ax
+        guard origin.isValidWindowFrame else {
             restoreAccessibility?()
             window = nil
             stopDriving()
@@ -444,7 +444,7 @@ final class DirectWindowAnimator {
         window = element
         lastEnvironmentCheck = now
         if rebindDriver { startDriving() }
-        WindowAnimationDiagnostics.event("keyboard-animation-start", fields: ["windowID": element.windowId ?? 0,
+        DiagnosticTrace.event("keyboard-animation-start", fields: ["windowID": element.windowId ?? 0,
             "source": [origin.minX, origin.minY, origin.width, origin.height],
             "destination": [destination.minX, destination.minY, destination.width, destination.height]])
     }
@@ -505,8 +505,8 @@ final class DirectWindowAnimator {
         }
         if !window.animationMotionApplied { session.visualTime = priorTime }
         if time - session.motion.startedAt >= 0.6 || (sample.progress >= 1 && time >= (session.resizePause.motion?.endsAt ?? 0)) || (sampled == session.motion.destination
-            && WindowAnimationGeometry.near(window.frame, sampled, tolerance: 0.001)
-            && serverFrame(window).map({ WindowAnimationGeometry.near($0, sampled, tolerance: 0.001) }) == true) {
+            && window.frame.isNear(sampled, tolerance: 0.001)
+            && serverFrame(window).map({ $0.isNear(sampled, tolerance: 0.001) }) == true) {
             finishKeyboard()
         }
     }
@@ -541,7 +541,7 @@ final class DirectWindowAnimator {
             return
         }
         let actual = window.frame
-        guard (WindowAnimationGeometry.valid(actual) && actual.size == destination.size)
+        guard (actual.isValidWindowFrame && actual.size == destination.size)
                 || window.writeAnimationSize(destination.size) == .success else {
             self.window = nil
             stopDriving()
@@ -550,7 +550,7 @@ final class DirectWindowAnimator {
             return
         }
         let resized = window.frame
-        if WindowAnimationGeometry.valid(resized), resized.size == destination.size, resized.origin != destination.origin {
+        if resized.isValidWindowFrame, resized.size == destination.size, resized.origin != destination.origin {
             guard window.writeAnimationPosition(destination.origin) == .success else {
                 self.window = nil
                 stopDriving()
@@ -563,8 +563,8 @@ final class DirectWindowAnimator {
         let confirmed = serverFrame(window)
         let now = clock()
         session.handoff.observe(ax: placed, server: confirmed, at: now)
-        let verified = WindowAnimationGeometry.near(placed, destination, tolerance: 0.001)
-            && confirmed.map { WindowAnimationGeometry.near($0, destination, tolerance: 0.001) } == true
+        let verified = placed.isNear(destination, tolerance: 0.001)
+            && confirmed.map { $0.isNear(destination, tolerance: 0.001) } == true
         pendingSettlement = PendingSettlement(destination: destination, origin: session.motion.origin,
             placement: session.placement, stability: WindowAnimationSettlement(startedAt: now,
                 verifiedFrame: verified ? placed : nil, alignmentTolerance: 0.001,
@@ -608,7 +608,7 @@ final class DirectWindowAnimator {
         var finalResizeAccepted = false
         lastEnvironmentCheck = clock()
         window = element
-        WindowAnimationDiagnostics.event("direct-animation-start", fields: ["windowID": element.windowId ?? 0,
+        DiagnosticTrace.event("direct-animation-start", fields: ["windowID": element.windowId ?? 0,
             "source": [origin.minX, origin.minY, origin.width, origin.height],
             "destination": [destination.minX, destination.minY, destination.width, destination.height],
             "resizeOnly": resizeOnly, "duration": duration, "nativeResize": nativeResize])
@@ -624,15 +624,15 @@ final class DirectWindowAnimator {
             defer { element.animationIntermediateStep = false }
             if element.animationNeedsRecovery {
                 let actual = element.animationObservedFrame ?? element.frame
-                guard WindowAnimationGeometry.valid(actual), !element.animationYieldRequested else { return true }
+                guard actual.isValidWindowFrame, !element.animationYieldRequested else { return true }
                 previousFrame = actual
                 element.animationNeedsRecovery = false
                 sizeFeedback = WindowAnimationSizeFeedback()
             }
-            let traceStart = WindowAnimationDiagnostics.enabled ? animationClock() : nil
+            let traceStart = DiagnosticTrace.enabled ? animationClock() : nil
             defer {
                 if let traceStart {
-                    WindowAnimationDiagnostics.event("direct-frame-write", fields: ["windowID": element.windowId ?? 0,
+                    DiagnosticTrace.event("direct-frame-write", fields: ["windowID": element.windowId ?? 0,
                         "progress": progress, "elapsed": traceStart - startedAt,
                         "milliseconds": (animationClock() - traceStart) * 1000,
                         "requested": frame.dictionaryRepresentation,
@@ -688,8 +688,8 @@ final class DirectWindowAnimator {
                 if element.animationYieldRequested || element.animationNeedsRecovery { return true }
                 if element.animationObservedFrame == nil, sampledFrame == destination {
                     let actual = element.frame
-                    reachedDestination = WindowAnimationGeometry.near(actual, destination, tolerance: 0.001)
-                        && readServer(element).map { WindowAnimationGeometry.near($0, destination, tolerance: 0.001) } == true
+                    reachedDestination = actual.isNear(destination, tolerance: 0.001)
+                        && readServer(element).map { $0.isNear(destination, tolerance: 0.001) } == true
                 }
                 return true
             }
@@ -701,7 +701,7 @@ final class DirectWindowAnimator {
             if nativeResize {
                 guard nativeResizeAccepted else { return }
                 let actual = element.frame
-                guard WindowAnimationGeometry.valid(actual) else { return }
+                guard actual.isValidWindowFrame else { return }
                 // Restore requests carry a previously achieved size. If the native resize app
                 // rejected that growth, let the ordinary mover retry it.
                 if placement?.sharedEdges == nil,
@@ -712,14 +712,14 @@ final class DirectWindowAnimator {
                     guard element.writeAnimationPosition(aligned.origin) == .success else { return }
                 }
                 let achieved = element.frame
-                if WindowAnimationGeometry.valid(achieved),
+                if achieved.isValidWindowFrame,
                    abs(achieved.minX - aligned.minX) <= 1, abs(achieved.minY - aligned.minY) <= 1,
                    abs(achieved.width - aligned.width) <= 1, abs(achieved.height - aligned.height) <= 1 {
                     finalFrame = achieved
                 }
             } else if placement != nil {
                 if let actual = element.animationObservedFrame {
-                    if WindowAnimationGeometry.near(actual, frame, tolerance: 0.5) {
+                    if actual.isNear(frame, tolerance: 0.5) {
                         finalResizeAccepted = true
                     } else if actual.size == frame.size {
                         finalResizeAccepted = true
@@ -734,14 +734,14 @@ final class DirectWindowAnimator {
                 // Do not align a possibly stale size and immediately report success.
                 // The settlement phase verifies the achieved frame on later ticks.
                 let actual = element.frame
-                finalResizeAccepted = (WindowAnimationGeometry.valid(actual) && actual.size == frame.size)
+                finalResizeAccepted = (actual.isValidWindowFrame && actual.size == frame.size)
                     || element.writeAnimationSize(frame.size) == .success
                 if finalResizeAccepted {
                     let placed = element.frame
                     let confirmed = readServer(element)
                     handoff.observe(ax: placed, server: confirmed, at: animationClock())
-                    if WindowAnimationGeometry.near(placed, frame, tolerance: 0.001),
-                       confirmed.map({ WindowAnimationGeometry.near($0, frame, tolerance: 0.001) }) == true {
+                    if placed.isNear(frame, tolerance: 0.001),
+                       confirmed.map({ $0.isNear(frame, tolerance: 0.001) }) == true {
                         verifiedFinalFrame = placed
                     }
                 }
@@ -751,7 +751,7 @@ final class DirectWindowAnimator {
             self?.animation = nil
             self?.window = nil
             if !finalized || !needsSettlement { restoreAccessibility() }
-            if !finalized { WindowAnimationDiagnostics.event("direct-animation-cancel", fields: ["windowID": element.windowId ?? 0]) }
+            if !finalized { DiagnosticTrace.event("direct-animation-cancel", fields: ["windowID": element.windowId ?? 0]) }
         }, completion: { [weak self] requested in
             if needsSettlement, let placement {
                 guard let self, finalResizeAccepted else {
@@ -783,7 +783,7 @@ final class DirectWindowAnimator {
                 if !achieved.isNull, sizeMatches, positionMatches { finalFrame = achieved }
             }
             let frame = finalFrame ?? .null
-            WindowAnimationDiagnostics.event("direct-animation-complete", fields: ["windowID": element.windowId ?? 0,
+            DiagnosticTrace.event("direct-animation-complete", fields: ["windowID": element.windowId ?? 0,
                 "placed": !frame.isNull])
             completion(frame)
         })
@@ -794,7 +794,7 @@ final class DirectWindowAnimator {
             } else {
                 nativeResizeAccepted = element.setAnimationFrame(destination, resizeOnly: resizeOnly)
             }
-            WindowAnimationDiagnostics.event("direct-native-resize-settlement", fields: [
+            DiagnosticTrace.event("direct-native-resize-settlement", fields: [
                 "windowID": element.windowId ?? 0, "accepted": nativeResizeAccepted])
         }
         startDriving()
@@ -828,7 +828,7 @@ final class DirectWindowAnimator {
             destination: destination, placement: placement, origin: origin, velocity: velocity,
             at: clock(), endingAt: endingAt)
         if let motion = pause.motion {
-            WindowAnimationDiagnostics.event("direct-resize-pause", fields: ["windowID": window.windowId ?? 0,
+            DiagnosticTrace.event("direct-resize-pause", fields: ["windowID": window.windowId ?? 0,
                 "actual": actual.dictionaryRepresentation, "target": destination.dictionaryRepresentation,
                 "positionTarget": motion.destination.dictionaryRepresentation])
         }
@@ -839,10 +839,10 @@ final class DirectWindowAnimator {
         var frame = frame
         if !exact { frame.origin = CGPoint(x: frame.minX.rounded(), y: frame.minY.rounded()) }
         guard frame.origin != previous.origin else { return frame }
-        let startedAt = WindowAnimationDiagnostics.enabled ? clock() : nil
+        let startedAt = DiagnosticTrace.enabled ? clock() : nil
         let result = window.writeAnimationPosition(frame.origin)
         if let startedAt {
-            WindowAnimationDiagnostics.event("direct-position-write", fields: ["windowID": window.windowId ?? 0,
+            DiagnosticTrace.event("direct-position-write", fields: ["windowID": window.windowId ?? 0,
                 "milliseconds": (clock() - startedAt) * 1000, "result": result.rawValue,
                 "requested": frame.dictionaryRepresentation])
         }
@@ -866,7 +866,7 @@ final class DirectWindowAnimator {
 
     private func completeSettlement(_ frame: CGRect) {
         guard let pending = pendingSettlement else { return }
-        WindowAnimationDiagnostics.event("direct-animation-complete", fields: [
+        DiagnosticTrace.event("direct-animation-complete", fields: [
             "windowID": window?.windowId ?? 0, "placed": !frame.isNull,
             "settlementMilliseconds": (clock() - pending.stability.startedAt) * 1000])
         clearSettlement()

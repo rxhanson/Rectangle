@@ -7,8 +7,6 @@ import os.log
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    static let launcherAppId = "com.knollsoft.RectangleLauncher"
-
     private let accessibilityAuthorization = AccessibilityAuthorization()
     private let statusItem = RectangleStatusItem.instance
     static let windowHistory = WindowHistory()
@@ -27,6 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var stackBadgeManager: StackBadgeManager!
     private var titleBarManager: TitleBarManager!
     private var greenButtonManager: GreenButtonManager!
+    private var newWindowActionManager: NewWindowActionManager!
     
     private var settingsWindowController: NSWindowController?
     
@@ -151,6 +150,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.stackBadgeManager = StackBadgeManager()
         self.titleBarManager = TitleBarManager()
         self.greenButtonManager = GreenButtonManager()
+        self.newWindowActionManager = NewWindowActionManager()
         self.initializeTodo()
         checkForProblematicApps()
         MacTilingDefaults.checkForBuiltInTiling(skipIfAlreadyNotified: true)
@@ -257,7 +257,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBAction func openPreferences(_ sender: Any) {
         if settingsWindowController == nil {
-            settingsWindowController = SettingsWindowController()
+            let controller = SettingsWindowController()
+            controller.onClose = { [weak self] in self?.settingsWindowController = nil }
+            settingsWindowController = controller
         }
         NSApp.activate(ignoringOtherApps: true)
         settingsWindowController?.showWindow(self)
@@ -464,6 +466,7 @@ extension AppDelegate {
         self.showHideTodoMenuItems()
         TodoManager.registerUnregisterToggleShortcut()
         TodoManager.registerUnregisterReflowShortcut()
+        TodoManager.startReflowOnDisplayChanges()
         TodoManager.moveAllIfNeeded(bringToFront)
     }
 

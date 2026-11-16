@@ -26,7 +26,9 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
             return calculateAcrossDisplays(params)
         case .resize, .resizeAndCycleQuadrants:
             return calculateResize(params)
-        case .none, .cycleMonitor:
+        case .switchSides where isRepeatedCommand(params):
+            return calculateSwitchSides(params)
+        case .none, .cycleMonitor, .switchSides:
             let screen = usableScreens.currentScreen
             let oneHalfRect = calculateFirstRect(params.asRectParams())
             return WindowCalculationResult(rect: oneHalfRect.rect, screen: screen, resultingAction: params.action)
@@ -46,16 +48,22 @@ class LeftRightHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCal
         return RectResult(HalfSplitFrameCalculation.horizontalRect(in: params.visibleFrameOfScreen, side: side, fraction: fraction))
     }
 
-    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
-        calculateRepeatedSideRect(params)
-    }
-
     func calculateResize(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         let screen = params.usableScreens.currentScreen
-        let rectResult: RectResult = calculateRepeatedSideRect(params.asRectParams())
+        let rectResult: RectResult = calculateRepeatedRect(params.asRectParams())
         return WindowCalculationResult(rect: rectResult.rect, screen: screen, resultingAction: params.action)
     }
     
+    /// Repeating a half action while the window still sits on that half moves it to the opposite
+    /// half (Left Half → Right Half → Left Half). Reporting the opposite half as the resulting action
+    /// is what makes the next repeat flip back; a first execution, or a window that has moved since,
+    /// gets a plain half above.
+    func calculateSwitchSides(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
+        let opposite: WindowAction = params.action == .rightHalf ? .leftHalf : .rightHalf
+        let oppositeRect = calculateFirstRect(params.asRectParams(differentAction: opposite))
+        return WindowCalculationResult(rect: oppositeRect.rect, screen: params.usableScreens.currentScreen, resultingAction: opposite)
+    }
+
     func calculateAcrossDisplays(_ params: WindowCalculationParameters) -> WindowCalculationResult? {
         let screen = params.usableScreens.currentScreen
         return params.action == .rightHalf

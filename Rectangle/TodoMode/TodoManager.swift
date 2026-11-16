@@ -12,6 +12,14 @@ class TodoManager {
     static let reflowDefaultsKey = "reflowTodo"
     static let defaultsKeys = [toggleDefaultsKey, reflowDefaultsKey]
     private static var shortcutBindingsSuspended = false
+    private static var displayChangeReflow: TodoDisplayChangeReflow?
+
+    /// Keeps the Todo layout in step with display changes for as long as the
+    /// app runs. Starting it again is a no-op.
+    static func startReflowOnDisplayChanges() {
+        guard displayChangeReflow == nil else { return }
+        displayChangeReflow = TodoDisplayChangeReflow()
+    }
     
     static func setTodoMode(_ enabled: Bool, _ bringToFront: Bool = true) {
         Defaults.todoMode.enabled = enabled
@@ -200,31 +208,66 @@ class TodoManager {
                 }
 
                 adjustedVisibleFrame = screen.adjustedVisibleFrame(true)
-                let sidebarWidth = getSidebarWidth(visibleFrameWidth: adjustedVisibleFrame.width)
-
-                var sharedEdge: Edge
-                var rect = adjustedVisibleFrame
-                let isRightSide = Defaults.todoSidebarSide.value == .right
-
-                sharedEdge = isRightSide ? .left : .right
-
-                if isRightSide {
-                    rect.origin.x = adjustedVisibleFrame.maxX - sidebarWidth
-                }
-                rect.size.width = sidebarWidth
-
-                rect = rect.screenFlipped
-                
-                if Defaults.gapSize.value > 0 {
-                    rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
-                }
-                todoWindow.setFrame(rect)
+                moveTodoWindow(todoWindow, screenVisibleFrame: adjustedVisibleFrame)
             }
 
             if bringToFront {
                 todoWindow.bringToFront()
             }
         }
+    }
+
+    static func moveTodoWindow(_ todoWindow: AccessibilityElement,
+                               screenVisibleFrame: CGRect,
+                               primaryScreenMaxY: CGFloat = NSScreen.screens[0].frame.maxY) {
+        let sidebarWidth = getSidebarWidth(visibleFrameWidth: screenVisibleFrame.width)
+        let isRightSide = Defaults.todoSidebarSide.value == .right
+        let sharedEdge: Edge = isRightSide ? .left : .right
+        var rect = screenVisibleFrame
+
+        if isRightSide {
+            rect.origin.x = screenVisibleFrame.maxX - sidebarWidth
+        }
+        rect.size.width = sidebarWidth
+
+        // Accessibility coordinates are relative to the primary display, even on other displays.
+        rect = rect.screenFlipped(primaryScreenMaxY: primaryScreenMaxY)
+
+        if Defaults.gapSize.value > 0 {
+            rect = GapCalculation.applyGaps(rect, sharedEdges: sharedEdge, gapSize: Defaults.gapSize.value)
+        }
+        todoWindow.setFrame(rect)
+        keepOnScreen(todoWindow, placedIn: rect,
+                     visibleFrame: screenVisibleFrame.screenFlipped(primaryScreenMaxY: primaryScreenMaxY),
+                     isRightSide: isRightSide)
+    }
+
+    /// An app can refuse a size below its minimum, which left a right-side Todo
+    /// window extending past the screen edge (#1307). Keep the size the app
+    /// accepted, align it with the outer edge of its zone (ClampedWindowAligner's
+    /// rule for the other actions) and keep it on screen with the position-only
+    /// write BestEffortWindowMover uses.
+    private static func keepOnScreen(_ todoWindow: AccessibilityElement, placedIn zone: CGRect,
+                                     visibleFrame: CGRect, isRightSide: Bool) {
+        let achieved = todoWindow.frame
+        let tolerance = ClampedWindowAligner.alignmentTolerance
+        guard !achieved.isNull,
+              achieved.width > zone.width + tolerance || achieved.height > zone.height + tolerance
+        else { return }
+
+        var corrected = achieved
+        if achieved.width > zone.width + tolerance {
+            corrected.origin.x = isRightSide ? zone.maxX - achieved.width : zone.minX
+        }
+        corrected = WindowFrameBounds.constrained(corrected, to: visibleFrame, gap: CGFloat(Defaults.gapSize.value))
+        // constrained favours the far edge of a window that cannot fit. Keep the
+        // leading edges, where the title bar is, on screen instead.
+        corrected.origin.x = max(corrected.minX, visibleFrame.minX)
+        corrected.origin.y = max(corrected.minY, visibleFrame.minY)
+        guard corrected.origin != achieved.origin else { return }
+
+        Logger.log("Todo window kept \(achieved.size.debugDescription) instead of \(zone.size.debugDescription), moving it to \(corrected.origin.debugDescription)")
+        todoWindow.setImmediateFrame(corrected, from: achieved, sizeFirst: false)
     }
     
     static func getSidebarWidth(visibleFrameWidth: CGFloat) -> CGFloat {
@@ -397,5 +440,87 @@ enum TodoSidebarWidthUnit: Int, CaseIterable, CustomStringConvertible {
         case .pixels: return String(localized: "px")
         case .pct: return String(localized: "%")
         }
+    }
+}
+
+/// Reflows Todo mode after the display configuration changes (#764).
+///
+/// Connecting or disconnecting a display, or changing an arrangement or a
+/// resolution, posts a burst of screen-parameter notifications, after which
+/// the Todo window tends to sit on the wrong display or at the wrong size.
+/// Once the burst settles, the reflow the Reflow Todo command performs runs,
+/// without bringing the Todo window forward. Nothing happens while Todo mode
+/// is off, and nothing happens for notifications that leave the layout as it
+/// was at the last reflow.
+final class TodoDisplayChangeReflow {
+
+    struct ScreenLayout: Equatable {
+        let frames: [CGRect]
+        let visibleFrames: [CGRect]
+
+        static var current: ScreenLayout {
+            ScreenLayout(frames: NSScreen.screens.map(\.frame), visibleFrames: NSScreen.screens.map(\.visibleFrame))
+        }
+    }
+
+    /// How long the screen parameters must stay quiet before the reflow.
+    static let settleDelay: TimeInterval = 1.0
+
+    private let notificationCenter: NotificationCenter
+    private let delay: TimeInterval
+    private let layout: () -> ScreenLayout
+    private let reflow: () -> Void
+    private let schedule: (TimeInterval, DispatchWorkItem) -> Void
+    private var observer: NSObjectProtocol?
+    private var pending: DispatchWorkItem?
+    private var lastLayout: ScreenLayout
+    private var layoutChanged = false
+
+    init(notificationCenter: NotificationCenter = .default,
+         delay: TimeInterval = TodoDisplayChangeReflow.settleDelay,
+         layout: @escaping () -> ScreenLayout = { .current },
+         reflow: @escaping () -> Void = { TodoManager.moveAllIfNeeded(false) },
+         schedule: @escaping (TimeInterval, DispatchWorkItem) -> Void = { delay, work in
+             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+         }) {
+        self.notificationCenter = notificationCenter
+        self.delay = delay
+        self.layout = layout
+        self.reflow = reflow
+        self.schedule = schedule
+        lastLayout = layout()
+        observer = notificationCenter.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
+                                                  object: nil, queue: .main) { [weak self] _ in
+            self?.screenParametersDidChange()
+        }
+    }
+
+    deinit {
+        pending?.cancel()
+        if let observer {
+            notificationCenter.removeObserver(observer)
+        }
+    }
+
+    private func screenParametersDidChange() {
+        // A display that is unplugged and plugged back in before the burst
+        // settles ends with the old layout, but macOS has moved windows meanwhile.
+        if layout() != lastLayout {
+            layoutChanged = true
+        }
+        pending?.cancel()
+        let work = DispatchWorkItem { [weak self] in self?.settled() }
+        pending = work
+        schedule(delay, work)
+    }
+
+    private func settled() {
+        pending = nil
+        // AppKit can report stale visible frames at notification time (#467),
+        // so the layout is checked again now that the burst has settled.
+        guard layoutChanged || layout() != lastLayout else { return }
+        layoutChanged = false
+        lastLayout = layout()
+        reflow()
     }
 }

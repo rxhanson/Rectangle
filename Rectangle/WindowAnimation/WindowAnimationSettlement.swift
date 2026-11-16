@@ -53,8 +53,8 @@ struct WindowAnimationSettlement {
         // Two bounded resize retries, position motion and final verification
         // share one deadline. A missing acknowledgment also has its own limit.
         guard now - startedAt < 1.2 else { return .failed }
-        guard let server, WindowAnimationGeometry.valid(ax), WindowAnimationGeometry.valid(server),
-              WindowAnimationGeometry.near(ax, server, tolerance: 1) else {
+        guard let server, ax.isValidWindowFrame, server.isValidWindowFrame,
+              ax.isNear(server, tolerance: 1) else {
             previous = nil
             stableSince = nil
             completionCandidate = nil
@@ -63,16 +63,16 @@ struct WindowAnimationSettlement {
             return now - verificationStartedAt < 0.2 ? .waiting : .failed
         }
         let sizeDiffers = abs(ax.width - destination.width) > 1 || abs(ax.height - destination.height) > 1
-        if !sizeDiffers, WindowAnimationGeometry.near(ax, destination, tolerance: alignmentTolerance) {
+        if !sizeDiffers, ax.isNear(destination, tolerance: alignmentTolerance) {
             return .complete(ax)
         }
         if let request = lastAlignmentRequest, !sizeDiffers || sizeRetries >= 2 {
             let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
             // Some apps quantize fractional gap coordinates. Accept that result
             // only after an exact final position write leaves corroborated geometry unchanged.
-            if WindowAnimationGeometry.near(ax, server, tolerance: 0.001),
-               WindowAnimationGeometry.near(ax, request.observed, tolerance: 0.001),
-               WindowAnimationGeometry.near(request.frame, aligned, tolerance: 0.001),
+            if ax.isNear(server, tolerance: 0.001),
+               ax.isNear(request.observed, tolerance: 0.001),
+               request.frame.isNear(aligned, tolerance: 0.001),
                Self.matchesPixelRoundedFrame(ax, target: aligned) {
                 return .complete(ax)
             }
@@ -86,7 +86,7 @@ struct WindowAnimationSettlement {
             let sameDirection = delta.x * evidence.velocity.x >= 0 && delta.y * evidence.velocity.y >= 0
             if evidence.destination == destination, now >= evidence.sampledAt,
                now - evidence.sampledAt <= 1.0 / 30,
-               WindowAnimationGeometry.near(ax, evidence.frame, tolerance: 1),
+               ax.isNear(evidence.frame, tolerance: 1),
                sameDirection {
                 reusedHandoff = true
                 previous = ax
@@ -105,13 +105,13 @@ struct WindowAnimationSettlement {
             // Reuse the final readback only when a fresh AX/WindowServer pair
             // still confirms the requested size and aligned position.
             let aligned = placement.frame(for: destination, actualSize: ax.size, origin: origin, progress: 1)
-            if !sizeDiffers, WindowAnimationGeometry.near(ax, candidate, tolerance: alignmentTolerance),
-               WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+            if !sizeDiffers, ax.isNear(candidate, tolerance: alignmentTolerance),
+               ax.isNear(aligned, tolerance: alignmentTolerance) {
                 return .complete(ax)
             }
         }
         if var motion = alignment {
-            guard WindowAnimationGeometry.near(ax, motion.expected, tolerance: 1) else {
+            guard ax.isNear(motion.expected, tolerance: 1) else {
                 // A resize or external move invalidates the trajectory. Recompute
                 // from the geometry reported by both AX and WindowServer.
                 alignment = nil
@@ -147,7 +147,7 @@ struct WindowAnimationSettlement {
             }
         }
         if sizeDiffers {
-            guard let previous, WindowAnimationGeometry.near(previous, ax, tolerance: 1) else {
+            guard let previous, previous.isNear(ax, tolerance: 1) else {
                 self.previous = ax
                 stableSince = now
                 return .waiting
@@ -187,12 +187,12 @@ struct WindowAnimationSettlement {
                 }
                 return position == ax.origin ? .retrySize : .retrySizeAt(position)
             }
-            if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+            if ax.isNear(aligned, tolerance: alignmentTolerance) {
                 sizeRetries += 1
                 resetObservation(at: now)
                 return .retrySize
             }
-        } else if WindowAnimationGeometry.near(ax, aligned, tolerance: alignmentTolerance) {
+        } else if ax.isNear(aligned, tolerance: alignmentTolerance) {
             return .complete(ax)
         }
         let distance = max(abs(aligned.minX - ax.minX), abs(aligned.minY - ax.minY))
@@ -275,9 +275,9 @@ struct WindowReleasedSnapStability {
     init(startedAt: TimeInterval) { self.startedAt = startedAt }
 
     mutating func observe(ax: CGRect, server: CGRect?, at now: TimeInterval) -> Decision {
-        if let server, WindowAnimationGeometry.valid(ax), WindowAnimationGeometry.valid(server),
-           WindowAnimationGeometry.near(ax, server, tolerance: 1) {
-            if let previous, WindowAnimationGeometry.near(previous, server, tolerance: 1) {
+        if let server, ax.isValidWindowFrame, server.isValidWindowFrame,
+           ax.isNear(server, tolerance: 1) {
+            if let previous, previous.isNear(server, tolerance: 1) {
                 if let stableSince, now - stableSince >= 1.0 / 30 { return .ready }
             } else { stableSince = now }
             previous = server
@@ -313,8 +313,8 @@ struct WindowAnimationHandoff {
     }
 
     mutating func observe(ax: CGRect, server: CGRect?, at now: TimeInterval) {
-        guard now.isFinite, let server, WindowAnimationGeometry.valid(ax),
-              WindowAnimationGeometry.valid(server), abs(ax.width - server.width) <= 1,
+        guard now.isFinite, let server, ax.isValidWindowFrame,
+              server.isValidWindowFrame, abs(ax.width - server.width) <= 1,
               abs(ax.height - server.height) <= 1 else {
             samples.removeAll(keepingCapacity: true)
             return
@@ -326,7 +326,7 @@ struct WindowAnimationHandoff {
         }
         // Size acknowledgments remain useful while position writes are still
         // in flight. Velocity requires corroborated positions throughout.
-        samples.append((ax, now, WindowAnimationGeometry.near(ax, server, tolerance: 1)))
+        samples.append((ax, now, ax.isNear(server, tolerance: 1)))
         if samples.count > 4 { samples.removeFirst() }
     }
 

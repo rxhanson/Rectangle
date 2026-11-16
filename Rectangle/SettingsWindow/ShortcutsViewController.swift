@@ -320,11 +320,12 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.tileRows, .tileColumns]),
             ShortcutCategory(actions: [.largerWidth, .smallerWidth]),
             ShortcutCategory(actions: [.topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds]),
+            ShortcutCategory(actions: [.firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth, .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth]),
             ShortcutCategory(actions: [.topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth]),
             ShortcutCategory(actions: [.topLeftNinth, .topLeftTwelfth, .topLeftSixteenth])
         ]
         
-        let extraGroup = CategoryGroup(title: "Extra", categories: extraCategories, isCollapsible: true)
+        let extraGroup = CategoryGroup(title: String(localized: "Extra"), categories: extraCategories, isCollapsible: true)
         
         let standardGroup = CategoryGroup(title: "", categories: standardCategories, isCollapsible: false)
         let moreGroup = CategoryGroup(title: "⋯", categories: moreCategories, subGroups: [extraGroup], isCollapsible: true)

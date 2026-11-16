@@ -58,8 +58,8 @@ struct WindowDragGeometry {
         // The two mouse-down reads may straddle the first native movement.
         // AX catching up still proves movement against its own baseline, but
         // a persistent difference between coordinate sources does not.
-        guard let server, WindowAnimationGeometry.near(ax, server, tolerance: 1),
-              !WindowAnimationGeometry.near(initialAX, ax, tolerance: 1) else { return false }
+        guard let server, ax.isNear(server, tolerance: 1),
+              !initialAX.isNear(ax, tolerance: 1) else { return false }
         return WindowDragGeometry(initialFrame: initialAX, initialServerFrame: nil, serverFrame: nil,
             accessibilityFrame: { ax })?.movedWithoutResizing == true
     }
@@ -85,6 +85,46 @@ enum DragRestorePlacement {
     }
 }
 
+/// Keeps drag-to-snap away from a window in fullscreen without giving it up
+/// on every display (#1260).
+///
+/// With separate Spaces per display, a fullscreen window takes over its own
+/// display only, so gestures that start there are ignored while the other
+/// displays keep snapping. Listening still stops altogether, as it always has,
+/// when the fullscreen window is on the only display or its display cannot be
+/// told.
+struct FullScreenSnapGate: Equatable {
+    static let inactive = FullScreenSnapGate(isFullScreen: false, windowFrame: nil, displayFrames: [])
+
+    let isFullScreen: Bool
+    /// The display showing the fullscreen window, in flipped coordinates.
+    let displayFrame: CGRect?
+    let suspendsListening: Bool
+
+    /// `windowFrame` and `displayFrames` are flipped (top-left origin), as
+    /// `AccessibilityElement.frame` and `NSScreen.frame.screenFlipped` are.
+    init(isFullScreen: Bool, windowFrame: CGRect?, displayFrames: [CGRect]) {
+        self.isFullScreen = isFullScreen
+        displayFrame = isFullScreen ? Self.display(containing: windowFrame, in: displayFrames) : nil
+        suspendsListening = isFullScreen && (displayFrame == nil || displayFrames.count < 2)
+    }
+
+    /// Whether a mouse gesture that starts at `location` (flipped) is left alone.
+    func ignoresGesture(at location: CGPoint?) -> Bool {
+        guard isFullScreen else { return false }
+        guard let displayFrame, let location else { return true }
+        return displayFrame.contains(location)
+    }
+
+    static func display(containing windowFrame: CGRect?, in displayFrames: [CGRect]) -> CGRect? {
+        guard let windowFrame, !windowFrame.isNull, !windowFrame.isEmpty else { return nil }
+        let covered = displayFrames
+            .map { ($0, $0.intersection(windowFrame)) }
+            .filter { !$0.1.isNull && !$0.1.isEmpty }
+        return covered.max { $0.1.width * $0.1.height < $1.1.width * $1.1.height }?.0
+    }
+}
+
 class SnappingManager {
     
     private let fullIgnoreIds: [String] = Defaults.fullIgnoreBundleIds.typedValue ?? ["com.install4j", 
@@ -100,7 +140,17 @@ class SnappingManager {
     var windowIdAttempt: Int = 0
     var lastWindowIdAttempt: TimeInterval?
     var windowMoving: Bool = false
-    var isFullScreen: Bool = false
+    /// Where the front window's fullscreen state keeps gestures away from
+    /// snapping. `checkFullScreen()` keeps it current.
+    var fullScreenGate = FullScreenSnapGate.inactive
+    /// Whether the front window is fullscreen. Setting it directly leaves the
+    /// display unknown until the next `checkFullScreen()`.
+    var isFullScreen: Bool {
+        get { fullScreenGate.isFullScreen }
+        set { fullScreenGate = FullScreenSnapGate(isFullScreen: newValue, windowFrame: nil, displayFrames: []) }
+    }
+    /// The current mouse gesture started on the fullscreen display.
+    private var ignoringGesture = false
     var allowListening: Bool = true
     var initialWindowRect: CGRect?
     private var initialWindowServerRect: CGRect?
@@ -135,6 +185,7 @@ class SnappingManager {
         
         registerWorkspaceChangeNote()
         registerSessionChangeNote()
+        registerScreenChangeNote()
         
         Notification.Name.windowSnapping.onPost { notification in
             if let enabled = notification.object as? Bool {
@@ -178,7 +229,7 @@ class SnappingManager {
     }
     
     func toggleListening() {
-        if allowListening, !isFullScreen, !Defaults.windowSnapping.userDisabled {
+        if allowListening, !fullScreenGate.suspendsListening, !Defaults.windowSnapping.userDisabled {
             enableSnapping()
         } else {
             disableSnapping()
@@ -191,7 +242,11 @@ class SnappingManager {
     }
     
     func checkFullScreen() {
-        isFullScreen = AccessibilityElement.getFrontWindowElement()?.isFullScreen == true
+        let frontWindow = AccessibilityElement.getFrontWindowElement()
+        let isFullScreen = frontWindow?.isFullScreen == true
+        fullScreenGate = FullScreenSnapGate(isFullScreen: isFullScreen,
+                                            windowFrame: isFullScreen ? frontWindow?.frame : nil,
+                                            displayFrames: NSScreen.screens.map { $0.frame.screenFlipped })
         toggleListening()
     }
     
@@ -205,6 +260,15 @@ class SnappingManager {
     }
     
     @objc func receiveSessionNote(_ notification: Notification) {
+        checkFullScreen()
+    }
+    
+    private func registerScreenChangeNote() {
+        // A display can come or go, or move, while a window stays fullscreen.
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveScreenChangeNote(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+    }
+    
+    @objc func receiveScreenChangeNote(_ notification: Notification) {
         checkFullScreen()
     }
         
@@ -249,6 +313,8 @@ class SnappingManager {
     private func stopEventMonitor() {
         if box?.waitingForPlacement == true { box?.orderOut(nil) }
         pendingReleasedRestore = nil
+        // A restarted monitor judges the first gesture it sees on its own.
+        ignoringGesture = false
         eventMonitor?.stop()
         eventMonitor = nil
     }
@@ -299,6 +365,18 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
+            // Left alone, as every gesture was while listening stopped for a
+            // fullscreen window: no window lookup, no drag tracking.
+            ignoringGesture = fullScreenGate.ignoresGesture(at: event.cgEvent?.location)
+            if ignoringGesture {
+                // A release that never arrived must not leave the previous
+                // gesture behind, as it would not have before.
+                if nativeGesture.held {
+                    nativeGesture.end()
+                    resetNativeDragState()
+                }
+                return
+            }
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -316,6 +394,10 @@ class SnappingManager {
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
+            if ignoringGesture {
+                ignoringGesture = false
+                return
+            }
             nativeGesture.end()
             traceNativeInput(event, phase: "up")
             if windowMoving, currentSnapArea != nil { WindowAnimator.shared.finish() }
@@ -361,6 +443,7 @@ class SnappingManager {
             windowIdAttempt = 0
             lastWindowIdAttempt = nil
         case .leftMouseDragged:
+            if ignoringGesture { return }
             nativeGesture.drag()
 
             if nativeGesture.cancelled { return }
@@ -440,12 +523,12 @@ class SnappingManager {
     }
 
     private func traceNativeInput(_ event: NSEvent, phase: String) {
-        guard WindowAnimationDiagnostics.enabled else { return }
+        guard DiagnosticTrace.enabled else { return }
         func fields(_ frame: CGRect?) -> [CGFloat] {
             guard let frame else { return [] }
             return [frame.minX, frame.minY, frame.width, frame.height]
         }
-        WindowAnimationDiagnostics.event("native-input-" + phase, fields: ["windowID": windowId ?? 0,
+        DiagnosticTrace.event("native-input-" + phase, fields: ["windowID": windowId ?? 0,
             "initialAX": fields(initialWindowRect), "initialServer": fields(initialWindowServerRect),
             "history": fields(windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0]?.rect }),
             "moving": windowMoving, "dragged": nativeGesture.observedDrag, "cancelled": nativeGesture.cancelled,
@@ -499,7 +582,7 @@ class SnappingManager {
         guard var pending = nativeSizeRestore, pending.windowID == windowId,
               let windowElement, !Defaults.unsnapRestore.userDisabled else { return }
         let current = windowElement.frame
-        guard WindowAnimationGeometry.valid(current) else { return }
+        guard current.isValidWindowFrame else { return }
         guard needsNativeSizeRestore(current.size, to: pending.size) else {
             nativeSizeRestore = nil
             return
@@ -519,7 +602,7 @@ class SnappingManager {
                                adjustSizeFirst: false, adjustPosition: false)
         let achieved = windowElement.frame
         if !needsNativeSizeRestore(achieved.size, to: pending.size) { nativeSizeRestore = nil }
-        WindowAnimationDiagnostics.event("native-size-restore-retry", fields: ["windowID": pending.windowID,
+        DiagnosticTrace.event("native-size-restore-retry", fields: ["windowID": pending.windowID,
             "requested": [pending.size.width, pending.size.height],
             "achieved": [achieved.width, achieved.height], "pending": nativeSizeRestore != nil])
     }
@@ -541,14 +624,14 @@ class SnappingManager {
                   AppDelegate.windowHistory.lastRectangleActions[pending.windowID] == nil else { return }
             self.pendingReleasedRestore = nil
             let current = element.frame
-            guard WindowAnimationGeometry.valid(current), self.needsNativeSizeRestore(current.size, to: pending.size) else { return }
+            guard current.isValidWindowFrame, self.needsNativeSizeRestore(current.size, to: pending.size) else { return }
             var target = CGRect(origin: current.origin, size: pending.size)
             if let screen = NSScreen.screens.first(where: { $0.frame.screenFlipped.contains(current.origin) }) {
                 target = WindowFrameBounds.constrained(target, to: screen.visibleFrame.screenFlipped, gap: 0)
             }
             element.setFrame(target, adjustSizeFirst: false)
             let achieved = element.frame
-            WindowAnimationDiagnostics.event("native-size-restore-released", fields: ["windowID": pending.windowID,
+            DiagnosticTrace.event("native-size-restore-released", fields: ["windowID": pending.windowID,
                 "requested": [pending.size.width, pending.size.height],
                 "achieved": [achieved.width, achieved.height]])
         }
@@ -595,8 +678,15 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
+    /// Whether a blurred footprint sits just below the dragged window and stays up until the
+    /// window has animated into it. This only applies while placement animates: an immediate
+    /// placement needs no footprint to land in.
+    private var footprintFollowsAnimatedPlacement: Bool {
+        WindowAnimator.enabled && Defaults.footprintBlur.enabled
+    }
+
     private func snapPreviewCompletion() -> (() -> Void)? {
-        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+        if footprintFollowsAnimatedPlacement {
             return box?.completionForSnap(windowID: windowId)
         }
         box?.orderOut(nil)
@@ -612,7 +702,7 @@ class SnappingManager {
         }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
                          duration: getFootprintAnimationDuration(),
-                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
+                         below: footprintFollowsAnimatedPlacement ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {
@@ -680,8 +770,9 @@ class SnappingManager {
     }
 
     func snapAreaContainingCursor(priorSnapArea: SnapArea?, at loc: CGPoint) -> SnapArea? {
-        for screen in NSScreen.screens {
-            guard let directional = directionalLocationOfCursor(loc: loc, screen: screen)
+        let screens = NSScreen.screens
+        for screen in screens {
+            guard let directional = directionalLocationOfCursor(loc: loc, screen: screen, screens: screens)
             else { continue }
             
             if let windowId = windowId, Defaults.todo.userEnabled && Defaults.todoMode.enabled && TodoManager.isTodoWindow(windowId) {
@@ -708,48 +799,12 @@ class SnappingManager {
         return nil
     }
     
-    func directionalLocationOfCursor(loc: NSPoint, screen: NSScreen) -> Directional? {
-        let frame = screen.frame
-        let cornerSize = Defaults.cornerSnapAreaSize.cgFloat
-        
-        /// cgrect contains doesn't include max edges, so manually compare
-        guard loc.x >= frame.minX,
-              loc.x <= frame.maxX,
-              loc.y >= frame.minY,
-              loc.y <= frame.maxY
-        else { return nil }
-        
-        if loc.x < frame.minX + marginLeft + cornerSize {
-            if loc.y >= frame.maxY - marginTop - cornerSize {
-                return .tl
-            }
-            if loc.y <= frame.minY + marginBottom + cornerSize {
-                return .bl
-            }
-            if loc.x < frame.minX + marginLeft {
-                return .l
-            }
-        }
-        
-        if loc.x > frame.maxX - marginRight - cornerSize {
-            if loc.y >= frame.maxY - marginTop - cornerSize {
-                return .tr
-            }
-            if loc.y <= frame.minY + marginBottom + cornerSize {
-                return .br
-            }
-            if loc.x > frame.maxX - marginRight {
-                return .r
-            }
-        }
-        
-        if loc.y > frame.maxY - marginTop {
-            return .t
-        }
-        if loc.y < frame.minY + marginBottom {
-            return .b
-        }
-        
-        return nil
+    func directionalLocationOfCursor(loc: NSPoint, screen: NSScreen, screens: [NSScreen]? = nil) -> Directional? {
+        return SnapEdgeDetection.direction(
+            at: loc, in: screen.frame, screens: (screens ?? NSScreen.screens).map(\.frame),
+            margins: NSEdgeInsets(top: marginTop, left: marginLeft, bottom: marginBottom, right: marginRight),
+            cornerSize: Defaults.cornerSnapAreaSize.cgFloat,
+            earlyDistance: CGFloat(Defaults.snapBeforeReachingEdges.value)
+        )
     }
 }

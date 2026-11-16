@@ -48,6 +48,13 @@ final class SnapAreaViewModel {
         }
     }
     
+    var unsnapRestoreFromSizeChange: Bool {
+        didSet {
+            guard oldValue != unsnapRestoreFromSizeChange else { return }
+            Defaults.unsnapRestoreFromSizeChange.enabled = unsnapRestoreFromSizeChange
+        }
+    }
+    
     var hapticFeedback: Bool {
         didSet {
             guard oldValue != hapticFeedback else { return }
@@ -82,6 +89,15 @@ final class SnapAreaViewModel {
         }
     }
     
+    var snapBeforeReachingEdges: Bool {
+        didSet {
+            guard oldValue != snapBeforeReachingEdges else { return }
+            // Syncing an imported distance must not replace it with the toggle preset.
+            guard snapBeforeReachingEdges != (Defaults.snapBeforeReachingEdges.value > 0) else { return }
+            Defaults.snapBeforeReachingEdges.value = snapBeforeReachingEdges ? 20 : 0
+        }
+    }
+
     var preventMissionControlDragging: Bool {
         didSet {
             guard oldValue != preventMissionControlDragging else { return }
@@ -102,6 +118,8 @@ final class SnapAreaViewModel {
         self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.unsnapRestoreFromSizeChange = !Defaults.unsnapRestoreFromSizeChange.userDisabled
+        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
@@ -116,6 +134,8 @@ final class SnapAreaViewModel {
     func syncDefaults() {
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
+        self.unsnapRestoreFromSizeChange = !Defaults.unsnapRestoreFromSizeChange.userDisabled
+        self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
@@ -189,6 +209,8 @@ struct SnapAreaSettingsView: View {
             Section {
                 Toggle("Snap windows by dragging", isOn: $viewModel.windowSnapping)
                 Toggle("Restore window size when unsnapped", isOn: $viewModel.unsnapRestore)
+                Toggle("Also restore windows resized with Larger or Smaller", isOn: $viewModel.unsnapRestoreFromSizeChange)
+                    .disabled(!viewModel.unsnapRestore)
             }
             
             // Customization Options
@@ -207,6 +229,8 @@ struct SnapAreaSettingsView: View {
                     }
                 }
                 
+                Toggle("Snap before reaching screen edges", isOn: $viewModel.snapBeforeReachingEdges)
+
                 if viewModel.showMissionControlDragging {
                     Toggle("Prevent Mission Control from triggering while dragging", isOn: $viewModel.preventMissionControlDragging)
                 }

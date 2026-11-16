@@ -41,6 +41,8 @@ class ShortcutManager {
     private let workspaceNotificationCenter: NotificationCenter
     private let shortcutsProvider: () -> [WindowAction: MASShortcut]
     private let appDisabledProvider: () -> Bool
+    private let missionControlActiveProvider: () -> Bool
+    private let ignoreShortcutsInMissionControlProvider: () -> Bool
     private let windowUnderCursorProvider: (MouseButtonPress) -> AccessibilityElement?
     private let scheduler: ShortcutRebindScheduler
     private let todoSessionStateChanged: (Bool) -> Void
@@ -65,6 +67,8 @@ class ShortcutManager {
             return session?[kCGSessionOnConsoleKey] as? Bool ?? true
         },
         appDisabledProvider: @escaping () -> Bool = { ApplicationToggle.shortcutsDisabled },
+        missionControlActiveProvider: @escaping () -> Bool = { MissionControl.isActive },
+        ignoreShortcutsInMissionControlProvider: @escaping () -> Bool = { Defaults.ignoreShortcutsInMissionControl.enabled },
         windowUnderCursorProvider: @escaping (MouseButtonPress) -> AccessibilityElement? = { press in
             AccessibilityElement.getWindowElementUnderCursor(at: press.location, eventWindowID: press.windowId)
         },
@@ -84,6 +88,8 @@ class ShortcutManager {
         self.workspaceNotificationCenter = workspaceNotificationCenter
         self.shortcutsProvider = shortcutsProvider
         self.appDisabledProvider = appDisabledProvider
+        self.missionControlActiveProvider = missionControlActiveProvider
+        self.ignoreShortcutsInMissionControlProvider = ignoreShortcutsInMissionControlProvider
         self.windowUnderCursorProvider = windowUnderCursorProvider
         self.scheduler = scheduler
         self.todoSessionStateChanged = todoSessionStateChanged
@@ -230,6 +236,17 @@ class ShortcutManager {
         // running it here as well would dismiss the preview before the move finishes.
         var completionHandledByWindowManager = false
         defer { if !completionHandledByWindowManager { originalParameters.completion?() } }
+
+        // Mission Control leaves the previous app frontmost, so a shortcut would
+        // move the window behind the overview and distort its thumbnail (#1739).
+        // Opt out with: defaults write com.knollsoft.Rectangle ignoreShortcutsInMissionControl -bool false
+        if parameters.source == .keyboardShortcut,
+           ignoreShortcutsInMissionControlProvider(),
+           missionControlActiveProvider() {
+            Logger.log("Ignoring \(parameters.action.name) while Mission Control is active")
+            return
+        }
+
         Notification.Name.windowActionWillExecute.post(object: parameters)
 
         if MultiWindowManager.execute(parameters: parameters) {
@@ -242,7 +259,7 @@ class ShortcutManager {
 
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
-           parameters.source != .titleBar,
+           parameters.source != .titleBar, parameters.source != .newWindow,
            parameters.action.classification != .size,
            parameters.action.classification != .display {
             guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement(),
@@ -254,7 +271,7 @@ class ShortcutManager {
 
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
                !cursorChangedDisplay(windowId: windowId),
-               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowManager.logicalFrame(for: windowElement)) == nil {
+               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowElement.logicalFrame) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus, completion: parameters.completion, cancellation: parameters.cancellation)
                     // Bypass any other subsequent action by removing the last action
@@ -300,7 +317,7 @@ class ShortcutManager {
             return
         }
 
-        let logicalFrame = windowManager.logicalFrame(for: windowElement)
+        let logicalFrame = windowElement.logicalFrame
         let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
         if ShortcutCycle.isStale(lastAction: lastAction, currentWindowRect: logicalFrame) {
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
@@ -365,7 +382,7 @@ class ShortcutManager {
     private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
 
         if parameters.action == .maximize {
-            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowManager.logicalFrame(for: windowElement).size {
+            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.logicalFrame.size {
                 return true
             }
         }

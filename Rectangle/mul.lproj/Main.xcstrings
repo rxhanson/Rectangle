@@ -65,6 +65,12 @@
             "value" : "Rechercher"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ढूँढें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -245,6 +251,12 @@
             "value" : "Abaisser"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "नीचे करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -323,6 +335,12 @@
             "value" : "Nedre"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Опустити"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -387,6 +405,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Personnaliser la barre d'outils…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टूलबार कस्टमाइज़ करें…"
           }
         },
         "id" : {
@@ -467,6 +491,12 @@
             "value" : "Anpassa verktygsfältet…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Налаштувати панель інструментів…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -540,6 +570,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle"
+          }
+        },
+        "hi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle"
@@ -710,13 +746,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si repites acciones de mitad o desplazar, la ventana se moverá a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
+            "value" : "Si repites acciones de mitad o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si repites acciones de mitad o desplazar, la ventana se moverá a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
+            "value" : "Si repites acciones de mitad o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
           }
         },
         "fa" : {
@@ -729,6 +765,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En répétant une action de déplacement ou de moitié d'écran, la fenêtre sera déplacée sur le moniteur suivant au lieu d'alterner les tailles 1/2, 2/3, et 1/3."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अगर आप मूव या आधी स्क्रीन की क्रियाएँ दोहराते हैं, तो विंडो 1/2, 2/3 और 1/3 आकार में बदलने के बजाय अगले डिस्प्ले पर चली जाएगी।"
           }
         },
         "id" : {
@@ -788,7 +830,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetindo os comandos de movimento e divisão, a janela será movida para a próxima tela, em vez de diminuir para 1/2, 2/3 ou 1/3 do tamanho"
+            "value" : "Ao repetir ações de mover ou de metade, a janela vai para a próxima tela em vez de alternar entre 1/2, 2/3 e 1/3 do tamanho."
           }
         },
         "pt-PT" : {
@@ -813,6 +855,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Om du upprepar drag eller halva åtgärder, kommer fönstret att flyttas till nästa skärm i stället för 1/2-, 2/3- och 1/3-storlek."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "При повторенні дій переміщення або половин вікно переходитиме на наступний екран замість зміни розміру на 1/2, 2/3 і 1/3."
           }
         },
         "vi" : {
@@ -879,6 +927,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lever"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "उठाएँ"
           }
         },
         "id" : {
@@ -959,6 +1013,12 @@
             "value" : "Höja"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підняти"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1023,6 +1083,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformations"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ट्रांसफ़ॉर्मेशन"
           }
         },
         "id" : {
@@ -1103,6 +1169,12 @@
             "value" : "Transformationer"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перетворення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1167,6 +1239,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orthographe"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वर्तनी"
           }
         },
         "id" : {
@@ -1247,6 +1325,12 @@
             "value" : "Stavning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правопис"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1311,6 +1395,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utiliser la valeur par défaut"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिफ़ॉल्ट का उपयोग करें"
           }
         },
         "id" : {
@@ -1391,6 +1481,12 @@
             "value" : "Använd standard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1455,6 +1551,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Discours"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बोली"
           }
         },
         "id" : {
@@ -1535,6 +1637,12 @@
             "value" : "Tal"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мовлення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1611,6 +1719,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rechercher"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ढूँढें"
           }
         },
         "id" : {
@@ -1805,6 +1919,12 @@
             "value" : "Passer en plein écran"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ुल स्क्रीन में प्रवेश करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1997,6 +2117,12 @@
             "value" : "Quitter Rectangle"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle बंद करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2054,7 +2180,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
@@ -2187,6 +2313,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "À propos de Rectangle"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle के बारे में"
           }
         },
         "id" : {
@@ -2381,6 +2513,12 @@
             "value" : "Modifier"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "संपादन"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2561,6 +2699,12 @@
             "value" : "Style de copie"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "शैली कॉपी करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2639,6 +2783,12 @@
             "value" : "Kopiera stil"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копіювати стиль"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2715,6 +2865,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Refaire"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फिर करें"
           }
         },
         "id" : {
@@ -2897,6 +3053,12 @@
             "value" : "Sens d'écriture"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "लिखने की दिशा"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2975,6 +3137,12 @@
             "value" : "Skrivriktning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напрямок письма"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3039,6 +3207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remplacements"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सब्स्टिट्यूशन"
           }
         },
         "id" : {
@@ -3119,6 +3293,12 @@
             "value" : "Substitutioner"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заміни"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3183,6 +3363,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copier/coller intelligent"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्मार्ट कॉपी/पेस्ट"
           }
         },
         "id" : {
@@ -3263,6 +3449,12 @@
             "value" : "Smart kopiera/klistra in"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумне копіювання/вставлення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3327,6 +3519,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reserrer"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कसें"
           }
         },
         "id" : {
@@ -3407,6 +3605,12 @@
             "value" : "Dra åt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ущільнити"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3471,6 +3675,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Corriger l'orthographe automatiquement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वर्तनी को ऑटोमैटिकली सुधारें"
           }
         },
         "id" : {
@@ -3551,6 +3761,12 @@
             "value" : "Automatiskt rättstavning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автоматично виправляти правопис"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3629,6 +3845,12 @@
             "value" : "Quitter Rectangle"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle बंद करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3686,7 +3908,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
@@ -3809,6 +4031,12 @@
             "value" : "Utiliser la valeur par défaut"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिफ़ॉल्ट का उपयोग करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3887,6 +4115,12 @@
             "value" : "Använd standard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3910,16 +4144,46 @@
             "value" : "Animation style"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animación"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "سبک پویانمایی"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐनिमेशन शैली"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "アニメーションの種類"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de animação"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стиль анімації"
           }
         },
         "zh-Hans" : {
@@ -3986,6 +4250,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Imprimer…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्रिंट करें…"
           }
         },
         "id" : {
@@ -4066,6 +4336,12 @@
             "value" : "Skriv ut…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Друкувати…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4142,6 +4418,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fenêtre"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो"
           }
         },
         "id" : {
@@ -4324,6 +4606,12 @@
             "value" : "Police"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ॉन्ट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4400,6 +4688,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Typsnitt"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шрифт"
           }
         },
         "vi" : {
@@ -4480,6 +4774,12 @@
             "value" : "Menu principal"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मुख्य मेन्यू"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4537,7 +4837,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Menu Principal"
+            "value" : "Menu principal"
           }
         },
         "pt-PT" : {
@@ -4660,6 +4960,12 @@
             "value" : "\tDe gauche à droite"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tबाएँ से दाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4738,6 +5044,12 @@
             "value" : "\tVänster till höger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tЗліва направо"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4802,6 +5114,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher les couleurs"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रंग दिखाएँ"
           }
         },
         "id" : {
@@ -4882,6 +5200,12 @@
             "value" : "Visa färger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати кольори"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4958,6 +5282,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fichier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ाइल"
           }
         },
         "id" : {
@@ -5097,16 +5427,46 @@
             "value" : "Blur appearance"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspecto del desenfoque"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspecto del desenfoque"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ظاهر مات"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "धुंधलेपन का प्रकटन"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしの外観"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aparência do desfoque"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вигляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -5132,16 +5492,46 @@
             "value" : "Blur preview"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vista previa desenfocada"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vista previa desenfocada"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "پیش‌نمایش مات"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पूर्वावलोकन धुंधला करें"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ぼかしプレビュー"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfocar pré-visualização"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Попередній перегляд розмиття"
           }
         },
         "zh-Hans" : {
@@ -5220,6 +5610,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Préférences…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "प्राथमिकता…"
           }
         },
         "id" : {
@@ -5414,6 +5810,12 @@
             "value" : "Utiliser la sélection pour la recherche"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ढूँढने के लिए चयन का उपयोग करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5594,6 +5996,12 @@
             "value" : "Enregistrer sous…"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऐसे सहेजें…"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5672,6 +6080,12 @@
             "value" : "Spara som…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберегти як…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5736,6 +6150,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformations"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ट्रांसफ़ॉर्मेशन"
           }
         },
         "id" : {
@@ -5814,6 +6234,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transformationer"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перетворення"
           }
         },
         "vi" : {
@@ -5900,6 +6326,12 @@
             "value" : "Non autorisé à contrôler votre ordinateur"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपके कंप्यूटर को नियंत्रित करने की अनुमति नहीं है"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5957,7 +6389,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não autorizado para controlar seu computador"
+            "value" : "Sem autorização para controlar o computador"
           }
         },
         "pt-PT" : {
@@ -6080,6 +6512,12 @@
             "value" : "Ne rien utiliser"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "किसी का भी उपयोग न करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6158,6 +6596,12 @@
             "value" : "Använd ingen"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не використовувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6181,10 +6625,28 @@
             "value" : "Konflikt mit macOS Fenstermanagement"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflicto con el mosaico de macOS"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflicto con el mosaico de macOS"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "تداخل با چیدمان کاشی‌وار macOS"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS टाइलिंग से टकराव"
           }
         },
         "ja" : {
@@ -6199,10 +6661,22 @@
             "value" : "macOS 타일 정리 기능과 충돌"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conflito com a organização lado a lado do macOS"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konflikt s umiestnením dlaždíc v macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конфлікт із розкладанням вікон macOS"
           }
         },
         "vi" : {
@@ -6273,6 +6747,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coins"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कोने"
           }
         },
         "id" : {
@@ -6449,6 +6929,12 @@
             "value" : "Sélection"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चयन"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6527,6 +7013,12 @@
             "value" : "Markerade"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виділення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6591,6 +7083,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liens intelligents"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्मार्ट लिंक"
           }
         },
         "id" : {
@@ -6671,6 +7169,12 @@
             "value" : "Smarta länkar"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумні посилання"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6735,6 +7239,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Texte"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टेक्स्ट"
           }
         },
         "id" : {
@@ -6815,6 +7325,12 @@
             "value" : "Text"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текст"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6879,6 +7395,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passer en minuscules"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्मॉल लेटर बनाएँ"
           }
         },
         "id" : {
@@ -6959,6 +7481,12 @@
             "value" : "Ändra till gemener"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Усі малі літери"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7035,6 +7563,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ignorer frontmost.app"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "frontmost.app को अनदेखा करें"
           }
         },
         "id" : {
@@ -7174,16 +7708,46 @@
             "value" : "Dark"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oscuro"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oscuro"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "تیره"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गहरा"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ダーク"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuro"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Темний"
           }
         },
         "zh-Hans" : {
@@ -7209,16 +7773,46 @@
             "value" : "Direct resize"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionado directo"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionado directo"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ مستقیم"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सीधे आकार बदलें"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ウインドウを直接リサイズ"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redimensionamento direto"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пряма зміна розміру"
           }
         },
         "zh-Hans" : {
@@ -7244,10 +7838,28 @@
             "value" : "In Systemeinstellungen deaktivieren"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en macOS"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en macOS"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "غیرفعال‌سازی در macOS"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS में अक्षम करें"
           }
         },
         "ja" : {
@@ -7262,10 +7874,22 @@
             "value" : "macOS의 기능 끄기"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar no macOS"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vypnúť v macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в macOS"
           }
         },
         "vi" : {
@@ -7291,10 +7915,28 @@
             "value" : "In Rectangle deaktivieren"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en Rectangle"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar en Rectangle"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "غیرفعال‌سازی در Rectangle"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle में अक्षम करें"
           }
         },
         "ja" : {
@@ -7309,10 +7951,22 @@
             "value" : "Rectangle의 기능 끄기"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desativar no Rectangle"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vypnúť v Rectangle"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вимкнути в Rectangle"
           }
         },
         "vi" : {
@@ -7338,10 +7992,28 @@
             "value" : "Abbrechen"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "رد کردن"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ख़ारिज करें"
           }
         },
         "ja" : {
@@ -7356,10 +8028,22 @@
             "value" : "무시"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignorar"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zatvoriť"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрити"
           }
         },
         "vi" : {
@@ -7430,6 +8114,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Moniteur"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिस्प्ले"
           }
         },
         "id" : {
@@ -7618,6 +8308,12 @@
             "value" : "Fichier"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ाइल"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7755,10 +8451,28 @@
             "value" : "Das Ziehen zum Bildschirmrand für das Anordnen von Fenstern ist sowohl in Rectangle als auch in den macOS Systemeinstellungen aktiviert."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El mosaico al arrastrar al borde de la pantalla está activado tanto en Rectangle como en macOS."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El mosaico al arrastrar al borde de la pantalla está activado tanto en Rectangle como en macOS."
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار با کشیدن به لبهٔ نمایشگر در هر دوی Rectangle و macOS فعال است."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्क्रीन के किनारे पर ड्रैग करके टाइलिंग Rectangle और macOS दोनों में सक्षम है।"
           }
         },
         "ja" : {
@@ -7773,10 +8487,22 @@
             "value" : "화면 가장자리로 드래그해 타일을 정렬하는 기능이 Rectangle과 macOS 설정에서 모두 켜져 있습니다."
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado ao arrastar para a borda da tela está ativada no Rectangle e no macOS."
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Potiahnutie na okraj obrazovky je zapnuté v Rectangle aj macOS."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон перетягуванням до краю екрана увімкнено і в Rectangle, і в macOS."
           }
         },
         "vi" : {
@@ -7855,6 +8581,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annuler"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पहले जैसा करें"
           }
         },
         "id" : {
@@ -8037,6 +8769,12 @@
             "value" : "Orthographe et grammaire"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वर्तनी और व्याकरण"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8115,6 +8853,12 @@
             "value" : "Stavning och grammatik"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правопис і граматика"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8191,6 +8935,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fermer"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बंद करें"
           }
         },
         "id" : {
@@ -8323,10 +9073,28 @@
     },
     "Eighths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Octavos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Octavos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌هشتم‌ها"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आठवें भाग"
           }
         },
         "ko" : {
@@ -8335,10 +9103,28 @@
             "value" : "1/8"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oitavos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмі"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ tám"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "八等分"
           }
         }
       }
@@ -8352,10 +9138,28 @@
             "value" : "Extra Shortcuts"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atajos extra"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atajos extra"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "میانبرهای اضافی"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अतिरिक्त शॉर्टकट"
           }
         },
         "ko" : {
@@ -8364,16 +9168,34 @@
             "value" : "추가 단축키"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atalhos extras"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Дополнительные горячие клавиши"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додаткові комбінації клавіш"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Phím tắt bổ sung"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "额外快捷键"
           }
         }
       }
@@ -8440,6 +9262,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aide"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सहायता"
           }
         },
         "id" : {
@@ -8622,6 +9450,12 @@
             "value" : "Texte"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टेक्स्ट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8700,6 +9534,12 @@
             "value" : "Text"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Текст"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8764,6 +9604,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remplacements"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सब्स्टिट्यूशन"
           }
         },
         "id" : {
@@ -8844,6 +9690,12 @@
             "value" : "Substitutioner"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заміни"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -8920,6 +9772,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aide Rectangle"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle सहायता"
           }
         },
         "id" : {
@@ -9059,16 +9917,46 @@
             "value" : "Follow System"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según el sistema"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según el sistema"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "پیروی از سیستم"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सिस्टम के अनुसार"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "システムに合わせる"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir o sistema"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Як у системі"
           }
         },
         "zh-Hans" : {
@@ -9145,6 +10033,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quarts"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चौथाई भाग"
           }
         },
         "id" : {
@@ -9240,7 +10134,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Четверини"
+            "value" : "Чверті"
           }
         },
         "vi" : {
@@ -9321,6 +10215,12 @@
             "value" : "Gras"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बोल्ड"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9399,6 +10299,12 @@
             "value" : "Fetstil"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жирний"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9463,6 +10369,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Format"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ॉर्मैट"
           }
         },
         "id" : {
@@ -9543,6 +10455,12 @@
             "value" : "Format"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Формат"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9619,6 +10537,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "À propos"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "परिचय"
           }
         },
         "id" : {
@@ -9801,6 +10725,12 @@
             "value" : "Police"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ॉन्ट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9879,6 +10809,12 @@
             "value" : "Typsnitt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шрифт"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9943,6 +10879,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utiliser la valeur par défaut"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिफ़ॉल्ट का उपयोग करें"
           }
         },
         "id" : {
@@ -10023,6 +10965,12 @@
             "value" : "Använd standard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Стандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10099,6 +11047,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coller"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पेस्ट"
           }
         },
         "id" : {
@@ -10281,6 +11235,12 @@
             "value" : "Sens d'écriture"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "लिखने की दिशा"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10359,6 +11319,12 @@
             "value" : "Skrivriktning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напрямок письма"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10435,6 +11401,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दृश्य"
           }
         },
         "id" : {
@@ -10617,6 +11589,12 @@
             "value" : "Afficher l'orthographe et la grammaire"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वर्तनी और व्याकरण दिखाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10695,6 +11673,12 @@
             "value" : "Visa stavning och grammatik"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати правопис і граматику"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10759,6 +11743,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remplacement de texte"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टेक्स्ट प्रतिस्थापन"
           }
         },
         "id" : {
@@ -10839,6 +11829,12 @@
             "value" : "Textbyte"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заміна тексту"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10917,6 +11913,12 @@
             "value" : "Mettre à jour…"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अपडेट जाँचें…"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10974,7 +11976,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Procurar por atualizações…"
+            "value" : "Buscar atualizações…"
           }
         },
         "pt-PT" : {
@@ -11097,6 +12099,12 @@
             "value" : "Citations intelligentes"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्मार्ट कोट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11175,6 +12183,12 @@
             "value" : "Smarta citat"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумні лапки"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11251,6 +12265,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दृश्य"
           }
         },
         "id" : {
@@ -11433,6 +12453,12 @@
             "value" : "Vérifier le document maintenant"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दस्तावेज़ अभी जाँचें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11511,6 +12537,12 @@
             "value" : "Kontrollera dokument nu"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевірити документ зараз"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11587,6 +12619,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Services"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सेवाएँ"
           }
         },
         "id" : {
@@ -11769,6 +12807,12 @@
             "value" : "Indice"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सबस्क्रिप्ट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11847,6 +12891,12 @@
             "value" : "Index"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нижній індекс"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -11911,6 +12961,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plus petit"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "और छोटा"
           }
         },
         "id" : {
@@ -11991,6 +13047,12 @@
             "value" : "Mindre"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менший"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12067,6 +13129,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "खोलें…"
           }
         },
         "id" : {
@@ -12249,6 +13317,12 @@
             "value" : "Ligne de base"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बेसलाइन"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12327,6 +13401,12 @@
             "value" : "Baslinje"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Базова лінія"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12391,6 +13471,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Justifier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "जस्टिफ़ाई करें"
           }
         },
         "id" : {
@@ -12471,6 +13557,12 @@
             "value" : "Justera"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирівняти по ширині"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12535,6 +13627,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ne rien utiliser"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "किसी का भी उपयोग न करें"
           }
         },
         "id" : {
@@ -12615,6 +13713,12 @@
             "value" : "Använd ingen"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не використовувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12679,6 +13783,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kern"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कर्न"
           }
         },
         "id" : {
@@ -12759,6 +13869,12 @@
             "value" : "Kerning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кернінг"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12823,6 +13939,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\tDe droite à gauche"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tदाएँ से बाएँ"
           }
         },
         "id" : {
@@ -12903,6 +14025,12 @@
             "value" : "\tHöger till vänster"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСправа наліво"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -12979,6 +14107,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "À propos"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "परिचय"
           }
         },
         "id" : {
@@ -13161,6 +14295,12 @@
             "value" : "Format"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ॉर्मैट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13239,6 +14379,12 @@
             "value" : "Format"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Формат"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13303,6 +14449,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Revenir au dernier enregistrement"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सहेजे हुए पर रिवर्ट करें"
           }
         },
         "id" : {
@@ -13383,6 +14535,12 @@
             "value" : "Återgå till sparad"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повернути до збереженого"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13461,6 +14619,12 @@
             "value" : "Tout afficher"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सभी दिखाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13518,7 +14682,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar todos"
+            "value" : "Mostrar tudo"
           }
         },
         "pt-PT" : {
@@ -13641,6 +14805,12 @@
             "value" : "Afficher la barre latérale"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "साइडबार दिखाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13719,6 +14889,12 @@
             "value" : "Visa sidofältet"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати бічну панель"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13742,10 +14918,28 @@
             "value" : "Larger Width"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensanchar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ensanchar"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "عرض بزرگ‌تر"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चौड़ाई बढ़ाएँ"
           }
         },
         "ko" : {
@@ -13754,16 +14948,34 @@
             "value" : "너비 크게"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aumentar largura"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Увеличить ширину"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більша ширина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiều rộng lớn hơn"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "增加宽度"
           }
         }
       }
@@ -13818,6 +15030,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\tDe gauche à droite"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tबाएँ से दाएँ"
           }
         },
         "id" : {
@@ -13898,6 +15116,12 @@
             "value" : "\tVänster till höger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tЗліва направо"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13962,6 +15186,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tout ramener au premier plan"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सभी आगे लाएँ"
           }
         },
         "id" : {
@@ -14042,6 +15272,12 @@
             "value" : "Ta fram allt"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перенести все наперед"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14065,16 +15301,46 @@
             "value" : "Light"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "روشن"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हल्का"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "ライト"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claro"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Світлий"
           }
         },
         "zh-Hans" : {
@@ -14141,6 +15407,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Règle pour coller"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रूलर पेस्ट करें"
           }
         },
         "id" : {
@@ -14221,6 +15493,12 @@
             "value" : "Klistra in linjal"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставити лінійку"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14295,6 +15573,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximiser"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मैक्सिमाइज़ करें"
           }
         },
         "id" : {
@@ -14477,6 +15761,12 @@
             "value" : "Vérifier la grammaire avec l'orthographe"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "वर्तनी के साथ व्याकरण जाँचें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14555,6 +15845,12 @@
             "value" : "Kontrollera grammatik med stavning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевіряти граматику разом із правописом"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14619,6 +15915,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Règle pour copier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रूलर कॉपी करें"
           }
         },
         "id" : {
@@ -14699,6 +16001,12 @@
             "value" : "Kopiera linjal"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Копіювати лінійку"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -14767,6 +16075,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Déplacer vers le bord"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "किनारे पर मूव करें"
           }
         },
         "id" : {
@@ -14893,10 +16207,28 @@
     },
     "Ninths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novenos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novenos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌نهم‌ها"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "नौवें भाग"
           }
         },
         "ko" : {
@@ -14905,10 +16237,28 @@
             "value" : "1/9"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nonos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дев'яті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ chín"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "九等分"
           }
         }
       }
@@ -14975,6 +16325,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Services"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सेवाएँ"
           }
         },
         "id" : {
@@ -15157,6 +16513,12 @@
             "value" : "\tPar défaut"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tडिफ़ॉल्ट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15235,6 +16597,12 @@
             "value" : "\tStandard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСтандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15299,6 +16667,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligatures"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "संयुक्ताक्षर"
           }
         },
         "id" : {
@@ -15379,6 +16753,12 @@
             "value" : "Ligaturer"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лігатури"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15455,6 +16835,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voir le journal…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "लॉग देखें…"
           }
         },
         "id" : {
@@ -15637,6 +17023,12 @@
             "value" : "Ligne de base"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बेसलाइन"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15715,6 +17107,12 @@
             "value" : "Baslinje"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Базова лінія"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15779,6 +17177,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir l'élément récent"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हालिया खोलें"
           }
         },
         "id" : {
@@ -15859,6 +17263,12 @@
             "value" : "Öppna senaste"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити недавні"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15923,6 +17333,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desserrer"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ढीला करें"
           }
         },
         "id" : {
@@ -16003,6 +17419,12 @@
             "value" : "Lossa"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розрідити"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16079,6 +17501,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Masquer Rectangle"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle छिपाएँ"
           }
         },
         "id" : {
@@ -16265,6 +17693,12 @@
             "value" : "Other"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अन्य"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16322,7 +17756,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Outro"
+            "value" : "Outros"
           }
         },
         "pt-PT" : {
@@ -16451,6 +17885,12 @@
             "value" : "Rechercher le précédent"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पिछला ढूँढें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16550,7 +17990,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Знайти попередній"
+            "value" : "Знайти попереднє"
           }
         },
         "vi" : {
@@ -16647,6 +18087,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Placer dans le Dock"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मिनिमाइज़ करें"
           }
         },
         "id" : {
@@ -16829,6 +18275,12 @@
             "value" : "Arrêter Dictée"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बोलना बंद करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16905,6 +18357,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sluta prata"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зупинити мовлення"
           }
         },
         "vi" : {
@@ -16985,6 +18443,12 @@
             "value" : "Supprimer"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डिलीट करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17042,7 +18506,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir"
+            "value" : "Apagar"
           }
         },
         "pt-PT" : {
@@ -17165,6 +18629,12 @@
             "value" : "Plus grand"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "और बड़ा"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17243,6 +18713,12 @@
             "value" : "Större"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Більший"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17319,6 +18795,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sauvegarder…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सहेजें…"
           }
         },
         "id" : {
@@ -17501,6 +18983,12 @@
             "value" : "Afficher les polices"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ॉन्ट दिखाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17577,6 +19065,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visa typsnitt"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати шрифти"
           }
         },
         "vi" : {
@@ -17657,6 +19151,12 @@
             "value" : "Rechercher le suivant"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अगला ढूँढें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17714,7 +19214,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar próximo"
+            "value" : "Buscar seguinte"
           }
         },
         "pt-PT" : {
@@ -17837,6 +19337,12 @@
             "value" : "Mise en page…"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पृष्ठ सेटअप…"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17915,6 +19421,12 @@
             "value" : "Sidinställningar…"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Параметри сторінки…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17979,6 +19491,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Réduire/agrandir"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ज़ूम करें"
           }
         },
         "id" : {
@@ -18059,6 +19577,12 @@
             "value" : "Zoom"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Масштабувати"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18123,6 +19647,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "\tDe droite à gauche"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tदाएँ से बाएँ"
           }
         },
         "id" : {
@@ -18203,6 +19733,12 @@
             "value" : "\tHöger till vänster"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСправа наліво"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18267,6 +19803,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vérifier l'orthographe pendant la frappe"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टाइप करते समय वर्तनी जाँचें"
           }
         },
         "id" : {
@@ -18347,6 +19889,12 @@
             "value" : "Kontrollera stavningen medan du skriver"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевіряти правопис під час введення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18411,6 +19959,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tirets intelligents"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "स्मार्ट डैश"
           }
         },
         "id" : {
@@ -18491,6 +20045,12 @@
             "value" : "Smarta bindestreck"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розумні тире"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18555,6 +20115,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exposant"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सुपरस्क्रिप्ट"
           }
         },
         "id" : {
@@ -18635,6 +20201,12 @@
             "value" : "Upphöjd"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхній індекс"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18711,6 +20283,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tout sélectionner"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सभी चुनें"
           }
         },
         "id" : {
@@ -18905,6 +20483,12 @@
             "value" : "Aller à la sélection"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चयन पर जाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19004,7 +20588,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Перейти до вибору"
+            "value" : "Перейти до виділеного"
           }
         },
         "vi" : {
@@ -19087,6 +20671,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Moitiés"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आधे"
           }
         },
         "id" : {
@@ -19213,10 +20803,28 @@
     },
     "Sixteenths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieciseisavos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieciseisavos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌شانزدهم‌ها"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सोलहवें भाग"
           }
         },
         "ko" : {
@@ -19225,10 +20833,28 @@
             "value" : "1/16"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dezesseis avos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шістнадцяті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ mười sáu"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十六等分"
           }
         }
       }
@@ -19287,6 +20913,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sixièmes"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "छठे भाग"
           }
         },
         "id" : {
@@ -19467,6 +21099,12 @@
             "value" : "Taille"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आकार"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19598,10 +21236,28 @@
             "value" : "Smaller Width"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estrechar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estrechar"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "عرض کوچک‌تر"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चौड़ाई घटाएँ"
           }
         },
         "ko" : {
@@ -19610,16 +21266,34 @@
             "value" : "너비 작게"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diminuir largura"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Уменьшить ширину"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Менша ширина"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiều rộng nhỏ hơn"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "减少宽度"
           }
         }
       }
@@ -19674,6 +21348,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher la barre d'outils"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टूलबार दिखाएँ"
           }
         },
         "id" : {
@@ -19754,6 +21434,12 @@
             "value" : "Visa verktygsfältet"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати панель інструментів"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19799,13 +21485,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bucle a través de pantallas en ejecuciones repetidas de comandos de movimiento a la izquierda o a la derecha"
+            "value" : "Recorrer las pantallas al repetir los comandos de mover a la izquierda o a la derecha"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bucle a través de pantallas en ejecuciones repetidas de comandos de movimiento a la izquierda o a la derecha"
+            "value" : "Recorrer las pantallas al repetir los comandos de mover a la izquierda o a la derecha"
           }
         },
         "fa" : {
@@ -19818,6 +21504,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Déplacer sur les moniteurs lors de commandes gauche ou droite répétées"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बाएँ या दाएँ कमांड दोहराने पर डिस्प्ले बारी-बारी से बदलें"
           }
         },
         "id" : {
@@ -19898,6 +21590,12 @@
             "value" : "Bläddra mellan skärmarna med upprepade vänster- eller högerkommandon"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перемикати екрани при повторенні дій ліворуч або праворуч"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19974,6 +21672,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fenêtre"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो"
           }
         },
         "id" : {
@@ -20160,6 +21864,12 @@
             "value" : "Tiers"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "तिहाई भाग"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20299,14 +22009,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en columnas"
+            "state" : "translated",
+            "value" : "Organizar en columnas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en columnas"
+            "state" : "translated",
+            "value" : "Organizar en columnas"
           }
         },
         "fa" : {
@@ -20321,15 +22031,33 @@
             "value" : "Fenêtres en colonnes"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कॉलम में टाइल करें"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "ウインドウを列に並べる"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar em colunas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти стовпцями"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "按列平铺窗口"
           }
         }
@@ -20352,14 +22080,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en filas"
+            "state" : "translated",
+            "value" : "Organizar en filas"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ventanas en filas"
+            "state" : "translated",
+            "value" : "Organizar en filas"
           }
         },
         "fa" : {
@@ -20374,15 +22102,33 @@
             "value" : "Fenêtres en lignes"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पंक्तियों में टाइल करें"
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "ウインドウを行に並べる"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organizar em linhas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкласти рядками"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "按行平铺窗口"
           }
         }
@@ -20397,10 +22143,46 @@
             "value" : "Tiling"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mosaico"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mosaico"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "टाइलिंग"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lado a lado"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "平铺"
           }
         }
       }
@@ -20414,10 +22196,28 @@
             "value" : "Das Ziehen von Fenstern an den Bildschirmrand zum Anordnen wurde in den macOS Systemeinstellungen deaktiviert"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار در macOS غیرفعال شده است"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS में टाइलिंग अक्षम कर दी गई है"
           }
         },
         "ja" : {
@@ -20432,10 +22232,22 @@
             "value" : "macOS의 타일 정리 기능이 비활성화됨"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado do macOS foi desativada"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Umiestnenie dlaždíc v macOS bolo vypnuté"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у macOS вимкнено"
           }
         },
         "vi" : {
@@ -20455,10 +22267,28 @@
     "Tiling in Rectangle has been disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de Rectangle"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de Rectangle"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار در Rectangle غیرفعال شده است"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle में टाइलिंग अक्षम कर दी गई है"
           }
         },
         "ko" : {
@@ -20467,10 +22297,28 @@
             "value" : "Rectangle의 타일 정리 기능이 비활성화됨"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado do Rectangle foi desativada"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон у Rectangle вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Việc xếp gạch trong hình chữ nhật đã bị vô hiệu hóa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle 中的窗口平铺功能已被禁用"
           }
         }
       }
@@ -20525,6 +22373,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kern"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कर्न"
           }
         },
         "id" : {
@@ -20605,6 +22459,12 @@
             "value" : "Kerning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кернінг"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20622,10 +22482,28 @@
     "To adjust macOS tiling, go to System Settings → Desktop & Dock → Windows" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar el mosaico de macOS, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar el mosaico de macOS, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "برای تنظیم چیدمان کاشی‌وار macOS، به System Settings → Desktop & Dock → Windows بروید"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS टाइलिंग बदलने के लिए, सिस्टम सेटिंग → डेस्कटॉप और Dock → विंडो पर जाएँ"
           }
         },
         "ko" : {
@@ -20634,10 +22512,28 @@
             "value" : "macOS 타일 정리 기능을 조정하려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동하세요"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para ajustar a organização lado a lado do macOS, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб налаштувати розкладання вікон macOS, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Để điều chỉnh ô xếp macOS, hãy vào Cài đặt hệ thống → Màn hình nền & Dock → Windows"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要调整 macOS 窗口平铺，请前往 系统设置 → 桌面与程序坞 → 窗口"
           }
         }
       }
@@ -20651,10 +22547,28 @@
             "value" : "Um dies wieder zu aktivieren, gehe zu Systemeinstellungen → Schreibtisch & Dock → Fenster"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para volver a activarlo, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para volver a activarlo, ve a Ajustes del Sistema → Escritorio y Dock → Ventanas"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "برای فعال‌سازی مجدد آن، به System Settings → Desktop & Dock → Windows بروید"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इसे फिर से सक्षम करने के लिए, सिस्टम सेटिंग → डेस्कटॉप और Dock → विंडो पर जाएँ"
           }
         },
         "ja" : {
@@ -20669,10 +22583,22 @@
             "value" : "다시 켜려면, 시스템 설정 → 데스크탑 및 Dock → 윈도우로 이동합니다"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para reativá-la, acesse Ajustes do Sistema → Mesa e Dock → Janelas"
+          }
+        },
         "sk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pre opätovné povolenie, prejdi do Systémové nastavenia → Plocha a Dock → Okná"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Щоб увімкнути його знову, перейдіть до Системні параметри → Робочий стіл і Dock → Вікна"
           }
         },
         "vi" : {
@@ -20692,10 +22618,28 @@
     "Top screen edge tiling in macOS is now disabled" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS en el borde superior de la pantalla"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha desactivado el mosaico de macOS en el borde superior de la pantalla"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "چیدمان کاشی‌وار لبهٔ بالای نمایشگر در macOS اکنون غیرفعال است"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS में स्क्रीन के ऊपरी किनारे पर टाइलिंग अब अक्षम है"
           }
         },
         "ko" : {
@@ -20704,10 +22648,28 @@
             "value" : "macOS의 화면 상단 가장자리 타일 정렬이 꺼졌습니다"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A organização lado a lado na borda superior da tela foi desativada no macOS"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Розкладання вікон біля верхнього краю екрана в macOS тепер вимкнено"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tính năng ghép cạnh màn hình trên cùng trong macOS hiện đã bị vô hiệu hóa"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS 中的顶部屏幕边缘平铺现已禁用"
           }
         }
       }
@@ -20715,10 +22677,28 @@
     "Top/bottom sides" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitades superior/inferior"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mitades superior/inferior"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "سمت‌های بالا/پایین"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ऊपरी/निचला आधा"
           }
         },
         "ko" : {
@@ -20733,10 +22713,28 @@
             "value" : "Górna/Dolna połowa"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metades superior/inferior"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Верхня/нижня половини"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nửa trên/dưới"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上／下半屏"
           }
         }
       }
@@ -20791,6 +22789,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Détecteurs de données"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "डेटा डिटेक्टर"
           }
         },
         "id" : {
@@ -20871,6 +22875,12 @@
             "value" : "Datadetektorer"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Детектори даних"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20887,10 +22897,28 @@
     },
     "Twelfths" : {
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doceavos"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doceavos"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "یک‌دوازدهم‌ها"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बारहवें भाग"
           }
         },
         "ko" : {
@@ -20899,10 +22927,28 @@
             "value" : "1/12"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duodécimos"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Дванадцяті"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thứ mười hai"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "十二等分"
           }
         }
       }
@@ -20957,6 +23003,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ouvrir l'élément récent"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हालिया खोलें"
           }
         },
         "id" : {
@@ -21037,6 +23089,12 @@
             "value" : "Öppna senaste"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрити недавні"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21101,6 +23159,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Capitaliser"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हर पहला अक्षर कैपिटल करें"
           }
         },
         "id" : {
@@ -21181,6 +23245,12 @@
             "value" : "Kapitalisera"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "З великої літери"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21198,10 +23268,28 @@
     "Update Available…" : {
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualización disponible…"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualización disponible…"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "به‌روزرسانی موجود است…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अपडेट उपलब्ध है…"
           }
         },
         "ko" : {
@@ -21210,10 +23298,28 @@
             "value" : "업데이트 가능…"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atualização disponível…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступне оновлення…"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cập nhật có sẵn…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有可用更新…"
           }
         }
       }
@@ -21277,6 +23383,12 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle"
+          }
+        },
+        "hi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rectangle"
@@ -21474,6 +23586,12 @@
             "value" : "Couper"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21666,6 +23784,12 @@
             "value" : "Masquer les autres"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अन्य छिपाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21723,7 +23847,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esconder Outros"
+            "value" : "Ocultar outros"
           }
         },
         "pt-PT" : {
@@ -21862,6 +23986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Autoriser…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अधिकृत करें…"
           }
         },
         "id" : {
@@ -22050,6 +24180,12 @@
             "value" : "Centrer"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मध्य"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22128,6 +24264,12 @@
             "value" : "Mitten"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По центру"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22192,6 +24334,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Italique"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इटैलिक"
           }
         },
         "id" : {
@@ -22272,6 +24420,12 @@
             "value" : "Kursiv"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Курсив"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22336,6 +24490,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Style de collage"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "शैली पेस्ट करें"
           }
         },
         "id" : {
@@ -22416,6 +24576,12 @@
             "value" : "Klistra in stil"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вставити стиль"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22480,6 +24646,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Afficher la règle"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रूलर दिखाएँ"
           }
         },
         "id" : {
@@ -22560,6 +24732,12 @@
             "value" : "Visa linjal"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати лінійку"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22624,6 +24802,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passer en majuscules"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कैपिटल लेटर बनाएँ"
           }
         },
         "id" : {
@@ -22704,6 +24888,12 @@
             "value" : "Ändra till versaler"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Усі великі літери"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22768,6 +24958,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Effacer le menu"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मेन्यू साफ़ करें"
           }
         },
         "id" : {
@@ -22848,6 +25044,12 @@
             "value" : "Rensa menyn"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Очистити меню"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22912,6 +25114,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ligatures"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "संयुक्ताक्षर"
           }
         },
         "id" : {
@@ -22992,6 +25200,12 @@
             "value" : "Ligaturer"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лігатури"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23068,6 +25282,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Modifier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "संपादन"
           }
         },
         "id" : {
@@ -23262,6 +25482,12 @@
             "value" : "Nouveau"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "नया"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23442,6 +25668,12 @@
             "value" : "Aligner à droite"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दाईं ओर अलाइन करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23520,6 +25752,12 @@
             "value" : "Anpassa höger"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирівняти праворуч"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23596,6 +25834,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Coller et adapter le style"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पेस्ट करें और शैली मिलाएँ"
           }
         },
         "id" : {
@@ -23735,10 +25979,28 @@
             "value" : "Width Step (px)"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de anchura (px)"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de anchura (px)"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "گام عرض (px)"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चौड़ाई का चरण (px)"
           }
         },
         "ko" : {
@@ -23747,16 +26009,34 @@
             "value" : "너비 단위 (px)"
           }
         },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incremento de largura (px)"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Шаг ширины (px)"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крок ширини (пкс)"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bước chiều rộng (px)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "宽度步长（px）"
           }
         }
       }
@@ -23771,10 +26051,46 @@
             "value" : "Unable to resize window smaller.\nWindows may overlap."
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede reducir más la ventana.\nLas ventanas pueden superponerse."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede reducir más la ventana.\nLas ventanas pueden superponerse."
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "تغییر اندازهٔ پنجره به کوچک‌تر امکان‌پذیر نیست.\nممکن است پنجره‌ها هم‌پوشانی پیدا کنند."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो का आकार और छोटा नहीं किया जा सका।\nविंडो ओवरलैप हो सकती हैं।"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível reduzir mais a janela.\nAs janelas podem se sobrepor."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неможливо ще зменшити вікно.\nВікна можуть перекриватися."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法将窗口缩得更小。\n窗口可能会重叠。"
           }
         }
       }
@@ -23789,10 +26105,46 @@
             "value" : "Minimum window size reached"
           }
         },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño mínimo de ventana alcanzado"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño mínimo de ventana alcanzado"
+          }
+        },
         "fa" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "حداقل اندازهٔ پنجره حاصل شد"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "विंडो न्यूनतम आकार तक पहुँच गई है"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamanho mínimo da janela atingido"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Досягнуто мінімального розміру вікна"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已达到窗口最小尺寸"
           }
         }
       }
@@ -23859,6 +26211,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aide"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सहायता"
           }
         },
         "id" : {
@@ -24041,6 +26399,12 @@
             "value" : "Souligner"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "रेखांकित करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24119,6 +26483,12 @@
             "value" : "Understrykning"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підкреслений"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24195,6 +26565,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कॉपी"
           }
         },
         "id" : {
@@ -24377,6 +26753,12 @@
             "value" : "Tout utiliser"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सभी का उपयोग करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24455,6 +26837,12 @@
             "value" : "Använd alla"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Використовувати всі"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24513,6 +26901,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Discours"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बोली"
           }
         },
         "id" : {
@@ -24593,6 +26987,12 @@
             "value" : "Tal"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мовлення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24669,6 +27069,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rechercher…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ढूँढें…"
           }
         },
         "id" : {
@@ -24863,6 +27269,12 @@
             "value" : "Rechercher et remplacer…"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ढूँढें और बदलें…"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25037,6 +27449,12 @@
             "value" : "\tPar défaut"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tडिफ़ॉल्ट"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25115,6 +27533,12 @@
             "value" : "\tStandard"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\tСтандартно"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25179,6 +27603,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Démarrer Dictée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बोलना शुरू करें"
           }
         },
         "id" : {
@@ -25259,6 +27689,12 @@
             "value" : "Börja tala"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Почати мовлення"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25315,14 +27751,14 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferencias…"
+            "state" : "translated",
+            "value" : "Ajustes…"
           }
         },
         "es-419" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferencias…"
+            "state" : "translated",
+            "value" : "Ajustes…"
           }
         },
         "fa" : {
@@ -25335,6 +27771,12 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Préférences…"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सेटिंग…"
           }
         },
         "id" : {
@@ -25393,8 +27835,8 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Preferências…"
+            "state" : "translated",
+            "value" : "Ajustes…"
           }
         },
         "pt-PT" : {
@@ -25523,6 +27965,12 @@
             "value" : "Quitter Rectangle"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle बंद करें"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25580,7 +28028,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fechar Rectangle"
+            "value" : "Encerrar Rectangle"
           }
         },
         "pt-PT" : {
@@ -25697,6 +28145,12 @@
             "value" : "Montrer les substitutions"
           }
         },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सब्स्टिट्यूशन दिखाएँ"
+          }
+        },
         "id" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25775,6 +28229,12 @@
             "value" : "Visa substitutioner"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показати заміни"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25839,6 +28299,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aligner à gauche"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बाईं ओर अलाइन करें"
           }
         },
         "id" : {
@@ -25919,6 +28385,12 @@
             "value" : "Justera vänster"
           }
         },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирівняти ліворуч"
+          }
+        },
         "vi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -25983,6 +28455,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paragraphe"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "अनुच्छेद"
           }
         },
         "id" : {
@@ -26061,6 +28539,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paragraf"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Абзац"
           }
         },
         "vi" : {

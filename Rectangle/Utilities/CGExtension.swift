@@ -13,7 +13,14 @@ extension CGRect {
         guard !isNull else {
             return self
         }
-        return .init(origin: .init(x: origin.x, y: NSScreen.screens[0].frame.maxY - maxY), size: size)
+        return screenFlipped(primaryScreenMaxY: NSScreen.screens[0].frame.maxY)
+    }
+
+    func screenFlipped(primaryScreenMaxY: CGFloat) -> CGRect {
+        guard !isNull else {
+            return self
+        }
+        return .init(origin: .init(x: origin.x, y: primaryScreenMaxY - maxY), size: size)
     }
 
     var isLandscape: Bool { width > height }
@@ -44,5 +51,19 @@ extension CGRect {
 extension OptionSet where RawValue: FixedWidthInteger {
     var count: Int {
         rawValue.nonzeroBitCount
+    }
+}
+
+extension CGRect {
+    /// A frame a window could actually have: finite, with a positive size.
+    var isValidWindowFrame: Bool {
+        !isNull && !isInfinite && [minX, minY, width, height].allSatisfy { $0.isFinite } && width > 0 && height > 0
+    }
+
+    /// Whether both frames are valid and every edge of one is within `tolerance` of the other's.
+    func isNear(_ other: CGRect, tolerance: CGFloat = 2) -> Bool {
+        isValidWindowFrame && other.isValidWindowFrame
+            && abs(minX - other.minX) <= tolerance && abs(minY - other.minY) <= tolerance
+            && abs(width - other.width) <= tolerance && abs(height - other.height) <= tolerance
     }
 }
