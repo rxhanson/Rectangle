@@ -7098,7 +7098,7 @@ class ShortcutManagerSessionTests: XCTestCase {
     }
 
     func testDisplayCycleStartsFreshWhenCursorPointsAtAnotherDisplay() throws {
-        defer { AppDelegate.windowHistory.cursorScreenFrames.removeValue(forKey: 987_004) }
+        defer { CursorScreenHistory.shared.screenFrames.removeValue(forKey: 987_004) }
         try withExecutionSettings(subsequentExecutionMode: .cycleMonitor, pointerTargeting: false, cursorDetection: true) {
             let window = TestWindow(windowId: 987_004)
             defer { AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: 987_004) }
@@ -7108,13 +7108,13 @@ class ShortcutManagerSessionTests: XCTestCase {
             AppDelegate.windowHistory.lastRectangleActions[987_004] = RectangleAction(action: .leftHalf, rect: window.frame)
 
             // The last press happened with the cursor on another display.
-            AppDelegate.windowHistory.cursorScreenFrames[987_004] = screen.frame.offsetBy(dx: screen.frame.width, dy: 0)
+            CursorScreenHistory.shared.screenFrames[987_004] = screen.frame.offsetBy(dx: screen.frame.width, dy: 0)
             harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName,
                                             object: ExecutionParameters(.leftHalf, windowElement: window, windowId: 987_004))
             XCTAssertNil(try XCTUnwrap(windowManager.executedParameters.last).screen)
 
             // Pressing again with the cursor where it was last time still cycles.
-            AppDelegate.windowHistory.cursorScreenFrames[987_004] = screen.frame
+            CursorScreenHistory.shared.screenFrames[987_004] = screen.frame
             harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName,
                                             object: ExecutionParameters(.leftHalf, windowElement: window, windowId: 987_004))
             XCTAssertTrue(try XCTUnwrap(windowManager.executedParameters.last).screen === screen)
@@ -11282,11 +11282,11 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
         savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
         settings.forEach { $0.0.load(from: $0.1) }
         savedActions = AppDelegate.windowHistory.lastRectangleActions
-        savedCursorScreenFrames = AppDelegate.windowHistory.cursorScreenFrames
-        savedCursorActions = AppDelegate.windowHistory.cursorActions
+        savedCursorScreenFrames = CursorScreenHistory.shared.screenFrames
+        savedCursorActions = CursorScreenHistory.shared.actions
         AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-        AppDelegate.windowHistory.cursorScreenFrames.removeValue(forKey: windowId)
-        AppDelegate.windowHistory.cursorActions.removeValue(forKey: windowId)
+        CursorScreenHistory.shared.screenFrames.removeValue(forKey: windowId)
+        CursorScreenHistory.shared.actions.removeValue(forKey: windowId)
         savedLogging = Logger.logging
         Logger.logging = false
     }
@@ -11294,8 +11294,8 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
     override func tearDown() {
         savedDefaults.forEach { $0.0.load(from: $0.1) }
         AppDelegate.windowHistory.lastRectangleActions = savedActions
-        AppDelegate.windowHistory.cursorScreenFrames = savedCursorScreenFrames
-        AppDelegate.windowHistory.cursorActions = savedCursorActions
+        CursorScreenHistory.shared.screenFrames = savedCursorScreenFrames
+        CursorScreenHistory.shared.actions = savedCursorActions
         Logger.logging = savedLogging
         ActiveSideSplitRatios.shared.resetAll()
         super.tearDown()
@@ -11364,8 +11364,8 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
         func walk(cursorDetection: Bool) -> [CGRect] {
             Defaults.useCursorScreenDetection.enabled = cursorDetection
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-            AppDelegate.windowHistory.cursorScreenFrames.removeValue(forKey: windowId)
-            AppDelegate.windowHistory.cursorActions.removeValue(forKey: windowId)
+            CursorScreenHistory.shared.screenFrames.removeValue(forKey: windowId)
+            CursorScreenHistory.shared.actions.removeValue(forKey: windowId)
             let window = TestWindow(frame: leftHalf(of: right), heightStep: 7)
             let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
             let manager = TestWindowManager(screenDetection: detection)
@@ -11436,7 +11436,7 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
         // The cursor followed the window, which mustn't make the next press a fresh one.
         XCTAssertEqual(manager.cursorWarps, 1)
         XCTAssertTrue(detection.cursorScreen === right)
-        XCTAssertFalse(AppDelegate.windowHistory.cursorChangedDisplay(for: windowId, cursorScreenFrame: right.frame))
+        XCTAssertFalse(CursorScreenHistory.shared.changedDisplay(for: windowId, cursorScreenFrame: right.frame))
     }
 
     func testNextDisplayCountsFromWindowDisplay() {
@@ -11458,7 +11458,7 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
         manager.execute(ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId))
 
         XCTAssertEqual(window.frame, leftHalf(of: left))
-        XCTAssertNil(AppDelegate.windowHistory.cursorScreenFrames[windowId])
+        XCTAssertNil(CursorScreenHistory.shared.screenFrames[windowId])
     }
 
     private func leftHalf(of screen: NSScreen) -> CGRect {

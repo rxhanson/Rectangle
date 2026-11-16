@@ -7,6 +7,7 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
+    private let screenSelector: ScreenSelector
     private let targetAdjusterChain: [WindowTargetAdjuster]
     private let delegateProviders: [WindowManagerDelegateProvider]
     private let windowAnimator: WindowAnimator
@@ -32,6 +33,8 @@ class WindowManager {
             FixedSizeWindowMover(),
             BestEffortWindowMover()
         ]
+
+        screenSelector = ScreenSelector(screenDetection: screenDetection)
 
         // Gaps come first: the overlap offset is measured from the gapped frame.
         targetAdjusterChain = [
@@ -123,7 +126,7 @@ class WindowManager {
                           parameters: ExecutionParameters) -> PlannedMove? {
         let action = parameters.action
 
-        guard let screens = resolveScreens(for: windowElement, windowId: windowId, parameters: parameters) else {
+        guard let screens = screenSelector.screens(for: windowElement, windowId: windowId, parameters: parameters) else {
             reject(parameters, reason: "Unable to obtain usable screens")
             return nil
         }
@@ -135,12 +138,9 @@ class WindowManager {
 
         var lastRectangleAction = reconcileHistory(windowId: windowId, currentWindowRect: currentWindowRect,
                                                    updateRestoreRect: parameters.updateRestoreRect)
-
-        if screens.forgetsLastAction {
+        if screens.forgetsLastAction, let windowId {
             lastRectangleAction = nil
-            if let windowId {
-                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-            }
+            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
         }
 
         let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
@@ -213,53 +213,6 @@ class WindowManager {
                            isMovedAcrossDisplays: isMovedAcrossDisplays,
                            delegate: delegate,
                            result: result)
-    }
-
-    /// The screens to calculate against, and the screens the window starts on.
-    /// `forgetsLastAction` is true when a press with cursor screen detection is a first press
-    /// on the cursor's display, so the last action mustn't count as a repeat.
-    private func resolveScreens(for windowElement: AccessibilityElement, windowId: CGWindowID?,
-                                parameters: ExecutionParameters) -> (usable: UsableScreens, source: UsableScreens, forgetsLastAction: Bool)? {
-        let action = parameters.action
-        // An explicit screen (display cycling) or the cursor screen controls the
-        // calculation, but neither necessarily contains the window before it moves.
-        let sourceScreens = screenDetection.detectScreens(using: windowElement)
-        let screens: UsableScreens?
-        var forgetsLastAction = false
-        if let screen = parameters.screen {
-            screens = parameters.source == .titleBar
-            ? screenDetection.detectScreens(at: screen)
-            : UsableScreens(currentScreen: screen, numScreens: 1)
-        } else if Defaults.useCursorScreenDetection.enabled,
-                  action.classification != .display,
-                  let cursorScreens = screenDetection.detectScreensAtCursor() {
-            let cursorScreenFrame = cursorScreens.currentScreen.frame
-            let cursorChangedDisplay = windowHistory.cursorChangedDisplay(for: windowId, cursorScreenFrame: cursorScreenFrame)
-            let isSameCommandAgain = windowId.map { windowHistory.cursorActions[$0] == action } ?? false
-            if !cursorChangedDisplay && isSameCommandAgain {
-                // Until the cursor points elsewhere, pressing the same command again continues
-                // from wherever the last press left the window, so repeats that cross displays
-                // keep working. This mustn't depend on the last action, which is forgotten
-                // whenever the app adjusts the frame Rectangle set.
-                screens = sourceScreens
-            } else {
-                // Pointing at another display, or pressing another command, is a first press
-                // on the cursor's display. The last action there doesn't count as a repeat if
-                // the cursor moved or repeats walked the window off that display.
-                forgetsLastAction = cursorChangedDisplay || sourceScreens?.currentScreen != cursorScreens.currentScreen
-                screens = cursorScreens
-            }
-            if let windowId {
-                windowHistory.cursorScreenFrames[windowId] = cursorScreenFrame
-                windowHistory.cursorActions[windowId] = action
-            }
-        } else {
-            // Display actions count from the window's display, even with cursor screen detection.
-            screens = sourceScreens
-        }
-
-        guard let screens, let sourceScreens else { return nil }
-        return (screens, sourceScreens, forgetsLastAction)
     }
 
     /// Forgets history for a window moved since Rectangle last placed it, and saves its restore rect.
@@ -468,26 +421,15 @@ class WindowManager {
             windowElement.bringToFront(force: true)
         }
         
-        if Defaults.moveCursorAcrossDisplays.userEnabled, !windowCameToCursor(on: destination) {
-            moveCursor(to: resultingRect.centerPoint, on: destination, windowId: windowId)
+        if Defaults.moveCursorAcrossDisplays.userEnabled,
+           screenSelector.shouldMoveCursorAcrossDisplays(onto: destination) {
+            moveCursor(to: resultingRect.centerPoint, onto: destination, windowId: windowId)
         }
     }
 
-    /// With cursor screen detection, a window moved to the cursor's display was sent
-    /// there by the cursor, so moving the cursor again would only pull it away from
-    /// where the user put it.
-    private func windowCameToCursor(on destination: NSScreen) -> Bool {
-        Defaults.useCursorScreenDetection.enabled
-            && screenDetection.detectScreensAtCursor()?.currentScreen == destination
-    }
-
-    private func moveCursor(to point: CGPoint, on screen: NSScreen, windowId: CGWindowID?) {
+    private func moveCursor(to point: CGPoint, onto screen: NSScreen, windowId: CGWindowID?) {
         warpCursor(to: point)
-        // Rectangle moving the cursor isn't the user pointing at another display,
-        // so the next press of the same command still counts as a repeat.
-        if Defaults.useCursorScreenDetection.enabled, let windowId {
-            windowHistory.cursorScreenFrames[windowId] = screen.frame
-        }
+        screenSelector.didMoveCursor(onto: screen, windowId: windowId)
     }
 
     func warpCursor(to point: CGPoint) {
@@ -502,7 +444,7 @@ class WindowManager {
         }
         
         if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
-            moveCursor(to: resultingRect.centerPoint, on: calcResult.screen, windowId: result.windowId)
+            moveCursor(to: resultingRect.centerPoint, onto: calcResult.screen, windowId: result.windowId)
         }
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
