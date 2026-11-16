@@ -678,8 +678,15 @@ class SnappingManager {
         return AppDelegate.windowHistory.restoreRects[windowId]
     }
     
+    /// Whether a blurred footprint sits just below the dragged window and stays up until the
+    /// window has animated into it. This only applies while placement animates: an immediate
+    /// placement needs no footprint to land in.
+    private var footprintFollowsAnimatedPlacement: Bool {
+        WindowAnimator.enabled && Defaults.footprintBlur.enabled
+    }
+
     private func snapPreviewCompletion() -> (() -> Void)? {
-        if WindowAnimator.enabled && Defaults.footprintBlur.enabled {
+        if footprintFollowsAnimatedPlacement {
             return box?.completionForSnap(windowID: windowId)
         }
         box?.orderOut(nil)
@@ -695,7 +702,7 @@ class SnappingManager {
         }
         box?.showPreview(in: rect, from: getFootprintAnimationOrigin(snapArea, rect),
                          duration: getFootprintAnimationDuration(),
-                         below: WindowAnimator.enabled && Defaults.footprintBlur.enabled ? windowId : nil)
+                         below: footprintFollowsAnimatedPlacement ? windowId : nil)
     }
 
     func getFootprintAnimationDuration() -> Double {
