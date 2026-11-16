@@ -142,7 +142,7 @@ struct BehaviorSettingsView: View {
                         Divider()
                         VStack(alignment: .leading, spacing: 2) {
                             Toggle("Move window to display where cursor is", isOn: $viewModel.useCursorScreenDetection)
-                            Text("All move commands will move the focused window to its target position on the display where the cursor currently resides, leaving the cursor where it is.")
+                            Text("Commands use the display containing the cursor instead of the window.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
