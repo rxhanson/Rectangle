@@ -397,8 +397,9 @@ class WindowManager {
         let move = placement.move
         move.delegate?.moveDidSettle(resultingRect: resultingRect,
                                       screenFrame: move.sourceScreens.currentScreen.adjustedVisibleFrame(move.ignoreTodo))
-        // Cleanup can move the focused window too, so read where it ended up.
-        let settledRect = animatedFrame == nil ? move.windowElement.frame : resultingRect
+        // A delegate's cleanup can move the focused window too, so read where it ended up.
+        // Otherwise the placement's own read, or the animation's verified frame, still holds.
+        let settledRect = move.delegate != nil && animatedFrame == nil ? move.windowElement.frame : resultingRect
         finish(placement, resultingRect: settledRect)
     }
 
