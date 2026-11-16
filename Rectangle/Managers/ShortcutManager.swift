@@ -67,7 +67,7 @@ class ShortcutManager {
             return session?[kCGSessionOnConsoleKey] as? Bool ?? true
         },
         appDisabledProvider: @escaping () -> Bool = { ApplicationToggle.shortcutsDisabled },
-        missionControlActiveProvider: @escaping () -> Bool = { WindowAnimationInterruptionPolicy.missionControlActive },
+        missionControlActiveProvider: @escaping () -> Bool = { MissionControl.isActive },
         ignoreShortcutsInMissionControlProvider: @escaping () -> Bool = { Defaults.ignoreShortcutsInMissionControl.enabled },
         windowUnderCursorProvider: @escaping (MouseButtonPress) -> AccessibilityElement? = { press in
             AccessibilityElement.getWindowElementUnderCursor(at: press.location, eventWindowID: press.windowId)

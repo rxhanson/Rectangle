@@ -81,7 +81,7 @@ final class WindowAnimator {
     private var workerNativeResize = false
     private var workerOffset = CGPoint.zero
     private lazy var core = DirectWindowAnimator(enabled: { true }, clock: { [weak self] in self?.workerTime ?? ProcessInfo.processInfo.systemUptime }, automaticallyAdvances: false, smoothResize: true,
-        environmentIsSafe: { !WindowAnimationInterruptionPolicy.missionControlActive },
+        environmentIsSafe: { !MissionControl.isActive },
         crossesDisplays: { [weak self] a, b in
             let screens = self?.workerScreens ?? []
             return WindowDisplayTransition.display(containing: a, displays: screens)
@@ -254,7 +254,7 @@ final class WindowAnimator {
                 if current.request.consumeGeometryChange() { workerWindow?.animationPolicy?.geometryChanged = true }
                 if current.request.consumeResizeChange() {
                     workerWindow?.animationResizeNotified = true
-                    WindowAnimationDiagnostics.event("animation-resize-notification", fields: ["windowID": workerWindow?.windowId ?? 0])
+                    DiagnosticTrace.event("animation-resize-notification", fields: ["windowID": workerWindow?.windowId ?? 0])
                 }
                 workerTime = start
                 workerWindow?.animationVerificationTime = start
@@ -263,7 +263,7 @@ final class WindowAnimator {
                 // Only motion samples look ahead; feedback and timeout checks use real time.
                 let sampleTime = WindowAnimationPacing.sampleTime(now: start, deadline: deadline, displayInterval: displayInterval)
                 core.advance(at: workerTime, presentationTime: sampleTime)
-                WindowAnimationDiagnostics.event("animation-executor-tick", fields: [
+                DiagnosticTrace.event("animation-executor-tick", fields: [
                     "windowID": workerWindow?.windowId ?? 0, "rate": rate,
                     "queueMilliseconds": (start - now) * 1000,
                     "sizeFrameCount": workerWindow?.resizeCadence.frames ?? 1,

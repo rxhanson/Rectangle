@@ -9896,12 +9896,12 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
                     XCTAssertEqual(inner.height, bounds.height, accuracy: 1)
                 }
                 let settlementDeadline = CACurrentMediaTime() + 2
-                while WindowAnimationCaptureGate.shared.isPaused && CACurrentMediaTime() < settlementDeadline {
+                while window.isAnimating && CACurrentMediaTime() < settlementDeadline {
                     try await Task.sleep(nanoseconds: 8_000_000)
                 }
                 XCTAssertEqual(surface.frame.width, target.width, accuracy: 1)
                 XCTAssertEqual(surface.frame.height, target.height, accuracy: 1)
-                XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+                XCTAssertFalse(window.isAnimating)
                 window.orderOut(nil)
                 try await Task.sleep(nanoseconds: 30_000_000)
             }
@@ -9932,7 +9932,7 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
         try await Task.sleep(nanoseconds: 300_000_000)
         XCTAssertEqual(surface.frame, closedFrame)
         XCTAssertFalse(window.realIsVisible)
-        XCTAssertFalse(WindowAnimationCaptureGate.shared.isPaused)
+        XCTAssertFalse(window.isAnimating)
     }
 }
 

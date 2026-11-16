@@ -460,7 +460,7 @@ class WindowManager {
                 evidence["restore"] = [restore.minX, restore.minY, restore.width, restore.height]
             }
         }
-        WindowAnimationDiagnostics.event("window-action-achieved", fields: evidence)
+        DiagnosticTrace.event("window-action-achieved", fields: evidence)
         Notification.Name.windowActionCompleted.post()
         
         if Logger.logging {
