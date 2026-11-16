@@ -313,7 +313,13 @@ For example, the command for setting the first vertical sixth shortcut to `ctrl 
 defaults write com.knollsoft.Rectangle firstVerticalSixth -dict-add keyCode -float 18 modifierFlags -float 917504
 ```
 
-Repeating `firstVerticalSixth` cycles forward through all 6 positions. Repeating `lastVerticalSixth` cycles through them in reverse when repeated-command behavior is enabled.
+Repeating any of them cycles the window through the three placements available inside that sixth: the whole sixth, then half of it (the top half of a column, or the left half of a row on a portrait display), then the other half, then the whole sixth again. Cycling needs repeated-command behavior enabled; with "do nothing" selected each press gives the whole sixth.
+
+To instead have repeating `firstVerticalSixth` cycle forward through all 6 positions and `lastVerticalSixth` cycle through them in reverse, without halving inside a sixth:
+
+```bash
+defaults write com.knollsoft.Rectangle verticalSixthsWalkAcrossScreen -bool true
+```
 
 ## Add additional "thirds" sizing commands 
 
