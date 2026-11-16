@@ -14,9 +14,10 @@ struct WindowMoveAnimation {
     let profile: WindowAnimationProfile
 
     /// The animation for moving a window to a calculated target, or nil to place it immediately.
-    static func forMove(action: WindowAction, calcResult: WindowCalculationResult, screenFrame: CGRect,
+    static func forMove(of windowElement: AccessibilityElement, action: WindowAction,
+                        calcResult: WindowCalculationResult, screenFrame: CGRect,
                         isFixedSize: Bool, isMovedAcrossDisplays: Bool, source: ExecutionSource) -> WindowMoveAnimation? {
-        guard WindowAnimator.enabled, !isFixedSize, !isMovedAcrossDisplays || source == .dragToSnap else { return nil }
+        guard windowElement.canAnimate, !isFixedSize, !isMovedAcrossDisplays || source == .dragToSnap else { return nil }
 
         let flippedScreenFrame = screenFrame.screenFlipped
         let placement = WindowAnimationPlacement(
@@ -34,7 +35,7 @@ struct WindowMoveAnimation {
     /// The animation for restoring a window to a saved frame, or nil to restore it immediately.
     static func forRestore(to restoreRect: CGRect, of windowElement: AccessibilityElement,
                            source: ExecutionSource) -> WindowMoveAnimation? {
-        guard WindowAnimator.enabled, windowElement.isResizable() else { return nil }
+        guard windowElement.canAnimate, windowElement.isResizable() else { return nil }
         return WindowMoveAnimation(destination: restoreRect, placement: nil, releasedSnap: false,
                                    profile: profile(for: source))
     }

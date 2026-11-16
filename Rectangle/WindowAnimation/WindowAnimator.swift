@@ -322,4 +322,10 @@ extension AccessibilityElement {
     /// Decisions based on the window's position use this, so that they aren't thrown off
     /// by a frame partway through an animation.
     var logicalFrame: CGRect { WindowAnimator.shared.destination(for: self) ?? frame }
+
+    /// Whether moves of this window animate. Rectangle's own windows, such as Settings, never do:
+    /// the animator writes frames through Accessibility off the main thread, and for our own
+    /// process those writes are carried out in-process on that thread, where AppKit traps.
+    /// They are placed immediately instead.
+    var canAnimate: Bool { WindowAnimator.enabled && pid != getpid() }
 }

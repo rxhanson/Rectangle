@@ -11154,3 +11154,39 @@ final class VerticalDisplayTraversalTests: XCTestCase {
         XCTAssertTrue(calculate(.topHalf, source: laptop, screens: [laptop, above], mode: .acrossAndResize)?.screen === above)
     }
 }
+
+final class WindowMoveAnimationOwnProcessTests: XCTestCase {
+    private final class TestWindow: AccessibilityElement {
+        private let processIdentifier: pid_t
+        init(pid: pid_t) {
+            processIdentifier = pid
+            super.init(AXUIElementCreateApplication(pid))
+        }
+        override var pid: pid_t? { processIdentifier }
+        override var windowId: CGWindowID? { 1 }
+        override func isResizable() -> Bool { true }
+    }
+
+    func testRectangleOwnWindowsMoveWithoutAnimating() throws {
+        let saved = Defaults.experimentalWindowAnimations.enabled
+        Defaults.experimentalWindowAnimations.enabled = true
+        defer { Defaults.experimentalWindowAnimations.enabled = saved }
+        try XCTSkipUnless(WindowAnimator.enabled, "Window animations are disabled by settings or accessibility")
+        let screen = try XCTUnwrap(NSScreen.main, "Requires a screen")
+
+        let own = TestWindow(pid: getpid())
+        let other = TestWindow(pid: 1)
+        let target = CGRect(x: 100, y: 100, width: 400, height: 300)
+        let calcResult = WindowCalculationResult(rect: target, screen: screen, resultingAction: .leftHalf)
+        func move(_ window: AccessibilityElement) -> WindowMoveAnimation? {
+            WindowMoveAnimation.forMove(of: window, action: .leftHalf, calcResult: calcResult,
+                                        screenFrame: screen.visibleFrame, isFixedSize: false,
+                                        isMovedAcrossDisplays: false, source: .keyboardShortcut)
+        }
+
+        XCTAssertNil(move(own))
+        XCTAssertNil(WindowMoveAnimation.forRestore(to: target, of: own, source: .keyboardShortcut))
+        XCTAssertNotNil(move(other))
+        XCTAssertNotNil(WindowMoveAnimation.forRestore(to: target, of: other, source: .keyboardShortcut))
+    }
+}

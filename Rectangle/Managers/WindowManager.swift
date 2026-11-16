@@ -323,7 +323,7 @@ class WindowManager {
         // already-achieved request must not discard an animation's needed fallback.
         // A matching logical target is still pending, so it continues through here.
         let calcResult = move.calcResult
-        let animation = WindowMoveAnimation.forMove(action: move.action, calcResult: calcResult,
+        let animation = WindowMoveAnimation.forMove(of: move.windowElement, action: move.action, calcResult: calcResult,
                                                     screenFrame: move.visibleFrameOfDestinationScreen,
                                                     isFixedSize: move.isFixedSize,
                                                     isMovedAcrossDisplays: move.isMovedAcrossDisplays,
