@@ -779,7 +779,8 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             return super.moveDelegate(for: request)
         }
 
-        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {}
+        override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,
+                                                resultingRect: CGRect, destination: NSScreen, preservesFocus: Bool) {}
 
         override func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
             postProcessCount += 1

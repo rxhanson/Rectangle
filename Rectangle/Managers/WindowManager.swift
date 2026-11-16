@@ -7,6 +7,7 @@ class WindowManager {
     private let screenDetection: ScreenDetection
     private let standardWindowMoverChain: [WindowMover]
     private let fixedSizeWindowMoverChain: [WindowMover]
+    private let screenSelector: ScreenSelector
     private let targetAdjusterChain: [WindowTargetAdjuster]
     private let delegateProviders: [WindowManagerDelegateProvider]
     private let windowAnimator: WindowAnimator
@@ -32,6 +33,8 @@ class WindowManager {
             FixedSizeWindowMover(),
             BestEffortWindowMover()
         ]
+
+        screenSelector = ScreenSelector(screenDetection: screenDetection)
 
         // Gaps come first: the overlap offset is measured from the gapped frame.
         targetAdjusterChain = [
@@ -123,7 +126,7 @@ class WindowManager {
                           parameters: ExecutionParameters) -> PlannedMove? {
         let action = parameters.action
 
-        guard let screens = resolveScreens(for: windowElement, parameters: parameters) else {
+        guard let screens = screenSelector.screens(for: windowElement, windowId: windowId, parameters: parameters) else {
             reject(parameters, reason: "Unable to obtain usable screens")
             return nil
         }
@@ -133,8 +136,12 @@ class WindowManager {
         let pendingDestination = windowAnimator.destination(for: windowElement)
         let currentWindowRect = pendingDestination ?? windowElement.frame
 
-        let lastRectangleAction = reconcileHistory(windowId: windowId, currentWindowRect: currentWindowRect,
+        var lastRectangleAction = reconcileHistory(windowId: windowId, currentWindowRect: currentWindowRect,
                                                    updateRestoreRect: parameters.updateRestoreRect)
+        if screens.forgetsLastAction, let windowId {
+            lastRectangleAction = nil
+            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        }
 
         let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
 
@@ -206,27 +213,6 @@ class WindowManager {
                            isMovedAcrossDisplays: isMovedAcrossDisplays,
                            delegate: delegate,
                            result: result)
-    }
-
-    /// The screens to calculate against, and the screens the window starts on.
-    private func resolveScreens(for windowElement: AccessibilityElement,
-                                parameters: ExecutionParameters) -> (usable: UsableScreens, source: UsableScreens)? {
-        // An explicit screen (display cycling) or the cursor screen controls the
-        // calculation, but neither necessarily contains the window before it moves.
-        let sourceScreens = screenDetection.detectScreens(using: windowElement)
-        let screens: UsableScreens?
-        if let screen = parameters.screen {
-            screens = parameters.source == .titleBar
-            ? screenDetection.detectScreens(at: screen)
-            : UsableScreens(currentScreen: screen, numScreens: 1)
-        } else {
-            screens = Defaults.useCursorScreenDetection.enabled
-            ? screenDetection.detectScreensAtCursor()
-            : sourceScreens
-        }
-
-        guard let screens, let sourceScreens else { return nil }
-        return (screens, sourceScreens)
     }
 
     /// Forgets history for a window moved since Rectangle last placed it, and saves its restore rect.
@@ -375,7 +361,8 @@ class WindowManager {
                                       retries: ArraySlice<(delay: DispatchTimeInterval?, message: String)>) {
         let move = placement.move
         guard move.calcResult.rect.size != resultingRect.size, let retry = retries.first else {
-            windowMovedAcrossDisplays(windowElement: move.windowElement, resultingRect: resultingRect,
+            windowMovedAcrossDisplays(windowElement: move.windowElement, windowId: move.windowId,
+                                      resultingRect: resultingRect, destination: move.calcResult.screen,
                                       preservesFocus: move.parameters.preservesFocus)
             return finish(placement, resultingRect: resultingRect)
         }
@@ -428,14 +415,25 @@ class WindowManager {
         }
     }
     
-    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, resultingRect: CGRect, preservesFocus: Bool) {
+    func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,
+                                   resultingRect: CGRect, destination: NSScreen, preservesFocus: Bool) {
         if !preservesFocus {
             windowElement.bringToFront(force: true)
         }
         
-        if Defaults.moveCursorAcrossDisplays.userEnabled {
-            CGWarpMouseCursorPosition(resultingRect.centerPoint)
+        if Defaults.moveCursorAcrossDisplays.userEnabled,
+           screenSelector.shouldMoveCursorAcrossDisplays(onto: destination) {
+            moveCursor(to: resultingRect.centerPoint, onto: destination, windowId: windowId)
         }
+    }
+
+    private func moveCursor(to point: CGPoint, onto screen: NSScreen, windowId: CGWindowID?) {
+        warpCursor(to: point)
+        screenSelector.didMoveCursor(onto: screen, windowId: windowId)
+    }
+
+    func warpCursor(to point: CGPoint) {
+        CGWarpMouseCursorPosition(point)
     }
 
     func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
@@ -446,7 +444,7 @@ class WindowManager {
         }
         
         if Defaults.moveCursor.userEnabled, result.source == .keyboardShortcut {
-            CGWarpMouseCursorPosition(resultingRect.centerPoint)
+            moveCursor(to: resultingRect.centerPoint, onto: calcResult.screen, windowId: result.windowId)
         }
         
         recordAction(windowId: result.windowId, resultingRect: resultingRect, action: calcResult.resultingAction, subAction: calcResult.resultingSubAction, incrementCount: incrementCount)
