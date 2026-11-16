@@ -52,10 +52,6 @@ class WindowManager {
         return nil
     }
 
-    func logicalFrame(for element: AccessibilityElement) -> CGRect {
-        windowAnimator.destination(for: element) ?? element.frame
-    }
-
     func recordAction(windowId: CGWindowID?,
                       resultingRect: CGRect,
                       action: WindowAction,

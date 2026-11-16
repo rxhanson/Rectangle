@@ -90,8 +90,6 @@ final class WindowAnimator {
         isNativeResizeApp: { [weak self] _ in self?.workerNativeResize == true })
 
 
-    func logicalFrame(for element: AccessibilityElement) -> CGRect? { destination(for: element) }
-
     func destination(for element: AccessibilityElement) -> CGRect? {
         if let active, active.element == element { return active.destination }
         return retiring.last(where: { $0.0 == element })?.1
@@ -317,4 +315,11 @@ final class WindowAnimator {
         }
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in self?.cancel() }
     }
+}
+
+extension AccessibilityElement {
+    /// Where the window is settling: a running animation's destination, or its current frame.
+    /// Decisions based on the window's position use this, so that they aren't thrown off
+    /// by a frame partway through an animation.
+    var logicalFrame: CGRect { WindowAnimator.shared.destination(for: self) ?? frame }
 }

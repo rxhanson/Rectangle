@@ -270,7 +270,7 @@ class ShortcutManager {
             }
 
             if isRepeatAction(parameters: parameters, windowElement: windowElement, windowId: windowId),
-               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowManager.logicalFrame(for: windowElement)) == nil {
+               RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowElement.logicalFrame) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus, completion: parameters.completion, cancellation: parameters.cancellation)
                     // Bypass any other subsequent action by removing the last action
@@ -316,7 +316,7 @@ class ShortcutManager {
             return
         }
 
-        let logicalFrame = windowManager.logicalFrame(for: windowElement)
+        let logicalFrame = windowElement.logicalFrame
         let lastAction = AppDelegate.windowHistory.lastRectangleActions[windowId]
         if ShortcutCycle.isStale(lastAction: lastAction, currentWindowRect: logicalFrame) {
             AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
@@ -381,7 +381,7 @@ class ShortcutManager {
     private func isRepeatAction(parameters: ExecutionParameters, windowElement: AccessibilityElement, windowId: CGWindowID) -> Bool {
 
         if parameters.action == .maximize {
-            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowManager.logicalFrame(for: windowElement).size {
+            if screenDetection.detectScreens(using: windowElement)?.currentScreen.visibleFrame.size == windowElement.logicalFrame.size {
                 return true
             }
         }
