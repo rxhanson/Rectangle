@@ -425,8 +425,9 @@ enum TodoSidebarSide: Int, CaseIterable {
     
     var title: String {
         switch self {
-        case .left: return String(localized: "Left")
-        case .right: return String(localized: "Right")
+        // Own keys: "Left" and "Right" alone name the Left/Right Half actions.
+        case .left: return String(localized: "Todo Side Left", defaultValue: "Left", comment: "Todo side option: the Todo app sits on the left side of the screen")
+        case .right: return String(localized: "Todo Side Right", defaultValue: "Right", comment: "Todo side option: the Todo app sits on the right side of the screen")
         }
     }
 }
