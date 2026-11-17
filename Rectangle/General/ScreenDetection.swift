@@ -5,12 +5,9 @@ import Cocoa
 class ScreenDetection {
 
     private let availableScreens: () -> [NSScreen]
-    private let logicalFrame: (AccessibilityElement) -> CGRect?
 
-    init(screens: @escaping () -> [NSScreen] = { NSScreen.screens },
-         logicalFrame: @escaping (AccessibilityElement) -> CGRect? = { WindowAnimator.shared.logicalFrame(for: $0) }) {
+    init(screens: @escaping () -> [NSScreen] = { NSScreen.screens }) {
         availableScreens = screens
-        self.logicalFrame = logicalFrame
     }
 
     func detectScreens(using frontmostWindowElement: AccessibilityElement?) -> UsableScreens? {
@@ -27,7 +24,7 @@ class ScreenDetection {
         
         let screensOrdered = order(screens: screens)
         // Route repeated actions using the destination instead of an intermediate animation frame.
-        let windowFrame = frontmostWindowElement.map { logicalFrame($0) ?? $0.frame } ?? .zero
+        let windowFrame = frontmostWindowElement?.logicalFrame ?? .zero
         guard let sourceScreen: NSScreen = screenContaining(windowFrame, screens: screensOrdered) else {
             let adjacentScreens = AdjacentScreens(prev: firstScreen, next: firstScreen)
             return UsableScreens(currentScreen: firstScreen, adjacentScreens: adjacentScreens, numScreens: screens.count, screensOrdered: screensOrdered)
@@ -130,16 +127,37 @@ class ScreenDetection {
         case .minX:
             return screens.sorted(by: { $0.frame.minX < $1.frame.minX })
         case .yThenMinX:
-            let sortedScreens = screens.sorted(by: { screen1, screen2 in
-                if screen2.frame.maxY <= screen1.frame.minY {
-                    return true
+            // Group displays into horizontal bands of vertically-overlapping screens, top band
+            // first, and sort each band left-to-right. The previous comparator ordered some
+            // pairs by Y (when one screen sat entirely above the other) and others by X (when
+            // they overlapped vertically). That predicate is intransitive for staircase layouts
+            // — screen A above B, B above C, yet A and C disjoint — so `sorted(by:)` ran on an
+            // invalid strict weak ordering and returned a result that depended on the order
+            // NSScreen.screens happened to enumerate the displays. Banding is a deterministic
+            // function of the layout and matches the old result on clean rows, columns and grids.
+            let byTop = screens.sorted { lhs, rhs in
+                if lhs.frame.maxY != rhs.frame.maxY { return lhs.frame.maxY > rhs.frame.maxY }
+                if lhs.frame.minX != rhs.frame.minX { return lhs.frame.minX < rhs.frame.minX }
+                return lhs.frame.minY > rhs.frame.minY
+            }
+            var bands: [[NSScreen]] = []
+            var bandMinY = CGFloat.greatestFiniteMagnitude
+            for screen in byTop {
+                if !bands.isEmpty, screen.frame.maxY > bandMinY {
+                    bands[bands.count - 1].append(screen)
+                    bandMinY = min(bandMinY, screen.frame.minY)
+                } else {
+                    bands.append([screen])
+                    bandMinY = screen.frame.minY
                 }
-                if screen1.frame.maxY <= screen2.frame.minY {
-                    return false
+            }
+            return bands.flatMap { band in
+                band.sorted { lhs, rhs in
+                    lhs.frame.minX != rhs.frame.minX
+                        ? lhs.frame.minX < rhs.frame.minX
+                        : lhs.frame.minY > rhs.frame.minY
                 }
-                return screen1.frame.minX < screen2.frame.minX
-            })
-            return sortedScreens
+            }
         }
     }
     

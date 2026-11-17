@@ -24,7 +24,7 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculati
             return calculateFirstRect(params)
         }
         
-        return calculateRepeatedSideRect(params)
+        return calculateRepeatedRect(params)
     }
     
     func calculateFirstRect(_ params: RectCalculationParameters) -> RectResult {
@@ -37,8 +37,4 @@ class TopHalfCalculation: WindowCalculation, RepeatedExecutionsInThirdsCalculati
         return RectResult(HalfSplitFrameCalculation.verticalRect(in: params.visibleFrameOfScreen, side: .leading, fraction: fraction))
     }
 
-    func calculateRepeatedRect(_ params: RectCalculationParameters) -> RectResult {
-        calculateRepeatedSideRect(params)
-    }
-    
 }

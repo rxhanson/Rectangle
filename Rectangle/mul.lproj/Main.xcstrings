@@ -506,7 +506,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自定义工具栏..."
+            "value" : "自定义工具栏…"
           }
         }
       }
@@ -872,7 +872,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果你重复移动或进行一半的移动操作，窗口将移动到下一个显示器，而不是 1 / 2、2 / 3 或 1 / 3 大小。"
+            "value" : "重复执行移动或半屏操作时，窗口会移到下一个显示器，而不是循环½、⅔、⅓大小。"
           }
         }
       }
@@ -7901,7 +7901,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 macOS 里禁用"
+            "value" : "在 macOS 中禁用"
           }
         }
       }
@@ -7978,7 +7978,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Rectangle 里禁用"
+            "value" : "在 Rectangle 中禁用"
           }
         }
       }
@@ -8514,7 +8514,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 Rectangle 和 macOS 中都启用了拖移窗口至屏幕边缘实现平铺"
+            "value" : "在 Rectangle 和 macOS 中都启用了拖移窗口至屏幕边缘实现平铺。"
           }
         }
       }
@@ -14736,7 +14736,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "显示所有"
+            "value" : "全部显示"
           }
         },
         "zh-Hant" : {
@@ -19436,7 +19436,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "页面设置..."
+            "value" : "页面设置…"
           }
         }
       }
@@ -21605,7 +21605,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过重复向左或向右命令在显示器循环显示"
+            "value" : "重复执行向左或向右命令时在显示器间循环"
           }
         }
       }
@@ -22533,7 +22533,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要调整 macOS 窗口平铺，请前往 系统设置 → 桌面与程序坞 → 窗口"
+            "value" : "要调整 macOS 窗口平铺，请前往“系统设置”→“桌面与程序坞”→“窗口”"
           }
         }
       }
@@ -22610,7 +22610,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要重新启用它，请转到系统设置→ 桌面与程序坞 → 窗口"
+            "value" : "要重新启用，请前往“系统设置”→“桌面与程序坞”→“窗口”"
           }
         }
       }
@@ -27890,7 +27890,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "偏好设置…"
+            "value" : "设置…"
           }
         },
         "zh-Hant" : {

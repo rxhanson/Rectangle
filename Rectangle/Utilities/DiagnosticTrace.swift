@@ -1,13 +1,16 @@
+/// DiagnosticTrace.swift
+
 import Cocoa
 import QuartzCore
 
-/// Opt-in local timing evidence. Normal app launches do no tracing or filesystem work.
+/// Opt-in local timing evidence for window actions, snapping and animation.
+/// Normal app launches do no tracing or filesystem work.
 /// Example Terminal command to launch Rectangle with this enabled:
 /// open -a Rectangle --env RECTANGLE_ANIMATION_TRACE_PATH="/tmp/trace.json"
-enum WindowAnimationDiagnostics {
+enum DiagnosticTrace {
     private static let path = ProcessInfo.processInfo.environment["RECTANGLE_ANIMATION_TRACE_PATH"]
     static var enabled: Bool { !(path ?? "").isEmpty }
-    private static let queue = DispatchQueue(label: "Rectangle.WindowAnimation.diagnostics", qos: .utility)
+    private static let queue = DispatchQueue(label: "Rectangle.diagnostics", qos: .utility)
     static func event(_ name: String, fields: [String: Any] = [:]) {
         guard let path, !path.isEmpty else { return }
         var record = fields

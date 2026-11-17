@@ -80,8 +80,7 @@ class TitleBarManager {
         let historyAction = windowElement.windowId.flatMap { AppDelegate.windowHistory.lastRectangleActions[$0] }
         let resolvedAction = Self.resolveAction(action,
             restoreEnabled: Defaults.doubleClickTitleBarRestore.enabled != false,
-            windowFrame: windowElement.frame,
-            pendingFrame: WindowAnimator.shared.logicalFrame(for: windowElement),
+            windowFrame: windowElement.logicalFrame,
             lastAction: historyAction)
         let clickedScreen = Self.screenForClick(at: location.screenFlipped, screens: NSScreen.screens)
         resolvedAction.postTitleBar(windowElement: windowElement, screen: clickedScreen)
@@ -108,13 +107,13 @@ class TitleBarManager {
             || titleBarIgnoredApps?.contains(bundleIdentifier) == true
     }
 
+    /// - Parameter windowFrame: The window's logical frame, since during an animation
+    ///   the real window may not have reached its target
     static func resolveAction(_ action: WindowAction, restoreEnabled: Bool,
-                              windowFrame: CGRect, pendingFrame: CGRect?,
+                              windowFrame: CGRect,
                               lastAction: RectangleAction?) -> WindowAction {
-        // During an animation the real window may not have reached its target.
-        let frame = pendingFrame ?? windowFrame
-        guard restoreEnabled, frame != .null,
-              let lastAction, lastAction.action == action, lastAction.rect == frame
+        guard restoreEnabled, windowFrame != .null,
+              let lastAction, lastAction.action == action, lastAction.rect == windowFrame
         else { return action }
         return .restore
     }

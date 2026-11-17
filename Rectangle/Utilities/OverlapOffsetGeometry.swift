@@ -121,3 +121,10 @@ enum OverlapOffsetGeometry {
     }
     
 }
+
+struct OverlapOffsetTargetAdjuster: WindowTargetAdjuster {
+    func adjust(_ result: inout WindowCalculationResult, action: WindowAction, windowId: CGWindowID?) {
+        guard Defaults.cyclingOverlapOffset.userEnabled, action.overlapOffsetApplies else { return }
+        result.rect = OverlapOffsetGeometry.applyOverlapOffsetIfNeeded(result.rect, windowId: windowId, screen: result.screen)
+    }
+}

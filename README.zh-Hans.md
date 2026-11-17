@@ -24,6 +24,31 @@ Rectangle 支持 macOS 14 及更高版本。
 brew install --cask rectangle
 ```
 
+### 中国大陆用户：下载与更新
+
+如果访问 GitHub 不稳定，可以完全通过官网获取 Rectangle：
+
+- **下载**：从 <https://rectangleapp.com/zh-CN/> 下载最新的 dmg。每个版本都会同时发布到 GitHub 和 rectangleapp.com；自 2.0.4 起，官网的下载直接由 rectangleapp.com 提供，无需经过 GitHub。
+- **更新**：应用内更新（Rectangle 菜单中的「检查更新…」）同样从 rectangleapp.com 获取。
+- **Homebrew**：`brew install --cask rectangle` 目前仍从 GitHub 下载安装包。常见的 Homebrew 镜像配置加速的是 Homebrew 本身、软件索引和预编译包（bottle），不会改变这一点；下载失败时，请改从官网下载。
+- **旧版 macOS**：适用于 macOS 13 及更早版本的 v1.100 和 v0.73 目前只在 GitHub 上提供。
+
+Rectangle 的官方版本已内置简体中文，且完全免费。请只从官网、GitHub 或 Homebrew 获取，无需下载第三方网站提供的「汉化版」。
+
+安装后，可以用以下命令确认应用由开发者签名并已通过 Apple 公证：
+
+```bash
+spctl -a -vv /Applications/Rectangle.app
+```
+
+输出应为：
+
+```
+/Applications/Rectangle.app: accepted
+source=Notarized Developer ID
+origin=Developer ID Application: Ryan Hanson (XSYZ3E4B7D)
+```
+
 ## 使用方法
 
 [快捷键](https://support.apple.com/guide/mac-help/what-are-those-symbols-shown-in-menus-cpmh0011/mac)不言自明；至于吸附区域，如果你从未在 Windows 或其他窗口管理应用中使用过，则可能需要一些说明。
@@ -83,7 +108,7 @@ brew install --cask rectangle
 
 ### 忽略应用
 
-忽略某个应用意味着：当该应用位于最前面时，快捷键会从 macOS 取消注册；当该应用不再位于最前面时，快捷键会重新向 macOS 注册。如果某些应用与 Rectangle 使用相同的快捷键，而你又不想更改这些快捷键，这个功能就很有用。
+忽略某个应用意味着：当该应用位于最前面时，快捷键会从 macOS 取消注册；当该应用不再位于最前面时，快捷键会重新向 macOS 注册。如果某些应用与 Rectangle 使用相同的快捷键，而你又不想更改这些快捷键，这个功能就很有用。连按被忽略应用的窗口标题栏时，也不会触发 Rectangle 的标题栏操作。
 
 1. 聚焦要忽略的应用（将该应用的某个窗口置于最前面）。
 1. 打开 Rectangle 菜单，选择「忽略 <应用名>」
@@ -119,7 +144,7 @@ rectangle://execute-task?name=ignore-app&app-bundle-id=com.apple.Safari
 * Rectangle 提供了额外的窗口操作：在不调整大小的情况下将窗口移动到各个边缘、仅最大化窗口高度，以及接近最大化窗口。
 * 「下一个／上一个屏幕三等分」已改为明确的「左首１／３」、「左侧２／３」、「中间１／３」、「右侧２／３」和「右首１／３」。这些操作会根据屏幕方向而变化：例如，「左首１／３」在横屏时是左侧的三分之一，在竖屏时则是顶部的三分之一。
   * 不过，可以用「左首１／３」和「右首１／３」这两个操作来模拟 Spectacle 的三等分循环。也就是说，反复执行「左首１／３」会在各个三等分位置（左首、中间、右首）之间依次循环，反复执行「右首１／３」则反向循环。
-* 提供了一个选项，可让窗口在连续执行向左或向右的操作时跨显示器移动。
+* 提供了一个选项，可让窗口在重复执行半屏操作时跨显示器移动。左半屏和右半屏按显示器顺序移动；上半屏和下半屏会移到上方或下方最近的、在水平方向上有重叠的显示器，并落在该显示器靠近原显示器的那一半。到达最上方或最下方的显示器时，会绕回另一端，与左右循环一致。若在**重复命令**中选择「半屏操作时移动到相邻显示器，并在最后边缘循环大小」，则会在边界处改为循环切换大小。
 * 将窗口拖移到屏幕边缘或角落时会自动吸附。此功能可以禁用。
 
 ## 常见已知问题
