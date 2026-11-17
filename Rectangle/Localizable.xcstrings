@@ -4043,13 +4043,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad inferior"
+            "value" : "Abajo"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad inferior"
+            "value" : "Abajo"
           }
         },
         "fa" : {
@@ -4079,7 +4079,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metà inferiore"
+            "value" : "In basso"
           }
         },
         "ja" : {
@@ -7276,13 +7276,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad central"
+            "value" : "Centro"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad central"
+            "value" : "Centro"
           }
         },
         "fa" : {
@@ -7312,7 +7312,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metà centrale"
+            "value" : "Centro"
           }
         },
         "ja" : {
@@ -19497,13 +19497,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si repites acciones de mitad o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
+            "value" : "Si repites acciones laterales o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si repites acciones de mitad o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
+            "value" : "Si repites acciones laterales o de mover, la ventana pasará a la siguiente pantalla en lugar de ajustarse a 1/2, 2/3 o 1/3 del tamaño."
           }
         },
         "fa" : {
@@ -19533,7 +19533,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ripeti lo spostamento o i mezzi spostamenti, la finestra si sposterà sullo schermo successivo invece che ridimensionarsi a 1/2, 2/3 o 1/3."
+            "value" : "Se ripeti le azioni di spostamento o laterali, la finestra si sposterà sullo schermo successivo invece che ridimensionarsi a 1/2, 2/3 o 1/3."
           }
         },
         "ja" : {
@@ -19581,7 +19581,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ao repetir ações de mover ou de metade, a janela vai para a próxima tela em vez de alternar entre 1/2, 2/3 e 1/3 do tamanho."
+            "value" : "Ao repetir ações de mover ou laterais, a janela vai para a próxima tela em vez de alternar entre 1/2, 2/3 e 1/3 do tamanho."
           }
         },
         "pt-PT" : {
@@ -22138,13 +22138,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad izquierda o derecha"
+            "value" : "Lado izquierdo o derecho"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad izquierda o derecha"
+            "value" : "Lado izquierdo o derecho"
           }
         },
         "fa" : {
@@ -22174,7 +22174,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metà destra o sinistra"
+            "value" : "Lato sinistro o destro"
           }
         },
         "ja" : {
@@ -22222,7 +22222,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade esquerda ou direita"
+            "value" : "Lado esquerdo ou direito"
           }
         },
         "pt-PT" : {
@@ -22335,13 +22335,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad izquierda; mitad superior/inferior cerca de las esquinas"
+            "value" : "Lado izquierdo; arriba/abajo cerca de las esquinas"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad izquierda; mitad superior/inferior cerca de las esquinas"
+            "value" : "Lado izquierdo; arriba/abajo cerca de las esquinas"
           }
         },
         "fa" : {
@@ -22419,7 +22419,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade esquerda; metade superior/inferior perto dos cantos"
+            "value" : "Lado esquerdo; superior/inferior perto dos cantos"
           }
         },
         "pt-PT" : {
@@ -26161,7 +26161,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Centro"
+            "value" : "Sposta al centro"
           }
         },
         "ja" : {
@@ -29067,13 +29067,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajustes…"
+            "value" : "Preferencias…"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajustes…"
+            "value" : "Preferencias…"
           }
         },
         "fa" : {
@@ -32710,7 +32710,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metà destra"
+            "value" : "Destra"
           }
         },
         "ja" : {
@@ -32871,13 +32871,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad derecha; mitad superior/inferior cerca de las esquinas"
+            "value" : "Lado derecho; arriba/abajo cerca de las esquinas"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad derecha; mitad superior/inferior cerca de las esquinas"
+            "value" : "Lado derecho; arriba/abajo cerca de las esquinas"
           }
         },
         "fa" : {
@@ -32955,7 +32955,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metade direita; metade superior/inferior perto dos cantos"
+            "value" : "Lado direito; superior/inferior perto dos cantos"
           }
         },
         "pt-PT" : {
@@ -34019,7 +34019,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preferenze…"
+            "value" : "Impostazioni…"
           }
         },
         "ja" : {
@@ -35167,13 +35167,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitades"
+            "value" : "Lados"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitades"
+            "value" : "Lados"
           }
         },
         "fa" : {
@@ -35203,7 +35203,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metà"
+            "value" : "Lati"
           }
         },
         "ja" : {
@@ -35251,7 +35251,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metades"
+            "value" : "Lados"
           }
         },
         "pt-PT" : {
@@ -35658,7 +35658,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terzi"
+            "value" : "Sesti"
           }
         },
         "ja" : {
@@ -37885,13 +37885,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tercios; mitad superior/inferior cerca de las esquinas"
+            "value" : "Tercios; arriba/abajo cerca de las esquinas"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tercios; mitad superior/inferior cerca de las esquinas"
+            "value" : "Tercios; arriba/abajo cerca de las esquinas"
           }
         },
         "fa" : {
@@ -37969,7 +37969,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terços; metade superior/inferior perto dos cantos"
+            "value" : "Terços; superior/inferior perto dos cantos"
           }
         },
         "pt-PT" : {
@@ -39752,13 +39752,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad superior"
+            "value" : "Arriba"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitad superior"
+            "value" : "Arriba"
           }
         },
         "fa" : {
@@ -39788,7 +39788,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metà superiore"
+            "value" : "In alto"
           }
         },
         "ja" : {
@@ -42674,13 +42674,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitades superior/inferior"
+            "value" : "Lados superior/inferior"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitades superior/inferior"
+            "value" : "Lados superior/inferior"
           }
         },
         "fa" : {
@@ -42716,7 +42716,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metades superior/inferior"
+            "value" : "Lados superior/inferior"
           }
         },
         "uk" : {
@@ -42756,13 +42756,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitades superior/inferior"
+            "value" : "Arriba/abajo"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mitades superior/inferior"
+            "value" : "Arriba/abajo"
           }
         },
         "fa" : {
@@ -42786,7 +42786,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Metades superior/inferior"
+            "value" : "Superior/inferior"
           }
         },
         "uk" : {
