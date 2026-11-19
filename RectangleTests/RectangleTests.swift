@@ -2418,6 +2418,15 @@ final class SettingsLabelLocalizationTests: XCTestCase {
         }
     }
 
+    func testSettingsOnlyLabelsHaveJapaneseTranslations() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "ja", ofType: "lproj"))
+        let ja = try XCTUnwrap(Bundle(path: path))
+        for key in ["Extra", "Ninths (3x3)", "Twelfths (3x4)", "Sixteenths (4x4)"] {
+            let value = ja.localizedString(forKey: key, value: nil, table: "Localizable")
+            XCTAssertNotEqual(value, key, "\(key) has no ja translation")
+        }
+    }
+
     func testSettingsDisplayNamesKeepTheirEnglishText() {
         XCTAssertEqual(WindowAction.topLeftNinth.settingsDisplayName, String(localized: "Ninths (3x3)"))
         XCTAssertEqual(WindowAction.topLeftTwelfth.settingsDisplayName, String(localized: "Twelfths (3x4)"))
@@ -2441,6 +2450,13 @@ final class TodoSideLocalizationTests: XCTestCase {
         XCTAssertEqual(zhHans.localizedString(forKey: "Todo Side Right", value: nil, table: "Localizable"), "右侧")
         XCTAssertEqual(zhHans.localizedString(forKey: "Left", value: nil, table: "Localizable"), "左半屏")
         XCTAssertEqual(zhHans.localizedString(forKey: "Right", value: nil, table: "Localizable"), "右半屏")
+    }
+
+    func testTodoSideJapaneseTranslations() throws {
+        let path = try XCTUnwrap(Bundle.main.path(forResource: "ja", ofType: "lproj"))
+        let ja = try XCTUnwrap(Bundle(path: path))
+        XCTAssertEqual(ja.localizedString(forKey: "Todo Side Left", value: nil, table: "Localizable"), "左")
+        XCTAssertEqual(ja.localizedString(forKey: "Todo Side Right", value: nil, table: "Localizable"), "右")
     }
 }
 

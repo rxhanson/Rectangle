@@ -788,7 +788,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ウインドウを移動する動作や半分のサイズに変更する動作を繰り返すと、ウインドウをサイズ変更するのではなく、次のディスプレイに移動します。"
+            "value" : "ウインドウを移動する動作やサイド動作を繰り返すと、ウインドウをサイズ変更するのではなく、次のディスプレイに移動します。"
           }
         },
         "ko" : {
@@ -6794,7 +6794,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "画面端"
+            "value" : "四隅"
           }
         },
         "ko" : {
@@ -8538,7 +8538,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\"画面の端にドラッグしてタイル表示\"が、Ractangle と macOS の両方で有効になっています。"
+            "value" : "\"画面の端にドラッグしてタイル表示\"が、Rectangle と macOS の両方で有効になっています。"
           }
         },
         "ko" : {
@@ -9163,6 +9163,12 @@
             "value" : "Ottavi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8分割"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9232,6 +9238,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbreviazioni extra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加ショートカット"
           }
         },
         "ko" : {
@@ -15026,6 +15038,12 @@
             "value" : "Allarga"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅を広げる"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16325,6 +16343,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noni"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9分割"
           }
         },
         "ko" : {
@@ -20790,7 +20814,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "半分"
+            "value" : "サイド"
           }
         },
         "ko" : {
@@ -20927,6 +20951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "16分割"
           }
         },
         "ko" : {
@@ -21368,6 +21398,12 @@
             "value" : "Restringi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅を狭める"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21635,7 +21671,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左半分/左半分にサイズ変更するコマンドを繰り返したら、ウインドウを表示するディスプレイを変更"
+            "value" : "左または右コマンドを繰り返したら、ウインドウを表示するディスプレイを変更"
           }
         },
         "ko" : {
@@ -22153,7 +22189,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ウインドウを列に並べる"
           }
         },
@@ -22230,7 +22266,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ウインドウを行に並べる"
           }
         },
@@ -22291,6 +22327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Affiancamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイル表示"
           }
         },
         "pt-BR" : {
@@ -22427,6 +22469,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L'affiancamento di Rectangle è stato disattivato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle のタイル表示機能が無効になりました"
           }
         },
         "ko" : {
@@ -22650,6 +22698,12 @@
             "value" : "Per regolare l'affiancamento di macOS, vai in Impostazioni di Sistema → Scrivania e Dock → Finestre"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS のタイル表示を調整するには、システム設定 → デスクトップとDock → ウインドウに移動します"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22798,6 +22852,12 @@
             "value" : "L'affiancamento sul bordo superiore dello schermo in macOS è ora disattivato"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS の画面上端へのタイル表示機能が無効になりました"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22861,6 +22921,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lati superiore/inferiore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上側・下側"
           }
         },
         "ko" : {
@@ -23087,6 +23153,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodicesimi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12分割"
           }
         },
         "ko" : {
@@ -23464,6 +23536,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggiornamento disponibile…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデート可能…"
           }
         },
         "ko" : {
@@ -26183,6 +26261,12 @@
             "value" : "Passo larghezza (px)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅の変更単位（px）"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26261,6 +26345,12 @@
             "value" : "Impossibile ridurre ancora la finestra.\nLe finestre potrebbero sovrapporsi."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウをこれ以上小さくリサイズできません。\nウインドウ同士が重なる場合があります。"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -26319,6 +26409,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dimensione minima della finestra raggiunta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウの最小サイズに達しました"
           }
         },
         "pt-BR" : {
