@@ -68,7 +68,7 @@ extension CornerCycleExpansionCalculation {
     func calculateFractionalRect(_ params: RectCalculationParameters, fraction: Float) -> RectResult {
         let normalRect = calculateFirstRect(params).rect
 
-        switch Defaults.cornerCycleExpansionAxis.value {
+        switch Defaults.cornerCycleExpansionAxis.value.axis(for: params.visibleFrameOfScreen) {
         case .horizontal:
             let cycledRect = cornerRect(params,
                                         horizontalFraction: fraction,

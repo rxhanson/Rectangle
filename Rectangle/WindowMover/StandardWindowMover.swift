@@ -11,7 +11,8 @@ class StandardWindowMover: WindowMover {
         let bounds = resultParameters.visibleFrameOfScreen.screenFlipped
         let sizeFirst = ImmediateFrameOrder.sizeFirst(from: before, to: target, bounds: bounds,
             acrossScreens: resultParameters.usableScreens.currentScreen != resultParameters.calcResult.screen,
-            preferSizeFirst: shouldAdjustSizeFirst(resultParameters.action))
+            preferSizeFirst: shouldAdjustSizeFirst(resultParameters.action,
+                                                   screenFrame: resultParameters.visibleFrameOfScreen))
         let placement = ImmediateWindowPlacement(screenFrame: bounds,
             sharedEdges: resultParameters.action.resizes ? Defaults.moveFixedSizeToEdge.value.alignmentEdges(
                 for: resultParameters.calcResult.initialRect.screenFlipped, in: bounds) : nil,
@@ -20,8 +21,9 @@ class StandardWindowMover: WindowMover {
         windowElement.setImmediateFrame(target, from: before, sizeFirst: sizeFirst, placement: placement)
     }
     
-    private func shouldAdjustSizeFirst(_ action: WindowAction) -> Bool {
-        switch (action, Defaults.cornerCycleExpansionAxis.value) {
+    private func shouldAdjustSizeFirst(_ action: WindowAction, screenFrame: CGRect) -> Bool {
+        let axis = Defaults.cornerCycleExpansionAxis.value.axis(for: screenFrame)
+        switch (action, axis) {
         case (.topRight, .horizontal),
              (.bottomRight, .horizontal),
              (.bottomLeft, .vertical),

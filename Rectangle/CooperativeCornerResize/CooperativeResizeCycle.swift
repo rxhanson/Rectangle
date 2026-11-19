@@ -90,7 +90,7 @@ enum CooperativeResizeCycle {
             return true
         }
 
-        let axis = Defaults.cornerCycleExpansionAxis.value
+        let axis = Defaults.cornerCycleExpansionAxis.value.axis(for: params.visibleFrameOfScreen)
         let tolerance = max(CGFloat(4), CGFloat(Defaults.gapSize.value) * 2.0 + 4.0)
         let currentAxisSize = axisSize(currentFrame, axis)
         let expectedAxisSizes = [axisSize(cycleFrame, axis), axisSize(gappedCycleFrame, axis)]
@@ -124,7 +124,7 @@ enum CooperativeResizeCycle {
                                          action: WindowAction,
                                          axis: CornerCycleExpansionAxis,
                                          tolerance: CGFloat) -> Bool {
-        guard let movedEdge = CooperativeResizeCoordinator.movedEdge(for: action) else {
+        guard let movedEdge = CooperativeResizeCoordinator.movedEdge(for: action, axis: axis) else {
             return false
         }
 
