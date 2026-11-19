@@ -315,6 +315,12 @@ defaults write com.knollsoft.Rectangle firstVerticalSixth -dict-add keyCode -flo
 
 Repeating `firstVerticalSixth` cycles forward through all 6 positions. Repeating `lastVerticalSixth` cycles through them in reverse when repeated-command behavior is enabled.
 
+To instead have repeating any of them cycle the window through the three placements available inside that sixth (the whole sixth, then half of it: the top half of a column, or the left half of a row on a portrait display, then the other half, then the whole sixth again):
+
+```bash
+defaults write com.knollsoft.Rectangle verticalSixthsCycleTwelfths -bool true
+```
+
 ## Add additional "thirds" sizing commands 
 
 These commands for resizing to corner two-thirds are not available in the UI but can be configured via CLI.

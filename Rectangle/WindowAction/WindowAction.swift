@@ -1142,6 +1142,34 @@ enum SubWindowAction {
     fifthVerticalSixthPortrait,
     lastVerticalSixthPortrait,
 
+    firstVerticalSixthTopLandscape,
+    secondVerticalSixthTopLandscape,
+    thirdVerticalSixthTopLandscape,
+    fourthVerticalSixthTopLandscape,
+    fifthVerticalSixthTopLandscape,
+    lastVerticalSixthTopLandscape,
+
+    firstVerticalSixthBottomLandscape,
+    secondVerticalSixthBottomLandscape,
+    thirdVerticalSixthBottomLandscape,
+    fourthVerticalSixthBottomLandscape,
+    fifthVerticalSixthBottomLandscape,
+    lastVerticalSixthBottomLandscape,
+
+    firstVerticalSixthLeftPortrait,
+    secondVerticalSixthLeftPortrait,
+    thirdVerticalSixthLeftPortrait,
+    fourthVerticalSixthLeftPortrait,
+    fifthVerticalSixthLeftPortrait,
+    lastVerticalSixthLeftPortrait,
+
+    firstVerticalSixthRightPortrait,
+    secondVerticalSixthRightPortrait,
+    thirdVerticalSixthRightPortrait,
+    fourthVerticalSixthRightPortrait,
+    fifthVerticalSixthRightPortrait,
+    lastVerticalSixthRightPortrait,
+
     topLeftTwelfth,
     topCenterLeftTwelfth,
     topCenterRightTwelfth,
@@ -1268,6 +1296,26 @@ enum SubWindowAction {
         case .secondVerticalSixthPortrait, .thirdVerticalSixthPortrait, .fourthVerticalSixthPortrait, .fifthVerticalSixthPortrait:
             return [.top, .bottom]
         case .lastVerticalSixthPortrait: return .top
+        case .firstVerticalSixthTopLandscape: return [.right, .bottom]
+        case .secondVerticalSixthTopLandscape, .thirdVerticalSixthTopLandscape,
+             .fourthVerticalSixthTopLandscape, .fifthVerticalSixthTopLandscape:
+            return [.left, .right, .bottom]
+        case .lastVerticalSixthTopLandscape: return [.left, .bottom]
+        case .firstVerticalSixthBottomLandscape: return [.right, .top]
+        case .secondVerticalSixthBottomLandscape, .thirdVerticalSixthBottomLandscape,
+             .fourthVerticalSixthBottomLandscape, .fifthVerticalSixthBottomLandscape:
+            return [.left, .right, .top]
+        case .lastVerticalSixthBottomLandscape: return [.left, .top]
+        case .firstVerticalSixthLeftPortrait: return [.bottom, .right]
+        case .secondVerticalSixthLeftPortrait, .thirdVerticalSixthLeftPortrait,
+             .fourthVerticalSixthLeftPortrait, .fifthVerticalSixthLeftPortrait:
+            return [.top, .bottom, .right]
+        case .lastVerticalSixthLeftPortrait: return [.top, .right]
+        case .firstVerticalSixthRightPortrait: return [.bottom, .left]
+        case .secondVerticalSixthRightPortrait, .thirdVerticalSixthRightPortrait,
+             .fourthVerticalSixthRightPortrait, .fifthVerticalSixthRightPortrait:
+            return [.top, .bottom, .left]
+        case .lastVerticalSixthRightPortrait: return [.top, .left]
         case .topLeftTwelfth: return [.right, .bottom]
         case .topCenterLeftTwelfth: return [.right, .left, .bottom]
         case .topCenterRightTwelfth: return [.right, .left, .bottom]

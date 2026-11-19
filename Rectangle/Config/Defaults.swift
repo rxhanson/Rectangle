@@ -36,6 +36,7 @@ class Defaults {
     static let ignoredSnapAreas = IntDefault(key: "ignoredSnapAreas")
     static let traverseSingleScreen = OptionalBoolDefault(key: "traverseSingleScreen")
     static let thirdsAndFourthsAcrossDisplays = OptionalBoolDefault(key: "thirdsAndFourthsAcrossDisplays")
+    static let verticalSixthsCycleTwelfths = OptionalBoolDefault(key: "verticalSixthsCycleTwelfths")
     static let useCursorScreenDetection = BoolDefault(key: "useCursorScreenDetection")
     static let minimumWindowWidth = DoubleDefault(key: "minimumWindowWidth", defaultValue: 0.25)
     static let minimumWindowHeight = DoubleDefault(key: "minimumWindowHeight", defaultValue: 0.25)
@@ -169,6 +170,7 @@ class Defaults {
         ignoredSnapAreas,
         traverseSingleScreen,
         thirdsAndFourthsAcrossDisplays,
+        verticalSixthsCycleTwelfths,
         minimumWindowWidth,
         minimumWindowHeight,
         sizeOffset,
