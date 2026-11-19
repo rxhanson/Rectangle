@@ -74,9 +74,15 @@ class VerticalSixthCalculation: WindowCalculation, OrientationAware {
                             height: visibleFrameOfScreen.height)
 
         if placement != .wholeSixth {
-            let halfHeight = floor(column.height / 2.0)
-            column.origin.y = placement == .leadingHalf ? column.maxY - halfHeight : column.minY
-            column.size.height = halfHeight
+            // The top half gets the floor and the bottom half the remainder, so the two halves
+            // always meet with no gap, even when the column height is odd.
+            let topHeight = floor(column.height / 2.0)
+            if placement == .leadingHalf {
+                column.origin.y = column.maxY - topHeight
+                column.size.height = topHeight
+            } else {
+                column.size.height -= topHeight
+            }
         }
 
         return RectResult(column, subAction: .verticalSixth(ordinal: ordinal,
@@ -97,9 +103,15 @@ class VerticalSixthCalculation: WindowCalculation, OrientationAware {
                          height: bottomOffset - topOffset)
 
         if placement != .wholeSixth {
-            let halfWidth = floor(row.width / 2.0)
-            row.origin.x = placement == .leadingHalf ? row.minX : row.maxX - halfWidth
-            row.size.width = halfWidth
+            // The left half gets the floor and the right half the remainder, so the two halves
+            // always meet with no gap, even when the row width is odd.
+            let leftWidth = floor(row.width / 2.0)
+            if placement == .leadingHalf {
+                row.size.width = leftWidth
+            } else {
+                row.origin.x += leftWidth
+                row.size.width -= leftWidth
+            }
         }
 
         return RectResult(row, subAction: .verticalSixth(ordinal: ordinal,

@@ -584,7 +584,20 @@ class VerticalSixthActionTests: XCTestCase {
             XCTAssertEqual(results.map(\.rect), [
                 CGRect(x: 0, y: 0, width: 166, height: 401),
                 CGRect(x: 0, y: 201, width: 166, height: 200),
-                CGRect(x: 0, y: 0, width: 166, height: 200)
+                CGRect(x: 0, y: 0, width: 166, height: 201)
+            ])
+        }
+    }
+
+    func testOddWidthPortraitRowsGiveTheRightHalfTheExtraPixel() {
+        withVerticalSixthsCyclingTwelfths(true) {
+            let visibleFrame = CGRect(x: 0, y: 0, width: 401, height: 1001)
+            let results = repeatedResults(for: .firstVerticalSixth, count: 3, visibleFrame: visibleFrame)
+
+            XCTAssertEqual(results.map(\.rect), [
+                CGRect(x: 0, y: 835, width: 401, height: 166),
+                CGRect(x: 0, y: 835, width: 200, height: 166),
+                CGRect(x: 200, y: 835, width: 201, height: 166)
             ])
         }
     }
