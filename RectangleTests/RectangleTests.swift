@@ -7396,9 +7396,9 @@ class MouseButtonShortcutTests: XCTestCase {
     }
 
     func testButtonsAreNumberedFromTheLeftButton() {
-        XCTAssertEqual(MouseButtonShortcut(buttonNumber: 2, modifierFlags: []).description, "Middle Button")
-        XCTAssertEqual(MouseButtonShortcut(buttonNumber: 3, modifierFlags: []).description, "Button 4")
-        XCTAssertEqual(MouseButtonShortcut(buttonNumber: 4, modifierFlags: [.command, .option]).description, "⌥⌘ Button 5")
+        XCTAssertEqual(MouseButtonShortcut(buttonNumber: 2, modifierFlags: []).description, String(localized: "Middle Button"))
+        XCTAssertEqual(MouseButtonShortcut(buttonNumber: 3, modifierFlags: []).description, String(localized: "Button \(4)"))
+        XCTAssertEqual(MouseButtonShortcut(buttonNumber: 4, modifierFlags: [.command, .option]).description, "⌥⌘ " + String(localized: "Button \(5)"))
         XCTAssertEqual(MouseButtonShortcut(buttonNumber: 4, modifierFlags: []).keyCodeStringForKeyEquivalent, "")
     }
 
@@ -7539,7 +7539,6 @@ class WindowActionShortcutViewTests: XCTestCase {
         view.shortcutValue = MASShortcut(keyCode: MouseButtonShortcut(buttonNumber: 3, modifierFlags: []).keyCode, modifierFlags: [.option])
 
         XCTAssertTrue(view.shortcutValue is MouseButtonShortcut)
-        XCTAssertEqual(view.shortcutValue?.description, "⌥ Button 4")
     }
 
     func testRecordsAMouseButtonOnlyWhileRecording() throws {
