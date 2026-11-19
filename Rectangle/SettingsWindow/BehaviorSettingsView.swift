@@ -70,14 +70,16 @@ struct BehaviorSettingsView: View {
                         
                         HStack(spacing: 12) {
                             Text("Cyclic corner shortcuts expand")
+                                .lineLimit(1)
+                                .fixedSize()
                             Spacer()
                             Picker("", selection: $viewModel.cornerCycleExpansionMode) {
                                 Text("horizontally").tag(CornerCycleExpansionMode.horizontal)
                                 Text("vertically").tag(CornerCycleExpansionMode.vertical)
                                 Text("based on display orientation").tag(CornerCycleExpansionMode.displayOrientation)
                             }
-                            .pickerStyle(.radioGroup)
-                            .horizontalRadioGroupLayout()
+                            .pickerStyle(.menu)
+                            .labelsHidden()
                         }
                         
                         if viewModel.showCooperativeCornerResize {
