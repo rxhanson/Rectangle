@@ -5,9 +5,13 @@ import Foundation
 /// A vertical sixth is one sixth of the screen, sliced along the display's long axis: a full height
 /// column on a landscape display, a full width row on a portrait one.
 ///
-/// Repeating the same chord cycles the window through the three placements available inside that
-/// sixth: the whole sixth, then the half of it nearest the leading edge (top of a column, left of a
-/// row), then the trailing half, then the whole sixth again.
+/// By default, repeating `firstVerticalSixth` steps forward through all six positions and repeating
+/// `lastVerticalSixth` steps backward; the other sixths stay put.
+///
+/// With the hidden `verticalSixthsCycleTwelfths` flag set, repeating any sixth instead cycles the
+/// window through the three placements available inside that sixth: the whole sixth, then the half
+/// of it nearest the leading edge (top of a column, left of a row), then the trailing half, then the
+/// whole sixth again.
 class VerticalSixthCalculation: WindowCalculation, OrientationAware {
 
     private let baseOrdinal: Int
@@ -26,17 +30,16 @@ class VerticalSixthCalculation: WindowCalculation, OrientationAware {
             return rect(ordinal: baseOrdinal, placement: .wholeSixth, in: visibleFrameOfScreen)
         }
 
-        if Defaults.verticalSixthsWalkAcrossScreen.userEnabled {
-            return walkedRect(params: params, previousOrdinal: previous.ordinal, in: visibleFrameOfScreen)
+        if Defaults.verticalSixthsCycleTwelfths.userEnabled {
+            return rect(ordinal: previous.ordinal,
+                        placement: previous.placement.next,
+                        in: visibleFrameOfScreen)
         }
 
-        return rect(ordinal: previous.ordinal,
-                    placement: previous.placement.next,
-                    in: visibleFrameOfScreen)
+        return walkedRect(params: params, previousOrdinal: previous.ordinal, in: visibleFrameOfScreen)
     }
 
-    /// Behind the hidden `verticalSixthsWalkAcrossScreen` flag: repeating the first or last chord
-    /// steps through all six positions instead of halving within one sixth.
+    /// Default repeat behavior: repeating the first or last chord steps through all six positions.
     private func walkedRect(params: RectCalculationParameters,
                             previousOrdinal: Int,
                             in visibleFrameOfScreen: CGRect) -> RectResult {

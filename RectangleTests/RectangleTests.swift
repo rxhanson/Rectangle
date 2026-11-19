@@ -534,7 +534,7 @@ class VerticalSixthActionTests: XCTestCase {
     }
 
     func testVerticalSixthRepeatsCycleThroughWholeTopAndBottomHalfOfTheColumn() {
-        withSubsequentExecutionMode(.resize) {
+        withVerticalSixthsCyclingTwelfths(true) {
             let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
             let results = repeatedResults(for: .thirdVerticalSixth, count: 4, visibleFrame: visibleFrame)
 
@@ -548,7 +548,7 @@ class VerticalSixthActionTests: XCTestCase {
     }
 
     func testEveryVerticalSixthActionCyclesWithinItsOwnColumn() {
-        withSubsequentExecutionMode(.resize) {
+        withVerticalSixthsCyclingTwelfths(true) {
             let visibleFrame = CGRect(x: 20, y: 40, width: 1003, height: 800)
             let columnMinXs: [CGFloat] = [20, 187, 354, 521, 688, 855]
 
@@ -563,7 +563,7 @@ class VerticalSixthActionTests: XCTestCase {
     }
 
     func testVerticalSixthRepeatsSplitPortraitRowsLeftAndRight() {
-        withSubsequentExecutionMode(.resize) {
+        withVerticalSixthsCyclingTwelfths(true) {
             let visibleFrame = CGRect(x: 20, y: 40, width: 800, height: 1003)
             let results = repeatedResults(for: .secondVerticalSixth, count: 4, visibleFrame: visibleFrame)
 
@@ -577,7 +577,7 @@ class VerticalSixthActionTests: XCTestCase {
     }
 
     func testOddSizedSixthsGiveTheTrailingHalfTheExtraPixel() {
-        withSubsequentExecutionMode(.resize) {
+        withVerticalSixthsCyclingTwelfths(true) {
             let visibleFrame = CGRect(x: 0, y: 0, width: 1001, height: 401)
             let results = repeatedResults(for: .firstVerticalSixth, count: 3, visibleFrame: visibleFrame)
 
@@ -595,18 +595,20 @@ class VerticalSixthActionTests: XCTestCase {
         let columnEdges: [Edge] = [.right, [.left, .right], .left]
         let rowEdges: [Edge] = [.bottom, [.top, .bottom], .top]
 
-        for (index, action) in actions.enumerated() {
-            let edges = columnEdges[boundaryIndex(of: index)]
-            let results = repeatedResults(for: action, count: 3, visibleFrame: landscape)
-            XCTAssertEqual(results.map(\.subAction?.gapSharedEdge),
-                           [edges, edges.union(.bottom), edges.union(.top)],
-                           "\(action) column halves reported the wrong gap edges")
+        withVerticalSixthsCyclingTwelfths(true) {
+            for (index, action) in actions.enumerated() {
+                let edges = columnEdges[boundaryIndex(of: index)]
+                let results = repeatedResults(for: action, count: 3, visibleFrame: landscape)
+                XCTAssertEqual(results.map(\.subAction?.gapSharedEdge),
+                               [edges, edges.union(.bottom), edges.union(.top)],
+                               "\(action) column halves reported the wrong gap edges")
 
-            let edgesAcross = rowEdges[boundaryIndex(of: index)]
-            let portraitResults = repeatedResults(for: action, count: 3, visibleFrame: portrait)
-            XCTAssertEqual(portraitResults.map(\.subAction?.gapSharedEdge),
-                           [edgesAcross, edgesAcross.union(.right), edgesAcross.union(.left)],
-                           "\(action) row halves reported the wrong gap edges")
+                let edgesAcross = rowEdges[boundaryIndex(of: index)]
+                let portraitResults = repeatedResults(for: action, count: 3, visibleFrame: portrait)
+                XCTAssertEqual(portraitResults.map(\.subAction?.gapSharedEdge),
+                               [edgesAcross, edgesAcross.union(.right), edgesAcross.union(.left)],
+                               "\(action) row halves reported the wrong gap edges")
+            }
         }
     }
 
@@ -616,7 +618,7 @@ class VerticalSixthActionTests: XCTestCase {
     }
 
     func testAnotherVerticalSixthChordRestartsAtTheWholeSixth() {
-        withSubsequentExecutionMode(.resize) {
+        withVerticalSixthsCyclingTwelfths(true) {
             let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
             let firstColumnTopHalf = calculate(.firstVerticalSixth, visibleFrame: visibleFrame, lastAction: nil)
             let lastAction = RectangleAction(action: .firstVerticalSixth,
@@ -628,19 +630,28 @@ class VerticalSixthActionTests: XCTestCase {
         }
     }
 
-    func testFirstVerticalSixthWalksAcrossTheScreenWhenTheHiddenFlagIsSet() {
-        withVerticalSixthsWalkingAcrossScreen {
+    func testFirstVerticalSixthWalksAcrossTheScreenByDefault() {
+        withVerticalSixthsCyclingTwelfths(nil) {
             let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
             let results = repeatedResults(for: .firstVerticalSixth, count: 7, visibleFrame: visibleFrame)
             XCTAssertEqual(results.map { $0.rect.minX }, [20, 120, 220, 320, 420, 520, 20])
         }
     }
 
-    func testLastVerticalSixthWalksBackwardWhenTheHiddenFlagIsSet() {
-        withVerticalSixthsWalkingAcrossScreen {
+    func testLastVerticalSixthWalksBackwardByDefault() {
+        withVerticalSixthsCyclingTwelfths(nil) {
             let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
             let results = repeatedResults(for: .lastVerticalSixth, count: 7, visibleFrame: visibleFrame)
             XCTAssertEqual(results.map { $0.rect.minX }, [520, 420, 320, 220, 120, 20, 520])
+        }
+    }
+
+    func testMiddleVerticalSixthsStayWholeOnRepeatByDefault() {
+        withVerticalSixthsCyclingTwelfths(nil) {
+            let visibleFrame = CGRect(x: 20, y: 40, width: 600, height: 400)
+            let results = repeatedResults(for: .thirdVerticalSixth, count: 3, visibleFrame: visibleFrame)
+            XCTAssertEqual(results.map(\.rect),
+                           Array(repeating: CGRect(x: 220, y: 40, width: 100, height: 400), count: 3))
         }
     }
 
@@ -701,10 +712,10 @@ class VerticalSixthActionTests: XCTestCase {
         body()
     }
 
-    private func withVerticalSixthsWalkingAcrossScreen(_ body: () -> Void) {
-        let saved = Defaults.verticalSixthsWalkAcrossScreen.enabled
-        defer { Defaults.verticalSixthsWalkAcrossScreen.enabled = saved }
-        Defaults.verticalSixthsWalkAcrossScreen.enabled = true
+    private func withVerticalSixthsCyclingTwelfths(_ enabled: Bool?, _ body: () -> Void) {
+        let saved = Defaults.verticalSixthsCycleTwelfths.enabled
+        defer { Defaults.verticalSixthsCycleTwelfths.enabled = saved }
+        Defaults.verticalSixthsCycleTwelfths.enabled = enabled
         withSubsequentExecutionMode(.resize, body)
     }
 }
