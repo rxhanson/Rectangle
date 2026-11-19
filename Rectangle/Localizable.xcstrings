@@ -1,9 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
+    "" : {},
     "-" : {
       "localizations" : {
         "ar" : {
@@ -291,6 +289,12 @@
           }
         },
         "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld px"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld px"
@@ -801,7 +805,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. ToDoアプリに指定したいアプリを最前面に表示します"
+            "value" : "1. Todoアプリに指定したいアプリを最前面に表示します"
           }
         },
         "ko" : {
@@ -998,7 +1002,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Rectangleのメニューにある\n\"[アプリケーション名]をToDoアプリとして使う\"を選択します"
+            "value" : "2. Rectangleのメニューにある\n\"[アプリケーション名]をTodoアプリとして使う\"を選択します"
           }
         },
         "ko" : {
@@ -1195,7 +1199,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. RectangleのメニューからToDoモードを有効にします。"
+            "value" : "3. RectangleのメニューからTodoモードを有効にします。"
           }
         },
         "ko" : {
@@ -2277,7 +2281,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ToDoモードについて"
+            "value" : "Todoモードについて"
           }
         },
         "ko" : {
@@ -2422,6 +2426,12 @@
             "value" : "Impostazioni tra più schermi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ディスプレイをまたぐ設定"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2487,6 +2497,12 @@
             "value" : "Dopo che Rectangle ha massimizzato o quasi massimizzato una finestra, ripetere la stessa azione riporta la finestra alla dimensione e alla posizione precedenti."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle でウインドウを最大化またはほぼ最大化したあと、同じ操作をもう一度実行すると前のサイズと位置に戻します。"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2547,6 +2563,12 @@
             "value" : "Consenti"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2603,6 +2625,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Consentire l'azione URL di Rectangle?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle の URL アクションを許可しますか？"
           }
         },
         "pt-BR" : {
@@ -2859,6 +2887,12 @@
             "value" : "Ripristina anche le finestre ridimensionate con Ingrandisci o Rimpicciolisci"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「拡大」または「縮小」でリサイズしたウインドウも元に戻す"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2917,6 +2951,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una fonte esterna ha chiesto a Rectangle di eseguire \"%1$@\" sull'app con bundle id \"%2$@\". Consentire?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部から Rectangle に対して、アプリ（バンドル ID: \"%2$@\"）で「%1$@」を実行するよう要求がありました。許可しますか？"
           }
         },
         "pt-BR" : {
@@ -3173,6 +3213,12 @@
             "value" : "Anima le finestre"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウをアニメーション表示"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -3300,6 +3346,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impostazioni app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリ設定"
           }
         },
         "pt-BR" : {
@@ -3765,6 +3817,12 @@
             "value" : "Comportamento"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動作"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4085,7 +4143,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "下半分"
+            "value" : "下"
           }
         },
         "ko" : {
@@ -4236,6 +4294,12 @@
             "value" : "Ottavo inferiore centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行2列 1/8"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4299,6 +4363,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo inferiore centro-sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行2列 1/8"
           }
         },
         "ko" : {
@@ -4377,6 +4447,12 @@
             "value" : "Sedicesimo inferiore centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4行2列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4439,6 +4515,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodicesimo inferiore centro-sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行2列 1/12"
           }
         },
         "pt-BR" : {
@@ -4505,6 +4587,12 @@
             "value" : "Nono inferiore centrale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中央下 1/9"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4567,6 +4655,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo inferiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行3列 1/8"
           }
         },
         "pt-BR" : {
@@ -4632,6 +4726,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo inferiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行3列 1/8"
           }
         },
         "ko" : {
@@ -4710,6 +4810,12 @@
             "value" : "Sedicesimo inferiore centro-destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4行3列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -4772,6 +4878,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodicesimo inferiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行3列 1/12"
           }
         },
         "pt-BR" : {
@@ -5038,6 +5150,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavi inferiori dagli angoli; terzi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3分割（角からドラッグで下側8分割）"
           }
         },
         "ko" : {
@@ -5312,6 +5430,12 @@
             "value" : "Ottavo inferiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行1列 1/8"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5375,6 +5499,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo inferiore sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行1列 1/8"
           }
         },
         "ko" : {
@@ -5453,6 +5583,12 @@
             "value" : "Nono inferiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左下 1/9"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -5515,6 +5651,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo inferiore sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4行1列 1/16"
           }
         },
         "pt-BR" : {
@@ -5777,6 +5919,12 @@
             "value" : "Dodicesimo inferiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行1列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6037,6 +6185,12 @@
             "value" : "Ottavo inferiore destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行4列 1/8"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6100,6 +6254,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo inferiore destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行4列 1/8"
           }
         },
         "ko" : {
@@ -6178,6 +6338,12 @@
             "value" : "Nono inferiore destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右下 1/9"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6240,6 +6406,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo inferiore destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4行4列 1/16"
           }
         },
         "pt-BR" : {
@@ -6502,6 +6674,12 @@
             "value" : "Dodicesimo inferiore destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行4列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6611,7 +6789,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3分割（画面端にドラッグで下側6分割）"
+            "value" : "3分割（角からドラッグで下側6分割）"
           }
         },
         "ko" : {
@@ -6762,6 +6940,12 @@
             "value" : "Terzo inferiore"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/3にして下寄せ"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6838,6 +7022,12 @@
             "value" : "Due terzi inferiori"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2/3にして下寄せ"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6908,6 +7098,12 @@
             "value" : "Porta in primo piano, una alla volta, le finestre agganciate alla stessa area della finestra attiva"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォーカス中のウインドウと同じ領域にスナップされたウインドウを順番に手前へ表示"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6972,6 +7168,12 @@
             "value" : "Seleziona la finestra dell'applicazione scelta"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todoアプリに指定したいアプリを最前面に表示します"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7023,6 +7225,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pulsante %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ボタン %lld"
           }
         },
         "pt-BR" : {
@@ -7318,7 +7526,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "半分にして中央に表示"
+            "value" : "中央"
           }
         },
         "ko" : {
@@ -7722,7 +7930,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3/4にして中央揃え"
+            "value" : "3/4にして中央に表示"
           }
         },
         "ko" : {
@@ -7918,7 +8126,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中央の3分の2"
+            "value" : "2/3にして中央に表示"
           }
         },
         "ko" : {
@@ -8043,6 +8251,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Centra le finestre quando passano da uno schermo all'altro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別ディスプレイへ移動時にウインドウを中央に配置"
           }
         },
         "pt-BR" : {
@@ -8856,7 +9070,14 @@
       }
     },
     "Commands use the display containing the cursor instead of the window." : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウのあるディスプレイではなく、カーソルがあるディスプレイを使用します。"
+          }
+        }
+      }
     },
     "Configure the divide between side and corner actions" : {
       "localizations" : {
@@ -8894,6 +9115,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Configura il confine tra azioni laterali e azioni d'angolo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サイド・四隅操作の分割位置を設定"
           }
         },
         "pt-BR" : {
@@ -9449,6 +9676,12 @@
             "value" : "Copyright © 2019-2026 Ryan Hanson. Tutti i diritti riservati."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copyright © 2019-2026 Ryan Hanson. All rights reserved."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -9559,7 +9792,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "画面端"
+            "value" : "四隅"
           }
         },
         "ko" : {
@@ -9877,6 +10110,12 @@
             "value" : "In uso: "
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在の設定: "
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10139,6 +10378,12 @@
             "value" : "Scorri le posizioni nei quadranti, scorri le dimensioni ai lati"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "四隅操作で位置を繰り返し変更、サイド操作でサイズを繰り返し変更"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "needs_review",
@@ -10260,8 +10505,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "サイズを半分にするのを繰り返す"
+            "state" : "translated",
+            "value" : "サイド操作でサイズを繰り返し変更"
           }
         },
         "ko" : {
@@ -10382,6 +10627,12 @@
             "value" : "Scorri le finestre impilate"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なったウインドウを切り替え"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10438,6 +10689,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scorri finestre impilate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なったウインドウを切り替え"
           }
         },
         "pt-BR" : {
@@ -10498,6 +10755,12 @@
             "value" : "Scorri le finestre impilate all'indietro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なったウインドウを逆順に切り替え"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -10554,6 +10817,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scorri finestre impilate all'indietro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なったウインドウを逆順に切り替え"
           }
         },
         "pt-BR" : {
@@ -10665,7 +10934,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "ウインドウを表示するディスプレイを変更"
           }
         },
@@ -10809,6 +11078,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le abbreviazioni cicliche d'angolo si espandono"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "四隅のショートカット繰り返し時の拡大方向"
           }
         },
         "pt-BR" : {
@@ -12109,7 +12384,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "何もしない"
           }
         },
@@ -12473,7 +12748,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\"画面の端にドラッグしてタイル表示\"が、Ractangle と macOS の両方で有効になっています。"
+            "value" : "\"画面の端にドラッグしてタイル表示\"が、Rectangle と macOS の両方で有効になっています。"
           }
         },
         "ko" : {
@@ -12754,6 +13029,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8分割"
           }
         },
         "ko" : {
@@ -13067,7 +13348,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ToDoモードを有効にする"
+            "value" : "Todoモードを有効にする"
           }
         },
         "ko" : {
@@ -13448,8 +13729,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "エクスポート"
+            "state" : "translated",
+            "value" : "設定をエクスポート"
           }
         },
         "ko" : {
@@ -13576,6 +13857,12 @@
             "value" : "Abbreviazioni extra"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加ショートカット"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13633,6 +13920,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abbreviazioni extra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加ショートカット"
           }
         },
         "ko" : {
@@ -13718,6 +14011,12 @@
             "value" : "Extra"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13800,6 +14099,12 @@
             "value" : "Quinto ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から5番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -13856,6 +14161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quinto sesto verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/6（左から5番目）"
           }
         },
         "pt-BR" : {
@@ -15889,6 +16200,12 @@
             "value" : "Primo ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から1番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -15945,6 +16262,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Primo sesto verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/6（左から1番目）"
           }
         },
         "pt-BR" : {
@@ -16075,6 +16398,12 @@
             "value" : "Per l'elenco delle finestre e le abbreviazioni per scorrerle. Se disattivato, contano le finestre impilate nella stessa posizione in alto a sinistra, qualunque sia la loro dimensione"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウ一覧および切り替えショートカットに適用されます。オフの場合、左上の位置が同じウインドウはサイズに関係なく重なりとして扱われます"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16139,6 +16468,12 @@
             "value" : "Quarto ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から4番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -16195,6 +16530,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quarto sesto verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/6（左から4番目）"
           }
         },
         "pt-BR" : {
@@ -17516,6 +17857,12 @@
             "value" : "Il pulsante verde della finestra massimizza invece di passare a tutto schermo"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "緑のズームボタンでフルスクリーンではなく最大化"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17579,6 +17926,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Posizioni della griglia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グリッド配置"
           }
         },
         "ko" : {
@@ -17658,6 +18011,12 @@
             "value" : "Le azioni di metà mantengono la dimensione della finestra sull'altro asse"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半分操作時にもう一方の軸のウインドウサイズを保持"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -17731,7 +18090,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "触覚フィードバック"
           }
         },
@@ -18610,6 +18969,12 @@
             "value" : "Tieni premuto un tasto modificatore o usa il menu Finestra per il comportamento predefinito di macOS"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修飾キーを押しながら操作するかウインドウメニューを使うと macOS 標準の動作になります"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18672,6 +19037,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orizzontale (S/D, %)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平方向（左/右, %）"
           }
         },
         "ko" : {
@@ -18750,6 +19121,12 @@
             "value" : "orizzontalmente"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平方向"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -18806,6 +19183,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Orizzontalmente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "水平方向"
           }
         },
         "pt-BR" : {
@@ -18870,6 +19253,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Porta il puntatore vicino all'angolo in alto a sinistra di una finestra per mostrare l'elenco"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウの左上付近にカーソルを合わせると一覧を表示します"
           }
         },
         "pt-BR" : {
@@ -19542,7 +19931,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ウインドウを移動する動作や半分のサイズに変更する動作を繰り返すと、ウインドウをサイズ変更するのではなく、次のディスプレイに移動します。"
+            "value" : "ウインドウを移動する動作やサイド動作を繰り返すと、ウインドウをサイズ変更するのではなく、次のディスプレイに移動します。"
           }
         },
         "ko" : {
@@ -19916,8 +20305,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "インポート"
+            "state" : "translated",
+            "value" : "設定をインポート"
           }
         },
         "ko" : {
@@ -20056,6 +20445,12 @@
             "value" : "Nel menu di Rectangle, attiva la modalità In evidenza."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RectangleのメニューからTodoモードを有効にします。"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20118,6 +20513,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nel menu di Rectangle, seleziona\n\"Usa [Applicazione] come applicazione in evidenza\""
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangleのメニューにある\n\"[アプリケーション名]をTodoアプリとして使う\"を選択します"
           }
         },
         "pt-BR" : {
@@ -20425,8 +20826,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "メインディスプレイの右側に、指定されたアプリケーションを常に表示します"
+            "state" : "translated",
+            "value" : "メインディスプレイの指定した側に、選択したアプリケーションを常に表示します"
           }
         },
         "ko" : {
@@ -20565,6 +20966,12 @@
             "value" : "Le abbreviazioni da tastiera agiscono sempre sulla finestra attiva"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キーボードショートカットは常にフォーカス中のウインドウに適用されます"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20621,6 +21028,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aree a scatto orizzontali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "横向きディスプレイのスナップ領域"
           }
         },
         "pt-BR" : {
@@ -20685,6 +21098,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allarga"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅を広げる"
           }
         },
         "ko" : {
@@ -21559,6 +21978,12 @@
             "value" : "Ultimo ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から8番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -21615,6 +22040,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ultimo sesto verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/6（左から6番目）"
           }
         },
         "pt-BR" : {
@@ -22074,6 +22505,12 @@
             "value" : "Metà sinistra seguita da Metà superiore sposta la finestra nel quarto in alto a sinistra; l'azione del bordo opposto la riespande."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左半分の後に上半分を実行すると左上の1/4に移動し、反対側の端の操作を実行すると元に戻ります。"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22183,7 +22620,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左半分または右半分"
+            "value" : "左側または右側"
           }
         },
         "ko" : {
@@ -22379,8 +22816,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "左半分、画面端付近の上半分・下半分"
+            "state" : "translated",
+            "value" : "左側、角付近の上・下"
           }
         },
         "ko" : {
@@ -22601,6 +23038,12 @@
             "value" : "Sedicesimo medio-inferiore centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行2列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22663,6 +23106,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo medio-inferiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行3列 1/16"
           }
         },
         "pt-BR" : {
@@ -22729,6 +23178,12 @@
             "value" : "Sedicesimo medio-inferiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行1列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -22791,6 +23246,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo medio-inferiore destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3行4列 1/16"
           }
         },
         "pt-BR" : {
@@ -23099,7 +23560,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "拡大"
           }
         },
@@ -23296,7 +23757,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "縮小"
           }
         },
@@ -23852,6 +24313,12 @@
             "value" : "Impostazioni di Massimizza"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大化の設定"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -23914,6 +24381,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Massimo di finestre per colonna"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1列あたりの最大ウインドウ数"
           }
         },
         "pt-BR" : {
@@ -23980,6 +24453,12 @@
             "value" : "Massimo di finestre per riga"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行あたりの最大ウインドウ数"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24031,6 +24510,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pulsante centrale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中ボタン"
           }
         },
         "pt-BR" : {
@@ -24097,6 +24582,12 @@
             "value" : "Dodicesimo centrale centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行2列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24159,6 +24650,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nono centrale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中央 1/9"
           }
         },
         "pt-BR" : {
@@ -24225,6 +24722,12 @@
             "value" : "Dodicesimo centrale centro-destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行3列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24287,6 +24790,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nono centrale sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中央左 1/9"
           }
         },
         "pt-BR" : {
@@ -24353,6 +24862,12 @@
             "value" : "Dodicesimo centrale sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行1列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24415,6 +24930,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nono centrale destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中央右 1/9"
           }
         },
         "pt-BR" : {
@@ -24481,6 +25002,12 @@
             "value" : "Dodicesimo centrale destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行4列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24543,6 +25070,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Terzo di mezzo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/3にして縦中央に表示"
           }
         },
         "ko" : {
@@ -24825,6 +25358,12 @@
             "value" : "Dimensione minima della finestra raggiunta"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウの最小サイズに達しました"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -24875,6 +25414,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Le abbreviazioni con i pulsanti del mouse agiscono sulla finestra sotto il puntatore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マウスボタンのショートカットはポインタ下のウインドウに適用"
           }
         },
         "pt-BR" : {
@@ -25770,7 +26315,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "サイド操作でウインドウを隣接するディスプレイに移動"
           }
         },
@@ -25967,7 +26512,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "サイド操作でウインドウを隣接するディスプレイに移動し、最後の端でサイズを繰り返し変更"
           }
         },
@@ -26671,7 +27216,14 @@
       }
     },
     "Move window to display where cursor is" : {
-
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルがあるディスプレイにウインドウを移動"
+          }
+        }
+      }
     },
     "New" : {
       "extractionState" : "manual",
@@ -27105,6 +27657,12 @@
             "value" : "Noni"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9分割"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27182,6 +27740,12 @@
             "value" : "Noni (3×3)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9分割（3×3）"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27244,6 +27808,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noni (3x3)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9分割（3×3）"
           }
         },
         "pt-BR" : {
@@ -27507,6 +28077,12 @@
             "value" : "Sfalsa la posizione delle finestre sovrapposte"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なり時にウインドウ位置をずらす"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -27563,6 +28139,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impila solo finestre della stessa dimensione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同じサイズのウインドウのみを重なりとして扱う"
           }
         },
         "pt-BR" : {
@@ -29005,6 +29587,12 @@
             "value" : "Aree a scatto verticali"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦向きディスプレイのスナップ領域"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29266,6 +29854,12 @@
             "value" : "Mantieni la finestra massimizzata quando passa da uno schermo all'altro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別ディスプレイへ移動時に最大化状態を維持"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -29328,6 +29922,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mantieni la dimensione sull'asse laterale con le azioni di metà, come in Windows"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半分操作時にもう一方の軸のサイズを維持（Windows風）"
           }
         },
         "pt-BR" : {
@@ -29393,6 +29993,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Premi ripetutamente l'abbreviazione per scorrere tutte le posizioni della griglia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカットを繰り返し押すと、グリッド内のすべての位置を順に切り替えます。"
           }
         },
         "ko" : {
@@ -29465,6 +30071,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impedisci l'attivazione di Mission Control durante il trascinamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドラッグ中に Mission Control が起動しないようにする"
           }
         },
         "pt-BR" : {
@@ -29722,6 +30334,12 @@
           }
         },
         "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "px"
+          }
+        },
+        "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "px"
@@ -29998,6 +30616,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Area delle app recenti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近使ったアプリ領域"
           }
         },
         "pt-BR" : {
@@ -31289,7 +31913,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ToDoモードを再設定"
+            "value" : "Todoモードを再設定"
           }
         },
         "ko" : {
@@ -31439,6 +32063,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rimuovi lo spazio sul bordo superiore dello schermo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面上端の余白をなくす"
           }
         },
         "pt-BR" : {
@@ -31701,6 +32331,12 @@
             "value" : "Rimuovi lo spazio superiore quando agganci al bordo superiore"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上端にスナップするとき上部の余白をなくす"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -31961,6 +32597,12 @@
             "value" : "Ripetere Massimizza ripristina la dimensione e la posizione precedenti"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大化を繰り返すと前のサイズと位置に戻す"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -32023,6 +32665,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ridimensiona le finestre adiacenti quando scorri le abbreviazioni laterali o d'angolo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サイドまたは四隅のショートカット繰り返し時に隣接ウインドウもリサイズ"
           }
         },
         "pt-BR" : {
@@ -32722,7 +33370,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "右半分"
+            "value" : "右"
           }
         },
         "ko" : {
@@ -32918,8 +33566,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "右半分、画面端付近の上半分・下半分"
+            "state" : "translated",
+            "value" : "右側、角付近の上・下"
           }
         },
         "ko" : {
@@ -33469,6 +34117,12 @@
             "value" : "Secondo ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から2番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -33525,6 +34179,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Secondo sesto verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/6（左から2番目）"
           }
         },
         "pt-BR" : {
@@ -34182,6 +34842,12 @@
             "value" : "Settimo ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から7番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34437,6 +35103,12 @@
             "value" : "Mostra le abbreviazioni *extra* nel menu"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メニューに「追加ショートカット」を表示"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34500,6 +35172,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostra dimensioni aggiuntive nel menu"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加サイズをメニューに表示"
           }
         },
         "ko" : {
@@ -34775,6 +35453,12 @@
             "value" : "Mostra l'elenco delle finestre impilate al passaggio del puntatore"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソルを合わせて重なったウインドウ一覧を表示"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -34884,7 +35568,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ToDoモードをメニューに表示"
+            "value" : "Todoモードをメニューに表示"
           }
         },
         "ko" : {
@@ -35029,6 +35713,12 @@
             "value" : "Avvisa quando le finestre non possono essere ridotte abbastanza"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを十分小さくできない場合に警告を表示"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35091,6 +35781,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Proporzione della divisione laterale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左右・上下の分割比率"
           }
         },
         "ko" : {
@@ -35215,7 +35911,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "半分"
+            "value" : "サイド"
           }
         },
         "ko" : {
@@ -35361,6 +36057,12 @@
             "value" : "Sedicesimi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "16分割"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35438,6 +36140,12 @@
             "value" : "Sedicesimi (4×4)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "16分割（4×4）"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35502,6 +36210,12 @@
             "value" : "Sedicesimi (4x4)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "16分割（4×4）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -35558,6 +36272,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sesto ottavo verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から6番目）"
           }
         },
         "pt-BR" : {
@@ -36006,6 +36726,12 @@
             "value" : "Restringi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅を狭める"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36205,6 +36931,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aggancia prima di raggiungere i bordi dello schermo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面端に到達する前にスナップ"
           }
         },
         "pt-BR" : {
@@ -36805,6 +37537,12 @@
             "value" : "Finestre impilate"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なったウインドウ"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -36867,6 +37605,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stage Manager"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ステージマネージャ"
           }
         },
         "pt-BR" : {
@@ -37116,6 +37860,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passa al lato opposto con le azioni di metà"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "半分操作で反対側に切り替え"
           }
         },
         "pt-BR" : {
@@ -37378,6 +38128,12 @@
             "value" : "Terzo ottavo verticale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/8（左から3番目）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -37434,6 +38190,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Terzo sesto verticale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縦 1/6（左から3番目）"
           }
         },
         "pt-BR" : {
@@ -37932,8 +38694,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "3分割、画面端付近の上半分・下半分"
+            "state" : "translated",
+            "value" : "3分割、角付近の上・下"
           }
         },
         "ko" : {
@@ -38082,6 +38844,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lascia un po' di spazio da cui si vede la finestra sotto ed è ideale con lo spazio tra le finestre"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下のウインドウが少し見えるように余白を残します（ウインドウの間隔設定との併用が最適です）"
           }
         },
         "pt-BR" : {
@@ -38312,6 +39080,12 @@
             "value" : "Affianca le finestre in righe/colonne"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウを行／列に並べる"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38375,6 +39149,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Affiancamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイル表示"
           }
         },
         "pt-BR" : {
@@ -38537,6 +39317,12 @@
             "value" : "L'affiancamento di Rectangle è stato disattivato"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectangle のタイル表示機能が無効になりました"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -38612,6 +39398,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Per regolare l'affiancamento di macOS, vai in Impostazioni di Sistema → Scrivania e Dock → Finestre"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS のタイル表示を調整するには、システム設定 → デスクトップとDock → ウインドウに移動します"
           }
         },
         "ko" : {
@@ -39026,7 +39818,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ToDoアプリケーションのウインドウ幅"
+            "value" : "Todoアプリケーションのウインドウ幅"
           }
         },
         "ko" : {
@@ -39169,6 +39961,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Modalità In evidenza"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todoモード"
           }
         },
         "pt-BR" : {
@@ -39453,7 +40251,7 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "左"
           }
         },
@@ -39615,8 +40413,8 @@
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "右半分"
+            "state" : "translated",
+            "value" : "右"
           }
         },
         "ko" : {
@@ -39765,6 +40563,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostra/nascondi il badge delle finestre impilate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重なったウインドウバッジを切り替え"
           }
         },
         "pt-BR" : {
@@ -40027,6 +40831,12 @@
             "value" : "Mostra/nascondi l'elenco delle finestre"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウ一覧を切り替え"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40136,7 +40946,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "上半分"
+            "value" : "上"
           }
         },
         "ko" : {
@@ -40287,6 +41097,12 @@
             "value" : "Ottavo superiore centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行2列 1/8"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40350,6 +41166,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo superiore centro-sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行2列 1/8"
           }
         },
         "ko" : {
@@ -40428,6 +41250,12 @@
             "value" : "Sedicesimo superiore centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行2列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40490,6 +41318,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodicesimo superiore centro-sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行2列 1/12"
           }
         },
         "pt-BR" : {
@@ -40556,6 +41390,12 @@
             "value" : "Nono superiore centrale"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中央上 1/9"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40618,6 +41458,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo superiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行3列 1/8"
           }
         },
         "pt-BR" : {
@@ -40683,6 +41529,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo superiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行3列 1/8"
           }
         },
         "ko" : {
@@ -40761,6 +41613,12 @@
             "value" : "Sedicesimo superiore centro-destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行3列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -40823,6 +41681,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodicesimo superiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行3列 1/12"
           }
         },
         "pt-BR" : {
@@ -41089,6 +41953,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavi superiori dagli angoli; massimizza"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大化（角からドラッグで上側8分割）"
           }
         },
         "ko" : {
@@ -41363,6 +42233,12 @@
             "value" : "Ottavo superiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行1列 1/8"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41426,6 +42302,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo superiore sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行1列 1/8"
           }
         },
         "ko" : {
@@ -41504,6 +42386,12 @@
             "value" : "Nono superiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上 1/9"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -41566,6 +42454,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo superiore sinistro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行1列 1/16"
           }
         },
         "pt-BR" : {
@@ -41828,6 +42722,12 @@
             "value" : "Dodicesimo superiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行1列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42088,6 +42988,12 @@
             "value" : "Ottavo superiore destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行4列 1/8"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42151,6 +43057,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ottavo superiore destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行4列 1/8"
           }
         },
         "ko" : {
@@ -42229,6 +43141,12 @@
             "value" : "Nono superiore destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上 1/9"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42291,6 +43209,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo superiore destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行4列 1/16"
           }
         },
         "pt-BR" : {
@@ -42553,6 +43477,12 @@
             "value" : "Dodicesimo superiore destro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1行4列 1/12"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42616,6 +43546,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "L'affiancamento sul bordo superiore dello schermo in macOS è ora disattivato"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "macOS の画面上端へのタイル表示機能が無効になりました"
           }
         },
         "ko" : {
@@ -42739,7 +43675,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最大化（画面端にドラッグで上側6分割）"
+            "value" : "最大化（角からドラッグで上側6分割）"
           }
         },
         "ko" : {
@@ -42890,6 +43826,12 @@
             "value" : "Terzo superiore"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1/3にして上寄せ"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -42964,6 +43906,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Due terzi superiori"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2/3にして上寄せ"
           }
         },
         "ko" : {
@@ -43041,6 +43989,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lati superiore/inferiore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上側・下側"
           }
         },
         "ko" : {
@@ -43125,6 +44079,12 @@
             "value" : "Alto/basso"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上・下"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43187,6 +44147,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tratta più schermi come uno solo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複数ディスプレイを1つとして扱う"
           }
         },
         "pt-BR" : {
@@ -43252,6 +44218,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tratta più monitor come uno solo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複数モニターを1つとして扱う"
           }
         },
         "ko" : {
@@ -43325,6 +44297,12 @@
             "value" : "Dodicesimi"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12分割"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43389,6 +44367,12 @@
             "value" : "Dodicesimi (3x4)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12分割（3×4）"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43446,6 +44430,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodicesimi (4×3)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12分割（4×3）"
           }
         },
         "ko" : {
@@ -43523,6 +44513,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Impossibile ridurre ancora la finestra.\nLe finestre potrebbero sovrapporsi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウインドウをこれ以上小さくリサイズできません。\nウインドウ同士が重なる場合があります。"
           }
         },
         "pt-BR" : {
@@ -43786,6 +44782,12 @@
             "value" : "Aggiornamento disponibile…"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップデート可能…"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43862,6 +44864,12 @@
             "value" : "Sedicesimo medio-superiore centro-sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行2列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -43924,6 +44932,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo medio-superiore centro-destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行3列 1/16"
           }
         },
         "pt-BR" : {
@@ -43990,6 +45004,12 @@
             "value" : "Sedicesimo medio-superiore sinistro"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行1列 1/16"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44052,6 +45072,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sedicesimo medio-superiore destro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2行4列 1/16"
           }
         },
         "pt-BR" : {
@@ -44315,6 +45341,12 @@
             "value" : "Usa la posizione del puntatore per rilevare lo schermo"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソル位置でディスプレイを検出"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -44390,6 +45422,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rileva lo schermo dal puntatore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カーソル位置でディスプレイを検出"
           }
         },
         "pt-BR" : {
@@ -44495,7 +45533,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "frontmost.appをToDoアプリとして使う"
+            "value" : "frontmost.appをTodoアプリとして使う"
           }
         },
         "ko" : {
@@ -44968,6 +46006,12 @@
             "value" : "Verticale (A/B, %)"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直方向（上/下, %）"
+          }
+        },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
@@ -45044,6 +46088,12 @@
             "value" : "verticalmente"
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直方向"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -45100,6 +46150,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verticalmente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "垂直方向"
           }
         },
         "pt-BR" : {
@@ -45947,6 +47003,12 @@
             "value" : "Se disattivato, i bordi tra finestra e schermo vengono mantenuti dove possibile."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフの場合、該当する箇所ではウインドウが画面端に接している位置関係が維持されます。"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -46207,6 +47269,12 @@
             "value" : "Con più schermi, li tratta come un unico schermo. Richiede che in Impostazioni di Sistema > Scrivania e Dock l'opzione «I monitor hanno spazi separati» sia disattivata."
           }
         },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複数のディスプレイを1つのディスプレイとして扱います。「システム設定」>「デスクトップとDock」>「ディスプレイごとに個別の操作スペース」をオフにする必要があります。"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -46316,7 +47384,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ToDoモードのウインドウ配置を復元するには、ToDoモードのときに、Rectangleのメニューにある\"ToDoモードを再設定\"を選択するか、指定されたキーボードショートカットを押します。"
+            "value" : "Todoモードのウインドウ配置を復元するには、Todoモードのときに、Rectangleのメニューにある\"Todoモードを再設定\"を選択するか、指定されたキーボードショートカットを押します。"
           }
         },
         "ko" : {
@@ -46465,6 +47533,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passo larghezza (px)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幅の変更単位（px）"
           }
         },
         "ko" : {
