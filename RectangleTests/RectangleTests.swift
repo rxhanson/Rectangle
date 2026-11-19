@@ -8398,6 +8398,27 @@ final class WindowSizeConstraintTests: XCTestCase {
         }
     }
 
+    func testCharacterCellTerminalsAllowUpToACell() {
+        let withinCell = CGRect(x: 0, y: 0, width: requested.width + 17, height: requested.height + 30)
+        XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: requested, actual: withinCell,
+                                                       action: .firstThird, bundleId: { "com.apple.Terminal" }))
+        XCTAssertTrue(WindowSizeConstraint.isExceeded(requested: requested, actual: withinCell,
+                                                      action: .firstThird, bundleId: { "com.example.app" }))
+        XCTAssertTrue(WindowSizeConstraint.isExceeded(requested: requested, actual: withinCell,
+                                                      action: .firstThird, bundleId: { nil }))
+
+        let beyondCell = CGRect(x: 0, y: 0, width: requested.width + 100, height: requested.height)
+        XCTAssertTrue(WindowSizeConstraint.isExceeded(requested: requested, actual: beyondCell,
+                                                      action: .firstThird, bundleId: { "com.apple.Terminal" }))
+    }
+
+    func testBundleIdIsOnlyLookedUpWhenLargerThanRequested() {
+        var lookups = 0
+        XCTAssertFalse(WindowSizeConstraint.isExceeded(requested: requested, actual: requested, action: .firstThird,
+                                                       bundleId: { lookups += 1; return "com.apple.Terminal" }))
+        XCTAssertEqual(lookups, 0)
+    }
+
     func testInvalidRequestedAndActualFramesDoNotWarn() {
         let invalidFrames: [CGRect] = [
             .null, .infinite, .zero,
@@ -8449,7 +8470,8 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
             (Defaults.screenEdgeGapBottom, CodableDefault(float: 0)),
             (Defaults.cyclingOverlapOffset, CodableDefault(int: 2)),
             (Defaults.combinedDisplayMode, CodableDefault(int: 2)),
-            (Defaults.todo, CodableDefault(int: 2))
+            (Defaults.todo, CodableDefault(int: 2)),
+            (Defaults.showMinimumWindowSizeWarning, CodableDefault(int: 1))
         ]
         savedDefaults = settings.map { ($0.0, $0.0.toCodable()) }
         settings.forEach { $0.0.load(from: $0.1) }
@@ -8746,20 +8768,33 @@ final class WindowSizeConstraintExecutionTests: XCTestCase {
         }
     }
 
-    private final class TestWindowManager: WindowManager {
+    private final class RecordingSizeConstraint: WindowSizeConstraint {
         private(set) var warningScreens: [NSScreen] = []
         private(set) var hideCount = 0
         private(set) var warningVisible = false
-        var didFinish: (() -> Void)?
 
-        override func showSizeConstraintWarning(on screen: NSScreen) {
+        override func showWarning(on screen: NSScreen) {
             warningScreens.append(screen)
             warningVisible = true
         }
 
-        override func hideSizeConstraintWarning() {
+        override func hideWarning() {
             hideCount += 1
             warningVisible = false
+        }
+    }
+
+    private final class TestWindowManager: WindowManager {
+        private let recorder: RecordingSizeConstraint
+        var warningScreens: [NSScreen] { recorder.warningScreens }
+        var hideCount: Int { recorder.hideCount }
+        var warningVisible: Bool { recorder.warningVisible }
+        var didFinish: (() -> Void)?
+
+        init(screenDetection: ScreenDetection) {
+            let recorder = RecordingSizeConstraint()
+            self.recorder = recorder
+            super.init(screenDetection: screenDetection, sizeConstraint: recorder)
         }
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,
@@ -11632,9 +11667,6 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
             detection = screenDetection
             super.init(screenDetection: screenDetection)
         }
-
-        override func showSizeConstraintWarning(on screen: NSScreen) {}
-        override func hideSizeConstraintWarning() {}
 
         override func warpCursor(to point: CGPoint) {
             cursorWarps += 1

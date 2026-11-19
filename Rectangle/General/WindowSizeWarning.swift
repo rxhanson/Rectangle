@@ -1,10 +1,60 @@
 import AppKit
 
-enum WindowSizeConstraint {
-    static func isExceeded(requested: CGRect, actual: CGRect, action: WindowAction) -> Bool {
+/// Explains why a window overlaps its neighbors when its app won't let it shrink to the size an action asked for
+/// (Rectangle #1847). Off unless `showMinimumWindowSizeWarning` is enabled.
+class WindowSizeConstraint {
+    /// Terminals size their windows in whole character cells, so a window can end up as much as a cell
+    /// larger than requested even though it could be made smaller. This covers a cell at large font sizes.
+    static let characterCellTolerance: CGFloat = 40
+
+    /// Terminals that size their windows in whole character cells.
+    static let characterCellBundleIds: Set<String> = [
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "com.mitchellh.ghostty",
+        "net.kovidgoyal.kitty",
+        "org.alacritty",
+        "com.github.wez.wezterm"
+    ]
+
+    private var warning: WindowSizeWarning?
+
+    /// Shows the warning on the action's destination display if it's enabled and the app kept the window
+    /// from shrinking to the size the action asked for.
+    func warnIfExceeded(_ result: ResultParameters, resultingRect: CGRect) {
+        guard Defaults.showMinimumWindowSizeWarning.userEnabled,
+              Self.isExceeded(requested: result.calcResult.rect, actual: resultingRect, action: result.action,
+                              bundleId: { result.windowElement.bundleIdentifier })
+        else { return }
+        showWarning(on: result.calcResult.screen)
+    }
+
+    func showWarning(on screen: NSScreen) {
+        if warning == nil {
+            warning = WindowSizeWarning()
+        }
+        warning?.show(on: screen)
+    }
+
+    func hideWarning() {
+        warning?.hide()
+    }
+
+    /// Whether the window is larger than requested, allowing terminals up to a character cell.
+    /// `bundleId` is only evaluated once the window is larger than requested, since it's a cross-process lookup.
+    static func isExceeded(requested: CGRect, actual: CGRect, action: WindowAction, bundleId: () -> String?) -> Bool {
+        guard isExceeded(requested: requested, actual: actual, action: action) else { return false }
+
+        if let bundleId = bundleId(), characterCellBundleIds.contains(bundleId) {
+            return isExceeded(requested: requested, actual: actual, action: action, tolerance: characterCellTolerance)
+        }
+        return true
+    }
+
+    static func isExceeded(requested: CGRect, actual: CGRect, action: WindowAction, tolerance: CGFloat = 1) -> Bool {
         guard action.resizes, isValid(requested), isValid(actual) else { return false }
 
-        return actual.width > requested.width + 1 || actual.height > requested.height + 1
+        return actual.width > requested.width + tolerance || actual.height > requested.height + tolerance
     }
 
     private static func isValid(_ rect: CGRect) -> Bool {
