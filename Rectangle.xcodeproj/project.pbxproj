@@ -9,7 +9,21 @@
 /* Begin PBXBuildFile section */
 		01f52cab9bce43359775bdd7 /* JSONDefaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = de0950b8b00f40308934a523 /* JSONDefaultTests.swift */; };
 		944F25D12CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 944F25D02CE5A144004B2FD2 /* ShortcutRecordingObserverTests.swift */; };
-		9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9824701F22AF9B7E0037B409 /* RectangleTests.swift */; };
+		AF0C50000000000000000002 /* SnappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000001 /* SnappingTests.swift */; };
+		AF0C50000000000000000004 /* VerticalActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000003 /* VerticalActionTests.swift */; };
+		AF0C50000000000000000006 /* DefaultsAndConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000005 /* DefaultsAndConfigTests.swift */; };
+		AF0C50000000000000000008 /* BandTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000007 /* BandTilingTests.swift */; };
+		AF0C5000000000000000000A /* WindowCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000009 /* WindowCalculationTests.swift */; };
+		AF0C5000000000000000000C /* CooperativeResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C5000000000000000000B /* CooperativeResizeTests.swift */; };
+		AF0C5000000000000000000E /* ScreenAndDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C5000000000000000000D /* ScreenAndDisplayTests.swift */; };
+		AF0C50000000000000000010 /* TodoModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C5000000000000000000F /* TodoModeTests.swift */; };
+		AF0C50000000000000000012 /* StackAndOverlapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000011 /* StackAndOverlapTests.swift */; };
+		AF0C50000000000000000014 /* EnhancedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000013 /* EnhancedUITests.swift */; };
+		AF0C50000000000000000016 /* HalfSplitCornerCalculationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000015 /* HalfSplitCornerCalculationTests.swift */; };
+		AF0C50000000000000000018 /* ShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000017 /* ShortcutTests.swift */; };
+		AF0C5000000000000000001A /* WindowAnimationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C50000000000000000019 /* WindowAnimationTests.swift */; };
+		AF0C5000000000000000001C /* WindowSizeConstraintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C5000000000000000001B /* WindowSizeConstraintTests.swift */; };
+		AF0C5000000000000000001E /* NewWindowActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C5000000000000000001D /* NewWindowActionTests.swift */; };
 		9877B63A29C8AC0E00F02D74 /* MASShortcut in Frameworks */ = {isa = PBXBuildFile; productRef = 9877B63929C8AC0E00F02D74 /* MASShortcut */; };
 		9877B63D29C8AC3600F02D74 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 9877B63C29C8AC3600F02D74 /* Sparkle */; };
 		AF09A0000000000000000003 /* GridTilingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF09A0000000000000000004 /* GridTilingTests.swift */; };
@@ -32,7 +46,21 @@
 		9821405D22B3ED3600ABFB3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		9824700922AF9B7D0037B409 /* Rectangle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rectangle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9824701B22AF9B7E0037B409 /* RectangleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RectangleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9824701F22AF9B7E0037B409 /* RectangleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000001 /* SnappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnappingTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000003 /* VerticalActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalActionTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000005 /* DefaultsAndConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsAndConfigTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000007 /* BandTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandTilingTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000009 /* WindowCalculationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowCalculationTests.swift; sourceTree = "<group>"; };
+		AF0C5000000000000000000B /* CooperativeResizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CooperativeResizeTests.swift; sourceTree = "<group>"; };
+		AF0C5000000000000000000D /* ScreenAndDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenAndDisplayTests.swift; sourceTree = "<group>"; };
+		AF0C5000000000000000000F /* TodoModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoModeTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000011 /* StackAndOverlapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackAndOverlapTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000013 /* EnhancedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedUITests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000015 /* HalfSplitCornerCalculationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HalfSplitCornerCalculationTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000017 /* ShortcutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutTests.swift; sourceTree = "<group>"; };
+		AF0C50000000000000000019 /* WindowAnimationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAnimationTests.swift; sourceTree = "<group>"; };
+		AF0C5000000000000000001B /* WindowSizeConstraintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSizeConstraintTests.swift; sourceTree = "<group>"; };
+		AF0C5000000000000000001D /* NewWindowActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWindowActionTests.swift; sourceTree = "<group>"; };
 		9824702122AF9B7E0037B409 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AF09A0000000000000000004 /* GridTilingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTilingTests.swift; sourceTree = "<group>"; };
 		AF09B1000000000000000004 /* DisplayTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTransferTests.swift; sourceTree = "<group>"; };
@@ -104,7 +132,21 @@
 		9824701E22AF9B7E0037B409 /* RectangleTests */ = {
 			isa = PBXGroup;
 			children = (
-				9824701F22AF9B7E0037B409 /* RectangleTests.swift */,
+				AF0C50000000000000000001 /* SnappingTests.swift */,
+				AF0C50000000000000000003 /* VerticalActionTests.swift */,
+				AF0C50000000000000000005 /* DefaultsAndConfigTests.swift */,
+				AF0C50000000000000000007 /* BandTilingTests.swift */,
+				AF0C50000000000000000009 /* WindowCalculationTests.swift */,
+				AF0C5000000000000000000B /* CooperativeResizeTests.swift */,
+				AF0C5000000000000000000D /* ScreenAndDisplayTests.swift */,
+				AF0C5000000000000000000F /* TodoModeTests.swift */,
+				AF0C50000000000000000011 /* StackAndOverlapTests.swift */,
+				AF0C50000000000000000013 /* EnhancedUITests.swift */,
+				AF0C50000000000000000015 /* HalfSplitCornerCalculationTests.swift */,
+				AF0C50000000000000000017 /* ShortcutTests.swift */,
+				AF0C50000000000000000019 /* WindowAnimationTests.swift */,
+				AF0C5000000000000000001B /* WindowSizeConstraintTests.swift */,
+				AF0C5000000000000000001D /* NewWindowActionTests.swift */,
 				AF09A0000000000000000004 /* GridTilingTests.swift */,
 				AF09B1000000000000000004 /* DisplayTransferTests.swift */,
 				AF09B1000000000000000006 /* CooperativeResizeExecutionTests.swift */,
@@ -273,7 +315,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9824702022AF9B7E0037B409 /* RectangleTests.swift in Sources */,
+				AF0C50000000000000000002 /* SnappingTests.swift in Sources */,
+				AF0C50000000000000000004 /* VerticalActionTests.swift in Sources */,
+				AF0C50000000000000000006 /* DefaultsAndConfigTests.swift in Sources */,
+				AF0C50000000000000000008 /* BandTilingTests.swift in Sources */,
+				AF0C5000000000000000000A /* WindowCalculationTests.swift in Sources */,
+				AF0C5000000000000000000C /* CooperativeResizeTests.swift in Sources */,
+				AF0C5000000000000000000E /* ScreenAndDisplayTests.swift in Sources */,
+				AF0C50000000000000000010 /* TodoModeTests.swift in Sources */,
+				AF0C50000000000000000012 /* StackAndOverlapTests.swift in Sources */,
+				AF0C50000000000000000014 /* EnhancedUITests.swift in Sources */,
+				AF0C50000000000000000016 /* HalfSplitCornerCalculationTests.swift in Sources */,
+				AF0C50000000000000000018 /* ShortcutTests.swift in Sources */,
+				AF0C5000000000000000001A /* WindowAnimationTests.swift in Sources */,
+				AF0C5000000000000000001C /* WindowSizeConstraintTests.swift in Sources */,
+				AF0C5000000000000000001E /* NewWindowActionTests.swift in Sources */,
 				AF09A0000000000000000003 /* GridTilingTests.swift in Sources */,
 				AF09B1000000000000000003 /* DisplayTransferTests.swift in Sources */,
 				AF09B1000000000000000005 /* CooperativeResizeExecutionTests.swift in Sources */,
