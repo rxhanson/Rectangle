@@ -9076,6 +9076,12 @@
             "state" : "translated",
             "value" : "ウインドウのあるディスプレイではなく、カーソルがあるディスプレイを使用します。"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "命令以光标而非窗口所在的显示器为准。"
+          }
         }
       }
     },
@@ -10345,6 +10351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "based on display orientation"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "根据显示器方向"
           }
         }
       }
@@ -26421,7 +26433,7 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "半屏操作时移动到相邻显示器"
           }
         },
@@ -26618,8 +26630,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "半屏操作时移动到相邻显示器，并在最后边缘循环大小"
+            "state" : "translated",
+            "value" : "半屏操作时移动到相邻显示器，并在最外侧边缘循环大小"
           }
         },
         "zh-Hant" : {
@@ -27231,6 +27243,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カーソルがあるディスプレイにウインドウを移動"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将窗口移到光标所在的显示器"
           }
         }
       }
