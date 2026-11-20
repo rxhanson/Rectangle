@@ -97,6 +97,10 @@ class Defaults {
     static let notifiedOfProblemApps = BoolDefault(key: "notifiedOfProblemApps")
     static let specifiedHeight = FloatDefault(key: "specifiedHeight", defaultValue: 1050)
     static let specifiedWidth = FloatDefault(key: "specifiedWidth", defaultValue: 1680)
+    static let freeformOne = JSONDefault<FreeformRegion>(key: "freeformOneRegion")
+    static let freeformTwo = JSONDefault<FreeformRegion>(key: "freeformTwoRegion")
+    static let freeformThree = JSONDefault<FreeformRegion>(key: "freeformThreeRegion")
+    static let freeformFour = JSONDefault<FreeformRegion>(key: "freeformFourRegion")
     static let horizontalSplitRatio = FloatDefault(key: "horizontalSplitRatio", defaultValue: 50)
     static let verticalSplitRatio = FloatDefault(key: "verticalSplitRatio", defaultValue: 50)
     static let moveCursorAcrossDisplays = OptionalBoolDefault(key: "moveCursorAcrossDisplays")
@@ -212,6 +216,10 @@ class Defaults {
         notifiedOfProblemApps,
         specifiedHeight,
         specifiedWidth,
+        freeformOne,
+        freeformTwo,
+        freeformThree,
+        freeformFour,
         horizontalSplitRatio,
         verticalSplitRatio,
         moveCursorAcrossDisplays,

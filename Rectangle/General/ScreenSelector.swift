@@ -39,12 +39,25 @@ struct ScreenSelector {
 
     let screenDetection: ScreenDetection
     var history: CursorScreenHistory = .shared
+    /// Identifies the display a Freeform area was selected on.
+    var displayID: (NSScreen) -> UUID? = { $0.freeformDisplayID }
 
     /// The screens a move is calculated against, or nil when they can't be found.
     /// Records the press with cursor screen detection, so it must be called once per move.
     func screens(for windowElement: AccessibilityElement, windowId: CGWindowID?,
                  parameters: ExecutionParameters) -> ScreenSelection? {
         guard let sourceScreens = screenDetection.detectScreens(using: windowElement) else { return nil }
+
+        // A Freeform area belongs to the display it was selected on, wherever the window or the
+        // cursor is. If that display isn't connected, the area is used on the window's display.
+        if let setting = parameters.action.freeformRegion {
+            guard let region = setting.typedValue else { return nil }
+            let destination = region.displayID.flatMap { id in
+                sourceScreens.screensOrdered.first { displayID($0) == id }
+            }
+            let usable = destination.flatMap { screenDetection.detectScreens(at: $0) } ?? sourceScreens
+            return ScreenSelection(usable: usable, source: sourceScreens)
+        }
 
         // An explicit screen (display cycling) or the cursor screen controls the
         // calculation, but neither necessarily contains the window before it moves.

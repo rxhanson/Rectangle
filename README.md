@@ -41,6 +41,12 @@ Drag a window to the edge of the screen. When the mouse cursor reaches the edge 
 
 In **Behavior** > **Extras**, enable **Animate windows** for smooth window resizing, or in **Snap Areas**, enable **Blur footprint** for a blurred snap preview. Both are off by default. Animated snapping keeps the selected edge or center aligned when an app limits its window size or aspect ratio. Dragging a snapped window starts restoring its previous size as the window begins moving, and a quick release lets the remaining restore animation continue. Far-right title-bar grabs can still show visible jumps. Title-bar double-click maximize/restore follows the same animation setting and timing as snapping. Window animation has been tested in known scenarios, but remains experimental because repeatedly updating the window's size and position during the transition may cause issues in some edge cases.
 
+### Freeform window positions
+
+In Settings > **Shortcuts**, expand **⋯** and **Extra**. Click **Select** beside one of **Freeform 1** to **Freeform 4**. The settings window steps aside and every display is dimmed, like when taking a screenshot of a selected area: drag over the area you want and release to save it. The preset's current area is shown with a dashed outline, and the size of the new one is shown beside the pointer. As in the screenshot selection, hold Space while dragging to move the selection, hold Option to resize it around the point where you started, and hold Shift to resize it in one direction only. Press Esc to cancel. Once an area is selected, the preset gets an icon showing where it is on the display, like the other positions. Assign a shortcut to move and resize the focused window to that area.
+
+Selections stay within the display's usable area, so they never cover the menu bar or the Dock. Each preset remembers its display. If that display is disconnected, the preset uses the same proportions on the focused window's display.
+
 ### Tile windows in rows or columns
 
 In **Behavior** > **Extras**, enable **Show Extra shortcuts in menu** to include Rows and Columns in the **Tiling** submenu. Their keyboard shortcuts remain available when the submenu is hidden.

@@ -8,6 +8,9 @@ class ShortcutRecordingObserver: NSObject {
     private static var recordingObservationContext = 0
     private var observedViews = [ObjectIdentifier: MASShortcutView]()
     private var recordingViews = Set<ObjectIdentifier>()
+    private var isSelectingArea = false
+
+    private var needsSuspendedShortcuts: Bool { isSelectingArea || !recordingViews.isEmpty }
 
     func observe(_ views: [MASShortcutView]) {
         for view in views {
@@ -60,7 +63,7 @@ class ShortcutRecordingObserver: NSObject {
     }
 
     func recordingChanged(for view: MASShortcutView, isRecording: Bool) {
-        let wasRecording = !recordingViews.isEmpty
+        let wasSuspended = needsSuspendedShortcuts
         let viewId = ObjectIdentifier(view)
         if isRecording {
             recordingViews.insert(viewId)
@@ -68,9 +71,22 @@ class ShortcutRecordingObserver: NSObject {
             recordingViews.remove(viewId)
         }
 
-        let isRecordingAnyView = !recordingViews.isEmpty
-        guard wasRecording != isRecordingAnyView else { return }
-        Notification.Name.shortcutRecording.post(object: isRecordingAnyView)
+        updateShortcutSuspension(previous: wasSuspended)
     }
 
+    func setSelectingArea(_ selecting: Bool) {
+        let wasSuspended = needsSuspendedShortcuts
+        isSelectingArea = selecting
+        if selecting {
+            for view in recordingViews.compactMap({ observedViews[$0] }) {
+                view.isRecording = false
+            }
+        }
+        updateShortcutSuspension(previous: wasSuspended)
+    }
+
+    private func updateShortcutSuspension(previous: Bool) {
+        guard previous != needsSuspendedShortcuts else { return }
+        Notification.Name.shortcutRecording.post(object: needsSuspendedShortcuts)
+    }
 }

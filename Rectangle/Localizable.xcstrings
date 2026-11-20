@@ -256,6 +256,22 @@
         }
       }
     },
+    "%@: drag to select an area. Hold Space to move it, press Esc to cancel." : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: перетягніть, щоб виділити область. Утримуйте пробіл, щоб перемістити її, або натисніть Esc, щоб скасувати."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@：拖移以选择区域。按住空格键可移动区域，按 Esc 键取消。"
+          }
+        }
+      }
+    },
     "%lld px" : {
       "localizations" : {
         "en" : {
@@ -16981,6 +16997,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "四等分直欄"
+          }
+        }
+      }
+    },
+    "Freeform 1" : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Довільна область 1"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由区域 1"
+          }
+        }
+      }
+    },
+    "Freeform 2" : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Довільна область 2"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由区域 2"
+          }
+        }
+      }
+    },
+    "Freeform 3" : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Довільна область 3"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由区域 3"
+          }
+        }
+      }
+    },
+    "Freeform 4" : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Довільна область 4"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自由区域 4"
           }
         }
       }
@@ -34241,6 +34321,22 @@
         }
       }
     },
+    "Select" : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вибрати"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择"
+          }
+        }
+      }
+    },
     "Select All" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -34434,6 +34530,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全選"
+          }
+        }
+      }
+    },
+    "Select the area on screen for %@" : {
+      "localizations" : {
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Виберіть область на екрані для «%@»"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在屏幕上为“%@”选择区域"
           }
         }
       }
