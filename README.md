@@ -132,6 +132,10 @@ By default iTerm2 will only resize in increments of character widths. There migh
 defaults write com.googlecode.iterm2 DisableWindowSizeSnap -integer 1
 ```
 
+### Terminal.app changes to an unintended window size when switching tabs
+
+Terminal stores its own window size, and it can go back to that stored size when you open or switch tabs. The stored size might be from before Rectangle positioned the window, so the window can jump to a size you didn't intend. One workaround is to resize the Terminal window by hand with the mouse so Terminal stores the new size, then quit and reopen Terminal.
+
 ### Rectangle appears to cause Notification Center to freeze
 
 This appears to affect only a small amount of users. To prevent this from happening, uncheck the box for "Snap windows by dragging".
