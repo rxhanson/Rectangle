@@ -480,6 +480,29 @@ class ShortcutManagerSessionTests: XCTestCase {
         }
     }
 
+    /// A Freeform area is on the display it was selected on, so repeating it doesn't cycle displays.
+    func testFreeformRepeatDoesNotCycleDisplays() throws {
+        try withExecutionSettings(subsequentExecutionMode: .cycleMonitor, pointerTargeting: false) {
+            let screen = RepeatedMaximizeTestScreen(frame: CGRect(x: 0, y: 0, width: 1440, height: 900))
+            let windowManager = CapturingWindowManager()
+            let harness = makeHarness(windowManager: windowManager, screenDetection: AdjacentScreenDetection(screen: screen))
+
+            for (action, windowId) in [(WindowAction.leftHalf, CGWindowID(987_010)), (.freeformOne, 987_011)] {
+                let window = TestWindow(windowId: windowId)
+                defer { AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId) }
+                AppDelegate.windowHistory.lastRectangleActions[windowId] = RectangleAction(action: action, rect: window.frame)
+
+                harness.notificationCenter.post(name: action.notificationName,
+                                                object: ExecutionParameters(action, windowElement: window, windowId: windowId))
+            }
+
+            // Left Half moves on to the next display, while Freeform 1 stays where its area is.
+            XCTAssertEqual(windowManager.executedParameters.map(\.action), [.leftHalf, .freeformOne])
+            XCTAssertTrue(windowManager.executedParameters.first?.screen === screen)
+            XCTAssertNil(windowManager.executedParameters.last?.screen)
+        }
+    }
+
     func testDisplayCycleStartsFreshWhenCursorPointsAtAnotherDisplay() throws {
         defer { CursorScreenHistory.shared.screenFrames.removeValue(forKey: 987_004) }
         try withExecutionSettings(subsequentExecutionMode: .cycleMonitor, pointerTargeting: false, cursorDetection: true) {

@@ -153,7 +153,11 @@ enum WindowAction: Int, Codable {
          thirdVerticalSixth = 143,
          fourthVerticalSixth = 144,
          fifthVerticalSixth = 145,
-         lastVerticalSixth = 146
+         lastVerticalSixth = 146,
+         freeformOne = 147,
+         freeformTwo = 148,
+         freeformThree = 149,
+         freeformFour = 150
 
     // Order matters here - it's used in the menu
     static let active = [leftHalf, rightHalf, centerHalf, topHalf, bottomHalf,
@@ -191,7 +195,8 @@ enum WindowAction: Int, Codable {
                          cascadeActiveApp, tileActiveApp,
                          displayOne, displayTwo, displayThree, displayFour, displayFive,
                          displaySix, displaySeven, displayEight, displayNine,
-                         cycleStackedWindows, cycleStackedWindowsBackward
+                         cycleStackedWindows, cycleStackedWindowsBackward,
+                         freeformOne, freeformTwo, freeformThree, freeformFour
     ]
 
     func post() {
@@ -232,7 +237,8 @@ enum WindowAction: Int, Codable {
              .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
              .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
              .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth,
-             .cycleStackedWindows, .cycleStackedWindowsBackward: return true
+             .cycleStackedWindows, .cycleStackedWindowsBackward,
+             .freeformOne, .freeformTwo, .freeformThree, .freeformFour: return true
         default: return false
         }
     }
@@ -330,6 +336,10 @@ enum WindowAction: Int, Codable {
         case .tileColumns: return "tileColumns"
         case .cycleStackedWindows: return "cycleStackedWindows"
         case .cycleStackedWindowsBackward: return "cycleStackedWindowsBackward"
+        case .freeformOne: return "freeformOne"
+        case .freeformTwo: return "freeformTwo"
+        case .freeformThree: return "freeformThree"
+        case .freeformFour: return "freeformFour"
         case .cascadeAll: return "cascadeAll"
         case .leftTodo: return "leftTodo"
         case .rightTodo: return "rightTodo"
@@ -565,6 +575,14 @@ enum WindowAction: Int, Codable {
             String(localized: "Cycle Stacked Windows")
         case .cycleStackedWindowsBackward:
             String(localized: "Cycle Stacked Windows Backward")
+        case .freeformOne:
+            String(localized: "Freeform 1")
+        case .freeformTwo:
+            String(localized: "Freeform 2")
+        case .freeformThree:
+            String(localized: "Freeform 3")
+        case .freeformFour:
+            String(localized: "Freeform 4")
         case .largerWidth:
             String(localized: "Larger Width")
         case .smallerWidth:
@@ -686,7 +704,7 @@ enum WindowAction: Int, Codable {
     var isDragSnappable: Bool {
         switch self {
         case .restore, .previousDisplay, .nextDisplay, .moveUp, .moveDown, .moveLeft, .moveRight, .specified, .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .larger, .smaller, .largerWidth, .smallerWidth, .cascadeActiveApp, .tileActiveApp,
-            .cycleStackedWindows, .cycleStackedWindowsBackward,
+            .cycleStackedWindows, .cycleStackedWindowsBackward, .freeformOne, .freeformTwo, .freeformThree, .freeformFour,
             .firstVerticalEighth, .secondVerticalEighth, .thirdVerticalEighth, .fourthVerticalEighth,
             .fifthVerticalEighth, .sixthVerticalEighth, .seventhVerticalEighth, .lastVerticalEighth,
             .firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth,
@@ -842,6 +860,9 @@ enum WindowAction: Int, Codable {
         case .halveWidthLeft: return  NSImage()
         case .halveWidthRight: return  NSImage()
         case .specified, .reverseAll: return NSImage()
+        case .freeformOne, .freeformTwo, .freeformThree, .freeformFour:
+            // Only a preset with a selected area has a picture of it.
+            return freeformRegion?.typedValue.map(FreeformPreview.image(for:)) ?? NSImage()
         case .tileAll: return NSImage()
         case .tileRows: return NSImage(imageLiteralResourceName: "tileRowsTemplate")
         case .tileColumns: return NSImage(imageLiteralResourceName: "tileColumnsTemplate")
@@ -954,7 +975,7 @@ enum WindowAction: Int, Codable {
         case .maximizeHeight:
             return Defaults.applyGapsToMaximizeHeight.userDisabled ? .none : .vertical;
         case .almostMaximize, .previousDisplay, .nextDisplay, .larger, .smaller, .largerWidth, .smallerWidth, .largerHeight, .smallerHeight, .center, .centerProminently, .restore, .specified, .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
-             .cycleStackedWindows, .cycleStackedWindowsBackward,
+             .cycleStackedWindows, .cycleStackedWindowsBackward, .freeformOne, .freeformTwo, .freeformThree, .freeformFour,
              .displayOne, .displayTwo, .displayThree, .displayFour, .displayFive,
              .displaySix, .displaySeven, .displayEight, .displayNine:
             return .none
@@ -976,7 +997,7 @@ enum WindowAction: Int, Codable {
              .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll, .cascadeActiveApp, .tileActiveApp,
              .cycleStackedWindows, .cycleStackedWindowsBackward,
              .leftTodo, .rightTodo,
-             .specified:
+             .specified, .freeformOne, .freeformTwo, .freeformThree, .freeformFour:
             return false
         default:
             return true

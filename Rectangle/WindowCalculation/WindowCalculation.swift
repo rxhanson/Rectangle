@@ -260,6 +260,7 @@ class WindowCalculationFactory {
     static let bottomCenterRightEighthCalculation = BottomCenterRightEighthCalculation()
     static let bottomRightEighthCalculation = BottomRightEighthCalculation()
     static let specifiedCalculation = SpecifiedCalculation()
+    static let freeformCalculation = FreeformCalculation()
     static let leftTodoCalculation = LeftTodoCalculation()
     static let rightTodoCalculation = RightTodoCalculation()
     static let bottomVerticalTwoThirdsCalculation = BottomVerticalTwoThirdsCalculation()
@@ -401,6 +402,10 @@ class WindowCalculationFactory {
      .doubleWidthLeft: halfOrDoubleDimensionCalculation,
      .doubleWidthRight: halfOrDoubleDimensionCalculation,
      .specified: specifiedCalculation,
+     .freeformOne: freeformCalculation,
+     .freeformTwo: freeformCalculation,
+     .freeformThree: freeformCalculation,
+     .freeformFour: freeformCalculation,
      .leftTodo: leftTodoCalculation,
      .rightTodo: rightTodoCalculation,
      .topVerticalThird: topVerticalThirdCalculation,

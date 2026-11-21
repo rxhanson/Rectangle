@@ -261,6 +261,7 @@ class ShortcutManager {
 
         // Check if repeat cycles displays
         if Defaults.subsequentExecutionMode.value == .cycleMonitor,
+           parameters.action.freeformRegion == nil,
            parameters.source != .titleBar, parameters.source != .newWindow,
            parameters.action.classification != .size,
            parameters.action.classification != .display {

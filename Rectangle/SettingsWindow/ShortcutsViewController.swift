@@ -110,6 +110,8 @@ final class ShortcutActionCellView: NSTableCellView {
     let titleLabel = NSTextField(labelWithString: "")
     let shortcutView = WindowActionShortcutView()
     let popoverButton = PopoverButton()
+    let selectButton = NSButton(title: String(localized: "Select"), target: nil, action: nil)
+    private var selectArea: (() -> Void)?
     
     private var shortcutTrailingConstraint: NSLayoutConstraint?
     private var activePopover: NSPopover?
@@ -145,11 +147,20 @@ final class ShortcutActionCellView: NSTableCellView {
         popoverButton.bezelStyle = .inline
         popoverButton.isBordered = false
         popoverButton.contentTintColor = .secondaryLabelColor
+
+        selectButton.translatesAutoresizingMaskIntoConstraints = false
+        selectButton.bezelStyle = .rounded
+        selectButton.controlSize = .small
+        selectButton.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        selectButton.target = self
+        selectButton.action = #selector(selectFreeformArea)
+        selectButton.isHidden = true
         
         addSubview(titleLabel)
         addSubview(iconImageView)
         addSubview(shortcutView)
         addSubview(popoverButton)
+        addSubview(selectButton)
         
         let trailingConstraint = shortcutView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -68)
         self.shortcutTrailingConstraint = trailingConstraint
@@ -164,6 +175,10 @@ final class ShortcutActionCellView: NSTableCellView {
             popoverButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             popoverButton.widthAnchor.constraint(equalToConstant: 20),
             popoverButton.heightAnchor.constraint(equalToConstant: 20),
+
+            selectButton.leadingAnchor.constraint(equalTo: shortcutView.trailingAnchor, constant: 6),
+            selectButton.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -2),
+            selectButton.centerYAnchor.constraint(equalTo: centerYAnchor),
             
             iconImageView.trailingAnchor.constraint(equalTo: shortcutView.leadingAnchor, constant: -16),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -182,11 +197,21 @@ final class ShortcutActionCellView: NSTableCellView {
         activePopover?.close()
         activePopover = nil
         currentConfig = nil
+        selectArea = nil
+        selectButton.isHidden = true
     }
     
-    func configure(with action: WindowAction, recordingObserver: ShortcutRecordingObserver) {
+    func configure(with action: WindowAction, recordingObserver: ShortcutRecordingObserver,
+                   selectArea: (() -> Void)? = nil) {
         iconImageView.image = action.image
         titleLabel.stringValue = action.settingsDisplayName ?? action.displayName ?? ""
+        self.selectArea = selectArea
+        selectButton.isHidden = selectArea == nil
+        if selectArea != nil {
+            let title = titleLabel.stringValue
+            selectButton.toolTip = String(localized: "Select the area on screen for \(title)")
+            selectButton.setAccessibilityLabel(selectButton.toolTip)
+        }
         
         if Defaults.allowAnyShortcut.enabled {
             shortcutView.shortcutValidator = PassthroughShortcutValidator()
@@ -207,6 +232,10 @@ final class ShortcutActionCellView: NSTableCellView {
             self.currentConfig = nil
             popoverButton.isHidden = true
         }
+    }
+
+    @objc private func selectFreeformArea() {
+        selectArea?()
     }
 }
 
@@ -230,10 +259,21 @@ class ShortcutsViewController: NSViewController {
     private let scrollView = NSScrollView()
     private let outlineView = InsetOutlineView()
     private let shortcutRecordingObserver = ShortcutRecordingObserver()
+    let freeformSelection: FreeformSelectionController
     private var allowAnyShortcutObserver: NSObjectProtocol?
     private var lastGroupToggleTime: TimeInterval = 0
     
     private var rootItems: [CategoryGroup] = []
+
+    init(freeformDisplays: @escaping () -> [FreeformSelectionDisplay] = FreeformSelectionDisplay.current) {
+        freeformSelection = FreeformSelectionController(displays: freeformDisplays)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        freeformSelection = FreeformSelectionController(displays: FreeformSelectionDisplay.current)
+        super.init(coder: coder)
+    }
     
     override func loadView() {
         setupGroups()
@@ -296,6 +336,32 @@ class ShortcutsViewController: NSViewController {
         super.viewWillAppear()
         view.window?.setContentSize(initialSize)
     }
+
+    /// Selecting hides the settings window without ordering it out, so this view stays on screen
+    /// and the selection ends on its own: when it's made, cancelled, or the window closes.
+    private func selectFreeformArea(for action: WindowAction) {
+        guard !freeformSelection.isSelecting, let window = view.window,
+              let setting = action.freeformRegion else { return }
+        shortcutRecordingObserver.setSelectingArea(true)
+        let title = action.settingsDisplayName ?? action.displayName ?? ""
+        freeformSelection.begin(from: window, title: title, current: setting.typedValue) { [weak self, shortcutRecordingObserver] region in
+            if let region {
+                setting.typedValue = region
+                self?.refreshIcon(for: action)
+            }
+            shortcutRecordingObserver.setSelectingArea(false)
+        }
+    }
+
+    /// Shows the new area in the row's icon. Rows made later get it from `configure`.
+    private func refreshIcon(for action: WindowAction) {
+        for row in 0..<outlineView.numberOfRows {
+            guard (outlineView.item(atRow: row) as? ShortcutItem)?.action == action,
+                  let cell = outlineView.view(atColumn: 0, row: row, makeIfNecessary: false) as? ShortcutActionCellView
+            else { continue }
+            cell.iconImageView.image = action.image
+        }
+    }
     
     private func setupGroups() {
         let standardCategories: [ShortcutCategory] = [
@@ -322,7 +388,8 @@ class ShortcutsViewController: NSViewController {
             ShortcutCategory(actions: [.topVerticalThird, .middleVerticalThird, .bottomVerticalThird, .topVerticalTwoThirds, .bottomVerticalTwoThirds]),
             ShortcutCategory(actions: [.firstVerticalSixth, .secondVerticalSixth, .thirdVerticalSixth, .fourthVerticalSixth, .fifthVerticalSixth, .lastVerticalSixth]),
             ShortcutCategory(actions: [.topLeftEighth, .topCenterLeftEighth, .topCenterRightEighth, .topRightEighth, .bottomLeftEighth, .bottomCenterLeftEighth, .bottomCenterRightEighth, .bottomRightEighth]),
-            ShortcutCategory(actions: [.topLeftNinth, .topLeftTwelfth, .topLeftSixteenth])
+            ShortcutCategory(actions: [.topLeftNinth, .topLeftTwelfth, .topLeftSixteenth]),
+            ShortcutCategory(actions: [.freeformOne, .freeformTwo, .freeformThree, .freeformFour])
         ]
         
         let extraGroup = CategoryGroup(title: String(localized: "Extra"), categories: extraCategories, isCollapsible: true)
@@ -334,6 +401,7 @@ class ShortcutsViewController: NSViewController {
     }
     
     deinit {
+        freeformSelection.cancel()
         if let observer = allowAnyShortcutObserver {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -399,7 +467,11 @@ extension ShortcutsViewController: NSOutlineViewDelegate {
         if let shortcutItem = item as? ShortcutItem {
             let cell = outlineView.makeView(withIdentifier: ShortcutActionCellView.identifier, owner: self) as? ShortcutActionCellView ?? ShortcutActionCellView()
             cell.identifier = ShortcutActionCellView.identifier
-            cell.configure(with: shortcutItem.action, recordingObserver: shortcutRecordingObserver)
+            let action = shortcutItem.action
+            let selectArea: (() -> Void)? = action.freeformRegion == nil ? nil : { [weak self] in
+                self?.selectFreeformArea(for: action)
+            }
+            cell.configure(with: action, recordingObserver: shortcutRecordingObserver, selectArea: selectArea)
             return cell
         }
         

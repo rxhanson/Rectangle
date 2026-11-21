@@ -21,6 +21,7 @@ The preferences window is purposefully slim, but there's a lot that can be modif
 - [Add extra "eighths" sizing commands](#add-extra-eighths-sizing-commands)
 - [Add extra "full-height eighths" sizing commands](#add-extra-full-height-eighths-sizing-commands)
 - [Add extra "full-height sixths" sizing commands](#add-extra-full-height-sixths-sizing-commands)
+- [Freeform positions](#freeform-positions)
 - [Add additional "thirds" sizing commands](#add-additional-thirds-sizing-commands)
 - [Add doubling/halving window sizing commands](#add-doublinghalving-window-sizing-commands)
 - [Add additional tiling and cascading commands](#add-additional-tiling-and-cascading-commands)
@@ -319,6 +320,29 @@ To instead have repeating any of them cycle the window through the three placeme
 
 ```bash
 defaults write com.knollsoft.Rectangle verticalSixthsCycleTwelfths -bool true
+```
+
+## Freeform positions
+
+The four Freeform commands move the window to an area you choose. Select the area with the Select button beside each of them in the "Extra" section of the Shortcuts settings. The shortcuts can be set there, or via CLI.
+
+The key codes are:
+
+* freeformOne
+* freeformTwo
+* freeformThree
+* freeformFour
+
+For example, the command for setting the Freeform 1 shortcut to `ctrl opt shift 1` would be:
+
+```bash
+defaults write com.knollsoft.Rectangle freeformOne -dict-add keyCode -float 18 modifierFlags -float 917504
+```
+
+A Freeform command does nothing until its area has been selected. The areas are stored in `freeformOneRegion` to `freeformFourRegion`, relative to the usable area of the display they were selected on. To forget one, quit Rectangle and run:
+
+```bash
+defaults delete com.knollsoft.Rectangle freeformOneRegion
 ```
 
 ## Add additional "thirds" sizing commands 
