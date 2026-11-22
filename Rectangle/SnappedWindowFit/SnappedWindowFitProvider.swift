@@ -10,14 +10,22 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     private var observers: [NSObjectProtocol] = []
     private final class Reference {
         let anchor: SnappedWindowFitOpportunity?
+        let order: Int
         var fitted = false
-        init(_ anchor: SnappedWindowFitOpportunity?) { self.anchor = anchor }
+        init(_ anchor: SnappedWindowFitOpportunity?, order: Int) {
+            self.anchor = anchor
+            self.order = order
+        }
     }
     // A deferred command keeps the reference it consumed at dispatch. Weak keys
     // release that state when the command and its planning attempts are gone.
     private let references = NSMapTable<WindowActionIdentity, Reference>(keyOptions: .weakMemory,
                                                                        valueOptions: .strongMemory)
-    private var latestIdentity: WindowActionIdentity?
+    private var commandOrder = 0
+    private var resetOrder = 0
+    // A late accepted snap may establish a reference after a rejection, but
+    // cannot replace a newer reference or cross a Restore/reset boundary.
+    private var referenceOrder = 0
 
     init(enabled: @escaping () -> Bool = { Defaults.fitBesideSnappedWindows.enabled },
          session: @escaping () -> SnappedWindowFitSession = { .shared },
@@ -38,9 +46,10 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
         observers.append(Notification.Name.windowActionCompleted.onPost(center: notifications) { [weak self] note in
             guard let self, self.enabled(),
                   let completion = note.object as? WindowActionCompletion,
-                  completion.identity === self.latestIdentity,
-                  self.references.object(forKey: completion.identity)?.fitted != true else { return }
+                  let reference = self.references.object(forKey: completion.identity), !reference.fitted,
+                  reference.order > self.resetOrder, reference.order >= self.referenceOrder else { return }
             self.session().record(result: completion.result, frame: completion.achievedFrame)
+            if self.session().current != nil { self.referenceOrder = reference.order }
         })
         for name in [Notification.Name.configImported, .fitBesideSnappedWindowsChanged] {
             observers.append(name.onPost(center: notifications) { [weak self] _ in self?.stage(nil) })
@@ -50,11 +59,17 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     deinit { observers.forEach(notifications.removeObserver) }
 
     private func stage(_ parameters: ExecutionParameters?) {
-        latestIdentity = parameters?.identity
-        guard enabled() else { return }
-        guard let parameters else { references.removeAllObjects(); session().clear(); return }
+        commandOrder += 1
+        guard let parameters, enabled() else {
+            resetOrder = commandOrder
+            references.removeAllObjects()
+            session().clear()
+            return
+        }
         let anchor = session().take()
-        references.setObject(Reference(parameters.action == .restore ? nil : anchor), forKey: parameters.identity)
+        if parameters.action == .restore { resetOrder = commandOrder }
+        references.setObject(Reference(parameters.action == .restore ? nil : anchor, order: commandOrder),
+                             forKey: parameters.identity)
     }
 
     func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
@@ -63,9 +78,9 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
         if let staged = references.object(forKey: request.identity) {
             reference = staged
         } else {
-            reference = Reference(session().take())
+            commandOrder += 1
+            reference = Reference(session().take(), order: commandOrder)
             references.setObject(reference, forKey: request.identity)
-            latestIdentity = request.identity
         }
         let anchor = reference.anchor
         guard let anchor, !request.isFixedSize, !request.action.allowedToExtendOutsideCurrentScreenArea,

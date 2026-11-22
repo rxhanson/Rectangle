@@ -494,7 +494,9 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         let session = SnappedWindowFitSession(observeWorkspace: false)
         let fit = SnappedWindowFitProvider(session: { session })
         let manager = makeManager(windows: [anchor], beforeCooperative: [fit])
-        manager.execute(ExecutionParameters(.leftHalf, windowElement: anchor))
+        let parameters = ExecutionParameters(.leftHalf, windowElement: anchor)
+        Notification.Name.windowActionWillExecute.post(object: parameters)
+        manager.execute(parameters)
         XCTAssertEqual(session.current?.frame, anchor.frame)
         XCTAssertEqual(session.current?.id, neighborId)
     }

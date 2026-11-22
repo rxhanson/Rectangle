@@ -18,7 +18,7 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         setting.enabled = true
     }
 
-    func testEarlierCompletionDoesNotRearmAfterARejectedCommand() throws {
+    func testRejectedCommandAllowsTheEarlierAcceptedSnapToEstablishAReference() throws {
         let provider = makeProvider { _, _ in .noRoom }
         let earlier = try request(.leftHalf, id: 1)
         let incoming = try request(.rightHalf, id: 2)
@@ -28,7 +28,7 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         XCTAssertEqual(provider.delegate(for: incoming)?.acceptsPlacement, false)
         XCTAssertFalse(session.hasPotentialAnchor)
         complete(earlier)
-        XCTAssertFalse(session.hasPotentialAnchor)
+        XCTAssertTrue(session.hasPotentialAnchor)
     }
 
     func testMinimizeClearsStagedAndLiveAnchorsAndExcludesLateSettlement() throws {
