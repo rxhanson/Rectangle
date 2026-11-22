@@ -143,6 +143,7 @@ class SnappingManager {
     /// Where the front window's fullscreen state keeps gestures away from
     /// snapping. `checkFullScreen()` keeps it current.
     var fullScreenGate = FullScreenSnapGate.inactive
+    private var fullScreenReadGeneration = 0
     /// Whether the front window is fullscreen. Setting it directly leaves the
     /// display unknown until the next `checkFullScreen()`.
     var isFullScreen: Bool {
@@ -251,12 +252,35 @@ class SnappingManager {
     }
     
     func checkFullScreen() {
-        let frontWindow = AccessibilityElement.getFrontWindowElement()
-        let isFullScreen = frontWindow?.isFullScreen == true
-        fullScreenGate = FullScreenSnapGate(isFullScreen: isFullScreen,
-                                            windowFrame: isFullScreen ? frontWindow?.frame : nil,
-                                            displayFrames: NSScreen.screens.map { $0.frame.screenFlipped })
-        toggleListening()
+        let displays = NSScreen.screens.map { $0.frame.screenFlipped }
+        checkFullScreen {
+            let frontWindow = AccessibilityElement.getFrontWindowElement()
+            let isFullScreen = frontWindow?.isFullScreen == true
+            return FullScreenSnapGate(isFullScreen: isFullScreen,
+                                      windowFrame: isFullScreen ? frontWindow?.frame : nil,
+                                      displayFrames: displays)
+        }
+    }
+
+    func checkFullScreen(read: @escaping () -> FullScreenSnapGate) {
+        fullScreenReadGeneration += 1
+        let generation = fullScreenReadGeneration
+        let apply = { [weak self] (gate: FullScreenSnapGate) in
+            guard let self, self.fullScreenReadGeneration == generation else { return }
+            self.fullScreenGate = gate
+            self.toggleListening()
+        }
+        guard !WindowWriteFence.shared.externalTargets.isEmpty else { apply(read()); return }
+        // App activation can arrive while a pair member is handling an AX write.
+        // Read fullscreen state off main so commands for other apps remain responsive.
+        let frontPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        DispatchQueue.global(qos: .userInitiated).async {
+            let gate = read()
+            DispatchQueue.main.async {
+                guard NSWorkspace.shared.frontmostApplication?.processIdentifier == frontPID else { return }
+                apply(gate)
+            }
+        }
     }
     
     @objc func receiveWorkspaceNote(_ notification: Notification) {

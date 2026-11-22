@@ -13,4 +13,3 @@ struct WindowWriteTarget {
         return true
     }
 }
-

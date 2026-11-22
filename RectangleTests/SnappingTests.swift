@@ -484,6 +484,31 @@ class SnappingManagerSessionTests: XCTestCase {
         Defaults.windowSnapping.enabled = savedSnappingEnabled
     }
 
+    func testFullscreenReadDuringExternalPlacementPreservesNewerAppState() {
+        let manager = SnappingManager()
+        let fence = WindowWriteFence.shared
+        let lease = fence.claim([WindowWriteTarget(element: nil, windowID: 991)])
+        defer { fence.finish(lease) }
+        let started = expectation(description: "Background fullscreen read started")
+        let returned = expectation(description: "Background fullscreen read returned")
+        let release = DispatchSemaphore(value: 0)
+        manager.checkFullScreen {
+            started.fulfill()
+            _ = release.wait(timeout: .now() + 3)
+            returned.fulfill()
+            return FullScreenSnapGate(isFullScreen: true, windowFrame: nil, displayFrames: [])
+        }
+        wait(for: [started], timeout: 1)
+        fence.finish(lease)
+        manager.checkFullScreen { .inactive }
+        release.signal()
+        wait(for: [returned], timeout: 1)
+        let drained = expectation(description: "Main queue applied the fullscreen result")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) { drained.fulfill() }
+        wait(for: [drained], timeout: 1)
+        XCTAssertFalse(manager.isFullScreen, "An older app read must preserve the current fullscreen decision")
+    }
+
     func testSessionDidBecomeActiveTriggersCheckFullScreen() {
         let sm = SnappingManager()
         sm.isFullScreen = true
