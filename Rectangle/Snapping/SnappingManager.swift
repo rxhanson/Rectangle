@@ -172,7 +172,6 @@ class SnappingManager {
                 fitPreviewGeometry = nil
                 if fitPreviewSample != nil {
                     fitPreviewSample = nil
-                    SnappedWindowFitSession.shared.endPreview()
                 }
             }
         }

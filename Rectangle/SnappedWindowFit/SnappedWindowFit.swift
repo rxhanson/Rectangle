@@ -12,22 +12,14 @@ struct SnappedWindowFit: Equatable {
     }
 
     static func resolve(action: WindowAction, window: Window, initialTarget: CGRect, target: CGRect,
-                        screenFrame: CGRect, opportunity: SnappedWindowFitOpportunity?) -> Resolution {
-        resolveIfKnown(action: action, window: window, initialTarget: initialTarget, target: target,
-                       screenFrame: screenFrame, opportunity: opportunity) ?? .unchanged
-    }
-
-    /// A preview can retry a missing WindowServer sample. An accepted action must always make a fresh decision.
-    static func resolveIfKnown(action: WindowAction, window: Window, initialTarget: CGRect, target: CGRect,
-                               screenFrame: CGRect, opportunity: SnappedWindowFitOpportunity?,
-                               windowList: () -> [WindowInfo] = { WindowUtil.getWindowList(forceRefresh: true) },
-                               processLaunchTime: (pid_t) -> TimeInterval? = WindowProcessIdentity.launchTime(for:)) -> Resolution? {
+                        screenFrame: CGRect, opportunity: SnappedWindowFitOpportunity?,
+                        windowList: () -> [WindowInfo] = { WindowUtil.getWindowList(forceRefresh: true) },
+                        processLaunchTime: (pid_t) -> TimeInterval? = WindowProcessIdentity.launchTime(for:)) -> Resolution {
         guard Defaults.fitBesideSnappedWindows.enabled, let id = window.id, let opportunity,
               let calculation = WindowCalculationFactory.calculationsByAction[action] else { return .unchanged }
         let gap = max(0, CGFloat(Defaults.gapSize.value))
         let bounds = effectiveBounds(screenFrame)
-        guard opportunity.accepts(action: action, movingWindowID: id, bounds: bounds,
-                                  at: ProcessInfo.processInfo.systemUptime) else { return .unchanged }
+        guard opportunity.accepts(action: action, movingWindowID: id, bounds: bounds) else { return .unchanged }
 
         // An explicitly cycled fraction should keep the target the user chose.
         let ordinary = calculation.calculateRect(RectCalculationParameters(window: window,
@@ -39,7 +31,10 @@ struct SnappedWindowFit: Equatable {
         }
         DiagnosticTrace.event("fit-window-list", fields: ["windowID": id, "anchorID": opportunity.id])
         let windows = windowList()
-        guard let index = windows.firstIndex(where: { $0.id == opportunity.id }) else { return nil }
+        guard let index = windows.firstIndex(where: { $0.id == opportunity.id }) else {
+            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
+            return .unchanged
+        }
         let windowInfo = windows[index]
         guard isExposed(windowInfo, inFront: windows[..<index], ignoring: id,
                         ignoredPID: ProcessInfo.processInfo.processIdentifier),
@@ -60,23 +55,20 @@ struct SnappedWindowFit: Equatable {
               let opportunity = SnappedWindowFitSession.shared.current,
               let id = window.id,
               opportunity.accepts(action: action, movingWindowID: id,
-                                  bounds: SnappedWindowFit.effectiveBounds(screenFrame),
-                                  at: ProcessInfo.processInfo.systemUptime),
+                                  bounds: SnappedWindowFit.effectiveBounds(screenFrame)),
               let fittedInput = adjustedTarget()
         else { return ordinaryPreview }
 
         // Fit sees the same adjusted target as its move provider. If the offset excludes Fit,
         // the ordinary preview still follows the upstream gap-only behavior.
-        switch SnappedWindowFit.resolveIfKnown(action: action, window: window,
+        switch SnappedWindowFit.resolve(action: action, window: window,
                                                initialTarget: target.initialRect, target: fittedInput,
                                                screenFrame: screenFrame, opportunity: opportunity) {
         case .fit(let plan):
-            SnappedWindowFitSession.shared.beginPreview()
             return plan.target.screenFlipped
         case .unchanged:
-            SnappedWindowFitSession.shared.endPreview()
             return ordinaryPreview
-        case .noRoom, nil:
+        case .noRoom:
             return nil
         }
     }
@@ -138,14 +130,6 @@ struct SnappedWindowFit: Equatable {
 
     private static func fullHeight(_ frame: CGRect, in bounds: CGRect) -> Bool {
         abs(frame.minY - bounds.minY) <= 3 && abs(frame.maxY - bounds.maxY) <= 3
-    }
-
-    func neighborIsUnchanged() -> Bool {
-        guard WindowProcessIdentity.launchTime(for: neighbor.pid) == neighbor.launch else { return false }
-        return WindowUtil.getWindowList(ids: [neighbor.id], forceRefresh: true).contains {
-            $0.id == neighbor.id && $0.pid == neighbor.pid && $0.isOnScreen && $0.alpha > 0
-                && WindowGeometry.matches($0.frame, neighbor.frame)
-        }
     }
 
     /// WindowCalculationResult retains the unpadded tile as well as the padded placement target.
@@ -211,11 +195,9 @@ struct SnappedWindowFitOpportunity: Equatable {
     let action: WindowAction
     let frame: CGRect
     let bounds: CGRect
-    let createdAt: TimeInterval
 
-    func accepts(action incoming: WindowAction, movingWindowID: CGWindowID, bounds: CGRect,
-                 at time: TimeInterval) -> Bool {
-        guard movingWindowID != id, time >= createdAt, time - createdAt < 10,
+    func accepts(action incoming: WindowAction, movingWindowID: CGWindowID, bounds: CGRect) -> Bool {
+        guard movingWindowID != id,
               WindowGeometry.matches(self.bounds, bounds, tolerance: 0.5) else { return false }
         switch (action, incoming) {
         case (.leftHalf, .rightHalf), (.rightHalf, .leftHalf), (.topHalf, .bottomHalf), (.bottomHalf, .topHalf): return true

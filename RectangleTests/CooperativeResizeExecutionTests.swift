@@ -492,7 +492,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         }
         anchor.reportedPID = getpid()
         let incoming = window(focusedId, origin)
-        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in true })
+        let session = SnappedWindowFitSession(observeWorkspace: false)
         let target = CGRect(x: 1920, y: 0, width: 480, height: 900)
         let fit = SnappedWindowFitProvider(session: { session }, resolve: { request, opportunity in
             XCTAssertEqual(request.action, .rightHalf)
@@ -500,7 +500,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             XCTAssertEqual(opportunity.frame, anchor.frame)
             XCTAssertEqual(opportunity.frame.width, 720)
             return .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
-        }, validateNeighbor: { _ in true })
+        })
         let manager = makeManager(windows: [anchor, incoming], beforeCooperative: [fit])
         let settled = expectation(description: "Cross-display retries have finished")
 
@@ -571,8 +571,8 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         seedHistory(neighbor, action: .rightHalf)
         let cooperative = CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
                                                             windowElements: { [incoming, neighbor] })
-        let fit = fitProvider(anchor: neighbor, fallback: cooperative) { _, _ in .unchanged }
-        let manager = makeManager(windows: [incoming, neighbor], beforeCooperative: [fit])
+        let fit = fitProvider(anchor: neighbor) { _, _ in .unchanged }
+        let manager = makeManager(windows: [incoming, neighbor], beforeCooperative: [fit, cooperative])
 
         manager.execute(ExecutionParameters(.leftHalf, windowElement: incoming))
 
@@ -750,17 +750,14 @@ final class CooperativeResizeExecutionTests: XCTestCase {
 
     private func fitProvider(anchor: FakeWindow, on anchorScreen: NSScreen? = nil, enabled: @escaping () -> Bool = { true },
                              notifications: NotificationCenter = NotificationCenter(),
-                             validateNeighbor: @escaping (SnappedWindowFit) -> Bool = { _ in true },
-                             fallback: WindowManagerDelegateProvider? = nil,
                              resolve: @escaping (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution) -> SnappedWindowFitProvider {
-        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in true })
+        let session = SnappedWindowFitSession(observeWorkspace: false)
         session.record(SnappedWindowFitOpportunity(id: neighborId, pid: 500, launch: 1, action: .leftHalf,
-                                                   frame: anchor.frame, bounds: (anchorScreen ?? screen).frame.screenFlipped,
-                                                   createdAt: ProcessInfo.processInfo.systemUptime))
+                                                   frame: anchor.frame, bounds: (anchorScreen ?? screen).frame.screenFlipped))
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
         wait(for: [ready], timeout: 2)
-        return SnappedWindowFitProvider(fallback: fallback, enabled: enabled, session: { session }, resolve: resolve,
-                                        validateNeighbor: validateNeighbor, notifications: notifications)
+        return SnappedWindowFitProvider(enabled: enabled, session: { session }, resolve: resolve,
+                                        notifications: notifications)
     }
 
     private func makeManager(windows: [AccessibilityElement], beforeCooperative: [WindowManagerDelegateProvider] = []) -> TestWindowManager {

@@ -249,6 +249,8 @@ class WindowManager {
         Logger.log("Window is already at its target frame")
         recordAction(windowId: move.windowId, resultingRect: move.currentWindowRect,
                      action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
+        Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: move.result,
+                                                                                    achievedFrame: move.currentWindowRect))
         return true
     }
 
