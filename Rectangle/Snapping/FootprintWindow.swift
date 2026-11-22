@@ -129,7 +129,6 @@ class FootprintWindow: NSWindow {
     private let shadowView = NSView()
     private let fade = PreviewOpacityAnimation()
     private let accessibility: () -> FootprintAccessibility
-    private var accessibilityObserver: NSObjectProtocol?
     private var showing = false
     private var closing = false
     private var destination = CGRect.zero
@@ -197,14 +196,11 @@ class FootprintWindow: NSWindow {
         effectView.onAppearanceChange = { [weak self] in self?.updateAppearance(refreshMaterial: false) }
         root.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
-        accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification, object: nil, queue: .main
-        ) { [weak self] _ in self?.refreshAccessibility() }
+
     }
 
     deinit {
         geometryTimer?.invalidate()
-        if let accessibilityObserver { NSWorkspace.shared.notificationCenter.removeObserver(accessibilityObserver) }
     }
 
     private func updateAppearance(refreshMaterial: Bool = true) {

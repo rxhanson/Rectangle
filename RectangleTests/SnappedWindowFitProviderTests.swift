@@ -86,6 +86,21 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         XCTAssertTrue(session.hasPotentialAnchor)
     }
 
+    func testDeferredPlanningKeepsTheReferenceConsumedByItsOwnCommand() throws {
+        let provider = makeProvider { _, reference in
+            XCTAssertEqual(reference.id, 3)
+            return .unchanged
+        }
+        let waiting = try request(.rightHalf, id: 2)
+        stageVerifiedAnchor()
+        postIntent(waiting)
+        session.record(SnappedWindowFitOpportunity(id: 4, pid: getpid(), launch: 1, action: .leftHalf,
+            frame: CGRect(x: 0, y: 0, width: 600, height: 800), bounds: CGRect(x: 0, y: 0, width: 1200, height: 800)))
+        postIntent(try request(.topHalf, id: 5))
+        XCTAssertNil(provider.delegate(for: waiting))
+        XCTAssertNil(provider.delegate(for: waiting))
+    }
+
     private func makeProvider(resolve: @escaping (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution) -> SnappedWindowFitProvider {
         SnappedWindowFitProvider(enabled: { true }, session: { [session] in session }, resolve: resolve,
                                  notifications: notifications)
@@ -119,7 +134,7 @@ final class SnappedWindowFitProviderTests: XCTestCase {
 
     private func postIntent(_ request: WindowMoveRequest) {
         Notification.Name.windowActionWillExecute.post(center: notifications, object: ExecutionParameters(request.action,
-            source: request.source))
+            source: request.source, identity: request.identity))
     }
 
     private func complete(_ request: WindowMoveRequest, move: WindowManagerDelegate? = nil) {

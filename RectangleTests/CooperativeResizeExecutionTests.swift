@@ -639,6 +639,31 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertNil(history(of: focused))
     }
 
+    func testCooperativeNeighborWaitsForDividerBeforeChangingEitherWindow() {
+        let c = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
+        let b = window(neighborId, CGRect(x: 600, y: 0, width: 600, height: 900))
+        seedHistory(c, action: .leftHalf)
+        seedHistory(b, action: .rightHalf)
+        let fence = WindowWriteFence()
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                        windows: [c, b], writeFence: fence)
+        let release = DispatchSemaphore(value: 0)
+        let divider = fence.claim([.init(element: b, windowID: neighborId)])
+        fence.perform(divider, work: { release.wait(timeout: .now() + 3) }) { result in
+            XCTAssertEqual(result, .success)
+            fence.finish(divider)
+        }
+        let completed = expectation(description: "Cooperative command settled after its neighbor drained")
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: c,
+                                            completion: { completed.fulfill() }))
+        XCTAssertTrue(writes.isEmpty)
+        release.signal()
+        wait(for: [completed], timeout: 5)
+        assertFrame(c, CGRect(x: 0, y: 0, width: 800, height: 900))
+        assertFrame(b, CGRect(x: 800, y: 0, width: 400, height: 900))
+        assertWritten(neighborId, before: focusedId)
+    }
+
     func testPendingRestoreStillRunsAfterAnUnrelatedAcceptedMove() {
         Defaults.cooperativeCornerResize.enabled = false
         let a = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
@@ -668,7 +693,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertNil(history(of: a))
     }
 
-    func testRestoreWithoutTargetSupersedesDrainedExternalWriteBeforeItsCompletion() {
+    func testRestoreWithoutTargetRunsAfterBothMembersPublishTheirHistory() {
         Defaults.cooperativeCornerResize.enabled = false
         let subject = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
         seedHistory(subject, action: .leftHalf)
@@ -682,13 +707,12 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         var restoreCompletions = 0
         fence.perform(external, work: { release.wait(timeout: .now() + 3) }) { outcome in
             XCTAssertEqual(outcome, .success)
-            XCTAssertEqual(restoreCompletions, 1)
-            XCTAssertFalse(external.isCurrent)
-            if external.isCurrent {
-                AppDelegate.windowHistory.lastRectangleActions[self.focusedId] = RectangleAction(
-                    action: .rightHalf, rect: subject.frame)
-                AppDelegate.windowHistory.restoreRects[self.focusedId] = subject.frame
-            }
+            XCTAssertEqual(restoreCompletions, 0)
+            XCTAssertTrue(external.isCurrent)
+            AppDelegate.windowHistory.recordAction(windowId: self.focusedId, resultingRect: subject.frame,
+                                                   action: .specified, subAction: nil)
+            AppDelegate.windowHistory.recordAction(windowId: self.neighborId, resultingRect: subject.frame,
+                                                   action: .specified, subAction: nil)
             fence.finish(external)
             writerFinished.fulfill()
         }
@@ -701,6 +725,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         wait(for: [writerFinished], timeout: 5)
         XCTAssertEqual(restoreCompletions, 1)
         XCTAssertNil(history(of: subject))
+        XCTAssertEqual(AppDelegate.windowHistory.lastRectangleActions[neighborId]?.action, .specified)
         XCTAssertNil(AppDelegate.windowHistory.restoreRects[focusedId])
         XCTAssertEqual(subject.writeCount, 0)
     }
@@ -1107,6 +1132,16 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         private(set) var postProcessCount = 0
         private(set) var lastIncrementCount: Bool?
         private(set) var lastResult: ResultParameters?
+        private var dispatcher: WindowActionDispatcher!
+
+        override func execute(_ parameters: ExecutionParameters) {
+            dispatcher.dispatch(parameters)
+        }
+
+        private func executeResolved(_ parameters: ExecutionParameters) {
+            super.execute(parameters)
+        }
+
         /// Replaces the built-in delegate when set.
         var delegate: ((WindowMoveRequest) -> WindowManagerDelegate?)?
 
@@ -1115,6 +1150,10 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             super.init(screenDetection: screenDetection,
                        delegateProviders: beforeCooperative + [CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
                                                                                windowElements: { windows })], writeFence: writeFence)
+            dispatcher = WindowActionDispatcher(fence: writeFence) { [weak self] parameters in
+                guard let self else { parameters.completion?(); return }
+                self.executeResolved(parameters)
+            }
         }
 
         override func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {

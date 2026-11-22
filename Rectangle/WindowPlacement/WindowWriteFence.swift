@@ -5,18 +5,7 @@ import Cocoa
 final class WindowWriteFence {
     static let shared = WindowWriteFence()
 
-    struct Target {
-        let element: AccessibilityElement?
-        let windowID: CGWindowID?
-
-        fileprivate func overlaps(_ other: Target) -> Bool {
-            if let windowID, let otherID = other.windowID { return windowID == otherID }
-            if let pid = element?.pid, let otherPID = other.element?.pid, pid != otherPID { return false }
-            // Two wrappers in the same app can represent the same window even
-            // when macOS temporarily stops providing a window ID.
-            return true
-        }
-    }
+    typealias Target = WindowWriteTarget
 
     final class Lease {
         private let lock = NSLock()
@@ -81,8 +70,12 @@ final class WindowWriteFence {
         return true
     }
 
+    func hasIssuedWork(for targets: [WindowWriteTarget]) -> Bool {
+        entries.contains { $0.workInFlight && $0.overlaps(targets) }
+    }
+
     private func hasIssuedWork(for plan: PendingPlan) -> Bool {
-        entries.contains { $0.workInFlight && $0.overlaps(plan.targets) }
+        hasIssuedWork(for: plan.targets)
     }
 
     private func resumeDrainedPlans() {
@@ -142,10 +135,10 @@ final class WindowWriteFence {
                 if let index = entries.firstIndex(where: { $0.lease === lease }) {
                     entries[index].workInFlight = false
                 }
-                // A fresh plan must get a chance to supersede the old writer
-                // before its completion can enqueue another AX phase.
-                resumeDrainedPlans()
+                // Publish both achieved frames and their history before a queued
+                // command takes over one member of the pair.
                 completion(result)
+                resumeDrainedPlans()
                 entries.removeAll { !$0.workInFlight && !$0.lease.isCurrent }
                 runReadyEntries()
             }

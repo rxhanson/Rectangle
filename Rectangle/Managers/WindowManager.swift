@@ -74,14 +74,9 @@ class WindowManager {
             parameters.completion?()
             return
         }
-        // Preserve the resolved target while an older AX call drains. Focus may
-        // change before the queued action can read the window's final frame.
         let windowId = parameters.windowId ?? windowElement.getWindowId()
-        let target = WindowWriteFence.Target(element: windowElement, windowID: windowId)
-        if placementCoordinator.deferPlanningIfNeeded(for: [target], discard: parameters.completion, resume: { [self] in
-            execute(parameters, on: windowElement, windowId: windowId, hasWaitedForWrites: true)
-        }) { return }
-        execute(parameters, on: windowElement, windowId: windowId)
+        execute(parameters, on: windowElement, windowId: windowId,
+                hasWaitedForWrites: parameters.preservesUnrelatedActions)
     }
 
     private func execute(_ parameters: ExecutionParameters, on windowElement: AccessibilityElement, windowId: CGWindowID?,
@@ -224,7 +219,7 @@ class WindowManager {
                                                                  screenFrame: visibleFrameOfDestinationScreen,
                                                                  sourceScreens: sourceScreens,
                                                                  destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                                                                 lastRectangleAction: lastRectangleAction))
+                                                                 lastRectangleAction: lastRectangleAction, identity: parameters.identity))
 
         guard delegate?.acceptsPlacement != false else {
             reject(parameters)
@@ -263,8 +258,7 @@ class WindowManager {
     /// Returns true when the window is already where the move would put it, recording that as the action.
     private func finishIfAlreadyAchieved(_ move: PlannedMove, targets: [WindowWriteFence.Target]) -> Bool {
         // The delegate's check records state, so it only runs without a pending destination.
-        guard !placementCoordinator.hasConflictingExternalWork(for: targets),
-              move.pendingDestination == nil,
+        guard move.pendingDestination == nil,
               move.delegate?.isAlreadyAchieved() ?? move.currentNormalizedRect.equalTo(move.calcResult.rect)
         else { return false }
 
@@ -285,38 +279,25 @@ class WindowManager {
             reject(parameters)
             return false
         }
-        var handedOff = false
-        if let restoreRect = windowHistory.restoreRects[windowId] {
-            handedOff = true
-            let requestedAnimation = WindowMoveAnimation.forRestore(to: restoreRect, of: windowElement, source: parameters.source)
-            let target = WindowWriteFence.Target(element: windowElement, windowID: windowId)
-            placementCoordinator.withAccess(to: [target], hasWaitedForWrites: hasWaitedForWrites,
-                            completion: parameters.completion) { [self] access in
-                guard placementCoordinator.isCurrent(access) else {
-                    placementCoordinator.finish(access)
-                    parameters.completion?()
-                    return
-                }
-                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-                let animation = placementCoordinator.availableAnimation(requestedAnimation, for: windowElement, access: access)
-                place(windowElement, animation: animation, access: access, cancellation: {
-                    self.placementCoordinator.finish(access)
-                    parameters.cancellation?()
-                }) { animatedFrame in
-                    defer {
-                        self.placementCoordinator.finish(access)
-                        parameters.completion?()
-                    }
-                    guard self.placementCoordinator.isCurrent(access), animatedFrame == nil else { return }
-                    windowElement.setFrame(restoreRect)
-                }
-            }
-        } else {
-            let target = WindowWriteFence.Target(element: windowElement, windowID: windowId)
+        let target = WindowWriteTarget(element: windowElement, windowID: windowId)
+        guard let restoreRect = windowHistory.restoreRects[windowId] else {
             placementCoordinator.acceptRestoreWithoutTarget(for: target)
             windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            return false
         }
-        return handedOff
+        let access = placementCoordinator.begin(to: [target], hasWaitedForWrites: hasWaitedForWrites)
+        windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        let requested = WindowMoveAnimation.forRestore(to: restoreRect, of: windowElement, source: parameters.source)
+        let animation = placementCoordinator.availableAnimation(requested, for: windowElement, access: access)
+        placementCoordinator.place(windowElement, animation: animation, access: access, cancellation: { [self] in
+            placementCoordinator.finish(access)
+            parameters.cancellation?()
+        }) { [self] animatedFrame in
+            defer { placementCoordinator.finish(access); parameters.completion?() }
+            guard placementCoordinator.isCurrent(access), animatedFrame == nil else { return }
+            windowElement.setFrame(restoreRect)
+        }
+        return true
     }
 
     // MARK: - Placement
@@ -340,28 +321,19 @@ class WindowManager {
                                                     isFixedSize: move.isFixedSize,
                                                     isMovedAcrossDisplays: move.isMovedAcrossDisplays,
                                                     source: move.parameters.source)
-        placementCoordinator.withAccess(to: targets, hasWaitedForWrites: hasWaitedForWrites,
-                                        completion: move.parameters.completion) { [self] access in
-            let animation = placementCoordinator.availableAnimation(requestedAnimation, for: move.windowElement, access: access)
-            let placement = ActivePlacement(move: move, access: access, animated: animation != nil)
-            guard placementCoordinator.isCurrent(access) else { return end(placement) }
-            if animation != nil {
-                recordAction(windowId: move.windowId, resultingRect: move.calcResult.rect.screenFlipped,
-                             action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
-            }
-            place(move.windowElement, animation: animation, access: access, cancellation: { [self] in
-                placementCoordinator.finish(access)
-                move.parameters.cancellation?()
-            }) { frame in
-                self.completePlacement(placement, animatedFrame: frame)
-            }
+        let access = placementCoordinator.begin(to: targets, hasWaitedForWrites: hasWaitedForWrites)
+        let animation = placementCoordinator.availableAnimation(requestedAnimation, for: move.windowElement, access: access)
+        let placement = ActivePlacement(move: move, access: access, animated: animation != nil)
+        if animation != nil {
+            recordAction(windowId: move.windowId, resultingRect: move.calcResult.rect.screenFlipped,
+                         action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
         }
-    }
-
-    private func place(_ windowElement: AccessibilityElement, animation: WindowMoveAnimation?,
-                       access: WindowPlacementCoordinator.Access, cancellation: (() -> Void)?, completion: @escaping (CGRect?) -> Void) {
-        placementCoordinator.place(windowElement, animation: animation, access: access,
-                                   cancellation: cancellation, completion: completion)
+        placementCoordinator.place(move.windowElement, animation: animation, access: access, cancellation: { [self] in
+            placementCoordinator.finish(access)
+            move.parameters.cancellation?()
+        }) { [self] frame in
+            completePlacement(placement, animatedFrame: frame)
+        }
     }
 
     /// Places the window, unless an animation already did, then settles it. Every path ends in one completion.
@@ -434,8 +406,7 @@ class WindowManager {
         postProcess(result: move.result, resultingRect: resultingRect, incrementCount: !placement.animated)
         // An unchanged frame away from the target can be a refused AX write.
         // Complete a refused write without publishing a successful placement.
-        if placementCoordinator.isCurrent(placement.access),
-           resultingRect != move.currentWindowRect
+        if resultingRect != move.currentWindowRect
             || WindowGeometry.near(resultingRect, move.calcResult.rect.screenFlipped) {
             publishCompletion(result: move.result, achievedFrame: resultingRect)
         }
@@ -552,6 +523,7 @@ struct RectangleAction {
 }
 
 struct ExecutionParameters {
+    let identity: WindowActionIdentity
     let action: WindowAction
     let updateRestoreRect: Bool
     let screen: NSScreen?
@@ -566,8 +538,11 @@ struct ExecutionParameters {
     let cancellation: (() -> Void)?
     /// A display-cycle repeat calculates a fresh action on the chosen display.
     let isDisplayCycle: Bool
+    /// A command resumed after another writer must leave unrelated actions running.
+    let preservesUnrelatedActions: Bool
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil, isDisplayCycle: Bool = false) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil, isDisplayCycle: Bool = false, identity: WindowActionIdentity = WindowActionIdentity(), preservesUnrelatedActions: Bool = false) {
+        self.identity = identity
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
@@ -578,6 +553,7 @@ struct ExecutionParameters {
         self.completion = completion
         self.cancellation = cancellation
         self.isDisplayCycle = isDisplayCycle
+        self.preservesUnrelatedActions = preservesUnrelatedActions
     }
 }
 

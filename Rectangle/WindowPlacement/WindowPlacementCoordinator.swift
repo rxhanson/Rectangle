@@ -53,25 +53,19 @@ final class WindowPlacementCoordinator {
         access.lease.isCurrent && (access.followsExternalWriter || access.ordinaryExecutionID == executionID)
     }
 
-    func withAccess(to targets: [WindowWriteFence.Target], hasWaitedForWrites: Bool,
-                    completion: (() -> Void)?, perform: @escaping (Access) -> Void) {
+    /// Planning has already waited for every issued conflicting write.
+    func begin(to targets: [WindowWriteTarget], hasWaitedForWrites: Bool) -> Access {
+        precondition(!fence.hasIssuedWork(for: targets))
         let ordinaryID: Int?
-        // A resumed action keeps its original window scope. It cannot supersede
-        // an action on another window that started while its write was draining.
+        // A resumed command keeps its window scope while later commands on
+        // other windows continue using the shared animator.
         if hasWaitedForWrites || fence.hasConflictingExternalWork(for: targets) {
             ordinaryID = nil
         } else {
             executionID &+= 1
             ordinaryID = executionID
         }
-        var waiting = true
-        let lease = fence.claim(targets, isExternal: false) {
-            if waiting { completion?() }
-        }
-        fence.whenReady(lease) {
-            waiting = false
-            perform(Access(lease: lease, ordinaryExecutionID: ordinaryID))
-        }
+        return Access(lease: fence.claim(targets, isExternal: false), ordinaryExecutionID: ordinaryID)
     }
 
     func finish(_ access: Access) {

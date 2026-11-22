@@ -8,7 +8,14 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     private let resolve: (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution
     private let notifications: NotificationCenter
     private var observers: [NSObjectProtocol] = []
-    private var stagedAnchor: (action: WindowAction, source: ExecutionSource, anchor: SnappedWindowFitOpportunity?)?
+    private final class Reference {
+        let anchor: SnappedWindowFitOpportunity?
+        init(_ anchor: SnappedWindowFitOpportunity?) { self.anchor = anchor }
+    }
+    // A deferred command keeps the reference it consumed at dispatch. Weak keys
+    // release that state when the command and its planning attempts are gone.
+    private let references = NSMapTable<WindowActionIdentity, Reference>(keyOptions: .weakMemory,
+                                                                       valueOptions: .strongMemory)
     private var recordsCompletions = true
     private var fittedWindow: AccessibilityElement?
 
@@ -45,24 +52,19 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     deinit { observers.forEach(notifications.removeObserver) }
 
     private func stage(_ parameters: ExecutionParameters?) {
-        stagedAnchor = nil
         recordsCompletions = parameters != nil && parameters?.action != .restore
         guard enabled() else { return }
-        guard let parameters else { session().clear(); return }
+        guard let parameters else { references.removeAllObjects(); session().clear(); return }
         let anchor = session().take()
-        if parameters.action != .restore {
-            stagedAnchor = (parameters.action, parameters.source, anchor)
-        }
+        references.setObject(Reference(parameters.action == .restore ? nil : anchor), forKey: parameters.identity)
     }
 
     func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
-        let staged = stagedAnchor
-        stagedAnchor = nil
         fittedWindow = nil
         guard enabled() else { return nil }
         let anchor: SnappedWindowFitOpportunity?
-        if let staged, staged.action == request.action, staged.source == request.source {
-            anchor = staged.anchor
+        if let reference = references.object(forKey: request.identity) {
+            anchor = reference.anchor
         } else {
             anchor = session().take()
         }

@@ -16,6 +16,9 @@ protocol WindowTargetAdjuster {
 
 // MARK: - Move delegates
 
+/// Shared by copies of a command, including deferred planning attempts.
+final class WindowActionIdentity: NSObject {}
+
 /// What a window move is about to do, for a delegate to plan around.
 struct WindowMoveRequest {
     let calcResult: WindowCalculationResult
@@ -32,6 +35,7 @@ struct WindowMoveRequest {
     let sourceScreens: UsableScreens
     let destinationScreenIsCurrentScreen: Bool
     let lastRectangleAction: RectangleAction?
+    var identity = WindowActionIdentity()
 }
 
 /// Customizes a single move once its target is known. It can decline the move, revise
@@ -56,7 +60,7 @@ protocol WindowManagerDelegate {
     func moveDidAccept()
 
     /// External windows this delegate may touch during placement or source cleanup.
-    func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target]
+    func additionalWriteTargets(in candidates: [WindowWriteTarget]) -> [WindowWriteTarget]
 
     /// Places the window, or returns nil to have the manager apply the target.
     /// Not used for animated placements or cross-display retries.
@@ -71,7 +75,7 @@ extension WindowManagerDelegate {
     var acceptsPlacement: Bool { true }
     func isAlreadyAchieved() -> Bool? { nil }
     func moveDidAccept() {}
-    func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target] { [] }
+    func additionalWriteTargets(in candidates: [WindowWriteTarget]) -> [WindowWriteTarget] { [] }
     func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? { nil }
     func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) {}
 }

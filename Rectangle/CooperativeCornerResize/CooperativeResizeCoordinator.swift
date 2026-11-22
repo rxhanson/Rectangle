@@ -1624,7 +1624,7 @@ extension CooperativeMove: WindowManagerDelegate {
                                                      screenFrame: request.screenFrame)
     }
 
-    func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target] {
+    func additionalWriteTargets(in candidates: [WindowWriteTarget]) -> [WindowWriteTarget] {
         guard !candidates.isEmpty else { return [] }
         let placementIDs = Set(placement?.plan.candidates.map(\.id) ?? [])
         let sourceFrame = request.sourceScreens.currentScreen.adjustedVisibleFrame(

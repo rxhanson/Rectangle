@@ -30,7 +30,7 @@ struct AppSettingsView: View {
     @State private var showsOverlayHelp = false
 
     private var overlayHelp: String {
-        String(localized: "Used by snap previews and divider handles.")
+        String(localized: "Used by snap previews, divider handles, stack lists, and window size warnings.")
     }
 
     var body: some View {

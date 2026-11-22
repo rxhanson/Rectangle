@@ -122,7 +122,7 @@ final class WindowWriteFenceTests: XCTestCase {
         let drained = expectation(description: "Worker and pending plans completed")
         let old = fence.claim([first])
         fence.perform(old, work: { release.wait(timeout: .now() + 3) }) { _ in
-            XCTAssertFalse(old.isCurrent)
+            XCTAssertTrue(old.isCurrent)
             drained.fulfill()
         }
         var order: [String] = []

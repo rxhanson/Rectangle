@@ -48,11 +48,10 @@ final class WindowDividerOverlay: NSPanel {
         guide.setFrozenImage(image)
     }
 
-    func fadeOut(startedAt: TimeInterval = ProcessInfo.processInfo.systemUptime, completion: @escaping () -> Void) {
+    func fadeOut(completion: @escaping () -> Void) {
         cancelFade()
         guard let layer = guide.layer else { dismiss(); completion(); return }
-        let remaining = max(0, Self.fadeDuration - (ProcessInfo.processInfo.systemUptime - startedAt))
-        fade.set(layer, to: 0, duration: WindowAnimator.enabled ? remaining : 0,
+        fade.set(layer, to: 0, duration: WindowAnimator.enabled ? Self.fadeDuration : 0,
                  timing: CAMediaTimingFunction(name: .linear)) { [weak self] in
             self?.dismiss()
             completion()

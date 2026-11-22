@@ -34,6 +34,7 @@ typealias ShortcutRebindScheduler = (@escaping () -> Void) -> Void
 class ShortcutManager {
 
     let windowManager: WindowManager
+    private let dispatchWindowAction: (ExecutionParameters) -> Void
     private let screenDetection: ScreenDetection
     private let screenSelector: ScreenSelector
     private let bindingStore: ShortcutBindingStore
@@ -57,6 +58,7 @@ class ShortcutManager {
 
     init(
         windowManager: WindowManager,
+        dispatchWindowAction: ((ExecutionParameters) -> Void)? = nil,
         screenDetection: ScreenDetection = ScreenDetection(),
         bindingStore: ShortcutBindingStore = MASShortcutBindingStore(),
         mouseButtonBindingStore: MouseButtonBindingStore = MouseButtonShortcutMonitor(),
@@ -82,6 +84,7 @@ class ShortcutManager {
         }
     ) {
         self.windowManager = windowManager
+        self.dispatchWindowAction = dispatchWindowAction ?? windowManager.execute
         self.screenDetection = screenDetection
         self.screenSelector = ScreenSelector(screenDetection: screenDetection)
         self.bindingStore = bindingStore
@@ -278,13 +281,13 @@ class ShortcutManager {
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen,
                                                      windowElement: windowElement, windowId: windowId, source: parameters.source,
                                                      preservesFocus: parameters.preservesFocus, completion: parameters.completion,
-                                                     cancellation: parameters.cancellation, isDisplayCycle: true)
+                                                     cancellation: parameters.cancellation, isDisplayCycle: true, identity: parameters.identity)
                 }
             }
         }
 
         completionHandledByWindowManager = true
-        windowManager.execute(parameters)
+        dispatchWindowAction(parameters)
     }
 
     /// Mouse buttons work on the focused window, like keys, unless they've
