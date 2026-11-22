@@ -26,6 +26,14 @@ final class BehaviorSettingsViewModel {
             Defaults.cooperativeCornerResize.enabled = cooperativeCornerResize
         }
     }
+
+    var fitBesideSnappedWindows: Bool {
+        didSet {
+            guard Defaults.fitBesideSnappedWindows.enabled != fitBesideSnappedWindows else { return }
+            Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
+            Notification.Name.fitBesideSnappedWindowsChanged.post()
+        }
+    }
     
     var gapSize: Double
     var skipGapTopEdge: Bool {
@@ -189,6 +197,7 @@ final class BehaviorSettingsViewModel {
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionMode = Defaults.cornerCycleExpansionAxis.value
         self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
@@ -251,6 +260,7 @@ final class BehaviorSettingsViewModel {
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionMode = Defaults.cornerCycleExpansionAxis.value
         self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
         
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled

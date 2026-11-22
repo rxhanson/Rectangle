@@ -29,6 +29,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             (Defaults.cooperativeCornerResize, CodableDefault(bool: true)),
             (Defaults.cornerCycleExpansionAxis, CodableDefault(int: CornerCycleExpansionMode.vertical.rawValue)),
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
+            (Defaults.fitBesideSnappedWindows, CodableDefault(bool: true)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
             (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
@@ -482,6 +483,138 @@ final class CooperativeResizeExecutionTests: XCTestCase {
 
     // MARK: - Completion
 
+    func testCrossDisplaySnapRecordsTheAchievedFrameAfterRetries() {
+        let origin = CGRect(x: 100, y: 100, width: 920, height: 400)
+        let anchor = window(neighborId, origin) { frame in
+            var accepted = frame
+            accepted.size.width = max(frame.width, 720)
+            return accepted
+        }
+        anchor.reportedPID = getpid()
+        let incoming = window(focusedId, origin)
+        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in true })
+        let target = CGRect(x: 1920, y: 0, width: 480, height: 900)
+        let fit = SnappedWindowFitProvider(session: { session }, resolve: { request, opportunity in
+            XCTAssertEqual(request.action, .rightHalf)
+            XCTAssertEqual(opportunity.id, self.neighborId)
+            XCTAssertEqual(opportunity.frame, anchor.frame)
+            XCTAssertEqual(opportunity.frame.width, 720)
+            return .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
+        }, validateNeighbor: { _ in true })
+        let manager = makeManager(windows: [anchor, incoming], beforeCooperative: [fit])
+        let settled = expectation(description: "Cross-display retries have finished")
+
+        manager.execute(ExecutionParameters(.leftHalf, screen: secondScreen, windowElement: anchor,
+                                            completion: { settled.fulfill() }))
+
+        XCTAssertFalse(session.hasPotentialAnchor)
+        wait(for: [settled], timeout: 2)
+        assertFrame(anchor, CGRect(x: 1200, y: 0, width: 720, height: 900))
+        let verified = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        wait(for: [verified], timeout: 2)
+
+        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming))
+
+        assertFrame(incoming, target)
+        XCTAssertFalse(session.hasPotentialAnchor)
+    }
+
+    func testFitClaimFillsRemaining480WithoutChangingTheAnchorOldGroupOrRatio() {
+        let oldGroup = CGRect(x: 0, y: 0, width: 500, height: 900)
+        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900))
+        let incoming = window(focusedId, oldGroup)
+        let oldNeighbor = window(stackedId, oldGroup)
+        seedHistory(incoming, action: .leftHalf)
+        ActiveSideSplitRatios.shared.recordSideAction(.leftHalf, targetFrame: oldGroup, screenFrame: screen.frame)
+        let ratio = ActiveSideSplitRatios.shared.horizontalRatio(for: screen.frame)
+        let target = CGRect(x: 720, y: 0, width: 480, height: 900)
+        let fit = fitProvider(anchor: anchor) { request, opportunity in
+            XCTAssertEqual(request.action, .rightHalf)
+            return .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
+        }
+        let manager = makeManager(windows: [incoming, anchor, oldNeighbor], beforeCooperative: [fit])
+        let completed = expectation(description: "Fit placement completed")
+
+        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, completion: { completed.fulfill() }))
+        wait(for: [completed], timeout: 2)
+
+        assertFrame(incoming, target)
+        assertUntouched(anchor)
+        assertUntouched(oldNeighbor)
+        XCTAssertEqual(ActiveSideSplitRatios.shared.horizontalRatio(for: screen.frame), ratio)
+        assertHistory(incoming, action: .rightHalf, count: 1)
+        XCTAssertEqual(history(of: incoming)?.rect, incoming.frame)
+    }
+
+    func testAlreadyAchievedFitClaimsWithoutWritingOrInvokingCooperativeResize() {
+        let target = CGRect(x: 720, y: 0, width: 480, height: 900)
+        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900))
+        let incoming = window(focusedId, target)
+        let fit = fitProvider(anchor: anchor) { _, opportunity in
+            .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
+        }
+        let manager = makeManager(windows: [incoming, anchor], beforeCooperative: [fit])
+        var completions = 0
+
+        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, completion: { completions += 1 }))
+
+        XCTAssertEqual(completions, 1)
+        XCTAssertTrue(writes.isEmpty)
+        XCTAssertEqual(manager.postProcessCount, 0)
+        assertHistory(incoming, action: .rightHalf, count: 1)
+    }
+
+    func testFitPassLetsCooperativeResizeCycleBothWindows() {
+        let incoming = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
+        let neighbor = window(neighborId, CGRect(x: 600, y: 0, width: 600, height: 900))
+        seedHistory(incoming, action: .leftHalf)
+        seedHistory(neighbor, action: .rightHalf)
+        let cooperative = CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
+                                                            windowElements: { [incoming, neighbor] })
+        let fit = fitProvider(anchor: neighbor, fallback: cooperative) { _, _ in .unchanged }
+        let manager = makeManager(windows: [incoming, neighbor], beforeCooperative: [fit])
+
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: incoming))
+
+        assertFrame(incoming, CGRect(x: 0, y: 0, width: 800, height: 900))
+        assertFrame(neighbor, CGRect(x: 800, y: 0, width: 400, height: 900))
+        assertWritten(neighborId, before: focusedId)
+        assertHistory(incoming, action: .leftHalf, count: 2)
+    }
+
+    func testFitRejectionPreservesStaleHistoryAndDoesNotSupersedePriorCrossDisplayRetry() {
+        let retrying = clampingWindow()
+        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 995, height: 900))
+        let incoming = window(stackedId, CGRect(x: 100, y: 100, width: 400, height: 400))
+        let priorFrame = CGRect(x: 50, y: 50, width: 500, height: 350)
+        let priorRestore = CGRect(x: 20, y: 60, width: 500, height: 300)
+        AppDelegate.windowHistory.lastRectangleActions[stackedId] = RectangleAction(action: .centerHalf,
+                                                                                    rect: priorFrame, count: 2)
+        AppDelegate.windowHistory.restoreRects[stackedId] = priorRestore
+        var fitEnabled = false
+        let fit = fitProvider(anchor: anchor, enabled: { fitEnabled }) { _, _ in .noRoom }
+        let manager = makeManager(windows: [incoming, anchor, retrying], beforeCooperative: [fit])
+        let retryFinished = expectation(description: "Earlier cross-display retry still finished")
+        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: retrying,
+                                            completion: { retryFinished.fulfill() }))
+        XCTAssertEqual(manager.postProcessCount, 0)
+        fitEnabled = true
+        var completions = 0
+
+        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, completion: { completions += 1 }))
+
+        XCTAssertEqual(completions, 1)
+        assertUntouched(incoming)
+        assertUntouched(anchor)
+        assertHistory(incoming, action: .centerHalf, count: 2)
+        XCTAssertEqual(history(of: incoming)?.rect, priorFrame)
+        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[stackedId], priorRestore)
+        XCTAssertEqual(manager.postProcessCount, 0)
+        wait(for: [retryFinished], timeout: 1)
+        XCTAssertEqual(retrying.frame.size, CGSize(width: 600, height: 900))
+        XCTAssertEqual(manager.postProcessCount, 1)
+    }
+
     func testCompletionFiresOnceWhenWindowIsRejected() {
         let sheet = window(focusedId, CGRect(x: 0, y: 0, width: 400, height: 400))
         sheet.sheet = true
@@ -615,8 +748,24 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         return window
     }
 
-    private func makeManager(windows: [AccessibilityElement]) -> TestWindowManager {
-        TestWindowManager(screenDetection: TestScreenDetection(source: screen), windows: windows)
+    private func fitProvider(anchor: FakeWindow, on anchorScreen: NSScreen? = nil, enabled: @escaping () -> Bool = { true },
+                             notifications: NotificationCenter = NotificationCenter(),
+                             validateNeighbor: @escaping (SnappedWindowFit) -> Bool = { _ in true },
+                             fallback: WindowManagerDelegateProvider? = nil,
+                             resolve: @escaping (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution) -> SnappedWindowFitProvider {
+        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in true })
+        session.record(SnappedWindowFitOpportunity(id: neighborId, pid: 500, launch: 1, action: .leftHalf,
+                                                   frame: anchor.frame, bounds: (anchorScreen ?? screen).frame.screenFlipped,
+                                                   createdAt: ProcessInfo.processInfo.systemUptime))
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        wait(for: [ready], timeout: 2)
+        return SnappedWindowFitProvider(fallback: fallback, enabled: enabled, session: { session }, resolve: resolve,
+                                        validateNeighbor: validateNeighbor, notifications: notifications)
+    }
+
+    private func makeManager(windows: [AccessibilityElement], beforeCooperative: [WindowManagerDelegateProvider] = []) -> TestWindowManager {
+        TestWindowManager(screenDetection: TestScreenDetection(source: screen), windows: windows,
+                          beforeCooperative: beforeCooperative)
     }
 
     private func execute(_ action: WindowAction, on focused: FakeWindow, among windows: [AccessibilityElement],
@@ -669,6 +818,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         private(set) var writeCount = 0
         private(set) var requestedFrames: [CGRect] = []
         var reportedMinimumSize: CGSize?
+        var reportedPID: pid_t?
         var sheet = false
         var onStopClamping: (() -> Void)?
 
@@ -684,6 +834,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         func stopClamping() { onStopClamping?() }
 
         override var frame: CGRect { currentFrame }
+        override var pid: pid_t? { reportedPID ?? super.pid }
         private(set) var minimumSizeReads = 0
         override var minimumSize: CGSize? {
             minimumSizeReads += 1
@@ -768,9 +919,9 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         /// Replaces the built-in delegate when set.
         var delegate: ((WindowMoveRequest) -> WindowManagerDelegate?)?
 
-        init(screenDetection: ScreenDetection, windows: [AccessibilityElement]) {
+        init(screenDetection: ScreenDetection, windows: [AccessibilityElement], beforeCooperative: [WindowManagerDelegateProvider] = []) {
             super.init(screenDetection: screenDetection,
-                       delegateProviders: [CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
+                       delegateProviders: beforeCooperative + [CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
                                                                                windowElements: { windows })])
         }
 
