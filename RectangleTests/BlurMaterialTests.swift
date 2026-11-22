@@ -122,7 +122,7 @@ final class LiquidGlassBlurTests: XCTestCase {
             notifications.post(name: .blurStyleChanged, object: nil)
             XCTAssertEqual(surface.usesLiquidGlass, enabled)
             XCTAssertTrue(button.superview === surface.content)
-                if enabled {
+            if enabled {
                 let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
                 XCTAssertTrue(glass.contentView === surface.content)
                 XCTAssertNil(glass.tintColor)
