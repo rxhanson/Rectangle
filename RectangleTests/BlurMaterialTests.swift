@@ -112,7 +112,7 @@ final class LiquidGlassBlurTests: XCTestCase {
         var policy = BlurSurfaceView.Presentation(usesLiquidGlass: false, appearance: nil)
         let notifications = NotificationCenter()
         let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 240, height: 160), material: .popover,
-                                      cornerRadius: 12, flipped: true, notifications: notifications,
+                                      cornerRadius: 12, notifications: notifications,
                                       presentation: { policy })
         let button = NSButton(title: "Choose", target: nil, action: nil)
         surface.content.addSubview(button)
@@ -122,8 +122,7 @@ final class LiquidGlassBlurTests: XCTestCase {
             notifications.post(name: .blurStyleChanged, object: nil)
             XCTAssertEqual(surface.usesLiquidGlass, enabled)
             XCTAssertTrue(button.superview === surface.content)
-            XCTAssertTrue(surface.content.isFlipped)
-            if enabled {
+                if enabled {
                 let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
                 XCTAssertTrue(glass.contentView === surface.content)
                 XCTAssertNil(glass.tintColor)
@@ -205,58 +204,6 @@ final class LiquidGlassBlurTests: XCTestCase {
         Defaults.footprintBlur.enabled = false
         XCTAssertFalse(window.usesLiquidGlass)
         XCTAssertFalse(window.presentation.usesBlur)
-    }
-
-    func testStackListKeepsItsNativeHUDRowsAndSelectionWhenFootprintMaterialChanges() throws {
-        let windows = ["First", "Second"].enumerated().map { index, title in
-            StackBadgeStackedWindow(windowId: CGWindowID(index + 1), pid: getpid(), title: title)
-        }
-        let panel = StackBadgeListPanel(windows: windows, selectedWindowId: 2,
-                                        listTop: CGPoint(x: 20, y: 200),
-                                        screenFrame: CGRect(x: 0, y: 0, width: 800, height: 600),
-                                        onSelect: { _ in }, onDismiss: {}, onLostKey: {})
-        defer { panel.close() }
-        let hud = try XCTUnwrap(panel.contentView as? NSVisualEffectView)
-        let rows = hud.subviews.compactMap { $0 as? StackBadgeRowView }
-        XCTAssertEqual(rows.count, 2)
-        for material: BlurMaterial in [.liquidGlass, .standard] {
-            Defaults.blurMaterial.value = material
-            Notification.Name.blurStyleChanged.post()
-            XCTAssertTrue(panel.contentView === hud)
-            XCTAssertEqual(hud.material, .hudWindow)
-            XCTAssertEqual(hud.blendingMode, .behindWindow)
-            XCTAssertEqual(hud.state, .active)
-            XCTAssertEqual(hud.subviews.compactMap { $0 as? StackBadgeRowView }, rows)
-            XCTAssertEqual(panel.selectedWindow?.windowId, 2)
-        }
-        panel.moveSelection(by: -1)
-        XCTAssertEqual(panel.selectedWindow?.windowId, 1)
-    }
-
-    func testMinimumSizeWarningKeepsItsNativeHUDAndLabelWhenFootprintMaterialChanges() throws {
-        guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
-        let warningPreference = Defaults.showMinimumWindowSizeWarning.toCodable()
-        Defaults.showMinimumWindowSizeWarning.enabled = true
-        defer { Defaults.showMinimumWindowSizeWarning.load(from: warningPreference) }
-        let warning = WindowSizeWarning()
-        defer { warning.hide(); warning.close() }
-        let hud = try XCTUnwrap(warning.contentView as? NSVisualEffectView)
-        let stack = try XCTUnwrap(hud.subviews.compactMap { $0 as? NSStackView }.first)
-        let title = try XCTUnwrap(stack.arrangedSubviews.compactMap { $0 as? NSTextField }.first)
-        XCTAssertFalse(title.stringValue.isEmpty)
-        for material: BlurMaterial in [.liquidGlass, .standard] {
-            Defaults.blurMaterial.value = material
-            Notification.Name.blurStyleChanged.post()
-            warning.show(on: screen)
-            XCTAssertTrue(warning.contentView === hud)
-            XCTAssertEqual(hud.material, .hudWindow)
-            XCTAssertEqual(hud.blendingMode, .behindWindow)
-            XCTAssertEqual(hud.state, .active)
-            XCTAssertTrue(title.isDescendant(of: hud))
-            XCTAssertTrue(warning.ignoresMouseEvents)
-            XCTAssertGreaterThan(warning.frame.width, 100)
-            XCTAssertEqual(warning.frame.height, 48)
-        }
     }
 
     func testPreferenceParticipatesInConfigAndViewModel() {

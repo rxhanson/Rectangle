@@ -8,7 +8,7 @@ final class BlurSurfaceView: NSView {
         var appearance: NSAppearance?
     }
 
-    let content = ContentView()
+    let content = NSView()
     private let legacy = NSVisualEffectView()
     private var glass: NSView?
     private var legacyMaskRadius: CGFloat?
@@ -19,20 +19,13 @@ final class BlurSurfaceView: NSView {
     private(set) var usesLiquidGlass = false
     var onStyleChange: (() -> Void)?
     var onAppearanceChange: (() -> Void)?
-    var blendingMode: NSVisualEffectView.BlendingMode {
-        get { legacy.blendingMode }
-        set { legacy.blendingMode = newValue }
-    }
-    override var isFlipped: Bool { content.isFlipped }
-
     init(frame: CGRect = .zero, material: NSVisualEffectView.Material, cornerRadius: CGFloat,
-         flipped: Bool = false, notifications: NotificationCenter = .default,
+         notifications: NotificationCenter = .default,
          presentation: @escaping () -> Presentation) {
         self.notifications = notifications
         self.presentation = presentation
         radius = cornerRadius
         super.init(frame: frame)
-        content.contentFlipped = flipped
         content.autoresizingMask = [.width, .height]
         legacy.material = material
         legacy.state = .active
@@ -137,8 +130,4 @@ final class BlurSurfaceView: NSView {
         else { layoutMaterial() }
     }
 
-    final class ContentView: NSView {
-        var contentFlipped = false
-        override var isFlipped: Bool { contentFlipped }
-    }
 }
