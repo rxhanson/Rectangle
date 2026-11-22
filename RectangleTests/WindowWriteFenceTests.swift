@@ -254,12 +254,15 @@ final class WindowWriteFenceTests: XCTestCase {
             WindowInfo(id: id, level: level, frame: frame, pid: pid, processName: nil)
         }
         let resolved = try XCTUnwrap(WindowActionDispatcher.reservedTarget(frontPID: 123,
-            windows: [info(701, pid: 456), info(702, level: 3), info(501)], reservations: [target]))
+            windows: [info(701, pid: 456), info(501)], reservations: [target]))
         XCTAssertTrue(resolved.element === window)
         XCTAssertEqual(resolved.windowID, 501)
         XCTAssertNil(WindowActionDispatcher.reservedTarget(frontPID: 123,
             windows: [info(502), info(501)], reservations: [target]),
             "A different front window or modal must use normal focus resolution")
+        XCTAssertNil(WindowActionDispatcher.reservedTarget(frontPID: 123,
+            windows: [info(702, level: 3), info(501)], reservations: [target]),
+            "An app's floating window must use normal focus resolution")
         XCTAssertNil(WindowActionDispatcher.reservedTarget(frontPID: 456,
             windows: [info(501, pid: 456)], reservations: [target]),
             "A reservation in another process cannot resolve the command")

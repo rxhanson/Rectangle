@@ -43,10 +43,11 @@ final class WindowActionDispatcher {
         return WindowWriteTarget(element: window, windowID: parameters.windowId ?? window?.getWindowId())
     }
 
-    /// Reuse the known AX element only when the front app's foremost normal window
+    /// Reuse the known AX element only when the front app's foremost window
     /// is reserved. Asking that busy app for its focused window would block main.
     static func reservedTarget(frontPID: pid_t, windows: [WindowInfo], reservations: [WindowWriteTarget]) -> WindowWriteTarget? {
-        guard let front = windows.first(where: { $0.pid == frontPID && $0.level == 0 && $0.isOnScreen && $0.alpha > 0 }) else { return nil }
+        guard let front = windows.first(where: { $0.pid == frontPID && $0.isOnScreen && $0.alpha > 0 }),
+              front.level == 0 else { return nil }
         return reservations.first { $0.windowID == front.id && $0.element?.pid == frontPID }
     }
 
