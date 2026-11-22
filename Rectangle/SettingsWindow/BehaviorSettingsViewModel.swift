@@ -26,7 +26,45 @@ final class BehaviorSettingsViewModel {
             Defaults.cooperativeCornerResize.enabled = cooperativeCornerResize
         }
     }
+
+    var fitBesideSnappedWindows: Bool {
+        didSet {
+            guard Defaults.fitBesideSnappedWindows.enabled != fitBesideSnappedWindows else { return }
+            Defaults.fitBesideSnappedWindows.enabled = fitBesideSnappedWindows
+            Notification.Name.fitBesideSnappedWindowsChanged.post()
+        }
+    }
     
+    private var reloadingDefaults = false
+
+    var windowDivider: Bool {
+        didSet {
+            guard !reloadingDefaults, oldValue != windowDivider else { return }
+            Defaults.windowDivider.enabled = windowDivider
+            WindowDividerManager.shared.refreshMonitoring()
+        }
+    }
+    var windowDividerEnhanced: Bool {
+        didSet {
+            guard !reloadingDefaults, oldValue != windowDividerEnhanced else { return }
+            Defaults.windowDividerEnhanced.enabled = windowDividerEnhanced
+            WindowDividerManager.shared.interrupt(animated: false)
+        }
+    }
+
+    func setDividerEnhancedFromSettings(_ enabled: Bool) {
+        windowDividerEnhanced = enabled
+        if enabled {
+            WindowCapturePermission.guideIfNeeded(explanation: WindowDividerSnapshot.captureExplanation, onDecline: { [weak self] in
+                if let self {
+                    self.windowDividerEnhanced = false
+                } else {
+                    Defaults.windowDividerEnhanced.enabled = false
+                }
+            })
+        }
+    }
+
     var gapSize: Double
     var skipGapTopEdge: Bool {
         didSet {
@@ -189,6 +227,9 @@ final class BehaviorSettingsViewModel {
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionMode = Defaults.cornerCycleExpansionAxis.value
         self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
+        self.windowDivider = Defaults.windowDivider.enabled
+        self.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
         
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled
@@ -246,11 +287,16 @@ final class BehaviorSettingsViewModel {
     }
     
     func reloadFromDefaults() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         self.subsequentExecutionMode = Defaults.subsequentExecutionMode.value
         let isCycleChanged = Defaults.cycleSizesIsChanged.enabled
         self.selectedCycleSizes = isCycleChanged ? Defaults.selectedCycleSizes.value : CycleSize.defaultSizes
         self.cornerCycleExpansionMode = Defaults.cornerCycleExpansionAxis.value
         self.cooperativeCornerResize = Defaults.cooperativeCornerResize.enabled
+        self.fitBesideSnappedWindows = Defaults.fitBesideSnappedWindows.enabled
+        self.windowDivider = Defaults.windowDivider.enabled
+        self.windowDividerEnhanced = Defaults.windowDividerEnhanced.enabled
         
         self.gapSize = Double(Defaults.gapSize.value)
         self.skipGapTopEdge = Defaults.skipGapTopEdge.enabled

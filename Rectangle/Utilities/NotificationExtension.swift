@@ -3,9 +3,12 @@
 import Cocoa
 
 extension Notification.Name {
+    static let blurStyleChanged = Notification.Name("blurStyleChanged")
+    static let blurAppearanceChanged = Notification.Name("blurAppearanceChanged")
     static let windowActionWillExecute = Notification.Name("windowActionWillExecute")
   
     static let configImported = Notification.Name("configImported")
+    static let fitBesideSnappedWindowsChanged = Notification.Name("fitBesideSnappedWindowsChanged")
     static let windowAnimationPreferencesChanged = Notification.Name("windowAnimationPreferencesChanged")
     static let windowActionCompleted = Notification.Name("windowActionCompleted")
     static let windowSnapping = Notification.Name("windowSnapping")
@@ -24,6 +27,7 @@ extension Notification.Name {
     static let shortcutRecording = Notification.Name("shortcutRecording")
     static let stackBadgeChanged = Notification.Name("stackBadgeChanged")
     static let snapAreaSettingsNeedsResize = Notification.Name("snapAreaSettingsNeedsResize")
+    static let appSettingsNeedsResize = Notification.Name("appSettingsNeedsResize")
 
     func post(
         center: NotificationCenter = NotificationCenter.default,

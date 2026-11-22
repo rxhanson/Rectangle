@@ -13,7 +13,10 @@ class Defaults {
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionMode>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
+    static let windowDivider = BoolDefault(key: "windowDivider")
+    static let windowDividerEnhanced = BoolDefault(key: "windowDividerEnhanced")
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
+    static let fitBesideSnappedWindows = BoolDefault(key: "fitBesideSnappedWindows")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
     static let showMinimumWindowSizeWarning = OptionalBoolDefault(key: "showMinimumWindowSizeWarning")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
@@ -62,7 +65,7 @@ class Defaults {
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
     static let footprintAlpha = DoubleDefault(key: "footprintAlpha")
     static var effectiveFootprintAlpha: Double {
-        effectiveFootprintAlpha(usesBlur: footprintBlur.enabled)
+        effectiveFootprintAlpha(usesBlur: effectiveOverlayMaterial.usesBlur)
     }
     static func effectiveFootprintAlpha(usesBlur: Bool) -> Double {
         if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
@@ -73,8 +76,15 @@ class Defaults {
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
-    static let footprintBlur = BoolDefault(key: "footprintBlur")
+    static let overlayMaterial = OverlayMaterialPreference()
     static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
+    static var effectiveOverlayMaterial: OverlayMaterial {
+        overlayMaterial.value.effective(supportsLiquidGlass: OverlayMaterial.supportsLiquidGlass,
+                                        reduceTransparency: NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency)
+    }
+    static var effectiveOverlayAppearance: NSAppearance? {
+        effectiveOverlayMaterial.usesBlur ? blurAppearance.value.appearance : nil
+    }
 
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let todo = OptionalBoolDefault(key: "todo")
@@ -151,6 +161,9 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        fitBesideSnappedWindows,
+        windowDivider,
+        windowDividerEnhanced,
         experimentalWindowAnimations,
         allowAnyShortcut,
         windowSnapping,
@@ -194,7 +207,7 @@ class Defaults {
         footprintBorderWidth,
         footprintFade,
         footprintColor,
-        footprintBlur,
+        overlayMaterial,
         blurAppearance,
         SUEnableAutomaticChecks,
         todo,
@@ -532,6 +545,7 @@ class IntDefault: Default {
 class JSONDefault<T: Codable>: StringDefault {
     
     private var typeInitialized = false
+    private let fallbackValue: T?
     
     var typedValue: T? {
         didSet {
@@ -542,17 +556,16 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     override init(key: String) {
+        fallbackValue = nil
         super.init(key: key)
         loadFromJSON()
         typeInitialized = true
     }
     
     init(key: String, defaultValue: T) {
+        fallbackValue = defaultValue
         super.init(key: key)
         loadFromJSON()
-        if typedValue == nil {
-            typedValue = defaultValue
-        }
     }
     
     override func load(from codable: CodableDefault) {
@@ -565,10 +578,9 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     private func loadFromJSON() {
-        guard let jsonString = value else { return }
-        let decoder = JSONDecoder()
-        guard let jsonData = jsonString.data(using: .utf8) else { return }
-        typedValue = try? decoder.decode(T.self, from: jsonData)
+        let decodedValue = value.flatMap { $0.data(using: .utf8) }
+            .flatMap { try? JSONDecoder().decode(T.self, from: $0) }
+        typedValue = decodedValue ?? fallbackValue
     }
     
     private func saveToJSON(_ obj: T?) {

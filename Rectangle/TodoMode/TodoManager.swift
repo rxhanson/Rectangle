@@ -188,6 +188,7 @@ class TodoManager {
     }
     
     static func moveAll(_ bringToFront: Bool = true) {
+        if WindowWriteFence.shared.deferExternalWrites(resume: { moveAll(bringToFront) }) { return }
         TodoManager.refreshTodoScreen()
 
         let pid = ProcessInfo.processInfo.processIdentifier
@@ -337,8 +338,12 @@ class TodoManager {
         }
     }
     
+    static func handles(_ action: WindowAction) -> Bool {
+        action == .leftTodo || action == .rightTodo
+    }
+
     static func execute(parameters: ExecutionParameters) -> Bool {
-        if [.leftTodo, .rightTodo].contains(parameters.action) {
+        if handles(parameters.action) {
             moveAll(!parameters.preservesFocus)
             return true
         }

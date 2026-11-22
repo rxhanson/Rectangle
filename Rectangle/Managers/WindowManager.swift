@@ -13,18 +13,20 @@ class WindowManager {
     private let windowAnimator: WindowAnimator
     private let windowHistory: WindowHistory
     private let sizeConstraint: WindowSizeConstraint
-    private var executionID = 0
+    private let placementCoordinator: WindowPlacementCoordinator
 
     init(screenDetection: ScreenDetection = ScreenDetection(),
          windowAnimator: WindowAnimator = WindowAnimator.shared,
          windowHistory: WindowHistory = AppDelegate.windowHistory,
          delegateProviders: [WindowManagerDelegateProvider]? = nil,
-         sizeConstraint: WindowSizeConstraint = WindowSizeConstraint()) {
+         sizeConstraint: WindowSizeConstraint = WindowSizeConstraint(),
+         writeFence: WindowWriteFence = .shared) {
 
         self.screenDetection = screenDetection
         self.sizeConstraint = sizeConstraint
         self.windowAnimator = windowAnimator
         self.windowHistory = windowHistory
+        self.placementCoordinator = WindowPlacementCoordinator(fence: writeFence, animator: windowAnimator)
         standardWindowMoverChain = [
             StandardWindowMover(),
             EdgeAlignmentWindowMover(),
@@ -49,7 +51,7 @@ class WindowManager {
         ]
     }
 
-    /// The delegate for a move, or nil when no feature customizes it.
+    /// The first provider that applies owns the move and its admission decision.
     func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
         for provider in delegateProviders {
             if let delegate = provider.delegate(for: request) { return delegate }
@@ -66,30 +68,39 @@ class WindowManager {
     }
     
     func execute(_ parameters: ExecutionParameters) {
-        // Completion fires exactly once: here, unless a placement or restore took it over.
-        var handedOff = false
-        defer { if !handedOff { parameters.completion?() } }
         sizeConstraint.hideWarning()
-
-        guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement()
-        else { return reject(parameters) }
-
-        // The window id can be unavailable when macOS stops vending window info
-        // after a session transition (#640). Actions still execute; only
-        // window-id-keyed history is skipped.
-        let windowId = parameters.windowId ?? windowElement.getWindowId()
-
-        if parameters.action == .restore {
-            handedOff = restore(windowElement, windowId: windowId, parameters: parameters)
+        guard let windowElement = parameters.windowElement ?? AccessibilityElement.getFrontWindowElement() else {
+            reject(parameters)
+            parameters.completion?()
             return
         }
+        let windowId = parameters.windowId ?? windowElement.getWindowId()
+        execute(parameters, on: windowElement, windowId: windowId,
+                hasWaitedForWrites: parameters.preservesUnrelatedActions)
+    }
 
-        guard let move = planMove(windowElement, windowId: windowId, parameters: parameters),
-              !finishIfAlreadyAchieved(move)
-        else { return }
-
+    private func execute(_ parameters: ExecutionParameters, on windowElement: AccessibilityElement, windowId: CGWindowID?,
+                         hasWaitedForWrites: Bool = false) {
+        var handedOff = false
+        defer { if !handedOff { parameters.completion?() } }
+        if parameters.action == .restore {
+            handedOff = restore(windowElement, windowId: windowId, parameters: parameters,
+                                hasWaitedForWrites: hasWaitedForWrites)
+            return
+        }
+        guard let move = planMove(windowElement, windowId: windowId, parameters: parameters) else { return }
+        let targets = [move.writeTarget] + (move.delegate?.additionalWriteTargets(in: placementCoordinator.externalTargets) ?? [])
+        if placementCoordinator.deferPlanningIfNeeded(for: targets, discard: parameters.completion, resume: { [self] in
+            execute(parameters, on: windowElement, windowId: windowId, hasWaitedForWrites: true)
+        }) {
+            handedOff = true
+            return
+        }
+        move.commitHistory()
+        move.delegate?.moveDidAccept()
+        guard !finishIfAlreadyAchieved(move, targets: targets) else { return }
         handedOff = true
-        perform(move)
+        perform(move, targets: targets, hasWaitedForWrites: hasWaitedForWrites)
     }
 
     /// Tells the user an action can't be carried out.
@@ -117,8 +128,13 @@ class WindowManager {
         let isMovedAcrossDisplays: Bool
         let delegate: WindowManagerDelegate?
         let result: ResultParameters
+        let commitHistory: () -> Void
 
         var action: WindowAction { parameters.action }
+
+        var writeTarget: WindowWriteTarget {
+            .init(element: windowElement, windowID: windowId)
+        }
 
         func complete() { parameters.completion?() }
     }
@@ -138,11 +154,24 @@ class WindowManager {
         let pendingDestination = windowAnimator.destination(for: windowElement)
         let currentWindowRect = pendingDestination ?? windowElement.frame
 
-        var lastRectangleAction = reconcileHistory(windowId: windowId, currentWindowRect: currentWindowRect,
-                                                   updateRestoreRect: parameters.updateRestoreRect)
-        if screens.forgetsLastAction, let windowId {
-            lastRectangleAction = nil
-            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+        // Use only current history when calculating the target. Keep the saved
+        // Restore frame intact until the delegate accepts the move.
+        let previousAction = parameters.isDisplayCycle ? nil : windowId.flatMap { windowHistory.lastRectangleActions[$0] }
+        let movedExternally = currentWindowRect != previousAction?.rect
+        let forgetsLastAction = screens.forgetsLastAction || movedExternally
+        let lastRectangleAction = forgetsLastAction ? nil : previousAction
+
+        var calculationHistoryUpdates: [() -> Void] = []
+        let commitHistory = { [windowHistory, screenSelector] in
+            guard let windowId else { return }
+            screenSelector.recordCursorPress(screens, action: action, windowId: windowId)
+            if forgetsLastAction {
+                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            }
+            if parameters.updateRestoreRect, movedExternally || windowHistory.restoreRects[windowId] == nil {
+                windowHistory.restoreRects[windowId] = currentWindowRect
+            }
+            for update in calculationHistoryUpdates { update() }
         }
 
         let ignoreTodo = windowId.map { TodoManager.isTodoWindow($0) } ?? false
@@ -151,6 +180,7 @@ class WindowManager {
             || currentWindowRect.isNull
             || usableScreens.frameOfCurrentScreen.isNull
             || usableScreens.currentScreen.adjustedVisibleFrame(ignoreTodo).isNull {
+            commitHistory()
             reject(parameters, reason: "Window is not snappable or usable screen is not valid")
             return nil
         }
@@ -160,8 +190,11 @@ class WindowManager {
 
         let windowCalculation = WindowCalculationFactory.calculationsByAction[action]
 
-        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens, action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo)
+        let calculationParams = WindowCalculationParameters(window: currentWindow, usableScreens: usableScreens,
+                                                            action: action, lastAction: lastRectangleAction, ignoreTodo: ignoreTodo,
+                                                            updateHistory: { calculationHistoryUpdates.append($0) })
         guard var calcResult = windowCalculation?.calculate(calculationParams) else {
+            commitHistory()
             reject(parameters, reason: "Nil calculation result")
             return nil
         }
@@ -186,8 +219,12 @@ class WindowManager {
                                                                  screenFrame: visibleFrameOfDestinationScreen,
                                                                  sourceScreens: sourceScreens,
                                                                  destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                                                                 lastRectangleAction: lastRectangleAction))
+                                                                 lastRectangleAction: lastRectangleAction, identity: parameters.identity))
 
+        guard delegate?.acceptsPlacement != false else {
+            reject(parameters)
+            return nil
+        }
         if let delegate {
             calcResult = delegate.calcResult
         }
@@ -214,81 +251,56 @@ class WindowManager {
                            isFixedSize: isFixedSize,
                            isMovedAcrossDisplays: isMovedAcrossDisplays,
                            delegate: delegate,
-                           result: result)
-    }
-
-    /// Forgets history for a window moved since Rectangle last placed it, and saves its restore rect.
-    /// - Returns: The last action, if it still describes the window
-    private func reconcileHistory(windowId: CGWindowID?, currentWindowRect: CGRect,
-                                  updateRestoreRect: Bool) -> RectangleAction? {
-        var lastRectangleAction = windowId.flatMap { windowHistory.lastRectangleActions[$0] }
-
-        let windowMovedExternally = currentWindowRect != lastRectangleAction?.rect
-
-        if windowMovedExternally {
-            lastRectangleAction = nil
-            if let windowId {
-                windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-            }
-        }
-
-        if updateRestoreRect, let windowId {
-            if windowHistory.restoreRects[windowId] == nil
-                || windowMovedExternally {
-                windowHistory.restoreRects[windowId] = currentWindowRect
-            }
-        }
-
-        return lastRectangleAction
+                           result: result,
+                           commitHistory: commitHistory)
     }
 
     /// Returns true when the window is already where the move would put it, recording that as the action.
-    private func finishIfAlreadyAchieved(_ move: PlannedMove) -> Bool {
+    private func finishIfAlreadyAchieved(_ move: PlannedMove, targets: [WindowWriteTarget]) -> Bool {
         // The delegate's check records state, so it only runs without a pending destination.
         guard move.pendingDestination == nil,
               move.delegate?.isAlreadyAchieved() ?? move.currentNormalizedRect.equalTo(move.calcResult.rect)
         else { return false }
 
+        guard placementCoordinator.acceptAlreadyAchieved(for: targets) else { return false }
         Logger.log("Window is already at its target frame")
         recordAction(windowId: move.windowId, resultingRect: move.currentWindowRect,
                      action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
+        publishCompletion(result: move.result, achievedFrame: move.currentWindowRect, identity: move.parameters.identity)
         return true
-    }
-
-    // MARK: - Supersession
-
-    /// Supersedes any pending placement or restore; only the newest one may still write frames.
-    private func nextExecutionID() -> Int {
-        executionID &+= 1
-        return executionID
-    }
-
-    private func isCurrent(_ id: Int) -> Bool {
-        executionID == id
     }
 
     // MARK: - Restore
 
     /// - Returns: Whether a deferred restore took over calling the completion
     private func restore(_ windowElement: AccessibilityElement, windowId: CGWindowID?,
-                         parameters: ExecutionParameters) -> Bool {
+                         parameters: ExecutionParameters, hasWaitedForWrites: Bool) -> Bool {
         guard let windowId else {
             reject(parameters)
             return false
         }
-        var handedOff = false
-        if let restoreRect = windowHistory.restoreRects[windowId] {
-            let currentExecutionID = nextExecutionID()
-            handedOff = true
-            let animation = WindowMoveAnimation.forRestore(to: restoreRect, of: windowElement, source: parameters.source)
-            place(windowElement, animation: animation, cancellation: parameters.cancellation) { [weak self] animatedFrame in
-                defer { parameters.completion?() }
-                guard let self, self.isCurrent(currentExecutionID), animatedFrame == nil else { return }
-                windowElement.setFrame(restoreRect)
-            }
+        let target = WindowWriteTarget(element: windowElement, windowID: windowId)
+        guard let restoreRect = windowHistory.restoreRects[windowId] else {
+            placementCoordinator.acceptRestoreWithoutTarget(for: target)
+            windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+            return false
         }
+        let access = placementCoordinator.begin(to: [target], hasWaitedForWrites: hasWaitedForWrites)
         windowHistory.lastRectangleActions.removeValue(forKey: windowId)
-        return handedOff
+        let requested = WindowMoveAnimation.forRestore(to: restoreRect, of: windowElement, source: parameters.source)
+        let animation = placementCoordinator.availableAnimation(requested, for: windowElement, access: access)
+        placementCoordinator.place(windowElement, animation: animation, access: access, cancellation: { [self] in
+            placementCoordinator.finish(access)
+            parameters.cancellation?()
+        }) { [self] animatedFrame in
+            defer {
+                placementCoordinator.finish(access)
+                parameters.completion?()
+            }
+            guard placementCoordinator.isCurrent(access), animatedFrame == nil else { return }
+            windowElement.setFrame(restoreRect)
+        }
+        return true
     }
 
     // MARK: - Placement
@@ -296,7 +308,7 @@ class WindowManager {
     /// A planned move that has been accepted and now owns its completion.
     private struct ActivePlacement {
         let move: PlannedMove
-        let executionID: Int
+        let access: WindowPlacementCoordinator.Access
         let animated: Bool
     }
 
@@ -306,44 +318,31 @@ class WindowManager {
         (.milliseconds(25), "Final attempt to adjust across displays.")
     ]
 
-    private func perform(_ move: PlannedMove) {
-        // Only an accepted move supersedes the prior completion. A rejected or
-        // already-achieved request must not discard an animation's needed fallback.
-        // A matching logical target is still pending, so it continues through here.
-        let calcResult = move.calcResult
-        let animation = WindowMoveAnimation.forMove(of: move.windowElement, action: move.action, calcResult: calcResult,
+    private func perform(_ move: PlannedMove, targets: [WindowWriteTarget], hasWaitedForWrites: Bool) {
+        let requestedAnimation = WindowMoveAnimation.forMove(of: move.windowElement, action: move.action, calcResult: move.calcResult,
                                                     screenFrame: move.visibleFrameOfDestinationScreen,
                                                     isFixedSize: move.isFixedSize,
                                                     isMovedAcrossDisplays: move.isMovedAcrossDisplays,
                                                     source: move.parameters.source)
-        let placement = ActivePlacement(move: move, executionID: nextExecutionID(), animated: animation != nil)
-
+        let access = placementCoordinator.begin(to: targets, hasWaitedForWrites: hasWaitedForWrites)
+        let animation = placementCoordinator.availableAnimation(requestedAnimation, for: move.windowElement, access: access)
+        let placement = ActivePlacement(move: move, access: access, animated: animation != nil)
         if animation != nil {
-            // Recorded up front so a repeat press during the animation continues the cycle.
-            // `finish` then records the achieved frame without counting the action again.
-            recordAction(windowId: move.windowId, resultingRect: calcResult.rect.screenFlipped,
-                         action: calcResult.resultingAction, subAction: calcResult.resultingSubAction)
+            recordAction(windowId: move.windowId, resultingRect: move.calcResult.rect.screenFlipped,
+                         action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
         }
-
-        place(move.windowElement, animation: animation,
-              cancellation: move.parameters.cancellation) { [self] animatedFrame in
-            completePlacement(placement, animatedFrame: animatedFrame)
+        placementCoordinator.place(move.windowElement, animation: animation, access: access, cancellation: { [self] in
+            placementCoordinator.finish(access)
+            move.parameters.cancellation?()
+        }) { [self] frame in
+            completePlacement(placement, animatedFrame: frame)
         }
-    }
-
-    /// Runs `completion` straight away in the usual case. Only an animation, or a placement that
-    /// must wait for an earlier animation to stop writing, goes through the animator.
-    /// - Parameter completion: Receives the frame an animation achieved, or nil to write the frame
-    private func place(_ windowElement: AccessibilityElement, animation: WindowMoveAnimation?,
-                       cancellation: (() -> Void)?, completion: @escaping (CGRect?) -> Void) {
-        guard animation != nil || !windowAnimator.isIdle else { return completion(nil) }
-        windowAnimator.place(windowElement, animation: animation, cancellation: cancellation, completion: completion)
     }
 
     /// Places the window, unless an animation already did, then settles it. Every path ends in one completion.
     private func completePlacement(_ placement: ActivePlacement, animatedFrame: CGRect?) {
         let move = placement.move
-        guard isCurrent(placement.executionID) else { return move.complete() }
+        guard placementCoordinator.isCurrent(placement.access) else { return end(placement) }
 
         // The worker already verified an animated frame. A second AX read on
         // main can stall if the target becomes busy after completion.
@@ -362,6 +361,7 @@ class WindowManager {
     private func settleAcrossDisplays(_ placement: ActivePlacement, resultingRect: CGRect,
                                       retries: ArraySlice<(delay: DispatchTimeInterval?, message: String)>) {
         let move = placement.move
+        guard placementCoordinator.isCurrent(placement.access) else { return end(placement) }
         guard move.calcResult.rect.size != resultingRect.size, let retry = retries.first else {
             windowMovedAcrossDisplays(windowElement: move.windowElement, windowId: move.windowId,
                                       resultingRect: resultingRect, destination: move.calcResult.screen,
@@ -370,10 +370,16 @@ class WindowManager {
         }
 
         Logger.log(retry.message)
+        let coordinator = placementCoordinator
         let reapply = { [weak self] in
-            guard let self, self.isCurrent(placement.executionID) else { return move.complete() }
-            self.settleAcrossDisplays(placement, resultingRect: self.apply(result: move.result),
-                                      retries: retries.dropFirst())
+            guard let self else {
+                coordinator.finish(placement.access)
+                move.complete()
+                return
+            }
+            guard self.placementCoordinator.isCurrent(placement.access) else { return self.end(placement) }
+            let frame = self.apply(result: move.result)
+            self.settleAcrossDisplays(placement, resultingRect: frame, retries: retries.dropFirst())
         }
         if let delay = retry.delay {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: reapply)
@@ -392,9 +398,22 @@ class WindowManager {
         finish(placement, resultingRect: settledRect)
     }
 
-    private func finish(_ placement: ActivePlacement, resultingRect: CGRect) {
-        postProcess(result: placement.move.result, resultingRect: resultingRect, incrementCount: !placement.animated)
+    private func end(_ placement: ActivePlacement) {
+        placementCoordinator.finish(placement.access)
         placement.move.complete()
+    }
+
+    private func finish(_ placement: ActivePlacement, resultingRect: CGRect) {
+        guard placementCoordinator.isCurrent(placement.access) else { return end(placement) }
+        let move = placement.move
+        postProcess(result: move.result, resultingRect: resultingRect, incrementCount: !placement.animated)
+        // An unchanged frame away from the target can be a refused AX write.
+        // Complete a refused write without publishing a successful placement.
+        if !placement.access.followsExternalWriter || resultingRect != move.currentWindowRect
+            || WindowGeometry.near(resultingRect, move.calcResult.rect.screenFlipped) {
+            publishCompletion(result: move.result, achievedFrame: resultingRect, identity: move.parameters.identity)
+        }
+        end(placement)
     }
 
     
@@ -438,6 +457,11 @@ class WindowManager {
         CGWarpMouseCursorPosition(point)
     }
 
+    private func publishCompletion(result: ResultParameters, achievedFrame: CGRect, identity: WindowActionIdentity) {
+        guard result.action != .restore, WindowGeometry.valid(achievedFrame) else { return }
+        Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: result, achievedFrame: achievedFrame, identity: identity))
+    }
+
     func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {
         let calcResult = result.calcResult
 
@@ -460,7 +484,6 @@ class WindowManager {
             }
         }
         DiagnosticTrace.event("window-action-achieved", fields: evidence)
-        Notification.Name.windowActionCompleted.post()
         
         if Logger.logging {
             var logItems = ["\(result.action.name)",
@@ -503,6 +526,7 @@ struct RectangleAction {
 }
 
 struct ExecutionParameters {
+    let identity: WindowActionIdentity
     let action: WindowAction
     let updateRestoreRect: Bool
     let screen: NSScreen?
@@ -515,8 +539,13 @@ struct ExecutionParameters {
     let completion: (() -> Void)?
     // Cancellation cleanup must not run placement completion or fallback work.
     let cancellation: (() -> Void)?
+    /// A display-cycle repeat calculates a fresh action on the chosen display.
+    let isDisplayCycle: Bool
+    /// A command resumed after another writer must leave unrelated actions running.
+    let preservesUnrelatedActions: Bool
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil, isDisplayCycle: Bool = false, identity: WindowActionIdentity = WindowActionIdentity(), preservesUnrelatedActions: Bool = false) {
+        self.identity = identity
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen
@@ -526,6 +555,8 @@ struct ExecutionParameters {
         self.preservesFocus = preservesFocus
         self.completion = completion
         self.cancellation = cancellation
+        self.isDisplayCycle = isDisplayCycle
+        self.preservesUnrelatedActions = preservesUnrelatedActions
     }
 }
 

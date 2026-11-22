@@ -29,11 +29,11 @@ struct FootprintPresentation {
 }
 
 enum FootprintAnimationGeometry {
-    static func initialFrame(in destination: CGRect, from origin: CGPoint) -> CGRect {
+    static func initialFrame(in destination: CGRect, from origin: CGPoint, minimumExtent: CGFloat = 1) -> CGRect {
         // A zero-sized frame on a shared edge can attach to the neighboring
         // display's Space. Keep the first visible pixel inside the destination.
-        let width = min(1, destination.width)
-        let height = min(1, destination.height)
+        let width = min(max(1, minimumExtent), destination.width)
+        let height = min(max(1, minimumExtent), destination.height)
         return CGRect(x: min(max(origin.x, destination.minX), destination.maxX - width),
                       y: min(max(origin.y, destination.minY), destination.maxY - height),
                       width: width, height: height)
@@ -120,13 +120,15 @@ final class FootprintShadow {
 
 class FootprintWindow: NSWindow {
     private let surface = NSView()
-    private let effectView = NSVisualEffectView()
+    private lazy var effectView = BlurSurfaceView(material: .fullScreenUI, cornerRadius: FootprintStyle.cornerRadius) { [weak self] in
+        let material = self?.effectiveMaterial ?? .noBlur
+        return .init(material: material, appearance: material.usesBlur ? Defaults.blurAppearance.value.appearance : nil)
+    }
     private let decoration = CAShapeLayer()
     private let shadow = FootprintShadow()
     private let shadowView = NSView()
     private let fade = PreviewOpacityAnimation()
     private let accessibility: () -> FootprintAccessibility
-    private var accessibilityObserver: NSObjectProtocol?
     private var showing = false
     private var closing = false
     private var destination = CGRect.zero
@@ -139,15 +141,23 @@ class FootprintWindow: NSWindow {
     private var placementGeneration: UUID?
     var waitingForPlacement: Bool { placementGeneration != nil }
 
+    private var effectiveMaterial: OverlayMaterial {
+        Defaults.overlayMaterial.value.effective(supportsLiquidGlass: OverlayMaterial.supportsLiquidGlass,
+                                                 reduceTransparency: accessibility().reduceTransparency)
+    }
+
     var presentation: FootprintPresentation {
         let options = accessibility()
-        let usesBlur = Defaults.footprintBlur.enabled && !options.reduceTransparency
-        return FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
+        let blurRequested = Defaults.overlayMaterial.value.usesBlur
+        let usesBlur = blurRequested && !options.reduceTransparency
+        return FootprintPresentation(blurRequested: blurRequested,
                               alpha: CGFloat(Defaults.effectiveFootprintAlpha(usesBlur: usesBlur)),
                               fadeRequested: !Defaults.footprintFade.userDisabled,
                               animationRequested: Defaults.footprintAnimationDurationMultiplier.value > 0,
                               accessibility: options)
     }
+
+    var usesLiquidGlass: Bool { effectiveMaterial == .liquidGlass }
 
     init(initialFrame: CGRect = .zero,
          accessibility: @escaping () -> FootprintAccessibility = { .current }) {
@@ -174,9 +184,6 @@ class FootprintWindow: NSWindow {
         root.addSubview(surface)
         surface.layer?.cornerRadius = FootprintStyle.cornerRadius
         surface.layer?.masksToBounds = true
-        effectView.material = .fullScreenUI
-        effectView.blendingMode = .behindWindow
-        effectView.state = .active
         surface.addSubview(effectView)
         surface.layer?.addSublayer(decoration)
         // AppKit attaches the effect view's backing layer later, above existing sublayers.
@@ -184,40 +191,33 @@ class FootprintWindow: NSWindow {
         decoration.contentsScale = backingScaleFactor
         decoration.contentsFormat = .RGBA8Uint
         if #available(macOS 26, *) { decoration.preferredDynamicRange = .standard }
-        let radius = FootprintStyle.cornerRadius
-        let mask = NSImage(size: NSSize(width: radius * 2 + 1, height: radius * 2 + 1), flipped: false) { rect in
-            NSColor.white.setFill()
-            NSBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius).fill()
-            return true
-        }
-        mask.capInsets = NSEdgeInsets(top: radius, left: radius, bottom: radius, right: radius)
-        mask.resizingMode = .stretch
-        effectView.maskImage = mask
         contentView = root
+        effectView.onStyleChange = { [weak self] in self?.refreshAccessibility(refreshMaterial: false) }
+        effectView.onAppearanceChange = { [weak self] in self?.updateAppearance(refreshMaterial: false) }
         root.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
-        accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification, object: nil, queue: .main
-        ) { [weak self] _ in self?.refreshAccessibility() }
     }
 
     deinit {
         geometryTimer?.invalidate()
-        if let accessibilityObserver { NSWorkspace.shared.notificationCenter.removeObserver(accessibilityObserver) }
     }
 
-    private func updateAppearance() {
+    private func updateAppearance(refreshMaterial: Bool = true) {
         let style = presentation
+        if refreshMaterial { effectView.refresh() }
+        let glass = usesLiquidGlass
         let requested = style.usesBlur ? Defaults.blurAppearance.value.appearance : nil
         if appearance?.name != requested?.name { appearance = requested }
         let dark = (contentView?.effectiveAppearance ?? effectiveAppearance).bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
         let color = Defaults.footprintColor.typedValue?.nsColor
             ?? (style.usesBlur && !dark ? NSColor.white : NSColor.black)
-        let tint = style.usesBlur ? min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha))) : 1
+        let tint = style.usesBlur ? min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha(usesBlur: true)))) : 1
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         effectView.isHidden = !style.usesBlur
-        shadowView.isHidden = !style.usesBlur
+        surface.layer?.masksToBounds = !glass
+        decoration.isHidden = glass
+        shadowView.isHidden = !style.usesBlur || glass
         decoration.fillColor = color.withAlphaComponent(tint).cgColor
         decoration.strokeColor = (style.usesBlur ? FootprintStyle.borderColor(isDark: dark) : NSColor.lightGray).cgColor
         decoration.lineWidth = style.usesBlur ? FootprintStyle.borderWidth : max(0, CGFloat(Defaults.footprintBorderWidth.value))
@@ -342,7 +342,7 @@ class FootprintWindow: NSWindow {
         updateAppearance()
         PreviewLayerTransition.set(shadow.container, "opacity", to: Float(1), duration: 0)
         if fresh {
-            let initial = presentation.animates ? origin.map { FootprintAnimationGeometry.initialFrame(in: rect, from: $0) } : nil
+            let initial = presentation.animates ? origin.map { FootprintAnimationGeometry.initialFrame(in: rect, from: $0, minimumExtent: usesLiquidGlass ? FootprintStyle.cornerRadius * 2 + 8 : 1) } : nil
             setGeometry(initial ?? rect, duration: 0)
             // Publish the new starting geometry before reading presentation layers again.
             CATransaction.flush()
@@ -430,8 +430,8 @@ class FootprintWindow: NSWindow {
     /// Whether the preview is still moving or fading.
     var isAnimating: Bool { moving || fade.isAnimating }
 
-    func refreshAccessibility() {
-        updateAppearance()
+    func refreshAccessibility(refreshMaterial: Bool = true) {
+        updateAppearance(refreshMaterial: refreshMaterial)
         if !presentation.animates || moving {
             stopGeometry()
             setGeometry(destination, duration: 0)

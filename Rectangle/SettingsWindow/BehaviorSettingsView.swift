@@ -389,6 +389,8 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            adjacentWindowsSection
+
             // MARK: - Extras
             Section {
                 CustomDisclosureGroup {
@@ -424,6 +426,34 @@ struct BehaviorSettingsView: View {
         .frame(width: 500)
         .animation(.easeInOut(duration: 0.2), value: viewModel.todoEnabled)
         .animation(.easeInOut(duration: 0.2), value: viewModel.subsequentExecutionMode)
+    }
+
+    private var adjacentWindowsSection: some View {
+        Section {
+            CustomDisclosureGroup {
+                VStack(alignment: .leading, spacing: 12) {
+                    Divider()
+                    Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
+                        .accessibilityIdentifier("fitBesideSnappedWindows")
+                    Toggle("Drag dividers to resize adjacent windows", isOn: $viewModel.windowDivider)
+                        .accessibilityIdentifier("windowDivider")
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("Enhanced transitions", isOn: Binding(
+                            get: { viewModel.windowDividerEnhanced },
+                            set: viewModel.setDividerEnhancedFromSettings))
+                            .accessibilityIdentifier("windowDividerEnhanced")
+                        Text("Use a temporary screenshot to hide resizing. Requires Screen Recording access.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.leading, 20)
+                    .disabled(!viewModel.windowDivider || !WindowCapturePermission.previewsSupported)
+                }
+                .padding(.leading, 12)
+            } label: {
+                Label("Adjacent Windows", systemImage: "rectangle.split.2x1")
+            }
+        }
     }
 
     /// A recorder for a window action's shortcut, validated like the ones on

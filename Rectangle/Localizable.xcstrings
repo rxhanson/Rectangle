@@ -2001,6 +2001,16 @@
         }
       }
     },
+    "About overlay material" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About overlay material"
+          }
+        }
+      }
+    },
     "About Rectangle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -23022,6 +23032,16 @@
         }
       }
     },
+    "Liquid Glass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liquid Glass"
+          }
+        }
+      }
+    },
     "Lower Middle Center Left Sixteenth" : {
       "localizations" : {
         "en" : {
@@ -27864,6 +27884,16 @@
         }
       }
     },
+    "No blur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No blur"
+          }
+        }
+      }
+    },
     "Not Authorized to Control Your Computer" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -28977,6 +29007,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "其他"
+          }
+        }
+      }
+    },
+    "Overlay material" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overlay material"
           }
         }
       }
@@ -37864,6 +37904,16 @@
         }
       }
     },
+    "Standard blur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard blur"
+          }
+        }
+      }
+    },
     "Switch to the opposite side on half actions" : {
       "localizations" : {
         "es" : {
@@ -45855,6 +45905,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用所選範圍尋找"
+          }
+        }
+      }
+    },
+    "Used by snap previews, divider handles, stack lists, and window size warnings." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used by snap previews, divider handles, stack lists, and window size warnings."
           }
         }
       }

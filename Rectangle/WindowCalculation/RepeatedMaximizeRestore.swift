@@ -35,7 +35,9 @@ enum RepeatedMaximizeRestore {
                                            resultingAction: .restore)
         }
         
-        AppDelegate.windowHistory.preMaximizeRects[windowId] = params.window.rect
+        params.updateHistory { [frame = params.window.rect] in
+            AppDelegate.windowHistory.preMaximizeRects[windowId] = frame
+        }
         return nil
     }
     

@@ -26,7 +26,7 @@ class NextPrevDisplayCalculation: WindowCalculation {
            let calculation = WindowCalculationFactory.calculationsByAction[lastAction.action] {
             
             if let windowId = params.window.id {
-                AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
+                params.updateHistory { AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId) }
             }
             
             let newCalculationParams = RectCalculationParameters(

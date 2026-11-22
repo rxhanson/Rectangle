@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        Defaults.overlayMaterial.migrateFootprintSetting()
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()
 
@@ -83,10 +84,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Notification.Name.configImported.onPost(using: { _ in
             self.checkAutoCheckForUpdates()
             self.statusItem.refreshVisibility()
-            self.applicationToggle.reloadFromDefaults()
-            self.shortcutManager.reloadFromDefaults()
-            self.snappingManager.reloadFromDefaults()
-            self.initializeTodo(false)
+            self.reloadWindowManagementAfterImport()
         })
         
         Notification.Name.todoMenuToggled.onPost(using: { _ in
@@ -96,6 +94,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         prevActiveAppObservation = NSWorkspace.shared.observe(\.frontmostApplication, options: .old) { workspace, change in
             self.prevActiveApp = change.oldValue ?? nil
         }
+    }
+
+    func reloadWindowManagementAfterImport() {
+        // Settings can be reopened before authorization. Managers will read the imported values when created.
+        guard let applicationToggle, let shortcutManager, let snappingManager else { return }
+        applicationToggle.reloadFromDefaults()
+        shortcutManager.reloadFromDefaults()
+        snappingManager.reloadFromDefaults()
+        WindowDividerManager.shared.refreshMonitoring()
+        initializeTodo(false)
     }
     
     func checkVersion() {
@@ -143,11 +151,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
-        self.windowManager = WindowManager()
-        self.shortcutManager = ShortcutManager(windowManager: windowManager)
+        self.windowManager = WindowManager(delegateProviders: [
+            SnappedWindowFitProvider(),
+            CooperativeResizeDelegateProvider(windowHistory: Self.windowHistory)
+        ])
+        let dispatcher = WindowActionDispatcher()
+        self.shortcutManager = ShortcutManager(windowManager: windowManager, prepareWindowAction: dispatcher.prepare)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
         self.stackBadgeManager = StackBadgeManager()
+        WindowDividerManager.shared.start()
         self.titleBarManager = TitleBarManager()
         self.greenButtonManager = GreenButtonManager()
         self.newWindowActionManager = NewWindowActionManager()

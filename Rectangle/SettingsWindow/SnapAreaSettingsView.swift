@@ -75,20 +75,6 @@ final class SnapAreaViewModel {
         }
     }
     
-    var footprintBlur: Bool {
-        didSet {
-            guard oldValue != footprintBlur else { return }
-            Defaults.footprintBlur.enabled = footprintBlur
-        }
-    }
-    
-    var blurAppearance: BlurAppearance {
-        didSet {
-            guard oldValue != blurAppearance else { return }
-            Defaults.blurAppearance.value = blurAppearance
-        }
-    }
-    
     var snapBeforeReachingEdges: Bool {
         didSet {
             guard oldValue != snapBeforeReachingEdges else { return }
@@ -110,20 +96,16 @@ final class SnapAreaViewModel {
     // UI State
     var showMissionControlDragging: Bool
     var isPortraitConnected: Bool
-    private(set) var reduceTransparency: Bool
 
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
         self.unsnapRestoreFromSizeChange = !Defaults.unsnapRestoreFromSizeChange.userDisabled
         self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
-        self.footprintBlur = Defaults.footprintBlur.enabled
-        self.blurAppearance = Defaults.blurAppearance.value
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
         self.isPortraitConnected = NSScreen.portraitDisplayConnected
@@ -138,8 +120,6 @@ final class SnapAreaViewModel {
         self.snapBeforeReachingEdges = Defaults.snapBeforeReachingEdges.value > 0
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
-        self.footprintBlur = Defaults.footprintBlur.enabled
-        self.blurAppearance = Defaults.blurAppearance.value
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
         self.isPortraitConnected = NSScreen.portraitDisplayConnected
@@ -147,13 +127,6 @@ final class SnapAreaViewModel {
     
     private func setupNotificationObservers() {
         let center = NotificationCenter.default
-
-        NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                self?.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
-            }
-            .store(in: &cancellables)
 
         center.publisher(for: NSApplication.didChangeScreenParametersNotification)
             .sink { [weak self] _ in
@@ -217,18 +190,6 @@ struct SnapAreaSettingsView: View {
             Section {
                 Toggle("Haptic feedback", isOn: $viewModel.hapticFeedback)
                 Toggle("Animate footprint", isOn: $viewModel.animateFootprint)
-                if !viewModel.reduceTransparency {
-                    Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
-
-                    if viewModel.footprintBlur {
-                        Picker("Blur appearance", selection: $viewModel.blurAppearance) {
-                            Text("Follow System").tag(BlurAppearance.system)
-                            Text("Light").tag(BlurAppearance.light)
-                            Text("Dark").tag(BlurAppearance.dark)
-                        }
-                    }
-                }
-                
                 Toggle("Snap before reaching screen edges", isOn: $viewModel.snapBeforeReachingEdges)
 
                 if viewModel.showMissionControlDragging {
@@ -259,11 +220,7 @@ struct SnapAreaSettingsView: View {
         .formStyle(.grouped)
         .frame(minHeight: 400)
         .frame(width: 500)
-        .animation(.easeInOut(duration: 0.2), value: viewModel.footprintBlur)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isPortraitConnected)
-        .onChange(of: viewModel.reduceTransparency) { _, _ in
-            Notification.Name.snapAreaSettingsNeedsResize.post()
-        }
         .onChange(of: viewModel.isPortraitConnected) { oldValue, isConnected in
             Notification.Name.snapAreaSettingsNeedsResize.post(object:isConnected)
         }

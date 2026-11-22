@@ -18,7 +18,22 @@ class MultiWindowManager {
         let isFocused: Bool
     }
 
+    static func handles(_ action: WindowAction) -> Bool {
+        switch action {
+        case .reverseAll, .tileAll, .tileRows, .tileColumns, .cascadeAll,
+             .cascadeActiveApp, .tileActiveApp, .cycleStackedWindows, .cycleStackedWindowsBackward:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static func writesFrames(_ action: WindowAction) -> Bool {
+        handles(action) && action != .cycleStackedWindows && action != .cycleStackedWindowsBackward
+    }
+
     static func execute(parameters: ExecutionParameters) -> Bool {
+        guard handles(parameters.action) else { return false }
         // TODO: Protocol and factory for all multi-window positioning algorithms
         switch parameters.action {
         case .reverseAll:
