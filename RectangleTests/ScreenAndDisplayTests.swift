@@ -1165,6 +1165,102 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
         super.tearDown()
     }
 
+    func testDeclinedMoveDoesNotTurnTheNextCursorCommandIntoARepeat() {
+        let initial = CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped
+        let window = TestWindow(frame: initial)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
+        var accepts = false
+        let manager = TestWindowManager(screenDetection: detection, delegateProviders: [
+            TestAdmissionProvider { accepts }
+        ])
+        let command = ExecutionParameters(.leftHalf, windowElement: window, windowId: windowId)
+
+        manager.execute(command)
+
+        XCTAssertEqual(window.frame, initial)
+        XCTAssertNil(CursorScreenHistory.shared.screenFrames[windowId])
+        XCTAssertNil(CursorScreenHistory.shared.actions[windowId])
+
+        accepts = true
+        manager.execute(command)
+
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+    }
+
+    func testDeclinedDisplayCommandsPreserveThePreviousAction() {
+        Defaults.attemptMatchOnNextPrevDisplay.enabled = true
+        let initial = leftHalf(of: left)
+        let window = TestWindow(frame: initial)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        var accepts = false
+        let manager = TestWindowManager(screenDetection: detection, delegateProviders: [
+            TestAdmissionProvider { accepts }
+        ])
+        let history = AppDelegate.windowHistory
+        history.lastRectangleActions[windowId] = RectangleAction(action: .leftHalf, rect: initial, count: 2)
+
+        for command in [
+            ExecutionParameters(.nextDisplay, windowElement: window, windowId: windowId),
+            ExecutionParameters(.displayTwo, windowElement: window, windowId: windowId),
+            ExecutionParameters(.leftHalf, screen: right, windowElement: window, windowId: windowId, isDisplayCycle: true)
+        ] {
+            manager.execute(command)
+            XCTAssertEqual(window.frame, initial)
+            XCTAssertEqual(history.lastRectangleActions[windowId]?.count, 2)
+        }
+
+        accepts = true
+        manager.execute(ExecutionParameters(.nextDisplay, windowElement: window, windowId: windowId))
+
+        XCTAssertEqual(window.frame, leftHalf(of: right))
+        XCTAssertEqual(history.lastRectangleActions[windowId]?.count, 1)
+    }
+
+    func testDeclinedMaximizeKeepsThePriorPreMaximizeFrame() {
+        let setting = Defaults.repeatedMaximizeRestoresPrevious
+        let savedSetting = setting.enabled
+        let history = AppDelegate.windowHistory
+        let savedFrame = history.preMaximizeRects[windowId]
+        defer {
+            setting.enabled = savedSetting
+            history.preMaximizeRects[windowId] = savedFrame
+        }
+        setting.enabled = true
+        let previous = CGRect(x: 90, y: 80, width: 300, height: 230)
+        history.preMaximizeRects[windowId] = previous
+        let initial = CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped
+        let window = TestWindow(frame: initial)
+        let detection = TestScreenDetection(screens: [left, right], cursorScreen: left)
+        var accepts = false
+        let manager = TestWindowManager(screenDetection: detection, delegateProviders: [
+            TestAdmissionProvider { accepts }
+        ])
+        let command = ExecutionParameters(.maximize, windowElement: window, windowId: windowId)
+
+        manager.execute(command)
+        XCTAssertEqual(history.preMaximizeRects[windowId], previous)
+
+        accepts = true
+        manager.execute(command)
+        XCTAssertEqual(history.preMaximizeRects[windowId], initial.screenFlipped)
+
+        manager.execute(command)
+        XCTAssertEqual(window.frame, initial)
+    }
+
+    private struct TestAdmissionProvider: WindowManagerDelegateProvider {
+        let accepts: () -> Bool
+
+        func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
+            TestAdmissionMove(calcResult: request.calcResult, acceptsPlacement: accepts())
+        }
+    }
+
+    private struct TestAdmissionMove: WindowManagerDelegate {
+        let calcResult: WindowCalculationResult
+        let acceptsPlacement: Bool
+    }
+
     func testCommandMovesWindowToCursorDisplay() {
         let window = TestWindow(frame: CGRect(x: 100, y: 100, width: 400, height: 300).screenFlipped)
         let detection = TestScreenDetection(screens: [left, right], cursorScreen: right)
@@ -1414,9 +1510,9 @@ final class CursorScreenDetectionExecutionTests: XCTestCase {
         private let detection: TestScreenDetection
         private(set) var cursorWarps = 0
 
-        init(screenDetection: TestScreenDetection) {
+        init(screenDetection: TestScreenDetection, delegateProviders: [WindowManagerDelegateProvider]? = nil) {
             detection = screenDetection
-            super.init(screenDetection: screenDetection)
+            super.init(screenDetection: screenDetection, delegateProviders: delegateProviders)
         }
 
         override func warpCursor(to point: CGPoint) {

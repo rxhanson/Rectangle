@@ -77,15 +77,30 @@ final class SnapAreaViewModel {
     
     var footprintBlur: Bool {
         didSet {
-            guard oldValue != footprintBlur else { return }
+            guard !reloadingDefaults, oldValue != footprintBlur else { return }
             Defaults.footprintBlur.enabled = footprintBlur
+            // Respect the user’s material choice when blur is disabled and enabled again.
+            if footprintBlur, #available(macOS 26, *), !Defaults.blurMaterial.hasSelection {
+                liquidGlassForBlurFootprint = true
+            } else {
+                Notification.Name.blurStyleChanged.post()
+            }
         }
     }
     
+    var liquidGlassForBlurFootprint: Bool {
+        didSet {
+            guard !reloadingDefaults, oldValue != liquidGlassForBlurFootprint else { return }
+            Defaults.blurMaterial.value = liquidGlassForBlurFootprint ? .liquidGlass : .standard
+            Notification.Name.blurStyleChanged.post()
+        }
+    }
+
     var blurAppearance: BlurAppearance {
         didSet {
-            guard oldValue != blurAppearance else { return }
+            guard !reloadingDefaults, oldValue != blurAppearance else { return }
             Defaults.blurAppearance.value = blurAppearance
+            Notification.Name.blurAppearanceChanged.post()
         }
     }
     
@@ -113,6 +128,7 @@ final class SnapAreaViewModel {
     private(set) var reduceTransparency: Bool
 
     private var cancellables = Set<AnyCancellable>()
+    private var reloadingDefaults = false
     
     init() {
         self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
@@ -123,6 +139,7 @@ final class SnapAreaViewModel {
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
+        self.liquidGlassForBlurFootprint = Defaults.blurMaterial.value == .liquidGlass
         self.blurAppearance = Defaults.blurAppearance.value
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
@@ -132,6 +149,8 @@ final class SnapAreaViewModel {
     }
     
     func syncDefaults() {
+        reloadingDefaults = true
+        defer { reloadingDefaults = false }
         self.windowSnapping = !Defaults.windowSnapping.userDisabled
         self.unsnapRestore = !Defaults.unsnapRestore.userDisabled
         self.unsnapRestoreFromSizeChange = !Defaults.unsnapRestoreFromSizeChange.userDisabled
@@ -139,6 +158,7 @@ final class SnapAreaViewModel {
         self.hapticFeedback = Defaults.hapticFeedbackOnSnap.userEnabled
         self.animateFootprint = Defaults.footprintAnimationDurationMultiplier.value > 0
         self.footprintBlur = Defaults.footprintBlur.enabled
+        self.liquidGlassForBlurFootprint = Defaults.blurMaterial.value == .liquidGlass
         self.blurAppearance = Defaults.blurAppearance.value
         self.preventMissionControlDragging = Defaults.missionControlDragging.userDisabled
         self.showMissionControlDragging = Defaults.missionControlDragging.userModified
@@ -221,6 +241,11 @@ struct SnapAreaSettingsView: View {
                     Toggle("Blur footprint", isOn: $viewModel.footprintBlur)
 
                     if viewModel.footprintBlur {
+                        if #available(macOS 26, *) {
+                            Toggle("Liquid Glass for Blur footprint", isOn: $viewModel.liquidGlassForBlurFootprint)
+                                .padding(.leading, 16)
+                                .accessibilityIdentifier("liquidGlassForBlurFootprint")
+                        }
                         Picker("Blur appearance", selection: $viewModel.blurAppearance) {
                             Text("Follow System").tag(BlurAppearance.system)
                             Text("Light").tag(BlurAppearance.light)

@@ -28,7 +28,14 @@ extension Defaults {
         for exportableDefault in Defaults.array {
             codableDefaults[exportableDefault.key] = exportableDefault.toCodable()
         }
-        codableDefaults[footprintAlpha.key] = CodableDefault(double: effectiveFootprintAlpha)
+        // An untouched material preference must still allow Glass on the first explicit blur enable.
+        if !blurMaterial.hasSelection {
+            codableDefaults.removeValue(forKey: blurMaterial.key)
+        }
+        // An unset opacity follows the active preview style after import.
+        if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
+            codableDefaults.removeValue(forKey: footprintAlpha.key)
+        }
                 
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: version,

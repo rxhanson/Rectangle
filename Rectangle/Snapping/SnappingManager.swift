@@ -164,7 +164,16 @@ class SnappingManager {
         var lastAttemptOrigin: CGPoint
     }
     private var nativeSizeRestore: NativeSizeRestore?
-    var currentSnapArea: SnapArea?
+    private var fitPreviewGeometry: SnappedWindowFitPreview?
+    private var fitPreviewSample: (time: TimeInterval, rect: CGRect?)?
+    var currentSnapArea: SnapArea? {
+        didSet {
+            if currentSnapArea != oldValue {
+                fitPreviewGeometry = nil
+                fitPreviewSample = nil
+            }
+        }
+    }
     var dragPrevY: Double?
     var dragRestrictionExpirationTimestamp: UInt64 = 0
     var dragRestrictionExpired: Bool { DispatchTime.now().uptimeMilliseconds > dragRestrictionExpirationTimestamp }
@@ -467,12 +476,14 @@ class SnappingManager {
                 guard let geometry = dragGeometry() else { return }
                 currentRect = geometry.currentFrame
                 if geometry.isMoving {
+                    if Defaults.fitBesideSnappedWindows.enabled { SnappedWindowFitSession.shared.invalidate(windowID: windowId) }
                     windowMoving = true
                     if let windowId {
                         unsnapRestore(windowId: windowId, currentRect: geometry.currentFrame, cursorLoc: event.cgEvent?.location)
                     }
                 }
                 else if geometry.isResizing, let windowId {
+                    if Defaults.fitBesideSnappedWindows.enabled { SnappedWindowFitSession.shared.invalidate(windowID: windowId) }
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
             }
@@ -487,23 +498,31 @@ class SnappingManager {
                 }
                 
                 if let snapArea = snapAreaContainingCursor(priorSnapArea: currentSnapArea, event: event) {
-                    if snapArea == currentSnapArea {
-                        return
+                    let sameArea = snapArea == currentSnapArea
+                    let checkingFit = Defaults.fitBesideSnappedWindows.enabled
+                        && WindowSplitAxis(action: snapArea.action) != nil
+                        && SnappedWindowFitSession.shared.hasPotentialAnchor
+                    if sameArea {
+                        guard checkingFit || fitPreviewSample != nil else { return }
+                        // Recheck the stack while a Fit preview is visible without scanning it on every mouse event.
+                        if let sample = fitPreviewSample, event.timestamp - sample.time < 0.15 { return }
                     }
 
                     guard let currentRect = currentRect ?? dragGeometry()?.currentFrame else { return }
-                    
-                    if Defaults.hapticFeedbackOnSnap.userEnabled {
+                    if !sameArea, Defaults.hapticFeedbackOnSnap.userEnabled {
                         NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
                     }
-                    
-                    let currentWindow = Window(id: windowId, rect: currentRect)
-                    
-                    if let newBoxRect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow) {
-                        showSnapPreview(in: newBoxRect, snapArea: snapArea)
-                    }
-                    
                     currentSnapArea = snapArea
+                    let currentWindow = Window(id: windowId, rect: currentRect)
+                    let rect = getBoxRect(hotSpot: snapArea, currentWindow: currentWindow, checkingFit: checkingFit)
+                    if let rect {
+                        if !sameArea || fitPreviewSample?.rect != rect {
+                            showSnapPreview(in: rect, snapArea: snapArea)
+                        }
+                    } else if box?.realIsVisible == true {
+                        box?.orderOut(nil)
+                    }
+                    fitPreviewSample = checkingFit ? (event.timestamp, rect) : nil
                 } else {
                     if currentSnapArea != nil {
                         box?.orderOut(nil)
@@ -733,24 +752,31 @@ class SnappingManager {
         }
     }
     
-    func getBoxRect(hotSpot: SnapArea, currentWindow: Window) -> CGRect? {
-        if let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] {
-            
+    private func getBoxRect(hotSpot: SnapArea, currentWindow: Window, checkingFit: Bool) -> CGRect? {
+        guard let calculation = WindowCalculationFactory.calculationsByAction[hotSpot.action] else { return nil }
+        let screenFrame: CGRect
+        if checkingFit, let geometry = fitPreviewGeometry, geometry.matches(area: hotSpot, windowID: currentWindow.id) {
+            screenFrame = geometry.screenFrame
+        } else {
             let ignoreTodo = currentWindow.id.map { TodoManager.isTodoWindow($0) } ?? false
-            let rectCalcParams = RectCalculationParameters(window: currentWindow, visibleFrameOfScreen: hotSpot.screen.adjustedVisibleFrame(ignoreTodo), action: hotSpot.action, lastAction: nil)
-            let rectResult = calculation.calculateRect(rectCalcParams)
-            
-            let gapsApplicable = hotSpot.action.gapsApplicable
-            
-            if Defaults.gapSize.value > 0, gapsApplicable != .none {
-                let gapSharedEdges = rectResult.subAction?.gapSharedEdge ?? hotSpot.action.gapSharedEdge
-
-                return GapCalculation.applyGaps(rectResult.rect, dimension: gapsApplicable, sharedEdges: gapSharedEdges, gapSize: Defaults.gapSize.value, skipTopGap: Defaults.skipGapTopEdge.enabled)
-            }
-            
-            return rectResult.rect
+            screenFrame = hotSpot.screen.adjustedVisibleFrame(ignoreTodo)
+            fitPreviewGeometry = checkingFit ? SnappedWindowFitPreview(area: hotSpot, windowID: currentWindow.id, screenFrame: screenFrame) : nil
         }
-        return nil
+        let parameters = RectCalculationParameters(window: currentWindow, visibleFrameOfScreen: screenFrame,
+                                                   action: hotSpot.action, lastAction: nil)
+        let base = calculation.calculateRect(parameters)
+        var target = WindowCalculationResult(rect: base.rect, screen: hotSpot.screen,
+                                            resultingAction: hotSpot.action, resultingSubAction: base.subAction)
+        GapTargetAdjuster().adjust(&target, action: hotSpot.action, windowId: currentWindow.id)
+        guard let geometry = fitPreviewGeometry else { return target.rect }
+        return SnappedWindowFit.previewRect(for: target, window: currentWindow, screenFrame: screenFrame) {
+            geometry.adjustedRect(for: target) {
+                guard self.windowElement?.isResizable() == true, self.windowElement?.isSystemDialog != true else { return nil }
+                var adjusted = target
+                OverlapOffsetTargetAdjuster().adjust(&adjusted, action: hotSpot.action, windowId: currentWindow.id)
+                return adjusted.rect
+            }
+        }
     }
     
     func snapAreaForNativeRelease(_ event: NSEvent) -> SnapArea? {

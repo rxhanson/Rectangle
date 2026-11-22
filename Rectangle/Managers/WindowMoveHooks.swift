@@ -16,6 +16,9 @@ protocol WindowTargetAdjuster {
 
 // MARK: - Move delegates
 
+/// Shared by copies of a command, including deferred planning attempts.
+final class WindowActionIdentity: NSObject {}
+
 /// What a window move is about to do, for a delegate to plan around.
 struct WindowMoveRequest {
     let calcResult: WindowCalculationResult
@@ -32,10 +35,11 @@ struct WindowMoveRequest {
     let sourceScreens: UsableScreens
     let destinationScreenIsCurrentScreen: Bool
     let lastRectangleAction: RectangleAction?
+    var identity = WindowActionIdentity()
 }
 
-/// Customizes a single move once its target is known: it can revise the target,
-/// decide that the move is already achieved, place the window itself, and tidy up after.
+/// Customizes a single move once its target is known. It can decline the move, revise
+/// the target, report it as already achieved, place the window, and tidy up afterward.
 /// Every hook but `calcResult` has a default that leaves the manager's own behavior in place.
 ///
 /// A move has at most one delegate. When features that customize moves could both apply,
@@ -43,6 +47,10 @@ struct WindowMoveRequest {
 protocol WindowManagerDelegate {
     /// The target this move aims for, possibly revised from the one it was given.
     var calcResult: WindowCalculationResult { get }
+
+    /// Returns false to decline the move before WindowManager saves its Restore
+    /// frame, records a placement, or supersedes pending work.
+    var acceptsPlacement: Bool { get }
 
     /// Whether the window is already where the move would put it, or nil to compare frames.
     /// Only called while no animation is pending, so it may record state.
@@ -58,6 +66,7 @@ protocol WindowManagerDelegate {
 }
 
 extension WindowManagerDelegate {
+    var acceptsPlacement: Bool { true }
     func isAlreadyAchieved() -> Bool? { nil }
     func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? { nil }
     func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) {}
@@ -68,4 +77,11 @@ extension WindowManagerDelegate {
 protocol WindowManagerDelegateProvider {
     /// A delegate for this move, or nil when this feature doesn't apply to it.
     func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate?
+}
+
+/// The final frame in AX coordinates after placement and any display retries.
+struct WindowActionCompletion {
+    let result: ResultParameters
+    let achievedFrame: CGRect
+    var identity = WindowActionIdentity()
 }

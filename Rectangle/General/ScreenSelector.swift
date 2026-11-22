@@ -33,6 +33,7 @@ struct ScreenSelection {
     let source: UsableScreens
     /// Whether the window's last action no longer counts as the one being repeated.
     var forgetsLastAction = false
+    var cursorScreenFrame: CGRect?
 }
 
 struct ScreenSelector {
@@ -41,7 +42,7 @@ struct ScreenSelector {
     var history: CursorScreenHistory = .shared
 
     /// The screens a move is calculated against, or nil when they can't be found.
-    /// Records the press with cursor screen detection, so it must be called once per move.
+    /// The cursor press is recorded when the move is admitted.
     func screens(for windowElement: AccessibilityElement, windowId: CGWindowID?,
                  parameters: ExecutionParameters) -> ScreenSelection? {
         guard let sourceScreens = screenDetection.detectScreens(using: windowElement) else { return nil }
@@ -72,24 +73,26 @@ struct ScreenSelector {
         let cursorChangedDisplay = history.changedDisplay(for: windowId, cursorScreenFrame: cursorScreenFrame)
         let isSameCommandAgain = windowId.map { history.actions[$0] == action } ?? false
 
-        if let windowId {
-            history.screenFrames[windowId] = cursorScreenFrame
-            history.actions[windowId] = action
-        }
-
         if !cursorChangedDisplay && isSameCommandAgain {
             // Until the cursor points elsewhere, pressing the same command again continues
             // from wherever the last press left the window, so repeats that cross displays
             // keep working. This mustn't depend on the last action, which is forgotten
             // whenever the app adjusts the frame Rectangle set.
-            return ScreenSelection(usable: sourceScreens, source: sourceScreens)
+            return ScreenSelection(usable: sourceScreens, source: sourceScreens, cursorScreenFrame: cursorScreenFrame)
         }
 
         // Pointing at another display, or pressing another command, is a first press
         // on the cursor's display. The last action there doesn't count as a repeat if
         // the cursor moved or repeats walked the window off that display.
         let forgetsLastAction = cursorChangedDisplay || sourceScreens.currentScreen != cursorScreens.currentScreen
-        return ScreenSelection(usable: cursorScreens, source: sourceScreens, forgetsLastAction: forgetsLastAction)
+        return ScreenSelection(usable: cursorScreens, source: sourceScreens, forgetsLastAction: forgetsLastAction,
+                               cursorScreenFrame: cursorScreenFrame)
+    }
+
+    func recordCursorPress(_ selection: ScreenSelection, action: WindowAction, windowId: CGWindowID) {
+        guard let frame = selection.cursorScreenFrame else { return }
+        history.screenFrames[windowId] = frame
+        history.actions[windowId] = action
     }
 
     /// A window moved to the cursor's display was sent there by the cursor, so moving

@@ -3,9 +3,12 @@
 import Cocoa
 
 extension Notification.Name {
+    static let blurStyleChanged = Notification.Name("blurStyleChanged")
+    static let blurAppearanceChanged = Notification.Name("blurAppearanceChanged")
     static let windowActionWillExecute = Notification.Name("windowActionWillExecute")
   
     static let configImported = Notification.Name("configImported")
+    static let fitBesideSnappedWindowsChanged = Notification.Name("fitBesideSnappedWindowsChanged")
     static let windowAnimationPreferencesChanged = Notification.Name("windowAnimationPreferencesChanged")
     static let windowActionCompleted = Notification.Name("windowActionCompleted")
     static let windowSnapping = Notification.Name("windowSnapping")

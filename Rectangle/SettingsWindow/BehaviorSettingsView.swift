@@ -389,6 +389,24 @@ struct BehaviorSettingsView: View {
                 }
             }
             
+            Section {
+                CustomDisclosureGroup {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Divider()
+                        Toggle("Fit remaining space", isOn: $viewModel.fitBesideSnappedWindows)
+                            .accessibilityIdentifier("fitBesideSnappedWindows")
+                    }
+                    .padding(.leading, 12)
+                } label: {
+                    Label {
+                        Text("Adjacent Windows")
+                    } icon: {
+                        Image(systemName: "rectangle.grid.1x2")
+                            .rotationEffect(.degrees(90))
+                    }
+                }
+            }
+
             // MARK: - Extras
             Section {
                 CustomDisclosureGroup {
