@@ -13,14 +13,11 @@ final class BlurSurfaceView: NSView {
         }
     }
 
-    let content = ContentView()
+    let content = NSView()
     private let legacy = NSVisualEffectView()
     private let solid = NSView()
     private let solidColor: NSColor
     private var glass: NSView?
-    private weak var suspendedFocus: NSView?
-    private weak var focusDuringGlassHide: NSResponder?
-    private weak var focusWindow: NSWindow?
     private var legacyMaskRadius: CGFloat?
     private let radius: CGFloat
     private let presentation: () -> Presentation
@@ -35,10 +32,9 @@ final class BlurSurfaceView: NSView {
         get { legacy.blendingMode }
         set { legacy.blendingMode = newValue }
     }
-    override var isFlipped: Bool { content.isFlipped }
 
     init(frame: CGRect = .zero, material: NSVisualEffectView.Material, cornerRadius: CGFloat,
-         flipped: Bool = false, notifications: NotificationCenter = .default,
+         notifications: NotificationCenter = .default,
          solidColor: NSColor = .windowBackgroundColor,
          presentation: @escaping () -> Presentation = { .overlay }) {
         self.notifications = notifications
@@ -46,7 +42,6 @@ final class BlurSurfaceView: NSView {
         self.solidColor = solidColor
         radius = cornerRadius
         super.init(frame: frame)
-        content.contentFlipped = flipped
         content.autoresizingMask = [.width, .height]
         legacy.material = material
         legacy.state = .active
@@ -89,8 +84,6 @@ final class BlurSurfaceView: NSView {
         updateAppearance(style.appearance)
         effectiveMaterial = style.material.effective(supportsLiquidGlass: OverlayMaterial.supportsLiquidGlass,
                                                      reduceTransparency: false)
-        let previousResponder = window?.firstResponder as? NSView
-        let restoresFocus = previousResponder?.isDescendant(of: content) == true
         switch effectiveMaterial {
         case .liquidGlass:
             if #available(macOS 26, *) { showGlass() }
@@ -100,10 +93,6 @@ final class BlurSurfaceView: NSView {
         case .noBlur:
             removeLegacyMaterial()
             showContent(above: solid)
-        }
-        // AppKit can clear a descendant's focus while the same content moves into or out of Glass.
-        if restoresFocus, let previousResponder, window?.firstResponder !== previousResponder {
-            window?.makeFirstResponder(previousResponder)
         }
         layoutMaterial()
     }
@@ -155,7 +144,6 @@ final class BlurSurfaceView: NSView {
     }
 
     private func layoutMaterial() {
-        defer { restoreFocusAfterGlassHide() }
         if !usesLiquidGlass {
             if effectiveMaterial == .standard {
                 layoutLegacyMaterial()
@@ -167,7 +155,7 @@ final class BlurSurfaceView: NSView {
             return
         }
         guard bounds.width > 1 && bounds.height > 1 else {
-            if let glass, !glass.isHidden { hideGlassForSmallBounds(glass) }
+            glass?.isHidden = true
             return
         }
         glass?.isHidden = false
@@ -176,28 +164,6 @@ final class BlurSurfaceView: NSView {
         if #available(macOS 26, *), let effect = glass as? NSGlassEffectView {
             effect.cornerRadius = max(0, min(radius, min(bounds.width, bounds.height) / 2))
         }
-    }
-
-    private func hideGlassForSmallBounds(_ glass: NSView) {
-        if let window, let responder = window.firstResponder as? NSView, responder.isDescendant(of: content) {
-            suspendedFocus = responder
-            focusWindow = window
-        }
-        glass.isHidden = true
-        if let focusWindow { focusDuringGlassHide = focusWindow.firstResponder }
-    }
-
-    private func restoreFocusAfterGlassHide() {
-        guard bounds.width > 1, bounds.height > 1, let responder = suspendedFocus else { return }
-        let originalWindow = focusWindow
-        let interimResponder = focusDuringGlassHide
-        suspendedFocus = nil
-        focusWindow = nil
-        focusDuringGlassHide = nil
-        // If something else took focus while the surface was hidden, keep that choice.
-        guard let window, window === originalWindow, window.firstResponder === interimResponder,
-              responder.window === window, !responder.isHiddenOrHasHiddenAncestor else { return }
-        window.makeFirstResponder(responder)
     }
 
     private func layoutLegacyMaterial() {
@@ -226,8 +192,4 @@ final class BlurSurfaceView: NSView {
         else { layoutMaterial() }
     }
 
-    final class ContentView: NSView {
-        var contentFlipped = false
-        override var isFlipped: Bool { contentFlipped }
-    }
 }

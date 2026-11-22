@@ -193,8 +193,8 @@ class FootprintWindow: NSWindow {
         decoration.contentsFormat = .RGBA8Uint
         if #available(macOS 26, *) { decoration.preferredDynamicRange = .standard }
         contentView = root
-        effectView.onStyleChange = { [weak self] in self?.refreshAccessibility() }
-        effectView.onAppearanceChange = { [weak self] in self?.updateAppearance() }
+        effectView.onStyleChange = { [weak self] in self?.refreshAccessibility(refreshMaterial: false) }
+        effectView.onAppearanceChange = { [weak self] in self?.updateAppearance(refreshMaterial: false) }
         root.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
         accessibilityObserver = NSWorkspace.shared.notificationCenter.addObserver(
@@ -207,9 +207,9 @@ class FootprintWindow: NSWindow {
         if let accessibilityObserver { NSWorkspace.shared.notificationCenter.removeObserver(accessibilityObserver) }
     }
 
-    private func updateAppearance() {
+    private func updateAppearance(refreshMaterial: Bool = true) {
         let style = presentation
-        effectView.refresh()
+        if refreshMaterial { effectView.refresh() }
         let glass = usesLiquidGlass
         let requested = style.usesBlur ? Defaults.blurAppearance.value.appearance : nil
         if appearance?.name != requested?.name { appearance = requested }
@@ -435,8 +435,8 @@ class FootprintWindow: NSWindow {
     /// Whether the preview is still moving or fading.
     var isAnimating: Bool { moving || fade.isAnimating }
 
-    func refreshAccessibility() {
-        updateAppearance()
+    func refreshAccessibility(refreshMaterial: Bool = true) {
+        updateAppearance(refreshMaterial: refreshMaterial)
         if !presentation.animates || moving {
             stopGeometry()
             setGeometry(destination, duration: 0)

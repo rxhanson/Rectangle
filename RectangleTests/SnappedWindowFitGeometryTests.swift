@@ -1,101 +1,33 @@
 import XCTest
 @testable import Rectangle
 
-final class SnappedWindowFitVerificationTests: XCTestCase {
-    func testPreviewLeaseSurvivesExpiryOnlyForDragRelease() {
-        var time = ProcessInfo.processInfo.systemUptime
-        let session = SnappedWindowFitSession(observeWorkspace: false, now: { time }) { _, _ in true }
-        session.record(opportunity(id: 1))
-        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
-        wait(for: [published], timeout: 2)
-        session.beginPreview()
-        time += 20
-        XCTAssertNotNil(session.take(allowPreview: true))
-        XCTAssertNil(session.current)
-    }
-
-    func testLeavingPreviewDoesNotExtendNextShortcutOpportunity() {
-        var time = ProcessInfo.processInfo.systemUptime
-        let session = SnappedWindowFitSession(observeWorkspace: false, now: { time }) { _, _ in true }
-        session.record(opportunity(id: 1))
-        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
-        wait(for: [published], timeout: 2)
-        session.beginPreview()
-        time += 20
-        session.endPreview()
-        XCTAssertNil(session.take())
-    }
-
-    func testSlowNeighborVerificationDoesNotBlockMainOrExposeUnverifiedAnchor() {
-        let started = expectation(description: "Background verification started")
-        let mainResponsive = expectation(description: "Main queue remains responsive")
-        let release = DispatchSemaphore(value: 0)
-        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in
-            XCTAssertFalse(Thread.isMainThread)
-            started.fulfill()
-            _ = release.wait(timeout: .now() + 2)
-            return true
-        })
-        session.record(opportunity(id: 1))
-        wait(for: [started], timeout: 1)
-        XCTAssertNil(session.current)
-        DispatchQueue.main.async { mainResponsive.fulfill() }
-        wait(for: [mainResponsive], timeout: 1)
-        release.signal()
-        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current?.id == 1 }, object: nil)
-        wait(for: [published], timeout: 2)
-    }
-
-    func testTakingPendingAnchorCancelsVerificationAndPreventsLatePublication() {
-        let started = expectation(description: "Background verification started")
-        let cancelled = expectation(description: "Worker sees cancellation")
-        let release = DispatchSemaphore(value: 0)
-        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, isCurrent in
-            started.fulfill()
-            _ = release.wait(timeout: .now() + 2)
-            XCTAssertFalse(isCurrent())
-            cancelled.fulfill()
-            return true
-        })
-        session.record(opportunity(id: 1))
-        wait(for: [started], timeout: 1)
-        XCTAssertNil(session.take())
-        release.signal()
-        wait(for: [cancelled], timeout: 1)
-        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
-        published.isInverted = true
-        wait(for: [published], timeout: 0.2)
-    }
-
-    func testSupersededVerificationCannotReplaceNewAnchor() {
-        let started = expectation(description: "First verification started")
-        let release = DispatchSemaphore(value: 0)
-        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { opportunity, isCurrent in
-            if opportunity.id == 1 {
-                started.fulfill()
-                _ = release.wait(timeout: .now() + 2)
-                XCTAssertFalse(isCurrent())
-            }
-            return true
-        })
-        session.record(opportunity(id: 1))
-        wait(for: [started], timeout: 1)
-        session.record(opportunity(id: 2))
-        release.signal()
-        let published = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current?.id == 2 }, object: nil)
-        wait(for: [published], timeout: 2)
-        XCTAssertEqual(session.take()?.id, 2)
-        XCTAssertNil(session.current)
-    }
-
-    private func opportunity(id: CGWindowID) -> SnappedWindowFitOpportunity {
-        SnappedWindowFitOpportunity(id: id, pid: 123, launch: 1, action: .leftHalf,
+final class SnappedWindowFitSessionTests: XCTestCase {
+    func testReferenceRemainsAvailableUntilTaken() {
+        let session = SnappedWindowFitSession(observeWorkspace: false)
+        let reference = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1, action: .leftHalf,
             frame: CGRect(x: 0, y: 0, width: 400, height: 600),
-            bounds: CGRect(x: 0, y: 0, width: 1000, height: 600),
-            createdAt: ProcessInfo.processInfo.systemUptime)
+            bounds: CGRect(x: 0, y: 0, width: 1000, height: 600))
+        session.record(reference)
+        XCTAssertEqual(session.current, reference)
+        XCTAssertEqual(session.take(), reference)
+        XCTAssertNil(session.current)
+    }
+
+    func testNewReferenceReplacesThePreviousOneAndInvalidationIsWindowSpecific() {
+        let session = SnappedWindowFitSession(observeWorkspace: false)
+        func reference(_ id: CGWindowID) -> SnappedWindowFitOpportunity {
+            SnappedWindowFitOpportunity(id: id, pid: 123, launch: 1, action: .leftHalf,
+                frame: CGRect(x: 0, y: 0, width: 400, height: 600),
+                bounds: CGRect(x: 0, y: 0, width: 1000, height: 600))
+        }
+        session.record(reference(1))
+        session.record(reference(2))
+        session.invalidate(windowID: 1)
+        XCTAssertEqual(session.current?.id, 2)
+        session.invalidate(windowID: 2)
+        XCTAssertNil(session.current)
     }
 }
-
 
 final class SnappedWindowFitOcclusionTests: XCTestCase {
     private let frame = CGRect(x: 0, y: 29, width: 840, height: 878)
@@ -137,7 +69,7 @@ final class SnappedWindowFitGeometryTests: XCTestCase {
         let axis = WindowSplitAxis(action: action)!
         let frame = axis.rect(bounds)
         let anchor = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1,
-            action: axis == .horizontal ? .leftHalf : .topHalf, frame: axis.rect(anchorFrame), bounds: frame, createdAt: 0)
+            action: axis == .horizontal ? .leftHalf : .topHalf, frame: axis.rect(anchorFrame), bounds: frame)
         return SnappedWindowFit.resolve(action: action, movingWindowID: 2, target: axis.rect(target
             ?? CGRect(x: 600, y: 0, width: 600, height: 800)), bounds: frame, gap: gap, anchor: anchor)
     }
@@ -215,7 +147,7 @@ final class SnappedWindowFitGeometryTests: XCTestCase {
         }
         let screen = RepeatedMaximizeTestScreen(frame: bounds)
         let anchor = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1, action: .leftHalf,
-            frame: CGRect(x: 0, y: 0, width: 720, height: 800), bounds: bounds, createdAt: 0)
+            frame: CGRect(x: 0, y: 0, width: 720, height: 800), bounds: bounds)
         let original = CGRect(x: 600, y: 0, width: 600, height: 800)
         let fitted = CGRect(x: 720, y: 0, width: 480, height: 800)
         for gap: Float in [0, 8] {
@@ -232,17 +164,16 @@ final class SnappedWindowFitGeometryTests: XCTestCase {
         }
     }
 
-    func testBoundsAndComplementaryActionAreRequiredForAnUnexpiredAnchor() {
+    func testBoundsAndComplementaryActionAreRequired() {
         let anchor = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1, action: .leftHalf,
-            frame: CGRect(x: 0, y: 0, width: 720, height: 800), bounds: bounds, createdAt: 5)
-        XCTAssertTrue(anchor.accepts(action: .rightHalf, movingWindowID: 2, bounds: bounds, at: 14.9))
-        XCTAssertFalse(anchor.accepts(action: .rightHalf, movingWindowID: 2, bounds: bounds, at: 15))
-        XCTAssertFalse(anchor.accepts(action: .rightHalf, movingWindowID: 1, bounds: bounds, at: 6))
-        XCTAssertFalse(anchor.accepts(action: .rightHalf, movingWindowID: 2, bounds: bounds.offsetBy(dx: 10, dy: 0), at: 6))
-        XCTAssertFalse(anchor.accepts(action: .leftHalf, movingWindowID: 2, bounds: bounds, at: 6))
+            frame: CGRect(x: 0, y: 0, width: 720, height: 800), bounds: bounds)
+        XCTAssertTrue(anchor.accepts(action: .rightHalf, movingWindowID: 2, bounds: bounds))
+        XCTAssertFalse(anchor.accepts(action: .rightHalf, movingWindowID: 1, bounds: bounds))
+        XCTAssertFalse(anchor.accepts(action: .rightHalf, movingWindowID: 2, bounds: bounds.offsetBy(dx: 10, dy: 0)))
+        XCTAssertFalse(anchor.accepts(action: .leftHalf, movingWindowID: 2, bounds: bounds))
     }
 
-    func testIncompleteWindowListDoesNotCommitOrPreventLaterVerification() {
+    func testMissingReferenceUsesOrdinaryTarget() {
         let fitEnabled = Defaults.fitBesideSnappedWindows.enabled
         let oldGap = Defaults.gapSize.value
         defer {
@@ -257,18 +188,18 @@ final class SnappedWindowFitGeometryTests: XCTestCase {
         let target = calculation.calculateRect(RectCalculationParameters(window: window, visibleFrameOfScreen: screenFrame,
                                                                           action: .rightHalf, lastAction: nil)).rect
         let anchor = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1, action: .leftHalf,
-            frame: CGRect(x: 0, y: 0, width: 720, height: 800), bounds: bounds, createdAt: ProcessInfo.processInfo.systemUptime)
+            frame: CGRect(x: 0, y: 0, width: 720, height: 800), bounds: bounds)
         var sampleCount = 0
         var windows = [WindowInfo]()
         func sample(_ initial: CGRect) -> SnappedWindowFit.Resolution? {
-            SnappedWindowFit.resolveIfKnown(action: .rightHalf, window: window, initialTarget: initial, target: target,
+            SnappedWindowFit.resolve(action: .rightHalf, window: window, initialTarget: initial, target: target,
                                             screenFrame: screenFrame, opportunity: anchor,
                                             windowList: { sampleCount += 1; return windows },
                                             processLaunchTime: { _ in 1 })
         }
         XCTAssertEqual(sample(target.insetBy(dx: 20, dy: 0)), .unchanged)
         XCTAssertEqual(sampleCount, 0)
-        XCTAssertNil(sample(target))
+        XCTAssertEqual(sample(target), .unchanged)
         windows.append(WindowInfo(id: 1, level: 0, frame: anchor.frame, pid: anchor.pid, processName: "Fixture"))
         guard case .fit(let fit) = sample(target) else { return XCTFail("A recovered WindowServer sample must be eligible") }
         XCTAssertEqual(fit.target, CGRect(x: 720, y: 0, width: 480, height: 800))

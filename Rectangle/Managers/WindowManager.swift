@@ -403,7 +403,7 @@ class WindowManager {
                 return
             }
             guard self.placementCoordinator.isCurrent(placement.access) else { return self.end(placement) }
-                let frame = self.apply(result: move.result)
+            let frame = self.apply(result: move.result)
             self.settleAcrossDisplays(placement, resultingRect: frame, retries: retries.dropFirst())
         }
         if let delay = retry.delay {

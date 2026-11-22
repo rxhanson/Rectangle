@@ -152,7 +152,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
         self.windowManager = WindowManager(delegateProviders: [
-            SnappedWindowFitProvider(fallback: CooperativeResizeDelegateProvider(windowHistory: Self.windowHistory))
+            SnappedWindowFitProvider(),
+            CooperativeResizeDelegateProvider(windowHistory: Self.windowHistory)
         ])
         self.shortcutManager = ShortcutManager(windowManager: windowManager)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
