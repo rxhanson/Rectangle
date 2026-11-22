@@ -16,6 +16,9 @@ protocol WindowTargetAdjuster {
 
 // MARK: - Move delegates
 
+/// Shared by copies of a command, including deferred planning attempts.
+final class WindowActionIdentity: NSObject {}
+
 /// What a window move is about to do, for a delegate to plan around.
 struct WindowMoveRequest {
     let calcResult: WindowCalculationResult
@@ -32,6 +35,7 @@ struct WindowMoveRequest {
     let sourceScreens: UsableScreens
     let destinationScreenIsCurrentScreen: Bool
     let lastRectangleAction: RectangleAction?
+    var identity = WindowActionIdentity()
 }
 
 /// Customizes a single move once its target is known. It can decline the move, revise

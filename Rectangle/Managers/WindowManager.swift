@@ -203,7 +203,7 @@ class WindowManager {
                                                                  screenFrame: visibleFrameOfDestinationScreen,
                                                                  sourceScreens: sourceScreens,
                                                                  destinationScreenIsCurrentScreen: !isMovedAcrossDisplays,
-                                                                 lastRectangleAction: lastRectangleAction))
+                                                                 lastRectangleAction: lastRectangleAction, identity: parameters.identity))
 
         guard delegate?.acceptsPlacement != false else {
             reject(parameters)
@@ -502,6 +502,7 @@ struct RectangleAction {
 }
 
 struct ExecutionParameters {
+    let identity: WindowActionIdentity
     let action: WindowAction
     let updateRestoreRect: Bool
     let screen: NSScreen?
@@ -517,7 +518,8 @@ struct ExecutionParameters {
     /// A display-cycle repeat calculates a fresh action on the chosen display.
     let isDisplayCycle: Bool
 
-    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil, isDisplayCycle: Bool = false) {
+    init(_ action: WindowAction, updateRestoreRect: Bool = true, screen: NSScreen? = nil, windowElement: AccessibilityElement? = nil, windowId: CGWindowID? = nil, source: ExecutionSource = .keyboardShortcut, preservesFocus: Bool = false, completion: (() -> Void)? = nil, cancellation: (() -> Void)? = nil, isDisplayCycle: Bool = false, identity: WindowActionIdentity = WindowActionIdentity()) {
+        self.identity = identity
         self.action = action
         self.updateRestoreRect = updateRestoreRect
         self.screen = screen

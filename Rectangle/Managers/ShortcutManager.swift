@@ -278,7 +278,7 @@ class ShortcutManager {
                     parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen,
                                                      windowElement: windowElement, windowId: windowId, source: parameters.source,
                                                      preservesFocus: parameters.preservesFocus, completion: parameters.completion,
-                                                     cancellation: parameters.cancellation, isDisplayCycle: true)
+                                                     cancellation: parameters.cancellation, isDisplayCycle: true, identity: parameters.identity)
                 }
             }
         }
