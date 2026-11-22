@@ -494,7 +494,9 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         let session = SnappedWindowFitSession(observeWorkspace: false)
         let fit = SnappedWindowFitProvider(session: { session })
         let manager = makeManager(windows: [anchor], beforeCooperative: [fit])
-        manager.execute(ExecutionParameters(.leftHalf, windowElement: anchor))
+        let parameters = ExecutionParameters(.leftHalf, windowElement: anchor)
+        Notification.Name.windowActionWillExecute.post(object: parameters)
+        manager.execute(parameters)
         XCTAssertEqual(session.current?.frame, anchor.frame)
         XCTAssertEqual(session.current?.id, neighborId)
     }
@@ -1149,7 +1151,10 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         private var dispatcher: WindowActionDispatcher!
 
         override func execute(_ parameters: ExecutionParameters) {
-            dispatcher.dispatch(parameters)
+            dispatcher.prepare(parameters) { [weak self] resolved in
+                guard let self else { resolved.completion?(); return }
+                self.executeResolved(resolved)
+            }
         }
 
         private func executeResolved(_ parameters: ExecutionParameters) {
@@ -1164,10 +1169,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             super.init(screenDetection: screenDetection,
                        delegateProviders: beforeCooperative + [CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
                                                                                windowElements: { windows })], writeFence: writeFence)
-            dispatcher = WindowActionDispatcher(fence: writeFence) { [weak self] parameters in
-                guard let self else { parameters.completion?(); return }
-                self.executeResolved(parameters)
-            }
+            dispatcher = WindowActionDispatcher(fence: writeFence)
         }
 
         override func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {

@@ -47,7 +47,7 @@ final class DividerRestoreOrderingTests: XCTestCase {
                                     windowAnimator: animator, windowHistory: history,
                                     delegateProviders: [], writeFence: fence)
 
-        let dispatcher = WindowActionDispatcher(fence: fence, execute: manager.execute)
+        let dispatcher = WindowActionDispatcher(fence: fence)
         let aTarget = WindowWriteTarget(element: a, windowID: 701)
         let divider = fence.claim([aTarget, .init(element: b, windowID: 702)])
         let dividerEntered = expectation(description: "Divider issued a write on A")
@@ -70,20 +70,20 @@ final class DividerRestoreOrderingTests: XCTestCase {
             aCompletions += 1
             restoreFinished.fulfill()
         })
-        dispatcher.dispatch(restore)
+        dispatcher.prepare(restore, perform: manager.execute)
         XCTAssertEqual(aCompletions, 0)
 
         let cTerminated = expectation(description: "C delivered its terminal callback")
         var cCompletions = 0
         var cCancellations = 0
-        dispatcher.dispatch(ExecutionParameters(.topHalf, screen: screen, windowElement: c, windowId: 703,
+        dispatcher.prepare(ExecutionParameters(.topHalf, screen: screen, windowElement: c, windowId: 703,
                                             source: .url, completion: {
             cCompletions += 1
             cTerminated.fulfill()
         }, cancellation: {
             cCancellations += 1
             cTerminated.fulfill()
-        }))
+        }), perform: manager.execute)
         let cDestination = try XCTUnwrap(animator.destination(for: c))
         wait(for: [cLookupStarted], timeout: 2)
         XCTAssertEqual(a.frame, startingFrame)

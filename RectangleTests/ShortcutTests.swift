@@ -103,7 +103,8 @@ class ShortcutManagerSessionTests: XCTestCase {
         shortcuts: [WindowAction: MASShortcut]? = nil,
         windowManager: WindowManager = WindowManager(),
         screenDetection: ScreenDetection = ScreenDetection(),
-        windowUnderCursor: AccessibilityElement? = nil
+        windowUnderCursor: AccessibilityElement? = nil,
+        prepareWindowAction: @escaping (ExecutionParameters, @escaping (ExecutionParameters) -> Void) -> Void = { parameters, perform in perform(parameters) }
     ) -> Harness {
         let bindingStore = BindingStoreSpy()
         let mouseButtonBindingStore = MouseButtonBindingStoreSpy()
@@ -117,6 +118,7 @@ class ShortcutManagerSessionTests: XCTestCase {
         let todoSessionStates = ValueBox<[Bool]>([])
         let manager = ShortcutManager(
             windowManager: windowManager,
+            prepareWindowAction: prepareWindowAction,
             screenDetection: screenDetection,
             bindingStore: bindingStore,
             mouseButtonBindingStore: mouseButtonBindingStore,
@@ -145,6 +147,35 @@ class ShortcutManagerSessionTests: XCTestCase {
             scheduler: scheduler,
             todoSessionStates: todoSessionStates
         )
+    }
+
+    func testActionPreparationRunsBeforeSingleWindowExecution() throws {
+        let target = CapturingWindowManager()
+        var pending: (ExecutionParameters, (ExecutionParameters) -> Void)?
+        let harness = makeHarness(windowManager: target, prepareWindowAction: { parameters, perform in
+            pending = (parameters, perform)
+        })
+        let original = ExecutionParameters(.leftHalf, windowElement: TestWindow(windowId: 42), source: .titleBar)
+        harness.notificationCenter.post(name: WindowAction.leftHalf.notificationName, object: original)
+        XCTAssertTrue(target.executedParameters.isEmpty)
+        let prepared = try XCTUnwrap(pending)
+        XCTAssertTrue(prepared.0.identity === original.identity)
+        prepared.1(prepared.0)
+        XCTAssertEqual(target.executedParameters.count, 1)
+    }
+
+    func testActionPreparationSeesBulkActionsBeforeTheirDirectWriter() {
+        let target = CapturingWindowManager()
+        var prepared: WindowAction?
+        var completions = 0
+        let harness = makeHarness(windowManager: target, prepareWindowAction: { parameters, _ in
+            prepared = parameters.action
+        })
+        harness.notificationCenter.post(name: WindowAction.tileAll.notificationName,
+            object: ExecutionParameters(.tileAll, source: .url, completion: { completions += 1 }))
+        XCTAssertEqual(prepared, .tileAll)
+        XCTAssertEqual(completions, 0)
+        XCTAssertTrue(target.executedParameters.isEmpty)
     }
 
     private func resignSession(_ harness: Harness) {

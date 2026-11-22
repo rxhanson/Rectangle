@@ -37,6 +37,8 @@ final class WindowWriteFence {
 
     private struct PendingPlan {
         let targets: [WindowWriteTarget]
+        let order: Int
+        let isShared: Bool
         let discard: (() -> Void)?
         let resume: () -> Void
 
@@ -49,6 +51,9 @@ final class WindowWriteFence {
                                          attributes: .concurrent)
     private var entries: [Entry] = []
     private var pendingPlans: [PendingPlan] = []
+    private var planOrder = 0
+
+    var hasPendingSharedLayout: Bool { pendingPlans.contains { $0.isShared } }
 
     var externalTargets: [WindowWriteTarget] {
         entries.filter { $0.isExternal && ($0.workInFlight || $0.lease.isCurrent) }.flatMap(\.targets)
@@ -58,17 +63,20 @@ final class WindowWriteFence {
         externalTargets.contains { external in targets.contains(where: external.overlaps) }
     }
 
-    /// Let planning read the frame after the issued work. Merely waiting does
-    /// not take ownership: a request can still be rejected by its provider.
-    /// Shared-layout commands take ownership after every issued external write
-    /// has published its outcome, then supersede older pending commands.
+    /// Shared layouts form an ordering boundary for later member commands.
+    /// Wait for all issued writes, commit the shared layout, then apply newer commands.
     func deferExternalWrites(discard: (() -> Void)? = nil, resume: @escaping () -> Void) -> Bool {
-        let targets = externalTargets
-        return deferPlanningIfNeeded(for: targets, discard: discard) { [self] in
-            let lease = claim(targets, isExternal: false)
-            finish(lease)
+        let targets = [WindowWriteTarget(element: nil, windowID: nil)]
+        guard hasIssuedWork(for: targets) else { return false }
+        planOrder += 1
+        let order = planOrder
+        let plan = PendingPlan(targets: targets, order: order, isShared: true, discard: discard) { [self] in
+            let lease = claim(targets, isExternal: false, supersedingPlansBefore: order)
             resume()
+            finish(lease)
         }
+        pendingPlans.append(plan)
+        return true
     }
 
     func hasPendingPlans(overlapping targets: [WindowWriteTarget]) -> Bool {
@@ -77,9 +85,10 @@ final class WindowWriteFence {
 
     func deferPlanningIfNeeded(for targets: [WindowWriteTarget], discard: (() -> Void)?,
                                resume: @escaping () -> Void) -> Bool {
-        let plan = PendingPlan(targets: targets, discard: discard, resume: resume)
-        guard hasIssuedWork(for: plan) else { return false }
-        pendingPlans.append(plan)
+        guard hasIssuedWork(for: targets) || hasPendingSharedLayout else { return false }
+        planOrder += 1
+        pendingPlans.append(PendingPlan(targets: targets, order: planOrder, isShared: false,
+                                        discard: discard, resume: resume))
         return true
     }
 
@@ -92,19 +101,28 @@ final class WindowWriteFence {
     }
 
     private func resumeDrainedPlans() {
-        // The latest request gets first refusal. An accepted claim discards
-        // older overlapping plans, while a rejection lets them continue.
-        while let index = pendingPlans.lastIndex(where: { !hasIssuedWork(for: $0) }) {
+        while true {
+            let ready = pendingPlans.indices.filter { index in
+                let plan = pendingPlans[index]
+                return !hasIssuedWork(for: plan) && !pendingPlans.contains {
+                    $0.isShared && (!plan.isShared || $0.order < plan.order)
+                }
+            }
+            let shared = ready.filter { pendingPlans[$0].isShared }.min {
+                pendingPlans[$0].order < pendingPlans[$1].order
+            }
+            // Between shared layouts, the latest member request gets first refusal.
+            guard let index = shared ?? ready.last else { return }
             pendingPlans.remove(at: index).resume()
         }
     }
 
     /// Every participant is claimed before an old owner is notified, so a
     /// two-window operation can never take ownership of just one member.
-    func claim(_ targets: [WindowWriteTarget], isExternal: Bool = true, onSuperseded: (() -> Void)? = nil) -> Lease {
+    func claim(_ targets: [WindowWriteTarget], isExternal: Bool = true, supersedingPlansBefore: Int? = nil, onSuperseded: (() -> Void)? = nil) -> Lease {
         precondition(!targets.isEmpty)
         let superseded = entries.filter { $0.lease.isCurrent && $0.overlaps(targets) }
-        let discarded = removePendingPlans(overlapping: targets)
+        let discarded = removePendingPlans(overlapping: targets, before: supersedingPlansBefore)
         for entry in superseded { entry.lease.invalidate() }
         let lease = Lease()
         entries.append(Entry(lease: lease, targets: targets, onSuperseded: onSuperseded, isExternal: isExternal))
@@ -114,9 +132,13 @@ final class WindowWriteFence {
         return lease
     }
 
-    private func removePendingPlans(overlapping targets: [WindowWriteTarget]) -> [PendingPlan] {
-        let discarded = pendingPlans.filter { $0.overlaps(targets) }
-        pendingPlans.removeAll { $0.overlaps(targets) }
+    private func removePendingPlans(overlapping targets: [WindowWriteTarget], before order: Int?) -> [PendingPlan] {
+        func superseded(_ plan: PendingPlan) -> Bool {
+            guard !plan.isShared, plan.overlaps(targets) else { return false }
+            return order.map { plan.order < $0 } ?? true
+        }
+        let discarded = pendingPlans.filter(superseded)
+        pendingPlans.removeAll(where: superseded)
         return discarded
     }
 

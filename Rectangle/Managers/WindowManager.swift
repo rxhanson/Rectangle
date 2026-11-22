@@ -293,7 +293,10 @@ class WindowManager {
             placementCoordinator.finish(access)
             parameters.cancellation?()
         }) { [self] animatedFrame in
-            defer { placementCoordinator.finish(access); parameters.completion?() }
+            defer {
+                placementCoordinator.finish(access)
+                parameters.completion?()
+            }
             guard placementCoordinator.isCurrent(access), animatedFrame == nil else { return }
             windowElement.setFrame(restoreRect)
         }

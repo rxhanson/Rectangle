@@ -501,7 +501,8 @@ final class WindowDividerManager {
                     }
                 }
                 if fence.hasPendingPlans(overlapping: targets) {
-                    self.pairs.removeValue(forKey: self.screenID(pair.left.screen))
+                    let display = self.screenID(pair.left.screen)
+                    if self.pairs[display] === pair { self.pairs.removeValue(forKey: display) }
                     self.finishMovement()
                     return
                 }

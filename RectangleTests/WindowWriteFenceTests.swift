@@ -191,6 +191,61 @@ final class WindowWriteFenceTests: XCTestCase {
         XCTAssertFalse(fence.hasPendingPlans(overlapping: [a, b]))
     }
 
+    func testSharedLayoutRunsBeforeNewerCommandsOnMembersAndOtherWindows() {
+        let fence = WindowWriteFence()
+        let a = target(201)
+        let c = target(203)
+        let release = DispatchSemaphore(value: 0)
+        let completed = expectation(description: "Shared layout and newer commands completed")
+        let pair = fence.claim([a])
+        var events: [String] = []
+        fence.perform(pair, work: { release.wait(timeout: .now() + 3) }) { outcome in
+            XCTAssertEqual(outcome, .success)
+            fence.finish(pair)
+        }
+        XCTAssertTrue(fence.deferExternalWrites(resume: { events.append("tile") }))
+        for (target, name) in [(a, "member"), (c, "other")] {
+            XCTAssertTrue(fence.deferPlanningIfNeeded(for: [target], discard: {
+                XCTFail("A newer command must survive the shared layout")
+            }, resume: {
+                let lease = fence.claim([target], isExternal: false)
+                events.append(name)
+                fence.finish(lease)
+                if events.count == 3 { completed.fulfill() }
+            }))
+        }
+        release.signal()
+        wait(for: [completed], timeout: 5)
+        XCTAssertEqual(events.first, "tile")
+        XCTAssertEqual(Set(events.dropFirst()), Set(["member", "other"]))
+    }
+
+    func testTwoSharedLayoutsCanReenterWithoutRequeuingEachOther() {
+        let fence = WindowWriteFence()
+        let release = DispatchSemaphore(value: 0)
+        let completed = expectation(description: "Both shared layouts completed")
+        completed.expectedFulfillmentCount = 2
+        let pair = fence.claim([target(301)])
+        fence.perform(pair, work: { release.wait(timeout: .now() + 3) }) { outcome in
+            XCTAssertEqual(outcome, .success)
+            fence.finish(pair)
+        }
+        var events: [Int] = []
+        for order in [1, 2] {
+            XCTAssertTrue(fence.deferExternalWrites(resume: {
+                XCTAssertFalse(fence.deferExternalWrites(resume: {
+                    XCTFail("An executing shared layout must not queue behind a later one")
+                }))
+                events.append(order)
+                completed.fulfill()
+            }))
+        }
+        release.signal()
+        wait(for: [completed], timeout: 5)
+        XCTAssertEqual(events, [1, 2])
+        XCTAssertFalse(fence.hasPendingSharedLayout)
+    }
+
     private func target(_ id: CGWindowID) -> WindowWriteTarget {
         .init(element: nil, windowID: id)
     }
