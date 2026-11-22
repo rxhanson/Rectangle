@@ -13,6 +13,17 @@ final class SnappedWindowFitSessionTests: XCTestCase {
         XCTAssertNil(session.current)
     }
 
+    func testInvalidatingAnOlderFrameKeepsTheNewerReference() {
+        let session = SnappedWindowFitSession(observeWorkspace: false)
+        let old = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1, action: .leftHalf,
+            frame: CGRect(x: 0, y: 0, width: 400, height: 600), bounds: CGRect(x: 0, y: 0, width: 1000, height: 600))
+        let current = SnappedWindowFitOpportunity(id: 1, pid: 123, launch: 1, action: .leftHalf,
+            frame: CGRect(x: 0, y: 0, width: 600, height: 600), bounds: old.bounds)
+        session.record(current)
+        session.invalidate(old)
+        XCTAssertEqual(session.current, current)
+    }
+
     func testNewReferenceReplacesThePreviousOneAndInvalidationIsWindowSpecific() {
         let session = SnappedWindowFitSession(observeWorkspace: false)
         func reference(_ id: CGWindowID) -> SnappedWindowFitOpportunity {

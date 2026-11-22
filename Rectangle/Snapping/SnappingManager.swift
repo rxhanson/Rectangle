@@ -170,9 +170,7 @@ class SnappingManager {
         didSet {
             if currentSnapArea != oldValue {
                 fitPreviewGeometry = nil
-                if fitPreviewSample != nil {
-                    fitPreviewSample = nil
-                }
+                fitPreviewSample = nil
             }
         }
     }

@@ -250,7 +250,7 @@ class WindowManager {
         recordAction(windowId: move.windowId, resultingRect: move.currentWindowRect,
                      action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
         Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: move.result,
-                                                                                    achievedFrame: move.currentWindowRect))
+                                                                                    achievedFrame: move.currentWindowRect, identity: move.parameters.identity))
         return true
     }
 
@@ -393,6 +393,8 @@ class WindowManager {
 
     private func finish(_ placement: ActivePlacement, resultingRect: CGRect) {
         postProcess(result: placement.move.result, resultingRect: resultingRect, incrementCount: !placement.animated)
+        Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: placement.move.result,
+            achievedFrame: resultingRect, identity: placement.move.parameters.identity))
         placement.move.complete()
     }
 
@@ -459,7 +461,6 @@ class WindowManager {
             }
         }
         DiagnosticTrace.event("window-action-achieved", fields: evidence)
-        Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: result, achievedFrame: resultingRect))
         
         if Logger.logging {
             var logItems = ["\(result.action.name)",
