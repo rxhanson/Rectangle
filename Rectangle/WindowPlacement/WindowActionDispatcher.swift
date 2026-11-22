@@ -43,8 +43,11 @@ final class WindowActionDispatcher {
                 cancellation: parameters.cancellation, isDisplayCycle: parameters.isDisplayCycle, identity: parameters.identity,
                 preservesUnrelatedActions: resumed)
         }
-        if !fence.deferPlanningIfNeeded(for: [.init(element: window, windowID: id)],
-                                       discard: parameters.completion, resume: { perform(resolved(resumed: true)) }) {
+        if fence.deferPlanningIfNeeded(for: [.init(element: window, windowID: id)],
+                                      discard: parameters.completion, resume: { perform(resolved(resumed: true)) }) {
+            DiagnosticTrace.event("window-action-deferred", fields: ["action": parameters.action.name,
+                "windowID": id.map { Int($0) } ?? 0])
+        } else {
             perform(resolved(resumed: false))
         }
     }
