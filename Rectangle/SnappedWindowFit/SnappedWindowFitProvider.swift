@@ -1,19 +1,22 @@
 import Cocoa
 
-/// Keeps the first window as an observation. Fit claims only the incoming window's
-/// complementary snap, so ordinary movement retains the cooperative delegate.
+/// Uses the selected move delegate to supply a fitted target or observe the
+/// actual frame of an ordinary snap, including cooperative placement.
 final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
+    private let fallback: WindowManagerDelegateProvider?
     private let enabled: () -> Bool
     private let session: () -> SnappedWindowFitSession
     private let resolve: (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution
     private let validateNeighbor: (SnappedWindowFit) -> Bool
     private let notifications: NotificationCenter
     private var observers: [NSObjectProtocol] = []
-    private var dispatchedAnchor: (requestID: UUID, opportunity: SnappedWindowFitOpportunity?)?
-    private var pendingAnchorRequestID: UUID?
-    private var claimedRequestID: UUID?
+    private var stagedAnchor: (action: WindowAction, source: ExecutionSource, anchor: SnappedWindowFitOpportunity?)?
+    private var command = UUID()
+    private var observation = UUID()
+    private var crossDisplaySnap: WindowMoveRequest?
 
-    init(enabled: @escaping () -> Bool = { Defaults.fitBesideSnappedWindows.enabled },
+    init(fallback: WindowManagerDelegateProvider? = nil,
+         enabled: @escaping () -> Bool = { Defaults.fitBesideSnappedWindows.enabled },
          session: @escaping () -> SnappedWindowFitSession = { .shared },
          resolve: @escaping (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution = { request, anchor in
              SnappedWindowFit.resolve(action: request.calcResult.resultingAction,
@@ -23,166 +26,190 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
          },
          validateNeighbor: @escaping (SnappedWindowFit) -> Bool = { $0.neighborIsUnchanged() },
          notifications: NotificationCenter = .default) {
+        self.fallback = fallback
         self.enabled = enabled
         self.session = session
         self.resolve = resolve
         self.validateNeighbor = validateNeighbor
         self.notifications = notifications
+
+        observers.append(Notification.Name.windowActionWillExecute.onPost(center: notifications) { [weak self] note in
+            self?.stage(note.object as? ExecutionParameters)
+        })
+        observers.append(Notification.Name.windowActionCompleted.onPost(center: notifications) { [weak self] note in
+            guard let completion = note.object as? WindowActionCompletion else { return }
+            self?.recordCrossDisplayCompletion(completion)
+        })
+        for name in [Notification.Name.configImported, .fitBesideSnappedWindowsChanged] {
+            observers.append(name.onPost(center: notifications) { [weak self] _ in
+                self?.stage(nil)
+            })
+        }
     }
 
     deinit { observers.forEach(notifications.removeObserver) }
 
+    private func stage(_ parameters: ExecutionParameters?) {
+        command = UUID()
+        stagedAnchor = nil
+        if parameters == nil || parameters?.action == .restore { crossDisplaySnap = nil }
+        guard enabled() else { return }
+        guard let parameters else {
+            observation = UUID()
+            session().clear()
+            return
+        }
+        let anchor = session().take(allowPreview: parameters.source == .dragToSnap)
+        stagedAnchor = (parameters.action, parameters.source, anchor)
+        if parameters.action == .restore {
+            observation = UUID()
+            stagedAnchor = nil
+        }
+    }
+
     func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
-        guard enabled() else { return nil }
-        startObserving()
+        let staged = stagedAnchor
+        stagedAnchor = nil
+        command = UUID()
+        let currentCommand = command
+        guard enabled() else { return fallback?.delegate(for: request) }
+
         let anchor: SnappedWindowFitOpportunity?
-        if let dispatchedAnchor, dispatchedAnchor.requestID == request.requestID {
-            anchor = dispatchedAnchor.opportunity
+        if let staged, staged.action == request.action, staged.source == request.source {
+            anchor = staged.anchor
         } else {
             anchor = session().take(allowPreview: request.source == .dragToSnap)
         }
-        dispatchedAnchor = nil
-        guard let anchor, !request.isFixedSize, !request.action.allowedToExtendOutsideCurrentScreenArea,
-              request.action.resizes || request.calcResult.rect.size != request.currentFrame.size
-        else { return nil }
 
-        switch resolve(request, anchor) {
-        case .unchanged: return nil
-        case .noRoom: return RejectedFitMove(calcResult: request.calcResult)
-        case .fit(let plan):
-            guard validateNeighbor(plan) else { return nil }
-            claimedRequestID = request.requestID
-            var result = request.calcResult
-            result.initialRect = plan.unpaddedTarget(for: result)
-            result.rect = plan.target.screenFlipped
-            return SnappedWindowFitMove(result, notifications: notifications) { [enabled, validateNeighbor] in
-                enabled() && validateNeighbor(plan)
+        if let anchor, !request.isFixedSize, !request.action.allowedToExtendOutsideCurrentScreenArea,
+           request.action.resizes || request.calcResult.rect.size != request.currentFrame.size {
+            switch resolve(request, anchor) {
+            case .unchanged:
+                break
+            case .noRoom:
+                return RejectedFitMove(calcResult: request.calcResult)
+            case .fit(let plan):
+                if validateNeighbor(plan) {
+                    var result = request.calcResult
+                    result.initialRect = plan.unpaddedTarget(for: result)
+                    result.rect = plan.target.screenFlipped
+                    observation = UUID()
+                    crossDisplaySnap = nil
+                    return ExistingHookFitMove(result, request: request) { [weak self] in
+                        guard let self, self.command == currentCommand else { return nil }
+                        return self.enabled() && self.validateNeighbor(plan)
+                    }
+                }
             }
+        }
+
+        let downstream = fallback?.delegate(for: request)
+        let currentObservation = observation
+        crossDisplaySnap = request.destinationScreenIsCurrentScreen ? nil : request
+        return ObservedSnap(request: request, downstream: downstream) { [weak self] result, frame in
+            guard let self, self.enabled(), self.observation == currentObservation else { return }
+            self.session().record(result: result, frame: frame)
         }
     }
 
-    private func startObserving() {
-        guard observers.isEmpty else { return }
-        // The dispatcher can consume a command before WindowManager sees it. Take
-        // the opportunity on intent; only that command's planning may use it.
-        observers.append(Notification.Name.windowActionWillExecute.onPost(center: notifications) { [weak self] note in
-            guard let self else { return }
-            guard self.enabled() else { self.dispatchedAnchor = nil; return }
-            guard let parameters = note.object as? ExecutionParameters else {
-                // Minimize has no placement request and may run before a previous snap settles.
-                self.dispatchedAnchor = nil
-                self.pendingAnchorRequestID = nil
-                self.session().clear()
-                return
-            }
-            let opportunity = self.session().take(allowPreview: parameters.source == .dragToSnap)
-            self.dispatchedAnchor = (parameters.requestID, opportunity)
-        })
-        // A rejected command leaves an earlier, accepted placement running.
-        observers.append(Notification.Name.windowPlacementAccepted.onPost(center: notifications) { [weak self] note in
-            guard let self, self.enabled(), let accepted = note.object as? WindowPlacementAcceptance else { return }
-            self.pendingAnchorRequestID = self.claimedRequestID == accepted.requestID ? nil : accepted.requestID
-            self.claimedRequestID = nil
-        })
-        observers.append(Notification.Name.windowPlacementSettled.onPost(center: notifications) { [weak self] note in
-            guard let self, let settled = note.object as? WindowPlacementSettlement,
-                  self.enabled(), settled.requestID == self.pendingAnchorRequestID else { return }
-            self.pendingAnchorRequestID = nil
-            self.session().record(result: settled.result, frame: settled.achievedFrame)
-        })
-        for name in [Notification.Name.configImported, .fitBesideSnappedWindowsChanged] {
-            observers.append(name.onPost(center: notifications) { [weak self] _ in
-                guard let self else { return }
-                self.dispatchedAnchor = nil
-                self.pendingAnchorRequestID = nil
-                self.claimedRequestID = nil
-                if !self.enabled() {
-                    self.observers.forEach(self.notifications.removeObserver)
-                    self.observers.removeAll()
-                }
-            })
-        }
+    private func recordCrossDisplayCompletion(_ completion: WindowActionCompletion) {
+        let result = completion.result
+        // An unrelated placement may finish while the display retry is pending.
+        guard let snap = crossDisplaySnap, result.windowElement === snap.windowElement,
+              result.action == snap.action, result.source == snap.source,
+              result.calcResult.screen == snap.calcResult.screen else { return }
+        crossDisplaySnap = nil
+        if enabled() { session().record(result: result, frame: completion.achievedFrame) }
     }
 }
 
-private final class SnappedWindowFitMove: WindowManagerDelegate, WindowPlacementCondition {
-    let calcResult: WindowCalculationResult
-    let cleanupCanMoveWindow = false
-    var placementCondition: WindowPlacementCondition? { self }
-    private let notifications: NotificationCenter
-    private let neighborIsCurrent: () -> Bool
-    private var timer: Timer?
-    private var observers: [(NotificationCenter, NSObjectProtocol)] = []
-    private(set) var invalidation: WindowPlacementInvalidation?
+private struct ObservedSnap: WindowManagerDelegate {
+    let request: WindowMoveRequest
+    let downstream: WindowManagerDelegate?
+    let record: (ResultParameters, CGRect) -> Void
 
-    init(_ calcResult: WindowCalculationResult, notifications: NotificationCenter,
-         neighborIsCurrent: @escaping () -> Bool) {
-        self.calcResult = calcResult
-        self.notifications = notifications
-        self.neighborIsCurrent = neighborIsCurrent
-    }
+    var calcResult: WindowCalculationResult { downstream?.calcResult ?? request.calcResult }
+    var acceptsPlacement: Bool { downstream?.acceptsPlacement ?? true }
 
-    deinit { stopMonitoring() }
-
-    func isValid() -> Bool {
-        if invalidation == nil && !neighborIsCurrent() { invalidation = .anchorChanged }
-        return invalidation == nil
-    }
-
-    func whilePending(cancel: @escaping (WindowPlacementInvalidation) -> Void) {
-        observeChanges(pollNeighbor: true, notify: cancel)
-    }
-
-    func observeEnvironmentDuringRetry() -> (() -> Void)? {
-        // The retry checks this state just before its AX write. No notification
-        // callback may cancel or finish a placement that is already settling.
-        observeChanges(pollNeighbor: false) { _ in }
-        return { [weak self] in self?.stopMonitoring() }
-    }
-
-    private func observeChanges(pollNeighbor: Bool, notify: @escaping (WindowPlacementInvalidation) -> Void) {
-        guard observers.isEmpty else { return }
-        let invalidate: (WindowPlacementInvalidation) -> Void = { [weak self] reason in
-            guard let self, self.invalidation != reason, self.invalidation != .environmentChanged else { return }
-            self.invalidation = reason
-            self.timer?.invalidate()
-            self.timer = nil
-            // Keep observing the desktop while a cancelled writer drains.
-            notify(reason)
+    func isAlreadyAchieved() -> Bool? {
+        let achieved = downstream?.isAlreadyAchieved()
+        if achieved ?? request.currentFrame.equalTo(calcResult.rect) {
+            recordFrame(request.currentFrame.screenFlipped)
         }
-        let events: [(NotificationCenter, WindowPlacementInvalidation, [Notification.Name])] = [
-            (notifications, .anchorChanged, [.configImported, .fitBesideSnappedWindowsChanged]),
-            (notifications, .environmentChanged, [NSApplication.willTerminateNotification,
-                                                  NSApplication.didChangeScreenParametersNotification]),
-            (NSWorkspace.shared.notificationCenter, .environmentChanged, [
-                NSWorkspace.activeSpaceDidChangeNotification, NSWorkspace.sessionDidResignActiveNotification,
-                NSWorkspace.willSleepNotification, NSWorkspace.screensDidSleepNotification])
-        ]
-        for (center, reason, names) in events {
-            for name in names {
-                observers.append((center, name.onPost(center: center, queue: .main) { _ in invalidate(reason) }))
-            }
-        }
-        if let invalidation { return notify(invalidation) }
-        // The anchor is another application's window; it can move while the
-        // incoming window animates without generating a Rectangle action.
-        guard pollNeighbor else { return }
-        let timer = Timer(timeInterval: 0.1, repeats: true) { [weak self] _ in
-            if let self, self.invalidation == nil, !self.neighborIsCurrent() { invalidate(.anchorChanged) }
-        }
-        self.timer = timer
-        RunLoop.main.add(timer, forMode: .common)
+        return achieved
     }
 
-    func stopMonitoring() {
-        timer?.invalidate()
-        timer = nil
-        for (center, observer) in observers { center.removeObserver(observer) }
-        observers.removeAll()
+    func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? {
+        downstream?.place(result: result, moveWindow: moveWindow)
+    }
+
+    func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) {
+        downstream?.moveDidSettle(resultingRect: resultingRect, screenFrame: screenFrame)
+        let achieved = downstream != nil && !request.windowElement.canAnimate ? request.windowElement.frame : resultingRect
+        recordFrame(achieved)
+    }
+
+    private func recordFrame(_ frame: CGRect) {
+        let result = ResultParameters(windowId: request.windowId, action: request.action,
+                                      windowElement: request.windowElement, calcResult: calcResult,
+                                      usableScreens: request.sourceScreens, visibleFrameOfScreen: request.screenFrame,
+                                      source: request.source, isFixedSize: request.isFixedSize)
+        record(result, frame)
     }
 }
 
 private struct RejectedFitMove: WindowManagerDelegate {
     let calcResult: WindowCalculationResult
     let acceptsPlacement = false
+}
+
+private final class ExistingHookFitMove: WindowManagerDelegate {
+    let calcResult: WindowCalculationResult
+    private let neighborIsCurrent: () -> Bool?
+    private var monitor: Timer?
+
+    init(_ calcResult: WindowCalculationResult, request: WindowMoveRequest,
+         neighborIsCurrent: @escaping () -> Bool?) {
+        self.calcResult = calcResult
+        self.neighborIsCurrent = neighborIsCurrent
+
+        let animator = WindowAnimator.shared
+        let window = request.windowElement
+        let destination = calcResult.rect.screenFlipped
+        guard WindowMoveAnimation.forMove(of: window, action: request.action, calcResult: calcResult,
+                                          screenFrame: request.screenFrame, isFixedSize: request.isFixedSize,
+                                          isMovedAcrossDisplays: !request.destinationScreenIsCurrentScreen,
+                                          source: request.source) != nil else { return }
+
+        let origin = window.frame
+        // Wait for the animation worker to stop before restoring the physical
+        // origin. Recheck command ownership just before issuing the AX write.
+        let timer = Timer(timeInterval: 0.03, repeats: true) { [weak self] timer in
+            guard let self, let valid = self.neighborIsCurrent(),
+                  animator.destination(for: window) == destination else { timer.invalidate(); return }
+            if !valid {
+                timer.invalidate()
+                animator.cancel(for: window)
+                animator.afterPendingWrites {
+                    guard neighborIsCurrent() == false else { return }
+                    window.setFrame(origin)
+                    guard let id = request.windowId else { return }
+                    let achievedOrigin = WindowGeometry.matches(window.frame, origin)
+                    AppDelegate.windowHistory.lastRectangleActions[id] = achievedOrigin ? request.lastRectangleAction : nil
+                    if !achievedOrigin { AppDelegate.windowHistory.restoreRects[id] = origin }
+                }
+            }
+        }
+        monitor = timer
+        RunLoop.main.add(timer, forMode: .common)
+    }
+
+    deinit { monitor?.invalidate() }
+
+    func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? {
+        guard neighborIsCurrent() == true else { return result.windowElement.frame }
+        return nil
+    }
+
+    func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) { monitor?.invalidate() }
 }

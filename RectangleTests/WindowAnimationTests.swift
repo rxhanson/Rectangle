@@ -201,7 +201,7 @@ final class WindowAnimationRequestCancellationTests: XCTestCase {
     private final class QueuedWindow: AccessibilityElement {
         private(set) var minimumSizeReads = 0
 
-        init(identity: pid_t = getpid()) { super.init(AXUIElementCreateApplication(identity)) }
+        init() { super.init(AXUIElementCreateApplication(getpid())) }
         override var windowId: CGWindowID? { .max }
         override var pid: pid_t? { getpid() }
         override var bundleIdentifier: String? { nil }
@@ -311,78 +311,6 @@ final class WindowAnimationRequestCancellationTests: XCTestCase {
         request.cancel()
         XCTAssertFalse(request.isCurrent)
         XCTAssertEqual(cancellations, 0)
-    }
-
-    func testTargetedDrainSurvivesAnUnrelatedAnimation() throws {
-        let saved = Defaults.experimentalWindowAnimations.enabled
-        let cooperative = Defaults.cooperativeCornerResize.enabled
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        defer {
-            Defaults.cooperativeCornerResize.enabled = cooperative
-            Defaults.experimentalWindowAnimations.enabled = saved
-        }
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations disabled by accessibility settings")
-
-        let queue = DispatchQueue(label: "RectangleTests.TargetedDrain")
-        let executor = WindowAnimator(queue: queue, lookupWindow: { _, _, _, _, _ in .unavailable })
-        let workerStarted = expectation(description: "Worker is occupied")
-        let release = DispatchSemaphore(value: 0)
-        queue.async {
-            workerStarted.fulfill()
-            _ = release.wait(timeout: .now() + 3)
-        }
-        wait(for: [workerStarted], timeout: 1)
-
-        let a = QueuedWindow()
-        let c = QueuedWindow(identity: getppid())
-        let target = CGRect(x: 20, y: 20, width: 600, height: 400)
-        executor.animate(a, to: target) { _ in XCTFail("Draining A must stop its animation") }
-        var immediate = false
-        executor.drainWrites(for: [c]) { immediate = true }
-        XCTAssertTrue(immediate)
-        XCTAssertEqual(executor.destination(for: a), target)
-
-        var drained = false
-        let finished = expectation(description: "A drained even when C started animating")
-        executor.drainWrites(for: [a]) {
-            drained = true
-            finished.fulfill()
-        }
-        XCTAssertFalse(drained)
-        executor.animate(c, to: target) { _ in }
-        release.signal()
-        wait(for: [finished], timeout: 2)
-        XCTAssertNil(executor.destination(for: a))
-    }
-
-    func testOldDrainDoesNotCancelANewerAnimationOfTheSameWindow() throws {
-        let saved = Defaults.experimentalWindowAnimations.enabled
-        let cooperative = Defaults.cooperativeCornerResize.enabled
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        defer {
-            Defaults.cooperativeCornerResize.enabled = cooperative
-            Defaults.experimentalWindowAnimations.enabled = saved
-        }
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations disabled by accessibility settings")
-        let queue = DispatchQueue(label: "RectangleTests.ReplacedDrain")
-        let executor = WindowAnimator(queue: queue, lookupWindow: { _, _, _, _, _ in .unavailable })
-        let release = DispatchSemaphore(value: 0)
-        queue.async { _ = release.wait(timeout: .now() + 3) }
-
-        let window = QueuedWindow()
-        let initial = CGRect(x: 0, y: 0, width: 300, height: 200)
-        executor.animate(window, to: initial) { _ in XCTFail("The old animation must be cancelled") }
-        let drained = expectation(description: "The issued write drained")
-        executor.drainWrites(for: [window]) { drained.fulfill() }
-        let newest = expectation(description: "The later animation kept ownership")
-        executor.animate(window, to: initial.offsetBy(dx: 250, dy: 0),
-                         cancellation: { XCTFail("An older drain cancelled the new request") }) { _ in
-            newest.fulfill()
-        }
-        release.signal()
-        wait(for: [drained, newest], timeout: 2)
     }
 
     func testSupersededPendingWriteRunsOnlyCancellationCleanup() throws {

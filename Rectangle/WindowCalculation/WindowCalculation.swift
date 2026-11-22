@@ -85,6 +85,7 @@ struct WindowCalculationParameters {
     let action: WindowAction
     let lastAction: RectangleAction?
     let ignoreTodo: Bool
+    var updateHistory: (@escaping () -> Void) -> Void = { update in update() }
     
     func asRectParams(visibleFrame: CGRect? = nil, differentAction: WindowAction? = nil) -> RectCalculationParameters {
         RectCalculationParameters(window: window,
@@ -99,7 +100,8 @@ struct WindowCalculationParameters {
               usableScreens: usableScreens,
               action: differentAction,
               lastAction: lastAction,
-              ignoreTodo: ignoreTodo)
+              ignoreTodo: ignoreTodo,
+              updateHistory: updateHistory)
     }
 }
 

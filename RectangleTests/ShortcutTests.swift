@@ -1022,8 +1022,6 @@ class MouseButtonShortcutMonitorTests: XCTestCase {
     private func deliver(_ type: CGEventType, _ buttonNumber: Int) throws -> Bool {
         let cgEvent = try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: type,
                                             mouseCursorPosition: .zero, mouseButton: .center))
-        // The test press carries its own modifiers independently of desktop input.
-        cgEvent.flags = []
         cgEvent.setIntegerValueField(.mouseEventButtonNumber, value: Int64(buttonNumber))
         let event = try XCTUnwrap(NSEvent(cgEvent: cgEvent))
         let filterer = try XCTUnwrap(eventMonitor.filterer)

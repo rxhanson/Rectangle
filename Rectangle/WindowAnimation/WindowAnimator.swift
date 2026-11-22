@@ -108,28 +108,6 @@ final class WindowAnimator {
         }
     }
 
-    /// External operations arbitrate by window. Drain retired writes for their
-    /// targets without letting an unrelated animation's generation cancel them.
-    func drainWrites(for windows: [AccessibilityElement], completion: @escaping () -> Void) {
-        if let active, windows.contains(active.element) { cancel() }
-        // A later animation can claim the same window while the worker drains.
-        // Wait only for requests that had already retired at this handoff.
-        let requests = retiring.filter { windows.contains($0.0) }.map { $0.2 }
-        waitForRetiredWrites(requests, completion: completion)
-    }
-
-    private func waitForRetiredWrites(_ requests: [WindowAnimationRequest], completion: @escaping () -> Void) {
-        guard retiring.contains(where: { entry in requests.contains { $0 === entry.2 } }) else {
-            completion()
-            return
-        }
-        queue.async { [self] in
-            DispatchQueue.main.async { [self] in
-                waitForRetiredWrites(requests, completion: completion)
-            }
-        }
-    }
-
     func cancel(for element: AccessibilityElement) {
         guard active?.element == element else { return }
         cancel()
