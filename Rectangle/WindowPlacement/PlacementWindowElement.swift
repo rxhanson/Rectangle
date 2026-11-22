@@ -1,6 +1,6 @@
 import Cocoa
-/// A worker owns this bounded AX handle. Generic window wrappers keep no
-/// persistent timeout, identity cache, or feature-specific write state.
+/// A placement worker owns this AX handle with a bounded messaging timeout.
+/// Its window ID ties readback to the window reserved for the operation.
 final class PlacementWindowElement: AccessibilityElement {
     private let id: CGWindowID
     init(_ element: AXUIElement, messagingTimeout: Float = 0.05, windowID: CGWindowID) {

@@ -274,7 +274,7 @@ extension WindowDividerPlacement {
         let rolledBack: Bool
     }
 
-    /// The existing incremental placement and reveal gates run on one worker.
+    /// Incremental placement and final-frame verification share one worker.
     /// Check ownership between app replies; cancellation never waits on AX.
     func settle(isCurrent: () -> Bool, shouldRollback: () -> Bool = { false },
                 now: () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
@@ -310,9 +310,8 @@ extension WindowDividerPlacement {
                     guard isCurrent() else { return nil }
                     let actualRight = readFrame(false)
                     guard isCurrent() else { return nil }
-                    // The fast per-attribute acknowledgment is optional, but a
-                    // supplied verifier must agree with both final frames before
-                    // the completed pair can be revealed. No limit is retained.
+                    // A supplied compositor verifier must agree with both final
+                    // frames before the completed pair can be revealed.
                     let leftVerified = acknowledged?(true, actualLeft) ?? true
                     guard isCurrent() else { return nil }
                     let rightVerified = acknowledged?(false, actualRight) ?? true

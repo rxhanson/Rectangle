@@ -571,8 +571,8 @@ final class WindowDividerManager {
         overlay.dismiss()
         dragging = false
         if let pair = active, wasPlacing {
-            // A cancelled in-flight write may still finish. Rediscover a pair
-            // from a subsequent accepted snap rather than retaining stale frames.
+            // A cancelled in-flight write may still finish. A subsequent accepted
+            // snap supplies confirmed frames for discovering the pair again.
             let display = screenID(pair.left.screen)
             if pairs[display] === pair { pairs.removeValue(forKey: display) }
         }

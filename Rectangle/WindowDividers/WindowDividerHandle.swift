@@ -50,7 +50,7 @@ final class WindowDividerHandle: NSView {
         grip.vertical = panel?.axis == .vertical
     }
 
-    // The native material is decorative; the existing handle owns all input.
+    // The handle owns pointer input; its material supplies decoration.
     override func hitTest(_ point: NSPoint) -> NSView? {
         super.hitTest(point) == nil ? nil : self
     }
@@ -86,7 +86,7 @@ final class WindowDividerHandle: NSView {
         if event.clickCount == 2 { panel?.onReset?(); return }
         guard let panel else { return }
         // The global pointer may have advanced while AX validation runs.
-        // Preserve the actual mouse-down point instead of dropping that motion.
+        // Start from the event's mouse-down point to preserve that motion.
         let downX = dividerCoordinate(for: event, in: panel)
         dragging = panel.onBegin?(downX) == true
         updateHoverCursor()
