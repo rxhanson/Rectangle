@@ -401,18 +401,55 @@ class ConfigImportTests: XCTestCase {
         XCTAssertNotNil(config.defaults[Defaults.mouseButtonShortcutsUseWindowUnderCursor.key])
     }
 
+    func testBlurMaterialRoundTripsThroughConfig() throws {
+        let material = Defaults.blurMaterial
+        let previous = UserDefaults.standard.object(forKey: material.key)
+        defer {
+            UserDefaults.standard.removeObject(forKey: material.key)
+            if let previous { UserDefaults.standard.set(previous, forKey: material.key) }
+        }
+
+        for selection: BlurMaterial in [.standard, .liquidGlass] {
+            material.value = selection
+            let config = try XCTUnwrap(Defaults.encoded().flatMap { Defaults.convert(jsonString: $0) })
+            let setting = try XCTUnwrap(config.defaults[material.key])
+            XCTAssertEqual(setting.int, selection.rawValue)
+            material.value = selection == .standard ? .liquidGlass : .standard
+            try loadConfig(shortcuts: [:], defaults: [material.key: setting])
+            XCTAssertEqual(material.value, selection)
+        }
+    }
+
+    func testInvalidImportedBlurMaterialLeavesTheSelectionUnchanged() throws {
+        let material = Defaults.blurMaterial
+        let previous = UserDefaults.standard.object(forKey: material.key)
+        defer { UserDefaults.standard.set(previous, forKey: material.key) }
+
+        for invalid in [CodableDefault(int: 999), CodableDefault(string: "glass")] {
+            material.value = .liquidGlass
+            try loadConfig(shortcuts: [:], defaults: [material.key: invalid])
+            XCTAssertEqual(material.value, .liquidGlass)
+
+            UserDefaults.standard.removeObject(forKey: material.key)
+            try loadConfig(shortcuts: [:], defaults: [material.key: invalid])
+            XCTAssertNil(UserDefaults.standard.object(forKey: material.key))
+            XCTAssertFalse(material.hasSelection)
+            XCTAssertEqual(material.value, .standard)
+        }
+    }
+
     private func store(_ shortcut: Shortcut, forKey key: String) {
         let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
         let value = transformer.reverseTransformedValue(shortcut.toMASSHortcut())
         UserDefaults.standard.set(value, forKey: key)
     }
 
-    private func loadConfig(shortcuts: [String: Shortcut],
+    private func loadConfig(shortcuts: [String: Shortcut], defaults: [String: CodableDefault] = [:],
                             notificationCenter: NotificationCenter = NotificationCenter()) throws {
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: "ConfigImportTests",
                             shortcuts: shortcuts,
-                            defaults: [:])
+                            defaults: defaults)
         let data = try JSONEncoder().encode(config)
         let fileURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("ConfigImportTests-\(UUID().uuidString).json")
