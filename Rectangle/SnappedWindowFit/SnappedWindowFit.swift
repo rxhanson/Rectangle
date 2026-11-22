@@ -59,8 +59,8 @@ struct SnappedWindowFit: Equatable {
               let fittedInput = adjustedTarget()
         else { return ordinaryPreview }
 
-        // Fit sees the same adjusted target as its move provider. If the offset excludes Fit,
-        // the ordinary preview still follows the upstream gap-only behavior.
+        // Check Fit eligibility against the execution target. An ordinary preview
+        // keeps the gap-adjusted target supplied by the snap calculation.
         switch SnappedWindowFit.resolve(action: action, window: window,
                                                initialTarget: target.initialRect, target: fittedInput,
                                                screenFrame: screenFrame, opportunity: opportunity) {
