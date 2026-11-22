@@ -45909,32 +45909,12 @@
         }
       }
     },
-    "Used by snap previews and divider handles." : {
+    "Used by snap previews, divider handles, stack lists, and window size warnings." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Used by snap previews and divider handles."
-          }
-        }
-      }
-    },
-    "Used by snap previews and Layout Helper." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Used by snap previews and Layout Helper."
-          }
-        }
-      }
-    },
-    "Used by snap previews, Layout Helper, and divider handles." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Used by snap previews, Layout Helper, and divider handles."
+            "value" : "Used by snap previews, divider handles, stack lists, and window size warnings."
           }
         }
       }

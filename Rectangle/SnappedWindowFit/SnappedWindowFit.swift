@@ -26,20 +26,20 @@ struct SnappedWindowFit: Equatable {
             visibleFrameOfScreen: screenFrame, action: action, lastAction: nil)).rect
         guard WindowGeometry.matches(initialTarget, ordinary, tolerance: 1) else { return .unchanged }
         guard processLaunchTime(opportunity.pid) == opportunity.launch else {
-            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
+            SnappedWindowFitSession.shared.invalidate(opportunity)
             return .unchanged
         }
         DiagnosticTrace.event("fit-window-list", fields: ["windowID": id, "anchorID": opportunity.id])
         let windows = windowList()
         guard let index = windows.firstIndex(where: { $0.id == opportunity.id }) else {
-            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
+            SnappedWindowFitSession.shared.invalidate(opportunity)
             return .unchanged
         }
         let windowInfo = windows[index]
         guard isExposed(windowInfo, inFront: windows[..<index], ignoring: id,
                         ignoredPID: ProcessInfo.processInfo.processIdentifier),
               windowInfo.pid == opportunity.pid, WindowGeometry.matches(windowInfo.frame, opportunity.frame) else {
-            SnappedWindowFitSession.shared.invalidate(windowID: opportunity.id)
+            SnappedWindowFitSession.shared.invalidate(opportunity)
             return .unchanged
         }
         return resolve(action: action, movingWindowID: id, target: target.screenFlipped, bounds: bounds,

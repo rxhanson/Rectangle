@@ -132,7 +132,7 @@ class WindowManager {
 
         var action: WindowAction { parameters.action }
 
-        var writeTarget: WindowWriteFence.Target {
+        var writeTarget: WindowWriteTarget {
             .init(element: windowElement, windowID: windowId)
         }
 
@@ -256,7 +256,7 @@ class WindowManager {
     }
 
     /// Returns true when the window is already where the move would put it, recording that as the action.
-    private func finishIfAlreadyAchieved(_ move: PlannedMove, targets: [WindowWriteFence.Target]) -> Bool {
+    private func finishIfAlreadyAchieved(_ move: PlannedMove, targets: [WindowWriteTarget]) -> Bool {
         // The delegate's check records state, so it only runs without a pending destination.
         guard move.pendingDestination == nil,
               move.delegate?.isAlreadyAchieved() ?? move.currentNormalizedRect.equalTo(move.calcResult.rect)
@@ -266,7 +266,7 @@ class WindowManager {
         Logger.log("Window is already at its target frame")
         recordAction(windowId: move.windowId, resultingRect: move.currentWindowRect,
                      action: move.calcResult.resultingAction, subAction: move.calcResult.resultingSubAction)
-        publishCompletion(result: move.result, achievedFrame: move.currentWindowRect)
+        publishCompletion(result: move.result, achievedFrame: move.currentWindowRect, identity: move.parameters.identity)
         return true
     }
 
@@ -315,7 +315,7 @@ class WindowManager {
         (.milliseconds(25), "Final attempt to adjust across displays.")
     ]
 
-    private func perform(_ move: PlannedMove, targets: [WindowWriteFence.Target], hasWaitedForWrites: Bool) {
+    private func perform(_ move: PlannedMove, targets: [WindowWriteTarget], hasWaitedForWrites: Bool) {
         let requestedAnimation = WindowMoveAnimation.forMove(of: move.windowElement, action: move.action, calcResult: move.calcResult,
                                                     screenFrame: move.visibleFrameOfDestinationScreen,
                                                     isFixedSize: move.isFixedSize,
@@ -406,9 +406,9 @@ class WindowManager {
         postProcess(result: move.result, resultingRect: resultingRect, incrementCount: !placement.animated)
         // An unchanged frame away from the target can be a refused AX write.
         // Complete a refused write without publishing a successful placement.
-        if resultingRect != move.currentWindowRect
+        if !placement.access.followsExternalWriter || resultingRect != move.currentWindowRect
             || WindowGeometry.near(resultingRect, move.calcResult.rect.screenFlipped) {
-            publishCompletion(result: move.result, achievedFrame: resultingRect)
+            publishCompletion(result: move.result, achievedFrame: resultingRect, identity: move.parameters.identity)
         }
         end(placement)
     }
@@ -454,9 +454,9 @@ class WindowManager {
         CGWarpMouseCursorPosition(point)
     }
 
-    private func publishCompletion(result: ResultParameters, achievedFrame: CGRect) {
+    private func publishCompletion(result: ResultParameters, achievedFrame: CGRect, identity: WindowActionIdentity) {
         guard result.action != .restore, WindowGeometry.valid(achievedFrame) else { return }
-        Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: result, achievedFrame: achievedFrame))
+        Notification.Name.windowActionCompleted.post(object: WindowActionCompletion(result: result, achievedFrame: achievedFrame, identity: identity))
     }
 
     func postProcess(result: ResultParameters, resultingRect: CGRect, incrementCount: Bool = true) {

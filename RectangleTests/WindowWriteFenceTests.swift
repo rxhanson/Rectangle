@@ -78,7 +78,7 @@ final class WindowWriteFenceTests: XCTestCase {
         fence.perform(old, work: { release.wait(timeout: .now() + 3) }) { _ in }
         fence.finish(old)
 
-        let unknown = WindowWriteFence.Target(element: nil, windowID: nil)
+        let unknown = WindowWriteTarget(element: nil, windowID: nil)
         let replacement = fence.claim([unknown], isExternal: false)
         var replacementRan = false
         fence.whenReady(replacement) {
@@ -96,7 +96,7 @@ final class WindowWriteFenceTests: XCTestCase {
         let fence = WindowWriteFence()
         var cancelled = false
         let old = fence.claim([target(70)]) { cancelled = true }
-        let unknown = WindowWriteFence.Target(element: nil, windowID: nil)
+        let unknown = WindowWriteTarget(element: nil, windowID: nil)
         let new = fence.claim([unknown], isExternal: false)
         XCTAssertTrue(cancelled)
         XCTAssertFalse(old.isCurrent)
@@ -108,7 +108,7 @@ final class WindowWriteFenceTests: XCTestCase {
     func testUnknownCommandSupersedesAnEarlierInternalOwner() {
         let fence = WindowWriteFence()
         let earlier = fence.claim([target(75)], isExternal: false)
-        let unknown = WindowWriteFence.Target(element: nil, windowID: nil)
+        let unknown = WindowWriteTarget(element: nil, windowID: nil)
         let current = fence.claim([unknown], isExternal: false)
         XCTAssertFalse(earlier.isCurrent, "The resumed internal command might still own this window")
         XCTAssertTrue(current.isCurrent)
@@ -163,7 +163,35 @@ final class WindowWriteFenceTests: XCTestCase {
         wait(for: [firstFinished, rollbackReady], timeout: 5, enforceOrder: true)
     }
 
-    private func target(_ id: CGWindowID) -> WindowWriteFence.Target {
+    func testSharedLayoutWaitsForThePairAndDiscardsOlderMemberCommands() {
+        let fence = WindowWriteFence()
+        let a = target(101)
+        let b = target(102)
+        let release = DispatchSemaphore(value: 0)
+        let finished = expectation(description: "Shared layout took ownership")
+        let oldCommandDiscarded = expectation(description: "Older member command completed once")
+        var published = false
+        let pair = fence.claim([a, b])
+        fence.perform(pair, work: { release.wait(timeout: .now() + 3) }) { outcome in
+            XCTAssertEqual(outcome, .success)
+            published = true
+            fence.finish(pair)
+        }
+        XCTAssertTrue(fence.deferPlanningIfNeeded(for: [a], discard: { oldCommandDiscarded.fulfill() }, resume: {
+            XCTFail("The older member command must yield to the shared layout")
+        }))
+        XCTAssertTrue(fence.hasPendingPlans(overlapping: [a, b]))
+        XCTAssertTrue(fence.deferExternalWrites(resume: {
+            XCTAssertTrue(published)
+            finished.fulfill()
+        }))
+        XCTAssertFalse(published)
+        release.signal()
+        wait(for: [oldCommandDiscarded, finished], timeout: 5, enforceOrder: true)
+        XCTAssertFalse(fence.hasPendingPlans(overlapping: [a, b]))
+    }
+
+    private func target(_ id: CGWindowID) -> WindowWriteTarget {
         .init(element: nil, windowID: id)
     }
 }

@@ -449,7 +449,7 @@ final class WindowDividerManager {
         guard let prepared = pair.prepared, workAreaIsCurrent(pair) else { interrupt(); return }
         DiagnosticTrace.event("divider-placement-start")
         let fence = WindowWriteFence.shared
-        let targets = [pair.left, pair.right].map { WindowWriteFence.Target(element: $0.element, windowID: $0.id) }
+        let targets = [pair.left, pair.right].map { WindowWriteTarget(element: $0.element, windowID: $0.id) }
         let lease = fence.claim(targets, onSuperseded: { [weak self, weak pair] in
             guard let self, let pair, self.active === pair else { return }
             self.interrupt()
@@ -499,6 +499,11 @@ final class WindowDividerManager {
                         AppDelegate.windowHistory.recordAction(windowId: entry.id, resultingRect: entry.frame,
                                                               action: .specified, subAction: nil)
                     }
+                }
+                if fence.hasPendingPlans(overlapping: targets) {
+                    self.pairs.removeValue(forKey: self.screenID(pair.left.screen))
+                    self.finishMovement()
+                    return
                 }
                 self.overlay.show(in: engine.geometry.outer.screenFlipped, divider: engine.divider,
                                   gap: engine.geometry.gap, axis: pair.axis, below: self.panel)

@@ -5,8 +5,6 @@ import Cocoa
 final class WindowWriteFence {
     static let shared = WindowWriteFence()
 
-    typealias Target = WindowWriteTarget
-
     final class Lease {
         private let lock = NSLock()
         private var current = true
@@ -26,23 +24,23 @@ final class WindowWriteFence {
 
     private struct Entry {
         let lease: Lease
-        let targets: [Target]
+        let targets: [WindowWriteTarget]
         let onSuperseded: (() -> Void)?
         let isExternal: Bool
         var workInFlight = false
         var ready: (() -> Void)?
 
-        func overlaps(_ otherTargets: [Target]) -> Bool {
+        func overlaps(_ otherTargets: [WindowWriteTarget]) -> Bool {
             targets.contains { target in otherTargets.contains(where: target.overlaps) }
         }
     }
 
     private struct PendingPlan {
-        let targets: [Target]
+        let targets: [WindowWriteTarget]
         let discard: (() -> Void)?
         let resume: () -> Void
 
-        func overlaps(_ otherTargets: [Target]) -> Bool {
+        func overlaps(_ otherTargets: [WindowWriteTarget]) -> Bool {
             targets.contains { target in otherTargets.contains(where: target.overlaps) }
         }
     }
@@ -52,17 +50,32 @@ final class WindowWriteFence {
     private var entries: [Entry] = []
     private var pendingPlans: [PendingPlan] = []
 
-    var externalTargets: [Target] {
+    var externalTargets: [WindowWriteTarget] {
         entries.filter { $0.isExternal && ($0.workInFlight || $0.lease.isCurrent) }.flatMap(\.targets)
     }
 
-    func hasConflictingExternalWork(for targets: [Target]) -> Bool {
+    func hasConflictingExternalWork(for targets: [WindowWriteTarget]) -> Bool {
         externalTargets.contains { external in targets.contains(where: external.overlaps) }
     }
 
     /// Let planning read the frame after the issued work. Merely waiting does
     /// not take ownership: a request can still be rejected by its provider.
-    func deferPlanningIfNeeded(for targets: [Target], discard: (() -> Void)?,
+    /// Shared-layout commands take ownership after every issued external write
+    /// has published its outcome, then supersede older pending commands.
+    func deferExternalWrites(discard: (() -> Void)? = nil, resume: @escaping () -> Void) -> Bool {
+        let targets = externalTargets
+        return deferPlanningIfNeeded(for: targets, discard: discard) { [self] in
+            let lease = claim(targets, isExternal: false)
+            finish(lease)
+            resume()
+        }
+    }
+
+    func hasPendingPlans(overlapping targets: [WindowWriteTarget]) -> Bool {
+        pendingPlans.contains { $0.overlaps(targets) }
+    }
+
+    func deferPlanningIfNeeded(for targets: [WindowWriteTarget], discard: (() -> Void)?,
                                resume: @escaping () -> Void) -> Bool {
         let plan = PendingPlan(targets: targets, discard: discard, resume: resume)
         guard hasIssuedWork(for: plan) else { return false }
@@ -88,7 +101,7 @@ final class WindowWriteFence {
 
     /// Every participant is claimed before an old owner is notified, so a
     /// two-window operation can never take ownership of just one member.
-    func claim(_ targets: [Target], isExternal: Bool = true, onSuperseded: (() -> Void)? = nil) -> Lease {
+    func claim(_ targets: [WindowWriteTarget], isExternal: Bool = true, onSuperseded: (() -> Void)? = nil) -> Lease {
         precondition(!targets.isEmpty)
         let superseded = entries.filter { $0.lease.isCurrent && $0.overlaps(targets) }
         let discarded = removePendingPlans(overlapping: targets)
@@ -101,11 +114,7 @@ final class WindowWriteFence {
         return lease
     }
 
-    func discardPendingPlans(overlapping targets: [Target]) {
-        for plan in removePendingPlans(overlapping: targets) { plan.discard?() }
-    }
-
-    private func removePendingPlans(overlapping targets: [Target]) -> [PendingPlan] {
+    private func removePendingPlans(overlapping targets: [WindowWriteTarget]) -> [PendingPlan] {
         let discarded = pendingPlans.filter { $0.overlaps(targets) }
         pendingPlans.removeAll { $0.overlaps(targets) }
         return discarded

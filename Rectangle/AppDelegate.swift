@@ -156,7 +156,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             CooperativeResizeDelegateProvider(windowHistory: Self.windowHistory)
         ])
         let dispatcher = WindowActionDispatcher(execute: windowManager.execute)
-        self.shortcutManager = ShortcutManager(windowManager: windowManager, dispatchWindowAction: dispatcher.dispatch)
+        self.shortcutManager = ShortcutManager(windowManager: windowManager, dispatchWindowAction: dispatcher.dispatch,
+                                               prepareWindowAction: dispatcher.prepare)
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
         self.stackBadgeManager = StackBadgeManager()

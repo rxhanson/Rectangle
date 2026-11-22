@@ -10,14 +10,14 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     private var observers: [NSObjectProtocol] = []
     private final class Reference {
         let anchor: SnappedWindowFitOpportunity?
+        var fitted = false
         init(_ anchor: SnappedWindowFitOpportunity?) { self.anchor = anchor }
     }
     // A deferred command keeps the reference it consumed at dispatch. Weak keys
     // release that state when the command and its planning attempts are gone.
     private let references = NSMapTable<WindowActionIdentity, Reference>(keyOptions: .weakMemory,
                                                                        valueOptions: .strongMemory)
-    private var recordsCompletions = true
-    private var fittedWindow: AccessibilityElement?
+    private var latestIdentity: WindowActionIdentity?
 
     init(enabled: @escaping () -> Bool = { Defaults.fitBesideSnappedWindows.enabled },
          session: @escaping () -> SnappedWindowFitSession = { .shared },
@@ -36,12 +36,10 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
             self?.stage(note.object as? ExecutionParameters)
         })
         observers.append(Notification.Name.windowActionCompleted.onPost(center: notifications) { [weak self] note in
-            guard let self, self.enabled(), self.recordsCompletions,
-                  let completion = note.object as? WindowActionCompletion else { return }
-            if self.fittedWindow === completion.result.windowElement {
-                self.fittedWindow = nil
-                return
-            }
+            guard let self, self.enabled(),
+                  let completion = note.object as? WindowActionCompletion,
+                  completion.identity === self.latestIdentity,
+                  self.references.object(forKey: completion.identity)?.fitted != true else { return }
             self.session().record(result: completion.result, frame: completion.achievedFrame)
         })
         for name in [Notification.Name.configImported, .fitBesideSnappedWindowsChanged] {
@@ -52,7 +50,7 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     deinit { observers.forEach(notifications.removeObserver) }
 
     private func stage(_ parameters: ExecutionParameters?) {
-        recordsCompletions = parameters != nil && parameters?.action != .restore
+        latestIdentity = parameters?.identity
         guard enabled() else { return }
         guard let parameters else { references.removeAllObjects(); session().clear(); return }
         let anchor = session().take()
@@ -60,14 +58,16 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
     }
 
     func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
-        fittedWindow = nil
         guard enabled() else { return nil }
-        let anchor: SnappedWindowFitOpportunity?
-        if let reference = references.object(forKey: request.identity) {
-            anchor = reference.anchor
+        let reference: Reference
+        if let staged = references.object(forKey: request.identity) {
+            reference = staged
         } else {
-            anchor = session().take()
+            reference = Reference(session().take())
+            references.setObject(reference, forKey: request.identity)
+            latestIdentity = request.identity
         }
+        let anchor = reference.anchor
         guard let anchor, !request.isFixedSize, !request.action.allowedToExtendOutsideCurrentScreenArea,
               request.action.resizes || request.calcResult.rect.size != request.currentFrame.size else { return nil }
         switch resolve(request, anchor) {
@@ -76,7 +76,7 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
         case .noRoom:
             return FittedMove(calcResult: request.calcResult, acceptsPlacement: false)
         case .fit(let plan):
-            fittedWindow = request.windowElement
+            reference.fitted = true
             var result = request.calcResult
             result.initialRect = plan.unpaddedTarget(for: result)
             result.rect = plan.target.screenFlipped

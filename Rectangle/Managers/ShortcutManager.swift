@@ -34,6 +34,7 @@ typealias ShortcutRebindScheduler = (@escaping () -> Void) -> Void
 class ShortcutManager {
 
     let windowManager: WindowManager
+    private let prepareWindowAction: (ExecutionParameters, @escaping (ExecutionParameters) -> Void) -> Void
     private let dispatchWindowAction: (ExecutionParameters) -> Void
     private let screenDetection: ScreenDetection
     private let screenSelector: ScreenSelector
@@ -59,6 +60,7 @@ class ShortcutManager {
     init(
         windowManager: WindowManager,
         dispatchWindowAction: ((ExecutionParameters) -> Void)? = nil,
+        prepareWindowAction: @escaping (ExecutionParameters, @escaping (ExecutionParameters) -> Void) -> Void = { parameters, perform in perform(parameters) },
         screenDetection: ScreenDetection = ScreenDetection(),
         bindingStore: ShortcutBindingStore = MASShortcutBindingStore(),
         mouseButtonBindingStore: MouseButtonBindingStore = MouseButtonShortcutMonitor(),
@@ -84,6 +86,7 @@ class ShortcutManager {
         }
     ) {
         self.windowManager = windowManager
+        self.prepareWindowAction = prepareWindowAction
         self.dispatchWindowAction = dispatchWindowAction ?? windowManager.execute
         self.screenDetection = screenDetection
         self.screenSelector = ScreenSelector(screenDetection: screenDetection)
@@ -233,15 +236,7 @@ class ShortcutManager {
         execute(parameters)
     }
 
-    private func execute(_ originalParameters: ExecutionParameters) {
-        var parameters = originalParameters
-        // Snap previews use completion to dismiss after placement finishes. If this
-        // method returns before handing off to WindowManager, finish that cleanup here.
-        // After handoff, WindowManager owns completion (including animated moves);
-        // running it here as well would dismiss the preview before the move finishes.
-        var completionHandledByWindowManager = false
-        defer { if !completionHandledByWindowManager { originalParameters.completion?() } }
-
+    private func execute(_ parameters: ExecutionParameters) {
         // Mission Control leaves the previous app frontmost, so a shortcut would
         // move the window behind the overview and distort its thumbnail (#1739).
         // Opt out with: defaults write com.knollsoft.Rectangle ignoreShortcutsInMissionControl -bool false
@@ -249,10 +244,22 @@ class ShortcutManager {
            ignoreShortcutsInMissionControlProvider(),
            missionControlActiveProvider() {
             Logger.log("Ignoring \(parameters.action.name) while Mission Control is active")
+            parameters.completion?()
             return
         }
 
         Notification.Name.windowActionWillExecute.post(object: parameters)
+        prepareWindowAction(parameters, executePrepared)
+    }
+
+    private func executePrepared(_ originalParameters: ExecutionParameters) {
+        var parameters = originalParameters
+        // Snap previews use completion to dismiss after placement finishes. If this
+        // method returns before handing off to WindowManager, finish that cleanup here.
+        // After handoff, WindowManager owns completion (including animated moves);
+        // running it here as well would dismiss the preview before the move finishes.
+        var completionHandledByWindowManager = false
+        defer { if !completionHandledByWindowManager { originalParameters.completion?() } }
 
         if MultiWindowManager.execute(parameters: parameters) {
             return

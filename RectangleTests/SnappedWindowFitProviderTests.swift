@@ -18,17 +18,17 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         setting.enabled = true
     }
 
-    func testRejectedRequestPreservesEarlierAcceptedPlacementAsAnAnchor() throws {
+    func testEarlierCompletionDoesNotRearmAfterARejectedCommand() throws {
         let provider = makeProvider { _, _ in .noRoom }
         let earlier = try request(.leftHalf, id: 1)
         let incoming = try request(.rightHalf, id: 2)
         XCTAssertNil(provider.delegate(for: earlier))
-        stageVerifiedAnchor()
+        stageAnchor()
         postIntent(incoming)
         XCTAssertEqual(provider.delegate(for: incoming)?.acceptsPlacement, false)
         XCTAssertFalse(session.hasPotentialAnchor)
         complete(earlier)
-        XCTAssertTrue(session.hasPotentialAnchor)
+        XCTAssertFalse(session.hasPotentialAnchor)
     }
 
     func testMinimizeClearsStagedAndLiveAnchorsAndExcludesLateSettlement() throws {
@@ -36,7 +36,7 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         let earlier = try request(.leftHalf, id: 1)
         let incoming = try request(.rightHalf, id: 2)
         XCTAssertNil(provider.delegate(for: earlier))
-        stageVerifiedAnchor()
+        stageAnchor()
         postIntent(incoming)
         session.record(anchor())
 
@@ -69,7 +69,7 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         }
         for source: ExecutionSource in [.titleBar, .keyboardShortcut] {
             let incoming = try request(.rightHalf, id: 2, source: source)
-            stageVerifiedAnchor()
+            stageAnchor()
             let move = try XCTUnwrap(provider.delegate(for: incoming))
             complete(incoming, move: move)
             XCTAssertFalse(session.hasPotentialAnchor)
@@ -87,18 +87,48 @@ final class SnappedWindowFitProviderTests: XCTestCase {
     }
 
     func testDeferredPlanningKeepsTheReferenceConsumedByItsOwnCommand() throws {
+        var resolutions = 0
         let provider = makeProvider { _, reference in
+            resolutions += 1
             XCTAssertEqual(reference.id, 3)
             return .unchanged
         }
         let waiting = try request(.rightHalf, id: 2)
-        stageVerifiedAnchor()
+        stageAnchor()
         postIntent(waiting)
         session.record(SnappedWindowFitOpportunity(id: 4, pid: getpid(), launch: 1, action: .leftHalf,
             frame: CGRect(x: 0, y: 0, width: 600, height: 800), bounds: CGRect(x: 0, y: 0, width: 1200, height: 800)))
         postIntent(try request(.topHalf, id: 5))
         XCTAssertNil(provider.delegate(for: waiting))
         XCTAssertNil(provider.delegate(for: waiting))
+        XCTAssertEqual(resolutions, 2)
+    }
+
+    func testLateFittedCompletionPreservesTheNewerReference() throws {
+        let provider = makeProvider { request, reference in
+            .fit(SnappedWindowFit(target: request.calcResult.rect.screenFlipped, neighbor: reference))
+        }
+        let fitted = try request(.rightHalf, id: 2)
+        stageAnchor()
+        postIntent(fitted)
+        let move = try XCTUnwrap(provider.delegate(for: fitted))
+        let newer = try request(.leftHalf, id: 6)
+        postIntent(newer)
+        XCTAssertNil(provider.delegate(for: newer))
+        complete(newer)
+        XCTAssertEqual(session.current?.id, 6)
+        complete(fitted, move: move)
+        XCTAssertEqual(session.current?.id, 6)
+    }
+
+    func testOlderSnapCompletionDoesNotRearmAfterRestoreIntent() throws {
+        let provider = makeProvider { _, _ in .unchanged }
+        let earlier = try request(.leftHalf, id: 1)
+        postIntent(earlier)
+        XCTAssertNil(provider.delegate(for: earlier))
+        Notification.Name.windowActionWillExecute.post(center: notifications, object: ExecutionParameters(.restore))
+        complete(earlier)
+        XCTAssertNil(session.current)
     }
 
     private func makeProvider(resolve: @escaping (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution) -> SnappedWindowFitProvider {
@@ -112,10 +142,9 @@ final class SnappedWindowFitProviderTests: XCTestCase {
             bounds: CGRect(x: 0, y: 0, width: 1200, height: 800))
     }
 
-    private func stageVerifiedAnchor() {
+    private func stageAnchor() {
         session.record(anchor())
-        let verified = XCTNSPredicateExpectation(predicate: NSPredicate { [session] _, _ in session.current != nil }, object: nil)
-        wait(for: [verified], timeout: 2)
+        XCTAssertNotNil(session.current)
     }
 
     private func request(_ action: WindowAction, id: CGWindowID, source: ExecutionSource = .keyboardShortcut,
@@ -143,6 +172,6 @@ final class SnappedWindowFitProviderTests: XCTestCase {
             usableScreens: request.sourceScreens, visibleFrameOfScreen: request.screenFrame,
             source: request.source, isFixedSize: request.isFixedSize)
         Notification.Name.windowActionCompleted.post(center: notifications,
-            object: WindowActionCompletion(result: result, achievedFrame: result.calcResult.rect.screenFlipped))
+            object: WindowActionCompletion(result: result, achievedFrame: result.calcResult.rect.screenFlipped, identity: request.identity))
     }
 }

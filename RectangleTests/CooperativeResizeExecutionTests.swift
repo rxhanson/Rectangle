@@ -483,6 +483,22 @@ final class CooperativeResizeExecutionTests: XCTestCase {
 
     // MARK: - Completion
 
+    func testUnchangedMinimumWidthSnapRecordsTheAchievedReference() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900)) { requested in
+            var accepted = requested
+            accepted.size.width = max(accepted.width, 720)
+            return accepted
+        }
+        anchor.reportedPID = getpid()
+        let session = SnappedWindowFitSession(observeWorkspace: false)
+        let fit = SnappedWindowFitProvider(session: { session })
+        let manager = makeManager(windows: [anchor], beforeCooperative: [fit])
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: anchor))
+        XCTAssertEqual(session.current?.frame, anchor.frame)
+        XCTAssertEqual(session.current?.id, neighborId)
+    }
+
     func testCrossDisplaySnapRecordsTheAchievedFrameAfterRetries() {
         let origin = CGRect(x: 100, y: 100, width: 920, height: 400)
         let anchor = window(neighborId, origin) { frame in
@@ -510,8 +526,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertFalse(session.hasPotentialAnchor)
         wait(for: [settled], timeout: 2)
         assertFrame(anchor, CGRect(x: 1200, y: 0, width: 720, height: 900))
-        let verified = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
-        wait(for: [verified], timeout: 2)
+        XCTAssertNotNil(session.current)
 
         manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming))
 
@@ -965,8 +980,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         let session = SnappedWindowFitSession(observeWorkspace: false)
         session.record(SnappedWindowFitOpportunity(id: neighborId, pid: 500, launch: 1, action: .leftHalf,
                                                    frame: anchor.frame, bounds: (anchorScreen ?? screen).frame.screenFlipped))
-        let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
-        wait(for: [ready], timeout: 2)
+        XCTAssertNotNil(session.current)
         return SnappedWindowFitProvider(enabled: enabled, session: { session }, resolve: resolve,
                                         notifications: notifications)
     }

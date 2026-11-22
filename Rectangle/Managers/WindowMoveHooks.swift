@@ -91,4 +91,5 @@ protocol WindowManagerDelegateProvider {
 struct WindowActionCompletion {
     let result: ResultParameters
     let achievedFrame: CGRect
+    var identity = WindowActionIdentity()
 }

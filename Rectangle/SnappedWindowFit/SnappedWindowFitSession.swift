@@ -54,6 +54,10 @@ final class SnappedWindowFitSession {
         observeInvalidation()
     }
 
+    func invalidate(_ opportunity: SnappedWindowFitOpportunity) {
+        if anchor == opportunity { clear() }
+    }
+
     func invalidate(windowID: CGWindowID?) {
         if let windowID, anchor?.id == windowID { clear() }
     }

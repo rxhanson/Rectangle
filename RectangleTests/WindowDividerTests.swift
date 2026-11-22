@@ -406,8 +406,8 @@ final class WindowDividerDiscoveryAndHistoryTests: XCTestCase {
 final class WindowDividerHandoffTests: XCTestCase {
     func testMemberClaimStopsOldRollbackAndWaitsForTheIssuedWrite() async {
         let fence = WindowWriteFence()
-        let left = WindowWriteFence.Target(element: nil, windowID: 10)
-        let right = WindowWriteFence.Target(element: nil, windowID: 11)
+        let left = WindowWriteTarget(element: nil, windowID: 10)
+        let right = WindowWriteTarget(element: nil, windowID: 11)
         let lease = fence.claim([left, right])
         let operation = WindowDividerOperation(lease: lease)
         let insideWrite = expectation(description: "The first member is resizing")

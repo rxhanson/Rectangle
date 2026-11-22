@@ -48,7 +48,7 @@ final class DividerRestoreOrderingTests: XCTestCase {
                                     delegateProviders: [], writeFence: fence)
 
         let dispatcher = WindowActionDispatcher(fence: fence, execute: manager.execute)
-        let aTarget = WindowWriteFence.Target(element: a, windowID: 701)
+        let aTarget = WindowWriteTarget(element: a, windowID: 701)
         let divider = fence.claim([aTarget, .init(element: b, windowID: 702)])
         let dividerEntered = expectation(description: "Divider issued a write on A")
         let dividerReturned = expectation(description: "Divider's issued write returned")

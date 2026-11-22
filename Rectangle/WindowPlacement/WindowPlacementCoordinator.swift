@@ -19,32 +19,28 @@ final class WindowPlacementCoordinator {
         self.animator = animator
     }
 
-    var externalTargets: [WindowWriteFence.Target] { fence.externalTargets }
+    var externalTargets: [WindowWriteTarget] { fence.externalTargets }
 
-    func deferPlanningIfNeeded(for targets: [WindowWriteFence.Target], discard: (() -> Void)?,
+    func deferPlanningIfNeeded(for targets: [WindowWriteTarget], discard: (() -> Void)?,
                                resume: @escaping () -> Void) -> Bool {
         fence.deferPlanningIfNeeded(for: targets, discard: discard, resume: resume)
     }
 
-    func hasConflictingExternalWork(for targets: [WindowWriteFence.Target]) -> Bool {
-        fence.hasConflictingExternalWork(for: targets)
-    }
-
     /// An achieved action still takes ownership of its windows. Retire older
     /// writes and recovery on those windows without cancelling unrelated work.
-    func acceptAlreadyAchieved(for targets: [WindowWriteFence.Target]) -> Bool {
+    func acceptAlreadyAchieved(for targets: [WindowWriteTarget]) -> Bool {
         guard !fence.hasConflictingExternalWork(for: targets) else { return false }
         retirePreviousAccess(to: targets)
         return true
     }
 
-    /// Execution has already waited for issued writes. Even an empty Restore
-    /// takes over before the previous writer can commit its completion history.
-    func acceptRestoreWithoutTarget(for target: WindowWriteFence.Target) {
+    /// A Restore without a saved frame still supersedes older queued plans
+    /// and any owner that has reserved this window but has not started writing.
+    func acceptRestoreWithoutTarget(for target: WindowWriteTarget) {
         retirePreviousAccess(to: [target])
     }
 
-    private func retirePreviousAccess(to targets: [WindowWriteFence.Target]) {
+    private func retirePreviousAccess(to targets: [WindowWriteTarget]) {
         let lease = fence.claim(targets, isExternal: false)
         fence.finish(lease)
     }

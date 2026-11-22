@@ -196,7 +196,6 @@ class FootprintWindow: NSWindow {
         effectView.onAppearanceChange = { [weak self] in self?.updateAppearance(refreshMaterial: false) }
         root.appearanceDidChange = { [weak self] in self?.updateAppearance() }
         updateAppearance()
-
     }
 
     deinit {
