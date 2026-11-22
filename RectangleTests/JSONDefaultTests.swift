@@ -50,4 +50,28 @@ class JSONDefaultTests: XCTestCase {
         let jsonDefault = JSONDefault<Set<String>>(key: key, defaultValue: defaultValue)
         XCTAssertEqual(jsonDefault.typedValue, defaultValue)
     }
+
+    func testResetRestoresTheCurrentDefaultAndClearsStoredJSON() {
+        let plainKey = "JSONDefaultTests-\(UUID().uuidString)"
+        let fallbackKey = "JSONDefaultTests-\(UUID().uuidString)"
+        defer {
+            UserDefaults.standard.removeObject(forKey: plainKey)
+            UserDefaults.standard.removeObject(forKey: fallbackKey)
+        }
+        let plain = JSONDefault<[String]>(key: plainKey)
+        let fallback = JSONDefault<[String]>(key: fallbackKey, defaultValue: ["default"])
+        let custom = CodableDefault(string: #"["custom"]"#)
+
+        plain.load(from: custom)
+        fallback.load(from: custom)
+        XCTAssertEqual(plain.typedValue, ["custom"])
+        XCTAssertEqual(fallback.typedValue, ["custom"])
+
+        plain.load(from: CodableDefault())
+        fallback.load(from: CodableDefault())
+        XCTAssertNil(plain.typedValue)
+        XCTAssertEqual(fallback.typedValue, ["default"])
+        XCTAssertNil(UserDefaults.standard.object(forKey: plainKey))
+        XCTAssertNil(UserDefaults.standard.object(forKey: fallbackKey))
+    }
 }

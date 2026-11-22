@@ -74,6 +74,7 @@ class Defaults {
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
     static let footprintBlur = BoolDefault(key: "footprintBlur")
+    static let blurMaterial = BlurMaterialPreference()
     static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
 
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
@@ -195,6 +196,7 @@ class Defaults {
         footprintFade,
         footprintColor,
         footprintBlur,
+        blurMaterial,
         blurAppearance,
         SUEnableAutomaticChecks,
         todo,
@@ -532,6 +534,7 @@ class IntDefault: Default {
 class JSONDefault<T: Codable>: StringDefault {
     
     private var typeInitialized = false
+    private let fallbackValue: T?
     
     var typedValue: T? {
         didSet {
@@ -542,17 +545,16 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     override init(key: String) {
+        fallbackValue = nil
         super.init(key: key)
         loadFromJSON()
         typeInitialized = true
     }
     
     init(key: String, defaultValue: T) {
+        fallbackValue = defaultValue
         super.init(key: key)
         loadFromJSON()
-        if typedValue == nil {
-            typedValue = defaultValue
-        }
     }
     
     override func load(from codable: CodableDefault) {
@@ -565,10 +567,9 @@ class JSONDefault<T: Codable>: StringDefault {
     }
     
     private func loadFromJSON() {
-        guard let jsonString = value else { return }
-        let decoder = JSONDecoder()
-        guard let jsonData = jsonString.data(using: .utf8) else { return }
-        typedValue = try? decoder.decode(T.self, from: jsonData)
+        let decodedValue = value.flatMap { $0.data(using: .utf8) }
+            .flatMap { try? JSONDecoder().decode(T.self, from: $0) }
+        typedValue = decodedValue ?? fallbackValue
     }
     
     private func saveToJSON(_ obj: T?) {

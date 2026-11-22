@@ -145,17 +145,21 @@ final class FootprintAlphaDefaultsTests: XCTestCase {
         }
     }
 
-    func testExportUsesTheEffectiveUnsetAlpha() throws {
+    func testUnsetAlphaStaysAdaptiveInConfigExports() throws {
         for blurred in [false, true] {
             UserDefaults.standard.removeObject(forKey: Defaults.footprintAlpha.key)
             Defaults.footprintBlur.enabled = blurred
-            let exported = try exportedAlpha()
-            XCTAssertEqual(exported.double, blurred ? 0 : 0.3)
+
+            let json = try XCTUnwrap(Defaults.encoded())
+            let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+            XCTAssertNil(config.defaults[Defaults.footprintAlpha.key])
             XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key))
 
-            Defaults.footprintAlpha.value = 0.8
-            Defaults.footprintAlpha.load(from: exported)
-            XCTAssertEqual(Defaults.effectiveFootprintAlpha, blurred ? 0 : 0.3)
+            let window = FootprintWindow(accessibility: {
+                FootprintAccessibility(reduceMotion: false, reduceTransparency: true)
+            })
+            defer { window.close() }
+            XCTAssertEqual(window.presentation.alpha, 0.3)
         }
     }
 
@@ -296,6 +300,20 @@ class ConfigImportTests: XCTestCase {
         super.tearDown()
     }
 
+    func testImportBeforeAccessibilitySetupCompletesWithoutWindowManagers() throws {
+        let delegate = AppDelegate()
+        let notifications = NotificationCenter()
+        let handled = expectation(description: "Imported configuration was handled before Accessibility setup")
+        let observer = Notification.Name.configImported.onPost(center: notifications) { _ in
+            delegate.reloadWindowManagementAfterImport()
+            handled.fulfill()
+        }
+        defer { notifications.removeObserver(observer) }
+
+        try loadConfig(shortcuts: [:], notificationCenter: notifications)
+        wait(for: [handled], timeout: 1)
+    }
+
     func testImportClearsOmittedActiveShortcut() throws {
         try XCTSkipIf(true, "Flaky: intermittently fails the XCTAssertNil. Skipped until the cause is found.")
 
@@ -383,23 +401,61 @@ class ConfigImportTests: XCTestCase {
         XCTAssertNotNil(config.defaults[Defaults.mouseButtonShortcutsUseWindowUnderCursor.key])
     }
 
+    func testBlurMaterialRoundTripsThroughConfig() throws {
+        let material = Defaults.blurMaterial
+        let previous = UserDefaults.standard.object(forKey: material.key)
+        defer {
+            UserDefaults.standard.removeObject(forKey: material.key)
+            if let previous { UserDefaults.standard.set(previous, forKey: material.key) }
+        }
+
+        for selection: BlurMaterial in [.standard, .liquidGlass] {
+            material.value = selection
+            let config = try XCTUnwrap(Defaults.encoded().flatMap { Defaults.convert(jsonString: $0) })
+            let setting = try XCTUnwrap(config.defaults[material.key])
+            XCTAssertEqual(setting.int, selection.rawValue)
+            material.value = selection == .standard ? .liquidGlass : .standard
+            try loadConfig(shortcuts: [:], defaults: [material.key: setting])
+            XCTAssertEqual(material.value, selection)
+        }
+    }
+
+    func testInvalidImportedBlurMaterialLeavesTheSelectionUnchanged() throws {
+        let material = Defaults.blurMaterial
+        let previous = UserDefaults.standard.object(forKey: material.key)
+        defer { UserDefaults.standard.set(previous, forKey: material.key) }
+
+        for invalid in [CodableDefault(int: 999), CodableDefault(string: "glass")] {
+            material.value = .liquidGlass
+            try loadConfig(shortcuts: [:], defaults: [material.key: invalid])
+            XCTAssertEqual(material.value, .liquidGlass)
+
+            UserDefaults.standard.removeObject(forKey: material.key)
+            try loadConfig(shortcuts: [:], defaults: [material.key: invalid])
+            XCTAssertNil(UserDefaults.standard.object(forKey: material.key))
+            XCTAssertFalse(material.hasSelection)
+            XCTAssertEqual(material.value, .standard)
+        }
+    }
+
     private func store(_ shortcut: Shortcut, forKey key: String) {
         let transformer = ValueTransformer(forName: NSValueTransformerName(rawValue: MASDictionaryTransformerName))!
         let value = transformer.reverseTransformedValue(shortcut.toMASSHortcut())
         UserDefaults.standard.set(value, forKey: key)
     }
 
-    private func loadConfig(shortcuts: [String: Shortcut]) throws {
+    private func loadConfig(shortcuts: [String: Shortcut], defaults: [String: CodableDefault] = [:],
+                            notificationCenter: NotificationCenter = NotificationCenter()) throws {
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: "ConfigImportTests",
                             shortcuts: shortcuts,
-                            defaults: [:])
+                            defaults: defaults)
         let data = try JSONEncoder().encode(config)
         let fileURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("ConfigImportTests-\(UUID().uuidString).json")
         defer { try? FileManager.default.removeItem(at: fileURL) }
         try data.write(to: fileURL, options: .atomic)
 
-        Defaults.load(fileUrl: fileURL, notificationCenter: NotificationCenter())
+        Defaults.load(fileUrl: fileURL, notificationCenter: notificationCenter)
     }
 }

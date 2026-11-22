@@ -23022,6 +23022,16 @@
         }
       }
     },
+    "Liquid Glass for Blur footprint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liquid Glass for Blur footprint"
+          }
+        }
+      }
+    },
     "Lower Middle Center Left Sixteenth" : {
       "localizations" : {
         "en" : {
