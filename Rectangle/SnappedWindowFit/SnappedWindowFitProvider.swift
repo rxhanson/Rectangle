@@ -44,6 +44,7 @@ final class SnappedWindowFitProvider: WindowManagerDelegateProvider {
             self?.stage(note.object as? ExecutionParameters)
         })
         observers.append(Notification.Name.windowActionCompleted.onPost(center: notifications) { [weak self] note in
+            // A fitted placement completes the opportunity. Ordinary snaps establish the next reference.
             guard let self, self.enabled(),
                   let completion = note.object as? WindowActionCompletion,
                   let reference = self.references.object(forKey: completion.identity), !reference.fitted,

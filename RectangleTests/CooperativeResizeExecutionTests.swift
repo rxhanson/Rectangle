@@ -536,7 +536,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertFalse(session.hasPotentialAnchor)
     }
 
-    func testFitClaimFillsRemaining480WithoutChangingTheAnchorOldGroupOrRatio() {
+    func testFitPlacementPreservesTheReferenceWindowCooperativeGroupAndSplitRatio() {
         let oldGroup = CGRect(x: 0, y: 0, width: 500, height: 900)
         let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900))
         let incoming = window(focusedId, oldGroup)

@@ -63,7 +63,7 @@ final class SnappedWindowFitProviderTests: XCTestCase {
         }
     }
 
-    func testTitleBarAndKeyboardCanConsumeAnAnchorWithoutRearmingIt() throws {
+    func testFittedPlacementCompletesTheReferenceOpportunity() throws {
         let provider = makeProvider { request, opportunity in
             .fit(SnappedWindowFit(target: request.calcResult.rect.screenFlipped, neighbor: opportunity))
         }
