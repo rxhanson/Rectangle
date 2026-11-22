@@ -1,7 +1,7 @@
 import AppKit
 
-/// Hosts content inside native glass on macOS 26+, or above the older blur view
-/// so vibrancy does not recolor opaque previews.
+/// Hosts content inside native glass on macOS 26+, or above Standard blur
+/// so vibrancy preserves the colors of opaque previews.
 final class BlurSurfaceView: NSView {
     struct Presentation {
         var usesLiquidGlass: Bool
