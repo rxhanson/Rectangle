@@ -95,8 +95,7 @@ struct CooperativeResizeCoordinator {
         }
     }
 
-    /// Starts a move, planning for other windows to cooperate in it where they can.
-    /// When the window moves alone, the target's side split ratio is recorded instead.
+    /// Plans a move that other windows can participate in once accepted.
     func beginMove(_ request: WindowMoveRequest) -> CooperativeMove {
         var calcResult = request.calcResult
         guard let plan = cooperativeCornerResizePlan(focusedWindowId: request.windowId,
@@ -110,9 +109,6 @@ struct CooperativeResizeCoordinator {
                                                      destinationScreenIsCurrentScreen: request.destinationScreenIsCurrentScreen,
                                                      lastRectangleAction: request.lastRectangleAction)
         else {
-            ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
-                                                          targetFrame: calcResult.initialRect,
-                                                          screenFrame: request.screenFrame)
             return CooperativeMove(calcResult: calcResult, placement: nil, request: request, coordinator: self)
         }
 
@@ -1621,6 +1617,13 @@ struct CooperativeMove {
 }
 
 extension CooperativeMove: WindowManagerDelegate {
+    func moveDidAccept() {
+        guard placement == nil else { return }
+        ActiveSideSplitRatios.shared.recordSideAction(calcResult.resultingAction,
+                                                     targetFrame: calcResult.initialRect,
+                                                     screenFrame: request.screenFrame)
+    }
+
     func isAlreadyAchieved() -> Bool? {
         placement?.isAlreadyAchieved()
     }
