@@ -32,11 +32,10 @@ struct WindowMoveRequest {
     let sourceScreens: UsableScreens
     let destinationScreenIsCurrentScreen: Bool
     let lastRectangleAction: RectangleAction?
-    var requestID = UUID()
 }
 
-/// Customizes a single move once its target is known: it can revise the target,
-/// decide that the move is already achieved, place the window itself, and tidy up after.
+/// Customizes a single move once its target is known. It can decline the move, revise
+/// the target, report it as already achieved, place the window, and tidy up afterward.
 /// Every hook but `calcResult` has a default that leaves the manager's own behavior in place.
 ///
 /// A move has at most one delegate. When features that customize moves could both apply,
@@ -45,7 +44,8 @@ protocol WindowManagerDelegate {
     /// The target this move aims for, possibly revised from the one it was given.
     var calcResult: WindowCalculationResult { get }
 
-    /// A selected delegate may veto an unusable target before history or ownership changes.
+    /// Returns false to decline the move before WindowManager saves its Restore
+    /// frame, records a placement, or supersedes pending work.
     var acceptsPlacement: Bool { get }
 
     /// Whether the window is already where the move would put it, or nil to compare frames.
@@ -65,12 +65,6 @@ protocol WindowManagerDelegate {
 
     /// The window has settled on the screen it started on. Not called after a move across displays.
     func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect)
-
-    /// A delegated move can depend on an external window which disappears during a handoff.
-    var placementCondition: WindowPlacementCondition? { get }
-
-    /// Whether settling could move the focused window after its frame was already read.
-    var cleanupCanMoveWindow: Bool { get }
 }
 
 extension WindowManagerDelegate {
@@ -80,31 +74,17 @@ extension WindowManagerDelegate {
     func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target] { [] }
     func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? { nil }
     func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) {}
-    var placementCondition: WindowPlacementCondition? { nil }
-    var cleanupCanMoveWindow: Bool { true }
 }
 
-enum WindowPlacementInvalidation: Equatable {
-    case anchorChanged
-    /// The original window coordinates may belong to a different desktop or display.
-    case environmentChanged
-}
-
-/// Guards a pending placement. The reason can escalate while outstanding writes drain.
-protocol WindowPlacementCondition {
-    var invalidation: WindowPlacementInvalidation? { get }
-    func isValid() -> Bool
-    func whilePending(cancel: @escaping (WindowPlacementInvalidation) -> Void)
-    func observeEnvironmentDuringRetry() -> (() -> Void)?
-    func stopMonitoring()
-}
-
-extension WindowPlacementCondition {
-    func observeEnvironmentDuringRetry() -> (() -> Void)? { nil }
-}
-
-/// Offers a feature's delegate for a move. The first provider to return a delegate
-/// owns the request, including its admission decision.
+/// Offers a feature's delegate for a move. The manager asks its providers in order,
+/// and the first to return a delegate is used, so the order sets precedence.
 protocol WindowManagerDelegateProvider {
+    /// A delegate for this move, or nil when this feature doesn't apply to it.
     func delegate(for request: WindowMoveRequest) -> WindowManagerDelegate?
+}
+
+/// The final frame in AX coordinates after placement and any display retries.
+struct WindowActionCompletion {
+    let result: ResultParameters
+    let achievedFrame: CGRect
 }

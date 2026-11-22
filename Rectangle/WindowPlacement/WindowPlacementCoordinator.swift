@@ -53,8 +53,6 @@ final class WindowPlacementCoordinator {
         access.lease.isCurrent && (access.followsExternalWriter || access.ordinaryExecutionID == executionID)
     }
 
-    func ownsWindow(_ access: Access) -> Bool { access.lease.isCurrent }
-
     func withAccess(to targets: [WindowWriteFence.Target], hasWaitedForWrites: Bool,
                     completion: (() -> Void)?, perform: @escaping (Access) -> Void) {
         let ordinaryID: Int?
@@ -91,13 +89,12 @@ final class WindowPlacementCoordinator {
     }
 
     func place(_ window: AccessibilityElement, animation: WindowMoveAnimation?, access: Access,
-               cancellation: (() -> Void)?, completion: @escaping (CGRect?) -> Void,
-               animate: (AccessibilityElement, WindowMoveAnimation?, (() -> Void)?, @escaping (CGRect?) -> Void) -> Void) {
+               cancellation: (() -> Void)?, completion: @escaping (CGRect?) -> Void) {
         if animation == nil, access.followsExternalWriter {
             animator.drainWrites(for: [window]) { completion(nil) }
             return
         }
         guard animation != nil || !animator.isIdle else { return completion(nil) }
-        animate(window, animation, cancellation, completion)
+        animator.place(window, animation: animation, cancellation: cancellation, completion: completion)
     }
 }

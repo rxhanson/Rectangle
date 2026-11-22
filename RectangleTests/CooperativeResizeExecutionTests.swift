@@ -29,6 +29,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             (Defaults.cooperativeCornerResize, CodableDefault(bool: true)),
             (Defaults.cornerCycleExpansionAxis, CodableDefault(int: CornerCycleExpansionMode.vertical.rawValue)),
             (Defaults.experimentalWindowAnimations, CodableDefault(bool: false)),
+            (Defaults.fitBesideSnappedWindows, CodableDefault(bool: true)),
             (Defaults.useCursorScreenDetection, CodableDefault(bool: false)),
             (Defaults.moveFixedSizeToEdge, CodableDefault(int: EdgeAlignment.edgesAndCorners.rawValue)),
             (Defaults.horizontalSplitRatio, CodableDefault(float: 50)),
@@ -480,7 +481,43 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertEqual(focused.minimumSizeReads, 0)
     }
 
-    // MARK: - Fit and cooperative resize
+    // MARK: - Completion
+
+    func testCrossDisplaySnapRecordsTheAchievedFrameAfterRetries() {
+        let origin = CGRect(x: 100, y: 100, width: 920, height: 400)
+        let anchor = window(neighborId, origin) { frame in
+            var accepted = frame
+            accepted.size.width = max(frame.width, 720)
+            return accepted
+        }
+        anchor.reportedPID = getpid()
+        let incoming = window(focusedId, origin)
+        let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in true })
+        let target = CGRect(x: 1920, y: 0, width: 480, height: 900)
+        let fit = SnappedWindowFitProvider(session: { session }, resolve: { request, opportunity in
+            XCTAssertEqual(request.action, .rightHalf)
+            XCTAssertEqual(opportunity.id, self.neighborId)
+            XCTAssertEqual(opportunity.frame, anchor.frame)
+            XCTAssertEqual(opportunity.frame.width, 720)
+            return .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
+        }, validateNeighbor: { _ in true })
+        let manager = makeManager(windows: [anchor, incoming], beforeCooperative: [fit])
+        let settled = expectation(description: "Cross-display retries have finished")
+
+        manager.execute(ExecutionParameters(.leftHalf, screen: secondScreen, windowElement: anchor,
+                                            completion: { settled.fulfill() }))
+
+        XCTAssertFalse(session.hasPotentialAnchor)
+        wait(for: [settled], timeout: 2)
+        assertFrame(anchor, CGRect(x: 1200, y: 0, width: 720, height: 900))
+        let verified = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
+        wait(for: [verified], timeout: 2)
+
+        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming))
+
+        assertFrame(incoming, target)
+        XCTAssertFalse(session.hasPotentialAnchor)
+    }
 
     func testFitClaimFillsRemaining480WithoutChangingTheAnchorOldGroupOrRatio() {
         let oldGroup = CGRect(x: 0, y: 0, width: 500, height: 900)
@@ -532,7 +569,9 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         let neighbor = window(neighborId, CGRect(x: 600, y: 0, width: 600, height: 900))
         seedHistory(incoming, action: .leftHalf)
         seedHistory(neighbor, action: .rightHalf)
-        let fit = fitProvider(anchor: neighbor) { _, _ in .unchanged }
+        let cooperative = CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
+                                                            windowElements: { [incoming, neighbor] })
+        let fit = fitProvider(anchor: neighbor, fallback: cooperative) { _, _ in .unchanged }
         let manager = makeManager(windows: [incoming, neighbor], beforeCooperative: [fit])
 
         manager.execute(ExecutionParameters(.leftHalf, windowElement: incoming))
@@ -575,537 +614,6 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertEqual(retrying.frame.size, CGSize(width: 600, height: 900))
         XCTAssertEqual(manager.postProcessCount, 1)
     }
-
-    func testFitLosingItsAnchorDuringTheWriteRestoresTheIncomingWindowAndPriorHistory() {
-        assertFitRollback(refused: false)
-    }
-
-    func testFitWithARefusedRollbackRetainsThePhysicalOriginForRestoreAndForgetsTheAction() {
-        assertFitRollback(refused: true)
-    }
-
-    func testFitLosingItsAnchorBeforeDelayedCrossDisplayRetryRollsBackAndCallsCompletionOnce() {
-        assertFitInterruptedBeforeDelayedRetry(.anchorChanged)
-    }
-
-    func testDisplayChangeBeforeDelayedFitRetryKeepsPartialFrameAndClearsOldAction() {
-        // The fake AX identity makes the requested animation fall back to direct placement.
-        // Its animation monitor has stopped before the delayed display retry starts.
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        assertFitInterruptedBeforeDelayedRetry(.environmentChanged)
-    }
-
-    private func assertFitInterruptedBeforeDelayedRetry(_ reason: WindowPlacementInvalidation) {
-        let anchor = window(neighborId, CGRect(x: 1200, y: 0, width: 720, height: 900))
-        let origin = CGRect(x: 100, y: 100, width: 400, height: 500)
-        let target = CGRect(x: 1920, y: 0, width: 480, height: 900)
-        let incoming = window(focusedId, origin) { requested in
-            guard requested == target else { return requested }
-            var clamped = requested
-            clamped.size.width -= 100
-            return clamped
-        }
-        seedHistory(incoming, action: .leftHalf, count: 2)
-        let priorRestore = CGRect(x: 30, y: 40, width: 300, height: 300)
-        AppDelegate.windowHistory.restoreRects[focusedId] = priorRestore
-        var anchorIsCurrent = true
-        let notifications = NotificationCenter()
-        let fit = fitProvider(anchor: anchor, on: secondScreen, notifications: notifications,
-                              validateNeighbor: { _ in anchorIsCurrent }) { _, opportunity in
-            .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
-        }
-        let manager = makeManager(windows: [incoming, anchor], beforeCooperative: [fit])
-        let events = PlacementEvents()
-        let finished = expectation(description: "Interrupted retry finished")
-        var completions = 0
-
-        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming, source: .dragToSnap,
-                                            completion: { completions += 1; finished.fulfill() }))
-        XCTAssertEqual(incoming.requestedFrames.filter { $0 == target }.count, 2)
-        XCTAssertEqual(completions, 0)
-        let partial = incoming.frame
-        let writesBeforeInterruption = incoming.requestedFrames
-        XCTAssertNotEqual(partial, origin.screenFlipped)
-        XCTAssertNotEqual(partial, target.screenFlipped)
-        switch reason {
-        case .anchorChanged: anchorIsCurrent = false
-        case .environmentChanged: NSApplication.didChangeScreenParametersNotification.post(center: notifications)
-        }
-        wait(for: [finished], timeout: 2)
-
-        XCTAssertEqual(incoming.requestedFrames.filter { $0 == target }.count, 2)
-        switch reason {
-        case .anchorChanged:
-            assertFrame(incoming, origin)
-            assertHistory(incoming, action: .leftHalf, count: 2)
-            XCTAssertEqual(history(of: incoming)?.rect, origin.screenFlipped)
-            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], priorRestore)
-        case .environmentChanged:
-            XCTAssertEqual(incoming.frame, partial)
-            XCTAssertEqual(incoming.requestedFrames, writesBeforeInterruption)
-            XCTAssertNil(history(of: incoming))
-            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], origin.screenFlipped)
-        }
-        assertUntouched(anchor)
-        XCTAssertEqual(completions, 1)
-        XCTAssertEqual(events.legacyCompletions, 0)
-        XCTAssertTrue(events.settlements.isEmpty)
-    }
-
-    func testFitAnimationFallbackKeepsPreviousCountAndFrameUntilPlacementSettles() throws {
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations are unavailable on this machine")
-        let origin = CGRect(x: 100, y: 100, width: 400, height: 500)
-        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900))
-        let target = CGRect(x: 720, y: 0, width: 480, height: 900)
-        let incoming = window(focusedId, origin)
-        XCTAssertTrue(incoming.canAnimate)
-        seedHistory(incoming, action: .rightHalf, count: 2)
-        let fit = fitProvider(anchor: anchor) { _, opportunity in
-            .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
-        }
-        let manager = makeManager(windows: [incoming, anchor], beforeCooperative: [fit])
-        let events = PlacementEvents()
-        let applied = expectation(description: "Animator used synchronous fallback for the synthetic window")
-        manager.afterNextApply = {
-            XCTAssertEqual(incoming.frame, target.screenFlipped)
-            self.assertHistory(incoming, action: .rightHalf, count: 2)
-            XCTAssertEqual(self.history(of: incoming)?.rect, origin.screenFlipped)
-            XCTAssertTrue(events.settlements.isEmpty)
-            applied.fulfill()
-        }
-        let request = ExecutionParameters(.rightHalf, windowElement: incoming)
-
-        manager.execute(request)
-        wait(for: [applied], timeout: 2)
-
-        assertHistory(incoming, action: .rightHalf, count: 3)
-        XCTAssertEqual(history(of: incoming)?.rect, target.screenFlipped)
-        XCTAssertEqual(events.settlements, [request.requestID])
-        assertUntouched(anchor)
-    }
-
-    func testAnimatorCancellationFollowedByEnvironmentChangeLeavesTheInterruptedFrameAlone() throws {
-        try assertInterruptedAnimation(reason: .environmentChanged, animatorCancelsFirst: true)
-    }
-
-    func testAnchorLossBeforeAnimatorCancellationRollsBackAndCancelsOnlyOnce() throws {
-        try assertInterruptedAnimation(reason: .anchorChanged, animatorCancelsFirst: false)
-    }
-
-    func testAnimatorCancellationFollowedByAnchorLossStillRecoversTheOriginalFrame() throws {
-        try assertInterruptedAnimation(reason: .anchorChanged, animatorCancelsFirst: true)
-    }
-
-    private func assertInterruptedAnimation(reason: WindowPlacementInvalidation, animatorCancelsFirst: Bool) throws {
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations are unavailable on this machine")
-        let origin = CGRect(x: 130, y: 180, width: 400, height: 450)
-        let partial = CGRect(x: 380, y: 90, width: 480, height: 620)
-        let incoming = window(focusedId, origin)
-        let previousRestore = CGRect(x: 70, y: 80, width: 500, height: 300)
-        AppDelegate.windowHistory.restoreRects[focusedId] = previousRestore
-        seedHistory(incoming, action: .leftHalf, count: 2)
-        let manager = makeManager(windows: [incoming])
-        let condition = TestPlacementCondition()
-        manager.delegate = { StubDelegate($0, condition: condition) }
-        let animation = HeldAnimation()
-        manager.heldAnimation = animation
-        let events = PlacementEvents()
-        var successes = 0
-        var cancellations = 0
-        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming,
-                                            completion: { successes += 1 }, cancellation: { cancellations += 1 }))
-        let invalidate = try XCTUnwrap(condition.pendingCancellation)
-        let animatorCancelled = try XCTUnwrap(animation.cancellation)
-        let animatorCompleted = try XCTUnwrap(animation.completion)
-        manager.heldAnimation = nil
-        incoming.setFrame(partial.screenFlipped)
-
-        if animatorCancelsFirst {
-            animatorCancelled()
-            XCTAssertEqual(cancellations, 0)
-        }
-        condition.invalidation = reason
-        invalidate(reason)
-        if !animatorCancelsFirst { animatorCancelled() }
-        drainMainQueue()
-
-        // A callback can have been queued before its monitor or animator stopped.
-        invalidate(reason)
-        animatorCancelled()
-        animatorCompleted(partial.screenFlipped)
-        drainMainQueue()
-
-        switch reason {
-        case .environmentChanged:
-            assertFrame(incoming, partial)
-            XCTAssertEqual(incoming.requestedFrames, [partial])
-            XCTAssertNil(history(of: incoming))
-            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], origin.screenFlipped)
-        case .anchorChanged:
-            assertFrame(incoming, origin)
-            XCTAssertEqual(incoming.requestedFrames, [partial, origin])
-            assertHistory(incoming, action: .leftHalf, count: 2)
-            XCTAssertEqual(history(of: incoming)?.rect, origin.screenFlipped)
-            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], previousRestore)
-        }
-        XCTAssertEqual(condition.stopCount, 1)
-        XCTAssertNil(condition.pendingCancellation)
-        XCTAssertEqual(cancellations, 1)
-        XCTAssertEqual(successes, 0)
-        XCTAssertEqual(events.legacyCompletions, 0)
-        XCTAssertTrue(events.settlements.isEmpty)
-    }
-
-    func testSettledCrossDisplayAnimationIgnoresLateMonitorAndAnimatorCallbacks() throws {
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations are unavailable on this machine")
-        let incoming = window(focusedId, CGRect(x: 100, y: 100, width: 400, height: 300))
-        let target = CGRect(x: 1800, y: 0, width: 600, height: 900)
-        let manager = makeManager(windows: [incoming])
-        let condition = TestPlacementCondition()
-        manager.delegate = { StubDelegate($0, condition: condition) }
-        let animation = HeldAnimation()
-        manager.heldAnimation = animation
-        let events = PlacementEvents()
-        var successes = 0
-        var cancellations = 0
-        let request = ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming, source: .dragToSnap,
-                                          completion: { successes += 1 }, cancellation: { cancellations += 1 })
-
-        manager.execute(request)
-        let invalidate = try XCTUnwrap(condition.pendingCancellation)
-        let animatorCompleted = try XCTUnwrap(animation.completion)
-        let animatorCancelled = try XCTUnwrap(animation.cancellation)
-        manager.heldAnimation = nil
-        incoming.setFrame(target.screenFlipped)
-        animatorCompleted(incoming.frame)
-        XCTAssertEqual(successes, 1)
-        XCTAssertNil(condition.pendingCancellation)
-        condition.invalidation = .anchorChanged
-        invalidate(.anchorChanged)
-        animatorCancelled()
-        animatorCompleted(nil)
-        drainMainQueue()
-
-        XCTAssertEqual(condition.stopCount, 1)
-        XCTAssertEqual(cancellations, 0)
-        XCTAssertEqual(successes, 1)
-        XCTAssertEqual(events.legacyCompletions, 1)
-        XCTAssertEqual(events.settlements, [request.requestID])
-        XCTAssertEqual(incoming.requestedFrames, [target])
-        assertHistory(incoming, action: .rightHalf, count: 1)
-        XCTAssertEqual(history(of: incoming)?.rect, target.screenFlipped)
-    }
-
-    func testConditionalRecoveryRetainsItsWindowAfterAnUnrelatedAction() throws {
-        try assertWindowScopedRecovery(sameWindow: false, anchorLost: true)
-    }
-
-    func testConditionalRecoveryCannotOverwriteANewerActionOnItsWindow() throws {
-        try assertWindowScopedRecovery(sameWindow: true, anchorLost: true)
-    }
-
-    func testUnrelatedAnimationPreemptionPreservesThePhysicalRestoreOrigin() throws {
-        try assertWindowScopedRecovery(sameWindow: false, anchorLost: false)
-    }
-
-    private func assertWindowScopedRecovery(sameWindow: Bool, anchorLost: Bool) throws {
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations are unavailable on this machine")
-        let origin = CGRect(x: 100, y: 100, width: 400, height: 300)
-        let incoming = window(focusedId, origin)
-        let other = window(stackedId, CGRect(x: 200, y: 150, width: 300, height: 250))
-        let previousRestore = CGRect(x: 50, y: 60, width: 350, height: 280).screenFlipped
-        seedHistory(incoming, action: .centerHalf, count: 3)
-        AppDelegate.windowHistory.restoreRects[focusedId] = previousRestore
-        let manager = makeManager(windows: [incoming, other])
-        let condition = TestPlacementCondition()
-        manager.delegate = { request in
-            request.windowId == self.focusedId && request.action == .rightHalf
-                ? StubDelegate(request, condition: condition) : nil
-        }
-        let animation = HeldAnimation()
-        manager.heldAnimation = animation
-        var drainCompletion: (() -> Void)?
-        manager.drainWrites = { _, completion in drainCompletion = completion }
-        let events = PlacementEvents()
-        var successes = 0
-        var cancellations = 0
-        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, source: .dragToSnap,
-                                            completion: { successes += 1 }, cancellation: { cancellations += 1 }))
-        let cancelAnimation = try XCTUnwrap(animation.cancellation)
-        incoming.setFrame(CGRect(x: 400, y: 0, width: 500, height: 900).screenFlipped)
-        if anchorLost {
-            condition.invalidation = .anchorChanged
-            try XCTUnwrap(condition.pendingCancellation)(.anchorChanged)
-            XCTAssertNotNil(drainCompletion)
-        } else {
-            cancelAnimation()
-        }
-
-        manager.heldAnimation = nil
-        Defaults.experimentalWindowAnimations.enabled = false
-        let newerID = UUID()
-        let newerWindow = sameWindow ? incoming : other
-        manager.execute(ExecutionParameters(.maximize, windowElement: newerWindow, requestID: newerID))
-        if anchorLost { try XCTUnwrap(drainCompletion)() }
-        drainMainQueue()
-
-        assertFrame(newerWindow, screen.frame)
-        assertHistory(newerWindow, action: .maximize, count: 1)
-        if !sameWindow {
-            if anchorLost {
-                assertFrame(incoming, origin)
-                assertHistory(incoming, action: .centerHalf, count: 3)
-                XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], previousRestore)
-            } else {
-                XCTAssertNil(history(of: incoming))
-                XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], origin.screenFlipped)
-            }
-        }
-        XCTAssertEqual(successes, 0)
-        XCTAssertEqual(cancellations, 1)
-        XCTAssertEqual(events.settlements, [newerID])
-        XCTAssertEqual(events.legacyCompletions, 1)
-    }
-
-    func testAlreadyAchievedPlacementSupersedesConditionalRecoveryOnItsWindow() throws {
-        try assertTerminalActionSupersedesRecovery(.leftHalf)
-    }
-
-    func testRestoreWithoutAStoredFrameSupersedesConditionalRecoveryOnItsWindow() throws {
-        try assertTerminalActionSupersedesRecovery(.restore)
-    }
-
-    private func assertTerminalActionSupersedesRecovery(_ action: WindowAction) throws {
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations are unavailable on this machine")
-        let incoming = window(focusedId, CGRect(x: 100, y: 100, width: 400, height: 300))
-        seedHistory(incoming, action: .centerHalf, count: 2)
-        let manager = makeManager(windows: [incoming])
-        let condition = TestPlacementCondition()
-        manager.delegate = { request in
-            request.action == .rightHalf ? StubDelegate(request, condition: condition) : nil
-        }
-        manager.heldAnimation = HeldAnimation()
-        var drainCompletion: (() -> Void)?
-        manager.drainWrites = { _, completion in drainCompletion = completion }
-        let events = PlacementEvents()
-        var cancellations = 0
-        manager.execute(ExecutionParameters(.rightHalf, updateRestoreRect: false, windowElement: incoming,
-                                            source: .dragToSnap, cancellation: { cancellations += 1 }))
-        condition.invalidation = .anchorChanged
-        try XCTUnwrap(condition.pendingCancellation)(.anchorChanged)
-        XCTAssertNotNil(drainCompletion)
-        let current = CGRect(x: 0, y: 0, width: 600, height: 900)
-        incoming.setFrame(current.screenFlipped)
-        let writes = incoming.requestedFrames
-        manager.heldAnimation = nil
-        Defaults.experimentalWindowAnimations.enabled = false
-        let newerID = UUID()
-        var completions = 0
-        manager.execute(ExecutionParameters(action, windowElement: incoming,
-                                            completion: { completions += 1 }, requestID: newerID))
-        let restoreAfterCommand = AppDelegate.windowHistory.restoreRects[focusedId]
-        try XCTUnwrap(drainCompletion)()
-        drainMainQueue()
-
-        assertFrame(incoming, current)
-        XCTAssertEqual(incoming.requestedFrames, writes)
-        XCTAssertEqual(completions, 1)
-        XCTAssertEqual(cancellations, 1)
-        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], restoreAfterCommand)
-        if action == .restore {
-            XCTAssertNil(history(of: incoming))
-            XCTAssertTrue(events.settlements.isEmpty)
-        } else {
-            assertHistory(incoming, action: action, count: 1)
-            XCTAssertEqual(events.settlements, [newerID])
-        }
-    }
-
-    func testAlreadyAchievedPlacementSupersedesADelayedRetryOnItsWindow() {
-        Defaults.experimentalWindowAnimations.enabled = false
-        Defaults.cooperativeCornerResize.enabled = false
-        let incoming = clampingWindow()
-        let manager = makeManager(windows: [incoming])
-        let events = PlacementEvents()
-        let earlierFinished = expectation(description: "Superseded retry completed")
-        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming,
-                                            completion: { earlierFinished.fulfill() }))
-        XCTAssertTrue(events.settlements.isEmpty)
-        incoming.stopClamping()
-        let current = CGRect(x: 1200, y: 0, width: 600, height: 900)
-        incoming.setFrame(current.screenFlipped)
-        let writes = incoming.requestedFrames
-        let newerID = UUID()
-        manager.execute(ExecutionParameters(.leftHalf, screen: secondScreen, windowElement: incoming,
-                                            requestID: newerID))
-        let restoreAfterCommand = AppDelegate.windowHistory.restoreRects[focusedId]
-        wait(for: [earlierFinished], timeout: 2)
-
-        assertFrame(incoming, current)
-        XCTAssertEqual(incoming.requestedFrames, writes)
-        assertHistory(incoming, action: .leftHalf, count: 1)
-        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], restoreAfterCommand)
-        XCTAssertEqual(events.settlements, [newerID])
-    }
-
-    func testAlreadyAchievedPlacementPreservesAnUnrelatedPendingDisplayRetry() {
-        Defaults.experimentalWindowAnimations.enabled = false
-        Defaults.cooperativeCornerResize.enabled = false
-        let incoming = clampingWindow()
-        let other = window(stackedId, CGRect(x: 0, y: 0, width: 600, height: 900))
-        let manager = makeManager(windows: [incoming, other])
-        let events = PlacementEvents()
-        let earlierFinished = expectation(description: "Unrelated retry completed")
-        let earlierID = UUID()
-        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: incoming,
-                                            completion: { earlierFinished.fulfill() }, requestID: earlierID))
-        XCTAssertTrue(events.settlements.isEmpty)
-        let newerID = UUID()
-        manager.execute(ExecutionParameters(.leftHalf, windowElement: other, requestID: newerID))
-        wait(for: [earlierFinished], timeout: 2)
-
-        assertFrame(incoming, CGRect(x: 1800, y: 0, width: 600, height: 900))
-        assertHistory(incoming, action: .rightHalf, count: 1)
-        assertUntouched(other)
-        assertHistory(other, action: .leftHalf, count: 1)
-        XCTAssertEqual(events.settlements, [newerID, earlierID])
-    }
-
-    func testSynchronousConditionInvalidationPreventsStartingTheAnimation() throws {
-        Defaults.experimentalWindowAnimations.enabled = true
-        Defaults.cooperativeCornerResize.enabled = false
-        try XCTSkipUnless(WindowAnimator.enabled, "Animations are unavailable on this machine")
-        let origin = CGRect(x: 100, y: 100, width: 400, height: 300)
-        let incoming = window(focusedId, origin)
-        let manager = makeManager(windows: [incoming])
-        let condition = TestPlacementCondition()
-        condition.invalidateWhenMonitoring = true
-        manager.delegate = { StubDelegate($0, condition: condition) }
-        let animation = HeldAnimation()
-        manager.heldAnimation = animation
-        var drainCompletion: (() -> Void)?
-        manager.drainWrites = { _, completion in drainCompletion = completion }
-        var cancellations = 0
-        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, source: .dragToSnap,
-                                            cancellation: { cancellations += 1 }))
-        XCTAssertNil(animation.cancellation)
-        XCTAssertNil(animation.completion)
-        XCTAssertNotNil(drainCompletion)
-        XCTAssertEqual(incoming.writeCount, 0)
-        try XCTUnwrap(drainCompletion)()
-        drainMainQueue()
-
-        assertFrame(incoming, origin)
-        XCTAssertEqual(incoming.writeCount, 0)
-        XCTAssertEqual(cancellations, 1)
-    }
-
-    private func drainMainQueue() {
-        let drained = expectation(description: "Deferred cancellation arbitration finished")
-        DispatchQueue.main.async { drained.fulfill() }
-        wait(for: [drained], timeout: 2)
-    }
-
-    private func assertFitRollback(refused: Bool, file: StaticString = #filePath, line: UInt = #line) {
-        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900))
-        let origin = CGRect(x: 150, y: 0, width: 350, height: 900)
-        let target = CGRect(x: 720, y: 0, width: 480, height: 900)
-        var anchorIsCurrent = true
-        let incoming = window(focusedId, origin) { requested in
-            if requested == target { anchorIsCurrent = false }
-            return refused && requested == origin ? target : requested
-        }
-        // A prior external move made the stored action stale. Planning could replace
-        // both entries, so verifying these distinct values exercises history rollback.
-        let previousActionFrame = CGRect(x: 50, y: 60, width: 500, height: 350)
-        let previousRestore = CGRect(x: 20, y: 80, width: 400, height: 300)
-        AppDelegate.windowHistory.lastRectangleActions[focusedId] = RectangleAction(action: .centerHalf,
-                                                                                     rect: previousActionFrame, count: 3)
-        AppDelegate.windowHistory.restoreRects[focusedId] = previousRestore
-        let fit = fitProvider(anchor: anchor, validateNeighbor: { _ in anchorIsCurrent }) { _, opportunity in
-            .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
-        }
-        let manager = makeManager(windows: [incoming, anchor], beforeCooperative: [fit])
-        let events = PlacementEvents()
-        let cancelled = expectation(description: "Fit cancellation finished")
-        var cancellations = 0
-        var successes = 0
-
-        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, completion: { successes += 1 },
-                                            cancellation: { cancellations += 1; cancelled.fulfill() }))
-        wait(for: [cancelled], timeout: 2)
-
-        XCTAssertEqual(incoming.requestedFrames.first, target, file: file, line: line)
-        XCTAssertEqual(incoming.requestedFrames.last, origin, file: file, line: line)
-        if refused {
-            assertFrame(incoming, target, file: file, line: line)
-            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], origin.screenFlipped, file: file, line: line)
-            XCTAssertNil(history(of: incoming), file: file, line: line)
-        } else {
-            assertFrame(incoming, origin, file: file, line: line)
-            XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], previousRestore, file: file, line: line)
-            assertHistory(incoming, action: .centerHalf, count: 3, file: file, line: line)
-            XCTAssertEqual(history(of: incoming)?.rect, previousActionFrame, file: file, line: line)
-        }
-        assertUntouched(anchor, file: file, line: line)
-        XCTAssertEqual(cancellations, 1, file: file, line: line)
-        XCTAssertEqual(successes, 0, file: file, line: line)
-        XCTAssertEqual(manager.postProcessCount, 0, file: file, line: line)
-        XCTAssertEqual(events.legacyCompletions, 0, file: file, line: line)
-        XCTAssertTrue(events.settlements.isEmpty, file: file, line: line)
-    }
-
-    func testCommandTakingOverAfterFitApplyOwnsTheFinalFrameHistoryAndSettlement() {
-        let anchor = window(neighborId, CGRect(x: 0, y: 0, width: 720, height: 900))
-        let target = CGRect(x: 720, y: 0, width: 480, height: 900)
-        var anchorIsCurrent = true
-        let incoming = window(focusedId, CGRect(x: 150, y: 0, width: 350, height: 900)) { requested in
-            if requested == target { anchorIsCurrent = false }
-            return requested
-        }
-        let fit = fitProvider(anchor: anchor, validateNeighbor: { _ in anchorIsCurrent }) { _, opportunity in
-            .fit(SnappedWindowFit(target: target.screenFlipped, neighbor: opportunity))
-        }
-        let manager = makeManager(windows: [incoming, anchor], beforeCooperative: [fit])
-        let events = PlacementEvents()
-        let newerID = UUID()
-        var newerRestore: CGRect?
-        let newerCompleted = expectation(description: "Maximize finished")
-        let oldFinished = expectation(description: "Superseded Fit finished")
-        manager.afterNextApply = {
-            XCTAssertEqual(incoming.frame, target.screenFlipped)
-            manager.execute(ExecutionParameters(.maximize, windowElement: incoming, completion: {
-                newerRestore = AppDelegate.windowHistory.restoreRects[self.focusedId]
-                newerCompleted.fulfill()
-            }, requestID: newerID))
-        }
-
-        manager.execute(ExecutionParameters(.rightHalf, windowElement: incoming, completion: { oldFinished.fulfill() },
-                                            cancellation: { oldFinished.fulfill() }))
-        wait(for: [newerCompleted, oldFinished], timeout: 2)
-
-        assertFrame(incoming, screen.frame)
-        assertHistory(incoming, action: .maximize, count: 1)
-        XCTAssertEqual(history(of: incoming)?.rect, incoming.frame)
-        XCTAssertNotNil(newerRestore)
-        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], newerRestore)
-        assertUntouched(anchor)
-        XCTAssertEqual(events.legacyCompletions, 1)
-        XCTAssertEqual(events.settlements, [newerID])
-    }
-
-    // MARK: - Completion
 
     func testCompletionFiresOnceWhenWindowIsRejected() {
         let sheet = window(focusedId, CGRect(x: 0, y: 0, width: 400, height: 400))
@@ -1274,8 +782,8 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         let finished = expectation(description: "Refused placement completed")
         let command = ExecutionParameters(.leftHalf, windowElement: subject,
                                           completion: { finished.fulfill() })
-        let observer = Notification.Name.windowPlacementSettled.onPost { note in
-            if (note.object as? WindowPlacementSettlement)?.requestID == command.requestID {
+        let observer = Notification.Name.windowActionCompleted.onPost { note in
+            if (note.object as? WindowActionCompletion)?.result.windowElement === subject {
                 XCTFail("A refused write must not publish the other operation's frame")
             }
         }
@@ -1429,6 +937,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
     private func fitProvider(anchor: FakeWindow, on anchorScreen: NSScreen? = nil, enabled: @escaping () -> Bool = { true },
                              notifications: NotificationCenter = NotificationCenter(),
                              validateNeighbor: @escaping (SnappedWindowFit) -> Bool = { _ in true },
+                             fallback: WindowManagerDelegateProvider? = nil,
                              resolve: @escaping (WindowMoveRequest, SnappedWindowFitOpportunity) -> SnappedWindowFit.Resolution) -> SnappedWindowFitProvider {
         let session = SnappedWindowFitSession(observeWorkspace: false, verify: { _, _ in true })
         session.record(SnappedWindowFitOpportunity(id: neighborId, pid: 500, launch: 1, action: .leftHalf,
@@ -1436,7 +945,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
                                                    createdAt: ProcessInfo.processInfo.systemUptime))
         let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in session.current != nil }, object: nil)
         wait(for: [ready], timeout: 2)
-        return SnappedWindowFitProvider(enabled: enabled, session: { session }, resolve: resolve,
+        return SnappedWindowFitProvider(fallback: fallback, enabled: enabled, session: { session }, resolve: resolve,
                                         validateNeighbor: validateNeighbor, notifications: notifications)
     }
 
@@ -1485,22 +994,13 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertLessThan(firstIndex, secondIndex, "Write order was \(writes)", file: file, line: line)
     }
 
-    // MARK: - Test doubles
-
-    private final class PlacementEvents {
-        var legacyCompletions = 0
-        var settlements: [UUID] = []
-        private var observers: [NSObjectProtocol] = []
-
-        init() {
-            observers.append(Notification.Name.windowActionCompleted.onPost { [weak self] _ in self?.legacyCompletions += 1 })
-            observers.append(Notification.Name.windowPlacementSettled.onPost { [weak self] note in
-                if let placement = note.object as? WindowPlacementSettlement { self?.settlements.append(placement.requestID) }
-            })
-        }
-
-        deinit { observers.forEach(NotificationCenter.default.removeObserver) }
+    private func drainMainQueue() {
+        let drained = expectation(description: "Deferred cancellation arbitration finished")
+        DispatchQueue.main.async { drained.fulfill() }
+        wait(for: [drained], timeout: 2)
     }
+
+    // MARK: - Test doubles
 
     private final class FakeWindow: AccessibilityElement {
         private let id: CGWindowID?
@@ -1510,6 +1010,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         private(set) var writeCount = 0
         private(set) var requestedFrames: [CGRect] = []
         var reportedMinimumSize: CGSize?
+        var reportedPID: pid_t?
         var sheet = false
         var refusesWrites = false
         var onStopClamping: (() -> Void)?
@@ -1526,6 +1027,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         func stopClamping() { onStopClamping?() }
 
         override var frame: CGRect { currentFrame }
+        override var pid: pid_t? { reportedPID ?? super.pid }
         private(set) var minimumSizeReads = 0
         override var minimumSize: CGSize? {
             minimumSizeReads += 1
@@ -1549,9 +1051,9 @@ final class CooperativeResizeExecutionTests: XCTestCase {
             writeCount += 1
             onWrite()
             // Windows are clamped in screen coordinates, with their top left held in place.
+            guard !refusesWrites else { return }
             let requested = frame.screenFlipped
             requestedFrames.append(requested)
-            guard !refusesWrites else { return }
             var result = accepted(requested)
             result.origin.y = requested.maxY - result.height
             currentFrame = result.screenFlipped
@@ -1559,44 +1061,13 @@ final class CooperativeResizeExecutionTests: XCTestCase {
     }
 
     /// Revises nothing unless told to, places the window through the manager's movers, and counts its hooks.
-    private final class TestPlacementCondition: WindowPlacementCondition {
-        var invalidation: WindowPlacementInvalidation?
-        var pendingCancellation: ((WindowPlacementInvalidation) -> Void)?
-        private(set) var stopCount = 0
-        var invalidateWhenMonitoring = false
-
-        func isValid() -> Bool { invalidation == nil }
-
-        func whilePending(cancel: @escaping (WindowPlacementInvalidation) -> Void) {
-            pendingCancellation = cancel
-            if invalidateWhenMonitoring {
-                invalidation = .anchorChanged
-                cancel(.anchorChanged)
-            }
-        }
-
-        func stopMonitoring() {
-            stopCount += 1
-            pendingCancellation = nil
-        }
-    }
-
-    private final class HeldAnimation {
-        var cancellation: (() -> Void)?
-        var completion: ((CGRect?) -> Void)?
-    }
-
     private final class StubDelegate: WindowManagerDelegate {
         var calcResult: WindowCalculationResult
         var achieved: Bool?
-        var placementCondition: WindowPlacementCondition?
         private(set) var placeCount = 0
         private(set) var settledCount = 0
 
-        init(_ request: WindowMoveRequest, condition: WindowPlacementCondition? = nil) {
-            calcResult = request.calcResult
-            placementCondition = condition
-        }
+        init(_ request: WindowMoveRequest) { calcResult = request.calcResult }
 
         func isAlreadyAchieved() -> Bool? { achieved }
 
@@ -1639,65 +1110,19 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         private(set) var postProcessCount = 0
         private(set) var lastIncrementCount: Bool?
         private(set) var lastResult: ResultParameters?
-        var afterNextApply: (() -> Void)?
-        private let animationDriver = AnimationDriver()
-        var heldAnimation: HeldAnimation? {
-            get { animationDriver.held }
-            set { animationDriver.held = newValue }
-        }
-
-        var drainWrites: (([AccessibilityElement], @escaping () -> Void) -> Void)? {
-            get { animationDriver.drainWrites }
-            set { animationDriver.drainWrites = newValue }
-        }
-
-        private final class AnimationDriver {
-            var held: HeldAnimation?
-            var drainWrites: (([AccessibilityElement], @escaping () -> Void) -> Void)?
-        }
         /// Replaces the built-in delegate when set.
         var delegate: ((WindowMoveRequest) -> WindowManagerDelegate?)?
 
         init(screenDetection: ScreenDetection, windows: [AccessibilityElement],
              beforeCooperative: [WindowManagerDelegateProvider] = [], writeFence: WindowWriteFence = .shared) {
-            let cooperative = CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory, windowElements: { windows })
-            let driver = animationDriver
-            var services = WindowPlacementServices(animator: .shared)
-            let drain = services.drainWrites
-            services.drainWrites = { windows, completion in
-                if let override = driver.drainWrites {
-                    override(windows, completion)
-                } else {
-                    drain(windows, completion)
-                }
-            }
-            let animate = services.animate
-            services.animate = { window, animation, cancellation, completion in
-                guard let held = driver.held else {
-                    return animate(window, animation, cancellation, completion)
-                }
-                XCTAssertNotNil(animation)
-                held.cancellation = cancellation
-                held.completion = completion
-            }
-            services.confirmsRollback = { window, id, frame in
-                window.getWindowId() == id && WindowGeometry.near(window.frame, frame)
-            }
-            super.init(screenDetection: screenDetection, delegateProviders: beforeCooperative + [cooperative],
-                       placementServices: services, writeFence: writeFence)
+            super.init(screenDetection: screenDetection,
+                       delegateProviders: beforeCooperative + [CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory,
+                                                                               windowElements: { windows })], writeFence: writeFence)
         }
 
         override func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {
             if let delegate { return delegate(request) }
             return super.moveDelegate(for: request)
-        }
-
-        override func apply(result: ResultParameters, whileOwned: (() -> Bool)? = nil) -> CGRect {
-            let frame = super.apply(result: result, whileOwned: whileOwned)
-            let afterApply = afterNextApply
-            afterNextApply = nil
-            afterApply?()
-            return frame
         }
 
         override func windowMovedAcrossDisplays(windowElement: AccessibilityElement, windowId: CGWindowID?,

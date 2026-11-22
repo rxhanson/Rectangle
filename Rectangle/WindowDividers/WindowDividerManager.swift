@@ -90,8 +90,8 @@ final class WindowDividerManager {
         monitoring = true
         if Defaults.windowDividerEnhanced.enabled { _ = WindowCapturePermission.previewsAllowed }
 
-        observations.append(Notification.Name.windowPlacementSettled.onPost(queue: .main) { [weak self] note in
-            guard let placement = note.object as? WindowPlacementSettlement else { return }
+        observations.append(Notification.Name.windowActionCompleted.onPost(queue: .main) { [weak self] note in
+            guard let placement = note.object as? WindowActionCompletion else { return }
             self?.record(placement)
         })
         // Intents can be rejected or concern an unrelated window. The write
@@ -143,7 +143,7 @@ final class WindowDividerManager {
         return monitoring && (dragging || panel.containsPointerEvent(event))
     }
 
-    private func record(_ placement: WindowPlacementSettlement) {
+    private func record(_ placement: WindowActionCompletion) {
         let result = placement.result
         guard Defaults.windowDivider.enabled, let id = result.windowId else { return }
         let window = result.windowElement
@@ -183,7 +183,7 @@ final class WindowDividerManager {
         // Validate identity asynchronously before this placement can form a pair.
         let entry = Entry(id: id, element: window, identity: identity, app: app, screen: screen, workArea: area,
                           displayWorkArea: screen.adjustedVisibleFrame(TodoManager.isTodoWindow(id)),
-                          requestID: placement.requestID, frame: frame)
+                          requestID: UUID(), frame: frame)
         recordRequests[id] = entry.requestID
         entries = entries.filter { !$0.value.app.isTerminated }
         let generation = recordGeneration
