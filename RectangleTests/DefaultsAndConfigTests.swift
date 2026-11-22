@@ -145,17 +145,21 @@ final class FootprintAlphaDefaultsTests: XCTestCase {
         }
     }
 
-    func testExportUsesTheEffectiveUnsetAlpha() throws {
+    func testUnsetAlphaStaysAdaptiveInConfigExports() throws {
         for blurred in [false, true] {
             UserDefaults.standard.removeObject(forKey: Defaults.footprintAlpha.key)
             Defaults.footprintBlur.enabled = blurred
-            let exported = try exportedAlpha()
-            XCTAssertEqual(exported.double, blurred ? 0 : 0.3)
+
+            let json = try XCTUnwrap(Defaults.encoded())
+            let config = try XCTUnwrap(Defaults.convert(jsonString: json))
+            XCTAssertNil(config.defaults[Defaults.footprintAlpha.key])
             XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key))
 
-            Defaults.footprintAlpha.value = 0.8
-            Defaults.footprintAlpha.load(from: exported)
-            XCTAssertEqual(Defaults.effectiveFootprintAlpha, blurred ? 0 : 0.3)
+            let window = FootprintWindow(accessibility: {
+                FootprintAccessibility(reduceMotion: false, reduceTransparency: true)
+            })
+            defer { window.close() }
+            XCTAssertEqual(window.presentation.alpha, 0.3)
         }
     }
 
@@ -296,6 +300,20 @@ class ConfigImportTests: XCTestCase {
         super.tearDown()
     }
 
+    func testImportBeforeAccessibilitySetupCompletesWithoutWindowManagers() throws {
+        let delegate = AppDelegate()
+        let notifications = NotificationCenter()
+        let handled = expectation(description: "Imported configuration was handled before Accessibility setup")
+        let observer = Notification.Name.configImported.onPost(center: notifications) { _ in
+            delegate.reloadWindowManagementAfterImport()
+            handled.fulfill()
+        }
+        defer { notifications.removeObserver(observer) }
+
+        try loadConfig(shortcuts: [:], notificationCenter: notifications)
+        wait(for: [handled], timeout: 1)
+    }
+
     func testImportClearsOmittedActiveShortcut() throws {
         try XCTSkipIf(true, "Flaky: intermittently fails the XCTAssertNil. Skipped until the cause is found.")
 
@@ -389,7 +407,8 @@ class ConfigImportTests: XCTestCase {
         UserDefaults.standard.set(value, forKey: key)
     }
 
-    private func loadConfig(shortcuts: [String: Shortcut]) throws {
+    private func loadConfig(shortcuts: [String: Shortcut],
+                            notificationCenter: NotificationCenter = NotificationCenter()) throws {
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: "ConfigImportTests",
                             shortcuts: shortcuts,
@@ -400,6 +419,6 @@ class ConfigImportTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: fileURL) }
         try data.write(to: fileURL, options: .atomic)
 
-        Defaults.load(fileUrl: fileURL, notificationCenter: NotificationCenter())
+        Defaults.load(fileUrl: fileURL, notificationCenter: notificationCenter)
     }
 }

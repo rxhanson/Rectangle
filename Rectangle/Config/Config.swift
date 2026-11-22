@@ -28,7 +28,10 @@ extension Defaults {
         for exportableDefault in Defaults.array {
             codableDefaults[exportableDefault.key] = exportableDefault.toCodable()
         }
-        codableDefaults[footprintAlpha.key] = CodableDefault(double: effectiveFootprintAlpha)
+        // An unset opacity follows the active preview style after import.
+        if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
+            codableDefaults.removeValue(forKey: footprintAlpha.key)
+        }
                 
         let config = Config(bundleId: "com.knollsoft.Rectangle",
                             version: version,

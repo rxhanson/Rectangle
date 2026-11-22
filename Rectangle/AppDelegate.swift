@@ -83,10 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Notification.Name.configImported.onPost(using: { _ in
             self.checkAutoCheckForUpdates()
             self.statusItem.refreshVisibility()
-            self.applicationToggle.reloadFromDefaults()
-            self.shortcutManager.reloadFromDefaults()
-            self.snappingManager.reloadFromDefaults()
-            self.initializeTodo(false)
+            self.reloadWindowManagementAfterImport()
         })
         
         Notification.Name.todoMenuToggled.onPost(using: { _ in
@@ -141,6 +138,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
     
+    func reloadWindowManagementAfterImport() {
+        // Preferences can import before Accessibility is granted. The managers
+        // will read those settings when accessibilityTrusted() creates them.
+        guard let applicationToggle, let shortcutManager, let snappingManager else { return }
+        applicationToggle.reloadFromDefaults()
+        shortcutManager.reloadFromDefaults()
+        snappingManager.reloadFromDefaults()
+        initializeTodo(false)
+    }
+
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
         self.windowManager = WindowManager()
