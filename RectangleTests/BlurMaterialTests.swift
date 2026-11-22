@@ -94,8 +94,8 @@ final class LiquidGlassBlurTests: XCTestCase {
             let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView, file: file, line: line)
             XCTAssertEqual(glass.frame.width, surface.bounds.width, accuracy: 1, file: file, line: line)
             XCTAssertEqual(glass.frame.height, surface.bounds.height, accuracy: 1, file: file, line: line)
-            // A newly installed material may not have a presentation layer yet.
-            // Never compare its model geometry with its parent's previous rendered frame.
+            // Compare rendered geometry only when both presentation layers are available,
+            // so each sample describes the same animation frame.
             if let outer = surface.layer?.presentation()?.bounds,
                let inner = glass.layer?.presentation()?.frame {
                 XCTAssertEqual(inner.width, outer.width, accuracy: 1, file: file, line: line)
@@ -107,7 +107,7 @@ final class LiquidGlassBlurTests: XCTestCase {
         XCTAssertGreaterThan(presentationSamples, 0, "Glass must produce a rendered frame", file: file, line: line)
     }
 
-    func testSwitchingMaterialRetainsContentAndResizesWithoutLegacyBlur() throws {
+    func testMaterialSwitchPreservesContentAndUsesTheSelectedEffect() throws {
         guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
         var policy = BlurSurfaceView.Presentation(usesLiquidGlass: false, appearance: nil)
         let notifications = NotificationCenter()
@@ -146,7 +146,7 @@ final class LiquidGlassBlurTests: XCTestCase {
         }
     }
 
-    func testStandardAndUnsupportedMaterialsUseLegacyBlur() {
+    func testBlurEffectsFollowTheSelectedMaterialAndSystemAvailability() {
         var policy = BlurSurfaceView.Presentation(usesLiquidGlass: false, appearance: nil)
         let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 160, height: 80), material: .fullScreenUI,
                                       cornerRadius: 10, presentation: { policy })
@@ -172,7 +172,7 @@ final class LiquidGlassBlurTests: XCTestCase {
         XCTAssertFalse(window.presentation.fades)
     }
 
-    func testFootprintGlassIgnoresLegacyTintAndLetsSystemHandleTransparency() throws {
+    func testGlassFootprintUsesSystemTintAndTransparency() throws {
         guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
         Defaults.blurMaterial.value = .liquidGlass
         Defaults.footprintBlur.enabled = true
