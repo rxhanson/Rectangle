@@ -14,6 +14,7 @@ class Defaults {
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionMode>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
+    static let fitBesideSnappedWindows = BoolDefault(key: "fitBesideSnappedWindows")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
     static let showMinimumWindowSizeWarning = OptionalBoolDefault(key: "showMinimumWindowSizeWarning")
     static let allowAnyShortcut = BoolDefault(key: "allowAnyShortcut")
@@ -152,6 +153,7 @@ class Defaults {
         cycleSizesIsChanged,
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
+        fitBesideSnappedWindows,
         experimentalWindowAnimations,
         allowAnyShortcut,
         windowSnapping,

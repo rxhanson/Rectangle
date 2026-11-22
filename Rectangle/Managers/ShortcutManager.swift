@@ -275,7 +275,7 @@ class ShortcutManager {
                !screenSelector.cursorChangedDisplay(for: windowId),
                RepeatedMaximizeRestore.restoreRect(for: parameters.action, windowId: windowId, windowRect: windowElement.logicalFrame) == nil {
                 if let screen = screenDetection.detectScreens(using: windowElement)?.adjacentScreens?.next{
-                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus, completion: parameters.completion, cancellation: parameters.cancellation)
+                    parameters = ExecutionParameters(parameters.action, updateRestoreRect: parameters.updateRestoreRect, screen: screen, windowElement: windowElement, windowId: windowId, source: parameters.source, preservesFocus: parameters.preservesFocus, completion: parameters.completion, cancellation: parameters.cancellation, requestID: parameters.requestID)
                     // Bypass any other subsequent action by removing the last action
                     AppDelegate.windowHistory.lastRectangleActions.removeValue(forKey: windowId)
                 }
