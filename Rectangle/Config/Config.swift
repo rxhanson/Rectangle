@@ -28,11 +28,8 @@ extension Defaults {
         for exportableDefault in Defaults.array {
             codableDefaults[exportableDefault.key] = exportableDefault.toCodable()
         }
-        // An untouched material preference must still allow Glass on the first explicit blur enable.
-        if !blurMaterial.hasSelection {
-            codableDefaults.removeValue(forKey: blurMaterial.key)
-        }
-        // An unset opacity follows the active preview style after import.
+        // An unset alpha adapts to the material being rendered. Exporting its current
+        // default would turn a temporary fallback into an explicit tint on import.
         if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
             codableDefaults.removeValue(forKey: footprintAlpha.key)
         }
@@ -71,7 +68,8 @@ extension Defaults {
         guard let jsonString = try? String(contentsOf: fileUrl, encoding: .utf8),
               let config = convert(jsonString: jsonString) else { return }
 
-        for availableDefault in Defaults.array {
+        overlayMaterial.importSelection(from: config.defaults)
+        for availableDefault in Defaults.array where availableDefault.key != overlayMaterial.key {
             if let codedDefault = config.defaults[availableDefault.key] {
                 availableDefault.load(from: codedDefault)
             }

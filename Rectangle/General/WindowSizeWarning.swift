@@ -66,6 +66,7 @@ class WindowSizeConstraint {
 }
 
 final class WindowSizeWarning: NSPanel {
+    private let surface = BlurSurfaceView(material: .hudWindow, cornerRadius: 14)
     private var dismissal: DispatchWorkItem?
 
     override var canBecomeKey: Bool { false }
@@ -86,13 +87,7 @@ final class WindowSizeWarning: NSPanel {
         ignoresMouseEvents = true
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
 
-        let container = NSVisualEffectView()
-        container.material = .hudWindow
-        container.blendingMode = .behindWindow
-        container.state = .active
-        container.wantsLayer = true
-        container.layer?.cornerRadius = 14
-        container.layer?.masksToBounds = true
+        let container = surface.content
 
         let iconConfig = NSImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         let iconImage = NSImage(systemSymbolName: "arrow.down.forward.and.arrow.up.backward.rectangle", accessibilityDescription: nil)?
@@ -123,15 +118,14 @@ final class WindowSizeWarning: NSPanel {
             container.heightAnchor.constraint(equalToConstant: 48)
         ])
 
-        contentView = container
+        contentView = surface
     }
 
     func show(on screen: NSScreen, duration: TimeInterval = 3) {
         hide()
-        guard let contentView else { return }
         let visibleFrame = screen.visibleFrame
 
-        let targetWidth = min(contentView.fittingSize.width, visibleFrame.width - 32)
+        let targetWidth = min(surface.content.fittingSize.width, visibleFrame.width - 32)
         let targetHeight: CGFloat = 48
 
         let frame = NSRect(x: visibleFrame.midX - targetWidth / 2,

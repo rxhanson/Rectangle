@@ -27,6 +27,11 @@ class AppSettingsViewController: NSViewController {
 
 struct AppSettingsView: View {
     @State private var viewModel = AppSettingsViewModel()
+    @State private var showsOverlayHelp = false
+
+    private var overlayHelp: String {
+        String(localized: "Used by snap previews and divider handles.")
+    }
 
     var body: some View {
         Form {
@@ -41,7 +46,48 @@ struct AppSettingsView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+            Section {
+                HStack(spacing: 5) {
+                    Text("Overlay material")
+                    Button {
+                        showsOverlayHelp.toggle()
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel("About overlay material")
+                    .accessibilityHint(overlayHelp)
+                    .accessibilityIdentifier("overlayMaterialHelp")
+                    .help(overlayHelp)
+                    .popover(isPresented: $showsOverlayHelp, arrowEdge: .bottom) {
+                        Text(overlayHelp)
+                            .accessibilityIdentifier("overlayMaterialHelpText")
+                            .padding()
+                    }
+
+                    Spacer()
+                    Picker("Overlay material", selection: $viewModel.overlayMaterial) {
+                        Text("No blur").tag(OverlayMaterial.noBlur)
+                        Text("Standard blur").tag(OverlayMaterial.standard)
+                        if OverlayMaterial.supportsLiquidGlass {
+                            Text("Liquid Glass").tag(OverlayMaterial.liquidGlass)
+                        }
+                    }
+                    .labelsHidden()
+                    .accessibilityIdentifier("overlayMaterial")
+                }
+
+                if viewModel.showsBlurAppearance {
+                    Picker("Blur appearance", selection: $viewModel.blurAppearance) {
+                        Text("Follow System").tag(BlurAppearance.system)
+                        Text("Light").tag(BlurAppearance.light)
+                        Text("Dark").tag(BlurAppearance.dark)
+                    }
+                    .accessibilityIdentifier("overlayBlurAppearance")
+                }
+            }
+
             Section {
                 HStack {
                     Button(viewModel.hasPendingUpdate ? "Update Available…" : "Check for Updates…") {
@@ -83,5 +129,8 @@ struct AppSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(width: 500)
+        .onChange(of: viewModel.showsBlurAppearance) { _, _ in
+            Notification.Name.appSettingsNeedsResize.post()
+        }
     }
 }

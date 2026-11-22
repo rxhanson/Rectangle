@@ -416,14 +416,16 @@ final class WindowAnimationRequestCancellationTests: XCTestCase {
 final class FootprintGeometrySynchronizationTests: XCTestCase {
     func testColdAndRepeatedPreviewKeepsMaterialInsideSurface() async throws {
         guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
-        let blur = Defaults.footprintBlur.toCodable()
+        let materialKey = Defaults.overlayMaterial.key
+        let storedMaterial = UserDefaults.standard.object(forKey: materialKey)
         let alpha = Defaults.footprintAlpha.value
         // A round trip through toCodable() would save an unset alpha as an explicit 0.
         let storedAlpha = UserDefaults.standard.object(forKey: Defaults.footprintAlpha.key)
         let duration = Defaults.footprintAnimationDurationMultiplier.toCodable()
         let fade = Defaults.footprintFade.toCodable()
         defer {
-            Defaults.footprintBlur.load(from: blur)
+            if let storedMaterial { UserDefaults.standard.set(storedMaterial, forKey: materialKey) }
+            else { UserDefaults.standard.removeObject(forKey: materialKey) }
             Defaults.footprintAlpha.value = alpha
             UserDefaults.standard.set(storedAlpha, forKey: Defaults.footprintAlpha.key)
             Defaults.footprintAnimationDurationMultiplier.load(from: duration)
@@ -434,12 +436,16 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
         Defaults.footprintFade.enabled = false
         let area = screen.visibleFrame.insetBy(dx: 40, dy: 20)
         let target = CGRect(x: area.minX, y: area.minY, width: area.width / 2, height: area.height)
-        for blurred in [true, false] {
-            Defaults.footprintBlur.enabled = blurred
+        for mode: OverlayMaterial in [.standard, .noBlur] {
+            Defaults.overlayMaterial.value = mode
             let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
             defer { window.close() }
-            let surface = try XCTUnwrap(window.contentView?.subviews.last)
+            let root = try XCTUnwrap(window.contentView)
+            let surface = try XCTUnwrap(root.subviews.last)
             let material = try XCTUnwrap(surface.subviews.first)
+            let expectedAlpha: CGFloat = mode == .standard ? 1 : 0.3
+            XCTAssertEqual(window.presentation.usesBlur, mode == .standard)
+            XCTAssertEqual(window.presentation.alpha, expectedAlpha, accuracy: 0.001)
             for _ in 0..<2 {
                 window.showPreview(in: target, from: CGPoint(x: target.minX + 4, y: target.midY), duration: 0.24)
                 let until = CACurrentMediaTime() + 0.32
@@ -457,6 +463,8 @@ final class FootprintGeometrySynchronizationTests: XCTestCase {
                 XCTAssertEqual(surface.frame.width, target.width, accuracy: 1)
                 XCTAssertEqual(surface.frame.height, target.height, accuracy: 1)
                 XCTAssertFalse(window.isAnimating)
+                let opacity = try XCTUnwrap(root.layer?.opacity)
+                XCTAssertEqual(CGFloat(opacity), expectedAlpha, accuracy: 0.001)
                 window.orderOut(nil)
                 try await Task.sleep(nanoseconds: 30_000_000)
             }

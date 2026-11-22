@@ -1131,6 +1131,164 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertNil(history(of: focused))
     }
 
+    func testPendingRestoreStillRunsAfterAnUnrelatedAcceptedMove() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let a = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
+        let c = window(stackedId, CGRect(x: 100, y: 100, width: 400, height: 400))
+        let restored = CGRect(x: 40, y: 50, width: 300, height: 200)
+        AppDelegate.windowHistory.restoreRects[focusedId] = restored
+        seedHistory(a, action: .leftHalf)
+        let fence = WindowWriteFence()
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                        windows: [a, c], writeFence: fence)
+        let release = DispatchSemaphore(value: 0)
+        let external = fence.claim([.init(element: a, windowID: focusedId)])
+        fence.perform(external, work: { release.wait(timeout: .now() + 3) }) { result in
+            XCTAssertEqual(result, .success)
+        }
+        let finished = expectation(description: "Accepted Restore on A completed")
+        manager.execute(ExecutionParameters(.restore, windowElement: a, completion: { finished.fulfill() }))
+        XCTAssertEqual(a.writeCount, 0)
+
+        manager.execute(ExecutionParameters(.rightHalf, windowElement: c))
+        assertFrame(c, CGRect(x: 600, y: 0, width: 600, height: 900))
+        XCTAssertEqual(a.writeCount, 0)
+
+        release.signal()
+        wait(for: [finished], timeout: 5)
+        XCTAssertEqual(a.frame, restored)
+        XCTAssertNil(history(of: a))
+    }
+
+    func testRestoreWithoutTargetSupersedesDrainedExternalWriteBeforeItsCompletion() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let subject = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
+        seedHistory(subject, action: .leftHalf)
+        XCTAssertNil(AppDelegate.windowHistory.restoreRects[focusedId])
+        let fence = WindowWriteFence()
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                        windows: [subject], writeFence: fence)
+        let release = DispatchSemaphore(value: 0)
+        let external = fence.claim([.init(element: subject, windowID: focusedId)])
+        let writerFinished = expectation(description: "External write returned")
+        var restoreCompletions = 0
+        fence.perform(external, work: { release.wait(timeout: .now() + 3) }) { outcome in
+            XCTAssertEqual(outcome, .success)
+            XCTAssertEqual(restoreCompletions, 1)
+            XCTAssertFalse(external.isCurrent)
+            if external.isCurrent {
+                AppDelegate.windowHistory.lastRectangleActions[self.focusedId] = RectangleAction(
+                    action: .rightHalf, rect: subject.frame)
+                AppDelegate.windowHistory.restoreRects[self.focusedId] = subject.frame
+            }
+            fence.finish(external)
+            writerFinished.fulfill()
+        }
+
+        manager.execute(ExecutionParameters(.restore, windowElement: subject,
+                                            completion: { restoreCompletions += 1 }))
+        XCTAssertEqual(restoreCompletions, 0)
+        XCTAssertTrue(external.isCurrent)
+        release.signal()
+        wait(for: [writerFinished], timeout: 5)
+        XCTAssertEqual(restoreCompletions, 1)
+        XCTAssertNil(history(of: subject))
+        XCTAssertNil(AppDelegate.windowHistory.restoreRects[focusedId])
+        XCTAssertEqual(subject.writeCount, 0)
+    }
+
+    func testResumedRestoreDoesNotSupersedeAnUnrelatedPendingDisplayRetry() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let a = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
+        let c = clampingWindow(id: stackedId)
+        let restored = CGRect(x: 40, y: 50, width: 300, height: 200)
+        AppDelegate.windowHistory.restoreRects[focusedId] = restored
+        let fence = WindowWriteFence()
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                        windows: [a, c], writeFence: fence)
+        let release = DispatchSemaphore(value: 0)
+        let external = fence.claim([.init(element: a, windowID: focusedId)])
+        fence.perform(external, work: { release.wait(timeout: .now() + 3) }) {
+            XCTAssertEqual($0, .success)
+        }
+
+        let restoreFinished = expectation(description: "Older restore on A ran")
+        manager.execute(ExecutionParameters(.restore, windowElement: a, completion: { restoreFinished.fulfill() }))
+        let retryFinished = expectation(description: "Newer retry on C settled")
+        manager.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: c,
+                                            completion: { retryFinished.fulfill() }))
+        XCTAssertEqual(manager.postProcessCount, 0)
+
+        // The older writer can retire before the queue hands the window to A.
+        fence.finish(external)
+        release.signal()
+        wait(for: [restoreFinished, retryFinished], timeout: 5, enforceOrder: true)
+        XCTAssertEqual(a.frame, restored)
+        XCTAssertEqual(c.frame.size, CGSize(width: 600, height: 900))
+        XCTAssertEqual(manager.postProcessCount, 1)
+    }
+
+    func testNewestDeferredNoOpDiscardsAnOlderMoveOnTheSameWindow() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let original = CGRect(x: 0, y: 0, width: 600, height: 900)
+        let window = window(focusedId, original)
+        let fence = WindowWriteFence()
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                        windows: [window], writeFence: fence)
+        let release = DispatchSemaphore(value: 0)
+        let external = fence.claim([.init(element: window, windowID: focusedId)])
+        fence.perform(external, work: { release.wait(timeout: .now() + 3) }) {
+            XCTAssertEqual($0, .success)
+        }
+        fence.finish(external)
+
+        let older = expectation(description: "Superseded right-half command completed")
+        let newer = expectation(description: "Left-half no-op completed")
+        manager.execute(ExecutionParameters(.rightHalf, windowElement: window, completion: { older.fulfill() }))
+        manager.execute(ExecutionParameters(.leftHalf, windowElement: window, completion: { newer.fulfill() }))
+
+        release.signal()
+        wait(for: [older, newer], timeout: 5)
+        assertFrame(window, original)
+        XCTAssertEqual(window.writeCount, 0)
+        assertHistory(window, action: .leftHalf, count: 1)
+    }
+
+    func testDeferredPlanReadsTheDrainedFrameBeforeSavingHistoryOrReportingSuccess() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let original = CGRect(x: 100, y: 100, width: 400, height: 400)
+        let externalResult = CGRect(x: 160, y: 110, width: 420, height: 370)
+        let subject = window(focusedId, original)
+        let fence = WindowWriteFence()
+        let manager = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                        windows: [subject], writeFence: fence)
+        let release = DispatchSemaphore(value: 0)
+        let external = fence.claim([.init(element: subject, windowID: focusedId)])
+        fence.perform(external, work: {
+            guard release.wait(timeout: .now() + 3) == .success else { return false }
+            subject.setFrame(externalResult.screenFlipped)
+            subject.refusesWrites = true
+            return true
+        }) { XCTAssertTrue($0) }
+
+        let finished = expectation(description: "Refused placement completed")
+        let command = ExecutionParameters(.leftHalf, windowElement: subject,
+                                          completion: { finished.fulfill() })
+        let observer = Notification.Name.windowPlacementSettled.onPost { note in
+            if (note.object as? WindowPlacementSettlement)?.requestID == command.requestID {
+                XCTFail("A refused write must not publish the other operation's frame")
+            }
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+        manager.execute(command)
+        XCTAssertNil(AppDelegate.windowHistory.restoreRects[focusedId])
+
+        release.signal()
+        wait(for: [finished], timeout: 5)
+        XCTAssertEqual(AppDelegate.windowHistory.restoreRects[focusedId], externalResult.screenFlipped)
+        assertFrame(subject, externalResult)
+    }
+
     func testCompletionFiresOnceWhenThereIsNothingToRestore() {
         let focused = window(focusedId, CGRect(x: 0, y: 0, width: 600, height: 900))
         var completions = 0
@@ -1168,6 +1326,34 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         XCTAssertEqual(completions, 1)
         XCTAssertEqual(manager.postProcessCount, 1)
         XCTAssertEqual(focused.frame.size, CGSize(width: 600, height: 900))
+    }
+
+    func testAbandonedDisplayRetryReleasesItsWindowAndCompletesOnce() {
+        Defaults.cooperativeCornerResize.enabled = false
+        let fence = WindowWriteFence()
+        let finished = expectation(description: "Abandoned retry completed")
+        weak var retainedWindow: FakeWindow?
+        weak var retainedManager: TestWindowManager?
+        var completions = 0
+
+        autoreleasepool {
+            let focused = clampingWindow()
+            retainedWindow = focused
+            var manager: TestWindowManager? = TestWindowManager(screenDetection: TestScreenDetection(source: screen),
+                                                                windows: [focused], writeFence: fence)
+            retainedManager = manager
+            manager?.execute(ExecutionParameters(.rightHalf, screen: secondScreen, windowElement: focused,
+                                                 completion: { completions += 1; finished.fulfill() }))
+            XCTAssertEqual(completions, 0)
+            manager = nil
+            XCTAssertNil(retainedManager)
+        }
+
+        wait(for: [finished], timeout: 1)
+        drainMainQueue()
+        XCTAssertEqual(completions, 1)
+        XCTAssertNil(retainedWindow)
+        withExtendedLifetime(fence) {}
     }
 
     func testSupersededRetryStillCompletesOnceWithoutPlacing() {
@@ -1473,7 +1659,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
         var delegate: ((WindowMoveRequest) -> WindowManagerDelegate?)?
 
         init(screenDetection: ScreenDetection, windows: [AccessibilityElement],
-             beforeCooperative: [WindowManagerDelegateProvider] = []) {
+             beforeCooperative: [WindowManagerDelegateProvider] = [], writeFence: WindowWriteFence = .shared) {
             let cooperative = CooperativeResizeDelegateProvider(windowHistory: AppDelegate.windowHistory, windowElements: { windows })
             let driver = animationDriver
             var services = WindowPlacementServices(animator: .shared)
@@ -1498,7 +1684,7 @@ final class CooperativeResizeExecutionTests: XCTestCase {
                 window.getWindowId() == id && WindowGeometry.near(window.frame, frame)
             }
             super.init(screenDetection: screenDetection, delegateProviders: beforeCooperative + [cooperative],
-                       placementServices: services)
+                       placementServices: services, writeFence: writeFence)
         }
 
         override func moveDelegate(for request: WindowMoveRequest) -> WindowManagerDelegate? {

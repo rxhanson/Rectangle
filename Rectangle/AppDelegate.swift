@@ -46,6 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        Defaults.overlayMaterial.migrateFootprintSetting()
         Defaults.loadFromSupportDir()
         migrateShowEighthsInMenu()
 
@@ -94,6 +95,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.prevActiveApp = change.oldValue ?? nil
         }
     }
+
+    func reloadWindowManagementAfterImport() {
+        // Settings can be reopened before authorization. Managers will read the imported values when created.
+        guard let applicationToggle, let shortcutManager, let snappingManager else { return }
+        applicationToggle.reloadFromDefaults()
+        shortcutManager.reloadFromDefaults()
+        snappingManager.reloadFromDefaults()
+        WindowDividerManager.shared.refreshMonitoring()
+        initializeTodo(false)
+    }
     
     func checkVersion() {
         let currentVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
@@ -137,16 +148,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func checkAutoCheckForUpdates() {
         updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
-
-    func reloadWindowManagementAfterImport() {
-        // Preferences can import before Accessibility is granted. The managers
-        // will read those settings when accessibilityTrusted() creates them.
-        guard let applicationToggle, let shortcutManager, let snappingManager else { return }
-        applicationToggle.reloadFromDefaults()
-        shortcutManager.reloadFromDefaults()
-        snappingManager.reloadFromDefaults()
-        initializeTodo(false)
-    }
     
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
@@ -158,6 +159,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.applicationToggle = ApplicationToggle(shortcutManager: shortcutManager)
         self.snappingManager = SnappingManager()
         self.stackBadgeManager = StackBadgeManager()
+        WindowDividerManager.shared.start()
         self.titleBarManager = TitleBarManager()
         self.greenButtonManager = GreenButtonManager()
         self.newWindowActionManager = NewWindowActionManager()

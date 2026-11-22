@@ -377,9 +377,10 @@ class SnappingManager {
             currentSnapArea = nil
             box?.orderOut(nil)
         case .leftMouseDown:
-            // Left alone, as every gesture was while listening stopped for a
-            // fullscreen window: no window lookup, no drag tracking.
+            // Decide ownership at mouse-down so crossing the floating divider later
+            // cannot steal a window's drag or turn a divider drag into a window snap.
             ignoringGesture = fullScreenGate.ignoresGesture(at: event.cgEvent?.location)
+                || (Defaults.windowDivider.enabled && WindowDividerManager.shared.containsPointerEvent(event))
             if ignoringGesture {
                 // A release that never arrived must not leave the previous
                 // gesture behind, as it would not have before.
@@ -389,6 +390,7 @@ class SnappingManager {
                 }
                 return
             }
+            if Defaults.windowDivider.enabled { WindowDividerManager.shared.handleInterruption(event) }
             beginNativeDrag()
             WindowAnimator.shared.finishForNewDrag()
             initialCursorLocation = event.cgEvent?.location
@@ -704,7 +706,7 @@ class SnappingManager {
     /// window has animated into it. This only applies while placement animates: an immediate
     /// placement needs no footprint to land in.
     private var footprintFollowsAnimatedPlacement: Bool {
-        WindowAnimator.enabled && Defaults.footprintBlur.enabled
+        WindowAnimator.enabled && Defaults.effectiveOverlayMaterial.usesBlur
     }
 
     private func snapPreviewCompletion() -> (() -> Void)? {

@@ -13,6 +13,8 @@ class Defaults {
     static let selectedCycleSizes = CycleSizesDefault()
     static let cycleSizesIsChanged = BoolDefault(key: "cycleSizesIsChanged")
     static let cornerCycleExpansionAxis = IntEnumDefault<CornerCycleExpansionMode>(key: "cornerCycleExpansionAxis", defaultValue: .horizontal)
+    static let windowDivider = BoolDefault(key: "windowDivider")
+    static let windowDividerEnhanced = BoolDefault(key: "windowDividerEnhanced")
     static let cooperativeCornerResize = BoolDefault(key: "cooperativeCornerResize")
     static let fitBesideSnappedWindows = BoolDefault(key: "fitBesideSnappedWindows")
     static let experimentalWindowAnimations = BoolDefault(key: "experimentalWindowAnimations")
@@ -63,7 +65,7 @@ class Defaults {
     static var SUHasLaunchedBefore: Bool { UserDefaults.standard.bool(forKey: "SUHasLaunchedBefore") }
     static let footprintAlpha = DoubleDefault(key: "footprintAlpha")
     static var effectiveFootprintAlpha: Double {
-        effectiveFootprintAlpha(usesBlur: footprintBlur.enabled)
+        effectiveFootprintAlpha(usesBlur: effectiveOverlayMaterial.usesBlur)
     }
     static func effectiveFootprintAlpha(usesBlur: Bool) -> Double {
         if UserDefaults.standard.object(forKey: footprintAlpha.key) == nil {
@@ -74,9 +76,15 @@ class Defaults {
     static let footprintBorderWidth = FloatDefault(key: "footprintBorderWidth", defaultValue: 2)
     static let footprintFade = OptionalBoolDefault(key: "footprintFade")
     static let footprintColor = JSONDefault<CodableColor>(key: "footprintColor")
-    static let footprintBlur = BoolDefault(key: "footprintBlur")
-    static let blurMaterial = BlurMaterialPreference()
+    static let overlayMaterial = OverlayMaterialPreference()
     static let blurAppearance = IntEnumDefault<BlurAppearance>(key: "blurAppearance", defaultValue: .system)
+    static var effectiveOverlayMaterial: OverlayMaterial {
+        overlayMaterial.value.effective(supportsLiquidGlass: OverlayMaterial.supportsLiquidGlass,
+                                        reduceTransparency: NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency)
+    }
+    static var effectiveOverlayAppearance: NSAppearance? {
+        effectiveOverlayMaterial.usesBlur ? blurAppearance.value.appearance : nil
+    }
 
     static let SUEnableAutomaticChecks = BoolDefault(key: "SUEnableAutomaticChecks")
     static let todo = OptionalBoolDefault(key: "todo")
@@ -154,6 +162,8 @@ class Defaults {
         cornerCycleExpansionAxis,
         cooperativeCornerResize,
         fitBesideSnappedWindows,
+        windowDivider,
+        windowDividerEnhanced,
         experimentalWindowAnimations,
         allowAnyShortcut,
         windowSnapping,
@@ -197,8 +207,7 @@ class Defaults {
         footprintBorderWidth,
         footprintFade,
         footprintColor,
-        footprintBlur,
-        blurMaterial,
+        overlayMaterial,
         blurAppearance,
         SUEnableAutomaticChecks,
         todo,

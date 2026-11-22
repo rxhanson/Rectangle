@@ -41,6 +41,7 @@ class SettingsWindowController: NSWindowController, NSWindowDelegate {
 class SettingsTabViewController: NSTabViewController {
     static var currentTab: Tab = .shortcuts
     static var savedWindowSizes: [Int: NSSize] = [:]
+    private var resizeObservers: [NSObjectProtocol] = []
     
     enum Tab: Int, CaseIterable {
         case shortcuts
@@ -104,23 +105,23 @@ class SettingsTabViewController: NSTabViewController {
         }
         selectedTabViewItemIndex = SettingsTabViewController.currentTab.rawValue
         
-        Notification.Name.snapAreaSettingsNeedsResize.onPost {[weak self] notification in
-            guard let self,
-                  let snapAreasIndex = Tab.allCases.firstIndex(of: .snapAreas)
-            else { return }
+        resizeObservers = [
+            Notification.Name.snapAreaSettingsNeedsResize.onPost { [weak self] _ in self?.resizeSettings(for: .snapAreas) },
+            Notification.Name.appSettingsNeedsResize.onPost { [weak self] _ in self?.resizeSettings(for: .appSettings) }
+        ]
+    }
 
-            Self.savedWindowSizes.removeValue(forKey: snapAreasIndex)
-            
-            if selectedTabViewItemIndex == snapAreasIndex {
-                let viewController = tabViewItems[snapAreasIndex].viewController!
-                
-                viewController.view.layoutSubtreeIfNeeded()
-                
-                DispatchQueue.main.async {
-                    let dynamicSize = self.calculateContentSize(for: viewController)
-                    self.resizeWindow(toContentSize: dynamicSize, animated: true)
-                }
-            }
+    deinit { resizeObservers.forEach { NotificationCenter.default.removeObserver($0) } }
+
+    private func resizeSettings(for tab: Tab) {
+        let index = tab.rawValue
+        Self.savedWindowSizes.removeValue(forKey: index)
+        guard selectedTabViewItemIndex == index,
+              let viewController = tabViewItems[index].viewController else { return }
+        viewController.view.layoutSubtreeIfNeeded()
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.selectedTabViewItemIndex == index else { return }
+            self.resizeWindow(toContentSize: self.calculateContentSize(for: viewController), animated: true)
         }
     }
     

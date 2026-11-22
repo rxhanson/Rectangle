@@ -121,9 +121,8 @@ final class FootprintShadow {
 class FootprintWindow: NSWindow {
     private let surface = NSView()
     private lazy var effectView = BlurSurfaceView(material: .fullScreenUI, cornerRadius: FootprintStyle.cornerRadius) { [weak self] in
-        let usesBlur = self?.presentation.usesBlur == true
-        return .init(usesLiquidGlass: usesBlur && Defaults.blurMaterial.value == .liquidGlass,
-                     appearance: usesBlur ? Defaults.blurAppearance.value.appearance : nil)
+        let material = self?.effectiveMaterial ?? .noBlur
+        return .init(material: material, appearance: material.usesBlur ? Defaults.blurAppearance.value.appearance : nil)
     }
     private let decoration = CAShapeLayer()
     private let shadow = FootprintShadow()
@@ -143,17 +142,23 @@ class FootprintWindow: NSWindow {
     private var placementGeneration: UUID?
     var waitingForPlacement: Bool { placementGeneration != nil }
 
+    private var effectiveMaterial: OverlayMaterial {
+        Defaults.overlayMaterial.value.effective(supportsLiquidGlass: OverlayMaterial.supportsLiquidGlass,
+                                                 reduceTransparency: accessibility().reduceTransparency)
+    }
+
     var presentation: FootprintPresentation {
         let options = accessibility()
-        let usesBlur = Defaults.footprintBlur.enabled && !options.reduceTransparency
-        return FootprintPresentation(blurRequested: Defaults.footprintBlur.enabled,
+        let blurRequested = Defaults.overlayMaterial.value.usesBlur
+        let usesBlur = blurRequested && !options.reduceTransparency
+        return FootprintPresentation(blurRequested: blurRequested,
                               alpha: CGFloat(Defaults.effectiveFootprintAlpha(usesBlur: usesBlur)),
                               fadeRequested: !Defaults.footprintFade.userDisabled,
                               animationRequested: Defaults.footprintAnimationDurationMultiplier.value > 0,
                               accessibility: options)
     }
 
-    var usesLiquidGlass: Bool { presentation.usesBlur && effectView.usesLiquidGlass }
+    var usesLiquidGlass: Bool { effectiveMaterial == .liquidGlass }
 
     init(initialFrame: CGRect = .zero,
          accessibility: @escaping () -> FootprintAccessibility = { .current }) {
@@ -211,7 +216,7 @@ class FootprintWindow: NSWindow {
         let dark = (contentView?.effectiveAppearance ?? effectiveAppearance).bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
         let color = Defaults.footprintColor.typedValue?.nsColor
             ?? (style.usesBlur && !dark ? NSColor.white : NSColor.black)
-        let tint = style.usesBlur ? min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha))) : 1
+        let tint = style.usesBlur ? min(1, max(0, CGFloat(Defaults.effectiveFootprintAlpha(usesBlur: true)))) : 1
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         effectView.isHidden = !style.usesBlur

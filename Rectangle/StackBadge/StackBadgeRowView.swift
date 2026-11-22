@@ -13,6 +13,7 @@ import Cocoa
 final class StackBadgeRowView: NSView {
     private let onClick: () -> Void
     private let textField: NSTextField
+    private var selected = false
 
     init(title: String, icon: NSImage?, onClick: @escaping () -> Void) {
         self.onClick = onClick
@@ -47,8 +48,20 @@ final class StackBadgeRowView: NSView {
     }
 
     func setSelected(_ selected: Bool) {
-        layer?.backgroundColor = selected ? NSColor.selectedContentBackgroundColor.cgColor : nil
+        self.selected = selected
         textField.textColor = selected ? .selectedMenuItemTextColor : .labelColor
+        updateSelectionColor()
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        updateSelectionColor()
+    }
+
+    private func updateSelectionColor() {
+        effectiveAppearance.performAsCurrentDrawingAppearance {
+            layer?.backgroundColor = selected ? NSColor.selectedContentBackgroundColor.cgColor : nil
+        }
     }
 
     override func mouseUp(with event: NSEvent) {

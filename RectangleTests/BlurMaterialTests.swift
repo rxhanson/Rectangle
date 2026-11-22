@@ -4,15 +4,12 @@ import XCTest
 @MainActor
 final class LiquidGlassBlurTests: XCTestCase {
     private var previousMaterial: Any?
-    private var previousBlur = false
 
     override func setUp() {
-        previousMaterial = UserDefaults.standard.object(forKey: Defaults.blurMaterial.key)
-        previousBlur = Defaults.footprintBlur.enabled
+        previousMaterial = UserDefaults.standard.object(forKey: Defaults.overlayMaterial.key)
     }
     override func tearDown() {
-        UserDefaults.standard.set(previousMaterial, forKey: Defaults.blurMaterial.key)
-        Defaults.footprintBlur.enabled = previousBlur
+        UserDefaults.standard.set(previousMaterial, forKey: Defaults.overlayMaterial.key)
         Notification.Name.blurStyleChanged.post()
     }
 
@@ -24,8 +21,7 @@ final class LiquidGlassBlurTests: XCTestCase {
             Defaults.footprintAnimationDurationMultiplier.load(from: duration)
             Defaults.footprintFade.load(from: fade)
         }
-        Defaults.blurMaterial.value = .liquidGlass
-        Defaults.footprintBlur.enabled = true
+        Defaults.overlayMaterial.value = .liquidGlass
         Defaults.footprintAnimationDurationMultiplier.value = 1
         Defaults.footprintFade.enabled = false
         let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
@@ -48,8 +44,7 @@ final class LiquidGlassBlurTests: XCTestCase {
             Defaults.footprintAnimationDurationMultiplier.load(from: duration)
             Defaults.footprintFade.load(from: fade)
         }
-        Defaults.blurMaterial.value = .liquidGlass
-        Defaults.footprintBlur.enabled = true
+        Defaults.overlayMaterial.value = .liquidGlass
         Defaults.footprintAnimationDurationMultiplier.value = 1
         Defaults.footprintFade.enabled = false
         let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
@@ -64,11 +59,11 @@ final class LiquidGlassBlurTests: XCTestCase {
         window.orderOut(nil)
         window.showPreview(in: left, from: CGPoint(x: left.minX + 4, y: left.midY), duration: 0.24)
         try await assertGlassTracksSurface(window, for: 0.05)
-        Defaults.blurMaterial.value = .standard
+        Defaults.overlayMaterial.value = .standard
         Notification.Name.blurStyleChanged.post()
         window.movePreview(to: right, duration: 0.24)
         try await Task.sleep(nanoseconds: 50_000_000)
-        Defaults.blurMaterial.value = .liquidGlass
+        Defaults.overlayMaterial.value = .liquidGlass
         Notification.Name.blurStyleChanged.post()
         try await assertGlassTracksSurface(window, for: 0.05)
         window.movePreview(to: left, duration: 0.24)
@@ -109,21 +104,29 @@ final class LiquidGlassBlurTests: XCTestCase {
 
     func testSwitchingMaterialRetainsContentAndResizesWithoutLegacyBlur() throws {
         guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
-        var policy = BlurSurfaceView.Presentation(usesLiquidGlass: false, appearance: nil)
+        var policy = BlurSurfaceView.Presentation(material: .standard, appearance: nil)
         let notifications = NotificationCenter()
         let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 240, height: 160), material: .popover,
                                       cornerRadius: 12, flipped: true, notifications: notifications,
                                       presentation: { policy })
-        let button = NSButton(title: "Choose", target: nil, action: nil)
-        surface.content.addSubview(button)
+        let host = NSWindow(contentRect: surface.frame, styleMask: .titled, backing: .buffered, defer: false)
+        host.isReleasedWhenClosed = false
+        defer { host.close() }
+        host.contentView?.addSubview(surface)
+        let editor = NSTextView(frame: CGRect(x: 5, y: 5, width: 150, height: 50))
+        surface.content.addSubview(editor)
+        XCTAssertTrue(host.makeFirstResponder(editor))
         XCTAssertEqual(surface.subviews.filter { $0 is NSVisualEffectView }.count, 1)
-        for enabled in [true, false, true] {
-            policy.usesLiquidGlass = enabled
+        for choice: OverlayMaterial in [.liquidGlass, .noBlur, .standard, .liquidGlass] {
+            let previous = surface.effectiveMaterial
+            XCTAssertTrue(host.firstResponder === editor, "Editor lost focus before switching from \(previous) to \(choice)")
+            policy.material = choice
             notifications.post(name: .blurStyleChanged, object: nil)
-            XCTAssertEqual(surface.usesLiquidGlass, enabled)
-            XCTAssertTrue(button.superview === surface.content)
+            XCTAssertEqual(surface.effectiveMaterial, choice)
+            XCTAssertTrue(editor.superview === surface.content)
+            XCTAssertTrue(host.firstResponder === editor, "Editor lost focus while switching from \(previous) to \(choice)")
             XCTAssertTrue(surface.content.isFlipped)
-            if enabled {
+            if choice == .liquidGlass {
                 let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
                 XCTAssertTrue(glass.contentView === surface.content)
                 XCTAssertNil(glass.tintColor)
@@ -132,28 +135,70 @@ final class LiquidGlassBlurTests: XCTestCase {
                 XCTAssertFalse(surface.layer?.masksToBounds ?? false)
             } else {
                 XCTAssertTrue(surface.content.superview === surface)
-                XCTAssertEqual((surface.subviews.first as? NSVisualEffectView)?.material, .popover)
+                if choice == .standard {
+                    XCTAssertEqual((surface.subviews.first as? NSVisualEffectView)?.material, .popover)
+                } else {
+                    XCTAssertFalse(surface.subviews.contains { $0 is NSVisualEffectView || $0 is NSGlassEffectView })
+                    XCTAssertNotNil(surface.subviews.first?.layer?.backgroundColor)
+                }
             }
             surface.setFrameSize(CGSize(width: 360, height: 210))
             surface.layoutSubtreeIfNeeded()
             XCTAssertEqual(surface.content.frame, surface.bounds)
-            if enabled {
-                surface.setFrameSize(CGSize(width: 1, height: 1))
-                surface.layoutSubtreeIfNeeded()
-                let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
-                XCTAssertTrue(glass.isHidden, "Do not render native glass with degenerate animation geometry")
-                surface.setFrameSize(CGSize(width: 360, height: 210))
-            }
+        }
+    }
+
+    func testGlassHidesAtOnePointAndReappearsWhenTheSurfaceGrows() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 240, height: 160), material: .popover,
+                                      cornerRadius: 12, presentation: { .init(material: .liquidGlass, appearance: nil) })
+        let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
+        surface.setFrameSize(CGSize(width: 1, height: 1))
+        surface.layoutSubtreeIfNeeded()
+        XCTAssertTrue(glass.isHidden)
+        surface.setFrameSize(CGSize(width: 360, height: 210))
+        surface.layoutSubtreeIfNeeded()
+        XCTAssertFalse(glass.isHidden)
+        XCTAssertTrue(glass.contentView === surface.content)
+        XCTAssertEqual(glass.frame, surface.bounds)
+    }
+
+    func testReturningGlassRestoresItsFocusOnlyWhenNoOtherViewTookIt() throws {
+        guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
+        let host = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 500, height: 250),
+                            styleMask: .titled, backing: .buffered, defer: false)
+        host.isReleasedWhenClosed = false
+        defer { host.close() }
+        let content = try XCTUnwrap(host.contentView)
+        let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 240, height: 160), material: .popover,
+                                      cornerRadius: 12, presentation: { .init(material: .liquidGlass, appearance: nil) })
+        content.addSubview(surface)
+        let inside = NSTextView(frame: CGRect(x: 10, y: 10, width: 160, height: 50))
+        let outside = NSTextView(frame: CGRect(x: 380, y: 10, width: 100, height: 50))
+        surface.content.addSubview(inside)
+        content.addSubview(outside)
+        let glass = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView)
+
+        for transfersFocus in [false, true] {
+            XCTAssertTrue(host.makeFirstResponder(inside))
+            surface.setFrameSize(CGSize(width: 1, height: 1))
+            surface.layoutSubtreeIfNeeded()
+            XCTAssertTrue(glass.isHidden)
+            XCTAssertFalse(host.firstResponder === inside)
+            if transfersFocus { XCTAssertTrue(host.makeFirstResponder(outside)) }
+            surface.setFrameSize(CGSize(width: 240, height: 160))
+            surface.layoutSubtreeIfNeeded()
+            XCTAssertTrue(host.firstResponder === (transfersFocus ? outside : inside))
         }
     }
 
     func testStandardAndUnsupportedMaterialsUseLegacyBlur() {
-        var policy = BlurSurfaceView.Presentation(usesLiquidGlass: false, appearance: nil)
+        var policy = BlurSurfaceView.Presentation(material: .standard, appearance: nil)
         let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 160, height: 80), material: .fullScreenUI,
                                       cornerRadius: 10, presentation: { policy })
         XCTAssertFalse(surface.usesLiquidGlass)
         XCTAssertEqual((surface.subviews.first as? NSVisualEffectView)?.material, .fullScreenUI)
-        policy.usesLiquidGlass = true
+        policy.material = .liquidGlass
         surface.refresh()
         if #available(macOS 26, *) {
             XCTAssertTrue(surface.subviews.contains { $0 is NSGlassEffectView })
@@ -164,19 +209,23 @@ final class LiquidGlassBlurTests: XCTestCase {
     }
 
     func testReduceTransparencyUsesThePlainFootprintWithGlassSelected() {
-        Defaults.blurMaterial.value = .liquidGlass
-        Defaults.footprintBlur.enabled = true
-        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: true) })
+        Defaults.overlayMaterial.value = .liquidGlass
+        var reduceTransparency = true
+        let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: reduceTransparency) })
         defer { window.close() }
         XCTAssertFalse(window.usesLiquidGlass)
         XCTAssertFalse(window.presentation.usesBlur)
         XCTAssertFalse(window.presentation.fades)
+        XCTAssertEqual(Defaults.overlayMaterial.value, .liquidGlass)
+        reduceTransparency = false
+        window.refreshAccessibility()
+        XCTAssertTrue(window.presentation.usesBlur)
+        XCTAssertEqual(window.usesLiquidGlass, OverlayMaterial.supportsLiquidGlass)
     }
 
     func testFootprintGlassIgnoresLegacyTintAndLetsSystemHandleTransparency() throws {
         guard #available(macOS 26, *) else { throw XCTSkip("Native glass requires macOS 26") }
-        Defaults.blurMaterial.value = .liquidGlass
-        Defaults.footprintBlur.enabled = true
+        Defaults.overlayMaterial.value = .liquidGlass
         let window = FootprintWindow(accessibility: { .init(reduceMotion: true, reduceTransparency: false) })
         defer { window.close() }
         XCTAssertTrue(window.usesLiquidGlass)
@@ -202,12 +251,12 @@ final class LiquidGlassBlurTests: XCTestCase {
         }
         XCTAssertTrue(material.subviews.first is NSGlassEffectView)
         XCTAssertFalse(material.subviews.contains { $0 is NSVisualEffectView })
-        Defaults.footprintBlur.enabled = false
+        Defaults.overlayMaterial.value = .noBlur
         XCTAssertFalse(window.usesLiquidGlass)
         XCTAssertFalse(window.presentation.usesBlur)
     }
 
-    func testStackListKeepsItsNativeHUDRowsAndSelectionWhenFootprintMaterialChanges() throws {
+    func testStackListRetainsItsRowsAndSelectionAcrossOverlayMaterials() throws {
         let windows = ["First", "Second"].enumerated().map { index, title in
             StackBadgeStackedWindow(windowId: CGWindowID(index + 1), pid: getpid(), title: title)
         }
@@ -216,42 +265,51 @@ final class LiquidGlassBlurTests: XCTestCase {
                                         screenFrame: CGRect(x: 0, y: 0, width: 800, height: 600),
                                         onSelect: { _ in }, onDismiss: {}, onLostKey: {})
         defer { panel.close() }
-        let hud = try XCTUnwrap(panel.contentView as? NSVisualEffectView)
-        let rows = hud.subviews.compactMap { $0 as? StackBadgeRowView }
+        let hud = try XCTUnwrap(panel.contentView as? BlurSurfaceView)
+        let rows = hud.content.subviews.compactMap { $0 as? StackBadgeRowView }
         XCTAssertEqual(rows.count, 2)
-        for material: BlurMaterial in [.liquidGlass, .standard] {
-            Defaults.blurMaterial.value = material
-            Notification.Name.blurStyleChanged.post()
+        let settings = AppSettingsViewModel()
+        let savedAppearance = settings.blurAppearance
+        defer { settings.blurAppearance = savedAppearance }
+        for material: OverlayMaterial in [.noBlur, .standard, .liquidGlass] {
+            settings.overlayMaterial = material
             XCTAssertTrue(panel.contentView === hud)
-            XCTAssertEqual(hud.material, .hudWindow)
-            XCTAssertEqual(hud.blendingMode, .behindWindow)
-            XCTAssertEqual(hud.state, .active)
-            XCTAssertEqual(hud.subviews.compactMap { $0 as? StackBadgeRowView }, rows)
+            try assertHUDMaterial(hud, requested: material)
+            XCTAssertEqual(hud.content.subviews.compactMap { $0 as? StackBadgeRowView }, rows)
             XCTAssertEqual(panel.selectedWindow?.windowId, 2)
+        }
+        settings.overlayMaterial = .standard
+        let selected = try XCTUnwrap(rows.last)
+        for appearance: BlurAppearance in [.dark, .light, .system] {
+            settings.blurAppearance = appearance
+            var expected: CGColor?
+            selected.effectiveAppearance.performAsCurrentDrawingAppearance {
+                expected = NSColor.selectedContentBackgroundColor.cgColor
+            }
+            XCTAssertEqual(selected.layer?.backgroundColor, expected)
+            XCTAssertNil(rows.first?.layer?.backgroundColor)
         }
         panel.moveSelection(by: -1)
         XCTAssertEqual(panel.selectedWindow?.windowId, 1)
     }
 
-    func testMinimumSizeWarningKeepsItsNativeHUDAndLabelWhenFootprintMaterialChanges() throws {
+    func testMinimumSizeWarningRetainsItsLabelAndLayoutAcrossOverlayMaterials() throws {
         guard let screen = NSScreen.main else { throw XCTSkip("Requires a screen") }
         let warningPreference = Defaults.showMinimumWindowSizeWarning.toCodable()
         Defaults.showMinimumWindowSizeWarning.enabled = true
         defer { Defaults.showMinimumWindowSizeWarning.load(from: warningPreference) }
         let warning = WindowSizeWarning()
         defer { warning.hide(); warning.close() }
-        let hud = try XCTUnwrap(warning.contentView as? NSVisualEffectView)
-        let stack = try XCTUnwrap(hud.subviews.compactMap { $0 as? NSStackView }.first)
+        let hud = try XCTUnwrap(warning.contentView as? BlurSurfaceView)
+        let stack = try XCTUnwrap(hud.content.subviews.compactMap { $0 as? NSStackView }.first)
         let title = try XCTUnwrap(stack.arrangedSubviews.compactMap { $0 as? NSTextField }.first)
         XCTAssertFalse(title.stringValue.isEmpty)
-        for material: BlurMaterial in [.liquidGlass, .standard] {
-            Defaults.blurMaterial.value = material
-            Notification.Name.blurStyleChanged.post()
+        let settings = AppSettingsViewModel()
+        for material: OverlayMaterial in [.noBlur, .standard, .liquidGlass] {
+            settings.overlayMaterial = material
             warning.show(on: screen)
             XCTAssertTrue(warning.contentView === hud)
-            XCTAssertEqual(hud.material, .hudWindow)
-            XCTAssertEqual(hud.blendingMode, .behindWindow)
-            XCTAssertEqual(hud.state, .active)
+            try assertHUDMaterial(hud, requested: material)
             XCTAssertTrue(title.isDescendant(of: hud))
             XCTAssertTrue(warning.ignoresMouseEvents)
             XCTAssertGreaterThan(warning.frame.width, 100)
@@ -259,104 +317,34 @@ final class LiquidGlassBlurTests: XCTestCase {
         }
     }
 
-    func testPreferenceParticipatesInConfigAndViewModel() {
-        Defaults.blurMaterial.value = .liquidGlass
-        let preference = Defaults.array.first { $0.key == "blurMaterial" }
-        XCTAssertNotNil(preference)
-        XCTAssertEqual(preference?.toCodable().int, BlurMaterial.liquidGlass.rawValue)
-        let model = SnapAreaViewModel()
-        XCTAssertTrue(model.liquidGlassForBlurFootprint)
-        model.liquidGlassForBlurFootprint = false
-        XCTAssertEqual(Defaults.blurMaterial.value, .standard)
-    }
-}
-
-@MainActor
-final class BlurDefaultSelectionTests: XCTestCase {
-    private var savedBlur = false
-    private var storedBlur: Any?
-    private var storedGlass: Any?
-    override func setUp() {
-        savedBlur = Defaults.footprintBlur.enabled
-        storedBlur = UserDefaults.standard.object(forKey: Defaults.footprintBlur.key)
-        storedGlass = UserDefaults.standard.object(forKey: Defaults.blurMaterial.key)
-        Defaults.footprintBlur.enabled = false
-        UserDefaults.standard.removeObject(forKey: Defaults.footprintBlur.key)
-        UserDefaults.standard.removeObject(forKey: Defaults.blurMaterial.key)
-    }
-    override func tearDown() {
-        Defaults.footprintBlur.enabled = savedBlur
-        for (key, value) in [(Defaults.footprintBlur.key, storedBlur), (Defaults.blurMaterial.key, storedGlass)] {
-            if let value { UserDefaults.standard.set(value, forKey: key) }
-            else { UserDefaults.standard.removeObject(forKey: key) }
+    private func assertHUDMaterial(_ surface: BlurSurfaceView, requested: OverlayMaterial,
+                                   file: StaticString = #filePath, line: UInt = #line) throws {
+        let expected = requested.effective(supportsLiquidGlass: OverlayMaterial.supportsLiquidGlass,
+                                           reduceTransparency: NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency)
+        XCTAssertEqual(surface.effectiveMaterial, expected, file: file, line: line)
+        switch expected {
+        case .noBlur:
+            let solid = try XCTUnwrap(surface.subviews.first, file: file, line: line)
+            XCTAssertFalse(solid === surface.content, file: file, line: line)
+            XCTAssertFalse(solid.isHidden, file: file, line: line)
+            XCTAssertNotNil(solid.layer?.backgroundColor, file: file, line: line)
+            XCTAssertFalse(surface.subviews.contains { $0 is NSVisualEffectView }, file: file, line: line)
+            if #available(macOS 26, *) {
+                XCTAssertFalse(surface.subviews.contains { $0 is NSGlassEffectView }, file: file, line: line)
+            }
+        case .standard:
+            let effect = try XCTUnwrap(surface.subviews.first as? NSVisualEffectView, file: file, line: line)
+            XCTAssertEqual(effect.material, .hudWindow, file: file, line: line)
+            XCTAssertEqual(effect.blendingMode, .behindWindow, file: file, line: line)
+            XCTAssertEqual(effect.state, .active, file: file, line: line)
+            XCTAssertFalse(effect.isHidden, file: file, line: line)
+        case .liquidGlass:
+            if #available(macOS 26, *) {
+                let effect = try XCTUnwrap(surface.subviews.first as? NSGlassEffectView, file: file, line: line)
+                XCTAssertTrue(effect.contentView === surface.content, file: file, line: line)
+                XCTAssertFalse(effect.isHidden, file: file, line: line)
+            }
         }
-        Notification.Name.blurStyleChanged.post()
-    }
-    func testOpeningAndReloadingSettingsDoesNotCreateMaterialChoices() {
-        let model = SnapAreaViewModel()
-        model.syncDefaults()
-        XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.footprintBlur.key))
-        XCTAssertNil(UserDefaults.standard.object(forKey: Defaults.blurMaterial.key))
-    }
-    func testExistingBlurWithoutAStoredMaterialStaysStandardWhenSettingsOpen() {
-        Defaults.footprintBlur.enabled = true
-        let model = SnapAreaViewModel()
-        model.syncDefaults()
-        XCTAssertTrue(model.footprintBlur)
-        XCTAssertFalse(model.liquidGlassForBlurFootprint)
-        XCTAssertFalse(Defaults.blurMaterial.hasSelection)
-    }
-
-    func testMissingMaterialIsOmittedFromExportUntilTheUserChooses() throws {
-        let config = try XCTUnwrap(Defaults.encoded().flatMap { Defaults.convert(jsonString: $0) })
-        XCTAssertNil(config.defaults[Defaults.blurMaterial.key])
-    }
-
-    func testInvalidStoredMaterialUsesTheFirstUseDefault() throws {
-        let key = Defaults.blurMaterial.key
-        for invalid: Any in [999, true, "1", 0.5] {
-            let suite = "BlurMaterialTests." + UUID().uuidString
-            let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
-            defer { defaults.removePersistentDomain(forName: suite) }
-            defaults.setPersistentDomain([key: invalid], forName: suite)
-            let preference = BlurMaterialPreference(defaults: defaults)
-            XCTAssertFalse(preference.hasSelection)
-            XCTAssertEqual(preference.value, .standard)
-
-            preference.value = .liquidGlass
-            XCTAssertTrue(preference.hasSelection)
-            XCTAssertEqual(preference.value, .liquidGlass)
-        }
-    }
-
-    func testFirstUserEnablingBlurSelectsGlassOnlyOnSupportedSystems() {
-        let model = SnapAreaViewModel()
-        model.footprintBlur = true
-        XCTAssertTrue(Defaults.footprintBlur.enabled)
-        if #available(macOS 26, *) {
-            XCTAssertTrue(model.liquidGlassForBlurFootprint)
-            XCTAssertEqual(Defaults.blurMaterial.value, .liquidGlass)
-        } else {
-            XCTAssertFalse(model.liquidGlassForBlurFootprint)
-            XCTAssertEqual(Defaults.blurMaterial.value, .standard)
-        }
-    }
-    func testExplicitlyDisabledGlassSurvivesBlurOffOnAndReload() {
-        let model = SnapAreaViewModel()
-        model.footprintBlur = true
-        model.liquidGlassForBlurFootprint = false
-        model.footprintBlur = false
-        model.syncDefaults()
-        model.footprintBlur = true
-        XCTAssertFalse(model.liquidGlassForBlurFootprint)
-        XCTAssertEqual(Defaults.blurMaterial.value, .standard)
-    }
-    func testImportedDisabledChoiceIsRespectedBeforeFirstBlurToggle() {
-        Defaults.blurMaterial.load(from: CodableDefault(int: BlurMaterial.standard.rawValue))
-        let model = SnapAreaViewModel()
-        model.footprintBlur = true
-        XCTAssertFalse(model.liquidGlassForBlurFootprint)
-        XCTAssertEqual(Defaults.blurMaterial.value, .standard)
     }
 }
 
@@ -364,30 +352,27 @@ final class BlurDefaultSelectionTests: XCTestCase {
 final class BlurAppearanceLiveTests: XCTestCase {
     private var savedMaterial: Any?
     private var savedAppearance = BlurAppearance.system
-    private var savedBlur = false
 
     override func setUp() {
-        savedMaterial = UserDefaults.standard.object(forKey: Defaults.blurMaterial.key)
+        savedMaterial = UserDefaults.standard.object(forKey: Defaults.overlayMaterial.key)
         savedAppearance = Defaults.blurAppearance.value
-        savedBlur = Defaults.footprintBlur.enabled
     }
 
     override func tearDown() {
-        UserDefaults.standard.set(savedMaterial, forKey: Defaults.blurMaterial.key)
+        UserDefaults.standard.set(savedMaterial, forKey: Defaults.overlayMaterial.key)
         Defaults.blurAppearance.value = savedAppearance
-        Defaults.footprintBlur.enabled = savedBlur
         Notification.Name.blurStyleChanged.post()
     }
 
     func testViewModelUpdatesExistingMaterialsAndRestoresInheritedAppearance() throws {
         Defaults.blurAppearance.value = .system
-        let model = SnapAreaViewModel()
-        for glass in [false, true] {
+        let model = AppSettingsViewModel()
+        for requestedMaterial: OverlayMaterial in [.standard, .liquidGlass] {
             let parent = NSView()
             parent.appearance = NSAppearance(named: .darkAqua)
             let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240), material: .fullScreenUI,
                                           cornerRadius: 12, presentation: {
-                .init(usesLiquidGlass: glass, appearance: model.blurAppearance.appearance)
+                .init(material: requestedMaterial, appearance: model.blurAppearance.appearance)
             })
             parent.addSubview(surface)
             let content = surface.content
@@ -410,7 +395,7 @@ final class BlurAppearanceLiveTests: XCTestCase {
     }
 
     func testConfigImportClearsForcedMaterialAppearance() {
-        var policy = BlurSurfaceView.Presentation(usesLiquidGlass: false, appearance: NSAppearance(named: .darkAqua))
+        var policy = BlurSurfaceView.Presentation(material: .standard, appearance: NSAppearance(named: .darkAqua))
         let notifications = NotificationCenter()
         let surface = BlurSurfaceView(frame: CGRect(x: 0, y: 0, width: 300, height: 240), material: .fullScreenUI,
                                       cornerRadius: 12, notifications: notifications, presentation: { policy })
@@ -422,10 +407,9 @@ final class BlurAppearanceLiveTests: XCTestCase {
 
     func testLiveGlassFootprintUsesAllThreeAppearancesWithoutChangingItsFrame() throws {
         guard #available(macOS 26, *) else { throw XCTSkip("Requires native Glass") }
-        Defaults.blurMaterial.value = .liquidGlass
-        Defaults.footprintBlur.enabled = true
+        Defaults.overlayMaterial.value = .liquidGlass
         Defaults.blurAppearance.value = .system
-        let model = SnapAreaViewModel()
+        let model = AppSettingsViewModel()
         let window = FootprintWindow(accessibility: { .init(reduceMotion: false, reduceTransparency: false) })
         defer { window.close() }
         window.showPreview(in: CGRect(x: 60, y: 60, width: 400, height: 300), from: nil, duration: 0)

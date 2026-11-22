@@ -55,6 +55,9 @@ protocol WindowManagerDelegate {
     /// Commit planning side effects after target admission and before placement.
     func moveDidAccept()
 
+    /// External windows this delegate may touch during placement or source cleanup.
+    func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target]
+
     /// Places the window, or returns nil to have the manager apply the target.
     /// Not used for animated placements or cross-display retries.
     /// - Returns: The rect of the window after placing it
@@ -74,6 +77,7 @@ extension WindowManagerDelegate {
     var acceptsPlacement: Bool { true }
     func isAlreadyAchieved() -> Bool? { nil }
     func moveDidAccept() {}
+    func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target] { [] }
     func place(result: ResultParameters, moveWindow: (CGRect, ResultParameters) -> Void) -> CGRect? { nil }
     func moveDidSettle(resultingRect: CGRect, screenFrame: CGRect) {}
     var placementCondition: WindowPlacementCondition? { nil }

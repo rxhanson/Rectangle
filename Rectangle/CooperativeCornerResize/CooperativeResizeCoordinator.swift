@@ -1624,6 +1624,26 @@ extension CooperativeMove: WindowManagerDelegate {
                                                      screenFrame: request.screenFrame)
     }
 
+    func additionalWriteTargets(in candidates: [WindowWriteFence.Target]) -> [WindowWriteFence.Target] {
+        guard !candidates.isEmpty else { return [] }
+        let placementIDs = Set(placement?.plan.candidates.map(\.id) ?? [])
+        let sourceFrame = request.sourceScreens.currentScreen.adjustedVisibleFrame(
+            request.windowId.map { TodoManager.isTodoWindow($0) } ?? false)
+        let mayCleanUpSource = request.destinationScreenIsCurrentScreen
+            && CooperativeResizeCoordinator.allowsResize(from: request.source)
+            && request.lastRectangleAction.map {
+                $0.action != request.action && CooperativeResizeCoordinator.axis(for: $0.action, screenFrame: sourceFrame) != nil
+            } == true
+        return candidates.filter { target in
+            if let id = target.windowID, placementIDs.contains(id) { return true }
+            if !mayCleanUpSource { return false }
+            // Cleanup discovers its neighbors after placement. Fence possible
+            // members on the source display even before the final pair is known.
+            guard let id = target.windowID, let frame = WindowUtil.getWindowFrame(id: id) else { return true }
+            return sourceFrame.screenFlipped.intersects(frame)
+        }
+    }
+
     func isAlreadyAchieved() -> Bool? {
         placement?.isAlreadyAchieved()
     }
