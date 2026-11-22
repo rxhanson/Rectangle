@@ -137,7 +137,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func checkAutoCheckForUpdates() {
         updaterController.updater.automaticallyChecksForUpdates = Defaults.SUEnableAutomaticChecks.enabled
     }
-    
+
     func reloadWindowManagementAfterImport() {
         // Preferences can import before Accessibility is granted. The managers
         // will read those settings when accessibilityTrusted() creates them.
@@ -147,7 +147,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         snappingManager.reloadFromDefaults()
         initializeTodo(false)
     }
-
+    
     func accessibilityTrusted() {
         self.windowCalculationFactory = WindowCalculationFactory()
         self.windowManager = WindowManager(delegateProviders: [
