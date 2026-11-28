@@ -2,16 +2,30 @@
 
 import Foundation
 
+enum WindowLookupResult: Equatable {
+    case found(AccessibilityElement)
+    case ownWindow
+    case notFound
+    case timedOut
+
+    var element: AccessibilityElement? {
+        if case .found(let element) = self { return element }
+        return nil
+    }
+}
+
 class AccessibilityElement {
     fileprivate let wrappedElement: AXUIElement
+    private let knownApplication: Bool
     var axElement: AXUIElement { wrappedElement }
     
-    init(_ element: AXUIElement) {
+    init(_ element: AXUIElement, isApplication: Bool = false) {
         wrappedElement = element
+        knownApplication = isApplication
     }
     
     convenience init(_ pid: pid_t) {
-        self.init(AXUIElementCreateApplication(pid))
+        self.init(AXUIElementCreateApplication(pid), isApplication: true)
     }
     
     convenience init?(_ bundleIdentifier: String) {
@@ -378,7 +392,7 @@ class AccessibilityElement {
     }
     
     private var applicationElement: AccessibilityElement? {
-        if isApplication == true { return self }
+        if knownApplication || isApplication == true { return self }
         guard let pid = pid else { return nil }
         return AccessibilityElement(pid)
     }
@@ -388,7 +402,17 @@ class AccessibilityElement {
     }
     
     var windowElements: [AccessibilityElement]? {
-        applicationElement?.getElementsValue(.windows)
+        getWindowElements().elements
+    }
+
+    func getWindowElements(timeout: Float? = nil) -> (elements: [AccessibilityElement]?, timedOut: Bool) {
+        guard let appElement = applicationElement else { return (nil, false) }
+        let result = appElement.wrappedElement.getValueResult(.windows, timeout: timeout)
+        if result.timedOut {
+            return (nil, true)
+        }
+        guard let array = result.value as? [AXUIElement] else { return (nil, false) }
+        return (array.map { AccessibilityElement($0) }, false)
     }
     
     var isHidden: Bool? {
@@ -439,62 +463,97 @@ extension AccessibilityElement {
         getFrontApplicationElement()?.focusedWindowElement
     }
     
-    static func getFrontWindowElement() -> AccessibilityElement? {
-        
-        if let appElement = getFrontApplicationElement() {
-            if let focusedWindowElement = appElement.focusedWindowElement {
-                return focusedWindowElement
+    static func resolveFrontWindowElement(
+        focusedWindow: () -> WindowLookupResult,
+        firstWindow: () -> WindowLookupResult,
+        systemWideFocusedWindow: () -> WindowLookupResult,
+        firstListedWindow: () -> WindowLookupResult
+    ) -> WindowLookupResult {
+        let focused = focusedWindow()
+        if focused != .notFound { return focused }
+        let first = firstWindow()
+        if first != .notFound { return first }
+        let systemWide = systemWideFocusedWindow()
+        if systemWide != .notFound { return systemWide }
+        return firstListedWindow()
+    }
+
+    static func getFrontWindowElement(timeout: Float? = nil) -> AccessibilityElement? {
+        let ownPid = ProcessInfo.processInfo.processIdentifier
+        let frontAppElement = getFrontApplicationElement()
+        let result = resolveFrontWindowElement(
+            focusedWindow: {
+                guard let appElement = frontAppElement else { return .notFound }
+                let res = appElement.wrappedElement.getValueResult(.focusedWindow, timeout: timeout)
+                if res.timedOut {
+                    Logger.log("AX focusedWindow lookup timed out")
+                    return .timedOut
+                }
+                if let value = res.value, CFGetTypeID(value) == AXUIElementGetTypeID() {
+                    return .found(AccessibilityElement(value as! AXUIElement))
+                }
+                return .notFound
+            },
+            firstWindow: {
+                guard let appElement = frontAppElement else { return .notFound }
+                let lookup = appElement.getWindowElements(timeout: timeout)
+                if lookup.timedOut {
+                    Logger.log("AX front windows lookup timed out")
+                    return .timedOut
+                }
+                return (lookup.elements?.first).map { .found($0) } ?? .notFound
+            },
+            systemWideFocusedWindow: {
+                getSystemWideFocusedWindowElement(timeout: timeout)
+            },
+            firstListedWindow: {
+                guard let firstWindowInfo = WindowUtil.getWindowList().first(where: {
+                    NSRunningApplication(processIdentifier: $0.pid) != nil && (timeout == nil || $0.pid != ownPid)
+                }) else {
+                    return .notFound
+                }
+                let lookup = AccessibilityElement(firstWindowInfo.pid).getWindowElements(timeout: timeout)
+                if lookup.timedOut {
+                    return .timedOut
+                }
+                return (lookup.elements?.first { $0.windowId == firstWindowInfo.id }).map { .found($0) } ?? .notFound
             }
-            if let firstWindowElement = appElement.windowElements?.first {
-                return firstWindowElement
-            }
+        )
+        if result == .notFound {
+            Logger.log("Failed to find frontmost window.")
         }
-        
-        if let fallbackWindow = getSystemWideFocusedWindowElement() {
-            return fallbackWindow
-        }
-        
-        if let firstWindowInfo = WindowUtil.getWindowList().first(where: { NSRunningApplication(processIdentifier: $0.pid) != nil }),
-            let firstWindowElement = getWindowElement(firstWindowInfo.id) {
-            return firstWindowElement
-        }
-        
-        Logger.log("Failed to find frontmost window.")
-        return nil
+        return result.element
     }
     
-    private static func getSystemWideFocusedWindowElement() -> AccessibilityElement? {
-        let systemWideElement = AXUIElementCreateSystemWide()
-        var focusedUIElement: CFTypeRef?
-        
-        // Get the currently focused UI element system-wide
-        let result = AXUIElementCopyAttributeValue(
-            systemWideElement,
-            kAXFocusedUIElementAttribute as CFString,
-            &focusedUIElement
-        )
-        
-        guard result == .success, let focusedElement = focusedUIElement else {
-            return nil
+    private static func getSystemWideFocusedWindowElement(timeout: Float? = nil) -> WindowLookupResult {
+        let res = AXUIElement.systemWide.getValueResult(.focusedUIElement, timeout: timeout)
+        if res.timedOut {
+            return .timedOut
         }
-        
-        let focusedAX = focusedElement as! AXUIElement
+        guard let focusedValue = res.value, CFGetTypeID(focusedValue) == AXUIElementGetTypeID() else {
+            return .notFound
+        }
+        let focusedAX = focusedValue as! AXUIElement
         
         // Check if the focused element is already a window
-        var role: CFTypeRef?
-        if AXUIElementCopyAttributeValue(focusedAX, kAXRoleAttribute as CFString, &role) == .success,
-           (role as? String) == (kAXWindowRole as String) {
-            return AccessibilityElement(focusedAX)
+        let roleRes = focusedAX.getValueResult(.role, timeout: timeout)
+        if roleRes.timedOut {
+            return .timedOut
+        }
+        if (roleRes.value as? String) == (kAXWindowRole as String) {
+            return .found(AccessibilityElement(focusedAX))
         }
         
         // If it's a child element (e.g., button, text field), traverse up to its window
-        var windowElement: CFTypeRef?
-        if AXUIElementCopyAttributeValue(focusedAX, kAXWindowAttribute as CFString, &windowElement) == .success,
-           let window = windowElement {
-            return AccessibilityElement(window as! AXUIElement)
+        let winRes = focusedAX.getValueResult(.window, timeout: timeout)
+        if winRes.timedOut {
+            return .timedOut
+        }
+        if let window = winRes.value, CFGetTypeID(window) == AXUIElementGetTypeID() {
+            return .found(AccessibilityElement(window as! AXUIElement))
         }
         
-        return nil
+        return .notFound
     }
     
     private static func getWindowInfo(_ location: CGPoint, eventWindowID: CGWindowID? = nil) -> WindowInfo? {
@@ -520,76 +579,157 @@ extension AccessibilityElement {
         })
     }
 
+    static let axLookupTimeout: Float = 0.25
+
+    static func resolveWindowElementUnderCursor(
+        systemWideFirst: Bool,
+        ownPid: pid_t,
+        windowInfo: WindowInfo?,
+        ownVisibleWindowAtPosition: Bool,
+        frontmostPid: pid_t?,
+        systemWideElement: () -> WindowLookupResult,
+        windowElementFromInfo: (WindowInfo) -> WindowLookupResult,
+        frontmostWindowElement: () -> WindowLookupResult
+    ) -> WindowLookupResult {
+        if windowInfo?.pid == ownPid || (windowInfo == nil && ownVisibleWindowAtPosition) {
+            return .ownWindow
+        }
+
+        if systemWideFirst {
+            let result = systemWideElement()
+            if result != .notFound { return result }
+        }
+
+        if let info = windowInfo {
+            let result = windowElementFromInfo(info)
+            if result != .notFound { return result }
+        }
+
+        if !systemWideFirst {
+            let result = systemWideElement()
+            if result != .notFound { return result }
+        }
+
+        if frontmostPid != ownPid {
+            return frontmostWindowElement()
+        }
+
+        return .notFound
+    }
+
     static func getWindowElementUnderCursor(at mouseDown: CGPoint? = nil, eventWindowID: CGWindowID? = nil) -> AccessibilityElement? {
+        getWindowElementUnderCursorResult(at: mouseDown, eventWindowID: eventWindowID).element
+    }
+
+    static func getWindowElementUnderCursorResult(at mouseDown: CGPoint? = nil, eventWindowID: CGWindowID? = nil) -> WindowLookupResult {
         let position = mouseDown ?? NSEvent.mouseLocation.screenFlipped
+        let ownPid = ProcessInfo.processInfo.processIdentifier
+
+        if let eventWindowID {
+            let ownInteractiveWindowIDs = Set(NSApp.windows.compactMap { window in
+                !window.ignoresMouseEvents ? CGWindowID(exactly: window.windowNumber) : nil
+            })
+            if ownInteractiveWindowIDs.contains(eventWindowID) {
+                return .ownWindow
+            }
+        }
         
         var systemWideFirst = Defaults.systemWideMouseDown.userEnabled
         if Defaults.systemWideMouseDown.notSet, let frontAppId = ApplicationToggle.frontAppId {
             systemWideFirst = Defaults.systemWideMouseDownApps.typedValue?.contains(frontAppId) == true
         }
-        
-        if systemWideFirst,
-            let element = AccessibilityElement(position),
-            let windowElement = element.windowElement,
-            eventWindowID == nil || windowElement.windowId == eventWindowID {
-                return windowElement
-        }
 
-        if let info = getWindowInfo(position, eventWindowID: eventWindowID) {
-            if !Defaults.dragFromStage.userDisabled {
-                if StageUtil.stageCapable && StageUtil.stageEnabled,
-                   let group = StageUtil.getStageStripWindowGroup(info.id),
-                   let windowId = group.first,
-                   windowId != info.id,
-                   let element = StageWindowAccessibilityElement(windowId) {
-                    return element
-                }
-            }
-            if let windowElements = AccessibilityElement(info.pid).windowElements {
-                if let windowElement = (windowElements.first { $0.windowId == info.id }) {
-                    return windowElement
-                }
-                if eventWindowID == nil, let windowElement = (windowElements.first { $0.frame == info.frame }) {
-                    return windowElement
-                }
-            }
+        let windowInfo = getWindowInfo(position, eventWindowID: eventWindowID)
+        let ownVisibleWindowAtPosition = windowInfo == nil && NSApp.windows.contains {
+            $0.isVisible && !$0.ignoresMouseEvents && $0.frame.screenFlipped.contains(position)
         }
-        
-        if !systemWideFirst,
-           let element = AccessibilityElement(position),
-           let windowElement = element.windowElement,
-           eventWindowID == nil || windowElement.windowId == eventWindowID {
-            
-            if Logger.logging, let pid = windowElement.pid {
-                let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
-                Logger.log("Window under cursor fallback matched: \(appName)")
-            }
-            return windowElement
-        }
+        let frontmostPid = NSWorkspace.shared.frontmostApplication?.processIdentifier
 
-        // Last resort for when the window server isn't vending window info (#640):
-        // the frontmost app's own accessibility windows don't depend on it.
-        if let frontAppElement = getFrontApplicationElement(),
-           let windowElements = frontAppElement.windowElements {
-            if let eventWindowID {
-                return windowElements.first { $0.windowId == eventWindowID }
-            }
-            let windowElement = windowElements
-                .map { (element: $0, frame: $0.frame) }
-                .filter { !$0.frame.isNull && $0.frame.contains(position) }
-                .min { $0.frame.width * $0.frame.height < $1.frame.width * $1.frame.height }?
-                .element
-            if let windowElement {
-                if Logger.logging, let pid = windowElement.pid {
+        let result = resolveWindowElementUnderCursor(
+            systemWideFirst: systemWideFirst,
+            ownPid: ownPid,
+            windowInfo: windowInfo,
+            ownVisibleWindowAtPosition: ownVisibleWindowAtPosition,
+            frontmostPid: frontmostPid,
+            systemWideElement: {
+                let hit = AXUIElement.systemWide.getElementAtPositionResult(position, timeout: Self.axLookupTimeout)
+                if hit.timedOut {
+                    Logger.log("AX lookup at cursor position timed out")
+                    return .timedOut
+                }
+                guard let rawElement = hit.value else { return .notFound }
+                let element = AccessibilityElement(rawElement)
+                element.setMessagingTimeout(Self.axLookupTimeout)
+                defer { element.setMessagingTimeout(0) }
+                guard let windowElement = element.windowElement,
+                      eventWindowID == nil || windowElement.windowId == eventWindowID else {
+                    return .notFound
+                }
+                if !systemWideFirst, Logger.logging, let pid = windowElement.pid {
                     let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
-                    Logger.log("Window under cursor frontmost app fallback matched: \(appName)")
+                    Logger.log("Window under cursor fallback matched: \(appName)")
                 }
-                return windowElement
+                return .found(windowElement)
+            },
+            windowElementFromInfo: { info in
+                if !Defaults.dragFromStage.userDisabled {
+                    if StageUtil.stageCapable && StageUtil.stageEnabled,
+                       let group = StageUtil.getStageStripWindowGroup(info.id),
+                       let windowId = group.first,
+                       windowId != info.id,
+                       let element = StageWindowAccessibilityElement(windowId) {
+                        return .found(element)
+                    }
+                }
+                let lookup = AccessibilityElement(info.pid).getWindowElements(timeout: Self.axLookupTimeout)
+                if lookup.timedOut {
+                    Logger.log("AX window lookup timed out for pid \(info.pid)")
+                    return .timedOut
+                }
+                if let windowElements = lookup.elements {
+                    if let windowElement = (windowElements.first { $0.windowId == info.id }) {
+                        return .found(windowElement)
+                    }
+                    if eventWindowID == nil, let windowElement = (windowElements.first { $0.frame == info.frame }) {
+                        return .found(windowElement)
+                    }
+                }
+                return .notFound
+            },
+            frontmostWindowElement: {
+                // Last resort for when the window server isn't vending window info (#640):
+                // the frontmost app's own accessibility windows don't depend on it.
+                if let frontAppElement = getFrontApplicationElement() {
+                    let lookup = frontAppElement.getWindowElements(timeout: Self.axLookupTimeout)
+                    if lookup.timedOut {
+                        return .timedOut
+                    }
+                    if let windowElements = lookup.elements {
+                        if let eventWindowID {
+                            return (windowElements.first { $0.windowId == eventWindowID }).map { .found($0) } ?? .notFound
+                        }
+                        let windowElement = windowElements
+                            .map { (element: $0, frame: $0.frame) }
+                            .filter { !$0.frame.isNull && $0.frame.contains(position) }
+                            .min { $0.frame.width * $0.frame.height < $1.frame.width * $1.frame.height }?
+                            .element
+                        if let windowElement {
+                            if Logger.logging, let pid = windowElement.pid {
+                                let appName = NSRunningApplication(processIdentifier: pid)?.localizedName ?? ""
+                                Logger.log("Window under cursor frontmost app fallback matched: \(appName)")
+                            }
+                            return .found(windowElement)
+                        }
+                    }
+                }
+                return .notFound
             }
-        }
+        )
 
-        Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
-        return nil
+        if result == .notFound {
+            Logger.log("Unable to obtain the accessibility element with the specified attribute at mouse location")
+        }
+        return result
     }
     
     static func getWindowElement(_ windowId: CGWindowID) -> AccessibilityElement? {
