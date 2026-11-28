@@ -32,9 +32,19 @@ extension AXValue {
     }
 }
 
+struct AXLookupResult<Value> {
+    let value: Value?
+    let error: AXError
+    let timedOut: Bool
+}
+
 extension AXUIElement {
     static let systemWide = AXUIElementCreateSystemWide()
-    
+
+    static func didMessagingTimeout(error: AXError, elapsed: TimeInterval, timeout: Float) -> Bool {
+        timeout > 0 && error == .cannotComplete && elapsed >= TimeInterval(timeout) * 0.8
+    }
+
     func isValueSettable(_ attribute: NSAccessibility.Attribute) -> Bool? {
         var isSettable = DarwinBoolean(false)
         let result = AXUIElementIsAttributeSettable(self, attribute.rawValue as CFString, &isSettable)
@@ -43,10 +53,15 @@ extension AXUIElement {
     }
     
     func getValue(_ attribute: NSAccessibility.Attribute) -> AnyObject? {
-        var value: AnyObject?
-        let result = AXUIElementCopyAttributeValue(self, attribute.rawValue as CFString, &value)
-        guard result == .success else { return nil }
-        return value
+        getValueResult(attribute).value
+    }
+
+    func getValueResult(_ attribute: NSAccessibility.Attribute, timeout: Float? = nil) -> AXLookupResult<AnyObject> {
+        performTimedLookup(timeout: timeout) {
+            var value: AnyObject?
+            let result = AXUIElementCopyAttributeValue(self, attribute.rawValue as CFString, &value)
+            return (result == .success ? value : nil, result)
+        }
     }
     
     /// Helper to fetch and extract a struct value with explicit type validation.
@@ -77,10 +92,31 @@ extension AXUIElement {
     }
     
     func getElementAtPosition(_ position: CGPoint) -> AXUIElement? {
-        var element: AXUIElement?
-        let result = AXUIElementCopyElementAtPosition(self, Float(position.x), Float(position.y), &element)
-        guard result == .success else { return nil }
-        return element
+        getElementAtPositionResult(position).value
+    }
+
+    func getElementAtPositionResult(_ position: CGPoint, timeout: Float? = nil) -> AXLookupResult<AXUIElement> {
+        performTimedLookup(timeout: timeout) {
+            var element: AXUIElement?
+            let result = AXUIElementCopyElementAtPosition(self, Float(position.x), Float(position.y), &element)
+            return (result == .success ? element : nil, result)
+        }
+    }
+
+    private func performTimedLookup<Value>(timeout: Float?, _ call: () -> (value: Value?, error: AXError)) -> AXLookupResult<Value> {
+        if let timeout {
+            AXUIElementSetMessagingTimeout(self, timeout)
+        }
+        defer {
+            if timeout != nil {
+                AXUIElementSetMessagingTimeout(self, 0)
+            }
+        }
+        let start = timeout != nil ? CFAbsoluteTimeGetCurrent() : 0
+        let outcome = call()
+        let elapsed = timeout != nil ? CFAbsoluteTimeGetCurrent() - start : 0
+        let timedOut = timeout.map { Self.didMessagingTimeout(error: outcome.error, elapsed: elapsed, timeout: $0) } ?? false
+        return AXLookupResult(value: outcome.value, error: outcome.error, timedOut: timedOut)
     }
     
     func getPid() -> pid_t? {

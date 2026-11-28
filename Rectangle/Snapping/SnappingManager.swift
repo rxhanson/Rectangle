@@ -242,7 +242,18 @@ class SnappingManager {
     }
     
     func checkFullScreen() {
-        let frontWindow = AccessibilityElement.getFrontWindowElement()
+        if NSWorkspace.shared.frontmostApplication?.processIdentifier == ProcessInfo.processInfo.processIdentifier {
+            let ownFullScreenWindow = NSApp.windows.first { $0.isVisible && $0.styleMask.contains(.fullScreen) }
+            let isFullScreen = ownFullScreenWindow != nil
+            fullScreenGate = FullScreenSnapGate(isFullScreen: isFullScreen,
+                                                windowFrame: ownFullScreenWindow?.frame.screenFlipped,
+                                                displayFrames: NSScreen.screens.map { $0.frame.screenFlipped })
+            toggleListening()
+            return
+        }
+        let frontWindow = AccessibilityElement.getFrontWindowElement(timeout: AccessibilityElement.axLookupTimeout)
+        frontWindow?.setMessagingTimeout(AccessibilityElement.axLookupTimeout)
+        defer { frontWindow?.setMessagingTimeout(0) }
         let isFullScreen = frontWindow?.isFullScreen == true
         fullScreenGate = FullScreenSnapGate(isFullScreen: isFullScreen,
                                             windowFrame: isFullScreen ? frontWindow?.frame : nil,
@@ -356,6 +367,16 @@ class SnappingManager {
         return true
     }
     
+    func lookupWindowElementUnderCursor(at location: CGPoint?, eventWindowID: CGWindowID?) -> WindowLookupResult {
+        AccessibilityElement.getWindowElementUnderCursorResult(at: location, eventWindowID: eventWindowID)
+    }
+
+    private func abortNativeGesture() {
+        ignoringGesture = true
+        nativeGesture.end()
+        resetNativeDragState()
+    }
+
     func handle(event: NSEvent) {
         switch event.type {
         case .keyDown:
@@ -387,10 +408,18 @@ class SnappingManager {
                 return id > 0 ? CGWindowID(exactly: id) : nil
             }
             if !Defaults.obtainWindowOnClick.userDisabled {
-                windowElement = AccessibilityElement.getWindowElementUnderCursor(at: initialCursorLocation, eventWindowID: initialEventWindowID)
-                windowId = windowElement?.getWindowId()
-                initialWindowRect = windowElement?.frame
-                initialWindowServerRect = windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
+                switch lookupWindowElementUnderCursor(at: initialCursorLocation, eventWindowID: initialEventWindowID) {
+                case .found(let element):
+                    windowElement = element
+                    windowId = element.getWindowId()
+                    initialWindowRect = element.frame
+                    initialWindowServerRect = windowId.flatMap { WindowUtil.getWindowFrame(id: $0) }
+                case .ownWindow, .timedOut:
+                    abortNativeGesture()
+                    return
+                case .notFound:
+                    windowElement = nil
+                }
             }
             traceNativeInput(event, phase: "down")
         case .leftMouseUp:
@@ -454,7 +483,15 @@ class SnappingManager {
                     }
                 }
                 if windowElement == nil {
-                    windowElement = AccessibilityElement.getWindowElementUnderCursor(at: initialCursorLocation, eventWindowID: initialEventWindowID)
+                    switch lookupWindowElementUnderCursor(at: initialCursorLocation, eventWindowID: initialEventWindowID) {
+                    case .found(let element):
+                        windowElement = element
+                    case .ownWindow, .timedOut:
+                        abortNativeGesture()
+                        return
+                    case .notFound:
+                        windowElement = nil
+                    }
                 }
                 windowId = windowElement?.getWindowId()
                 initialWindowRect = windowElement?.frame

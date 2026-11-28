@@ -939,3 +939,365 @@ final class SnappingManagerFullScreenTests: XCTestCase {
         XCTAssertEqual(manager.fullScreenGate, .inactive)
     }
 }
+
+final class SelfWindowAccessibilityGuardTests: XCTestCase {
+    private let ownPid: pid_t = 100
+    private let otherPid: pid_t = 200
+    private let position = CGPoint(x: 300, y: 300)
+    private lazy var ownWindowInfo = WindowInfo(id: 10, level: 0, frame: CGRect(x: 100, y: 100, width: 600, height: 500), pid: ownPid, processName: "Rectangle")
+    private lazy var otherWindowInfo = WindowInfo(id: 20, level: 0, frame: CGRect(x: 100, y: 100, width: 600, height: 500), pid: otherPid, processName: "Finder")
+    private lazy var otherElement = AccessibilityElement(AXUIElementCreateApplication(otherPid))
+
+    func testOwnWindowUnderCursorSkipsAllAXLookups() {
+        for systemWideFirst in [false, true] {
+            var systemWideCalls = 0
+            var infoCalls = 0
+            var frontmostCalls = 0
+
+            let resolved = AccessibilityElement.resolveWindowElementUnderCursor(
+                systemWideFirst: systemWideFirst,
+                ownPid: ownPid,
+                windowInfo: ownWindowInfo,
+                ownVisibleWindowAtPosition: false,
+                frontmostPid: ownPid,
+                systemWideElement: {
+                    systemWideCalls += 1
+                    return .found(self.otherElement)
+                },
+                windowElementFromInfo: { _ in
+                    infoCalls += 1
+                    return .found(self.otherElement)
+                },
+                frontmostWindowElement: {
+                    frontmostCalls += 1
+                    return .found(self.otherElement)
+                }
+            )
+
+            XCTAssertEqual(resolved, .ownWindow)
+            XCTAssertEqual(systemWideCalls, 0)
+            XCTAssertEqual(infoCalls, 0)
+            XCTAssertEqual(frontmostCalls, 0)
+        }
+    }
+
+    func testOtherAppWindowStillResolvesWhileOwnAppIsFrontmost() {
+        var systemWideCalls = 0
+        var infoCalls = 0
+        var frontmostCalls = 0
+
+        let resolved = AccessibilityElement.resolveWindowElementUnderCursor(
+            systemWideFirst: false,
+            ownPid: ownPid,
+            windowInfo: otherWindowInfo,
+            ownVisibleWindowAtPosition: false,
+            frontmostPid: ownPid,
+            systemWideElement: {
+                systemWideCalls += 1
+                return .notFound
+            },
+            windowElementFromInfo: { _ in
+                infoCalls += 1
+                return .found(self.otherElement)
+            },
+            frontmostWindowElement: {
+                frontmostCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(resolved, .found(otherElement))
+        XCTAssertEqual(infoCalls, 1)
+        XCTAssertEqual(systemWideCalls, 0)
+        XCTAssertEqual(frontmostCalls, 0)
+    }
+
+    func testOtherAppWindowAllowsSystemWideFallbackWithoutFrontmostSelfFallback() {
+        var systemWideCalls = 0
+        var infoCalls = 0
+        var frontmostCalls = 0
+
+        let resolvedViaSystemWide = AccessibilityElement.resolveWindowElementUnderCursor(
+            systemWideFirst: false,
+            ownPid: ownPid,
+            windowInfo: otherWindowInfo,
+            ownVisibleWindowAtPosition: false,
+            frontmostPid: ownPid,
+            systemWideElement: {
+                systemWideCalls += 1
+                return .found(self.otherElement)
+            },
+            windowElementFromInfo: { _ in
+                infoCalls += 1
+                return .notFound
+            },
+            frontmostWindowElement: {
+                frontmostCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(resolvedViaSystemWide, .found(otherElement))
+        XCTAssertEqual(infoCalls, 1)
+        XCTAssertEqual(systemWideCalls, 1)
+        XCTAssertEqual(frontmostCalls, 0)
+
+        let unresolved = AccessibilityElement.resolveWindowElementUnderCursor(
+            systemWideFirst: false,
+            ownPid: ownPid,
+            windowInfo: otherWindowInfo,
+            ownVisibleWindowAtPosition: false,
+            frontmostPid: ownPid,
+            systemWideElement: { .notFound },
+            windowElementFromInfo: { _ in .notFound },
+            frontmostWindowElement: {
+                frontmostCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(unresolved, .notFound)
+        XCTAssertEqual(frontmostCalls, 0)
+    }
+
+    func testMissingWindowInfoOverOwnVisibleWindowSkipsSystemWideAndFrontmostSelf() {
+        for systemWideFirst in [false, true] {
+            var systemWideCalls = 0
+            var frontmostCalls = 0
+
+            let resolved = AccessibilityElement.resolveWindowElementUnderCursor(
+                systemWideFirst: systemWideFirst,
+                ownPid: ownPid,
+                windowInfo: nil,
+                ownVisibleWindowAtPosition: true,
+                frontmostPid: ownPid,
+                systemWideElement: {
+                    systemWideCalls += 1
+                    return .found(self.otherElement)
+                },
+                windowElementFromInfo: { _ in
+                    XCTFail("windowInfo is nil")
+                    return .notFound
+                },
+                frontmostWindowElement: {
+                    frontmostCalls += 1
+                    return .found(self.otherElement)
+                }
+            )
+
+            XCTAssertEqual(resolved, .ownWindow)
+            XCTAssertEqual(systemWideCalls, 0)
+            XCTAssertEqual(frontmostCalls, 0)
+        }
+    }
+
+    func testMissingWindowInfoOverOtherAppStillUsesFallbacks() {
+        var systemWideCalls = 0
+        var frontmostCalls = 0
+
+        let resolved = AccessibilityElement.resolveWindowElementUnderCursor(
+            systemWideFirst: false,
+            ownPid: ownPid,
+            windowInfo: nil,
+            ownVisibleWindowAtPosition: false,
+            frontmostPid: otherPid,
+            systemWideElement: {
+                systemWideCalls += 1
+                return .notFound
+            },
+            windowElementFromInfo: { _ in
+                XCTFail("windowInfo is nil")
+                return .notFound
+            },
+            frontmostWindowElement: {
+                frontmostCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(resolved, .found(otherElement))
+        XCTAssertEqual(systemWideCalls, 1)
+        XCTAssertEqual(frontmostCalls, 1)
+    }
+
+    func testStage1TimeoutStopsCascadingToSystemWideAndFrontmost() {
+        var systemWideCalls = 0
+        var frontmostCalls = 0
+
+        let resolved = AccessibilityElement.resolveWindowElementUnderCursor(
+            systemWideFirst: false,
+            ownPid: ownPid,
+            windowInfo: otherWindowInfo,
+            ownVisibleWindowAtPosition: false,
+            frontmostPid: otherPid,
+            systemWideElement: {
+                systemWideCalls += 1
+                return .found(self.otherElement)
+            },
+            windowElementFromInfo: { _ in .timedOut },
+            frontmostWindowElement: {
+                frontmostCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(resolved, .timedOut)
+        XCTAssertEqual(systemWideCalls, 0)
+        XCTAssertEqual(frontmostCalls, 0)
+    }
+
+    func testSystemWideFirstTimeoutStopsCascadingToStage1AndFrontmost() {
+        var infoCalls = 0
+        var frontmostCalls = 0
+
+        let resolved = AccessibilityElement.resolveWindowElementUnderCursor(
+            systemWideFirst: true,
+            ownPid: ownPid,
+            windowInfo: otherWindowInfo,
+            ownVisibleWindowAtPosition: false,
+            frontmostPid: otherPid,
+            systemWideElement: { .timedOut },
+            windowElementFromInfo: { _ in
+                infoCalls += 1
+                return .found(self.otherElement)
+            },
+            frontmostWindowElement: {
+                frontmostCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(resolved, .timedOut)
+        XCTAssertEqual(infoCalls, 0)
+        XCTAssertEqual(frontmostCalls, 0)
+    }
+
+    func testDidMessagingTimeoutOnlyTriggersOnSlowCannotComplete() {
+        XCTAssertFalse(AXUIElement.didMessagingTimeout(error: .cannotComplete, elapsed: 0.01, timeout: 0.25))
+        XCTAssertTrue(AXUIElement.didMessagingTimeout(error: .cannotComplete, elapsed: 0.21, timeout: 0.25))
+        XCTAssertFalse(AXUIElement.didMessagingTimeout(error: .apiDisabled, elapsed: 0.30, timeout: 0.25))
+        XCTAssertFalse(AXUIElement.didMessagingTimeout(error: .noValue, elapsed: 0.30, timeout: 0.25))
+    }
+
+    func testSnappingManagerAbortsGestureOnMouseDownOwnWindowAndTimeout() throws {
+        final class StubLookupManager: SnappingManager {
+            var nextResult: WindowLookupResult = .ownWindow
+            var lookupCalls = 0
+            override func lookupWindowElementUnderCursor(at location: CGPoint?, eventWindowID: CGWindowID?) -> WindowLookupResult {
+                lookupCalls += 1
+                return nextResult
+            }
+        }
+
+        let savedSnapping = Defaults.windowSnapping.enabled
+        let savedObtainOnClick = Defaults.obtainWindowOnClick.enabled
+        Defaults.windowSnapping.enabled = false
+        Defaults.obtainWindowOnClick.enabled = true
+        defer {
+            Defaults.windowSnapping.enabled = savedSnapping
+            Defaults.obtainWindowOnClick.enabled = savedObtainOnClick
+        }
+
+        let manager = StubLookupManager()
+        let down = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: position, mouseButton: .left))))
+        let drag = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseDragged, mouseCursorPosition: CGPoint(x: 340, y: 340), mouseButton: .left))))
+        let up = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: CGPoint(x: 340, y: 340), mouseButton: .left))))
+
+        for result in [WindowLookupResult.ownWindow, .timedOut] {
+            manager.lookupCalls = 0
+            manager.nextResult = result
+            manager.handle(event: down)
+            manager.handle(event: drag)
+            manager.handle(event: drag)
+            XCTAssertEqual(manager.lookupCalls, 1)
+            XCTAssertEqual(manager.windowIdAttempt, 0)
+            manager.handle(event: up)
+        }
+    }
+
+    func testSnappingManagerAbortsGestureOnMouseDraggedOwnWindowAndTimeout() throws {
+        final class DragStubManager: SnappingManager {
+            var nextResult: WindowLookupResult = .ownWindow
+            var lookupCalls = 0
+            override func lookupWindowElementUnderCursor(at location: CGPoint?, eventWindowID: CGWindowID?) -> WindowLookupResult {
+                lookupCalls += 1
+                return nextResult
+            }
+        }
+
+        let savedSnapping = Defaults.windowSnapping.enabled
+        let savedObtainOnClick = Defaults.obtainWindowOnClick.enabled
+        Defaults.windowSnapping.enabled = false
+        Defaults.obtainWindowOnClick.enabled = false
+        defer {
+            Defaults.windowSnapping.enabled = savedSnapping
+            Defaults.obtainWindowOnClick.enabled = savedObtainOnClick
+        }
+
+        let manager = DragStubManager()
+        let down = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseDown, mouseCursorPosition: position, mouseButton: .left))))
+        let drag1 = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseDragged, mouseCursorPosition: CGPoint(x: 340, y: 340), mouseButton: .left))))
+        let drag2 = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseDragged, mouseCursorPosition: CGPoint(x: 360, y: 360), mouseButton: .left))))
+        let up = try XCTUnwrap(NSEvent(cgEvent: try XCTUnwrap(CGEvent(mouseEventSource: nil, mouseType: .leftMouseUp, mouseCursorPosition: CGPoint(x: 360, y: 360), mouseButton: .left))))
+
+        for result in [WindowLookupResult.ownWindow, .timedOut] {
+            manager.lookupCalls = 0
+            manager.nextResult = result
+            manager.handle(event: down)
+            manager.handle(event: drag1)
+            manager.handle(event: drag2)
+            XCTAssertEqual(manager.lookupCalls, 1)
+            XCTAssertEqual(manager.windowIdAttempt, 0)
+            manager.handle(event: up)
+        }
+    }
+
+    func testFrontWindowTimeoutOnFocusedWindowStopsCascading() {
+        var firstWindowCalls = 0
+        var systemWideCalls = 0
+        var firstListedCalls = 0
+
+        let result = AccessibilityElement.resolveFrontWindowElement(
+            focusedWindow: { .timedOut },
+            firstWindow: {
+                firstWindowCalls += 1
+                return .found(self.otherElement)
+            },
+            systemWideFocusedWindow: {
+                systemWideCalls += 1
+                return .found(self.otherElement)
+            },
+            firstListedWindow: {
+                firstListedCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(result, .timedOut)
+        XCTAssertEqual(firstWindowCalls, 0)
+        XCTAssertEqual(systemWideCalls, 0)
+        XCTAssertEqual(firstListedCalls, 0)
+    }
+
+    func testFrontWindowFallsThroughOnNotFoundAndStopsOnFirstWindowTimeout() {
+        var systemWideCalls = 0
+        var firstListedCalls = 0
+
+        let result = AccessibilityElement.resolveFrontWindowElement(
+            focusedWindow: { .notFound },
+            firstWindow: { .timedOut },
+            systemWideFocusedWindow: {
+                systemWideCalls += 1
+                return .found(self.otherElement)
+            },
+            firstListedWindow: {
+                firstListedCalls += 1
+                return .found(self.otherElement)
+            }
+        )
+
+        XCTAssertEqual(result, .timedOut)
+        XCTAssertEqual(systemWideCalls, 0)
+        XCTAssertEqual(firstListedCalls, 0)
+    }
+}
